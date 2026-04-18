@@ -1,20 +1,18 @@
 import type { ScaleStep } from '@/composables/useDoReMiGame'
+import type { ToneEngine } from './toneEngine'
+import { defaultToneEngine } from './toneEngine'
 import { noteToFrequency } from '@/utils/noteUtils'
 
 const NOTE_INTERVAL_MS = 250
 
 type PlaySequenceOptions = {
-  playTone?: (frequencyHz: number) => void | Promise<void>
-  warmUp?: () => Promise<void>
+  toneEngine?: ToneEngine
 }
 
 export { NOTE_INTERVAL_MS }
 
 export function useDoReMiPlaySequence(options: PlaySequenceOptions = {}) {
-  const tonePlayer = options.playTone ? null : useTonePlayer()
-  const playToneFn = options.playTone ?? tonePlayer!.playTone
-  const warmUpFn = options.warmUp ?? tonePlayer?.warmUp
-
+  const engine = options.toneEngine ?? defaultToneEngine
   const isPlayingSequence = ref(false)
   const currentPlayingIndex = ref(-1)
   let timers: ReturnType<typeof setTimeout>[] = []
@@ -24,11 +22,7 @@ export function useDoReMiPlaySequence(options: PlaySequenceOptions = {}) {
     intervalMs = NOTE_INTERVAL_MS,
   ) {
     stopSequence()
-
-    if (warmUpFn) {
-      await warmUpFn()
-    }
-
+    await engine.warmUp()
     isPlayingSequence.value = true
 
     scaleSteps.forEach((step, i) => {
@@ -37,7 +31,7 @@ export function useDoReMiPlaySequence(options: PlaySequenceOptions = {}) {
 
         currentPlayingIndex.value = i
         const freq = noteToFrequency(step.note, step.octave)
-        playToneFn(freq)
+        engine.playTone(freq)
 
         if (i === scaleSteps.length - 1) {
           const endTimer = setTimeout(() => {

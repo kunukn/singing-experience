@@ -1,19 +1,10 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest'
 import { buildMajorScale, C3_MIDI, noteToFrequency } from '@/utils/noteUtils'
+import { createMockToneEngine } from './toneEngine.mock'
 import {
   useDoReMiPlaySequence,
   NOTE_INTERVAL_MS,
 } from './useDoReMiPlaySequence'
-
-vi.mock('./useTonePlayer', () => ({
-  useTonePlayer: () => ({
-    playTone: vi.fn(),
-    isPlaying: { value: false },
-    toneMode: { value: 'piano' },
-    setToneMode: vi.fn(),
-    warmUp: vi.fn().mockResolvedValue(undefined),
-  }),
-}))
 
 describe('useDoReMiPlaySequence', () => {
   const scaleSteps = buildMajorScale(C3_MIDI)
@@ -27,9 +18,8 @@ describe('useDoReMiPlaySequence', () => {
   })
 
   test('should start with idle state', () => {
-    const mockPlayTone = vi.fn()
     const { isPlayingSequence, currentPlayingIndex } = useDoReMiPlaySequence({
-      playTone: mockPlayTone,
+      toneEngine: createMockToneEngine(),
     })
 
     expect(isPlayingSequence.value).toBe(false)
@@ -39,7 +29,7 @@ describe('useDoReMiPlaySequence', () => {
   test('should set isPlayingSequence to true when playing', async () => {
     const mockPlayTone = vi.fn().mockResolvedValue(undefined)
     const { isPlayingSequence, playSequence } = useDoReMiPlaySequence({
-      playTone: mockPlayTone,
+      toneEngine: createMockToneEngine({ playTone: mockPlayTone }),
     })
 
     await playSequence(scaleSteps)
@@ -49,7 +39,9 @@ describe('useDoReMiPlaySequence', () => {
 
   test('should call playTone with correct frequencies at each interval', async () => {
     const mockPlayTone = vi.fn().mockResolvedValue(undefined)
-    const { playSequence } = useDoReMiPlaySequence({ playTone: mockPlayTone })
+    const { playSequence } = useDoReMiPlaySequence({
+      toneEngine: createMockToneEngine({ playTone: mockPlayTone }),
+    })
 
     await playSequence(scaleSteps)
 
@@ -68,7 +60,7 @@ describe('useDoReMiPlaySequence', () => {
   test('should track currentPlayingIndex as steps play', async () => {
     const mockPlayTone = vi.fn().mockResolvedValue(undefined)
     const { currentPlayingIndex, playSequence } = useDoReMiPlaySequence({
-      playTone: mockPlayTone,
+      toneEngine: createMockToneEngine({ playTone: mockPlayTone }),
     })
 
     await playSequence(scaleSteps)
@@ -86,7 +78,9 @@ describe('useDoReMiPlaySequence', () => {
   test('should reset state after last step completes', async () => {
     const mockPlayTone = vi.fn().mockResolvedValue(undefined)
     const { isPlayingSequence, currentPlayingIndex, playSequence } =
-      useDoReMiPlaySequence({ playTone: mockPlayTone })
+      useDoReMiPlaySequence({
+        toneEngine: createMockToneEngine({ playTone: mockPlayTone }),
+      })
 
     await playSequence(scaleSteps)
 
@@ -105,7 +99,9 @@ describe('useDoReMiPlaySequence', () => {
       currentPlayingIndex,
       playSequence,
       stopSequence,
-    } = useDoReMiPlaySequence({ playTone: mockPlayTone })
+    } = useDoReMiPlaySequence({
+      toneEngine: createMockToneEngine({ playTone: mockPlayTone }),
+    })
 
     await playSequence(scaleSteps)
 
@@ -125,7 +121,7 @@ describe('useDoReMiPlaySequence', () => {
     const mockPlayTone = vi.fn().mockResolvedValue(undefined)
     const customInterval = 150
     const { currentPlayingIndex, playSequence } = useDoReMiPlaySequence({
-      playTone: mockPlayTone,
+      toneEngine: createMockToneEngine({ playTone: mockPlayTone }),
     })
 
     await playSequence(scaleSteps, customInterval)
@@ -145,7 +141,7 @@ describe('useDoReMiPlaySequence', () => {
   test('should stop previous sequence when playSequence is called while playing', async () => {
     const mockPlayTone = vi.fn().mockResolvedValue(undefined)
     const { currentPlayingIndex, playSequence } = useDoReMiPlaySequence({
-      playTone: mockPlayTone,
+      toneEngine: createMockToneEngine({ playTone: mockPlayTone }),
     })
 
     await playSequence(scaleSteps)

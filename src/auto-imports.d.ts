@@ -17,8 +17,11 @@ declare global {
   const computed: typeof import('vue').computed
   const confettiKey: typeof import('./composables/useConfetti').confettiKey
   const createApp: typeof import('vue').createApp
+  const createMockToneEngine: typeof import('./composables/toneEngine.mock').createMockToneEngine
+  const createTonejsAdapter: typeof import('./composables/toneEngine').createTonejsAdapter
   const customRef: typeof import('vue').customRef
   const debugLog: typeof import('@/utils/logger').debugLog
+  const defaultToneEngine: typeof import('./composables/toneEngine').defaultToneEngine
   const defineAsyncComponent: typeof import('vue').defineAsyncComponent
   const defineComponent: typeof import('vue').defineComponent
   const effectScope: typeof import('vue').effectScope
@@ -95,6 +98,9 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { ToneEngine } from './composables/toneEngine'
+  import('./composables/toneEngine')
+  // @ts-ignore
   export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep } from './composables/useDoReMiGame'
   import('./composables/useDoReMiGame')
   // @ts-ignore
@@ -115,8 +121,11 @@ declare module 'vue' {
     readonly START_TONE_OPTIONS: UnwrapRef<typeof import('./composables/useDoReMiGame')['START_TONE_OPTIONS']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
+    readonly createMockToneEngine: UnwrapRef<typeof import('./composables/toneEngine.mock')['createMockToneEngine']>
+    readonly createTonejsAdapter: UnwrapRef<typeof import('./composables/toneEngine')['createTonejsAdapter']>
     readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
     readonly debugLog: UnwrapRef<typeof import('@/utils/logger')['debugLog']>
+    readonly defaultToneEngine: UnwrapRef<typeof import('./composables/toneEngine')['defaultToneEngine']>
     readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
