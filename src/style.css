@@ -1,0 +1,15 @@
+@import 'tailwindcss';
+
+@layer base {
+  html {
+    @apply h-full;
+  }
+
+  body {
+    @apply relative flex min-h-full flex-col bg-gray-950 text-white;
+  }
+
+  #app {
+    @apply flex h-full w-full grow flex-col;
+  }
+}

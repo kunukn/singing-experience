@@ -1,0 +1,66 @@
+{
+  "name": "singing-experience",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 5555",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "buildpreview": "npm run build && npm run preview",
+    "typecheck": "vue-tsc --noEmit",
+    "lint:fix": "oxlint --fix",
+    "tscheck": "node scripts/tscheck-with-timing.js",
+    "checks": "node scripts/pre-push-checks.js",
+    "lint": "node scripts/lint-with-timing.js",
+    "format": "prettier --write ./src",
+    "prepare": "husky",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "guard": "npm run format && npm run checks",
+    "deploy": "gh-pages -d dist"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "canvas-confetti": "^1.9.4",
+    "pinia": "^3.0.4",
+    "pitchy": "^4.1.0",
+    "tailwindcss": "^4.2.2",
+    "tone": "^15.1.22",
+    "vue": "^3.5.32",
+    "vue-i18n": "^11.3.2",
+    "vue-router": "^5.0.4"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "@vitest/ui": "^4.1.4",
+    "@vue/test-utils": "^2.4.6",
+    "gh-pages": "^6.3.0",
+    "happy-dom": "^20.8.9",
+    "husky": "^9.1.7",
+    "oxlint": "^1.59.0",
+    "prettier": "^3.8.2",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "typescript": "^6.0.2",
+    "unplugin-auto-import": "^21.0.0",
+    "unplugin-vue-components": "^32.0.0",
+    "vite": "^8.0.8",
+    "vite-plugin-pwa": "^1.2.0",
+    "vite-plugin-vue-devtools": "^8.1.1",
+    "vitest": "^4.1.4",
+    "vue-tsc": "^2.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kunukn/singing-experience.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "0BSD",
+  "bugs": {
+    "url": "https://github.com/kunukn/singing-experience/issues"
+  },
+  "homepage": "https://github.com/kunukn/singing-experience#readme"
+}

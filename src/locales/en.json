@@ -1,0 +1,60 @@
+{
+  "generic": {
+    "start": "Start",
+    "stop": "Stop",
+    "backToMenu": "← Back to menu",
+    "switchToDanish": "Switch to Danish",
+    "switchToEnglish": "Switch to English"
+  },
+  "sounds": {
+    "toneSound": "Tone sound:",
+    "piano": "Piano",
+    "bell": "Bell",
+    "bass": "Bass",
+    "square": "Square"
+  },
+  "home": {
+    "title": "Singing Experience",
+    "subtitle": "Choose a program to get started",
+    "programs": {
+      "pitchDetector": {
+        "name": "Pitch Detector",
+        "description": "Detect your singing pitch in real time. See the note, octave, and how in-tune you are."
+      },
+      "doReMi": {
+        "name": "DO RE MI Game",
+        "description": "Sing through the C major scale — DO RE MI FA SO LA TI DO. Hold each note for a few seconds to advance."
+      }
+    },
+    "privacy": "🔒 Your privacy is safe — this app runs 100% in your browser. No audio is recorded or sent anywhere."
+  },
+  "doReMi": {
+    "title": "DO RE MI Game",
+    "singNoteFor": "Sing each note for {seconds} seconds to advance",
+    "holdDuration": "Hold duration:",
+    "congratulations": "Congratulations!",
+    "congratulationsMessage": "You completed the DO RE MI scale holding each note for {seconds} seconds!",
+    "time": "⏱ Time:",
+    "playAgain": "Play Again",
+    "singThisNote": "Sing this:",
+    "youreSinging": "You're singing:",
+    "tooLow": "♭ Too low",
+    "perfect": "Perfect",
+    "tooHigh": "Too high ♯",
+    "centsFromTarget": "{cents} cents",
+    "allowedRange": "Allowed range: ±50 cents · Target: {hz} Hz",
+    "playSolfege": "Play {solfege}",
+    "startTone": "Start tone:",
+    "doReMiButton": "Do Re Mi",
+    "muteButton": "Mute"
+  },
+  "pitchDetector": {
+    "listening": "Listening...",
+    "flat": "♭ Flat",
+    "inTune": "In tune",
+    "sharp": "Sharp ♯",
+    "hz": "Hz",
+    "clarity": "Clarity",
+    "cents": "cents"
+  }
+}

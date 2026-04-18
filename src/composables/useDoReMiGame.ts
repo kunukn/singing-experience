@@ -1,0 +1,232 @@
+import type { NoteName, NoteInfo } from '@/utils/noteUtils'
+import {
+  noteToFrequency,
+  buildMajorScale,
+  C3_MIDI,
+  START_TONE_OPTIONS,
+} from '@/utils/noteUtils'
+
+type ScaleStep = {
+  solfege: string
+  note: NoteName
+  octave: number
+}
+
+type PitchDetectionProvider = {
+  frequency: Readonly<Ref<number | null>>
+  noteInfo: Readonly<Ref<NoteInfo | null>>
+  isListening: Readonly<Ref<boolean>>
+  isClean: Readonly<Ref<boolean>>
+  error: Readonly<Ref<string | null>>
+  start: () => void | Promise<void>
+  stop: () => void
+}
+
+const DEFAULT_HOLD_DURATION_MS = 2000
+const GRACE_PERIOD_MS = 250
+
+/*
+ * Maximum cents deviation from the target note to count as "correct."
+ * ±50 cents is the standard threshold in beginner/educational singing apps
+ * (e.g. Yousician, Smule). Tighten to ±25 or ±10 for advanced difficulty.
+ */
+const MAX_CENTS_DEVIATION = 50
+
+type DoReMiGameOptions = {
+  holdDurationMs?: number
+  pitchDetection?: PitchDetectionProvider
+}
+
+export {
+  DEFAULT_HOLD_DURATION_MS,
+  GRACE_PERIOD_MS,
+  MAX_CENTS_DEVIATION,
+  START_TONE_OPTIONS,
+}
+export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep }
+
+export function useDoReMiGame(options: DoReMiGameOptions = {}) {
+  const holdDurationMs = ref(options.holdDurationMs ?? DEFAULT_HOLD_DURATION_MS)
+  const startingSemitoneOffset = ref(0)
+
+  const scaleSteps = computed<ScaleStep[]>(() =>
+    buildMajorScale(C3_MIDI + startingSemitoneOffset.value),
+  )
+  const {
+    noteInfo,
+    isClean,
+    isListening,
+    error,
+    frequency,
+    start: startDetection,
+    stop: stopDetection,
+  } = options.pitchDetection ?? usePitchDetection()
+
+  const currentStepIndex = ref(0)
+  const holdTimeMs = ref(0)
+  const graceTimeMs = ref(0)
+  const elapsedMs = ref(0)
+  const isComplete = ref(false)
+  const isStarted = ref(false)
+
+  let lastTimestamp: number | null = null
+  let timerFrameId: number | null = null
+
+  const targetStep = computed<ScaleStep>(
+    () => scaleSteps.value[currentStepIndex.value],
+  )
+
+  const targetFrequency = computed(() =>
+    noteToFrequency(targetStep.value.note, targetStep.value.octave),
+  )
+
+  const centsFromTarget = computed(() => {
+    if (!frequency.value || !isClean.value) return null
+
+    return Math.round(1200 * Math.log2(frequency.value / targetFrequency.value))
+  })
+
+  const holdProgress = computed(() =>
+    Math.min(holdTimeMs.value / holdDurationMs.value, 1),
+  )
+
+  const isSingingCorrectNote = computed(() => {
+    if (!noteInfo.value || !isClean.value) return false
+    if (centsFromTarget.value === null) return false
+
+    const target = targetStep.value
+
+    return (
+      noteInfo.value.note === target.note &&
+      noteInfo.value.octave === target.octave &&
+      Math.abs(centsFromTarget.value) <= MAX_CENTS_DEVIATION
+    )
+  })
+
+  function tickTimer(timestamp: number) {
+    if (lastTimestamp !== null) {
+      const delta = timestamp - lastTimestamp
+      elapsedMs.value += delta
+
+      if (isSingingCorrectNote.value) {
+        graceTimeMs.value = 0
+        holdTimeMs.value += delta
+      } else {
+        graceTimeMs.value += delta
+
+        if (graceTimeMs.value >= GRACE_PERIOD_MS) {
+          holdTimeMs.value = 0
+        }
+      }
+
+      if (holdTimeMs.value >= holdDurationMs.value) {
+        advanceStep()
+      }
+    }
+
+    lastTimestamp = timestamp
+
+    if (!isComplete.value && isListening.value) {
+      timerFrameId = requestAnimationFrame(tickTimer)
+    }
+  }
+
+  function advanceStep() {
+    holdTimeMs.value = 0
+    graceTimeMs.value = 0
+    lastTimestamp = null
+
+    if (currentStepIndex.value < scaleSteps.value.length - 1) {
+      currentStepIndex.value++
+    } else {
+      isComplete.value = true
+      stopTimer()
+    }
+  }
+
+  function startTimer() {
+    lastTimestamp = null
+    timerFrameId = requestAnimationFrame(tickTimer)
+  }
+
+  function stopTimer() {
+    if (timerFrameId !== null) {
+      cancelAnimationFrame(timerFrameId)
+      timerFrameId = null
+    }
+    lastTimestamp = null
+  }
+
+  async function start() {
+    isStarted.value = true
+    await startDetection()
+    startTimer()
+  }
+
+  function stop() {
+    stopTimer()
+    stopDetection()
+    isStarted.value = false
+    currentStepIndex.value = 0
+    holdTimeMs.value = 0
+    graceTimeMs.value = 0
+    elapsedMs.value = 0
+    isComplete.value = false
+  }
+
+  function reset() {
+    stop()
+  }
+
+  function completeGame() {
+    stopTimer()
+    stopDetection()
+    isComplete.value = true
+  }
+
+  watch(isListening, (listening) => {
+    if (!listening) {
+      stopTimer()
+    }
+  })
+
+  if (getCurrentInstance()) {
+    onUnmounted(() => stop())
+  }
+
+  function setHoldDuration(ms: number) {
+    holdDurationMs.value = ms
+  }
+
+  function setStartingSemitoneOffset(offset: number) {
+    startingSemitoneOffset.value = offset
+    stop()
+  }
+
+  return {
+    scaleSteps,
+    startingSemitoneOffset: readonly(startingSemitoneOffset),
+    currentStepIndex: readonly(currentStepIndex),
+    targetStep,
+    targetFrequency,
+    centsFromTarget,
+    holdProgress,
+    holdDurationMs: readonly(holdDurationMs),
+    holdTimeMs: readonly(holdTimeMs),
+    elapsedMs: readonly(elapsedMs),
+    isComplete: readonly(isComplete),
+    isStarted: readonly(isStarted),
+    isSingingCorrectNote,
+    noteInfo,
+    frequency,
+    isClean,
+    isListening,
+    error,
+    start,
+    stop,
+    reset,
+    completeGame,
+    setHoldDuration,
+    setStartingSemitoneOffset,
+  }
+}

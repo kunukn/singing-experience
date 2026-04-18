@@ -1,0 +1,61 @@
+{
+  "generic": {
+    "start": "Start",
+    "stop": "Stop",
+    "backToMenu": "← Tilbage til menu",
+    "switchToDanish": "Skift til Dansk",
+    "switchToEnglish": "Skift til Engelsk"
+  },
+  "sounds": {
+    "toneSound": "Tone lyd:",
+    "piano": "Klaver",
+    "bell": "Klokke",
+    "bass": "Bas",
+    "square": "Firkant"
+  },
+  "home": {
+    "title": "Sangoplevelse",
+    "subtitle": "Vælg et program for at komme i gang",
+    "programs": {
+      "pitchDetector": {
+        "name": "Tonemåler",
+        "description": "Registrer din sangtone i realtid. Se noden, oktaven og hvor godt du synger i stemning."
+      },
+      "doReMi": {
+        "name": "DO RE MI Spil",
+        "description": "Syng gennem C-dur skalaen — DO RE MI FA SO LA TI DO. Hold hver tone i nogle sekunder for at gå videre."
+      }
+    },
+    "privacy": "🔒 Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
+  },
+  "doReMi": {
+    "title": "DO RE MI Spil",
+    "singNoteFor": "Syng hver tone i {seconds} sekunder for at fortsætte",
+    "holdDuration": "Hold varighed:",
+    "congratulations": "Tillykke!",
+    "congratulationsMessage": "Du gennemførte DO RE MI skalaen og holdt hver tone i {seconds} sekunder!",
+    "time": "⏱ Tid:",
+    "playAgain": "Spil igen",
+    "singThisNote": "Syng denne:",
+    "youreSinging": "Du synger:",
+    "tooLow": "♭ For lav",
+    "perfect": "Perfekt",
+    "tooHigh": "For høj ♯",
+    "centsFromTarget": "{cents} cents",
+    "allowedRange": "Tilladt interval: ±50 cents · Mål: {hz} Hz",
+    "playSolfege": "Afspil {solfege}",
+    "startTone": "Starttone:",
+    "doReMiButton": "Do Re Mi",
+    "muteButton": "Lydløs"
+  },
+  "pitchDetector": {
+    "listening": "Lytter...",
+    "pressStartToBegin": "Tryk Start for at begynde",
+    "flat": "♭ For lav",
+    "inTune": "I tone",
+    "sharp": "For høj ♯",
+    "hz": "Hz",
+    "clarity": "Klarhed",
+    "cents": "cents"
+  }
+}
