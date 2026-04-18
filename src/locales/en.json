@@ -67,6 +67,15 @@
     "listening": "Listening...",
     "hz": "Hz",
     "tonesDetected": "{count} tone(s) detected",
-    "pressStart": "Press Start to detect tones"
+    "pressStart": "Press Start to detect tones",
+    "pageDescription": "Detects multiple tones at once. Play a chord or several notes simultaneously and see each tone displayed in real time.",
+    "sensitivityDescription": "Controls how many tones are picked up. Lower it to filter out overtones when playing a single note. Raise it to detect more simultaneous tones in a chord.",
+    "noiseGateDescription": "Sets the minimum volume required to detect a tone. Raise it if you see false tones during silence. Lower it to pick up quieter sounds.",
+    "sensitivity": "Sensitivity",
+    "noiseGate": "Noise gate",
+    "strict": "Fewer tones",
+    "loose": "More tones",
+    "quiet": "Less filtering",
+    "loud": "More filtering"
   }
 }

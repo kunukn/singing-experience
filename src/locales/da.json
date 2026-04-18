@@ -68,6 +68,15 @@
     "listening": "Lytter...",
     "hz": "Hz",
     "tonesDetected": "{count} tone(r) registreret",
-    "pressStart": "Tryk Start for at registrere toner"
+    "pressStart": "Tryk Start for at registrere toner",
+    "pageDescription": "Registrerer flere toner på én gang. Spil en akkord eller flere toner samtidig og se hver tone vist i realtid.",
+    "sensitivityDescription": "Styrer hvor mange toner der opfanges. Sænk den for at filtrere overtoner fra, når du spiller en enkelt tone. Hæv den for at registrere flere samtidige toner i en akkord.",
+    "noiseGateDescription": "Sætter den mindste lydstyrke for at registrere en tone. Hæv den, hvis du ser falske toner under stilhed. Sænk den for at opfange svagere lyde.",
+    "sensitivity": "Følsomhed",
+    "noiseGate": "Støjgrænse",
+    "strict": "Færre toner",
+    "loose": "Flere toner",
+    "quiet": "Mindre filtrering",
+    "loud": "Mere filtrering"
   }
 }
