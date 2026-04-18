@@ -50,6 +50,20 @@ export function useConfetti(canvasRef?: Ref<HTMLCanvasElement | null>) {
     burstFrame()
   }
 
+  function fireMicroConfetti() {
+    fire({
+      particleCount: 15,
+      spread: 60,
+      startVelocity: 15,
+      gravity: 1.5,
+      ticks: 30,
+      origin: { x: 0.5, y: 0.5 },
+      scalar: 0.5,
+      colors: ['#4ade80', '#22c55e', '#86efac'],
+      disableForReducedMotion: true,
+    })
+  }
+
   onUnmounted(() => {
     if (scopedConfetti) {
       scopedConfetti.reset()
@@ -58,5 +72,5 @@ export function useConfetti(canvasRef?: Ref<HTMLCanvasElement | null>) {
     }
   })
 
-  return { fireConfetti }
+  return { fireConfetti, fireMicroConfetti }
 }

@@ -5,7 +5,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <div class="flex grow flex-col items-center px-4 pt-4">
+  <div class="flex grow flex-col items-center px-4 pt-1">
     <div class="flex flex-wrap items-center gap-2">
       <MusicNote class="h-9 w-auto"></MusicNote>
       <h2 class="product-title mb-2 font-bold">{{ t('home.title') }}</h2>

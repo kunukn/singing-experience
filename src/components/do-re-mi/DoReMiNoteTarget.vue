@@ -26,10 +26,34 @@ const showSingHigherArrow = computed(() => tooLowMs >= TOO_LOW_OR_HIGH_HINT_MS)
 const showSingLowerArrow = computed(() => tooHighMs >= TOO_LOW_OR_HIGH_HINT_MS)
 
 const { t } = useI18n()
+
+const confettiCanvas = ref<HTMLCanvasElement | null>(null)
+const { fireMicroConfetti } = useConfetti(confettiCanvas)
+
+const isAnimating = ref(false)
+
+watch(
+  () => targetStep.solfege,
+  () => {
+    isAnimating.value = false
+    nextTick(() => {
+      isAnimating.value = true
+    })
+    fireMicroConfetti()
+  },
+)
+
+function onAnimationEnd() {
+  isAnimating.value = false
+}
 </script>
 
 <template>
-  <div class="flex items-center gap-4">
+  <div class="relative flex items-center gap-4">
+    <canvas
+      ref="confettiCanvas"
+      class="pointer-events-none absolute inset-0 z-10"
+    />
     <div class="flex items-center">
       <div class="grid w-6 place-items-center">
         <div
@@ -66,7 +90,11 @@ const { t } = useI18n()
         <p class="text-sm text-gray-400">{{ t('doReMi.singThisNote') }}</p>
         <div
           class="text-5xl font-bold"
-          :class="isSingingCorrectNote ? 'text-green-400' : 'text-white'"
+          :class="[
+            isSingingCorrectNote ? 'text-green-400' : 'text-white',
+            isAnimating && 'animate-note-pop',
+          ]"
+          @animationend="onAnimationEnd"
         >
           {{ targetStep.solfege }}
         </div>
@@ -105,3 +133,23 @@ const { t } = useI18n()
     </div>
   </div>
 </template>
+
+<style scoped>
+@keyframes note-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.3);
+    text-shadow: 0 0 12px rgba(74, 222, 128, 0.8);
+  }
+  100% {
+    transform: scale(1);
+    text-shadow: none;
+  }
+}
+
+.animate-note-pop {
+  animation: note-pop 400ms ease-out;
+}
+</style>
