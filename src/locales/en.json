@@ -27,7 +27,7 @@
       },
       "toneDetector": {
         "name": "Tone Detector",
-        "description": "Detect multiple simultaneous tones in real time. Play a chord and see which notes are sounding."
+        "description": "Detect multiple simultaneous tones in real time. Sing a harmony or play a chord and see which notes are sounding."
       }
     },
     "privacy": "🔒 Your privacy is safe — this app runs 100% in your browser. No audio is recorded or sent anywhere."

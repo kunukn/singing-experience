@@ -27,7 +27,7 @@
       },
       "toneDetector": {
         "name": "Tonedetektor",
-        "description": "Registrer flere samtidige toner i realtid. Spil en akkord og se hvilke toner der lyder."
+        "description": "Registrer flere samtidige toner i realtid. Syng en harmoni eller spil en akkord og se hvilke toner der lyder."
       }
     },
     "privacy": "🔒 Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
