@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import GitHubIcon from '@/components/generic/GitHubIcon.vue'
 import { programs } from '@/constants/programs'
 
 const { t } = useI18n()

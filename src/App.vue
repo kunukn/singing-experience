@@ -5,7 +5,7 @@ const confettiCanvas = ref<HTMLCanvasElement | null>(null)
 const { fireConfetti } = useConfetti(confettiCanvas)
 
 useConfettiStore().registerFireConfetti(fireConfetti)
-;(window as CustomWindow).fireConfetti = fireConfetti
+;(window as CustomWindow).fireConfetti = fireConfetti // Expose to global for testing purposes.
 </script>
 
 <template>
