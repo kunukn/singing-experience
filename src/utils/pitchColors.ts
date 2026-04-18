@@ -119,3 +119,16 @@ export function cleanTextColor(cents: number): string {
 
   return `rgb(${r}, ${g}, ${b})`
 }
+
+const DIRECTIONAL_ORANGE = '#fb923c' // too high
+const DIRECTIONAL_BLUE = '#60a5fa' // too low
+const DIRECTIONAL_GREEN = '#4ade80' // in tune
+
+/*
+ * Returns a directional color based on cents deviation:
+ * green when within threshold, orange when too high, blue when too low.
+ */
+export function directionalColor(cents: number, threshold = 50): string {
+  if (Math.abs(cents) <= threshold) return DIRECTIONAL_GREEN
+  return cents > 0 ? DIRECTIONAL_ORANGE : DIRECTIONAL_BLUE
+}

@@ -21,6 +21,9 @@ const { t } = useI18n()
       :threshold="50"
       :maxRange="150"
       :isVisible="true"
+      :highLabel="t('doReMi.tooHigh')"
+      :lowLabel="t('doReMi.tooLow')"
+      colorMode="directional"
     />
 
     <div>
@@ -36,18 +39,21 @@ const { t } = useI18n()
 
       <div class="flex min-h-8 flex-col justify-end gap-1">
         <div
-          class="text-xs tabular-nums"
+          class="min-w-8 text-xs tabular-nums"
           :class="[
             centsFromTarget === null ? 'invisible' : '',
-            Math.abs(centsFromTarget || 0) <= 50
+            Math.abs(centsFromTarget ?? 0) <= 50
               ? 'text-green-400'
-              : 'text-red-400',
+              : (centsFromTarget ?? 0) > 0
+                ? 'text-orange-400'
+                : 'text-blue-400',
           ]"
         >
           {{
             t('doReMi.centsFromTarget', {
               cents:
-                (centsFromTarget || 0 > 0 ? '+' : '') + (centsFromTarget || 0),
+                ((centsFromTarget ?? 0) > 0 ? '+' : '') +
+                (centsFromTarget ?? 0),
             })
           }}
         </div>

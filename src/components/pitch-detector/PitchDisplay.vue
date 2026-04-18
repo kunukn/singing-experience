@@ -73,6 +73,8 @@ defineExpose({ stopSequence })
           :threshold="10"
           :maxRange="50"
           :isVisible="isListening"
+          :highLabel="t('pitchDetector.sharp')"
+          :lowLabel="t('pitchDetector.flat')"
         />
 
         <div class="flex min-w-40 flex-col items-start justify-center">

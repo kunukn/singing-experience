@@ -51,9 +51,9 @@
   "pitchDetector": {
     "listening": "Lytter...",
     "pressStartToBegin": "Tryk Start for at begynde",
-    "flat": "♭ For lav",
+    "flat": "♭ Flad",
     "inTune": "I tone",
-    "sharp": "For høj ♯",
+    "sharp": "Skarp ♯",
     "hz": "Hz",
     "clarity": "Klarhed",
     "cents": "cents"

@@ -1,25 +1,31 @@
 <script setup lang="ts">
-import { cleanColor } from '@/utils/pitchColors'
+import { cleanColor, directionalColor } from '@/utils/pitchColors'
 
 type Props = {
   cents: number | null
   threshold?: number
   maxRange?: number
   isVisible?: boolean
+  highLabel?: string
+  lowLabel?: string
+  colorMode?: 'tuning' | 'directional'
 }
 
 const props = withDefaults(defineProps<Props>(), {
   threshold: 10,
   maxRange: 50,
   isVisible: true,
+  highLabel: '',
+  lowLabel: '',
+  colorMode: 'tuning',
 })
-
-const { t } = useI18n()
 
 const indicatorColor = computed(() => {
   if (props.cents === null) return undefined
 
-  return cleanColor(props.cents)
+  return props.colorMode === 'directional'
+    ? directionalColor(props.cents, props.threshold)
+    : cleanColor(props.cents)
 })
 
 const indicatorTop = computed(() => {
@@ -34,7 +40,7 @@ const indicatorTop = computed(() => {
     class="flex flex-col items-center gap-1"
     :class="{ invisible: !isVisible }"
   >
-    <span class="text-xs text-gray-500">{{ t('pitchDetector.sharp') }}</span>
+    <span class="text-xs text-gray-500">{{ highLabel }}</span>
 
     <div
       class="relative h-30 w-3 overflow-hidden rounded-full bg-gray-800 sm:h-40"
@@ -51,6 +57,6 @@ const indicatorTop = computed(() => {
       />
     </div>
 
-    <span class="text-xs text-gray-500">{{ t('pitchDetector.flat') }}</span>
+    <span class="text-xs text-gray-500">{{ lowLabel }}</span>
   </div>
 </template>
