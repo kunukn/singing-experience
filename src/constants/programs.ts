@@ -15,4 +15,9 @@ export const programs: Program[] = [
     icon: '🎶',
     route: '/do-re-mi',
   },
+  {
+    key: 'toneDetector',
+    icon: '🎹',
+    route: '/tone-detector',
+  },
 ]

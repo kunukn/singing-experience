@@ -18,9 +18,9 @@ const { t } = useI18n()
         v-for="program in programs"
         :key="program.route"
         :to="program.route"
-        class="block rounded-2xl border border-gray-800 bg-gray-900 p-6 transition-all hover:border-green-500 hover:bg-gray-800"
+        class="block rounded-2xl border border-gray-800 bg-gray-900 p-3 transition-all hover:border-green-500 hover:bg-gray-800 sm:p-6"
       >
-        <div class="flex items-start gap-4">
+        <div class="flex items-start gap-3 sm:gap-4">
           <span class="text-4xl">{{ program.icon }}</span>
           <div>
             <h2 class="text-xl font-semibold">

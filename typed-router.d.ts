@@ -55,6 +55,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/tone-detector': RouteRecordInfo<
+      '/tone-detector',
+      '/tone-detector',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
   }
 
   /**
@@ -89,6 +96,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/pitch-detector-test.vue': {
       routes:
         | '/pitch-detector-test'
+      views:
+        | never
+    }
+    'src/pages/tone-detector.vue': {
+      routes:
+        | '/tone-detector'
       views:
         | never
     }
