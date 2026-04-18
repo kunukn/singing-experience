@@ -27,6 +27,14 @@ type NoteMarker = {
   showLabel: boolean
 }
 
+type MarkerHitArea = {
+  x: number
+  y: number
+  w: number
+  h: number
+  midiNote: number
+}
+
 const props = withDefaults(defineProps<Props>(), {
   midiMin: 36,
   midiMax: 84,
@@ -66,6 +74,23 @@ function handleLabelClick(note: NoteName, octave: number, midi: number) {
     clickedMidi.value = null
     clickedTimer = null
   }, TONE_CLICK_HIGHLIGHT_DURATION_MS)
+}
+
+function handleCanvasClick(event: MouseEvent) {
+  if (props.isListening) return
+
+  const { offsetX, offsetY } = event
+  const hit = markerHitAreas.find(
+    (area) =>
+      offsetX >= area.x &&
+      offsetX <= area.x + area.w &&
+      offsetY >= area.y &&
+      offsetY <= area.y + area.h,
+  )
+  if (!hit) return
+
+  const { note, octave } = midiToNoteLabel(hit.midiNote)
+  playTone(noteToFrequency(note, octave))
 }
 
 const activeMidi = computed(() => props.highlightedMidi ?? clickedMidi.value)
@@ -119,6 +144,7 @@ const color2 = 'rgba(255, 255, 255, 1)'
 
 let samples: PitchSample[] = []
 let noteMarkers: NoteMarker[] = []
+const markerHitAreas: MarkerHitArea[] = []
 let animationFrameId: number | null = null
 
 let pausedAt: number | null = null
@@ -287,6 +313,7 @@ function drawChart() {
   }
 
   // Draw sustained-note markers (dot + label)
+  markerHitAreas.length = 0
   for (const marker of noteMarkers) {
     const x = timeToX(marker.timestamp, now, width)
     const y = midiToY(marker.midiNote, height)
@@ -319,6 +346,14 @@ function drawChart() {
 
       ctx.fillStyle = color2
       ctx.fillText(marker.label, labelX, labelY)
+
+      markerHitAreas.push({
+        x: bgX,
+        y: bgY,
+        w: bgW,
+        h: bgH,
+        midiNote: marker.midiNote,
+      })
     }
   }
 
@@ -505,6 +540,8 @@ onUnmounted(() => {
     <canvas
       ref="canvasRef"
       class="absolute inset-0 h-full w-full rounded-lg bg-gray-900/50"
+      :class="!isListening ? 'cursor-pointer' : ''"
+      @click="handleCanvasClick"
     />
     <button
       v-for="pos in labelPositions"
