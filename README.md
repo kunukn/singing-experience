@@ -16,6 +16,28 @@ Sing or hum into your microphone and instantly see:
 - How **in-tune** you are (are you a little sharp or flat?)
 - The **frequency** of your voice in real time
 
+#### 💡 What can you use it for?
+
+**🎸 Instrument tuning**
+
+Play a note on any acoustic instrument — guitar, ukulele, violin, flute, recorder — and the app instantly shows the note name and how many cents off you are. A visual sharp/flat bar makes it easy to nudge the string or breath pressure until you land exactly on pitch.
+
+**🎙️ Singing & voice practice**
+
+Warm up your voice and verify you're landing on target pitches. Use the voice range presets (Soprano, Alto, Tenor, Baritone, Bass, and more) to focus the display on your register. The cents deviation and pitch history chart reveal whether your intonation is solid or drifting over time.
+
+**👂 Ear training**
+
+Sing or hum an interval, then check whether you matched the pitch you intended. The pitch history chart gives a visual trace of your pitch over time — a flat line close to zero cents means you held the note rock-steady.
+
+**🎼 Music education**
+
+Demonstrate acoustics live: play a note and show students its frequency in Hz and its name on the musical scale. The visual feedback makes abstract concepts like "sharp" and "flat" immediately concrete.
+
+**🎵 Composition & transcription**
+
+Hum a melody fragment and read off the notes one by one. Useful for sketching out ideas when you don't have an instrument to hand or can't read sheet music on the fly.
+
 ### 🎶 DO RE MI Game
 
 A step-by-step singing game that walks you through the classic musical scale — DO, RE, MI, FA, SO, LA, TI, DO.

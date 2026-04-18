@@ -154,7 +154,7 @@ onUnmounted(() => {
         <div
           class="flex items-center gap-2 md:col-span-2 md:grid md:grid-cols-subgrid md:items-center"
         >
-          <label class="hidden text-sm text-gray-400 md:block">{{
+          <label class="hidden text-right text-sm text-gray-400 md:block">{{
             t('doReMi.scaleMode')
           }}</label>
           <BasicSelect v-model="selectedScaleMode">
@@ -184,9 +184,10 @@ onUnmounted(() => {
         <div
           class="hidden items-center gap-2 min-[500px]:flex md:col-span-2 md:grid md:grid-cols-subgrid md:items-center"
         >
-          <label class="hidden text-sm text-gray-400 md:block">{{
-            t('sounds.toneSound')
-          }}</label>
+          <label
+            class="hidden text-right text-sm text-gray-400 md:block md:min-w-22.5"
+            >{{ t('sounds.toneSound') }}</label
+          >
           <ToneModeSelect v-model="selectedToneMode" />
         </div>
       </div>

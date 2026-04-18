@@ -41,7 +41,7 @@ type GridNote = {
 }
 
 const HISTORY_DURATION_MS = 5000
-const LABEL_WIDTH = 32
+const LABEL_WIDTH = 40 // PADDING_LEFT is effectively 0 since labels are flush with left edge, so this is total reserved width for labels
 const PADDING_TOP = 16
 const PADDING_BOTTOM = 16
 const PADDING_RIGHT = 16

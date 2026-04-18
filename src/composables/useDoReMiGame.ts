@@ -23,7 +23,7 @@ type PitchDetectionProvider = {
   stop: () => void
 }
 
-const DEFAULT_HOLD_DURATION_MS = 2000
+const DEFAULT_HOLD_DURATION_MS = 1000
 const GRACE_PERIOD_MS = 250
 const DEFAULT_STARTING_SEMITONE_OFFSET = 7 // G3
 const DEFAULT_SCALE_MODE: ScaleMode = 'ionian'
@@ -34,7 +34,7 @@ const DEFAULT_SCALE_MODE: ScaleMode = 'ionian'
  * (e.g. Yousician, Smule). Tighten to ±25 or ±10 for advanced difficulty.
  */
 const MAX_CENTS_DEVIATION = 50
-const TOO_LOW_OR_HIGH_HINT_MS = 800
+const TOO_LOW_OR_HIGH_HINT_MS = 500
 
 type DoReMiGameOptions = {
   holdDurationMs?: number
