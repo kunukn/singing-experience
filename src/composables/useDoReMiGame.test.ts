@@ -8,10 +8,6 @@ import {
   MAX_CENTS_DEVIATION,
 } from './useDoReMiGame'
 
-vi.mock('./usePitchDetection', () => ({
-  usePitchDetection: vi.fn(),
-}))
-
 function createMockPitchDetection() {
   const frequency = ref<number | null>(null)
   const noteInfo = ref<NoteInfo | null>(null)
