@@ -209,6 +209,7 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     currentStepIndex: readonly(currentStepIndex),
     targetStep,
     targetFrequency,
+    currentFrequency: frequency,
     centsFromTarget,
     holdProgress,
     holdDurationMs: readonly(holdDurationMs),

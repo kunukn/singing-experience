@@ -4,12 +4,18 @@ import type { ScaleStep } from '@/composables/useDoReMiGame'
 type Props = {
   targetStep: ScaleStep
   targetFrequency: number
+  currentFrequency: number | null
   centsFromTarget: number | null
   isSingingCorrectNote: boolean
 }
 
-const { targetStep, targetFrequency, centsFromTarget, isSingingCorrectNote } =
-  defineProps<Props>()
+const {
+  targetStep,
+  targetFrequency,
+  currentFrequency,
+  centsFromTarget,
+  isSingingCorrectNote,
+} = defineProps<Props>()
 
 const { t } = useI18n()
 </script>
@@ -39,7 +45,7 @@ const { t } = useI18n()
 
       <div class="flex min-h-8 flex-col justify-end gap-1">
         <div
-          class="min-w-8 text-xs tabular-nums"
+          class="flex items-center gap-1 text-xs"
           :class="[
             centsFromTarget === null ? 'invisible' : '',
             Math.abs(centsFromTarget ?? 0) <= 50
@@ -49,17 +55,22 @@ const { t } = useI18n()
                 : 'text-blue-400',
           ]"
         >
-          {{
-            t('doReMi.centsFromTarget', {
-              cents:
-                ((centsFromTarget ?? 0) > 0 ? '+' : '') +
-                (centsFromTarget ?? 0),
-            })
-          }}
+          <span>{{ t('doReMi.cents') }} </span>
+          <span class="tabular-nums">
+            {{
+              ((centsFromTarget ?? 0) > 0 ? '+' : '') + (centsFromTarget ?? 0)
+            }}
+          </span>
         </div>
 
         <p class="text-xs text-gray-600">
           {{ t('doReMi.allowedRange', { hz: Math.round(targetFrequency) }) }}
+        </p>
+        <p
+          class="text-xs tabular-nums"
+          :class="currentFrequency === null ? 'invisible' : 'text-gray-400'"
+        >
+          {{ t('doReMi.currentHz', { hz: Math.round(currentFrequency ?? 0) }) }}
         </p>
       </div>
     </div>

@@ -41,12 +41,13 @@
     "tooLow": "♭ Too low",
     "perfect": "Perfect",
     "tooHigh": "Too high ♯",
-    "centsFromTarget": "{cents} cents",
+    "cents": "cents",
     "allowedRange": "Allowed range: ±50 cents · Target: {hz} Hz",
     "playSolfege": "Play {solfege}",
     "startTone": "Start tone:",
     "doReMiButton": "Do Re Mi",
-    "muteButton": "Mute"
+    "muteButton": "Mute",
+    "currentHz": "You: {hz} Hz"
   },
   "pitchDetector": {
     "listening": "Listening...",

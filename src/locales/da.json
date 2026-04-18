@@ -41,12 +41,13 @@
     "tooLow": "♭ For lav",
     "perfect": "Perfekt",
     "tooHigh": "For høj ♯",
-    "centsFromTarget": "{cents} cents",
+    "cents": "cents",
     "allowedRange": "Tilladt interval: ±50 cents · Mål: {hz} Hz",
     "playSolfege": "Afspil {solfege}",
     "startTone": "Starttone:",
     "doReMiButton": "Do Re Mi",
-    "muteButton": "Lydløs"
+    "muteButton": "Lydløs",
+    "currentHz": "Du: {hz} Hz"
   },
   "pitchDetector": {
     "listening": "Lytter...",

@@ -101,10 +101,10 @@ defineExpose({ stopSequence })
             class="mt-1 flex items-center gap-1 text-xs tabular-nums"
             :style="{ color: centsColor ?? undefined }"
           >
-            <span class="min-w-8 text-right">
+            <span>{{ t('pitchDetector.cents') }}</span>
+            <span class="min-w-6 text-right tabular-nums">
               {{ noteInfo.cents > 0 ? '+' : '' }}{{ noteInfo.cents }}
             </span>
-            <span>{{ t('pitchDetector.cents') }}</span>
           </div>
         </div>
 
@@ -113,7 +113,7 @@ defineExpose({ stopSequence })
           class="grid grid-cols-[auto_auto] items-center gap-x-1 text-gray-400 tabular-nums"
         >
           <span class="min-w-12 text-right tabular-nums">{{
-            frequency ?? '-'
+            frequency != null ? Math.round(frequency) : '-'
           }}</span>
           <span class="text-gray-600">{{ t('pitchDetector.hz') }}</span>
 

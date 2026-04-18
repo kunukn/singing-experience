@@ -20,6 +20,7 @@ const {
   currentStepIndex,
   targetStep,
   targetFrequency,
+  currentFrequency,
   centsFromTarget,
   holdProgress,
   elapsedMs,
@@ -184,6 +185,7 @@ onUnmounted(() => {
       <DoReMiNoteTarget
         :targetStep="targetStep"
         :targetFrequency="targetFrequency"
+        :currentFrequency="currentFrequency"
         :centsFromTarget="centsFromTarget"
         :isSingingCorrectNote="isSingingCorrectNote"
       />
