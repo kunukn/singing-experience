@@ -1,10 +1,10 @@
-import type { NoteName, NoteInfo, ScaleMode } from '@/utils/noteUtils'
+import type { NoteInfo, NoteName, ScaleMode } from '@/utils/noteUtils'
 import {
-  noteToFrequency,
   buildScale,
   C3_MIDI,
-  START_TONE_OPTIONS,
+  noteToFrequency,
   SCALE_MODE_OPTIONS,
+  START_TONE_OPTIONS,
 } from '@/utils/noteUtils'
 
 type ScaleStep = {
@@ -34,6 +34,7 @@ const DEFAULT_SCALE_MODE: ScaleMode = 'ionian'
  * (e.g. Yousician, Smule). Tighten to ±25 or ±10 for advanced difficulty.
  */
 const MAX_CENTS_DEVIATION = 50
+const TOO_LOW_OR_HIGH_HINT_MS = 800
 
 type DoReMiGameOptions = {
   holdDurationMs?: number
@@ -43,11 +44,12 @@ type DoReMiGameOptions = {
 export {
   DEFAULT_HOLD_DURATION_MS,
   DEFAULT_SCALE_MODE,
+  DEFAULT_STARTING_SEMITONE_OFFSET,
   GRACE_PERIOD_MS,
   MAX_CENTS_DEVIATION,
-  DEFAULT_STARTING_SEMITONE_OFFSET,
   SCALE_MODE_OPTIONS,
   START_TONE_OPTIONS,
+  TOO_LOW_OR_HIGH_HINT_MS,
 }
 export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep }
 
@@ -75,6 +77,8 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
   const elapsedMs = ref(0)
   const isComplete = ref(false)
   const isStarted = ref(false)
+  const tooLowMs = ref(0)
+  const tooHighMs = ref(0)
 
   let lastTimestamp: number | null = null
   let timerFrameId: number | null = null
@@ -118,11 +122,25 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
       if (isSingingCorrectNote.value) {
         graceTimeMs.value = 0
         holdTimeMs.value += delta
+        tooLowMs.value = 0
+        tooHighMs.value = 0
       } else {
         graceTimeMs.value += delta
 
         if (graceTimeMs.value >= GRACE_PERIOD_MS) {
           holdTimeMs.value = 0
+        }
+
+        const cents = centsFromTarget.value
+        if (cents !== null && cents < -MAX_CENTS_DEVIATION) {
+          tooLowMs.value += delta
+          tooHighMs.value = 0
+        } else if (cents !== null && cents > MAX_CENTS_DEVIATION) {
+          tooHighMs.value += delta
+          tooLowMs.value = 0
+        } else {
+          tooLowMs.value = 0
+          tooHighMs.value = 0
         }
       }
 
@@ -141,6 +159,8 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
   function advanceStep() {
     holdTimeMs.value = 0
     graceTimeMs.value = 0
+    tooLowMs.value = 0
+    tooHighMs.value = 0
     lastTimestamp = null
 
     if (currentStepIndex.value < scaleSteps.value.length - 1) {
@@ -177,6 +197,8 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     currentStepIndex.value = 0
     holdTimeMs.value = 0
     graceTimeMs.value = 0
+    tooLowMs.value = 0
+    tooHighMs.value = 0
     elapsedMs.value = 0
     isComplete.value = false
   }
@@ -227,6 +249,8 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     holdProgress,
     holdDurationMs: readonly(holdDurationMs),
     holdTimeMs: readonly(holdTimeMs),
+    tooLowMs: readonly(tooLowMs),
+    tooHighMs: readonly(tooHighMs),
     elapsedMs: readonly(elapsedMs),
     isComplete: readonly(isComplete),
     isStarted: readonly(isStarted),

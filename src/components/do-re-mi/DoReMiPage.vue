@@ -29,6 +29,8 @@ const {
   currentFrequency,
   centsFromTarget,
   holdProgress,
+  tooLowMs,
+  tooHighMs,
   elapsedMs,
   isComplete,
   isSingingCorrectNote,
@@ -230,6 +232,8 @@ onUnmounted(() => {
         :currentFrequency="currentFrequency"
         :centsFromTarget="centsFromTarget"
         :isSingingCorrectNote="isSingingCorrectNote"
+        :tooLowMs="tooLowMs"
+        :tooHighMs="tooHighMs"
       />
     </div>
 

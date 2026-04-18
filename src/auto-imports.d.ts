@@ -17,6 +17,7 @@ declare global {
   const SCALE_MODE_OPTIONS: typeof import('./composables/useDoReMiGame').SCALE_MODE_OPTIONS
   const SCALE_STEPS: typeof import('./composables/useDoReMiGame').SCALE_STEPS
   const START_TONE_OPTIONS: typeof import('./composables/useDoReMiGame').START_TONE_OPTIONS
+  const TOO_LOW_OR_HIGH_HINT_MS: typeof import('./composables/useDoReMiGame').TOO_LOW_OR_HIGH_HINT_MS
   const computed: typeof import('vue').computed
   const confettiKey: typeof import('./composables/useConfetti').confettiKey
   const createApp: typeof import('vue').createApp
@@ -125,6 +126,7 @@ declare module 'vue' {
     readonly NOTE_INTERVAL_MS: UnwrapRef<typeof import('./composables/useDoReMiPlaySequence')['NOTE_INTERVAL_MS']>
     readonly SCALE_MODE_OPTIONS: UnwrapRef<typeof import('./composables/useDoReMiGame')['SCALE_MODE_OPTIONS']>
     readonly START_TONE_OPTIONS: UnwrapRef<typeof import('./composables/useDoReMiGame')['START_TONE_OPTIONS']>
+    readonly TOO_LOW_OR_HIGH_HINT_MS: UnwrapRef<typeof import('./composables/useDoReMiGame')['TOO_LOW_OR_HIGH_HINT_MS']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createMockToneEngine: UnwrapRef<typeof import('./composables/toneEngine.mock')['createMockToneEngine']>

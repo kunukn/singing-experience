@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ScaleStep } from '@/composables/useDoReMiGame'
+import { TOO_LOW_OR_HIGH_HINT_MS } from '@/composables/useDoReMiGame'
 
 type Props = {
   targetStep: ScaleStep
@@ -7,6 +8,8 @@ type Props = {
   currentFrequency: number | null
   centsFromTarget: number | null
   isSingingCorrectNote: boolean
+  tooLowMs: number
+  tooHighMs: number
 }
 
 const {
@@ -15,22 +18,48 @@ const {
   currentFrequency,
   centsFromTarget,
   isSingingCorrectNote,
+  tooLowMs,
+  tooHighMs,
 } = defineProps<Props>()
+
+const showSingHigherArrow = computed(() => tooLowMs >= TOO_LOW_OR_HIGH_HINT_MS)
+const showSingLowerArrow = computed(() => tooHighMs >= TOO_LOW_OR_HIGH_HINT_MS)
 
 const { t } = useI18n()
 </script>
 
 <template>
   <div class="flex items-center gap-4">
-    <CentsDeviationBar
-      :cents="centsFromTarget"
-      :threshold="50"
-      :maxRange="150"
-      :isVisible="true"
-      :highLabel="t('doReMi.tooHigh')"
-      :lowLabel="t('doReMi.tooLow')"
-      colorMode="directional"
-    />
+    <div class="flex items-center">
+      <div class="grid w-6 place-items-center">
+        <div
+          class="col-start-1 row-start-1"
+          :class="
+            showSingLowerArrow ? 'animate-bounce text-blue-400' : 'invisible'
+          "
+        >
+          <ArrowUp class="size-5 rotate-180" />
+        </div>
+        <div
+          class="col-start-1 row-start-1"
+          :class="
+            showSingHigherArrow ? 'animate-bounce text-orange-400' : 'invisible'
+          "
+        >
+          <ArrowUp class="size-5" />
+        </div>
+      </div>
+
+      <CentsDeviationBar
+        :cents="centsFromTarget"
+        :threshold="50"
+        :maxRange="150"
+        :isVisible="true"
+        :highLabel="t('doReMi.tooHigh')"
+        :lowLabel="t('doReMi.tooLow')"
+        colorMode="directional"
+      />
+    </div>
 
     <div>
       <div class="flex-flow flex items-center gap-2">

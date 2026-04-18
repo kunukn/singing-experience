@@ -11,6 +11,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ArrowUp: typeof import('./components/icons/ArrowUp.vue')['default']
     BasicButton: typeof import('./components/generic/BasicButton.vue')['default']
     BasicSelect: typeof import('./components/generic/BasicSelect.vue')['default']
     CentsDeviationBar: typeof import('./components/generic/CentsDeviationBar.vue')['default']
