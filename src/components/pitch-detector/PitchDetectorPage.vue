@@ -56,7 +56,7 @@ onUnmounted(() => {
 
 <template>
   <div class="flex flex-1 flex-col items-center gap-4">
-    <div class="flex w-full flex-wrap items-center gap-4">
+    <div class="flex w-full flex-wrap items-center gap-2 sm:gap-4">
       <BasicSelect v-model.number="selectedRangeIndex" class="flex-1">
         <option
           v-for="(range, index) in VOICE_RANGES"

@@ -130,9 +130,11 @@ onUnmounted(() => {
       class="flex w-full flex-col items-center gap-4 sm:mb-4"
     >
       <div
-        class="flex flex-wrap items-center gap-4 sm:mb-4 md:grid md:grid-cols-2"
+        class="flex flex-wrap items-center gap-4 sm:mb-4 md:grid md:grid-cols-[auto_1fr_auto_1fr]"
       >
-        <div class="flex items-center gap-2 md:justify-self-end">
+        <div
+          class="flex items-center gap-2 md:col-span-2 md:grid md:grid-cols-subgrid md:items-center"
+        >
           <label class="hidden text-sm text-gray-400 md:block">{{
             t('doReMi.startTone')
           }}</label>
@@ -147,7 +149,9 @@ onUnmounted(() => {
           </BasicSelect>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div
+          class="flex items-center gap-2 md:col-span-2 md:grid md:grid-cols-subgrid md:items-center"
+        >
           <label class="hidden text-sm text-gray-400 md:block">{{
             t('doReMi.scaleMode')
           }}</label>
@@ -162,7 +166,9 @@ onUnmounted(() => {
           </BasicSelect>
         </div>
 
-        <div class="flex items-center gap-2 md:justify-self-end">
+        <div
+          class="flex items-center gap-2 md:col-span-2 md:grid md:grid-cols-subgrid md:items-center"
+        >
           <label class="hidden text-sm text-gray-400 md:block">{{
             t('doReMi.holdDuration')
           }}</label>
@@ -173,7 +179,9 @@ onUnmounted(() => {
           </BasicSelect>
         </div>
 
-        <div class="hidden items-center gap-2 min-[500px]:flex">
+        <div
+          class="hidden items-center gap-2 min-[500px]:flex md:col-span-2 md:grid md:grid-cols-subgrid md:items-center"
+        >
           <label class="hidden text-sm text-gray-400 md:block">{{
             t('sounds.toneSound')
           }}</label>

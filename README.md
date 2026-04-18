@@ -49,6 +49,8 @@ You will be asked to allow microphone access when you start a program. This is a
 
 **[https://kunukn.github.io/singing-experience/](https://kunukn.github.io/singing-experience/)**
 
+<img src="docs/qr-live-demo.png" alt="QR code for live demo" width="200" />
+
 The app is deployed to GitHub Pages and updates automatically on every push to `main`.
 
 ## Getting Started
