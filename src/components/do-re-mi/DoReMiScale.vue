@@ -111,5 +111,5 @@ function isStepHighlighted(index: number): boolean {
       @click="handleStepClick(originalIndex, step)"
     />
   </div>
-  <div id="scroll-anchor" ref="scrollAnchor" class="py-2"></div>
+  <div id="scroll-anchor" ref="scrollAnchor" class="w-full"></div>
 </template>

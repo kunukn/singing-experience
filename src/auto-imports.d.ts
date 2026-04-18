@@ -7,12 +7,14 @@
 export {}
 declare global {
   const DEFAULT_HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').DEFAULT_HOLD_DURATION_MS
+  const DEFAULT_SCALE_MODE: typeof import('./composables/useDoReMiGame').DEFAULT_SCALE_MODE
   const DEFAULT_STARTING_SEMITONE_OFFSET: typeof import('./composables/useDoReMiGame').DEFAULT_STARTING_SEMITONE_OFFSET
   const EffectScope: typeof import('vue').EffectScope
   const GRACE_PERIOD_MS: typeof import('./composables/useDoReMiGame').GRACE_PERIOD_MS
   const HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').HOLD_DURATION_MS
   const MAX_CENTS_DEVIATION: typeof import('./composables/useDoReMiGame').MAX_CENTS_DEVIATION
   const NOTE_INTERVAL_MS: typeof import('./composables/useDoReMiPlaySequence').NOTE_INTERVAL_MS
+  const SCALE_MODE_OPTIONS: typeof import('./composables/useDoReMiGame').SCALE_MODE_OPTIONS
   const SCALE_STEPS: typeof import('./composables/useDoReMiGame').SCALE_STEPS
   const START_TONE_OPTIONS: typeof import('./composables/useDoReMiGame').START_TONE_OPTIONS
   const computed: typeof import('vue').computed
@@ -115,11 +117,13 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly DEFAULT_HOLD_DURATION_MS: UnwrapRef<typeof import('./composables/useDoReMiGame')['DEFAULT_HOLD_DURATION_MS']>
+    readonly DEFAULT_SCALE_MODE: UnwrapRef<typeof import('./composables/useDoReMiGame')['DEFAULT_SCALE_MODE']>
     readonly DEFAULT_STARTING_SEMITONE_OFFSET: UnwrapRef<typeof import('./composables/useDoReMiGame')['DEFAULT_STARTING_SEMITONE_OFFSET']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly GRACE_PERIOD_MS: UnwrapRef<typeof import('./composables/useDoReMiGame')['GRACE_PERIOD_MS']>
     readonly MAX_CENTS_DEVIATION: UnwrapRef<typeof import('./composables/useDoReMiGame')['MAX_CENTS_DEVIATION']>
     readonly NOTE_INTERVAL_MS: UnwrapRef<typeof import('./composables/useDoReMiPlaySequence')['NOTE_INTERVAL_MS']>
+    readonly SCALE_MODE_OPTIONS: UnwrapRef<typeof import('./composables/useDoReMiGame')['SCALE_MODE_OPTIONS']>
     readonly START_TONE_OPTIONS: UnwrapRef<typeof import('./composables/useDoReMiGame')['START_TONE_OPTIONS']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>

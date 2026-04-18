@@ -1,9 +1,10 @@
-import type { NoteName, NoteInfo } from '@/utils/noteUtils'
+import type { NoteName, NoteInfo, ScaleMode } from '@/utils/noteUtils'
 import {
   noteToFrequency,
-  buildMajorScale,
+  buildScale,
   C3_MIDI,
   START_TONE_OPTIONS,
+  SCALE_MODE_OPTIONS,
 } from '@/utils/noteUtils'
 
 type ScaleStep = {
@@ -25,6 +26,7 @@ type PitchDetectionProvider = {
 const DEFAULT_HOLD_DURATION_MS = 2000
 const GRACE_PERIOD_MS = 250
 const DEFAULT_STARTING_SEMITONE_OFFSET = 7 // G3
+const DEFAULT_SCALE_MODE: ScaleMode = 'ionian'
 
 /*
  * Maximum cents deviation from the target note to count as "correct."
@@ -40,9 +42,11 @@ type DoReMiGameOptions = {
 
 export {
   DEFAULT_HOLD_DURATION_MS,
+  DEFAULT_SCALE_MODE,
   GRACE_PERIOD_MS,
   MAX_CENTS_DEVIATION,
   DEFAULT_STARTING_SEMITONE_OFFSET,
+  SCALE_MODE_OPTIONS,
   START_TONE_OPTIONS,
 }
 export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep }
@@ -50,9 +54,10 @@ export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep }
 export function useDoReMiGame(options: DoReMiGameOptions = {}) {
   const holdDurationMs = ref(options.holdDurationMs ?? DEFAULT_HOLD_DURATION_MS)
   const startingSemitoneOffset = ref(DEFAULT_STARTING_SEMITONE_OFFSET)
+  const scaleMode = ref<ScaleMode>(DEFAULT_SCALE_MODE)
 
   const scaleSteps = computed<ScaleStep[]>(() =>
-    buildMajorScale(C3_MIDI + startingSemitoneOffset.value),
+    buildScale(C3_MIDI + startingSemitoneOffset.value, scaleMode.value),
   )
   const {
     noteInfo,
@@ -205,9 +210,15 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     stop()
   }
 
+  function setScaleMode(mode: ScaleMode) {
+    scaleMode.value = mode
+    stop()
+  }
+
   return {
     scaleSteps,
     startingSemitoneOffset: readonly(startingSemitoneOffset),
+    scaleMode: readonly(scaleMode),
     currentStepIndex: readonly(currentStepIndex),
     targetStep,
     targetFrequency,
@@ -228,5 +239,6 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     completeGame,
     setHoldDuration,
     setStartingSemitoneOffset,
+    setScaleMode,
   }
 }

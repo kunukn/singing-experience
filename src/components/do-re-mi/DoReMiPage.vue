@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import {
   DEFAULT_HOLD_DURATION_MS,
+  DEFAULT_SCALE_MODE,
   DEFAULT_STARTING_SEMITONE_OFFSET,
+  SCALE_MODE_OPTIONS,
   START_TONE_OPTIONS,
 } from '@/composables/useDoReMiGame'
 import type { ToneMode } from '@/composables/useTonePlayer'
+import type { ScaleMode } from '@/utils/noteUtils'
 
 const { t } = useI18n()
 
@@ -15,6 +18,8 @@ const { toneMode, setToneMode } = useTonePlayer()
 const selectedToneMode = ref<ToneMode>(toneMode.value)
 
 const selectedStartOffset = ref(DEFAULT_STARTING_SEMITONE_OFFSET)
+
+const selectedScaleMode = ref<ScaleMode>(DEFAULT_SCALE_MODE)
 
 const {
   scaleSteps,
@@ -34,6 +39,7 @@ const {
   reset,
   setHoldDuration,
   setStartingSemitoneOffset,
+  setScaleMode,
 } = useDoReMiGame()
 
 const { isPlayingSequence, currentPlayingIndex, playSequence, stopSequence } =
@@ -51,6 +57,12 @@ const gameState = computed<GameState>(() => {
 
 const elapsedSeconds = computed(() => (elapsedMs.value / 1000).toFixed(1))
 
+const selectedScaleModeLabel = computed(
+  () =>
+    SCALE_MODE_OPTIONS.find((o) => o.id === selectedScaleMode.value)?.label ??
+    selectedScaleMode.value,
+)
+
 watch(selectedDurationSec, (sec) => {
   setHoldDuration(sec * 1000)
 })
@@ -61,6 +73,10 @@ watch(selectedToneMode, (mode) => {
 
 watch(selectedStartOffset, (offset) => {
   setStartingSemitoneOffset(offset)
+})
+
+watch(selectedScaleMode, (mode) => {
+  setScaleMode(mode)
 })
 
 watch(isComplete, (complete) => {
@@ -113,8 +129,10 @@ onUnmounted(() => {
       v-if="gameState === 'idle'"
       class="flex w-full flex-col items-center gap-4 sm:mb-4"
     >
-      <div class="flex flex-wrap items-center gap-4 sm:mb-4">
-        <div class="flex items-center gap-2">
+      <div
+        class="flex flex-wrap items-center gap-4 sm:mb-4 md:grid md:grid-cols-2"
+      >
+        <div class="flex items-center gap-2 md:justify-self-end">
           <label class="hidden text-sm text-gray-400 md:block">{{
             t('doReMi.startTone')
           }}</label>
@@ -131,6 +149,21 @@ onUnmounted(() => {
 
         <div class="flex items-center gap-2">
           <label class="hidden text-sm text-gray-400 md:block">{{
+            t('doReMi.scaleMode')
+          }}</label>
+          <BasicSelect v-model="selectedScaleMode">
+            <option
+              v-for="option in SCALE_MODE_OPTIONS"
+              :key="option.id"
+              :value="option.id"
+            >
+              {{ option.label }}
+            </option>
+          </BasicSelect>
+        </div>
+
+        <div class="flex items-center gap-2 md:justify-self-end">
+          <label class="hidden text-sm text-gray-400 md:block">{{
             t('doReMi.holdDuration')
           }}</label>
           <BasicSelect v-model.number="selectedDurationSec">
@@ -140,7 +173,7 @@ onUnmounted(() => {
           </BasicSelect>
         </div>
 
-        <div class="flex items-center gap-2">
+        <div class="hidden items-center gap-2 min-[500px]:flex">
           <label class="hidden text-sm text-gray-400 md:block">{{
             t('sounds.toneSound')
           }}</label>
@@ -203,7 +236,10 @@ onUnmounted(() => {
       </h2>
       <p class="text-gray-300">
         {{
-          t('doReMi.congratulationsMessage', { seconds: selectedDurationSec })
+          t('doReMi.congratulationsMessage', {
+            seconds: selectedDurationSec,
+            mode: selectedScaleModeLabel,
+          })
         }}
       </p>
       <p class="text-lg text-gray-400">

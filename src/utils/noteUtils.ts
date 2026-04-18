@@ -103,6 +103,40 @@ const SOLFEGE_LABELS = ['DO', 'RE', 'MI', 'FA', 'SO', 'LA', 'TI', 'DO'] as const
 /* Major scale intervals in semitones from root */
 const MAJOR_SCALE_SEMITONES = [0, 2, 4, 5, 7, 9, 11, 12]
 
+type ScaleMode =
+  | 'ionian'
+  | 'dorian'
+  | 'phrygian'
+  | 'lydian'
+  | 'mixolydian'
+  | 'aeolian'
+  | 'locrian'
+
+const SCALE_MODE_SEMITONES: Record<ScaleMode, readonly number[]> = {
+  ionian: [0, 2, 4, 5, 7, 9, 11, 12],
+  dorian: [0, 2, 3, 5, 7, 9, 10, 12],
+  phrygian: [0, 1, 3, 5, 7, 8, 10, 12],
+  lydian: [0, 2, 4, 6, 7, 9, 11, 12],
+  mixolydian: [0, 2, 4, 5, 7, 9, 10, 12],
+  aeolian: [0, 2, 3, 5, 7, 8, 10, 12],
+  locrian: [0, 1, 3, 5, 6, 8, 10, 12],
+}
+
+type ScaleModeOption = {
+  id: ScaleMode
+  label: string
+}
+
+const SCALE_MODE_OPTIONS: ScaleModeOption[] = [
+  { id: 'ionian', label: 'Major (Ionian)' },
+  { id: 'dorian', label: 'Dorian' },
+  { id: 'phrygian', label: 'Phrygian' },
+  { id: 'lydian', label: 'Lydian' },
+  { id: 'mixolydian', label: 'Mixolydian' },
+  { id: 'aeolian', label: 'Minor (Aeolian)' },
+  { id: 'locrian', label: 'Locrian' },
+]
+
 type ScaleNote = {
   solfege: string
   note: NoteName
@@ -110,10 +144,15 @@ type ScaleNote = {
 }
 
 /**
- * Build a major scale (DO–DO) starting from the given MIDI root note.
+ * Build a scale starting from the given MIDI root note using the specified mode.
  */
-function buildMajorScale(rootMidiNote: number): ScaleNote[] {
-  return MAJOR_SCALE_SEMITONES.map((semitone, i) => {
+function buildScale(
+  rootMidiNote: number,
+  mode: ScaleMode = 'ionian',
+): ScaleNote[] {
+  const semitones = SCALE_MODE_SEMITONES[mode]
+
+  return semitones.map((semitone, i) => {
     const midi = rootMidiNote + semitone
     const noteIndex = ((midi % 12) + 12) % 12
     const octave = Math.floor(midi / 12) - 1
@@ -124,6 +163,13 @@ function buildMajorScale(rootMidiNote: number): ScaleNote[] {
       octave,
     }
   })
+}
+
+/**
+ * Build a major scale (DO–DO) starting from the given MIDI root note.
+ */
+function buildMajorScale(rootMidiNote: number): ScaleNote[] {
+  return buildScale(rootMidiNote, 'ionian')
 }
 
 type StartToneOption = {
@@ -190,11 +236,20 @@ function midiRangeToScaleNotes(
 
 export {
   buildMajorScale,
+  buildScale,
   C3_MIDI,
   MAJOR_SCALE_SEMITONES,
   midiRangeToScaleNotes,
   midiToNoteLabel,
   NOTE_NAMES,
+  SCALE_MODE_OPTIONS,
+  SCALE_MODE_SEMITONES,
   START_TONE_OPTIONS,
 }
-export type { MidiNoteLabel, ScaleNote, StartToneOption }
+export type {
+  MidiNoteLabel,
+  ScaleMode,
+  ScaleModeOption,
+  ScaleNote,
+  StartToneOption,
+}
