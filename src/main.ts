@@ -1,3 +1,4 @@
+import '@/_init.ts'
 import da from '@/locales/da.json'
 import en from '@/locales/en.json'
 import { createPinia } from 'pinia'
@@ -35,6 +36,11 @@ if (import.meta.hot) {
 const app = createApp(App)
 
 app.use(createPinia()).use(router).use(i18n).mount('#app')
+
+self.app.useErrorToastStore = useErrorToastStore
+self.app.useConfettiStore = useConfettiStore
+// self.app.useErrorToastStore().addError('Welcome to the app! This is a demo error toast.')
+// self.app.useConfettiStore().fireConfetti()
 
 if (import.meta.env.VITE_DEBUG_LOG === '1') {
   const { initLogger } = await import('@/utils/logger')

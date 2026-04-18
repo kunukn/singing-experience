@@ -19,6 +19,7 @@ declare module 'vue' {
     DoReMiPage: typeof import('./components/do-re-mi/DoReMiPage.vue')['default']
     DoReMiScale: typeof import('./components/do-re-mi/DoReMiScale.vue')['default']
     DoReMiScaleItem: typeof import('./components/do-re-mi/DoReMiScaleItem.vue')['default']
+    ErrorToast: typeof import('./components/generic/ErrorToast.vue')['default']
     GitHubIcon: typeof import('./components/icons/GitHubIcon.vue')['default']
     LandingPage: typeof import('./components/LandingPage.vue')['default']
     LanguageSwitcher: typeof import('./components/generic/LanguageSwitcher.vue')['default']

@@ -79,6 +79,7 @@ declare global {
   const useCssVars: typeof import('vue').useCssVars
   const useDoReMiGame: typeof import('./composables/useDoReMiGame').useDoReMiGame
   const useDoReMiPlaySequence: typeof import('./composables/useDoReMiPlaySequence').useDoReMiPlaySequence
+  const useErrorToastStore: typeof import('./stores/useErrorToastStore').useErrorToastStore
   const useFireConfetti: typeof import('./composables/useConfetti').useFireConfetti
   const useI18n: typeof import('vue-i18n').useI18n
   const useId: typeof import('vue').useId
@@ -187,6 +188,7 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useDoReMiGame: UnwrapRef<typeof import('./composables/useDoReMiGame')['useDoReMiGame']>
     readonly useDoReMiPlaySequence: UnwrapRef<typeof import('./composables/useDoReMiPlaySequence')['useDoReMiPlaySequence']>
+    readonly useErrorToastStore: UnwrapRef<typeof import('./stores/useErrorToastStore')['useErrorToastStore']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>

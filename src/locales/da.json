@@ -6,6 +6,9 @@
     "switchToDanish": "Skift til Dansk",
     "switchToEnglish": "Skift til Engelsk"
   },
+  "errors": {
+    "microphoneAccess": "Kunne ikke få adgang til mikrofonen"
+  },
   "sounds": {
     "toneSound": "Tone lyd:",
     "piano": "Klaver",

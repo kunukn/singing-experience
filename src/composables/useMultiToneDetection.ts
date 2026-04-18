@@ -141,6 +141,7 @@ function suppressHarmonics(
 }
 
 export function useMultiToneDetection(config?: ToneDetectionConfig) {
+  const { t } = useI18n()
   const sensitivity = config?.sensitivity ?? ref(5)
   const noiseGate = config?.noiseGate ?? ref(5)
 
@@ -223,8 +224,10 @@ export function useMultiToneDetection(config?: ToneDetectionConfig) {
       isListening.value = true
       detectLoop(spectrum, audioContext.sampleRate, analyserNode.fftSize)
     } catch (err) {
-      error.value =
-        err instanceof Error ? err.message : 'Failed to access microphone'
+      const message =
+        err instanceof Error ? err.message : t('errors.microphoneAccess')
+      error.value = message
+      useErrorToastStore().addError(message)
       isListening.value = false
     }
   }

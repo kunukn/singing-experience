@@ -6,6 +6,9 @@
     "switchToDanish": "Switch to Danish",
     "switchToEnglish": "Switch to English"
   },
+  "errors": {
+    "microphoneAccess": "Failed to access microphone"
+  },
   "sounds": {
     "toneSound": "Tone sound:",
     "piano": "Piano",

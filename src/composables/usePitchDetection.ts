@@ -17,6 +17,7 @@ const SMOOTHING_FACTOR = 0.3
 const ONSET_DEBOUNCE_MS = 40
 
 export function usePitchDetection() {
+  const { t } = useI18n()
   const frequency = ref<number | null>(null)
   const noteInfo = ref<NoteInfo | null>(null)
   const clarity = ref(0)
@@ -101,8 +102,10 @@ export function usePitchDetection() {
       isListening.value = true
       detectPitch(detector, input, audioContext.sampleRate)
     } catch (err) {
-      error.value =
-        err instanceof Error ? err.message : 'Failed to access microphone'
+      const message =
+        err instanceof Error ? err.message : t('errors.microphoneAccess')
+      error.value = message
+      useErrorToastStore().addError(message)
       isListening.value = false
     }
   }
