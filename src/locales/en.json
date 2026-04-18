@@ -24,6 +24,10 @@
       "doReMi": {
         "name": "DO RE MI Game",
         "description": "Sing through the scale — DO RE MI FA SO LA TI DO. Hold each note for a few seconds to advance."
+      },
+      "toneDetector": {
+        "name": "Tone Detector",
+        "description": "Detect multiple simultaneous tones in real time. Play a chord and see which notes are sounding."
       }
     },
     "privacy": "🔒 Your privacy is safe — this app runs 100% in your browser. No audio is recorded or sent anywhere."
@@ -58,5 +62,11 @@
     "hz": "Hz",
     "clarity": "Clarity",
     "cents": "cents"
+  },
+  "toneDetector": {
+    "listening": "Listening...",
+    "hz": "Hz",
+    "tonesDetected": "{count} tone(s) detected",
+    "pressStart": "Press Start to detect tones"
   }
 }

@@ -29,6 +29,7 @@ declare module 'vue' {
     PitchHistoryChart: typeof import('./components/pitch-detector/PitchHistoryChart.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ToneDetectorPage: typeof import('./components/tone-detector/ToneDetectorPage.vue')['default']
     ToneModeSelect: typeof import('./components/generic/ToneModeSelect.vue')['default']
     TopBar: typeof import('./components/generic/TopBar.vue')['default']
   }

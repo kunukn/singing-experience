@@ -24,6 +24,10 @@
       "doReMi": {
         "name": "DO RE MI Spil",
         "description": "Syng gennem skalaen — DO RE MI FA SO LA TI DO. Hold hver tone i nogle sekunder for at gå videre."
+      },
+      "toneDetector": {
+        "name": "Tonedetektor",
+        "description": "Registrer flere samtidige toner i realtid. Spil en akkord og se hvilke toner der lyder."
       }
     },
     "privacy": "🔒 Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
@@ -59,5 +63,11 @@
     "hz": "Hz",
     "clarity": "Klarhed",
     "cents": "cents"
+  },
+  "toneDetector": {
+    "listening": "Lytter...",
+    "hz": "Hz",
+    "tonesDetected": "{count} tone(r) registreret",
+    "pressStart": "Tryk Start for at registrere toner"
   }
 }
