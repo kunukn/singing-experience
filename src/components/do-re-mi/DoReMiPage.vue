@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   DEFAULT_HOLD_DURATION_MS,
+  DEFAULT_STARTING_SEMITONE_OFFSET,
   START_TONE_OPTIONS,
 } from '@/composables/useDoReMiGame'
 import type { ToneMode } from '@/composables/useTonePlayer'
@@ -13,7 +14,7 @@ const selectedDurationSec = ref(DEFAULT_HOLD_DURATION_MS / 1000)
 const { toneMode, setToneMode } = useTonePlayer()
 const selectedToneMode = ref<ToneMode>(toneMode.value)
 
-const selectedStartOffset = ref(0)
+const selectedStartOffset = ref(DEFAULT_STARTING_SEMITONE_OFFSET)
 
 const {
   scaleSteps,

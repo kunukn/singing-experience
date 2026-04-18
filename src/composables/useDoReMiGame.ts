@@ -24,6 +24,7 @@ type PitchDetectionProvider = {
 
 const DEFAULT_HOLD_DURATION_MS = 2000
 const GRACE_PERIOD_MS = 250
+const DEFAULT_STARTING_SEMITONE_OFFSET = 7 // G3
 
 /*
  * Maximum cents deviation from the target note to count as "correct."
@@ -41,13 +42,14 @@ export {
   DEFAULT_HOLD_DURATION_MS,
   GRACE_PERIOD_MS,
   MAX_CENTS_DEVIATION,
+  DEFAULT_STARTING_SEMITONE_OFFSET,
   START_TONE_OPTIONS,
 }
 export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep }
 
 export function useDoReMiGame(options: DoReMiGameOptions = {}) {
   const holdDurationMs = ref(options.holdDurationMs ?? DEFAULT_HOLD_DURATION_MS)
-  const startingSemitoneOffset = ref(0)
+  const startingSemitoneOffset = ref(DEFAULT_STARTING_SEMITONE_OFFSET)
 
   const scaleSteps = computed<ScaleStep[]>(() =>
     buildMajorScale(C3_MIDI + startingSemitoneOffset.value),

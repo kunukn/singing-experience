@@ -133,9 +133,9 @@ type StartToneOption = {
 }
 
 const START_TONE_OPTIONS: StartToneOption[] = Array.from(
-  { length: 11 },
+  { length: 25 },
   (_, i) => {
-    const offset = 5 - i
+    const offset = 19 - i
     const midi = C3_MIDI + offset
     const noteIndex = ((midi % 12) + 12) % 12
     const octave = Math.floor(midi / 12) - 1

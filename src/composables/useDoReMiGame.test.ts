@@ -6,6 +6,7 @@ import {
   useDoReMiGame,
   GRACE_PERIOD_MS,
   MAX_CENTS_DEVIATION,
+  DEFAULT_STARTING_SEMITONE_OFFSET,
 } from './useDoReMiGame'
 
 function createMockPitchDetection() {
@@ -75,7 +76,7 @@ function advanceRAF(ms: number) {
 }
 
 describe('useDoReMiGame', () => {
-  const scaleSteps = buildMajorScale(C3_MIDI)
+  const scaleSteps = buildMajorScale(C3_MIDI + DEFAULT_STARTING_SEMITONE_OFFSET)
 
   beforeEach(() => {
     vi.useFakeTimers()

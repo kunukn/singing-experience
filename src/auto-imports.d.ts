@@ -7,6 +7,7 @@
 export {}
 declare global {
   const DEFAULT_HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').DEFAULT_HOLD_DURATION_MS
+  const DEFAULT_STARTING_SEMITONE_OFFSET: typeof import('./composables/useDoReMiGame').DEFAULT_STARTING_SEMITONE_OFFSET
   const EffectScope: typeof import('vue').EffectScope
   const GRACE_PERIOD_MS: typeof import('./composables/useDoReMiGame').GRACE_PERIOD_MS
   const HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').HOLD_DURATION_MS
@@ -114,6 +115,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly DEFAULT_HOLD_DURATION_MS: UnwrapRef<typeof import('./composables/useDoReMiGame')['DEFAULT_HOLD_DURATION_MS']>
+    readonly DEFAULT_STARTING_SEMITONE_OFFSET: UnwrapRef<typeof import('./composables/useDoReMiGame')['DEFAULT_STARTING_SEMITONE_OFFSET']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly GRACE_PERIOD_MS: UnwrapRef<typeof import('./composables/useDoReMiGame')['GRACE_PERIOD_MS']>
     readonly MAX_CENTS_DEVIATION: UnwrapRef<typeof import('./composables/useDoReMiGame')['MAX_CENTS_DEVIATION']>
