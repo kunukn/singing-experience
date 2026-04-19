@@ -1,0 +1,83 @@
+{
+  "generic": {
+    "start": "开始",
+    "stop": "停止",
+    "backToMenu": "← 返回菜单"
+  },
+  "errors": {
+    "microphoneAccess": "无法访问麦克风",
+    "microphoneDenied": "麦克风访问被阻止。请在浏览器设置中启用麦克风，然后重新加载页面。"
+  },
+  "sounds": {
+    "toneSound": "音色：",
+    "piano": "钢琴",
+    "bell": "铃声",
+    "bass": "低音",
+    "square": "方波"
+  },
+  "home": {
+    "title": "歌唱体验",
+    "subtitle": "选择一个程序开始",
+    "programs": {
+      "pitchDetector": {
+        "name": "音高检测器",
+        "description": "实时检测你的歌唱音高。查看音符、八度以及你的音准程度。"
+      },
+      "doReMi": {
+        "name": "DO RE MI 游戏",
+        "description": "唱完音阶 — DO RE MI FA SO LA TI DO。每个音符保持几秒钟即可前进。"
+      },
+      "toneDetector": {
+        "name": "音调检测器",
+        "description": "实时检测多个同时发出的音调。唱和声或弹奏和弦，查看正在发声的音符。"
+      }
+    },
+    "privacy": "你的隐私是安全的 — 此应用完全在浏览器中运行。不会录制或发送任何音频。"
+  },
+  "doReMi": {
+    "title": "DO RE MI 游戏",
+    "singNoteFor": "每个音符唱 {seconds} 秒即可前进",
+    "holdDuration": "保持时长：",
+    "congratulations": "恭喜！",
+    "congratulationsMessage": "你完成了 {mode} 音阶，每个音符保持了 {seconds} 秒！",
+    "time": "⏱ 时间：",
+    "playAgain": "再玩一次",
+    "singThisNote": "唱这个：",
+    "youreSinging": "你在唱：",
+    "tooLow": "♭ 太低",
+    "perfect": "完美",
+    "tooHigh": "太高 ♯",
+    "cents": "音分",
+    "allowedRange": "允许范围：±50 音分 · 目标：{hz} Hz",
+    "playSolfege": "播放 {solfege}",
+    "scaleMode": "音阶模式：",
+    "startTone": "起始音：",
+    "doReMiButton": "Do Re Mi",
+    "muteButton": "静音",
+    "currentHz": "你：{hz} Hz"
+  },
+  "pitchDetector": {
+    "listening": "正在聆听…",
+    "flat": "♭ 偏低",
+    "inTune": "音准",
+    "sharp": "偏高 ♯",
+    "hz": "Hz",
+    "clarity": "清晰度",
+    "cents": "音分"
+  },
+  "toneDetector": {
+    "listening": "正在聆听…",
+    "hz": "Hz",
+    "tonesDetected": "检测到 {count} 个音调",
+    "pressStart": "按开始检测音调",
+    "pageDescription": "同时检测多个音调（C2–C7）。唱和声、哼几个音符，实时查看每个音调。",
+    "sensitivityDescription": "控制检测到多少个音调。降低它以在唱或弹奏单个音符时过滤泛音。提高它以检测和声或和弦中更多的同时音调。",
+    "noiseGateDescription": "设置检测音调所需的最低音量。如果在安静时看到虚假音调，请提高它。降低它以捕获更安静的声音。",
+    "sensitivity": "灵敏度",
+    "noiseGate": "噪声门",
+    "strict": "更少音调",
+    "loose": "更多音调",
+    "quiet": "更少过滤",
+    "loud": "更多过滤"
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "generic": {
+    "start": "Iniciar",
+    "stop": "Detener",
+    "backToMenu": "← Volver al menú"
+  },
+  "errors": {
+    "microphoneAccess": "No se pudo acceder al micrófono",
+    "microphoneDenied": "El acceso al micrófono está bloqueado. Habilítalo en la configuración de tu navegador y recarga la página."
+  },
+  "sounds": {
+    "toneSound": "Sonido de tono:",
+    "piano": "Piano",
+    "bell": "Campana",
+    "bass": "Bajo",
+    "square": "Cuadrada"
+  },
+  "home": {
+    "title": "Experiencia de Canto",
+    "subtitle": "Elige un programa para comenzar",
+    "programs": {
+      "pitchDetector": {
+        "name": "Detector de tono",
+        "description": "Detecta tu tono de canto en tiempo real. Mira la nota, la octava y qué tan afinado estás."
+      },
+      "doReMi": {
+        "name": "Juego DO RE MI",
+        "description": "Canta la escala — DO RE MI FA SO LA TI DO. Mantén cada nota durante unos segundos para avanzar."
+      },
+      "toneDetector": {
+        "name": "Detector de tonos",
+        "description": "Detecta múltiples tonos simultáneos en tiempo real. Canta una armonía o toca un acorde y observa qué notas suenan."
+      }
+    },
+    "privacy": "Tu privacidad está segura — esta aplicación funciona 100% en tu navegador. No se graba ni envía ningún audio."
+  },
+  "doReMi": {
+    "title": "Juego DO RE MI",
+    "singNoteFor": "Canta cada nota durante {seconds} segundos para avanzar",
+    "holdDuration": "Duración de mantenimiento:",
+    "congratulations": "¡Felicidades!",
+    "congratulationsMessage": "¡Completaste la escala {mode} manteniendo cada nota durante {seconds} segundos!",
+    "time": "⏱ Tiempo:",
+    "playAgain": "Jugar de nuevo",
+    "singThisNote": "Canta esto:",
+    "youreSinging": "Estás cantando:",
+    "tooLow": "♭ Muy bajo",
+    "perfect": "Perfecto",
+    "tooHigh": "Muy alto ♯",
+    "cents": "cents",
+    "allowedRange": "Rango permitido: ±50 cents · Objetivo: {hz} Hz",
+    "playSolfege": "Reproducir {solfege}",
+    "scaleMode": "Modo de escala:",
+    "startTone": "Tono inicial:",
+    "doReMiButton": "Do Re Mi",
+    "muteButton": "Silenciar",
+    "currentHz": "Tú: {hz} Hz"
+  },
+  "pitchDetector": {
+    "listening": "Escuchando…",
+    "flat": "♭ Bemol",
+    "inTune": "Afinado",
+    "sharp": "Sostenido ♯",
+    "hz": "Hz",
+    "clarity": "Claridad",
+    "cents": "cents"
+  },
+  "toneDetector": {
+    "listening": "Escuchando…",
+    "hz": "Hz",
+    "tonesDetected": "{count} tono(s) detectado(s)",
+    "pressStart": "Pulsa Iniciar para detectar tonos",
+    "pageDescription": "Detecta múltiples tonos a la vez (C2–C7). Canta una armonía, tararea varias notas y observa cada tono en tiempo real.",
+    "sensitivityDescription": "Controla cuántos tonos se detectan. Redúcelo para filtrar armónicos al cantar o tocar una sola nota. Auméntalo para detectar más tonos simultáneos en una armonía o acorde.",
+    "noiseGateDescription": "Establece el volumen mínimo necesario para detectar un tono. Auméntalo si ves tonos falsos durante el silencio. Redúcelo para captar sonidos más suaves.",
+    "sensitivity": "Sensibilidad",
+    "noiseGate": "Puerta de ruido",
+    "strict": "Menos tonos",
+    "loose": "Más tonos",
+    "quiet": "Menos filtrado",
+    "loud": "Más filtrado"
+  }
+}

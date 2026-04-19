@@ -2,9 +2,7 @@
   "generic": {
     "start": "Start",
     "stop": "Stop",
-    "backToMenu": "← Tilbage til menu",
-    "switchToDanish": "Skift til Dansk",
-    "switchToEnglish": "Skift til Engelsk"
+    "backToMenu": "← Tilbage til menu"
   },
   "errors": {
     "microphoneAccess": "Kunne ikke få adgang til mikrofonen",

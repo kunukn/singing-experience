@@ -2,9 +2,7 @@
   "generic": {
     "start": "Start",
     "stop": "Stop",
-    "backToMenu": "← Back to menu",
-    "switchToDanish": "Switch to Danish",
-    "switchToEnglish": "Switch to English"
+    "backToMenu": "← Back to menu"
   },
   "errors": {
     "microphoneAccess": "Failed to access microphone",
