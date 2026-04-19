@@ -2,77 +2,11 @@
 import type { ToneMode } from '@/composables/toneEngine'
 import type { NoteName } from '@/utils/noteUtils'
 import { NOTE_NAMES } from '@/utils/noteUtils'
-import PitchDisplay from './PitchDisplay.vue'
+import PitchDetectorDisplay from './PitchDetectorDisplay.vue'
 
-const { t } = useI18n()
-
-const { toneMode, setToneMode } = useTonePlayer()
+const { toneMode } = useTonePlayer()
 const selectedToneMode = ref<ToneMode>(toneMode.value)
-
-watch(selectedToneMode, (mode) => {
-  setToneMode(mode)
-})
-
-type VoiceRange = {
-  labelKey: string
-  noteRange: string
-  midiMin: number
-  midiMax: number
-}
-
-const VOICE_RANGES: VoiceRange[] = [
-  {
-    labelKey: 'voiceRanges.full',
-    noteRange: 'C2–C7',
-    midiMin: 36,
-    midiMax: 96,
-  },
-  {
-    labelKey: 'voiceRanges.soprano',
-    noteRange: 'C4–C6',
-    midiMin: 60,
-    midiMax: 84,
-  },
-  {
-    labelKey: 'voiceRanges.sopranoPlus',
-    noteRange: 'C4–C7',
-    midiMin: 60,
-    midiMax: 96,
-  },
-  {
-    labelKey: 'voiceRanges.mezzoSoprano',
-    noteRange: 'A3–A5',
-    midiMin: 57,
-    midiMax: 81,
-  },
-  {
-    labelKey: 'voiceRanges.alto',
-    noteRange: 'F3–F5',
-    midiMin: 53,
-    midiMax: 77,
-  },
-  {
-    labelKey: 'voiceRanges.tenor',
-    noteRange: 'B2–B4',
-    midiMin: 47,
-    midiMax: 71,
-  },
-  {
-    labelKey: 'voiceRanges.baritone',
-    noteRange: 'G2–G4',
-    midiMin: 43,
-    midiMax: 67,
-  },
-  {
-    labelKey: 'voiceRanges.bass',
-    noteRange: 'E2–E4',
-    midiMin: 40,
-    midiMax: 64,
-  },
-]
-
 const selectedRangeIndex = ref(4)
-const selectedRange = computed(() => VOICE_RANGES[selectedRangeIndex.value])
 
 const selectedNote = ref<NoteName>('B')
 const selectedOctave = ref(3)
@@ -80,75 +14,32 @@ const selectedCents = ref(20)
 const selectedClarity = ref(0.95)
 const selectedJitter = ref(2)
 
-const {
-  frequency,
-  noteInfo,
-  clarity,
-  isListening,
-  isClean,
-  error,
-  start,
-  stop,
-} = useSimulatedPitchDetection({
+const detection = useSimulatedPitchDetection({
   note: selectedNote,
   octave: selectedOctave,
   cents: selectedCents,
   clarity: selectedClarity,
   jitter: selectedJitter,
 })
-
-const pitchDisplayRef = ref<InstanceType<typeof PitchDisplay> | null>(null)
-
-function toggle() {
-  pitchDisplayRef.value?.stopSequence()
-  if (isListening.value) stop()
-  else start()
-}
-
-onUnmounted(() => {
-  pitchDisplayRef.value?.stopSequence()
-  stop()
-})
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col items-center gap-4">
-    <div class="flex w-full flex-wrap items-center gap-4">
-      <div class="flex items-center gap-2">
-        <label class="hidden text-sm text-gray-400 lg:block">
-          {{ t('sounds.toneSound') }}
-        </label>
-        <ToneModeSelect v-model="selectedToneMode" class="min-w-30 flex-1" />
-      </div>
-
-      <Select v-model.number="selectedRangeIndex" class="flex-1">
-        <option
-          v-for="(range, index) in VOICE_RANGES"
-          :key="index"
-          :value="index"
-        >
-          {{ t(range.labelKey) }} ({{ range.noteRange }})
-        </option>
-      </Select>
-
-      <Button
-        class="ms-auto min-w-27.5"
-        :variant="isListening ? 'red' : 'green'"
-        @click="toggle"
-      >
-        {{ isListening ? t('generic.stop') : t('generic.start') }}
-      </Button>
-    </div>
-
-    <p v-if="error" class="mb-4 text-sm text-red-400">{{ error }}</p>
-
+  <PitchDetectorDisplay
+    :detection="detection"
+    v-model:rangeIndex="selectedRangeIndex"
+    v-model:toneMode="selectedToneMode"
+  >
     <div
       class="flex w-full flex-wrap items-end gap-4 rounded-lg bg-gray-800/50 p-4"
     >
       <div class="flex flex-col gap-1">
         <label class="text-xs text-gray-400">Note</label>
         <Select v-model="selectedNote" class="min-w-20">
-          <option v-for="note in NOTE_NAMES" :key="note" :value="note">
+          <option
+            v-for="note in [...NOTE_NAMES].reverse()"
+            :key="note"
+            :value="note"
+          >
             {{ note }}
           </option>
         </Select>
@@ -157,7 +48,11 @@ onUnmounted(() => {
       <div class="flex flex-col gap-1">
         <label class="text-xs text-gray-400">Octave</label>
         <Select v-model.number="selectedOctave" class="min-w-16">
-          <option v-for="oct in [2, 3, 4, 5, 6]" :key="oct" :value="oct">
+          <option
+            v-for="oct in [2, 3, 4, 5, 6].reverse()"
+            :key="oct"
+            :value="oct"
+          >
             {{ oct }}
           </option>
         </Select>
@@ -205,18 +100,5 @@ onUnmounted(() => {
         />
       </div>
     </div>
-
-    <PitchDisplay
-      ref="pitchDisplayRef"
-      :noteInfo="noteInfo"
-      :frequency="frequency"
-      :clarity="clarity"
-      :isClean="isClean"
-      :isListening="isListening"
-      :midiMin="selectedRange.midiMin"
-      :midiMax="selectedRange.midiMax"
-    />
-  </div>
+  </PitchDetectorDisplay>
 </template>
-
-<style scoped></style>

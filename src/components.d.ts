@@ -27,6 +27,7 @@ declare module 'vue' {
     LandingPage: typeof import('./components/LandingPage.vue')['default']
     LanguageSwitcher: typeof import('./components/generic/LanguageSwitcher.vue')['default']
     MusicNote: typeof import('./components/icons/MusicNote.vue')['default']
+    PitchDetectorDisplay: typeof import('./components/pitch-detector/PitchDetectorDisplay.vue')['default']
     PitchDetectorPage: typeof import('./components/pitch-detector/PitchDetectorPage.vue')['default']
     PitchDetectorTestPage: typeof import('./components/pitch-detector/PitchDetectorTestPage.vue')['default']
     PitchDisplay: typeof import('./components/pitch-detector/PitchDisplay.vue')['default']
