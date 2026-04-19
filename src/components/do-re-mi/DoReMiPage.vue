@@ -106,21 +106,37 @@ const selectedScaleModeLabel = computed(
     selectedScaleMode.value,
 )
 
-watch(selectedDurationSec, (sec) => {
-  setHoldDuration(sec * 1000)
-})
+watch(
+  selectedDurationSec,
+  (sec) => {
+    setHoldDuration(sec * 1000)
+  },
+  { immediate: true },
+)
 
-watch(selectedToneMode, (mode) => {
-  setToneMode(mode)
-})
+watch(
+  selectedToneMode,
+  (mode) => {
+    setToneMode(mode)
+  },
+  { immediate: true },
+)
 
-watch(selectedStartOffset, (offset) => {
-  setStartingSemitoneOffset(offset)
-})
+watch(
+  selectedStartOffset,
+  (offset) => {
+    setStartingSemitoneOffset(offset)
+  },
+  { immediate: true },
+)
 
-watch(selectedScaleMode, (mode) => {
-  setScaleMode(mode)
-})
+watch(
+  selectedScaleMode,
+  (mode) => {
+    setScaleMode(mode)
+  },
+  { immediate: true },
+)
 
 watch(isComplete, (complete) => {
   if (complete) {

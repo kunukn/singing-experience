@@ -16,9 +16,13 @@ if (!VALID_TONE_MODES.includes(selectedToneMode.value)) {
   selectedToneMode.value = toneMode.value
 }
 
-watch(selectedToneMode, (mode) => {
-  setToneMode(mode)
-})
+watch(
+  selectedToneMode,
+  (mode) => {
+    setToneMode(mode)
+  },
+  { immediate: true },
+)
 
 type VoiceRange = {
   labelKey: string
