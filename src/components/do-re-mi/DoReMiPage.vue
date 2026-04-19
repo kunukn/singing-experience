@@ -5,13 +5,11 @@ import {
   DEFAULT_SCALE_MODE,
   START_TONE_OPTIONS,
 } from '@/composables/useDoReMiGame'
-import type { ToneMode } from '@/composables/toneEngine'
 import type { ScaleMode } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import DoReMiDisplay from './DoReMiDisplay.vue'
 
 const holdDurationOptions = [0.1, 0.3, 0.5, 1, 2, 3, 4, 5, 6, 7, 10]
-const VALID_TONE_MODES: ToneMode[] = ['piano', 'bell', 'bass', 'square']
 const VALID_SCALE_MODES: ScaleMode[] = [
   'ionian',
   'dorian',
@@ -31,14 +29,7 @@ if (!holdDurationOptions.includes(selectedDurationSec.value)) {
   selectedDurationSec.value = defaultDurationSec
 }
 
-const { toneMode } = useTonePlayer()
-const selectedToneMode = useLocalStorage<ToneMode>(
-  'singing.toneMode',
-  toneMode.value,
-)
-if (!VALID_TONE_MODES.includes(selectedToneMode.value)) {
-  selectedToneMode.value = toneMode.value
-}
+const { toneMode: selectedToneMode } = useToneModeStore()
 
 const selectedStartOffset = useLocalStorage(
   'singing.startOffset',

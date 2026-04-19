@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type { ToneMode } from '@/composables/toneEngine'
 import type { NoteName } from '@/utils/noteUtils'
 import { NOTE_NAMES } from '@/utils/noteUtils'
 import PitchDetectorDisplay from './PitchDetectorDisplay.vue'
 
-const { toneMode } = useTonePlayer()
-const selectedToneMode = ref<ToneMode>(toneMode.value)
+const { toneMode: selectedToneMode } = useToneModeStore()
 const selectedRangeIndex = ref(4)
 
 const selectedNote = ref<NoteName>('B')

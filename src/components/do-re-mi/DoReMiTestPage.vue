@@ -5,7 +5,6 @@ import {
   DEFAULT_SCALE_MODE,
 } from '@/composables/useDoReMiGame'
 import type { ScaleStep } from '@/composables/useDoReMiGame'
-import type { ToneMode } from '@/composables/toneEngine'
 import type { NoteName, ScaleMode } from '@/utils/noteUtils'
 import { NOTE_NAMES } from '@/utils/noteUtils'
 import DoReMiDisplay from './DoReMiDisplay.vue'
@@ -14,8 +13,7 @@ const selectedDurationSec = ref(DEFAULT_HOLD_DURATION_MS / 1000)
 const selectedStartOffset = ref(DEFAULT_STARTING_SEMITONE_OFFSET)
 const selectedScaleMode = ref<ScaleMode>(DEFAULT_SCALE_MODE)
 
-const { toneMode } = useTonePlayer()
-const selectedToneMode = ref<ToneMode>(toneMode.value)
+const { toneMode: selectedToneMode } = useToneModeStore()
 
 const selectedNote = ref<NoteName>('G')
 const selectedOctave = ref(3)

@@ -95,6 +95,7 @@ declare global {
   const useSimulatedPitchDetection: typeof import('./composables/useSimulatedPitchDetection').useSimulatedPitchDetection
   const useSlots: typeof import('vue').useSlots
   const useTemplateRef: typeof import('vue').useTemplateRef
+  const useToneModeStore: typeof import('./stores/useToneModeStore').useToneModeStore
   const useTonePlayer: typeof import('./composables/useTonePlayer').useTonePlayer
   const watch: typeof import('vue').watch
   const watchEffect: typeof import('vue').watchEffect
@@ -209,6 +210,7 @@ declare module 'vue' {
     readonly useSimulatedPitchDetection: UnwrapRef<typeof import('./composables/useSimulatedPitchDetection')['useSimulatedPitchDetection']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
+    readonly useToneModeStore: UnwrapRef<typeof import('./stores/useToneModeStore')['useToneModeStore']>
     readonly useTonePlayer: UnwrapRef<typeof import('./composables/useTonePlayer')['useTonePlayer']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
