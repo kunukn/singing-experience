@@ -1,4 +1,4 @@
-import type { NoteInfo } from '@/utils/noteUtils'
+import type { DetectedTone } from '@/composables/toneDetectionTypes'
 import { frequencyToNote } from '@/utils/noteUtils'
 
 /*
@@ -38,10 +38,6 @@ function sensitivityToAdaptiveRange(sensitivity: number): number {
  * Base −80 dB is near silence; ×4 maps slider 0→−80 dB (hear everything), 10→−40 dB (gate noise). */
 function noiseGateToFloorDb(noiseGate: number): number {
   return -80 + noiseGate * 4
-}
-
-type DetectedTone = NoteInfo & {
-  isClean: boolean
 }
 
 type ToneDetectionConfig = {

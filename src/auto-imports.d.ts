@@ -107,6 +107,9 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { DetectedTone, ToneDetectionResult } from './composables/toneDetectionTypes'
+  import('./composables/toneDetectionTypes')
+  // @ts-ignore
   export type { ToneMode, ToneEngine } from './composables/toneEngine'
   import('./composables/toneEngine')
   // @ts-ignore

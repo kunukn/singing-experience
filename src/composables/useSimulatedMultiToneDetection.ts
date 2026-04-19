@@ -1,4 +1,5 @@
-import type { NoteInfo, NoteName } from '@/utils/noteUtils'
+import type { DetectedTone } from '@/composables/toneDetectionTypes'
+import type { NoteName } from '@/utils/noteUtils'
 import { frequencyToNote, noteToFrequency } from '@/utils/noteUtils'
 
 /* ±30 cents — matches MAX_CENTS_DEVIATION in useMultiToneDetection */
@@ -10,10 +11,6 @@ export type SimulatedToneConfig = {
   cents: number
   jitter: number
   enabled: boolean
-}
-
-type DetectedTone = NoteInfo & {
-  isClean: boolean
 }
 
 export function useSimulatedMultiToneDetection(

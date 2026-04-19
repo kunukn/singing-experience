@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { textColorAtMidi } from '@/utils/pitchColors'
 import { useLocalStorage } from '@vueuse/core'
+import SettingsSlider from './SettingsSlider.vue'
+import ToneDetectorDisplay from './ToneDetectorDisplay.vue'
 
 const { t } = useI18n()
 
@@ -21,125 +22,27 @@ const noiseGate = useLocalStorage('singing.noiseGate', DEFAULT_VALUE)
 if (!isValidSetting(sensitivity.value)) sensitivity.value = DEFAULT_VALUE
 if (!isValidSetting(noiseGate.value)) noiseGate.value = DEFAULT_VALUE
 
-const { detectedTones, isListening, error, start, stop } =
-  useMultiToneDetection({ sensitivity, noiseGate })
-
-function toggle() {
-  if (isListening.value) stop()
-  else start()
-}
-
-onUnmounted(() => {
-  stop()
-})
+const detection = useMultiToneDetection({ sensitivity, noiseGate })
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col items-center gap-4 sm:gap-6">
-    <p class="text-sm text-gray-400">
-      <Badge class="me-1">Beta</Badge>
-      <span> {{ t('toneDetector.pageDescription') }}</span>
-    </p>
-
-    <p v-if="error" class="text-sm text-red-400">{{ error }}</p>
-
+  <ToneDetectorDisplay :detection="detection">
     <div class="flex w-full flex-col gap-8 rounded-lg bg-white/5 p-4">
-      <div class="flex flex-col gap-1">
-        <p class="text-xs leading-relaxed text-gray-400">
-          {{ t('toneDetector.sensitivityDescription') }}
-        </p>
-        <label class="flex flex-col gap-1 text-sm text-gray-300">
-          {{ t('toneDetector.sensitivity') }} ({{ sensitivity }})
-          <input
-            v-model.number="sensitivity"
-            type="range"
-            min="0"
-            max="10"
-            step="1"
-            class="accent-blue-500"
-          />
-          <span class="flex justify-between text-xs text-gray-500">
-            <span>{{ t('toneDetector.strict') }}</span>
-            <span>{{ t('toneDetector.loose') }}</span>
-          </span>
-        </label>
-      </div>
+      <SettingsSlider
+        v-model="sensitivity"
+        :description="t('toneDetector.sensitivityDescription')"
+        :label="t('toneDetector.sensitivity')"
+        :minLabel="t('toneDetector.strict')"
+        :maxLabel="t('toneDetector.loose')"
+      />
 
-      <div class="flex flex-col gap-1">
-        <p class="text-xs leading-relaxed text-gray-400">
-          {{ t('toneDetector.noiseGateDescription') }}
-        </p>
-        <label class="flex flex-col gap-1 text-sm text-gray-300">
-          {{ t('toneDetector.noiseGate') }} ({{ noiseGate }})
-          <input
-            v-model.number="noiseGate"
-            type="range"
-            min="0"
-            max="10"
-            step="1"
-            class="accent-blue-500"
-          />
-          <span class="flex justify-between text-xs text-gray-500">
-            <span>{{ t('toneDetector.quiet') }}</span>
-            <span>{{ t('toneDetector.loud') }}</span>
-          </span>
-        </label>
-      </div>
+      <SettingsSlider
+        v-model="noiseGate"
+        :description="t('toneDetector.noiseGateDescription')"
+        :label="t('toneDetector.noiseGate')"
+        :minLabel="t('toneDetector.quiet')"
+        :maxLabel="t('toneDetector.loud')"
+      />
     </div>
-
-    <div class="flex w-full items-center justify-center">
-      <Button
-        class="min-w-27.5"
-        :variant="isListening ? 'red' : 'green'"
-        @click="toggle"
-      >
-        {{ isListening ? t('generic.stop') : t('generic.start') }}
-      </Button>
-    </div>
-
-    <div v-if="isListening" class="flex w-full flex-col items-center gap-4">
-      <p v-if="detectedTones.length === 0" class="text-sm text-gray-500">
-        {{ t('toneDetector.listening') }}
-      </p>
-
-      <div
-        v-else
-        class="flex flex-wrap items-baseline justify-center gap-4 sm:gap-6"
-      >
-        <div
-          v-for="tone in detectedTones"
-          :key="tone.midiNote"
-          class="flex flex-col items-center transition-colors duration-150"
-          :style="{
-            color: tone.isClean ? textColorAtMidi(tone.midiNote) : undefined,
-          }"
-          :class="{ 'text-gray-500 opacity-30': !tone.isClean }"
-        >
-          <div v-if="tone.isClean">
-            <span class="text-5xl font-bold tracking-tight sm:text-7xl">
-              {{ tone.note }}
-            </span>
-            <span
-              class="mt-1 inline-block align-top text-2xl font-light sm:text-4xl"
-            >
-              {{ tone.octave }}
-            </span>
-          </div>
-          <span class="mt-1 text-xs text-gray-400 tabular-nums">
-            {{ Math.round(tone.frequency) }}
-            {{ t('toneDetector.hz') }}
-          </span>
-        </div>
-      </div>
-
-      <p class="text-xs text-gray-600">
-        {{ t('toneDetector.tonesDetected', { count: detectedTones.length }) }}
-      </p>
-    </div>
-
-    <div v-else class="flex flex-col items-center gap-2 text-gray-500">
-      <span class="text-6xl">🎹</span>
-      <p class="text-sm">{{ t('toneDetector.pressStart') }}</p>
-    </div>
-  </div>
+  </ToneDetectorDisplay>
 </template>
