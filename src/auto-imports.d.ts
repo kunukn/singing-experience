@@ -84,6 +84,7 @@ declare global {
   const useI18n: typeof import('vue-i18n').useI18n
   const useId: typeof import('vue').useId
   const useLink: typeof import('vue-router').useLink
+  const useMicrophonePermission: typeof import('./composables/useMicrophonePermission').useMicrophonePermission
   const useModel: typeof import('vue').useModel
   const useMultiToneDetection: typeof import('./composables/useMultiToneDetection').useMultiToneDetection
   const usePitchDetection: typeof import('./composables/usePitchDetection').usePitchDetection
@@ -192,6 +193,7 @@ declare module 'vue' {
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
+    readonly useMicrophonePermission: UnwrapRef<typeof import('./composables/useMicrophonePermission')['useMicrophonePermission']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useMultiToneDetection: UnwrapRef<typeof import('./composables/useMultiToneDetection')['useMultiToneDetection']>
     readonly usePitchDetection: UnwrapRef<typeof import('./composables/usePitchDetection')['usePitchDetection']>

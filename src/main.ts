@@ -39,7 +39,7 @@ app.use(createPinia()).use(router).use(i18n).mount('#app')
 
 self.app.useErrorToastStore = useErrorToastStore
 self.app.useConfettiStore = useConfettiStore
-// self.app.useErrorToastStore().addError('Welcome to the app! This is a demo error toast.')
+// self.app.useErrorToastStore().addError(`This is a demo error toast. ${new Date().toLocaleTimeString()}`, {  persistent: true})
 // self.app.useConfettiStore().fireConfetti()
 
 if (import.meta.env.VITE_DEBUG_LOG === '1') {

@@ -9,6 +9,8 @@ type AddErrorOptions = {
   persistent?: boolean
 }
 
+const MAX_TOASTS = 5
+
 export const useErrorToastStore = defineStore('errorToast', () => {
   const toasts = ref<ErrorToast[]>([])
   let nextId = 0
@@ -16,6 +18,10 @@ export const useErrorToastStore = defineStore('errorToast', () => {
   function addError(message: string, options?: AddErrorOptions) {
     const id = nextId++
     toasts.value.push({ id, message })
+
+    while (toasts.value.length > MAX_TOASTS) {
+      toasts.value.shift()
+    }
 
     if (!options?.persistent) {
       setTimeout(() => {

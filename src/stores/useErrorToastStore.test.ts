@@ -87,6 +87,30 @@ describe('useErrorToastStore', () => {
     expect(store.toasts).toHaveLength(0)
   })
 
+  test('should keep at most 5 toasts and drop the oldest', () => {
+    const store = useErrorToastStore()
+
+    for (let i = 1; i <= 6; i++) {
+      store.addError(`Error ${i}`, { persistent: true })
+    }
+
+    expect(store.toasts).toHaveLength(5)
+    expect(store.toasts[0].message).toBe('Error 2')
+    expect(store.toasts[4].message).toBe('Error 6')
+  })
+
+  test('should drop multiple oldest toasts when exceeding max', () => {
+    const store = useErrorToastStore()
+
+    for (let i = 1; i <= 8; i++) {
+      store.addError(`Error ${i}`, { persistent: true })
+    }
+
+    expect(store.toasts).toHaveLength(5)
+    expect(store.toasts[0].message).toBe('Error 4')
+    expect(store.toasts[4].message).toBe('Error 8')
+  })
+
   test('should auto-remove each toast independently', () => {
     const store = useErrorToastStore()
 

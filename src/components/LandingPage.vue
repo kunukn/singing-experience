@@ -2,12 +2,20 @@
 import { programs } from '@/constants/programs'
 
 const { t } = useI18n()
+const { state: micPermission } = useMicrophonePermission()
+
+const musicNoteColorClass = computed(() => {
+  if (micPermission.value === 'granted') return 'text-green-400'
+  if (micPermission.value === 'denied') return 'text-red-400'
+
+  return ''
+})
 </script>
 
 <template>
   <div class="flex grow flex-col items-center px-4 pt-1">
     <div class="flex flex-wrap items-center gap-2">
-      <MusicNote class="h-9 w-auto"></MusicNote>
+      <MusicNote :class="['h-9 w-auto', musicNoteColorClass]"></MusicNote>
       <h2 class="product-title mb-2 font-bold">{{ t('home.title') }}</h2>
     </div>
 
