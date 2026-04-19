@@ -22,7 +22,8 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-1 flex-col items-center gap-4 sm:gap-6">
     <p class="text-sm text-gray-400">
-      <span>BETA:</span> {{ t('toneDetector.pageDescription') }}
+      <Badge class="mr-1">Beta</Badge>
+      <span> {{ t('toneDetector.pageDescription') }}</span>
     </p>
 
     <p v-if="error" class="text-sm text-red-400">{{ error }}</p>
@@ -72,13 +73,13 @@ onUnmounted(() => {
     </div>
 
     <div class="flex w-full items-center justify-center">
-      <BasicButton
+      <Button
         class="min-w-27.5"
         :variant="isListening ? 'red' : 'green'"
         @click="toggle"
       >
         {{ isListening ? t('generic.stop') : t('generic.start') }}
-      </BasicButton>
+      </Button>
     </div>
 
     <div v-if="isListening" class="flex w-full flex-col items-center gap-4">

@@ -140,7 +140,7 @@ onUnmounted(() => {
           <label class="hidden text-sm text-gray-400 md:block">{{
             t('doReMi.startTone')
           }}</label>
-          <BasicSelect v-model.number="selectedStartOffset">
+          <Select v-model.number="selectedStartOffset">
             <option
               v-for="option in START_TONE_OPTIONS"
               :key="option.offset"
@@ -148,7 +148,7 @@ onUnmounted(() => {
             >
               {{ option.label }}
             </option>
-          </BasicSelect>
+          </Select>
         </div>
 
         <div
@@ -157,7 +157,7 @@ onUnmounted(() => {
           <label class="hidden text-right text-sm text-gray-400 md:block">{{
             t('doReMi.scaleMode')
           }}</label>
-          <BasicSelect v-model="selectedScaleMode">
+          <Select v-model="selectedScaleMode">
             <option
               v-for="option in SCALE_MODE_OPTIONS"
               :key="option.id"
@@ -165,7 +165,7 @@ onUnmounted(() => {
             >
               {{ option.label }}
             </option>
-          </BasicSelect>
+          </Select>
         </div>
 
         <div
@@ -174,11 +174,11 @@ onUnmounted(() => {
           <label class="hidden text-sm text-gray-400 md:block">{{
             t('doReMi.holdDuration')
           }}</label>
-          <BasicSelect v-model.number="selectedDurationSec">
+          <Select v-model.number="selectedDurationSec">
             <option v-for="sec in holdDurationOptions" :key="sec" :value="sec">
               {{ sec }}s
             </option>
-          </BasicSelect>
+          </Select>
         </div>
 
         <div
@@ -193,11 +193,11 @@ onUnmounted(() => {
       </div>
 
       <div class="flex w-full flex-wrap items-center justify-center gap-4">
-        <BasicButton class="w-full max-w-35" @click="handleStart">
+        <Button class="w-full max-w-35" @click="handleStart">
           {{ t('generic.start') }}
-        </BasicButton>
+        </Button>
 
-        <BasicButton
+        <Button
           class="w-full max-w-35"
           :variant="isPlayingSequence ? 'yellow' : 'purple'"
           @click="toggleDoReMi"
@@ -207,7 +207,7 @@ onUnmounted(() => {
               ? t('doReMi.muteButton')
               : t('doReMi.doReMiButton')
           }}
-        </BasicButton>
+        </Button>
       </div>
 
       <p v-if="error" class="text-sm text-red-400">{{ error }}</p>
@@ -218,9 +218,9 @@ onUnmounted(() => {
       v-else-if="gameState === 'playing'"
       class="flex flex-col items-center gap-2 sm:mb-4"
     >
-      <BasicButton class="w-full max-w-35" variant="red" @click="handleStop">
+      <Button class="w-full max-w-35" variant="red" @click="handleStop">
         {{ t('generic.stop') }}
-      </BasicButton>
+      </Button>
       <p
         class="min-w-20 text-right font-mono text-lg text-gray-400 tabular-nums"
       >
@@ -259,9 +259,9 @@ onUnmounted(() => {
         {{ t('doReMi.time') }}
         <span class="font-mono text-white">{{ elapsedSeconds }}s</span>
       </p>
-      <BasicButton @click="handleReset">
+      <Button @click="handleReset">
         {{ t('doReMi.playAgain') }}
-      </BasicButton>
+      </Button>
     </div>
 
     <!-- Scale visualization -->

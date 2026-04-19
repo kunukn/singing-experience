@@ -58,7 +58,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-1 flex-col items-center gap-4">
     <div class="flex w-full flex-wrap items-center gap-2 sm:gap-4">
-      <BasicSelect v-model.number="selectedRangeIndex" class="flex-1">
+      <Select v-model.number="selectedRangeIndex" class="flex-1">
         <option
           v-for="(range, index) in VOICE_RANGES"
           :key="index"
@@ -66,7 +66,7 @@ onUnmounted(() => {
         >
           {{ range.label }}
         </option>
-      </BasicSelect>
+      </Select>
 
       <div class="flex items-center gap-2">
         <label v-if="false" class="hidden text-sm text-gray-400 lg:block">
@@ -75,13 +75,13 @@ onUnmounted(() => {
         <ToneModeSelect v-model="selectedToneMode" class="min-w-30 flex-1" />
       </div>
 
-      <BasicButton
+      <Button
         class="ml-auto min-w-27.5"
         :variant="isListening ? 'red' : 'green'"
         @click="toggle"
       >
         {{ isListening ? t('generic.stop') : t('generic.start') }}
-      </BasicButton>
+      </Button>
     </div>
 
     <p v-if="error" class="mb-4 text-sm text-red-400">{{ error }}</p>

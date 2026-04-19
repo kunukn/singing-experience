@@ -12,8 +12,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ArrowUp: typeof import('./components/icons/ArrowUp.vue')['default']
-    BasicButton: typeof import('./components/generic/BasicButton.vue')['default']
-    BasicSelect: typeof import('./components/generic/BasicSelect.vue')['default']
+    Badge: typeof import('./components/generic/Badge.vue')['default']
+    Button: typeof import('./components/generic/Button.vue')['default']
     CentsDeviationBar: typeof import('./components/generic/CentsDeviationBar.vue')['default']
     DoReMiNoteTarget: typeof import('./components/do-re-mi/DoReMiNoteTarget.vue')['default']
     DoReMiPage: typeof import('./components/do-re-mi/DoReMiPage.vue')['default']
@@ -30,6 +30,7 @@ declare module 'vue' {
     PitchHistoryChart: typeof import('./components/pitch-detector/PitchHistoryChart.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    Select: typeof import('./components/generic/Select.vue')['default']
     ToneDetectorPage: typeof import('./components/tone-detector/ToneDetectorPage.vue')['default']
     ToneModeSelect: typeof import('./components/generic/ToneModeSelect.vue')['default']
     TopBar: typeof import('./components/generic/TopBar.vue')['default']

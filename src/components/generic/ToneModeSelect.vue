@@ -13,7 +13,7 @@ const { t } = useI18n()
 </script>
 
 <template>
-  <BasicSelect
+  <Select
     :modelValue="modelValue"
     @update:modelValue="$emit('update:modelValue', $event)"
   >
@@ -21,5 +21,5 @@ const { t } = useI18n()
     <option value="bell">🔔 {{ t('sounds.bell') }}</option>
     <option value="bass">🎸 {{ t('sounds.bass') }}</option>
     <option value="square">⬜ {{ t('sounds.square') }}</option>
-  </BasicSelect>
+  </Select>
 </template>

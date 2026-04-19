@@ -80,7 +80,7 @@ onUnmounted(() => {
         <ToneModeSelect v-model="selectedToneMode" class="min-w-30 flex-1" />
       </div>
 
-      <BasicSelect v-model.number="selectedRangeIndex" class="flex-1">
+      <Select v-model.number="selectedRangeIndex" class="flex-1">
         <option
           v-for="(range, index) in VOICE_RANGES"
           :key="index"
@@ -88,15 +88,15 @@ onUnmounted(() => {
         >
           {{ range.label }}
         </option>
-      </BasicSelect>
+      </Select>
 
-      <BasicButton
+      <Button
         class="ml-auto min-w-27.5"
         :variant="isListening ? 'red' : 'green'"
         @click="toggle"
       >
         {{ isListening ? t('generic.stop') : t('generic.start') }}
-      </BasicButton>
+      </Button>
     </div>
 
     <p v-if="error" class="mb-4 text-sm text-red-400">{{ error }}</p>
@@ -106,20 +106,20 @@ onUnmounted(() => {
     >
       <div class="flex flex-col gap-1">
         <label class="text-xs text-gray-400">Note</label>
-        <BasicSelect v-model="selectedNote" class="min-w-20">
+        <Select v-model="selectedNote" class="min-w-20">
           <option v-for="note in NOTE_NAMES" :key="note" :value="note">
             {{ note }}
           </option>
-        </BasicSelect>
+        </Select>
       </div>
 
       <div class="flex flex-col gap-1">
         <label class="text-xs text-gray-400">Octave</label>
-        <BasicSelect v-model.number="selectedOctave" class="min-w-16">
+        <Select v-model.number="selectedOctave" class="min-w-16">
           <option v-for="oct in [2, 3, 4, 5, 6]" :key="oct" :value="oct">
             {{ oct }}
           </option>
-        </BasicSelect>
+        </Select>
       </div>
 
       <div class="flex min-w-40 flex-1 flex-col gap-1">

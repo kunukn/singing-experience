@@ -57,8 +57,8 @@ Let me take a look at the code and suggest a fix for you."
 
 **CRITICAL**: Always use Generic components from `/src/components/generic/` instead of HTML elements:
 
-- Use `<BasicSelect />` instead of `<select />`
-- Use `<BasicButton />` instead of `<button />`
+- Use `<Button />` instead of `<button />`
+- Use `<Select />` instead of `<select />`
 
 **Organization**:
 
