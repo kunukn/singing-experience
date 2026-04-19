@@ -65,6 +65,16 @@
     "clarity": "清晰度",
     "cents": "音分"
   },
+  "voiceRanges": {
+    "full": "完整",
+    "soprano": "女高音",
+    "sopranoPlus": "女高音+",
+    "mezzoSoprano": "次女高音",
+    "alto": "女低音",
+    "tenor": "男高音",
+    "baritone": "男中音",
+    "bass": "男低音"
+  },
   "toneDetector": {
     "listening": "正在聆听…",
     "hz": "Hz",

@@ -65,6 +65,16 @@
     "clarity": "Чёткость",
     "cents": "центов"
   },
+  "voiceRanges": {
+    "full": "Полный",
+    "soprano": "Сопрано",
+    "sopranoPlus": "Сопрано+",
+    "mezzoSoprano": "Меццо-сопрано",
+    "alto": "Контральто",
+    "tenor": "Тенор",
+    "baritone": "Баритон",
+    "bass": "Бас"
+  },
   "toneDetector": {
     "listening": "Слушаю...",
     "hz": "Гц",

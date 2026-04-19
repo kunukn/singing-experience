@@ -65,6 +65,16 @@
     "clarity": "Clareza",
     "cents": "cents"
   },
+  "voiceRanges": {
+    "full": "Completo",
+    "soprano": "Soprano",
+    "sopranoPlus": "Soprano+",
+    "mezzoSoprano": "Mezzo-soprano",
+    "alto": "Contralto",
+    "tenor": "Tenor",
+    "baritone": "Barítono",
+    "bass": "Baixo"
+  },
   "toneDetector": {
     "listening": "Ouvindo...",
     "hz": "Hz",

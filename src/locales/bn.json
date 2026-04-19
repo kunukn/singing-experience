@@ -65,6 +65,16 @@
     "clarity": "স্পষ্টতা",
     "cents": "সেন্ট"
   },
+  "voiceRanges": {
+    "full": "সম্পূর্ণ",
+    "soprano": "সোপ্রানো",
+    "sopranoPlus": "সোপ্রানো+",
+    "mezzoSoprano": "মেৎজো-সোপ্রানো",
+    "alto": "অল্টো",
+    "tenor": "টেনর",
+    "baritone": "ব্যারিটোন",
+    "bass": "বেস"
+  },
   "toneDetector": {
     "listening": "শুনছে...",
     "hz": "Hz",

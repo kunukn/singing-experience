@@ -65,6 +65,16 @@
     "clarity": "الوضوح",
     "cents": "سنت"
   },
+  "voiceRanges": {
+    "full": "كامل",
+    "soprano": "سوبرانو",
+    "sopranoPlus": "سوبرانو+",
+    "mezzoSoprano": "ميزو سوبرانو",
+    "alto": "آلتو",
+    "tenor": "تينور",
+    "baritone": "باريتون",
+    "bass": "باص"
+  },
   "toneDetector": {
     "listening": "يستمع…",
     "hz": "Hz",

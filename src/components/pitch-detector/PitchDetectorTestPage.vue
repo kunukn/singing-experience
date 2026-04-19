@@ -14,20 +14,61 @@ watch(selectedToneMode, (mode) => {
 })
 
 type VoiceRange = {
-  label: string
+  labelKey: string
+  noteRange: string
   midiMin: number
   midiMax: number
 }
 
 const VOICE_RANGES: VoiceRange[] = [
-  { label: 'Full (C2–C7)', midiMin: 36, midiMax: 96 },
-  { label: 'Soprano (C4–C6)', midiMin: 60, midiMax: 84 },
-  { label: 'Soprano+ (C4–C7)', midiMin: 60, midiMax: 96 },
-  { label: 'Mezzo-Soprano (A3–A5)', midiMin: 57, midiMax: 81 },
-  { label: 'Alto (F3–F5)', midiMin: 53, midiMax: 77 },
-  { label: 'Tenor (B2–B4)', midiMin: 47, midiMax: 71 },
-  { label: 'Baritone (G2–G4)', midiMin: 43, midiMax: 67 },
-  { label: 'Bass (E2–E4)', midiMin: 40, midiMax: 64 },
+  {
+    labelKey: 'voiceRanges.full',
+    noteRange: 'C2–C7',
+    midiMin: 36,
+    midiMax: 96,
+  },
+  {
+    labelKey: 'voiceRanges.soprano',
+    noteRange: 'C4–C6',
+    midiMin: 60,
+    midiMax: 84,
+  },
+  {
+    labelKey: 'voiceRanges.sopranoPlus',
+    noteRange: 'C4–C7',
+    midiMin: 60,
+    midiMax: 96,
+  },
+  {
+    labelKey: 'voiceRanges.mezzoSoprano',
+    noteRange: 'A3–A5',
+    midiMin: 57,
+    midiMax: 81,
+  },
+  {
+    labelKey: 'voiceRanges.alto',
+    noteRange: 'F3–F5',
+    midiMin: 53,
+    midiMax: 77,
+  },
+  {
+    labelKey: 'voiceRanges.tenor',
+    noteRange: 'B2–B4',
+    midiMin: 47,
+    midiMax: 71,
+  },
+  {
+    labelKey: 'voiceRanges.baritone',
+    noteRange: 'G2–G4',
+    midiMin: 43,
+    midiMax: 67,
+  },
+  {
+    labelKey: 'voiceRanges.bass',
+    noteRange: 'E2–E4',
+    midiMin: 40,
+    midiMax: 64,
+  },
 ]
 
 const selectedRangeIndex = ref(4)
@@ -86,7 +127,7 @@ onUnmounted(() => {
           :key="index"
           :value="index"
         >
-          {{ range.label }}
+          {{ t(range.labelKey) }} ({{ range.noteRange }})
         </option>
       </Select>
 
