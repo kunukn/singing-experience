@@ -144,4 +144,4 @@ If you accidentally blocked microphone access, the browser remembers your choice
 
 ## License
 
-This project is open source under the [0BSD License](LICENSE).
+This project is open source under the [0BSD License](LICENSE). _do what you want, but don't blame me._
