@@ -1,7 +1,7 @@
 {
   "name": "singing-experience",
   "version": "1.0.0",
-  "description": "",
+  "description": "A browser-based singing practice app with real-time pitch detection and a DO RE MI singing game. Free, private, works offline.",
   "type": "module",
   "scripts": {
     "dev": "vite --port 5555",
@@ -57,8 +57,22 @@
     "type": "git",
     "url": "git+https://github.com/kunukn/singing-experience.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "singing",
+    "pitch-detection",
+    "vocal-pitch",
+    "do-re-mi",
+    "ear-training",
+    "music-education",
+    "microphone",
+    "note-detection",
+    "frequency-analyzer",
+    "voice-training",
+    "pwa",
+    "vue",
+    "web-audio"
+  ],
+  "author": "kunukn",
   "license": "0BSD",
   "bugs": {
     "url": "https://github.com/kunukn/singing-experience/issues"

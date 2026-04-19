@@ -36,7 +36,8 @@ export default defineConfig({
       manifest: {
         name: 'Singing Experience',
         short_name: 'Singing',
-        description: 'A singing practice experience',
+        description:
+          'Real-time vocal pitch detector and DO RE MI singing game. Practice singing, train your ear, detect notes — free, private, works offline.',
         theme_color: '#4f46e5',
         background_color: '#ffffff',
         display: 'standalone',

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kunukn.github.io/singing-experience/sitemap.xml

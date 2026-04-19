@@ -1,5 +1,11 @@
 # <picture><source media="(prefers-color-scheme: dark)" srcset="public/icons/note-inverted.svg"><img src="public/icons/note.svg" width="32" height="32" alt="music note" /></picture> Singing Experience
 
+[![License: 0BSD](https://img.shields.io/badge/license-0BSD-green.svg)](LICENSE)
+[![GitHub Pages](https://img.shields.io/badge/demo-GitHub%20Pages-blue)](https://kunukn.github.io/singing-experience/)
+[![PWA Ready](https://img.shields.io/badge/PWA-ready-blueviolet)](#-offline--installable)
+
+**Real-time vocal pitch detector and singing game — practice singing, train your ear, detect notes and frequencies, all in the browser. Free, private, works offline.**
+
 A fun, browser-based singing practice app. Use your microphone to see what note you're singing in real time — or play a game where you sing through the musical scale.
 
 ## What Is This?

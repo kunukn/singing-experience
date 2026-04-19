@@ -14,6 +14,6 @@ const isHome = computed(() => route.path === '/')
       {{ t('generic.backToMenu') }}
     </RouterLink>
     <div v-else />
-    <LanguageSwitcher />
+    <LanguageSwitcher v-if="true" />
   </div>
 </template>
