@@ -13,7 +13,9 @@ const CLARITY_THRESHOLD = 0.85
 const MIN_FREQUENCY = 60
 const MAX_FREQUENCY = 1500
 
+/* EMA weight — 0.3 blends 30% new pitch + 70% previous, smoothing jitter without lagging */
 const SMOOTHING_FACTOR = 0.3
+/* ms to hold a clean signal before reporting onset — avoids transient flicker on note attacks */
 const ONSET_DEBOUNCE_MS = 40
 
 export function usePitchDetection() {
@@ -42,7 +44,7 @@ export function usePitchDetection() {
     analyserNode!.getFloatTimeDomainData(input)
     const [pitch, detectedClarity] = detector.findPitch(input, sampleRate)
 
-    clarity.value = Math.round(detectedClarity * 100) / 100
+    clarity.value = Math.round(detectedClarity * 100) / 100 // round to 2 decimal places
 
     if (
       detectedClarity >= CLARITY_THRESHOLD &&
@@ -61,7 +63,7 @@ export function usePitchDetection() {
       }
 
       if (now - cleanSinceTimestamp >= ONSET_DEBOUNCE_MS) {
-        frequency.value = Math.round(smoothedFrequency * 10) / 10
+        frequency.value = Math.round(smoothedFrequency * 10) / 10 // 0.1 Hz precision
         const detected = frequencyToNote(smoothedFrequency, prevMidi)
         noteInfo.value = detected
         prevMidi = detected?.midiNote
@@ -91,6 +93,7 @@ export function usePitchDetection() {
       mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true })
       audioContext = new AudioContext()
       analyserNode = audioContext.createAnalyser()
+      // 2048-sample FFT: ~23 ms window at 44.1 kHz — good pitch resolution with low latency
       analyserNode.fftSize = 2048
 
       const source = audioContext.createMediaStreamSource(mediaStream)

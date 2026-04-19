@@ -24,6 +24,7 @@ type PitchDetectionProvider = {
 }
 
 const DEFAULT_HOLD_DURATION_MS = 1000
+/* Brief pitch-loss tolerance — lets singers breathe or wobble without resetting hold progress */
 const GRACE_PERIOD_MS = 250
 const DEFAULT_STARTING_SEMITONE_OFFSET = 7 // G3
 const DEFAULT_SCALE_MODE: ScaleMode = 'ionian'
@@ -34,6 +35,7 @@ const DEFAULT_SCALE_MODE: ScaleMode = 'ionian'
  * (e.g. Yousician, Smule). Tighten to ±25 or ±10 for advanced difficulty.
  */
 const MAX_CENTS_DEVIATION = 50
+/* Delay before showing "too low" / "too high" hint arrow — avoids flashing during brief pitch drift */
 const TOO_LOW_OR_HIGH_HINT_MS = 500
 
 type DoReMiGameOptions = {
@@ -94,6 +96,7 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
   const centsFromTarget = computed(() => {
     if (!frequency.value || !isClean.value) return null
 
+    // 1200 cents = 1 octave; log₂ ratio gives the interval in octaves
     return Math.round(1200 * Math.log2(frequency.value / targetFrequency.value))
   })
 

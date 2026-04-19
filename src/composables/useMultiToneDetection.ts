@@ -22,12 +22,14 @@ const MAX_TONES = 8
  */
 const HARMONIC_TOLERANCE = 0.04
 
-/* Maps a 0–10 user slider to the adaptive range in dB (lower = stricter). */
+/* Maps a 0–10 user slider to the adaptive range in dB (lower = stricter).
+ * ×4 gives 0–40 dB range — at 0 only the loudest peak passes, at 10 even quiet tones show. */
 function sensitivityToAdaptiveRange(sensitivity: number): number {
   return sensitivity * 4
 }
 
-/* Maps a 0–10 user slider to absolute floor in dB (higher slider = louder floor). */
+/* Maps a 0–10 user slider to absolute floor in dB (higher slider = louder floor).
+ * Base −80 dB is near silence; ×4 maps slider 0→−80 dB (hear everything), 10→−40 dB (gate noise). */
 function noiseGateToFloorDb(noiseGate: number): number {
   return -80 + noiseGate * 4
 }
@@ -47,6 +49,7 @@ function findPeaks(
   adaptiveRangeDb: number,
 ): { frequency: number; magnitude: number }[] {
   const binWidth = sampleRate / fftSize
+  // Start at bin 2 minimum — bin 0 is DC offset, bin 1 prone to low-frequency noise
   const minBin = Math.max(2, Math.ceil(MIN_FREQUENCY / binWidth))
   const maxBin = Math.min(
     Math.floor(MAX_FREQUENCY / binWidth),
@@ -95,11 +98,12 @@ function findPeaks(
     const surroundAvg = surroundCount > 0 ? surroundSum / surroundCount : mag
     if (mag - surroundAvg < MIN_PEAK_PROMINENCE_DB) continue
 
-    /* Quadratic interpolation for sub-bin accuracy */
+    /* Quadratic (parabolic) interpolation for sub-bin frequency accuracy.
+     * Fits a parabola through left/center/right magnitudes to find the true peak offset. */
     const denom = 2 * mag - left - right
     if (denom === 0) continue
 
-    const delta = (0.5 * (right - left)) / denom
+    const delta = (0.5 * (right - left)) / denom // fractional bin offset from center
     const exactBin = i + delta
     const freq = exactBin * binWidth
 
@@ -122,6 +126,7 @@ function suppressHarmonics(
 
     for (const fundamental of kept) {
       for (let n = 2; n <= 4; n++) {
+        // check 2nd, 3rd, and 4th harmonics
         const expectedHarmonic = fundamental.frequency * n
         const tolerance = expectedHarmonic * HARMONIC_TOLERANCE
         if (Math.abs(peak.frequency - expectedHarmonic) < tolerance) {
@@ -213,7 +218,9 @@ export function useMultiToneDetection(config?: ToneDetectionConfig) {
       mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true })
       audioContext = new AudioContext()
       analyserNode = audioContext.createAnalyser()
+      // 4096-sample FFT: higher resolution than pitch detection to separate close tones
       analyserNode.fftSize = 4096
+      // Light temporal smoothing (0.2) — reduces flicker while keeping transient response
       analyserNode.smoothingTimeConstant = 0.2
 
       const source = audioContext.createMediaStreamSource(mediaStream)

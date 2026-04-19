@@ -26,8 +26,12 @@ export function useConfetti(canvasRef?: Ref<HTMLCanvasElement | null>) {
   }
 
   function fireConfetti() {
-    const end = Date.now() + 1500
+    const end = Date.now() + 1500 // 1.5 s total burst duration
 
+    /*
+     * Dual-cannon effect: left and right origins fire 3 particles each frame.
+     * angle 60/120 = angled inward; spread 55° = moderate cone; y 0.6 = 60% down the viewport.
+     */
     const burstFrame = () => {
       fire({
         particleCount: 3,
@@ -50,6 +54,9 @@ export function useConfetti(canvasRef?: Ref<HTMLCanvasElement | null>) {
     burstFrame()
   }
 
+  /* Small, quick celebratory burst for per-note success.
+   * scalar 0.5 = half-size particles; ticks 30 = very short lifetime;
+   * gravity 1.5 = fast drop so it doesn't linger; green palette matches "correct" UI color. */
   function fireMicroConfetti() {
     fire({
       particleCount: 15,

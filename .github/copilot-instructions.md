@@ -180,8 +180,10 @@ Prefer testing business logic outcomes (submitted values, rendered output) over 
 - Document public APIs and interfaces with JSDoc
 - Avoid obvious comments that just repeat what the code does
 - **Use `/* */` block comments for multiline comments**, not multiple `//` lines
+- **Always comment magic numbers** — numeric literals whose meaning isn't obvious from context (e.g., audio dB levels, timing thresholds, algorithm constants, pixel offsets). Extract to a named constant when reuse is likely; otherwise add an inline comment.
+- **Always comment complex patterns** — non-trivial code that requires domain knowledge to understand (e.g., audio synthesis configs, bitwise operations, regex patterns, mathematical formulas). A brief comment explaining *why* the values or pattern exist prevents future readers from guessing.
 
-Example:
+Examples:
 
 ```typescript
 // ✅ Correct - block comment for multiline
@@ -198,6 +200,21 @@ Example:
 
 // ✅ OK - single-line comment stays as //
 // This is a brief note about the next line
+```
+
+```typescript
+// ❌ Bad - magic number with no explanation
+const volume = -12
+
+// ✅ Good - magic number explained
+const volume = -12 // dB — extra quiet; square waves are perceptually louder
+
+// ❌ Bad - complex pattern with no context
+const filter = { Q: 2, type: 'lowpass', rolloff: -12 }
+
+// ✅ Good - complex pattern explained
+// Q 2 = mild resonance peak; -12 dB/oct rolloff for a warm low-end
+const filter = { Q: 2, type: 'lowpass', rolloff: -12 }
 ```
 
 ### TypeScript Verification
@@ -236,5 +253,6 @@ Follow Conventional Commits specification:
 - ✅ Run `npm run guard` as the final step to verify no errors
 - ✅ Add a blank line after single-line `return` statements
 - ✅ Use `/* */` for multiline comments, `//` for single-line only
+- ✅ Comment magic numbers and complex patterns that are hard to reason about without context
 - ✅ Use camelCase for Vue template prop bindings (`:currentStepIndex`, not `:current-step-index`)
 - ✅ Do not manually import `ref`, `computed`, `watch`, etc. from `vue` — they are auto-imported

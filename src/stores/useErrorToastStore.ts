@@ -26,7 +26,7 @@ export const useErrorToastStore = defineStore('errorToast', () => {
     if (!options?.persistent) {
       setTimeout(() => {
         removeError(id)
-      }, 5000)
+      }, 5000) // auto-dismiss after 5 s
     }
   }
 

@@ -38,6 +38,7 @@ export function frequencyToNote(
 ): NoteInfo | null {
   if (hz <= 0 || !isFinite(hz)) return null
 
+  // MIDI formula: 12 semitones/octave × log₂(hz / A4) + 69 (A4's MIDI number)
   const rawMidi = 12 * Math.log2(hz / 440) + 69
 
   let midiNote: number
@@ -49,10 +50,12 @@ export function frequencyToNote(
     midiNote = Math.round(rawMidi)
   }
 
+  // Double-modulo wraps negative MIDI values safely into 0–11 note index
   const noteIndex = ((midiNote % 12) + 12) % 12
+  // MIDI octave: C-1 = MIDI 0, so octave = floor(midi/12) - 1
   const octave = Math.floor(midiNote / 12) - 1
 
-  // Cents deviation from perfect pitch
+  // Cents deviation from perfect pitch (1200 cents = 1 octave)
   const perfectFrequency = 440 * Math.pow(2, (midiNote - 69) / 12)
   const cents = Math.round(1200 * Math.log2(hz / perfectFrequency))
 
@@ -71,6 +74,7 @@ export function frequencyToNote(
  */
 export function noteToFrequency(note: NoteName, octave: number): number {
   const noteIndex = NOTE_NAMES.indexOf(note)
+  // Reverse MIDI formula: (octave + 1) accounts for C-1 = MIDI 0
   const midiNote = (octave + 1) * 12 + noteIndex
 
   return 440 * Math.pow(2, (midiNote - 69) / 12)
@@ -178,10 +182,14 @@ type StartToneOption = {
   midiNote: number
 }
 
+/*
+ * 25 starting tone options spanning G#5 (offset 19) down to G#3 (offset −5),
+ * covering typical singing ranges from soprano highs to baritone lows.
+ */
 const START_TONE_OPTIONS: StartToneOption[] = Array.from(
   { length: 25 },
   (_, i) => {
-    const offset = 19 - i
+    const offset = 19 - i // highest offset first, descending
     const midi = C3_MIDI + offset
     const noteIndex = ((midi % 12) + 12) % 12
     const octave = Math.floor(midi / 12) - 1

@@ -48,14 +48,18 @@ type GridNote = {
   octave: number
 }
 
+/* Scrolling window duration — how many ms of pitch history are visible on screen */
 const HISTORY_DURATION_MS = 5000
 const LABEL_WIDTH = 40 // PADDING_LEFT is effectively 0 since labels are flush with left edge, so this is total reserved width for labels
 const PADDING_TOP = 16
 const PADDING_BOTTOM = 16
 const PADDING_RIGHT = 16
 const CHART_INSET_RIGHT = 16
+/* Vertical grid line spacing — one marker every 250 ms for subtle time reference */
 const TIME_MARKER_INTERVAL_MS = 250
+/* How long a note must be held before a label marker appears on the chart */
 const SUSTAINED_THRESHOLD_MS = 200
+/* Shorter threshold after a quick note transition — feels more responsive during runs */
 const SUSTAINED_PASSING_THRESHOLD_MS = 150
 
 const { playTone } = useTonePlayer()
@@ -286,6 +290,8 @@ function drawChart() {
       const p2 = points[i + 1]
       const p3 = points[Math.min(points.length - 1, i + 2)]
 
+      // Catmull-Rom tangent: dividing by 6 gives ⅓ of the chord length,
+      // producing a smooth spline without overshooting between points.
       const cp1x = p1.x + (p2.x - p0.x) / 6
       const cp1y = p1.y + (p2.y - p0.y) / 6
       const cp2x = p2.x - (p3.x - p1.x) / 6
@@ -313,10 +319,13 @@ function drawChart() {
     const x = timeToX(sample.timestamp, now, width)
     const y = midiToY(sample.midiNote, height)
     const age = now - sample.timestamp
+    // Fade old samples — 0.15 minimum so the oldest dots are still faintly visible
     const opacity = Math.max(0.15, 1 - age / HISTORY_DURATION_MS)
 
     ctx.beginPath()
+    // Clean samples: 2 px dot; unclean: 1.5 px — visual hint of signal quality
     ctx.arc(x, y, sample.isClean ? 2 : 1.5, 0, Math.PI * 2)
+    // Unclean samples rendered at 60% opacity to dim them relative to clean ones
     ctx.fillStyle = sample.isClean
       ? cleanColor(sample.cents, opacity)
       : `rgba(250, 204, 21, ${opacity * 0.6})`
@@ -329,6 +338,7 @@ function drawChart() {
     const x = timeToX(marker.timestamp, now, width)
     const y = midiToY(marker.midiNote, height)
 
+    // Sustained marker dot: 4 px radius for visibility at chart scale
     ctx.beginPath()
     ctx.arc(x, y, 4, 0, Math.PI * 2)
     ctx.fillStyle = color2
@@ -348,7 +358,7 @@ function drawChart() {
       const bgH = 12 + padV * 2
       const bgX = labelX - bgW / 2
       const bgY = labelY - bgH / 2
-      const bgR = 3
+      const bgR = 3 // corner radius for the label background pill
 
       ctx.fillStyle = 'rgba(15, 23, 42, 0.75)'
       ctx.beginPath()
@@ -378,6 +388,7 @@ function drawChart() {
   if (latestSample && latestPoint && latestSample.isClean) {
     const headColor = cleanColor(latestSample.cents, 1)
 
+    // Head dot: outer glow ring (7 px) + solid color center (5 px)
     ctx.beginPath()
     ctx.arc(latestPoint.x, latestPoint.y, 7, 0, Math.PI * 2)
     ctx.fillStyle = 'rgba(255, 255, 255, 0.25)'
@@ -417,6 +428,7 @@ watch(
 
     // Use fractional MIDI from the already-smoothed frequency to avoid
     // integer semitone staircase jumps caused by Math.round in frequencyToNote.
+    // MIDI formula on the already-smoothed frequency for sub-semitone precision
     const fractionalMidi = 12 * Math.log2(info.frequency / 440) + 69
 
     samples.push({
@@ -426,6 +438,7 @@ watch(
       cents: info.cents,
     })
 
+    // +100 ms buffer beyond SUSTAINED_THRESHOLD_MS — treats any gap this long as a singing pause
     const isPause =
       lastSampleTime > 0 && now - lastSampleTime > SUSTAINED_THRESHOLD_MS + 100
     lastSampleTime = now

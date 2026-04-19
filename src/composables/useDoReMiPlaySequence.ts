@@ -3,6 +3,7 @@ import type { ToneEngine } from './toneEngine'
 import { defaultToneEngine } from './toneEngine'
 import { noteToFrequency } from '@/utils/noteUtils'
 
+/* Time between sequential notes in the Do-Re-Mi preview — 250 ms ≈ 16th notes at 60 BPM */
 const NOTE_INTERVAL_MS = 250
 
 type PlaySequenceOptions = {

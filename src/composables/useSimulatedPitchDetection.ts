@@ -28,6 +28,7 @@ export function useSimulatedPitchDetection(config: SimulationConfig) {
     )
     const centsOffset =
       config.cents.value + (Math.random() - 0.5) * config.jitter.value
+    // 1200 cents = 1 octave; 2^(cents/1200) converts cents offset to frequency ratio
     return baseFrequency * Math.pow(2, centsOffset / 1200)
   }
 
@@ -40,6 +41,7 @@ export function useSimulatedPitchDetection(config: SimulationConfig) {
     noteInfo.value = detected
     prevMidi = detected?.midiNote
     clarity.value = Math.min(1, Math.max(0, config.clarity.value))
+    // 0.85 matches CLARITY_THRESHOLD in usePitchDetection — keeps simulation consistent
     isClean.value = clarity.value >= 0.85
 
     animationFrameId = requestAnimationFrame(tick)
