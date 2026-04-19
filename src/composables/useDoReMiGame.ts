@@ -55,6 +55,8 @@ export {
 }
 export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep }
 
+export type DoReMiGameResult = ReturnType<typeof useDoReMiGame>
+
 export function useDoReMiGame(options: DoReMiGameOptions = {}) {
   const holdDurationMs = ref(options.holdDurationMs ?? DEFAULT_HOLD_DURATION_MS)
   const startingSemitoneOffset = ref(DEFAULT_STARTING_SEMITONE_OFFSET)

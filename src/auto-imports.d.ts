@@ -113,7 +113,7 @@ declare global {
   export type { ToneMode, ToneEngine } from './composables/toneEngine'
   import('./composables/toneEngine')
   // @ts-ignore
-  export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep } from './composables/useDoReMiGame'
+  export type { DoReMiGameResult, DoReMiGameOptions, PitchDetectionProvider, ScaleStep } from './composables/useDoReMiGame'
   import('./composables/useDoReMiGame')
   // @ts-ignore
   export type { SimulatedToneConfig } from './composables/useSimulatedMultiToneDetection'

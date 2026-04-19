@@ -16,6 +16,7 @@ declare module 'vue' {
     Button: typeof import('./components/generic/Button.vue')['default']
     CentsDeviationBar: typeof import('./components/generic/CentsDeviationBar.vue')['default']
     DetectedToneCard: typeof import('./components/tone-detector/DetectedToneCard.vue')['default']
+    DoReMiDisplay: typeof import('./components/do-re-mi/DoReMiDisplay.vue')['default']
     DoReMiNoteTarget: typeof import('./components/do-re-mi/DoReMiNoteTarget.vue')['default']
     DoReMiPage: typeof import('./components/do-re-mi/DoReMiPage.vue')['default']
     DoReMiScale: typeof import('./components/do-re-mi/DoReMiScale.vue')['default']
