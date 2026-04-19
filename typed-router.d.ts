@@ -41,6 +41,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/do-re-mi-test': RouteRecordInfo<
+      '/do-re-mi-test',
+      '/do-re-mi-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/pitch-detector': RouteRecordInfo<
       '/pitch-detector',
       '/pitch-detector',
@@ -91,6 +98,12 @@ declare module 'vue-router/auto-routes' {
     'src/pages/do-re-mi.vue': {
       routes:
         | '/do-re-mi'
+      views:
+        | never
+    }
+    'src/pages/do-re-mi-test.vue': {
+      routes:
+        | '/do-re-mi-test'
       views:
         | never
     }
