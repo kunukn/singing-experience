@@ -16,7 +16,7 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), {
   midiMin: 36,
-  midiMax: 84,
+  midiMax: 96,
 })
 
 const { t } = useI18n()

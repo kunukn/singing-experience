@@ -22,7 +22,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-1 flex-col items-center gap-4 sm:gap-6">
     <p class="text-sm text-gray-400">
-      {{ t('toneDetector.pageDescription') }}
+      <span>BETA:</span> {{ t('toneDetector.pageDescription') }}
     </p>
 
     <p v-if="error" class="text-sm text-red-400">{{ error }}</p>

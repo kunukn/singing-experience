@@ -68,6 +68,13 @@ describe('frequencyToNote', () => {
     expect(result!.note).toBe('C')
     expect(result!.octave).toBe(6)
   })
+
+  test('handles very high frequency (C7)', () => {
+    const result = frequencyToNote(2093.0)
+    expect(result).not.toBeNull()
+    expect(result!.note).toBe('C')
+    expect(result!.octave).toBe(7)
+  })
 })
 
 describe('noteToFrequency', () => {

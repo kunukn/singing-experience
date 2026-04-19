@@ -1,6 +1,6 @@
 const MIDI_MIN = 36 // C2
-const MIDI_MAX = 84 // C6
-const NOTE_MIDIS = [36, 48, 60, 72, 84]
+const MIDI_MAX = 96 // C7
+const NOTE_MIDIS = [36, 48, 60, 72, 84, 96]
 
 /*
  * "Ember to Sky" theme — warm earthy bass rising to cool ethereal soprano.
@@ -12,6 +12,7 @@ export const OCTAVE_COLORS: [number, number, number][] = [
   [20, 83, 45], // C4 — moss green
   [14, 116, 144], // C5 — ocean teal
   [79, 70, 229], // C6 — soft lavender
+  [168, 50, 168], // C7 — soft magenta
 ]
 
 /*
@@ -23,6 +24,7 @@ const OCTAVE_TEXT_COLORS: [number, number, number][] = [
   [74, 222, 128], // C4 — light green
   [34, 211, 238], // C5 — light cyan
   [167, 139, 250], // C6 — light lavender
+  [232, 140, 232], // C7 — light magenta
 ]
 
 function interpolateColor(

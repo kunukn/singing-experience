@@ -54,7 +54,7 @@ describe('colorRgbAtMidi', () => {
     expect(low).toEqual(atMin)
 
     const high = colorRgbAtMidi(200)
-    const atMax = colorRgbAtMidi(84)
+    const atMax = colorRgbAtMidi(96)
     expect(high).toEqual(atMax)
   })
 })

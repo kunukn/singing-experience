@@ -20,8 +20,9 @@ type VoiceRange = {
 }
 
 const VOICE_RANGES: VoiceRange[] = [
-  { label: 'Full (C2–C6)', midiMin: 36, midiMax: 84 },
+  { label: 'Full (C2–C7)', midiMin: 36, midiMax: 96 },
   { label: 'Soprano (C4–C6)', midiMin: 60, midiMax: 84 },
+  { label: 'Soprano+ (C4–C7)', midiMin: 60, midiMax: 96 },
   { label: 'Mezzo-Soprano (A3–A5)', midiMin: 57, midiMax: 81 },
   { label: 'Alto (F3–F5)', midiMin: 53, midiMax: 77 },
   { label: 'Tenor (B2–B4)', midiMin: 47, midiMax: 71 },
