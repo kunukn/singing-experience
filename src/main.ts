@@ -1,28 +1,14 @@
 import '@/_init.ts'
-import ar from '@/locales/ar.json'
-import da from '@/locales/da.json'
-import en from '@/locales/en.json'
-import es from '@/locales/es.json'
-import hi from '@/locales/hi.json'
-import zh from '@/locales/zh.json'
+import { i18n } from '@/i18n'
 import { createPinia } from 'pinia'
 import { registerSW } from 'virtual:pwa-register'
 import { createApp } from 'vue'
-import { createI18n } from 'vue-i18n'
 import { createRouter, createWebHashHistory } from 'vue-router'
 import { handleHotUpdate, routes } from 'vue-router/auto-routes'
 import App from './App.vue'
 import './style.css'
 
 registerSW({ immediate: true })
-
-const savedLocale = localStorage.getItem('locale') ?? 'en'
-
-const i18n = createI18n({
-  legacy: false,
-  locale: savedLocale,
-  messages: { en, da, zh, es, hi, ar },
-})
 
 const router = createRouter({
   /*
