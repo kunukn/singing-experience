@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NoteInfo } from '@/utils/noteUtils'
-import { midiRangeToScaleNotes } from '@/utils/noteUtils'
+import { midiRangeToScaleNotes, NOTE_NAMES } from '@/utils/noteUtils'
 import { cleanTextColor } from '@/utils/pitchColors'
 import PitchHistoryChart from './PitchHistoryChart.vue'
 
@@ -32,10 +32,10 @@ const highlightedMidi = computed(() => {
   const idx = currentPlayingIndex.value
   if (idx < 0 || idx >= rangeNotes.value.length) return null
 
-  const count = rangeNotes.value.length
-  const step = (props.midiMax - props.midiMin) / (count - 1)
+  const n = rangeNotes.value[idx]
+  const noteIndex = NOTE_NAMES.indexOf(n.note)
 
-  return Math.round(props.midiMin + idx * step)
+  return (n.octave + 1) * 12 + noteIndex
 })
 
 function toggleSequence() {

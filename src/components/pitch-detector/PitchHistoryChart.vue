@@ -115,6 +115,17 @@ const gridNotes = computed<GridNote[]>(() => {
     })
   }
 
+  // Ensure the top boundary note is always included
+  if (notes.length === 0 || notes[notes.length - 1].midi !== props.midiMax) {
+    const info = midiToNoteLabel(props.midiMax)
+    notes.push({
+      midi: props.midiMax,
+      label: info.label,
+      note: info.note,
+      octave: info.octave,
+    })
+  }
+
   return notes
 })
 

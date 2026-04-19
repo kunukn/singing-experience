@@ -219,19 +219,24 @@ function midiRangeToScaleNotes(
 ): ScaleNote[] {
   if (count < 2) return []
 
-  const step = (midiMax - midiMin) / (count - 1)
+  const step = Math.max(1, Math.round((midiMax - midiMin) / (count - 1)))
+  const notes: ScaleNote[] = []
 
-  return Array.from({ length: count }, (_, i) => {
-    const midi = Math.round(midiMin + i * step)
+  for (let i = 0; i < count - 1; i++) {
+    const midi = midiMin + i * step
+    if (midi > midiMax) break
+
     const noteIndex = ((midi % 12) + 12) % 12
     const octave = Math.floor(midi / 12) - 1
+    notes.push({ solfege: '', note: NOTE_NAMES[noteIndex], octave })
+  }
 
-    return {
-      solfege: '',
-      note: NOTE_NAMES[noteIndex],
-      octave,
-    }
-  })
+  // Always include midiMax as the final note
+  const noteIndex = ((midiMax % 12) + 12) % 12
+  const octave = Math.floor(midiMax / 12) - 1
+  notes.push({ solfege: '', note: NOTE_NAMES[noteIndex], octave })
+
+  return notes
 }
 
 export {
