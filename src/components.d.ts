@@ -31,6 +31,7 @@ declare module 'vue' {
     PitchDetectorPage: typeof import('./components/pitch-detector/PitchDetectorPage.vue')['default']
     PitchDetectorTestPage: typeof import('./components/pitch-detector/PitchDetectorTestPage.vue')['default']
     PitchDisplay: typeof import('./components/pitch-detector/PitchDisplay.vue')['default']
+    PitchHistoryCanvas: typeof import('./components/pitch-detector/PitchHistoryCanvas.vue')['default']
     PitchHistoryChart: typeof import('./components/pitch-detector/PitchHistoryChart.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
