@@ -7,7 +7,8 @@
     "switchToEnglish": "Skift til Engelsk"
   },
   "errors": {
-    "microphoneAccess": "Kunne ikke få adgang til mikrofonen"
+    "microphoneAccess": "Kunne ikke få adgang til mikrofonen",
+    "microphoneDenied": "Mikrofonadgang er blokeret. Aktiver den i dine browserindstillinger, og genindlæs siden."
   },
   "sounds": {
     "toneSound": "Tone lyd:",
@@ -33,7 +34,7 @@
         "description": "Registrer flere samtidige toner i realtid. Syng en harmoni eller spil en akkord og se hvilke toner der lyder."
       }
     },
-    "privacy": "🔒 Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
+    "privacy": "Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
   },
   "doReMi": {
     "title": "DO RE MI Spil",

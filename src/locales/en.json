@@ -7,7 +7,8 @@
     "switchToEnglish": "Switch to English"
   },
   "errors": {
-    "microphoneAccess": "Failed to access microphone"
+    "microphoneAccess": "Failed to access microphone",
+    "microphoneDenied": "Microphone access is blocked. Please enable it in your browser settings and reload the page."
   },
   "sounds": {
     "toneSound": "Tone sound:",
@@ -33,7 +34,7 @@
         "description": "Detect multiple simultaneous tones in real time. Sing a harmony or play a chord and see which notes are sounding."
       }
     },
-    "privacy": "🔒 Your privacy is safe — this app runs 100% in your browser. No audio is recorded or sent anywhere."
+    "privacy": "Your privacy is safe — this app runs 100% in your browser. No audio is recorded or sent anywhere."
   },
   "doReMi": {
     "title": "DO RE MI Game",

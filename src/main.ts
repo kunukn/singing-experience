@@ -52,3 +52,18 @@ if (import.meta.env.DEV || location.href.includes('debug_rainbow=1')) {
     initDebugRainbow(),
   )
 }
+
+try {
+  const micPermission = await navigator.permissions.query({
+    name: 'microphone' as PermissionName,
+  })
+  debugLog('App initialized', micPermission)
+  if (micPermission.state === 'denied') {
+    const { t } = i18n.global
+    useErrorToastStore().addError(t('errors.microphoneDenied'), {
+      persistent: true,
+    })
+  }
+} catch {
+  console.error('App initialized (Permissions API not supported)')
+}

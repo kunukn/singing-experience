@@ -56,6 +56,29 @@ describe('useErrorToastStore', () => {
     expect(store.toasts).toHaveLength(0)
   })
 
+  test('should not auto-remove persistent toast after 5 seconds', () => {
+    const store = useErrorToastStore()
+
+    store.addError('Persistent error', { persistent: true })
+    expect(store.toasts).toHaveLength(1)
+
+    vi.advanceTimersByTime(10000)
+
+    expect(store.toasts).toHaveLength(1)
+    expect(store.toasts[0].message).toBe('Persistent error')
+  })
+
+  test('should remove persistent toast when dismissed manually', () => {
+    const store = useErrorToastStore()
+
+    store.addError('Persistent error', { persistent: true })
+    const id = store.toasts[0].id
+
+    store.removeError(id)
+
+    expect(store.toasts).toHaveLength(0)
+  })
+
   test('should not fail when removing a non-existent id', () => {
     const store = useErrorToastStore()
 

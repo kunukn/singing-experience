@@ -5,17 +5,23 @@ type ErrorToast = {
   message: string
 }
 
+type AddErrorOptions = {
+  persistent?: boolean
+}
+
 export const useErrorToastStore = defineStore('errorToast', () => {
   const toasts = ref<ErrorToast[]>([])
   let nextId = 0
 
-  function addError(message: string) {
+  function addError(message: string, options?: AddErrorOptions) {
     const id = nextId++
     toasts.value.push({ id, message })
 
-    setTimeout(() => {
-      removeError(id)
-    }, 5000)
+    if (!options?.persistent) {
+      setTimeout(() => {
+        removeError(id)
+      }, 5000)
+    }
   }
 
   function removeError(id: number) {

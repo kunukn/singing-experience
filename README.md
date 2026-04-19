@@ -124,6 +124,18 @@ iPhones and iPads have a **silent mode switch**. When silent mode is on, the bro
 
 If audio seems to play but you can't hear it, your device may be routing sound to a Bluetooth device, HDMI display, or AirPlay receiver. Disconnect external audio devices or switch the output in your device's audio settings.
 
+### 🎤 Microphone access was denied
+
+If you accidentally blocked microphone access, the browser remembers your choice and won't ask again. The app needs microphone permission to hear your voice — without it, nothing will work.
+
+**How to re-enable:**
+
+- **Chrome / Edge (desktop)** — click the 🔒 lock (or tune/slider) icon in the address bar → find **Microphone** → change to **Allow** → reload the page.
+- **Firefox (desktop)** — click the 🔒 lock icon → **Connection secure** → **More information** → **Permissions** tab → find **Use the Microphone** → remove the block.
+- **Safari (Mac)** — Safari menu → **Settings** → **Websites** → **Microphone** → find the site and change to **Allow**.
+- **Safari (iPhone / iPad)** — open **Settings** → **Safari** → **Microphone** → set to **Allow** (or **Ask**).
+- **Chrome (Android)** — tap the 🔒 lock icon in the address bar → **Permissions** → **Microphone** → change to **Allow**.
+
 ## License
 
 This project is open source under the [0BSD License](LICENSE).

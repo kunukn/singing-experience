@@ -16,14 +16,20 @@ const store = useErrorToastStore()
       leaveFromClass="translate-y-0 opacity-100"
       leaveToClass="translate-y-4 opacity-0"
     >
-      <button
+      <div
         v-for="toast in store.toasts"
         :key="toast.id"
-        class="w-fit max-w-sm cursor-pointer rounded-lg bg-red-600 px-4 py-2 text-sm text-white shadow-lg"
-        @click="store.removeError(toast.id)"
+        class="flex w-fit max-w-sm items-center gap-2 rounded-lg bg-red-600 py-2 pr-2 pl-4 text-sm text-white shadow-lg"
       >
-        {{ toast.message }}
-      </button>
+        <span>{{ toast.message }}</span>
+        <button
+          class="cursor-pointer rounded-md px-2 py-0.5 font-bold text-white/80 transition-colors hover:bg-red-700 hover:text-white"
+          @click="store.removeError(toast.id)"
+          aria-label="Dismiss"
+        >
+          ✕
+        </button>
+      </div>
     </TransitionGroup>
   </div>
 </template>
