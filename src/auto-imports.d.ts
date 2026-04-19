@@ -91,6 +91,7 @@ declare global {
   const usePitchDetection: typeof import('./composables/usePitchDetection').usePitchDetection
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter
+  const useSimulatedMultiToneDetection: typeof import('./composables/useSimulatedMultiToneDetection').useSimulatedMultiToneDetection
   const useSimulatedPitchDetection: typeof import('./composables/useSimulatedPitchDetection').useSimulatedPitchDetection
   const useSlots: typeof import('vue').useSlots
   const useTemplateRef: typeof import('vue').useTemplateRef
@@ -111,6 +112,9 @@ declare global {
   // @ts-ignore
   export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep } from './composables/useDoReMiGame'
   import('./composables/useDoReMiGame')
+  // @ts-ignore
+  export type { SimulatedToneConfig } from './composables/useSimulatedMultiToneDetection'
+  import('./composables/useSimulatedMultiToneDetection')
 }
 
 // for vue template auto import
@@ -198,6 +202,7 @@ declare module 'vue' {
     readonly usePitchDetection: UnwrapRef<typeof import('./composables/usePitchDetection')['usePitchDetection']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
+    readonly useSimulatedMultiToneDetection: UnwrapRef<typeof import('./composables/useSimulatedMultiToneDetection')['useSimulatedMultiToneDetection']>
     readonly useSimulatedPitchDetection: UnwrapRef<typeof import('./composables/useSimulatedPitchDetection')['useSimulatedPitchDetection']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>

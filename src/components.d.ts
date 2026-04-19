@@ -32,6 +32,7 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     Select: typeof import('./components/generic/Select.vue')['default']
     ToneDetectorPage: typeof import('./components/tone-detector/ToneDetectorPage.vue')['default']
+    ToneDetectorTestPage: typeof import('./components/tone-detector/ToneDetectorTestPage.vue')['default']
     ToneModeSelect: typeof import('./components/generic/ToneModeSelect.vue')['default']
     TopBar: typeof import('./components/generic/TopBar.vue')['default']
   }

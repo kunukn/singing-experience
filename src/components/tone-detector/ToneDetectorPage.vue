@@ -110,9 +110,12 @@ onUnmounted(() => {
           v-for="tone in detectedTones"
           :key="tone.midiNote"
           class="flex flex-col items-center transition-colors duration-150"
-          :style="{ color: textColorAtMidi(tone.midiNote) }"
+          :style="{
+            color: tone.isClean ? textColorAtMidi(tone.midiNote) : undefined,
+          }"
+          :class="{ 'text-gray-500 opacity-30': !tone.isClean }"
         >
-          <div>
+          <div v-if="tone.isClean">
             <span class="text-5xl font-bold tracking-tight sm:text-7xl">
               {{ tone.note }}
             </span>

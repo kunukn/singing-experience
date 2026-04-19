@@ -25,6 +25,9 @@ const HARMONIC_TOLERANCE = 0.04
 /* ms to hold a tone before reporting onset — avoids transient flicker on brief sounds */
 const ONSET_DEBOUNCE_MS = 40
 
+/* ±30 cents — only report a note when the frequency is within ~1.7% of perfect pitch */
+const MAX_CENTS_DEVIATION = 30
+
 /* Maps a 0–10 user slider to the adaptive range in dB (lower = stricter).
  * ×4 gives 0–40 dB range — at 0 only the loudest peak passes, at 10 even quiet tones show. */
 function sensitivityToAdaptiveRange(sensitivity: number): number {
@@ -37,7 +40,9 @@ function noiseGateToFloorDb(noiseGate: number): number {
   return -80 + noiseGate * 4
 }
 
-type DetectedTone = NoteInfo
+type DetectedTone = NoteInfo & {
+  isClean: boolean
+}
 
 type ToneDetectionConfig = {
   sensitivity: Readonly<Ref<number>>
@@ -189,7 +194,10 @@ export function useMultiToneDetection(config?: ToneDetectionConfig) {
       if (seenMidi.has(info.midiNote)) continue
 
       seenMidi.add(info.midiNote)
-      tones.push(info)
+      tones.push({
+        ...info,
+        isClean: Math.abs(info.cents) <= MAX_CENTS_DEVIATION,
+      })
     }
 
     /* Sort by MIDI note ascending (low to high) */
