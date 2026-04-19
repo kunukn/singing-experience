@@ -5,6 +5,7 @@ const confettiCanvas = ref<HTMLCanvasElement | null>(null)
 const { fireConfetti } = useConfetti(confettiCanvas)
 
 useConfettiStore().registerFireConfetti(fireConfetti)
+useDocumentDirection()
 </script>
 
 <template>

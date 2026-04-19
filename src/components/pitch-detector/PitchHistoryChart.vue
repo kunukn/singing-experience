@@ -571,7 +571,7 @@ onUnmounted(() => {
       v-for="pos in labelPositions"
       :key="pos.midi"
       :data-testid="`btn-${pos.label}`"
-      class="absolute left-0 origin-center -translate-y-1/2 cursor-pointer border-none bg-transparent px-0 font-mono text-base transition-all duration-150"
+      class="absolute start-0 origin-center -translate-y-1/2 cursor-pointer border-none bg-transparent px-0 font-mono text-base transition-all duration-150"
       :class="
         activeMidi === pos.midi
           ? 'scale-110 text-yellow-400'

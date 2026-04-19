@@ -47,12 +47,12 @@ const indicatorTop = computed(() => {
     >
       <!-- Center marker -->
       <div
-        class="absolute top-1/2 left-0 z-10 h-0.5 w-full -translate-y-1/2 bg-gray-500"
+        class="absolute start-0 top-1/2 z-10 h-0.5 w-full -translate-y-1/2 bg-gray-500"
       />
       <!-- Deviation indicator -->
       <div
         v-if="cents !== null"
-        class="absolute left-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-100"
+        class="absolute start-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-100"
         :style="{ top: indicatorTop, backgroundColor: indicatorColor }"
       />
     </div>

@@ -20,7 +20,7 @@ const store = useErrorToastStore()
       <div
         v-for="toast in store.toasts"
         :key="toast.id"
-        class="flex min-h-14 w-full max-w-120 items-center justify-between gap-2 rounded-lg bg-red-600 py-2 pr-2 pl-4 text-sm text-white shadow-lg"
+        class="flex min-h-14 w-full max-w-120 items-center justify-between gap-2 rounded-lg bg-red-600 py-2 ps-4 pe-2 text-sm text-white shadow-lg"
       >
         <span>{{ toast.message }}</span>
         <button

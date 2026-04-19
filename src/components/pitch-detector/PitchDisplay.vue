@@ -102,7 +102,7 @@ defineExpose({ stopSequence })
             :style="{ color: centsColor ?? undefined }"
           >
             <span>{{ t('pitchDetector.cents') }}</span>
-            <span class="min-w-6 text-right tabular-nums">
+            <span class="min-w-6 text-end tabular-nums">
               {{ noteInfo.cents > 0 ? '+' : '' }}{{ noteInfo.cents }}
             </span>
           </div>
@@ -112,12 +112,12 @@ defineExpose({ stopSequence })
           v-show="isListening"
           class="grid grid-cols-[auto_auto] items-center gap-x-1 text-gray-400 tabular-nums"
         >
-          <span class="min-w-12 text-right tabular-nums">{{
+          <span class="min-w-12 text-end tabular-nums">{{
             frequency != null ? Math.round(frequency) : '-'
           }}</span>
           <span class="text-gray-600">{{ t('pitchDetector.hz') }}</span>
 
-          <span class="text-right tabular-nums"
+          <span class="text-end tabular-nums"
             >{{ Math.round(clarity * 100) }}%</span
           >
           <span class="text-gray-600">{{ t('pitchDetector.clarity') }}</span>

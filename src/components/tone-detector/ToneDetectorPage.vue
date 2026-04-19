@@ -37,7 +37,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-1 flex-col items-center gap-4 sm:gap-6">
     <p class="text-sm text-gray-400">
-      <Badge class="mr-1">Beta</Badge>
+      <Badge class="me-1">Beta</Badge>
       <span> {{ t('toneDetector.pageDescription') }}</span>
     </p>
 

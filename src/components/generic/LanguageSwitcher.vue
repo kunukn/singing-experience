@@ -3,11 +3,11 @@ const { locale } = useI18n()
 
 const languages = [
   { code: 'en', label: '🇬🇧 EN' },
-  { code: 'da', label: '🇩🇰 DA' },
   { code: 'zh', label: '🇨🇳 ZH' },
-  { code: 'es', label: '🇪🇸 ES' },
   { code: 'hi', label: '🇮🇳 HI' },
+  { code: 'es', label: '🇪🇸 ES' },
   { code: 'ar', label: '🇸🇦 AR' },
+  { code: 'da', label: '🇩🇰 DA' },
 ] as const
 
 const selected = ref(locale.value)

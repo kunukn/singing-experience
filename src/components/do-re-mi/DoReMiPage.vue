@@ -195,7 +195,7 @@ onUnmounted(() => {
         <div
           class="flex items-center gap-2 md:col-span-2 md:grid md:grid-cols-subgrid md:items-center"
         >
-          <label class="hidden text-right text-sm text-gray-400 md:block">{{
+          <label class="hidden text-end text-sm text-gray-400 md:block">{{
             t('doReMi.scaleMode')
           }}</label>
           <Select v-model="selectedScaleMode">
@@ -226,7 +226,7 @@ onUnmounted(() => {
           class="hidden items-center gap-2 min-[500px]:flex md:col-span-2 md:grid md:grid-cols-subgrid md:items-center"
         >
           <label
-            class="hidden text-right text-sm text-gray-400 md:block md:min-w-22.5"
+            class="hidden text-end text-sm text-gray-400 md:block md:min-w-22.5"
             >{{ t('sounds.toneSound') }}</label
           >
           <ToneModeSelect v-model="selectedToneMode" />
@@ -262,9 +262,7 @@ onUnmounted(() => {
       <Button class="w-full max-w-35" variant="red" @click="handleStop">
         {{ t('generic.stop') }}
       </Button>
-      <p
-        class="min-w-20 text-right font-mono text-lg text-gray-400 tabular-nums"
-      >
+      <p class="min-w-20 text-end font-mono text-lg text-gray-400 tabular-nums">
         ⏱ {{ elapsedSeconds }}s
       </p>
 

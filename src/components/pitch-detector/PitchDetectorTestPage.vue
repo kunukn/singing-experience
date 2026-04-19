@@ -91,7 +91,7 @@ onUnmounted(() => {
       </Select>
 
       <Button
-        class="ml-auto min-w-27.5"
+        class="ms-auto min-w-27.5"
         :variant="isListening ? 'red' : 'green'"
         @click="toggle"
       >
