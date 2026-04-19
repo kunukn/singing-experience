@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { loadLocaleMessages } from '@/i18n'
+
 const { locale } = useI18n()
 
 const languages = [
@@ -7,12 +9,17 @@ const languages = [
   { code: 'hi', label: '🇮🇳 HI' },
   { code: 'es', label: '🇪🇸 ES' },
   { code: 'ar', label: '🇸🇦 AR' },
+  { code: 'fr', label: '🇫🇷 FR' },
+  { code: 'bn', label: '🇧🇩 BN' },
+  { code: 'pt', label: '🇧🇷 PT' },
+  { code: 'ru', label: '🇷🇺 RU' },
   { code: 'da', label: '🇩🇰 DA' },
 ] as const
 
 const selected = ref(locale.value)
 
-watch(selected, (next) => {
+watch(selected, async (next) => {
+  await loadLocaleMessages(next)
   locale.value = next
   localStorage.setItem('locale', next)
 })

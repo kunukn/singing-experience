@@ -145,6 +145,33 @@ See `src/auto-imports.d.ts` for the full list of available auto-imports.
 - Separate API calls into the `/src/apis/` directory
 - Prefer absolute import paths when not in the same folder. E.g. `import { Gallery } from '@/Gallery'` instead of `import { Gallery } from '../../Gallery'`
 
+### RTL & Logical Properties
+
+The app supports RTL languages (Arabic). All spacing, alignment, and positioning must use **CSS logical properties** so layouts mirror correctly in RTL mode.
+
+**Tailwind CSS** — use logical utilities instead of physical ones:
+
+| ❌ Physical (avoid) | ✅ Logical (use) |
+|---|---|
+| `ml-*` / `mr-*` | `ms-*` / `me-*` |
+| `pl-*` / `pr-*` | `ps-*` / `pe-*` |
+| `left-*` / `right-*` | `start-*` / `end-*` |
+| `text-left` / `text-right` | `text-start` / `text-end` |
+| `rounded-l-*` / `rounded-r-*` | `rounded-s-*` / `rounded-e-*` |
+| `border-l-*` / `border-r-*` | `border-s-*` / `border-e-*` |
+
+**Plain CSS** — use logical equivalents:
+
+| ❌ Physical (avoid) | ✅ Logical (use) |
+|---|---|
+| `margin-left` / `margin-right` | `margin-inline-start` / `margin-inline-end` |
+| `padding-left` / `padding-right` | `padding-inline-start` / `padding-inline-end` |
+| `text-align: left` / `right` | `text-align: start` / `end` |
+| `left` / `right` (positioning) | `inset-inline-start` / `inset-inline-end` |
+| `border-left` / `border-right` | `border-inline-start` / `border-inline-end` |
+
+Physical `top`/`bottom` and `mt-*`/`mb-*` are fine — they don't flip in RTL.
+
 ### Early Return Spacing
 
 Always add a blank line after a single-line `return` (including early/guard returns) before the next statement. This improves readability by visually separating the guard clause from the rest of the logic.
@@ -256,3 +283,5 @@ Follow Conventional Commits specification:
 - ✅ Comment magic numbers and complex patterns that are hard to reason about without context
 - ✅ Use camelCase for Vue template prop bindings (`:currentStepIndex`, not `:current-step-index`)
 - ✅ Do not manually import `ref`, `computed`, `watch`, etc. from `vue` — they are auto-imported
+- ✅ Use CSS logical properties (`ms-*`, `me-*`, `start`, `end`) — never physical `ml-*`/`mr-*`/`left`/`right` for horizontal spacing or alignment
+- ✅ Wrap user-facing strings with `$t()` / `t()` for i18n — never hardcode display text

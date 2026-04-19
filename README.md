@@ -62,6 +62,25 @@ The app works fully offline after the first visit — all assets are cached by a
 - **Install it** like a native app: use "Add to Home Screen" on mobile or your browser's install option on desktop
 - Updates are applied automatically in the background when a new version is available
 
+### 🌍 Multiple Languages
+
+The app is available in 10 languages, covering roughly 60 % of the world's population:
+
+| | Language | Code |
+|---|---|---|
+| 🇬🇧 | English | en |
+| 🇨🇳 | 中文 (Chinese) | zh |
+| 🇮🇳 | हिन्दी (Hindi) | hi |
+| 🇪🇸 | Español (Spanish) | es |
+| 🇸🇦 | العربية (Arabic) | ar |
+| 🇫🇷 | Français (French) | fr |
+| 🇧🇩 | বাংলা (Bengali) | bn |
+| 🇧🇷 | Português (Portuguese) | pt |
+| 🇷🇺 | Русский (Russian) | ru |
+| 🇩🇰 | Dansk (Danish) | da |
+
+Locale files are lazy-loaded — only the selected language is fetched. To add a new language, create a JSON file in `src/locales/` and register it in the language switcher.
+
 ## 🔒 Your Privacy
 
 **Everything happens on your device.** This is a static app — there is no server and no backend.

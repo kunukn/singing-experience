@@ -1,0 +1,83 @@
+{
+  "generic": {
+    "start": "Démarrer",
+    "stop": "Arrêter",
+    "backToMenu": "← Retour au menu"
+  },
+  "errors": {
+    "microphoneAccess": "Impossible d'accéder au microphone",
+    "microphoneDenied": "L'accès au microphone est bloqué. Veuillez l'activer dans les paramètres de votre navigateur et recharger la page."
+  },
+  "sounds": {
+    "toneSound": "Son de tonalité :",
+    "piano": "Piano",
+    "bell": "Cloche",
+    "bass": "Basse",
+    "square": "Carré"
+  },
+  "home": {
+    "title": "Singing Experience",
+    "subtitle": "Choisissez un programme pour commencer",
+    "programs": {
+      "pitchDetector": {
+        "name": "Détecteur de hauteur",
+        "description": "Détectez la hauteur de votre voix en temps réel. Voyez la note, l'octave et la justesse de votre chant."
+      },
+      "doReMi": {
+        "name": "Jeu DO RÉ MI",
+        "description": "Chantez la gamme — DO RÉ MI FA SOL LA SI DO. Tenez chaque note quelques secondes pour avancer."
+      },
+      "toneDetector": {
+        "name": "Détecteur de tons",
+        "description": "Détectez plusieurs tons simultanément en temps réel. Chantez une harmonie ou jouez un accord et voyez quelles notes résonnent."
+      }
+    },
+    "privacy": "Votre vie privée est protégée — cette application fonctionne à 100 % dans votre navigateur. Aucun son n'est enregistré ni envoyé."
+  },
+  "doReMi": {
+    "title": "Jeu DO RÉ MI",
+    "singNoteFor": "Chantez chaque note pendant {seconds} secondes pour avancer",
+    "holdDuration": "Durée de maintien :",
+    "congratulations": "Félicitations !",
+    "congratulationsMessage": "Vous avez complété la gamme {mode} en tenant chaque note pendant {seconds} secondes !",
+    "time": "⏱ Temps :",
+    "playAgain": "Rejouer",
+    "singThisNote": "Chantez ceci :",
+    "youreSinging": "Vous chantez :",
+    "tooLow": "♭ Trop bas",
+    "perfect": "Parfait",
+    "tooHigh": "Trop haut ♯",
+    "cents": "cents",
+    "allowedRange": "Plage autorisée : ±50 cents · Cible : {hz} Hz",
+    "playSolfege": "Jouer {solfege}",
+    "scaleMode": "Mode de gamme :",
+    "startTone": "Ton de départ :",
+    "doReMiButton": "Do Ré Mi",
+    "muteButton": "Muet",
+    "currentHz": "Vous : {hz} Hz"
+  },
+  "pitchDetector": {
+    "listening": "Écoute en cours...",
+    "flat": "♭ Bémol",
+    "inTune": "Juste",
+    "sharp": "Dièse ♯",
+    "hz": "Hz",
+    "clarity": "Clarté",
+    "cents": "cents"
+  },
+  "toneDetector": {
+    "listening": "Écoute en cours...",
+    "hz": "Hz",
+    "tonesDetected": "{count} ton(s) détecté(s)",
+    "pressStart": "Appuyez sur Démarrer pour détecter les tons",
+    "pageDescription": "Détecte plusieurs tons à la fois (C2–C7). Chantez une harmonie, fredonnez plusieurs notes et voyez chaque ton affiché en temps réel.",
+    "sensitivityDescription": "Contrôle le nombre de tons captés. Réduisez pour filtrer les harmoniques lorsque vous chantez ou jouez une seule note. Augmentez pour détecter plus de tons simultanés dans une harmonie ou un accord.",
+    "noiseGateDescription": "Définit le volume minimum requis pour détecter un ton. Augmentez si vous voyez de faux tons pendant le silence. Réduisez pour capter les sons plus faibles.",
+    "sensitivity": "Sensibilité",
+    "noiseGate": "Seuil de bruit",
+    "strict": "Moins de tons",
+    "loose": "Plus de tons",
+    "quiet": "Moins de filtrage",
+    "loud": "Plus de filtrage"
+  }
+}
