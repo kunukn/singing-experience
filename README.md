@@ -102,6 +102,28 @@ To run the app on your own computer, you need [Node.js](https://nodejs.org/) ins
 
 That's it! The app runs entirely in your browser.
 
+## Troubleshooting
+
+### 🔇 No sound on iPhone or iPad
+
+iPhones and iPads have a **silent mode switch**. When silent mode is on, the browser cannot play any audio — even if the in-app volume is fine.
+
+**Fix:**
+
+- **Older models** — flip the physical silent switch off (so no orange is visible).
+- **Newer iPhones and iPads** — open **Control Center** and tap the **Silent Mode** button to turn it off.
+- Also check that **Do Not Disturb** is off (Control Center → Focus → Do Not Disturb), as it can suppress audio too.
+
+### 🔈 No sound on Android or other tablets
+
+- Make sure your device **volume is turned up** — use the physical volume buttons.
+- Check that **Do Not Disturb** mode is off (it can suppress audio on some devices).
+- If you're connected to **Bluetooth headphones or a speaker**, audio may be routed there instead of the device speaker.
+
+### 🎧 Audio plays through the wrong output
+
+If audio seems to play but you can't hear it, your device may be routing sound to a Bluetooth device, HDMI display, or AirPlay receiver. Disconnect external audio devices or switch the output in your device's audio settings.
+
 ## License
 
 This project is open source under the [0BSD License](LICENSE).
