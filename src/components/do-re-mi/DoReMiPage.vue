@@ -8,18 +8,59 @@ import {
 } from '@/composables/useDoReMiGame'
 import type { ToneMode } from '@/composables/useTonePlayer'
 import type { ScaleMode } from '@/utils/noteUtils'
+import { useLocalStorage } from '@vueuse/core'
 
 const { t } = useI18n()
 
 const holdDurationOptions = [0.1, 0.3, 0.5, 1, 2, 3, 4, 5, 6, 7, 10]
-const selectedDurationSec = ref(DEFAULT_HOLD_DURATION_MS / 1000)
+const VALID_TONE_MODES: ToneMode[] = ['piano', 'bell', 'bass', 'square']
+const VALID_SCALE_MODES: ScaleMode[] = [
+  'ionian',
+  'dorian',
+  'phrygian',
+  'lydian',
+  'mixolydian',
+  'aeolian',
+  'locrian',
+]
+
+const defaultDurationSec = DEFAULT_HOLD_DURATION_MS / 1000
+const selectedDurationSec = useLocalStorage(
+  'singing.durationSec',
+  defaultDurationSec,
+)
+if (!holdDurationOptions.includes(selectedDurationSec.value)) {
+  selectedDurationSec.value = defaultDurationSec
+}
 
 const { toneMode, setToneMode } = useTonePlayer()
-const selectedToneMode = ref<ToneMode>(toneMode.value)
+const selectedToneMode = useLocalStorage<ToneMode>(
+  'singing.toneMode',
+  toneMode.value,
+)
+if (!VALID_TONE_MODES.includes(selectedToneMode.value)) {
+  selectedToneMode.value = toneMode.value
+}
 
-const selectedStartOffset = ref(DEFAULT_STARTING_SEMITONE_OFFSET)
+const selectedStartOffset = useLocalStorage(
+  'singing.startOffset',
+  DEFAULT_STARTING_SEMITONE_OFFSET,
+)
+if (
+  typeof selectedStartOffset.value !== 'number' ||
+  !Number.isInteger(selectedStartOffset.value) ||
+  !START_TONE_OPTIONS.some((o) => o.offset === selectedStartOffset.value)
+) {
+  selectedStartOffset.value = DEFAULT_STARTING_SEMITONE_OFFSET
+}
 
-const selectedScaleMode = ref<ScaleMode>(DEFAULT_SCALE_MODE)
+const selectedScaleMode = useLocalStorage<ScaleMode>(
+  'singing.scaleMode',
+  DEFAULT_SCALE_MODE,
+)
+if (!VALID_SCALE_MODES.includes(selectedScaleMode.value)) {
+  selectedScaleMode.value = DEFAULT_SCALE_MODE
+}
 
 const {
   scaleSteps,

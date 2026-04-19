@@ -1,10 +1,25 @@
 <script setup lang="ts">
 import { textColorAtMidi } from '@/utils/pitchColors'
+import { useLocalStorage } from '@vueuse/core'
 
 const { t } = useI18n()
 
-const sensitivity = ref(5)
-const noiseGate = ref(5)
+const DEFAULT_VALUE = 5
+
+function isValidSetting(value: unknown): value is number {
+  return (
+    typeof value === 'number' &&
+    Number.isFinite(value) &&
+    value >= 0 &&
+    value <= 10
+  )
+}
+
+const sensitivity = useLocalStorage('singing.sensitivity', DEFAULT_VALUE)
+const noiseGate = useLocalStorage('singing.noiseGate', DEFAULT_VALUE)
+
+if (!isValidSetting(sensitivity.value)) sensitivity.value = DEFAULT_VALUE
+if (!isValidSetting(noiseGate.value)) noiseGate.value = DEFAULT_VALUE
 
 const { detectedTones, isListening, error, start, stop } =
   useMultiToneDetection({ sensitivity, noiseGate })

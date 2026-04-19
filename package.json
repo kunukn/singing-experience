@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.2.2",
+    "@vueuse/core": "^14.2.1",
     "canvas-confetti": "^1.9.4",
     "pinia": "^3.0.4",
     "pitchy": "^4.1.0",

@@ -1,11 +1,20 @@
 <script setup lang="ts">
 import type { ToneMode } from '@/composables/useTonePlayer'
+import { useLocalStorage } from '@vueuse/core'
 import PitchDisplay from './PitchDisplay.vue'
 
 const { t } = useI18n()
 
+const VALID_TONE_MODES: ToneMode[] = ['piano', 'bell', 'bass', 'square']
+
 const { toneMode, setToneMode } = useTonePlayer()
-const selectedToneMode = ref<ToneMode>(toneMode.value)
+const selectedToneMode = useLocalStorage<ToneMode>(
+  'singing.pitchToneMode',
+  toneMode.value,
+)
+if (!VALID_TONE_MODES.includes(selectedToneMode.value)) {
+  selectedToneMode.value = toneMode.value
+}
 
 watch(selectedToneMode, (mode) => {
   setToneMode(mode)
@@ -28,7 +37,19 @@ const VOICE_RANGES: VoiceRange[] = [
   { label: 'Bass (E2–E4)', midiMin: 40, midiMax: 64 },
 ]
 
-const selectedRangeIndex = ref(4)
+const DEFAULT_RANGE_INDEX = 4
+const selectedRangeIndex = useLocalStorage(
+  'singing.rangeIndex',
+  DEFAULT_RANGE_INDEX,
+)
+if (
+  typeof selectedRangeIndex.value !== 'number' ||
+  !Number.isInteger(selectedRangeIndex.value) ||
+  selectedRangeIndex.value < 0 ||
+  selectedRangeIndex.value >= VOICE_RANGES.length
+) {
+  selectedRangeIndex.value = DEFAULT_RANGE_INDEX
+}
 const selectedRange = computed(() => VOICE_RANGES[selectedRangeIndex.value])
 
 const {
