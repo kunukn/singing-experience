@@ -105,14 +105,11 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { ToneEngine } from './composables/toneEngine'
+  export type { ToneMode, ToneEngine } from './composables/toneEngine'
   import('./composables/toneEngine')
   // @ts-ignore
   export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep } from './composables/useDoReMiGame'
   import('./composables/useDoReMiGame')
-  // @ts-ignore
-  export type { ToneMode } from './composables/useTonePlayer'
-  import('./composables/useTonePlayer')
 }
 
 // for vue template auto import

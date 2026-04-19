@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ToneMode } from '@/composables/useTonePlayer'
+import type { ToneMode } from '@/composables/toneEngine'
 import { useLocalStorage } from '@vueuse/core'
 import PitchDisplay from './PitchDisplay.vue'
 

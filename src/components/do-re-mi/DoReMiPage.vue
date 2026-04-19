@@ -6,7 +6,7 @@ import {
   SCALE_MODE_OPTIONS,
   START_TONE_OPTIONS,
 } from '@/composables/useDoReMiGame'
-import type { ToneMode } from '@/composables/useTonePlayer'
+import type { ToneMode } from '@/composables/toneEngine'
 import type { ScaleMode } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 
