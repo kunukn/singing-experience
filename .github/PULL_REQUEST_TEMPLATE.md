@@ -12,7 +12,6 @@
 ## Checklist
 
 - [ ] This does **not** add a new feature or new page
-- [ ] This does **not** add a dedicated guitar/instrument tuner
 - [ ] I have read [CONTRIBUTING.md](../CONTRIBUTING.md)
 - [ ] I ran `npm run guard` and it passes
 - [ ] I opened an issue first (link: #<!-- issue number -->)
