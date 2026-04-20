@@ -85,5 +85,46 @@ if (anyFailed) {
   console.log(`\n❌ Git push blocked — fix the issues above and try again.\n`)
   process.exit(1)
 } else {
+  console.log(`\n✅ All checks passed.\n`)
+}
+
+// Sequential: build + validate (only if parallel checks passed)
+console.log(`🏗️  Running build + validate...\n`)
+
+const buildResult = await runTask({
+  name: 'Build',
+  cmd: 'npx',
+  args: ['vite', 'build'],
+})
+
+const bIcon = buildResult.code === 0 ? '✅' : '❌'
+console.log(`\n${SEPARATOR}`)
+console.log(`${bIcon}  ${buildResult.name}  (${buildResult.duration}s)`)
+console.log(SEPARATOR)
+if (buildResult.stdout.trim()) process.stdout.write(buildResult.stdout)
+if (buildResult.stderr.trim()) process.stderr.write(buildResult.stderr)
+
+if (buildResult.code !== 0) {
+  console.log(`\n❌ Git push blocked — build failed.\n`)
+  process.exit(1)
+}
+
+const validateResult = await runTask({
+  name: 'Validate',
+  cmd: 'node',
+  args: ['scripts/validate-build.js'],
+})
+
+const vIcon = validateResult.code === 0 ? '✅' : '❌'
+console.log(`\n${SEPARATOR}`)
+console.log(`${vIcon}  ${validateResult.name}  (${validateResult.duration}s)`)
+console.log(SEPARATOR)
+if (validateResult.stdout.trim()) process.stdout.write(validateResult.stdout)
+if (validateResult.stderr.trim()) process.stderr.write(validateResult.stderr)
+
+if (validateResult.code !== 0) {
+  console.log(`\n❌ Git push blocked — build validation failed.\n`)
+  process.exit(1)
+} else {
   console.log(`\n✅ All checks passed — pushing.\n`)
 }
