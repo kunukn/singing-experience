@@ -1,6 +1,6 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest'
 import { buildMajorScale, C3_MIDI, noteToFrequency } from '@/utils/noteUtils'
-import { createMockToneEngine } from './toneEngine.mock'
+import { createMockToneEngine } from '@/composables/toneEngine.mock'
 import {
   useDoReMiPlaySequence,
   NOTE_INTERVAL_MS,

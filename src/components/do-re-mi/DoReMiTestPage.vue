@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import {
-  DEFAULT_HOLD_DURATION_MS,
-  DEFAULT_STARTING_SEMITONE_OFFSET,
-  DEFAULT_SCALE_MODE,
-} from '@/composables/useDoReMiGame'
-import type { ScaleStep } from '@/composables/useDoReMiGame'
 import type { NoteName, ScaleMode } from '@/utils/noteUtils'
 import { NOTE_NAMES } from '@/utils/noteUtils'
 import DoReMiDisplay from './DoReMiDisplay.vue'
+import type { ScaleStep } from './useDoReMiGame'
+import {
+  DEFAULT_HOLD_DURATION_MS,
+  DEFAULT_SCALE_MODE,
+  DEFAULT_STARTING_SEMITONE_OFFSET,
+  useDoReMiGame,
+} from './useDoReMiGame'
 
 const selectedDurationSec = ref(DEFAULT_HOLD_DURATION_MS / 1000)
 const selectedStartOffset = ref(DEFAULT_STARTING_SEMITONE_OFFSET)

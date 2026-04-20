@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ScaleStep } from '@/composables/useDoReMiGame'
+import type { ScaleStep } from './useDoReMiGame'
 import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
 import { noteToFrequency } from '@/utils/noteUtils'
 import DoReMiScaleItem from './DoReMiScaleItem.vue'

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ScaleStep } from '@/composables/useDoReMiGame'
+import type { ScaleStep } from './useDoReMiGame'
 
 type StepStatus = 'completed' | 'current' | 'upcoming'
 

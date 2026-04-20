@@ -2,6 +2,7 @@
 import { useLocalStorage } from '@vueuse/core'
 import SettingsSlider from './SettingsSlider.vue'
 import ToneDetectorDisplay from './ToneDetectorDisplay.vue'
+import { useMultiToneDetection } from './useMultiToneDetection'
 
 const { t } = useI18n()
 

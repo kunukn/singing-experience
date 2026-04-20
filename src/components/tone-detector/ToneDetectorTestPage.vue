@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import type { SimulatedToneConfig } from '@/composables/useSimulatedMultiToneDetection'
+import type { SimulatedToneConfig } from './useSimulatedMultiToneDetection'
+import { useSimulatedMultiToneDetection } from './useSimulatedMultiToneDetection'
 import type { NoteName } from '@/utils/noteUtils'
 import { NOTE_NAMES } from '@/utils/noteUtils'
 import ToneDetectorDisplay from './ToneDetectorDisplay.vue'

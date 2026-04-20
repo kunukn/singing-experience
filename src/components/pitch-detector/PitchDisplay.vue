@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDoReMiPlaySequence } from '@/components/do-re-mi/useDoReMiPlaySequence'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { midiRangeToScaleNotes, NOTE_NAMES } from '@/utils/noteUtils'
 import { cleanTextColor } from '@/utils/pitchColors'

@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import {
-  DEFAULT_HOLD_DURATION_MS,
-  DEFAULT_STARTING_SEMITONE_OFFSET,
-  DEFAULT_SCALE_MODE,
-  START_TONE_OPTIONS,
-} from '@/composables/useDoReMiGame'
 import type { ScaleMode } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import DoReMiDisplay from './DoReMiDisplay.vue'
+import {
+  DEFAULT_HOLD_DURATION_MS,
+  DEFAULT_SCALE_MODE,
+  DEFAULT_STARTING_SEMITONE_OFFSET,
+  START_TONE_OPTIONS,
+  useDoReMiGame,
+} from './useDoReMiGame'
 
 const holdDurationOptions = [0.1, 0.3, 0.5, 1, 2, 3, 4, 5, 6, 7, 10]
 const VALID_SCALE_MODES: ScaleMode[] = [

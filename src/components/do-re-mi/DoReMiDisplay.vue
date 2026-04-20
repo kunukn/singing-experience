@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import {
-  SCALE_MODE_OPTIONS,
-  START_TONE_OPTIONS,
-} from '@/composables/useDoReMiGame'
-import type { DoReMiGameResult } from '@/composables/useDoReMiGame'
 import type { ToneMode } from '@/composables/toneEngine'
 import type { ScaleMode } from '@/utils/noteUtils'
+import type { DoReMiGameResult } from './useDoReMiGame'
+import { SCALE_MODE_OPTIONS, START_TONE_OPTIONS } from './useDoReMiGame'
+import { useDoReMiPlaySequence } from './useDoReMiPlaySequence'
 
 type Props = {
   game: DoReMiGameResult
@@ -137,7 +135,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex grow flex-col items-center gap-4">
+  <div
+    class="flex grow flex-col items-center gap-4"
+    data-testid="do-re-mi-display"
+  >
     <h1 class="flex items-center gap-2 text-2xl font-semibold">
       <span>🎶</span>
       <span>

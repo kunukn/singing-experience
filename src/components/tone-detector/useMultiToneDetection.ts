@@ -1,4 +1,4 @@
-import type { DetectedTone } from '@/composables/toneDetectionTypes'
+import type { DetectedTone } from '@/components/tone-detector/toneDetectionTypes'
 import { frequencyToNote } from '@/utils/noteUtils'
 
 /*

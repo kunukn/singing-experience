@@ -1,6 +1,6 @@
-import type { ScaleStep } from '@/composables/useDoReMiGame'
-import type { ToneEngine } from './toneEngine'
-import { defaultToneEngine } from './toneEngine'
+import type { ScaleStep } from './useDoReMiGame'
+import type { ToneEngine } from '@/composables/toneEngine'
+import { defaultToneEngine } from '@/composables/toneEngine'
 import { noteToFrequency } from '@/utils/noteUtils'
 
 /* Time between sequential notes in the Do-Re-Mi preview — 250 ms ≈ 16th notes at 60 BPM */

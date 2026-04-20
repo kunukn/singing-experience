@@ -108,17 +108,8 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { DetectedTone, ToneDetectionResult } from './composables/toneDetectionTypes'
-  import('./composables/toneDetectionTypes')
-  // @ts-ignore
   export type { ToneMode, ToneEngine } from './composables/toneEngine'
   import('./composables/toneEngine')
-  // @ts-ignore
-  export type { DoReMiGameResult, DoReMiGameOptions, PitchDetectionProvider, ScaleStep } from './composables/useDoReMiGame'
-  import('./composables/useDoReMiGame')
-  // @ts-ignore
-  export type { SimulatedToneConfig } from './composables/useSimulatedMultiToneDetection'
-  import('./composables/useSimulatedMultiToneDetection')
 }
 
 // for vue template auto import
@@ -126,16 +117,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
-    readonly DEFAULT_HOLD_DURATION_MS: UnwrapRef<typeof import('./composables/useDoReMiGame')['DEFAULT_HOLD_DURATION_MS']>
-    readonly DEFAULT_SCALE_MODE: UnwrapRef<typeof import('./composables/useDoReMiGame')['DEFAULT_SCALE_MODE']>
-    readonly DEFAULT_STARTING_SEMITONE_OFFSET: UnwrapRef<typeof import('./composables/useDoReMiGame')['DEFAULT_STARTING_SEMITONE_OFFSET']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
-    readonly GRACE_PERIOD_MS: UnwrapRef<typeof import('./composables/useDoReMiGame')['GRACE_PERIOD_MS']>
-    readonly MAX_CENTS_DEVIATION: UnwrapRef<typeof import('./composables/useDoReMiGame')['MAX_CENTS_DEVIATION']>
-    readonly NOTE_INTERVAL_MS: UnwrapRef<typeof import('./composables/useDoReMiPlaySequence')['NOTE_INTERVAL_MS']>
-    readonly SCALE_MODE_OPTIONS: UnwrapRef<typeof import('./composables/useDoReMiGame')['SCALE_MODE_OPTIONS']>
-    readonly START_TONE_OPTIONS: UnwrapRef<typeof import('./composables/useDoReMiGame')['START_TONE_OPTIONS']>
-    readonly TOO_LOW_OR_HIGH_HINT_MS: UnwrapRef<typeof import('./composables/useDoReMiGame')['TOO_LOW_OR_HIGH_HINT_MS']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createMockToneEngine: UnwrapRef<typeof import('./composables/toneEngine.mock')['createMockToneEngine']>
@@ -193,8 +175,6 @@ declare module 'vue' {
     readonly useConfettiStore: UnwrapRef<typeof import('./stores/useConfettiStore')['useConfettiStore']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
-    readonly useDoReMiGame: UnwrapRef<typeof import('./composables/useDoReMiGame')['useDoReMiGame']>
-    readonly useDoReMiPlaySequence: UnwrapRef<typeof import('./composables/useDoReMiPlaySequence')['useDoReMiPlaySequence']>
     readonly useDocumentDirection: UnwrapRef<typeof import('./composables/useDocumentDirection')['useDocumentDirection']>
     readonly useErrorToastStore: UnwrapRef<typeof import('./stores/useErrorToastStore')['useErrorToastStore']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
@@ -202,11 +182,9 @@ declare module 'vue' {
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useMicrophonePermission: UnwrapRef<typeof import('./composables/useMicrophonePermission')['useMicrophonePermission']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
-    readonly useMultiToneDetection: UnwrapRef<typeof import('./composables/useMultiToneDetection')['useMultiToneDetection']>
     readonly usePitchDetection: UnwrapRef<typeof import('./composables/usePitchDetection')['usePitchDetection']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
-    readonly useSimulatedMultiToneDetection: UnwrapRef<typeof import('./composables/useSimulatedMultiToneDetection')['useSimulatedMultiToneDetection']>
     readonly useSimulatedPitchDetection: UnwrapRef<typeof import('./composables/useSimulatedPitchDetection')['useSimulatedPitchDetection']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>

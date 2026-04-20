@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ScaleStep } from '@/composables/useDoReMiGame'
-import { TOO_LOW_OR_HIGH_HINT_MS } from '@/composables/useDoReMiGame'
+import type { ScaleStep } from './useDoReMiGame'
+import { TOO_LOW_OR_HIGH_HINT_MS } from './useDoReMiGame'
 
 type Props = {
   targetStep: ScaleStep

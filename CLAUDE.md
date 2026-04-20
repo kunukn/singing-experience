@@ -17,14 +17,16 @@ This document provides coding standards and architectural principles for GitHub 
 /src
   /components
     /generic          # Reusable UI components (buttons, inputs, cards)
-    /[Feature]        # Feature-specific components
+    /[Feature]        # Feature-specific components, co-located composables, types, and tests
   /views             # Page components (route-based)
-  /composables       # Custom Vue composables
+  /composables       # Shared/cross-cutting composables (used by multiple features)
   /utils             # Utility functions
   /assets            # Static assets
   /stores            # Pinia stores
   /constants         # Application constants
 ```
+
+Feature folders contain everything the feature needs — components, composables, types, and tests — co-located together. Only composables shared across multiple features live in `/src/composables/`.
 
 ## Key Coding Rules
 
@@ -117,33 +119,39 @@ Use **camelCase** for component props in Vue templates, matching the JavaScript 
 
 ### Auto Imports
 
-This project uses `unplugin-auto-import` to auto-import common APIs from `vue`, `vue-router`, and local composables. **Do not manually import** these — they are globally available:
+This project uses `unplugin-auto-import` to auto-import common APIs from `vue`, `vue-router`, and shared composables. **Do not manually import** these — they are globally available:
 
 - **Vue**: `ref`, `computed`, `reactive`, `readonly`, `watch`, `watchEffect`, `onMounted`, `onUnmounted`, `nextTick`, `toRef`, `toRefs`, `toValue`, `provide`, `inject`, `shallowRef`, `defineComponent`, etc.
 - **Vue Router**: `useRoute`, `useRouter`, `onBeforeRouteLeave`, `onBeforeRouteUpdate`, `useLink`
-- **Composables** from `src/composables/`: all named exports are auto-imported
+- **Shared composables** from `src/composables/`: all named exports are auto-imported
+
+Co-located composables (inside feature folders like `src/components/do-re-mi/`) are **not** auto-imported — use explicit relative imports for those.
 
 ```typescript
-// ❌ Wrong - unnecessary manual imports
+// ❌ Wrong - unnecessary manual imports for auto-imported APIs
 import { ref, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
-import { useDoReMiGame } from '@/composables/useDoReMiGame'
 
 const count = ref(0)
 
 // ✅ Correct - use auto-imported APIs directly
 const count = ref(0)
+
+// ✅ Correct - explicit relative import for co-located composable
+import { useDoReMiGame } from './useDoReMiGame'
 ```
 
 See `src/auto-imports.d.ts` for the full list of available auto-imports.
 
 ### Code Organization
 
+- **Co-locate domain-specific files with their feature** — composables, types, and tests that serve a single feature belong in that feature's component directory (e.g., `src/components/do-re-mi/useDoReMiGame.ts`). Only composables used by multiple features stay in `src/composables/`.
 - Flat is better than nested
 - No generic 'helpers' folders
 - Keep business logic in composables or utils
 - Separate API calls into the `/src/apis/` directory
 - Prefer absolute import paths when not in the same folder. E.g. `import { Gallery } from '@/Gallery'` instead of `import { Gallery } from '../../Gallery'`
+- Use relative imports for co-located files within the same feature folder. E.g. `import { useDoReMiGame } from './useDoReMiGame'`
 
 ### RTL & Logical Properties
 
@@ -283,5 +291,6 @@ Follow Conventional Commits specification:
 - ✅ Comment magic numbers and complex patterns that are hard to reason about without context
 - ✅ Use camelCase for Vue template prop bindings (`:currentStepIndex`, not `:current-step-index`)
 - ✅ Do not manually import `ref`, `computed`, `watch`, etc. from `vue` — they are auto-imported
+- ✅ Co-locate domain-specific composables, types, and tests with their feature folder — only shared composables stay in `src/composables/`
 - ✅ Use CSS logical properties (`ms-*`, `me-*`, `start`, `end`) — never physical `ml-*`/`mr-*`/`left`/`right` for horizontal spacing or alignment
 - ✅ Wrap user-facing strings with `$t()` / `t()` for i18n — never hardcode display text

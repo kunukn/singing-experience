@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ToneDetectionResult } from '@/composables/toneDetectionTypes'
+import type { ToneDetectionResult } from '@/components/tone-detector/toneDetectionTypes'
 import DetectedToneCard from './DetectedToneCard.vue'
 
 type Props = {
