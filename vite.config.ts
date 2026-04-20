@@ -9,10 +9,36 @@ import { VitePWA } from 'vite-plugin-pwa'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import VueRouter from 'vue-router/vite'
 
+function formatUtcDateTime(date: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  const y = date.getUTCFullYear()
+  const mo = pad(date.getUTCMonth() + 1)
+  const d = pad(date.getUTCDate())
+  const h = pad(date.getUTCHours())
+  const mi = pad(date.getUTCMinutes())
+  const s = pad(date.getUTCSeconds())
+  return `${y}-${mo}-${d} ${h}:${mi}:${s}`
+}
+
+// Plugin to inject build timestamp into HTML
+function injectBuildTime() {
+  return {
+    name: 'inject-build-time',
+    transformIndexHtml(html: string) {
+      const buildTime = formatUtcDateTime(new Date())
+      return html.replace(
+        '<html lang="en" ',
+        `<html lang="en" data-build-utc-time="${buildTime}" `,
+      )
+    },
+  }
+}
+
 export default defineConfig({
   base: '/singing-experience/',
   plugins: [
     vueDevTools(),
+    injectBuildTime(),
     tailwindcss(),
     VueRouter(),
     AutoImport({
