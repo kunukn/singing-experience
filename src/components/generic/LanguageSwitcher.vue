@@ -21,7 +21,7 @@ const selected = ref(locale.value)
 watch(selected, async (next) => {
   await loadLocaleMessages(next)
   locale.value = next
-  localStorage.setItem('locale', next)
+  localStorage.setItem('singing.locale', next)
 })
 </script>
 

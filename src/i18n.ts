@@ -5,7 +5,7 @@ type MessageSchema = typeof en
 
 const localeModules = import.meta.glob('@/locales/*.json')
 
-const savedLocale = localStorage.getItem('locale') ?? 'en'
+const savedLocale = localStorage.getItem('singing.locale') ?? 'en'
 
 export const i18n = createI18n({
   legacy: false,
