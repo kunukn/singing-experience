@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { NoteInfo } from '@/utils/noteUtils'
 import type { ToneMode } from '@/composables/toneEngine'
+import type { NoteInfo } from '@/utils/noteUtils'
 import PitchDisplay from './PitchDisplay.vue'
 
 type PitchDetectionInput = {
@@ -121,7 +121,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col items-center gap-4">
+  <div
+    class="flex flex-1 flex-col items-center gap-4"
+    data-testid="pitch-detector-display"
+  >
     <div class="flex w-full flex-wrap items-center gap-2 sm:gap-4">
       <Select v-model.number="rangeIndex" class="flex-1">
         <option

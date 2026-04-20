@@ -22,7 +22,10 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col items-center gap-4 sm:gap-6">
+  <div
+    class="flex flex-1 flex-col items-center gap-4 sm:gap-6"
+    data-testid="tone-detector-display"
+  >
     <p class="text-sm text-gray-400">
       <Badge class="me-1">Beta</Badge>
       <span> {{ t('toneDetector.pageDescription') }}</span>
