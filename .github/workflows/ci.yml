@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Lint, Type Check & Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type check
+        run: npx vue-tsc --project tsconfig.app.json --noEmit
+
+      - name: Lint
+        run: npx oxlint src
+
+      - name: Unit tests
+        run: npx vitest run
+
+  validate-build:
+    name: Build & Validate
+    runs-on: ubuntu-latest
+    needs: checks
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      - name: Build
+        run: npx vite build
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Validate build
+        run: node scripts/validate-build.js
