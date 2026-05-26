@@ -1,0 +1,21 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.p-dark, .p-dark *));
+
+@layer base {
+  html {
+    @apply h-full;
+  }
+
+  body {
+    @apply relative flex min-h-full flex-col;
+  }
+
+  #app {
+    @apply flex h-full w-full grow flex-col;
+  }
+
+  [data-page] {
+    @apply flex h-full w-full grow flex-col px-4;
+  }
+}

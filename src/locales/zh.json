@@ -1,0 +1,254 @@
+{
+  "generic": {
+    "start": "开始",
+    "stop": "停止",
+    "clear": "清除",
+    "backToMenuArrow": "←",
+    "back": "返回",
+    "hz": "Hz",
+    "previewSoundLabel": "查看你的声音",
+    "toggleDarkMode": "切换深色模式",
+    "toggleFullscreen": "切换全屏",
+    "fullscreen": "全屏",
+    "settings": "设置",
+    "showNoteTarget": "显示目标音符",
+    "pageNotFound": "页面未找到",
+    "previewButton": "♪",
+    "darkMode": "🌙",
+    "lightMode": "☀️",
+    "muteButton": "静音",
+    "tooLow": "♭ 太低",
+    "tooHigh": "太高 ♯",
+    "play": "播放",
+    "restart": "重新开始",
+    "holdDuration": "保持时长：",
+    "gameLength": "游戏时长：",
+    "difficulty": "难度：",
+    "difficulty_easy": "简单",
+    "difficulty_normal": "普通",
+    "difficulty_hard": "困难",
+    "voiceRange": "音域：",
+    "congratulations": "恭喜！",
+    "gameOver": "游戏结束",
+    "playAgain": "再玩一次",
+    "score": "得分",
+    "time": "时间"
+  },
+  "errors": {
+    "microphoneAccess": "无法访问麦克风",
+    "microphoneDenied": "麦克风被阻止了。在浏览器设置里打开它，然后重新加载页面。"
+  },
+  "settings": {
+    "language": "语言",
+    "title": "设置",
+    "micSensitivity": {
+      "label": "麦克风灵敏度",
+      "description": "声音要多清晰才算一个音符。",
+      "forgiving": "更宽松",
+      "strict": "更严格"
+    },
+    "resetToDefaults": "恢复默认",
+    "reload": "重新加载应用"
+  },
+  "sounds": {
+    "toneSound": "音色：",
+    "piano": "钢琴",
+    "keyboard": "键盘",
+    "bell": "铃声",
+    "bass": "低音",
+    "square": "方波",
+    "tuning": "音叉"
+  },
+  "home": {
+    "title": "歌唱体验",
+    "subtitle": "选择一个程序开始",
+    "programs": {
+      "pitchDetector": {
+        "name": "音高检测器",
+        "description": "实时检测你的歌唱音高。查看音符、八度以及你的音准程度。"
+      },
+      "doReMi": {
+        "name": "DO RE MI 游戏",
+        "description": "唱完音阶 — DO RE MI FA SO LA TI DO。每个音符保持几秒钟即可前进。"
+      },
+      "tuner": {
+        "name": "乐器调音器",
+        "description": "拨动琴弦 — 查看音符、音分偏差，当弦完全调准时会响起提示音。"
+      },
+      "toneDetector": {
+        "name": "音调检测器",
+        "description": "实时检测多个同时发出的音调。唱和声，查看正在发声的音符。"
+      },
+      "singTone": {
+        "name": "唱音游戏",
+        "description": "播放一个随机音调 — 唱出来匹配！连续匹配不同的音调即可获胜。"
+      },
+      "pitchGame": {
+        "name": "音高游戏",
+        "description": "目标音符滑动进入 — 唱出每一个并保持以得分。和时间赛跑，尽量多打中。"
+      },
+      "warmUp": {
+        "name": "嗓音热身",
+        "description": "跟随引导的音阶热身嗓音 — 保持每个音以进入下一个。"
+      },
+      "singingTools": {
+        "name": "音乐工具",
+        "description": "音高检测、嗓音热身、调音器和复音检测。"
+      },
+      "singingGames": {
+        "name": "唱歌游戏",
+        "description": "练耳朵和嗓子的游戏。"
+      },
+      "singFly": {
+        "name": "唱飞",
+        "description": "唱歌让小鸟飞过缺口"
+      }
+    },
+    "privacy": "你的隐私是安全的 — 此应用完全在浏览器中运行。不会录制或发送任何音频。"
+  },
+  "tools": {
+    "title": "音乐工具",
+    "subtitle": "选个工具用"
+  },
+  "games": {
+    "title": "唱歌游戏",
+    "subtitle": "选个游戏玩"
+  },
+  "warmUp": {
+    "title": "热身",
+    "voice": "声音：",
+    "sequences": "序列：",
+    "semitoneStep": "步长：",
+    "pattern": "模式：",
+    "patternGroups": {
+      "basic": "基础",
+      "playful": "趣味",
+      "advanced": "进阶"
+    },
+    "patterns": {
+      "fiveNoteMajor": "五音大调 (1-2-3-4-5-4-3-2-1)",
+      "threeNoteMajor": "三音 (1-2-3-2-1)",
+      "majorTriad": "大三和弦 (1-3-5-3-1)",
+      "descendingFiveNote": "五音下行 (5-4-3-2-1)",
+      "fiveNoteMinor": "五音小调",
+      "octaveArpeggio": "八度琶音 (1-3-5-8-5-3-1)",
+      "octaveLeap": "八度跳进 (1-8-1)",
+      "fullOctaveScale": "完整八度音阶",
+      "majorNinthArpeggio": "九度琶音 (1-3-5-8-9-8-5-3-1)",
+      "bouncyBall": "弹力球 (1-3-1-5-1-8-1)",
+      "pogoStick": "弹簧棒 (1-5-1-5-1-8)",
+      "trampoline": "蹦床 (1-8-5-8-3-8-1)",
+      "frogHops": "青蛙跳 (1-5-3-7-5-8)",
+      "zigZag": "之字形 (1-3-2-4-3-5)",
+      "crisscross": "交叉 (1-5-2-6-3-7-4-8)",
+      "echo": "回声 (5-3-1-5-3-1)",
+      "questionAnswer": "一问一答 (1-3-5-3-5-3-1-3)",
+      "cuckoo": "布谷鸟 (5-3-5-3-1)",
+      "mouseElephant": "老鼠和大象 (1-2-1-8-7-8)",
+      "yodel": "约德尔 (1-8-3-8-5-8)",
+      "rollerCoaster": "过山车 (1-3-5-8-7-5-3-1)",
+      "rocketShip": "火箭 (1-2-3-5-8-12)",
+      "slideDown": "滑梯 (8-6-4-2-1)"
+    },
+    "subtitle": "唱出乐句。每一轮升高半音。",
+    "perTone": "每音",
+    "done": "热身完成！",
+    "listeningToReference": "正在听参考…",
+    "nextPhrase": "下一句…",
+    "singHighlightedNote": "唱出高亮的音",
+    "startToneInline": "起始音",
+    "sequencesUnit": "段",
+    "semitonesUnit": "半音"
+  },
+  "doReMi": {
+    "title": "DO RE MI 游戏",
+    "singNoteFor": "每个音符唱 {seconds} 秒即可前进",
+    "congratulationsMessage": "你从 {startTone} 开始完成了 {mode} 音阶，每个音符保持了 {seconds} 秒！",
+    "time": "⏱ 时间：",
+    "singThisNote": "唱这个：",
+    "youreSinging": "你在唱：",
+    "perfect": "完美",
+    "cents": "音分",
+    "allowedRange": "允许范围：±50 音分 · 目标：{hz} Hz",
+    "playSolfege": "播放 {solfege}",
+    "scaleMode": "音阶模式：",
+    "startTone": "起始音：",
+    "doReMiButton": "Do Re Mi",
+    "currentHz": "你：{hz} Hz",
+    "pickToneHeader": "选择起始音调",
+    "pickToneFooter": "⭐ = 推荐起始",
+    "voiceTier": {
+      "high": "👧 高音 – 女孩和女性",
+      "mid": "👧👦 所有人都适合",
+      "low": "👨 低音 – 男性和男孩"
+    }
+  },
+  "pitchDetector": {
+    "listening": "正在聆听…",
+    "flat": "♭ 偏低",
+    "inTune": "音准",
+    "sharp": "偏高 ♯",
+    "clarity": "清晰度",
+    "cents": "音分",
+    "replaySound": "回放声音\n（最近30秒）"
+  },
+  "voiceRanges": {
+    "full": "完整",
+    "everyone": "所有人",
+    "kids": "孩子 (6–11)",
+    "comfyWomen": "舒适 – 女声",
+    "comfyMen": "舒适 – 男声",
+    "soprano": "女高音",
+    "mezzoSoprano": "次女高音",
+    "alto": "女低音",
+    "tenor": "男高音",
+    "baritone": "男中音",
+    "bass": "男低音"
+  },
+  "toneDetector": {
+    "listening": "正在聆听…",
+    "tonesDetected": "检测到 {count} 个音调",
+    "pressStart": "按开始检测音调",
+    "pageDescription": "同时检测多个音调（C2–C7）。唱和声、哼几个音符，实时查看每个音调。",
+    "sensitivityDescription": "控制检测到多少个音调。降低它以在唱或弹奏单个音符时过滤泛音。提高它以检测和声或和弦中更多的同时音调。",
+    "noiseGateDescription": "设置检测音调所需的最低音量。如果在安静时看到虚假音调，请提高它。降低它以捕获更安静的声音。",
+    "sensitivity": "灵敏度",
+    "noiseGate": "噪声门",
+    "strict": "更少音调",
+    "loose": "更多音调",
+    "quiet": "更少过滤",
+    "loud": "更多过滤"
+  },
+  "singTone": {
+    "title": "唱音游戏",
+    "subtitle": "播放一个随机音调 — 唱出来匹配！",
+    "play": "播放",
+    "singThisNote": "唱这个：",
+    "rounds": "回合数：",
+    "congratulationsMessage": "你在 {seconds} 秒内匹配了全部 {rounds} 个音调，保持时长为 {holdDuration} 秒！",
+    "roundProgress": "{current} / {total}",
+    "settingsSummary": "唱 {rounds} 个音调，保持时长 {holdDuration} 秒"
+  },
+  "tuner": {
+    "tuning": "调音",
+    "guitar": "吉他",
+    "ukulele": "尤克里里",
+    "custom": "自定义",
+    "tuningGroups": {
+      "standard": "标准",
+      "drop": "降弦",
+      "open": "开放",
+      "alternate": "其他"
+    },
+    "tuningItems": {
+      "ebStandard": "Eb 标准",
+      "openG": "开放 G",
+      "openD": "开放 D",
+      "openC": "开放 C"
+    }
+  },
+  "singFly": {
+    "title": "唱飞",
+    "subtitle": "唱出每个音，飞过缺口"
+  }
+}

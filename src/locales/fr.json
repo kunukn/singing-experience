@@ -1,0 +1,254 @@
+{
+  "generic": {
+    "start": "Démarrer",
+    "stop": "Arrêter",
+    "clear": "Effacer",
+    "backToMenuArrow": "←",
+    "back": "Retour",
+    "hz": "Hz",
+    "previewSoundLabel": "Regarde ta voix",
+    "toggleDarkMode": "Basculer le mode sombre",
+    "toggleFullscreen": "Basculer en plein écran",
+    "fullscreen": "Plein écran",
+    "settings": "Réglages",
+    "showNoteTarget": "Afficher la cible de note",
+    "pageNotFound": "Page introuvable",
+    "previewButton": "♪",
+    "darkMode": "🌙",
+    "lightMode": "☀️",
+    "muteButton": "Muet",
+    "tooLow": "♭ Trop bas",
+    "tooHigh": "Trop haut ♯",
+    "play": "Jouer",
+    "restart": "Recommencer",
+    "holdDuration": "Durée de maintien :",
+    "gameLength": "Durée du jeu :",
+    "difficulty": "Difficulté :",
+    "difficulty_easy": "Facile",
+    "difficulty_normal": "Normal",
+    "difficulty_hard": "Difficile",
+    "voiceRange": "Tessiture :",
+    "congratulations": "Félicitations !",
+    "gameOver": "Partie terminée",
+    "playAgain": "Rejouer",
+    "score": "Score",
+    "time": "Temps"
+  },
+  "errors": {
+    "microphoneAccess": "Impossible d'accéder au microphone",
+    "microphoneDenied": "Le microphone est bloqué. Active-le dans les paramètres de ton navigateur et recharge la page."
+  },
+  "settings": {
+    "language": "Langue",
+    "title": "Réglages",
+    "micSensitivity": {
+      "label": "Sensibilité du micro",
+      "description": "À quel point un son doit être clair pour compter comme une note.",
+      "forgiving": "Plus indulgent",
+      "strict": "Plus strict"
+    },
+    "resetToDefaults": "Tout réinitialiser",
+    "reload": "Recharger l'appli"
+  },
+  "sounds": {
+    "toneSound": "Son de tonalité :",
+    "piano": "Piano",
+    "keyboard": "Clavier",
+    "bell": "Cloche",
+    "bass": "Basse",
+    "square": "Carré",
+    "tuning": "Diapason"
+  },
+  "home": {
+    "title": "Expérience de Chant",
+    "subtitle": "Choisis un programme pour commencer",
+    "programs": {
+      "pitchDetector": {
+        "name": "Détecteur de hauteur",
+        "description": "Détecte la hauteur de ta voix en temps réel. Vois la note, l'octave et si tu chantes juste."
+      },
+      "doReMi": {
+        "name": "Jeu DO RÉ MI",
+        "description": "Chante la gamme — DO RÉ MI FA SOL LA SI DO. Tiens chaque note quelques secondes pour continuer."
+      },
+      "tuner": {
+        "name": "Accordeur d'instrument",
+        "description": "Pince une corde — vois la note, l'écart en cents, et entends un carillon quand elle est parfaitement accordée."
+      },
+      "toneDetector": {
+        "name": "Détecteur de tons",
+        "description": "Détecte plusieurs tons en même temps. Chante une harmonie et vois quelles notes résonnent."
+      },
+      "singTone": {
+        "name": "Jeu Chante le Ton",
+        "description": "Un ton aléatoire est joué — chante-le ! Reproduis différents tons d'affilée pour gagner."
+      },
+      "pitchGame": {
+        "name": "Jeu de Pitch",
+        "description": "Des notes cibles défilent — chante chacune et tiens-la pour marquer. Cours contre la montre et touches-en un maximum."
+      },
+      "warmUp": {
+        "name": "Échauffement Vocal",
+        "description": "Échauffe ta voix avec une séquence de tons guidée — tiens chaque note pour passer à la suivante."
+      },
+      "singingTools": {
+        "name": "Outils de musique",
+        "description": "Détecteur de hauteur, échauffement, accordeur et détecteur de tons."
+      },
+      "singingGames": {
+        "name": "Jeux de chant",
+        "description": "Des jeux pour entraîner ton oreille et ta voix."
+      },
+      "singFly": {
+        "name": "Chantevole",
+        "description": "Chante pour faire passer l'oiseau dans les trous"
+      }
+    },
+    "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Aucun son n'est enregistré ni envoyé."
+  },
+  "tools": {
+    "title": "Outils de musique",
+    "subtitle": "Choisis un outil"
+  },
+  "games": {
+    "title": "Jeux de chant",
+    "subtitle": "Choisis un jeu"
+  },
+  "warmUp": {
+    "title": "Échauffement",
+    "voice": "Voix :",
+    "sequences": "Séquences :",
+    "semitoneStep": "Pas :",
+    "pattern": "Motif :",
+    "patternGroups": {
+      "basic": "Basique",
+      "playful": "Ludique",
+      "advanced": "Avancé"
+    },
+    "patterns": {
+      "fiveNoteMajor": "Cinq notes majeur (1-2-3-4-5-4-3-2-1)",
+      "threeNoteMajor": "Trois notes (1-2-3-2-1)",
+      "majorTriad": "Accord parfait majeur (1-3-5-3-1)",
+      "descendingFiveNote": "Cinq notes descendant (5-4-3-2-1)",
+      "fiveNoteMinor": "Cinq notes mineur",
+      "octaveArpeggio": "Arpège d'octave (1-3-5-8-5-3-1)",
+      "octaveLeap": "Saut d'octave (1-8-1)",
+      "fullOctaveScale": "Gamme d'octave complète",
+      "majorNinthArpeggio": "Arpège de neuvième (1-3-5-8-9-8-5-3-1)",
+      "bouncyBall": "Balle rebondissante (1-3-1-5-1-8-1)",
+      "pogoStick": "Pogo (1-5-1-5-1-8)",
+      "trampoline": "Trampoline (1-8-5-8-3-8-1)",
+      "frogHops": "Sauts de grenouille (1-5-3-7-5-8)",
+      "zigZag": "Zigzag (1-3-2-4-3-5)",
+      "crisscross": "Entrecroisé (1-5-2-6-3-7-4-8)",
+      "echo": "Écho (5-3-1-5-3-1)",
+      "questionAnswer": "Question et réponse (1-3-5-3-5-3-1-3)",
+      "cuckoo": "Coucou (5-3-5-3-1)",
+      "mouseElephant": "Souris et éléphant (1-2-1-8-7-8)",
+      "yodel": "Yodel (1-8-3-8-5-8)",
+      "rollerCoaster": "Montagnes russes (1-3-5-8-7-5-3-1)",
+      "rocketShip": "Fusée (1-2-3-5-8-12)",
+      "slideDown": "Toboggan (8-6-4-2-1)"
+    },
+    "subtitle": "Chante la phrase. Chaque tour monte d'un demi-ton.",
+    "perTone": "par note",
+    "done": "Échauffement terminé !",
+    "listeningToReference": "Écoute de la référence…",
+    "nextPhrase": "Phrase suivante…",
+    "singHighlightedNote": "Chante la note surlignée",
+    "startToneInline": "ton de départ",
+    "sequencesUnit": "séquences",
+    "semitonesUnit": "demi-tons"
+  },
+  "doReMi": {
+    "title": "Jeu DO RÉ MI",
+    "singNoteFor": "Tiens chaque note pendant {seconds} secondes pour continuer",
+    "congratulationsMessage": "Tu as fait la gamme {mode} en partant de {startTone}, en tenant chaque note pendant {seconds} secondes !",
+    "time": "⏱ Temps :",
+    "singThisNote": "Chante ceci :",
+    "youreSinging": "Tu chantes :",
+    "perfect": "Parfait",
+    "cents": "cents",
+    "allowedRange": "Plage autorisée : ±50 cents · Cible : {hz} Hz",
+    "playSolfege": "Jouer {solfege}",
+    "scaleMode": "Mode de gamme :",
+    "startTone": "Ton de départ :",
+    "doReMiButton": "Do Ré Mi",
+    "currentHz": "Toi : {hz} Hz",
+    "pickToneHeader": "Choisis ton ton de départ",
+    "pickToneFooter": "⭐ = départ recommandé",
+    "voiceTier": {
+      "high": "👧 Aigu – filles et femmes",
+      "mid": "👧👦 Confortable pour tous",
+      "low": "👨 Grave – hommes et garçons"
+    }
+  },
+  "pitchDetector": {
+    "listening": "Écoute en cours...",
+    "flat": "♭ Bémol",
+    "inTune": "Juste",
+    "sharp": "Dièse ♯",
+    "clarity": "Clarté",
+    "cents": "cents",
+    "replaySound": "Rejouer le son\n(30 dernières s)"
+  },
+  "voiceRanges": {
+    "full": "Complet",
+    "everyone": "Tout le monde",
+    "kids": "Enfants (6–11)",
+    "comfyWomen": "Tranquille – femmes",
+    "comfyMen": "Tranquille – hommes",
+    "soprano": "Soprano",
+    "mezzoSoprano": "Mezzo-soprano",
+    "alto": "Alto",
+    "tenor": "Ténor",
+    "baritone": "Baryton",
+    "bass": "Basse"
+  },
+  "toneDetector": {
+    "listening": "Écoute en cours...",
+    "tonesDetected": "{count} tons trouvés",
+    "pressStart": "Appuie sur Démarrer pour trouver les tons",
+    "pageDescription": "Détecte plusieurs tons à la fois (C2–C7). Chante une harmonie, fredonne plusieurs notes et vois chaque ton en temps réel.",
+    "sensitivityDescription": "Contrôle combien de tons sont captés. Baisse-le pour filtrer les harmoniques quand tu chantes une seule note. Monte-le pour détecter plus de tons à la fois dans une harmonie.",
+    "noiseGateDescription": "À quel volume tu dois chanter pour que l'appli t'entende. Monte-le si tu vois de faux tons dans le silence. Baisse-le pour capter les sons plus faibles.",
+    "sensitivity": "Sensibilité",
+    "noiseGate": "Seuil de bruit",
+    "strict": "Moins de tons",
+    "loose": "Plus de tons",
+    "quiet": "Moins de filtrage",
+    "loud": "Plus de filtrage"
+  },
+  "singTone": {
+    "title": "Jeu Chante le Ton",
+    "subtitle": "Un ton aléatoire est joué — chante-le pour le reproduire !",
+    "play": "Jouer",
+    "singThisNote": "Chante ceci :",
+    "rounds": "Manches :",
+    "congratulationsMessage": "Tu as reproduit les {rounds} tons en {seconds} secondes avec un maintien de {holdDuration}s !",
+    "roundProgress": "{current} / {total}",
+    "settingsSummary": "Chante {rounds} tons avec un maintien de {holdDuration}s"
+  },
+  "tuner": {
+    "tuning": "Accord",
+    "guitar": "Guitare",
+    "ukulele": "Ukulélé",
+    "custom": "Personnalisé",
+    "tuningGroups": {
+      "standard": "Standard",
+      "drop": "Drop",
+      "open": "Ouvert",
+      "alternate": "Alternatif"
+    },
+    "tuningItems": {
+      "ebStandard": "Eb standard",
+      "openG": "Ouvert en sol",
+      "openD": "Ouvert en ré",
+      "openC": "Ouvert en do"
+    }
+  },
+  "singFly": {
+    "title": "Chantevole",
+    "subtitle": "Chante chaque note et passe le trou"
+  }
+}

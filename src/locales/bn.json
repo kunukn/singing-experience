@@ -1,0 +1,254 @@
+{
+  "generic": {
+    "start": "শুরু",
+    "stop": "বন্ধ",
+    "clear": "মুছে ফেলো",
+    "backToMenuArrow": "←",
+    "back": "ফিরুন",
+    "hz": "Hz",
+    "previewSoundLabel": "আপনার কণ্ঠ দেখুন",
+    "toggleDarkMode": "ডার্ক মোড টগল করুন",
+    "toggleFullscreen": "ফুলস্ক্রিন টগল করুন",
+    "fullscreen": "ফুলস্ক্রিন",
+    "settings": "সেটিংস",
+    "showNoteTarget": "লক্ষ্য নোট দেখান",
+    "pageNotFound": "পৃষ্ঠা পাওয়া যায়নি",
+    "previewButton": "♪",
+    "darkMode": "🌙",
+    "lightMode": "☀️",
+    "muteButton": "নিঃশব্দ",
+    "tooLow": "♭ অনেক নিচু",
+    "tooHigh": "অনেক উঁচু ♯",
+    "play": "চালান",
+    "restart": "পুনরায় শুরু",
+    "holdDuration": "ধরে রাখার সময়কাল:",
+    "gameLength": "খেলার সময়:",
+    "difficulty": "কঠিনতা:",
+    "difficulty_easy": "সহজ",
+    "difficulty_normal": "সাধারণ",
+    "difficulty_hard": "কঠিন",
+    "voiceRange": "কণ্ঠস্বরের পরিসর:",
+    "congratulations": "অভিনন্দন!",
+    "gameOver": "খেলা শেষ",
+    "playAgain": "আবার খেলুন",
+    "score": "স্কোর",
+    "time": "সময়"
+  },
+  "errors": {
+    "microphoneAccess": "মাইক্রোফোন অ্যাক্সেস করতে ব্যর্থ",
+    "microphoneDenied": "মাইক্রোফোন ব্লক করা আছে। আপনার ব্রাউজারের সেটিংসে এটি চালু করুন এবং পৃষ্ঠাটি আবার লোড করুন।"
+  },
+  "settings": {
+    "language": "ভাষা",
+    "title": "সেটিংস",
+    "micSensitivity": {
+      "label": "মাইক্রোফোন সংবেদনশীলতা",
+      "description": "একটি শব্দ কতটা স্পষ্ট হলে সুর হিসেবে গণ্য হবে।",
+      "forgiving": "আরও সহজ",
+      "strict": "আরও কঠোর"
+    },
+    "resetToDefaults": "ডিফল্টে রিসেট করুন",
+    "reload": "অ্যাপ রিলোড করুন"
+  },
+  "sounds": {
+    "toneSound": "টোন শব্দ:",
+    "piano": "পিয়ানো",
+    "keyboard": "কীবোর্ড",
+    "bell": "ঘণ্টা",
+    "bass": "বেস",
+    "square": "স্কয়ার",
+    "tuning": "টিউনিং ফোর্ক"
+  },
+  "home": {
+    "title": "গানের অভিজ্ঞতা",
+    "subtitle": "শুরু করতে একটি প্রোগ্রাম বেছে নিন",
+    "programs": {
+      "pitchDetector": {
+        "name": "পিচ ডিটেক্টর",
+        "description": "রিয়েল টাইমে আপনার গানের পিচ শনাক্ত করুন। নোট, অক্টেভ এবং আপনি কতটা সুরে আছেন তা দেখুন।"
+      },
+      "doReMi": {
+        "name": "DO RE MI গেম",
+        "description": "স্কেল গান করুন — DO RE MI FA SO LA TI DO। এগিয়ে যেতে প্রতিটি নোট কয়েক সেকেন্ড ধরে রাখুন।"
+      },
+      "tuner": {
+        "name": "যন্ত্র টিউনার",
+        "description": "একটি তার বাজান — নোট, সেন্ট বিচ্যুতি দেখুন এবং তার পুরোপুরি মিলে গেলে চাইম শুনুন।"
+      },
+      "toneDetector": {
+        "name": "টোন ডিটেক্টর",
+        "description": "রিয়েল টাইমে একসাথে একাধিক টোন শনাক্ত করুন। একটি হারমনি গান করুন এবং দেখুন কোন নোটগুলো বাজছে।"
+      },
+      "singTone": {
+        "name": "সিং টোন গেম",
+        "description": "একটি এলোমেলো টোন বাজানো হয় — সেটি গেয়ে মেলান! জিততে পরপর বিভিন্ন টোন মেলান।"
+      },
+      "pitchGame": {
+        "name": "পিচ গেম",
+        "description": "লক্ষ্য স্বর গড়িয়ে আসে — প্রতিটি গান করুন এবং স্কোর করতে ধরে রাখুন। সময়ের সাথে দৌড়ান এবং যতগুলি পারেন মেলান।"
+      },
+      "warmUp": {
+        "name": "কণ্ঠ ওয়ার্ম-আপ",
+        "description": "একটি গাইডেড টোন সিকোয়েন্সের মাধ্যমে আপনার কণ্ঠ গরম করুন — পরবর্তীতে যেতে প্রতিটি স্বর ধরে রাখুন।"
+      },
+      "singingTools": {
+        "name": "মিউজিক টুল",
+        "description": "পিচ ডিটেক্টর, ওয়ার্ম-আপ, টিউনার, আর টোন ডিটেক্টর।"
+      },
+      "singingGames": {
+        "name": "গান গাওয়ার গেম",
+        "description": "কান আর কণ্ঠ অনুশীলনের গেম।"
+      },
+      "singFly": {
+        "name": "গেয়ে ওড়ো",
+        "description": "গান গাও, পাখিটাকে ফাঁক দিয়ে উড়াও"
+      }
+    },
+    "privacy": "আপনার গোপনীয়তা সুরক্ষিত — এই অ্যাপ ১০০% আপনার ব্রাউজারে চলে। কোনো অডিও রেকর্ড বা কোথাও পাঠানো হয় না।"
+  },
+  "tools": {
+    "title": "মিউজিক টুল",
+    "subtitle": "একটা টুল বেছে নাও"
+  },
+  "games": {
+    "title": "গান গাওয়ার গেম",
+    "subtitle": "একটা গেম বেছে নাও"
+  },
+  "warmUp": {
+    "title": "ওয়ার্ম-আপ",
+    "voice": "কণ্ঠ:",
+    "sequences": "অনুক্রম:",
+    "semitoneStep": "ধাপ:",
+    "pattern": "প্যাটার্ন:",
+    "patternGroups": {
+      "basic": "প্রাথমিক",
+      "playful": "মজার",
+      "advanced": "উন্নত"
+    },
+    "patterns": {
+      "fiveNoteMajor": "পাঁচ স্বর মেজর (1-2-3-4-5-4-3-2-1)",
+      "threeNoteMajor": "তিন স্বর (1-2-3-2-1)",
+      "majorTriad": "মেজর ট্রায়াড (1-3-5-3-1)",
+      "descendingFiveNote": "পাঁচ স্বর অবতরণ (5-4-3-2-1)",
+      "fiveNoteMinor": "পাঁচ স্বর মাইনর",
+      "octaveArpeggio": "অক্টেভ আর্পেজিও (1-3-5-8-5-3-1)",
+      "octaveLeap": "অক্টেভ লাফ (1-8-1)",
+      "fullOctaveScale": "সম্পূর্ণ অক্টেভ স্কেল",
+      "majorNinthArpeggio": "নবম আর্পেজিও (1-3-5-8-9-8-5-3-1)",
+      "bouncyBall": "লাফানো বল (1-3-1-5-1-8-1)",
+      "pogoStick": "পোগো স্টিক (1-5-1-5-1-8)",
+      "trampoline": "ট্রাম্পোলিন (1-8-5-8-3-8-1)",
+      "frogHops": "ব্যাঙের লাফ (1-5-3-7-5-8)",
+      "zigZag": "জিগজ্যাগ (1-3-2-4-3-5)",
+      "crisscross": "ক্রসক্রস (1-5-2-6-3-7-4-8)",
+      "echo": "প্রতিধ্বনি (5-3-1-5-3-1)",
+      "questionAnswer": "প্রশ্ন ও উত্তর (1-3-5-3-5-3-1-3)",
+      "cuckoo": "কোকিল (5-3-5-3-1)",
+      "mouseElephant": "ইঁদুর ও হাতি (1-2-1-8-7-8)",
+      "yodel": "ইয়োডেল (1-8-3-8-5-8)",
+      "rollerCoaster": "রোলার কোস্টার (1-3-5-8-7-5-3-1)",
+      "rocketShip": "রকেট (1-2-3-5-8-12)",
+      "slideDown": "স্লাইড (8-6-4-2-1)"
+    },
+    "subtitle": "বাক্যাংশটি গান। প্রতিটি রাউন্ড অর্ধ স্বর উপরে স্থানান্তরিত হয়।",
+    "perTone": "প্রতি স্বরে",
+    "done": "ওয়ার্ম-আপ শেষ!",
+    "listeningToReference": "রেফারেন্স শোনা হচ্ছে…",
+    "nextPhrase": "পরবর্তী বাক্যাংশ…",
+    "singHighlightedNote": "হাইলাইট করা স্বরটি গান",
+    "startToneInline": "শুরুর স্বর",
+    "sequencesUnit": "অনুক্রম",
+    "semitonesUnit": "সেমিটোন"
+  },
+  "doReMi": {
+    "title": "DO RE MI গেম",
+    "singNoteFor": "এগিয়ে যেতে প্রতিটি নোট {seconds} সেকেন্ড গান করুন",
+    "congratulationsMessage": "আপনি {startTone} থেকে শুরু করে প্রতিটি নোট {seconds} সেকেন্ড ধরে রেখে {mode} স্কেল সম্পন্ন করেছেন!",
+    "time": "⏱ সময়:",
+    "singThisNote": "এটি গান করুন:",
+    "youreSinging": "আপনি গাইছেন:",
+    "perfect": "নিখুঁত",
+    "cents": "সেন্ট",
+    "allowedRange": "অনুমোদিত পরিসর: ±৫০ সেন্ট · লক্ষ্য: {hz} Hz",
+    "playSolfege": "{solfege} বাজান",
+    "scaleMode": "স্কেল মোড:",
+    "startTone": "শুরুর টোন:",
+    "doReMiButton": "Do Re Mi",
+    "currentHz": "আপনি: {hz} Hz",
+    "pickToneHeader": "আপনার শুরুর সুর বেছে নিন",
+    "pickToneFooter": "⭐ = প্রস্তাবিত শুরু",
+    "voiceTier": {
+      "high": "👧 উচ্চ – মেয়ে ও মহিলা",
+      "mid": "👧👦 সবার জন্য স্বস্তিদায়ক",
+      "low": "👨 নিম্ন – পুরুষ ও ছেলে"
+    }
+  },
+  "pitchDetector": {
+    "listening": "শুনছে...",
+    "flat": "♭ ফ্ল্যাট",
+    "inTune": "সুরে আছে",
+    "sharp": "শার্প ♯",
+    "clarity": "স্পষ্টতা",
+    "cents": "সেন্ট",
+    "replaySound": "শব্দ পুনরায় চালান\n(শেষ ৩০ সেকেন্ড)"
+  },
+  "voiceRanges": {
+    "full": "সম্পূর্ণ",
+    "everyone": "সবাই",
+    "kids": "বাচ্চারা (6–11)",
+    "comfyWomen": "আরামদায়ক – মহিলা",
+    "comfyMen": "আরামদায়ক – পুরুষ",
+    "soprano": "সোপ্রানো",
+    "mezzoSoprano": "মেৎজো-সোপ্রানো",
+    "alto": "অল্টো",
+    "tenor": "টেনর",
+    "baritone": "ব্যারিটোন",
+    "bass": "বেস"
+  },
+  "toneDetector": {
+    "listening": "শুনছে...",
+    "tonesDetected": "{count}টি টোন শনাক্ত হয়েছে",
+    "pressStart": "টোন শনাক্ত করতে শুরু চাপুন",
+    "pageDescription": "একসাথে একাধিক টোন শনাক্ত করে (C2–C7)। একটি হারমনি গান করুন, কয়েকটি নোট গুনগুন করুন এবং প্রতিটি টোন রিয়েল টাইমে প্রদর্শিত দেখুন।",
+    "sensitivityDescription": "কতগুলো টোন ধরা হবে তা নিয়ন্ত্রণ করে। একটি নোট গাওয়া বা বাজানোর সময় ওভারটোন ফিল্টার করতে কমান। হারমনি বা কর্ডে আরো একযোগে টোন শনাক্ত করতে বাড়ান।",
+    "noiseGateDescription": "একটি টোন শনাক্ত করতে প্রয়োজনীয় ন্যূনতম ভলিউম সেট করে। নীরবতার সময় ভুল টোন দেখলে বাড়ান। শান্ত শব্দ ধরতে কমান।",
+    "sensitivity": "সংবেদনশীলতা",
+    "noiseGate": "নয়েজ গেট",
+    "strict": "কম টোন",
+    "loose": "বেশি টোন",
+    "quiet": "কম ফিল্টারিং",
+    "loud": "বেশি ফিল্টারিং"
+  },
+  "singTone": {
+    "title": "সিং টোন গেম",
+    "subtitle": "একটি এলোমেলো টোন বাজানো হয় — সেটি গেয়ে মেলান!",
+    "play": "বাজান",
+    "singThisNote": "এটি গান করুন:",
+    "rounds": "রাউন্ড:",
+    "congratulationsMessage": "আপনি {holdDuration} সেকেন্ড ধরে রেখে {seconds} সেকেন্ডে সব {rounds}টি টোন মিলিয়েছেন!",
+    "roundProgress": "{current} / {total}",
+    "settingsSummary": "{holdDuration} সেকেন্ড ধরে রেখে {rounds}টি টোন গান করুন"
+  },
+  "tuner": {
+    "tuning": "টিউনিং",
+    "guitar": "গিটার",
+    "ukulele": "ইউকুলেলে",
+    "custom": "কাস্টম",
+    "tuningGroups": {
+      "standard": "স্ট্যান্ডার্ড",
+      "drop": "ড্রপ",
+      "open": "ওপেন",
+      "alternate": "বিকল্প"
+    },
+    "tuningItems": {
+      "ebStandard": "Eb স্ট্যান্ডার্ড",
+      "openG": "ওপেন G",
+      "openD": "ওপেন D",
+      "openC": "ওপেন C"
+    }
+  },
+  "singFly": {
+    "title": "গেয়ে ওড়ো",
+    "subtitle": "প্রতিটি সুর গাও আর ফাঁক দিয়ে যাও"
+  }
+}

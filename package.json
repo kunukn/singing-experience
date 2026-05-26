@@ -1,0 +1,100 @@
+{
+  "name": "singing-experience",
+  "version": "1.0.0",
+  "description": "A browser-based singing practice app with real-time pitch detection and a DO RE MI singing game. Free, private, works offline.",
+  "type": "module",
+  "engines": {
+    "node": ">=24",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "dev": "vite --port 5555",
+    "build": "vue-tsc && vite build",
+    "build:preview": "npm run build && npm run preview",
+    "build:validate": "npm run build && node scripts/validate-build.js",
+    "preview": "vite preview",
+    "typecheck": "node scripts/tscheck-with-timing.js",
+    "lint": "node scripts/lint-with-timing.js",
+    "lint:fix": "oxlint --fix",
+    "format": "prettier --write ./src",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "check": "node scripts/check.js",
+    "check:fix": "npm run format && npm run check",
+    "deploy": "gh-pages -d dist",
+    "prepare": "husky"
+  },
+  "dependencies": {
+    "@primeuix/themes": "^2.0.3",
+    "@tailwindcss/vite": "^4.3.0",
+    "@unhead/vue": "^3.1.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
+    "@vueuse/core": "^14.3.0",
+    "@xstate/vue": "^5.0.0",
+    "canvas-confetti": "^1.9.4",
+    "dayjs": "^1.11.20",
+    "pinia": "^3.0.4",
+    "pitchy": "^4.1.0",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.5.5",
+    "tailwindcss": "^4.3.0",
+    "tone": "^15.1.22",
+    "vue": "^3.5.34",
+    "vue-i18n": "^11.3.2",
+    "vue-router": "^5.0.7",
+    "xstate": "^5.31.1"
+  },
+  "devDependencies": {
+    "@types/canvas-confetti": "^1.9.0",
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitest/ui": "^4.1.6",
+    "@vue/test-utils": "^2.4.10",
+    "gh-pages": "^6.3.0",
+    "happy-dom": "^20.9.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.2",
+    "oxlint": "^1.65.0",
+    "playwright": "^1.59.1",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.8.0",
+    "typescript": "^6.0.3",
+    "unplugin-auto-import": "^21.0.0",
+    "unplugin-vue-components": "^32.0.0",
+    "vite": "^8.0.13",
+    "vite-plugin-pwa": "^1.3.0",
+    "vite-plugin-vue-devtools": "^8.1.2",
+    "vitest": "^4.1.6",
+    "vue-tsc": "3.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kunukn/singing-experience.git"
+  },
+  "keywords": [
+    "singing",
+    "pitch-detection",
+    "vocal-pitch",
+    "do-re-mi",
+    "ear-training",
+    "music-education",
+    "microphone",
+    "note-detection",
+    "frequency-analyzer",
+    "voice-training",
+    "pwa",
+    "vue",
+    "web-audio",
+    "tuner"
+  ],
+  "author": "kunukn",
+  "license": "0BSD",
+  "bugs": {
+    "url": "https://github.com/kunukn/singing-experience/issues"
+  },
+  "homepage": "https://github.com/kunukn/singing-experience#readme",
+  "lint-staged": {
+    "src/**/*.{ts,vue,css,js}": "prettier --write"
+  }
+}

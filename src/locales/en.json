@@ -1,0 +1,254 @@
+{
+  "generic": {
+    "start": "Start",
+    "stop": "Stop",
+    "clear": "Clear",
+    "backToMenuArrow": "←",
+    "back": "Back",
+    "hz": "Hz",
+    "previewSoundLabel": "See your voice",
+    "toggleDarkMode": "Toggle dark mode",
+    "toggleFullscreen": "Toggle fullscreen",
+    "fullscreen": "Fullscreen",
+    "settings": "Settings",
+    "showNoteTarget": "Show note target",
+    "pageNotFound": "Page not found",
+    "previewButton": "♪",
+    "darkMode": "🌙",
+    "lightMode": "☀️",
+    "muteButton": "Mute",
+    "tooLow": "♭ Too low",
+    "tooHigh": "Too high ♯",
+    "play": "Play",
+    "restart": "Restart",
+    "holdDuration": "Hold duration:",
+    "gameLength": "Game length:",
+    "difficulty": "Difficulty:",
+    "difficulty_easy": "Easy",
+    "difficulty_normal": "Normal",
+    "difficulty_hard": "Hard",
+    "voiceRange": "Voice range:",
+    "congratulations": "Congratulations!",
+    "gameOver": "Game over",
+    "playAgain": "Play Again",
+    "score": "Score",
+    "time": "Time"
+  },
+  "errors": {
+    "microphoneAccess": "Failed to access microphone",
+    "microphoneDenied": "The microphone is blocked. Turn it on in your browser settings and reload the page."
+  },
+  "settings": {
+    "language": "Language",
+    "title": "Settings",
+    "micSensitivity": {
+      "label": "Microphone pickup",
+      "description": "How clear a sound must be to count as a note.",
+      "forgiving": "More forgiving",
+      "strict": "Stricter"
+    },
+    "resetToDefaults": "Reset to defaults",
+    "reload": "Reload app"
+  },
+  "sounds": {
+    "toneSound": "Tone sound:",
+    "piano": "Piano",
+    "keyboard": "Keyboard",
+    "bell": "Bell",
+    "bass": "Bass",
+    "square": "Square",
+    "tuning": "Tuning Fork"
+  },
+  "home": {
+    "title": "Singing Experience",
+    "subtitle": "Choose a program to get started",
+    "programs": {
+      "pitchDetector": {
+        "name": "Pitch Detector",
+        "description": "Detect your singing pitch in real time. See the note, octave, and how in-tune you are."
+      },
+      "doReMi": {
+        "name": "DO RE MI Game",
+        "description": "Sing through the scale — DO RE MI FA SO LA TI DO. Hold each note for a few seconds to advance."
+      },
+      "tuner": {
+        "name": "Instrument Tuner",
+        "description": "Pluck a string — see the note, cents deviation, and hear a chime when it's perfectly in tune."
+      },
+      "toneDetector": {
+        "name": "Tone Detector",
+        "description": "Detect multiple simultaneous tones in real time. Sing a harmony and see which notes are sounding."
+      },
+      "singTone": {
+        "name": "Sing Tone Game",
+        "description": "A random tone is played — sing it back! Match different tones in a row to win."
+      },
+      "pitchGame": {
+        "name": "Pitch Game",
+        "description": "Target notes scroll in — sing each one and hold it to score. Race the clock and hit as many as you can."
+      },
+      "warmUp": {
+        "name": "Vocal Warm-Up",
+        "description": "Warm up your voice through a guided pitch sequence — hold each note to advance."
+      },
+      "singingTools": {
+        "name": "Music Tools",
+        "description": "Pitch detector, warm-up, tuner, and tone detector."
+      },
+      "singingGames": {
+        "name": "Singing Games",
+        "description": "Games to train your ear and voice."
+      },
+      "singFly": {
+        "name": "Singfly",
+        "description": "Sing to fly the bird through the gaps"
+      }
+    },
+    "privacy": "Your privacy is safe — this app runs 100% in your browser. No audio is recorded or sent anywhere."
+  },
+  "tools": {
+    "title": "Music Tools",
+    "subtitle": "Pick a tool to use"
+  },
+  "games": {
+    "title": "Singing Games",
+    "subtitle": "Pick a game to play"
+  },
+  "warmUp": {
+    "title": "Warm-up",
+    "voice": "Voice:",
+    "sequences": "Sequences:",
+    "semitoneStep": "Step:",
+    "pattern": "Pattern:",
+    "patternGroups": {
+      "basic": "Basic",
+      "playful": "Playful",
+      "advanced": "Advanced"
+    },
+    "patterns": {
+      "fiveNoteMajor": "Five-note major (1-2-3-4-5-4-3-2-1)",
+      "threeNoteMajor": "Three-note (1-2-3-2-1)",
+      "majorTriad": "Major triad (1-3-5-3-1)",
+      "descendingFiveNote": "Descending five-note (5-4-3-2-1)",
+      "fiveNoteMinor": "Five-note minor",
+      "octaveArpeggio": "Octave arpeggio (1-3-5-8-5-3-1)",
+      "octaveLeap": "Octave leap (1-8-1)",
+      "fullOctaveScale": "Full octave scale",
+      "majorNinthArpeggio": "9th arpeggio (1-3-5-8-9-8-5-3-1)",
+      "bouncyBall": "Bouncy ball (1-3-1-5-1-8-1)",
+      "pogoStick": "Pogo stick (1-5-1-5-1-8)",
+      "trampoline": "Trampoline (1-8-5-8-3-8-1)",
+      "frogHops": "Frog hops (1-5-3-7-5-8)",
+      "zigZag": "Zig-zag (1-3-2-4-3-5)",
+      "crisscross": "Crisscross (1-5-2-6-3-7-4-8)",
+      "echo": "Echo (5-3-1-5-3-1)",
+      "questionAnswer": "Call & answer (1-3-5-3-5-3-1-3)",
+      "cuckoo": "Cuckoo (5-3-5-3-1)",
+      "mouseElephant": "Mouse & elephant (1-2-1-8-7-8)",
+      "yodel": "Yodel (1-8-3-8-5-8)",
+      "rollerCoaster": "Roller coaster (1-3-5-8-7-5-3-1)",
+      "rocketShip": "Rocket ship (1-2-3-5-8-12)",
+      "slideDown": "Slide (8-6-4-2-1)"
+    },
+    "subtitle": "Sing the phrase. Each round transposes up a half step.",
+    "perTone": "per tone",
+    "done": "Warm-up done!",
+    "listeningToReference": "Listening to reference…",
+    "nextPhrase": "Next phrase…",
+    "singHighlightedNote": "Sing the highlighted note",
+    "startToneInline": "start tone",
+    "sequencesUnit": "sequences",
+    "semitonesUnit": "semitones"
+  },
+  "doReMi": {
+    "title": "DO RE MI Game",
+    "singNoteFor": "Hold each note for {seconds} seconds to continue",
+    "congratulationsMessage": "You completed the {mode} scale starting on {startTone}, holding each note for {seconds} seconds!",
+    "time": "⏱ Time:",
+    "singThisNote": "Sing this:",
+    "youreSinging": "You're singing:",
+    "perfect": "Perfect",
+    "cents": "cents",
+    "allowedRange": "Allowed range: ±50 cents · Target: {hz} Hz",
+    "playSolfege": "Play {solfege}",
+    "scaleMode": "Scale mode:",
+    "startTone": "Start tone:",
+    "doReMiButton": "Do Re Mi",
+    "currentHz": "You: {hz} Hz",
+    "pickToneHeader": "Pick your starting tone",
+    "pickToneFooter": "⭐ = recommended start",
+    "voiceTier": {
+      "high": "👧 High – girls & women",
+      "mid": "👧👦 Comfortable for all",
+      "low": "👨 Low – men & boys"
+    }
+  },
+  "pitchDetector": {
+    "listening": "Listening...",
+    "flat": "♭ Flat",
+    "inTune": "In tune",
+    "sharp": "Sharp ♯",
+    "clarity": "Clarity",
+    "cents": "cents",
+    "replaySound": "Replay\n(last 30s)"
+  },
+  "voiceRanges": {
+    "full": "Full",
+    "everyone": "Everyone",
+    "kids": "Kids (6–11)",
+    "comfyWomen": "Comfy – Women",
+    "comfyMen": "Comfy – Men",
+    "soprano": "Soprano",
+    "mezzoSoprano": "Mezzo-Soprano",
+    "alto": "Alto",
+    "tenor": "Tenor",
+    "baritone": "Baritone",
+    "bass": "Bass"
+  },
+  "toneDetector": {
+    "listening": "Listening...",
+    "tonesDetected": "{count} tones found",
+    "pressStart": "Press Start to find tones",
+    "pageDescription": "Detects multiple tones at once (C2–C7). Sing a harmony, hum several notes and see each tone displayed in real time.",
+    "sensitivityDescription": "Controls how many tones are picked up. Lower it to filter out overtones when singing or playing a single note. Raise it to detect more simultaneous tones in a harmony or chord.",
+    "noiseGateDescription": "Sets the minimum volume required to detect a tone. Raise it if you see false tones during silence. Lower it to pick up quieter sounds.",
+    "sensitivity": "Sensitivity",
+    "noiseGate": "Noise gate",
+    "strict": "Fewer tones",
+    "loose": "More tones",
+    "quiet": "Less filtering",
+    "loud": "More filtering"
+  },
+  "singTone": {
+    "title": "Sing Tone Game",
+    "subtitle": "A random tone is played — sing it back to match!",
+    "play": "Play",
+    "singThisNote": "Sing this:",
+    "rounds": "Rounds:",
+    "congratulationsMessage": "You matched all {rounds} tones in {seconds} seconds with {holdDuration}s hold duration!",
+    "roundProgress": "{current} / {total}",
+    "settingsSummary": "Sing {rounds} tones with {holdDuration}s hold duration"
+  },
+  "tuner": {
+    "tuning": "Tuning",
+    "guitar": "Guitar",
+    "ukulele": "Ukulele",
+    "custom": "Custom",
+    "tuningGroups": {
+      "standard": "Standard",
+      "drop": "Drop",
+      "open": "Open",
+      "alternate": "Alternate"
+    },
+    "tuningItems": {
+      "ebStandard": "Eb standard",
+      "openG": "Open G",
+      "openD": "Open D",
+      "openC": "Open C"
+    }
+  },
+  "singFly": {
+    "title": "Singfly",
+    "subtitle": "Sing each note to fly through the gap"
+  }
+}

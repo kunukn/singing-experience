@@ -1,0 +1,250 @@
+{
+  "generic": {
+    "start": "Aallartitsit",
+    "stop": "Unikkit",
+    "clear": "Peerit",
+    "backToMenuArrow": "←",
+    "back": "Uteqqigit",
+    "hz": "Hz",
+    "previewSoundLabel": "Nipaat takunniaruk",
+    "toggleDarkMode": "Taartumik atuinerup allanngortinnera",
+    "toggleFullscreen": "Skærmi tamaat allanngortinnera",
+    "fullscreen": "Skærmi tamaat",
+    "settings": "Aaqqissuussinerit",
+    "showNoteTarget": "Nalunaarsorneq naaperineqarpoq",
+    "pageNotFound": "Nalunaarsorneq nassatarisassanngilaq",
+    "previewButton": "♪",
+    "darkMode": "🌙",
+    "lightMode": "☀️",
+    "muteButton": "Nipeqarani",
+    "tooLow": "♭ Mikippoq",
+    "tooHigh": "Qaffasip­pallappoq ♯",
+    "play": "Erinarsuk",
+    "restart": "Aallartiterneq",
+    "holdDuration": "Tigusimassuseq:",
+    "gameLength": "Spillip sivisussusia:",
+    "voiceRange": "Nipit annertussusia:",
+    "congratulations": "Pilluarit!",
+    "gameOver": "Pinnguarneq naavoq",
+    "playAgain": "Pinnguarit aqqissaaq",
+    "score": "Naatsorsuut",
+    "time": "Piffissaq"
+  },
+  "errors": {
+    "microphoneAccess": "Mikrofoni atorsinnaanngilaq",
+    "microphoneDenied": "Mikrofoni atorneqarsinnaanngilaq. Browserikkut atuutilersinnaasiuk imatullu qupperneq nutarteruk."
+  },
+  "settings": {
+    "language": "Oqaatsit",
+    "title": "Aaqqissuussinerit",
+    "micSensitivity": {
+      "label": "Mikrofonip misissuinnera",
+      "description": "How clear a sound must be to count as a note.",
+      "forgiving": "Akuerinnilluartoq",
+      "strict": "Aalajangersimasoq"
+    },
+    "resetToDefaults": "Pillugu utertippallakkit",
+    "reload": "App nutaamik ammartik"
+  },
+  "sounds": {
+    "toneSound": "Nipi:",
+    "piano": "Piano",
+    "keyboard": "Keyboard",
+    "bell": "Klokki",
+    "bass": "Bass",
+    "square": "Square",
+    "tuning": "Tonetunersoq"
+  },
+  "home": {
+    "title": "Erinarsornermik misigisaq",
+    "subtitle": "Atortussamik toqqaruk aallartinniarlutit",
+    "programs": {
+      "pitchDetector": {
+        "name": "Nipip Qaffassusia",
+        "description": "Erinarsortarfiit nipip qaffassusia paatsinnaaleruk. Nota, oktava aamma nipip eqqortarnera takusinnaavat."
+      },
+      "doReMi": {
+        "name": "DO RE MI Pinnguaq",
+        "description": "Niperutigit DO RE MI FA SO LA TI DO. Nota ataatsimik secondsit qassiit tigusimaaruk siusinnaannginnarlutit."
+      },
+      "tuner": {
+        "name": "Instrument Tuner",
+        "description": "Streng-imik nivinngarit — nota, cent-afvigelse takusinnaavat, aamma nipi tusarsinnaavat strengi naammattumik aalajangerneranut."
+      },
+      "toneDetector": {
+        "name": "Nipilerisoq",
+        "description": "Nipilerisoq assigiinngiitsut ataatsimik nassaarisinnaanngilaq. Erinarsortaruk aamma nipit takusinnaavat."
+      },
+      "singTone": {
+        "name": "Niperuserneq Pinnguaq",
+        "description": "Nipi nalinginnaasumik nipilerisarpoq — utertitsillugu niperusillugu! Nipit nalinginnaanngitsumillu tulleriiaarneqassapput ajugaannginnarlutit."
+      },
+      "pitchGame": {
+        "name": "Pitch Pinnguaq",
+        "description": "Nipit anguniagaasut takkuttarput — ataasiakkaarlugit niperuserlugillu tigusimaaruk akilersinnaajumallutit. Piffissaq akiullugu tamarmik anguniagaaffigeqqullugit."
+      },
+      "warmUp": {
+        "name": "Nipersiorneq",
+        "description": "Nipit nipilersuutigalugit nipersioriaruk — nota ataaseq tigusimaaruk siusinnaannginnarlutit."
+      },
+      "singingTools": {
+        "name": "Nipilersuutit atortut",
+        "description": "Nipiliuummik nassaarissut, nipersiorneq, nipersaat, nipillu amerlasuut nassaarissut."
+      },
+      "singingGames": {
+        "name": "Erinarsorpalaaq pinnguartakkat",
+        "description": "Pinnguartakkat siutivit nipivillu sungiusartakkavit."
+      },
+      "singFly": {
+        "name": "Erinnartimmiaq",
+        "description": "Erinnaarit timmiaq putuit akornanni timissinniarlugu"
+      }
+    },
+    "privacy": "Nammineersinnaassuseq illersorneqarpoq — app tamaat browserimi suliassarineqarpoq. Nipeqarneq nassiunnissaq pilersitsinaveersaarneqarpoq."
+  },
+  "tools": {
+    "title": "Nipilersuutit atortut",
+    "subtitle": "Atortoq toqqaruk"
+  },
+  "games": {
+    "title": "Erinarsorpalaaq pinnguartakkat",
+    "subtitle": "Pinnguarneq toqqaruk"
+  },
+  "warmUp": {
+    "title": "Nipersiorneq",
+    "voice": "Nipi:",
+    "sequences": "Tulleriiaat:",
+    "semitoneStep": "Allunneq:",
+    "pattern": "Mønster:",
+    "patternGroups": {
+      "basic": "Begynder",
+      "playful": "Sjov",
+      "advanced": "Avanceret"
+    },
+    "patterns": {
+      "fiveNoteMajor": "Femtoners dur (1-2-3-4-5-4-3-2-1)",
+      "threeNoteMajor": "Tretoner (1-2-3-2-1)",
+      "majorTriad": "Durtreklang (1-3-5-3-1)",
+      "descendingFiveNote": "Femtoner nedad (5-4-3-2-1)",
+      "fiveNoteMinor": "Femtoners mol",
+      "octaveArpeggio": "Oktav-arpeggio (1-3-5-8-5-3-1)",
+      "octaveLeap": "Oktavspring (1-8-1)",
+      "fullOctaveScale": "Hel oktavskala",
+      "majorNinthArpeggio": "9'er-arpeggio (1-3-5-8-9-8-5-3-1)",
+      "bouncyBall": "Hoppebold (1-3-1-5-1-8-1)",
+      "pogoStick": "Kængurustok (1-5-1-5-1-8)",
+      "trampoline": "Trampolin (1-8-5-8-3-8-1)",
+      "frogHops": "Frøhop (1-5-3-7-5-8)",
+      "zigZag": "Siksak (1-3-2-4-3-5)",
+      "crisscross": "På kryds og tværs (1-5-2-6-3-7-4-8)",
+      "echo": "Ekko (5-3-1-5-3-1)",
+      "questionAnswer": "Spørg og svar (1-3-5-3-5-3-1-3)",
+      "cuckoo": "Kuk-kuk (5-3-5-3-1)",
+      "mouseElephant": "Mus og elefant (1-2-1-8-7-8)",
+      "yodel": "Jodel (1-8-3-8-5-8)",
+      "rollerCoaster": "Rutsjebane (1-3-5-8-7-5-3-1)",
+      "rocketShip": "Raket (1-2-3-5-8-12)",
+      "slideDown": "Rutsj (8-6-4-2-1)"
+    },
+    "subtitle": "Oqaaseq erinarsoruk. Imaaliornermi tamarmi affaata qaffalluni.",
+    "perTone": "nota ataaseq",
+    "done": "Nipersiorneq naammassivoq!",
+    "listeningToReference": "Tunngavik tusarnaartoq…",
+    "nextPhrase": "Oqaaseq tulleq…",
+    "singHighlightedNote": "Nota erseqqissartoq erinarsoruk",
+    "startToneInline": "aallartineq",
+    "sequencesUnit": "tulleriiaat",
+    "semitonesUnit": "halvtonit"
+  },
+  "doReMi": {
+    "title": "DO RE MI Pinnguaq",
+    "singNoteFor": "Nota ataatsimik {seconds} secondsimik tigusimaaruk siusinnaannginnarlutit",
+    "congratulationsMessage": "{mode} nipiliuineq {startTone}-mit aallarnerlugu naammassineqarpoq, nota ataatsimik {seconds} secondsimik tigusimassutit!",
+    "time": "⏱ Piffissaq:",
+    "singThisNote": "Una niperusillugu:",
+    "youreSinging": "Niperuserputit:",
+    "perfect": "Pitsaaneq",
+    "cents": "cent",
+    "allowedRange": "Atorsinnaasut: ±50 cent · Siuarsarfissaq: {hz} Hz",
+    "playSolfege": "{solfege} nipiliigiuk",
+    "scaleMode": "Skalaap suussusia:",
+    "startTone": "Aallarkataasiutip nipia:",
+    "doReMiButton": "Do Re Mi",
+    "currentHz": "Illit: {hz} Hz",
+    "pickToneHeader": "Aallarkataasiutip nipia toqqaruk",
+    "pickToneFooter": "⭐ = nalunngissumik toqqissisimat",
+    "voiceTier": {
+      "high": "👧 Qaffassuk – arnariaraq & arnat",
+      "mid": "👧👦 Tamarmillu atugassatut",
+      "low": "👨 Naapersoq – angutit & meeqqat"
+    }
+  },
+  "pitchDetector": {
+    "listening": "Tusarnarpoq...",
+    "flat": "♭ Mikippoq",
+    "inTune": "Tuneqarpoq",
+    "sharp": "Qaffasip­pallappoq ♯",
+    "clarity": "Paatsin­naaneq",
+    "cents": "cent",
+    "replaySound": "Nipimik uteqqiigit\n(kingulleq 30 sek.)"
+  },
+  "voiceRanges": {
+    "full": "Tamaq",
+    "everyone": "Tamarmik",
+    "kids": "Meeqqat (6–11)",
+    "comfyWomen": "Naammattumik – arnat",
+    "comfyMen": "Naammattumik – angutit",
+    "soprano": "Soprano",
+    "mezzoSoprano": "Mezzo-Soprano",
+    "alto": "Alto",
+    "tenor": "Tenor",
+    "baritone": "Bariton",
+    "bass": "Bass"
+  },
+  "toneDetector": {
+    "listening": "Tusarnarpoq...",
+    "tonesDetected": "{count} nipi nassaarineqarput",
+    "pressStart": "Aallartitsimik tooruk nipilerisarniarlutit",
+    "pageDescription": "Nipit ataatsimut nassaarinnaalerput (C2–C7). Erinarsortaruk, nipit amerlasuut niperusigit aamma nipi ataatsimik takusinnaavat.",
+    "sensitivityDescription": "Nassaarisinnaanermik aqutsisuusarpoq. Annikillisinnaaruk niperit taamatut nipilerissagaangat. Annersallisinnaaruk niperit amerlasuut nassaarisinnaanikkut.",
+    "noiseGateDescription": "Nipip annikillisimassusianik nassaarinissaq pillugu pilersitsisoq. Annersallisinnaaruk nipeqarnanit nassaarineqannginnissaanut. Annikillisinnaaruk nipit nippisimasuut nassaarinissaanut.",
+    "sensitivity": "Nassaarisinnaanermi",
+    "noiseGate": "Nipeqarnanimi uuttortaq",
+    "strict": "Nipit ikkittuinnaat",
+    "loose": "Nipit amerlasuut",
+    "quiet": "Uuttortarneq annikitsoq",
+    "loud": "Uuttortarneq annertusoq"
+  },
+  "singTone": {
+    "title": "Niperuserneq Pinnguaq",
+    "subtitle": "Nipi nalinginnaasumik nipilerisarpoq — utertitsillugu niperusillugu!",
+    "play": "Pinnguarit",
+    "singThisNote": "Una niperusillugu:",
+    "rounds": "Pinnguaqataanermi:",
+    "congratulationsMessage": "Nipit {rounds} tamarmik {seconds} secondsimi {holdDuration}s tigusimassutit naammassineqarput!",
+    "roundProgress": "{current} / {total}",
+    "settingsSummary": "Nipit {rounds} niperusigit {holdDuration}s tigusimassutit"
+  },
+  "tuner": {
+    "tuning": "Tuning",
+    "guitar": "Guitar",
+    "ukulele": "Ukulele",
+    "custom": "Immikkut",
+    "tuningGroups": {
+      "standard": "Nalinginnaasoq",
+      "drop": "Drop",
+      "open": "Ammasoq",
+      "alternate": "Allamik"
+    },
+    "tuningItems": {
+      "ebStandard": "Eb nalinginnaasoq",
+      "openG": "Ammasoq G",
+      "openD": "Ammasoq D",
+      "openC": "Ammasoq C"
+    }
+  },
+  "singFly": {
+    "title": "Erinnartimmiaq",
+    "subtitle": "Nipi tamaasa erinnarlugu putummut ikaarniarit"
+  }
+}

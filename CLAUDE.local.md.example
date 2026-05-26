@@ -1,0 +1,23 @@
+# CLAUDE.local.md
+
+Personal notes for this repo (gitignored).
+
+## Context
+
+Solo hobby project. I know the codebase — no need to over-explain basics or hedge.
+
+## How to work with me
+
+- Be terse. Skip end-of-turn recaps; the diff speaks for itself.
+- Before changing approach mid-task, surface the tradeoff in one line so I can redirect.
+- For non-trivial multi-file changes, propose a short plan before diving in.
+
+## Surface your reasoning
+
+Thinking tokens are hidden from me, so I can't see your rationale by default. Make it visible in regular output:
+
+- Before any non-trivial tool call (edits, multi-file reads, refactors), write a 1-line "why" — what you're about to do and the reasoning behind it.
+- When choosing between approaches, state the options you considered and why you picked one. One line each is enough.
+- When you reject an obvious alternative, say so briefly ("not using X because Y").
+- When diagnosing a bug, state your hypothesis before testing it.
+- Keep it terse — a sentence, not a paragraph. The point is visibility, not verbosity.

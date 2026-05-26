@@ -1,0 +1,254 @@
+{
+  "generic": {
+    "start": "शुरू",
+    "stop": "रोकें",
+    "clear": "साफ़ करें",
+    "backToMenuArrow": "←",
+    "back": "वापस",
+    "hz": "Hz",
+    "previewSoundLabel": "अपनी आवाज़ देखें",
+    "toggleDarkMode": "डार्क मोड टॉगल करें",
+    "toggleFullscreen": "फ़ुलस्क्रीन टॉगल करें",
+    "fullscreen": "फ़ुलस्क्रीन",
+    "settings": "सेटिंग्स",
+    "showNoteTarget": "लक्ष्य नोट दिखाएं",
+    "pageNotFound": "पृष्ठ नहीं मिला",
+    "previewButton": "♪",
+    "darkMode": "🌙",
+    "lightMode": "☀️",
+    "muteButton": "म्यूट",
+    "tooLow": "♭ बहुत नीचा",
+    "tooHigh": "बहुत ऊँचा ♯",
+    "play": "चलाएँ",
+    "restart": "फिर से शुरू करें",
+    "holdDuration": "होल्ड अवधि:",
+    "gameLength": "खेल अवधि:",
+    "difficulty": "कठिनाई:",
+    "difficulty_easy": "आसान",
+    "difficulty_normal": "सामान्य",
+    "difficulty_hard": "कठिन",
+    "voiceRange": "आवाज़ की सीमा:",
+    "congratulations": "बधाई हो!",
+    "gameOver": "खेल खत्म",
+    "playAgain": "फिर से खेलें",
+    "score": "स्कोर",
+    "time": "समय"
+  },
+  "errors": {
+    "microphoneAccess": "माइक्रोफ़ोन तक पहुँच नहीं हो सकी",
+    "microphoneDenied": "माइक्रोफ़ोन ब्लॉक है। अपने ब्राउज़र की सेटिंग में इसे चालू करें और पेज फिर से लोड करें।"
+  },
+  "settings": {
+    "language": "भाषा",
+    "title": "सेटिंग्स",
+    "micSensitivity": {
+      "label": "माइक्रोफ़ोन संवेदनशीलता",
+      "description": "आवाज़ कितनी साफ़ हो कि वह सुर मानी जाए।",
+      "forgiving": "ज़्यादा ढीला",
+      "strict": "ज़्यादा सख़्त"
+    },
+    "resetToDefaults": "डिफ़ॉल्ट पर रीसेट करें",
+    "reload": "ऐप फिर से लोड करें"
+  },
+  "sounds": {
+    "toneSound": "स्वर ध्वनि:",
+    "piano": "पियानो",
+    "keyboard": "कीबोर्ड",
+    "bell": "घंटी",
+    "bass": "बेस",
+    "square": "स्क्वेयर",
+    "tuning": "ट्यूनिंग फोर्क"
+  },
+  "home": {
+    "title": "गायन अनुभव",
+    "subtitle": "शुरू करने के लिए एक कार्यक्रम चुनें",
+    "programs": {
+      "pitchDetector": {
+        "name": "पिच डिटेक्टर",
+        "description": "अपनी गायन पिच को वास्तविक समय में पहचानें। स्वर, सप्तक और सुर की सटीकता देखें।"
+      },
+      "doReMi": {
+        "name": "DO RE MI खेल",
+        "description": "स्वर-सप्तक गाएँ — DO RE MI FA SO LA TI DO। आगे बढ़ने के लिए प्रत्येक स्वर को कुछ सेकंड तक पकड़ें।"
+      },
+      "tuner": {
+        "name": "वाद्ययंत्र ट्यूनर",
+        "description": "तार छेड़ें — नोट, सेंट्स का विचलन देखें और तार पूरी तरह मिलने पर चाइम सुनें।"
+      },
+      "toneDetector": {
+        "name": "टोन डिटेक्टर",
+        "description": "वास्तविक समय में कई एक साथ बजने वाले स्वरों को पहचानें। सामंजस्य गाएँ और देखें कौन से स्वर बज रहे हैं।"
+      },
+      "singTone": {
+        "name": "सिंग टोन गेम",
+        "description": "एक यादृच्छिक स्वर बजाया जाता है — उसे गाकर मिलाएँ! जीतने के लिए लगातार विभिन्न स्वर मिलाएँ।"
+      },
+      "pitchGame": {
+        "name": "पिच गेम",
+        "description": "लक्ष्य स्वर सरकते हुए आते हैं — हर एक को गाएँ और स्कोर के लिए रोकें। समय से दौड़ें और जितने हो सकें मिलाएँ।"
+      },
+      "warmUp": {
+        "name": "स्वर वार्म-अप",
+        "description": "एक मार्गदर्शित स्वर अनुक्रम के साथ अपनी आवाज़ को तैयार करें — आगे बढ़ने के लिए हर स्वर को बनाए रखें।"
+      },
+      "singingTools": {
+        "name": "म्यूज़िक टूल",
+        "description": "पिच डिटेक्टर, वार्म-अप, ट्यूनर और टोन डिटेक्टर।"
+      },
+      "singingGames": {
+        "name": "गाने के खेल",
+        "description": "कान और आवाज़ को सुधारने के खेल।"
+      },
+      "singFly": {
+        "name": "गा उड़",
+        "description": "गाओ और चिड़िया को छेदों से उड़ाओ"
+      }
+    },
+    "privacy": "आपकी गोपनीयता सुरक्षित है — यह ऐप 100% आपके ब्राउज़र में चलता है। कोई ऑडियो रिकॉर्ड या कहीं भेजा नहीं जाता।"
+  },
+  "tools": {
+    "title": "म्यूज़िक टूल",
+    "subtitle": "एक टूल चुनो"
+  },
+  "games": {
+    "title": "गाने के खेल",
+    "subtitle": "एक खेल चुनो"
+  },
+  "warmUp": {
+    "title": "वार्म-अप",
+    "voice": "आवाज़:",
+    "sequences": "अनुक्रम:",
+    "semitoneStep": "चरण:",
+    "pattern": "पैटर्न:",
+    "patternGroups": {
+      "basic": "बुनियादी",
+      "playful": "मज़ेदार",
+      "advanced": "उन्नत"
+    },
+    "patterns": {
+      "fiveNoteMajor": "पाँच स्वर मेजर (1-2-3-4-5-4-3-2-1)",
+      "threeNoteMajor": "तीन स्वर (1-2-3-2-1)",
+      "majorTriad": "मेजर ट्रायड (1-3-5-3-1)",
+      "descendingFiveNote": "पाँच स्वर अवरोही (5-4-3-2-1)",
+      "fiveNoteMinor": "पाँच स्वर माइनर",
+      "octaveArpeggio": "ऑक्टेव आर्पेजियो (1-3-5-8-5-3-1)",
+      "octaveLeap": "ऑक्टेव छलांग (1-8-1)",
+      "fullOctaveScale": "पूर्ण ऑक्टेव स्केल",
+      "majorNinthArpeggio": "नौवाँ आर्पेजियो (1-3-5-8-9-8-5-3-1)",
+      "bouncyBall": "उछलती गेंद (1-3-1-5-1-8-1)",
+      "pogoStick": "पोगो स्टिक (1-5-1-5-1-8)",
+      "trampoline": "ट्रैम्पोलिन (1-8-5-8-3-8-1)",
+      "frogHops": "मेंढक की छलांग (1-5-3-7-5-8)",
+      "zigZag": "ज़िगज़ैग (1-3-2-4-3-5)",
+      "crisscross": "क्रिसक्रॉस (1-5-2-6-3-7-4-8)",
+      "echo": "गूँज (5-3-1-5-3-1)",
+      "questionAnswer": "सवाल-जवाब (1-3-5-3-5-3-1-3)",
+      "cuckoo": "कोयल (5-3-5-3-1)",
+      "mouseElephant": "चूहा और हाथी (1-2-1-8-7-8)",
+      "yodel": "योडल (1-8-3-8-5-8)",
+      "rollerCoaster": "रोलर कोस्टर (1-3-5-8-7-5-3-1)",
+      "rocketShip": "रॉकेट (1-2-3-5-8-12)",
+      "slideDown": "स्लाइड (8-6-4-2-1)"
+    },
+    "subtitle": "वाक्यांश गाएँ। हर राउंड आधा स्वर ऊपर स्थानांतरित होता है।",
+    "perTone": "प्रति स्वर",
+    "done": "वार्म-अप पूरा!",
+    "listeningToReference": "संदर्भ सुन रहे हैं…",
+    "nextPhrase": "अगला वाक्यांश…",
+    "singHighlightedNote": "हाइलाइट किया गया स्वर गाएँ",
+    "startToneInline": "प्रारंभिक स्वर",
+    "sequencesUnit": "अनुक्रम",
+    "semitonesUnit": "सेमिटोन"
+  },
+  "doReMi": {
+    "title": "DO RE MI खेल",
+    "singNoteFor": "आगे बढ़ने के लिए प्रत्येक स्वर को {seconds} सेकंड तक गाएँ",
+    "congratulationsMessage": "आपने {startTone} से शुरू करके {mode} स्वर-सप्तक पूरा किया, प्रत्येक स्वर को {seconds} सेकंड तक पकड़ कर!",
+    "time": "⏱ समय:",
+    "singThisNote": "यह गाएँ:",
+    "youreSinging": "आप गा रहे हैं:",
+    "perfect": "बिल्कुल सही",
+    "cents": "सेंट्स",
+    "allowedRange": "अनुमत सीमा: ±50 सेंट्स · लक्ष्य: {hz} Hz",
+    "playSolfege": "{solfege} बजाएँ",
+    "scaleMode": "स्वर-सप्तक प्रकार:",
+    "startTone": "आरंभिक स्वर:",
+    "doReMiButton": "Do Re Mi",
+    "currentHz": "आप: {hz} Hz",
+    "pickToneHeader": "अपना शुरुआती स्वर चुनें",
+    "pickToneFooter": "⭐ = सुझाई गई शुरुआत",
+    "voiceTier": {
+      "high": "👧 ऊँचा – लड़कियाँ और महिलाएँ",
+      "mid": "👧👦 सभी के लिए आरामदायक",
+      "low": "👨 नीचा – पुरुष और लड़के"
+    }
+  },
+  "pitchDetector": {
+    "listening": "सुन रहे हैं…",
+    "flat": "♭ नीचा",
+    "inTune": "सुर में",
+    "sharp": "ऊँचा ♯",
+    "clarity": "स्पष्टता",
+    "cents": "सेंट्स",
+    "replaySound": "ध्वनि पुनः चलाएँ\n(पिछले ३० सेकंड)"
+  },
+  "voiceRanges": {
+    "full": "पूर्ण",
+    "everyone": "सभी",
+    "kids": "बच्चे (6–11)",
+    "comfyWomen": "आरामदायक – महिला",
+    "comfyMen": "आरामदायक – पुरुष",
+    "soprano": "सोप्रानो",
+    "mezzoSoprano": "मेत्ज़ो-सोप्रानो",
+    "alto": "ऑल्टो",
+    "tenor": "टेनर",
+    "baritone": "बैरिटोन",
+    "bass": "बेस"
+  },
+  "toneDetector": {
+    "listening": "सुन रहे हैं…",
+    "tonesDetected": "{count} स्वर पहचाने गए",
+    "pressStart": "स्वर पहचानने के लिए शुरू दबाएँ",
+    "pageDescription": "एक साथ कई स्वर पहचानें (C2–C7)। सामंजस्य गाएँ, कई स्वर गुनगुनाएँ और प्रत्येक स्वर वास्तविक समय में देखें।",
+    "sensitivityDescription": "नियंत्रित करता है कि कितने स्वर पकड़े जाएँ। एक स्वर गाते या बजाते समय ओवरटोन फ़िल्टर करने के लिए इसे कम करें। सामंजस्य या तार में अधिक स्वर पहचानने के लिए इसे बढ़ाएँ।",
+    "noiseGateDescription": "स्वर पहचानने के लिए आवश्यक न्यूनतम ध्वनि स्तर सेट करता है। शांति में ग़लत स्वर दिखें तो इसे बढ़ाएँ। धीमी आवाज़ पकड़ने के लिए कम करें।",
+    "sensitivity": "संवेदनशीलता",
+    "noiseGate": "नॉइज़ गेट",
+    "strict": "कम स्वर",
+    "loose": "अधिक स्वर",
+    "quiet": "कम फ़िल्टरिंग",
+    "loud": "अधिक फ़िल्टरिंग"
+  },
+  "singTone": {
+    "title": "सिंग टोन गेम",
+    "subtitle": "एक यादृच्छिक स्वर बजाया जाता है — उसे गाकर मिलाएँ!",
+    "play": "बजाएँ",
+    "singThisNote": "यह गाएँ:",
+    "rounds": "राउंड:",
+    "congratulationsMessage": "आपने {holdDuration} सेकंड की होल्ड अवधि के साथ {seconds} सेकंड में सभी {rounds} स्वर मिलाए!",
+    "roundProgress": "{current} / {total}",
+    "settingsSummary": "{holdDuration} सेकंड की होल्ड अवधि के साथ {rounds} स्वर गाएँ"
+  },
+  "tuner": {
+    "tuning": "ट्यूनिंग",
+    "guitar": "गिटार",
+    "ukulele": "यूकुलेले",
+    "custom": "कस्टम",
+    "tuningGroups": {
+      "standard": "मानक",
+      "drop": "ड्रॉप",
+      "open": "ओपन",
+      "alternate": "वैकल्पिक"
+    },
+    "tuningItems": {
+      "ebStandard": "Eb मानक",
+      "openG": "ओपन G",
+      "openD": "ओपन D",
+      "openC": "ओपन C"
+    }
+  },
+  "singFly": {
+    "title": "गा उड़",
+    "subtitle": "हर सुर गाओ और छेद से निकलो"
+  }
+}

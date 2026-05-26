@@ -1,0 +1,254 @@
+{
+  "generic": {
+    "start": "Mulai",
+    "stop": "Berhenti",
+    "clear": "Hapus",
+    "backToMenuArrow": "←",
+    "back": "Kembali",
+    "hz": "Hz",
+    "previewSoundLabel": "Lihat suaramu",
+    "toggleDarkMode": "Alihkan mode gelap",
+    "toggleFullscreen": "Alihkan layar penuh",
+    "fullscreen": "Layar penuh",
+    "settings": "Pengaturan",
+    "showNoteTarget": "Tampilkan not target",
+    "pageNotFound": "Halaman tidak ditemukan",
+    "previewButton": "♪",
+    "darkMode": "🌙",
+    "lightMode": "☀️",
+    "muteButton": "Bisukan",
+    "tooLow": "♭ Terlalu rendah",
+    "tooHigh": "Terlalu tinggi ♯",
+    "play": "Mainkan",
+    "restart": "Mulai ulang",
+    "holdDuration": "Durasi tahan:",
+    "gameLength": "Durasi permainan:",
+    "difficulty": "Tingkat kesulitan:",
+    "difficulty_easy": "Mudah",
+    "difficulty_normal": "Normal",
+    "difficulty_hard": "Sulit",
+    "voiceRange": "Jangkauan suara:",
+    "congratulations": "Selamat!",
+    "gameOver": "Permainan selesai",
+    "playAgain": "Main Lagi",
+    "score": "Skor",
+    "time": "Waktu"
+  },
+  "errors": {
+    "microphoneAccess": "Gagal mengakses mikrofon",
+    "microphoneDenied": "Mikrofon diblokir. Aktifkan di pengaturan browser-mu lalu muat ulang halaman."
+  },
+  "settings": {
+    "language": "Bahasa",
+    "title": "Pengaturan",
+    "micSensitivity": {
+      "label": "Sensitivitas mikrofon",
+      "description": "Seberapa jernih suara harus agar dihitung sebagai nada.",
+      "forgiving": "Lebih longgar",
+      "strict": "Lebih ketat"
+    },
+    "resetToDefaults": "Setel ulang ke bawaan",
+    "reload": "Muat ulang aplikasi"
+  },
+  "sounds": {
+    "toneSound": "Suara nada:",
+    "piano": "Piano",
+    "keyboard": "Keyboard",
+    "bell": "Lonceng",
+    "bass": "Bass",
+    "square": "Kotak",
+    "tuning": "Garpu Tala"
+  },
+  "home": {
+    "title": "Pengalaman Bernyanyi",
+    "subtitle": "Pilih program untuk memulai",
+    "programs": {
+      "pitchDetector": {
+        "name": "Detektor Nada",
+        "description": "Deteksi nada nyanyianmu secara langsung. Lihat not, oktaf, dan seberapa tepat nadamu."
+      },
+      "doReMi": {
+        "name": "Permainan DO RE MI",
+        "description": "Nyanyikan tangga nada — DO RE MI FA SO LA TI DO. Tahan setiap not selama beberapa detik untuk melanjutkan."
+      },
+      "tuner": {
+        "name": "Penala Instrumen",
+        "description": "Petik senar — lihat not, deviasi sen, dan dengarkan dentingan saat senar selaras sempurna."
+      },
+      "toneDetector": {
+        "name": "Detektor Nada Ganda",
+        "description": "Deteksi beberapa nada sekaligus secara langsung. Nyanyikan harmoni dan lihat setiap nada yang terdengar."
+      },
+      "singTone": {
+        "name": "Permainan Tebak Nada",
+        "description": "Sebuah nada acak dimainkan — nyanyikan kembali! Cocokkan nada berbeda berturut-turut untuk menang."
+      },
+      "pitchGame": {
+        "name": "Permainan Pitch",
+        "description": "Nada-nada target meluncur masuk — nyanyikan tiap satu dan tahan untuk mencetak skor. Kejar waktu dan kena sebanyak mungkin."
+      },
+      "warmUp": {
+        "name": "Pemanasan Vokal",
+        "description": "Panaskan suaramu melalui rangkaian nada terpandu — tahan setiap nada untuk melanjutkan."
+      },
+      "singingTools": {
+        "name": "Alat Musik",
+        "description": "Pendeteksi nada, pemanasan, penala, dan pendeteksi nada polifonik."
+      },
+      "singingGames": {
+        "name": "Permainan Bernyanyi",
+        "description": "Permainan untuk melatih telinga dan suaramu."
+      },
+      "singFly": {
+        "name": "Nyanyibang",
+        "description": "Nyanyi biar burungnya lewat celah"
+      }
+    },
+    "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Tidak ada audio yang direkam atau dikirim ke mana pun."
+  },
+  "tools": {
+    "title": "Alat Musik",
+    "subtitle": "Pilih alat"
+  },
+  "games": {
+    "title": "Permainan Bernyanyi",
+    "subtitle": "Pilih permainan"
+  },
+  "warmUp": {
+    "title": "Pemanasan",
+    "voice": "Suara:",
+    "sequences": "Urutan:",
+    "semitoneStep": "Langkah:",
+    "pattern": "Pola:",
+    "patternGroups": {
+      "basic": "Dasar",
+      "playful": "Seru",
+      "advanced": "Lanjutan"
+    },
+    "patterns": {
+      "fiveNoteMajor": "Lima nada mayor (1-2-3-4-5-4-3-2-1)",
+      "threeNoteMajor": "Tiga nada (1-2-3-2-1)",
+      "majorTriad": "Trinada mayor (1-3-5-3-1)",
+      "descendingFiveNote": "Lima nada menurun (5-4-3-2-1)",
+      "fiveNoteMinor": "Lima nada minor",
+      "octaveArpeggio": "Arpegio oktaf (1-3-5-8-5-3-1)",
+      "octaveLeap": "Lompatan oktaf (1-8-1)",
+      "fullOctaveScale": "Tangga nada oktaf penuh",
+      "majorNinthArpeggio": "Arpegio nada kesembilan (1-3-5-8-9-8-5-3-1)",
+      "bouncyBall": "Bola pantul (1-3-1-5-1-8-1)",
+      "pogoStick": "Tongkat pogo (1-5-1-5-1-8)",
+      "trampoline": "Trampolin (1-8-5-8-3-8-1)",
+      "frogHops": "Loncat katak (1-5-3-7-5-8)",
+      "zigZag": "Zigzag (1-3-2-4-3-5)",
+      "crisscross": "Silang (1-5-2-6-3-7-4-8)",
+      "echo": "Gema (5-3-1-5-3-1)",
+      "questionAnswer": "Tanya jawab (1-3-5-3-5-3-1-3)",
+      "cuckoo": "Kukuk (5-3-5-3-1)",
+      "mouseElephant": "Tikus dan gajah (1-2-1-8-7-8)",
+      "yodel": "Yodel (1-8-3-8-5-8)",
+      "rollerCoaster": "Roller coaster (1-3-5-8-7-5-3-1)",
+      "rocketShip": "Roket (1-2-3-5-8-12)",
+      "slideDown": "Perosotan (8-6-4-2-1)"
+    },
+    "subtitle": "Nyanyikan frasa. Setiap putaran naik setengah nada.",
+    "perTone": "per nada",
+    "done": "Pemanasan selesai!",
+    "listeningToReference": "Mendengarkan referensi…",
+    "nextPhrase": "Frasa berikutnya…",
+    "singHighlightedNote": "Nyanyikan nada yang ditandai",
+    "startToneInline": "nada awal",
+    "sequencesUnit": "urutan",
+    "semitonesUnit": "semiton"
+  },
+  "doReMi": {
+    "title": "Permainan DO RE MI",
+    "singNoteFor": "Nyanyikan setiap not selama {seconds} detik untuk melanjutkan",
+    "congratulationsMessage": "Anda menyelesaikan tangga nada {mode} mulai dari {startTone} dengan menahan setiap not selama {seconds} detik!",
+    "time": "⏱ Waktu:",
+    "singThisNote": "Nyanyikan ini:",
+    "youreSinging": "Kamu menyanyikan:",
+    "perfect": "Sempurna",
+    "cents": "sen",
+    "allowedRange": "Rentang yang diizinkan: ±50 sen · Target: {hz} Hz",
+    "playSolfege": "Putar {solfege}",
+    "scaleMode": "Mode tangga nada:",
+    "startTone": "Nada awal:",
+    "doReMiButton": "Do Re Mi",
+    "currentHz": "Kamu: {hz} Hz",
+    "pickToneHeader": "Pilih nada awalmu",
+    "pickToneFooter": "⭐ = awal yang disarankan",
+    "voiceTier": {
+      "high": "👧 Tinggi – perempuan & wanita",
+      "mid": "👧👦 Nyaman untuk semua",
+      "low": "👨 Rendah – pria & anak laki-laki"
+    }
+  },
+  "pitchDetector": {
+    "listening": "Mendengarkan...",
+    "flat": "♭ Rendah",
+    "inTune": "Tepat nada",
+    "sharp": "Tinggi ♯",
+    "clarity": "Kejernihan",
+    "cents": "sen",
+    "replaySound": "Putar ulang suara\n(30 detik terakhir)"
+  },
+  "voiceRanges": {
+    "full": "Penuh",
+    "everyone": "Semua",
+    "kids": "Anak-anak (6–11)",
+    "comfyWomen": "Santai – wanita",
+    "comfyMen": "Santai – pria",
+    "soprano": "Sopran",
+    "mezzoSoprano": "Mezzo-Sopran",
+    "alto": "Alto",
+    "tenor": "Tenor",
+    "baritone": "Bariton",
+    "bass": "Bass"
+  },
+  "toneDetector": {
+    "listening": "Mendengarkan...",
+    "tonesDetected": "{count} nada terdeteksi",
+    "pressStart": "Tekan Mulai untuk mendeteksi nada",
+    "pageDescription": "Mendeteksi beberapa nada sekaligus (C2–C7). Nyanyikan harmoni, senandungkan beberapa not dan lihat setiap nada ditampilkan secara langsung.",
+    "sensitivityDescription": "Mengontrol berapa banyak nada yang ditangkap. Kurangi untuk menyaring overtone saat kamu menyanyikan satu not. Tingkatkan untuk mendeteksi lebih banyak nada sekaligus dalam harmoni atau akor.",
+    "noiseGateDescription": "Mengatur volume minimum untuk mendeteksi nada. Tingkatkan jika kamu melihat nada palsu saat hening. Kurangi untuk menangkap suara yang lebih pelan.",
+    "sensitivity": "Sensitivitas",
+    "noiseGate": "Gerbang kebisingan",
+    "strict": "Lebih sedikit nada",
+    "loose": "Lebih banyak nada",
+    "quiet": "Lebih sedikit filter",
+    "loud": "Lebih banyak filter"
+  },
+  "singTone": {
+    "title": "Permainan Tebak Nada",
+    "subtitle": "Sebuah nada acak dimainkan — nyanyikan kembali untuk mencocokkan!",
+    "play": "Putar",
+    "singThisNote": "Nyanyikan ini:",
+    "rounds": "Putaran:",
+    "congratulationsMessage": "Anda mencocokkan semua {rounds} nada dalam {seconds} detik dengan durasi tahan {holdDuration} detik!",
+    "roundProgress": "{current} / {total}",
+    "settingsSummary": "Nyanyikan {rounds} nada dengan durasi tahan {holdDuration} detik"
+  },
+  "tuner": {
+    "tuning": "Penalaan",
+    "guitar": "Gitar",
+    "ukulele": "Ukulele",
+    "custom": "Khusus",
+    "tuningGroups": {
+      "standard": "Standar",
+      "drop": "Drop",
+      "open": "Terbuka",
+      "alternate": "Alternatif"
+    },
+    "tuningItems": {
+      "ebStandard": "Eb standar",
+      "openG": "Terbuka G",
+      "openD": "Terbuka D",
+      "openC": "Terbuka C"
+    }
+  },
+  "singFly": {
+    "title": "Nyanyibang",
+    "subtitle": "Nyanyikan tiap nada buat lewat celah"
+  }
+}

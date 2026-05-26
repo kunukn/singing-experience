@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "ask": ["Bash(git *)"],
+    "allow": [
+      "WebFetch",
+      "Bash(cd *)",
+      "Bash(git status)",
+      "Bash(git diff)",
+      "Bash(git log *)",
+      "Bash(git show *)",
+      "Bash(head:*)",
+      "Bash(npm run check:fix *)",
+      "Bash(for f in *; do echo *; grep * \"$f\"; done)",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(npx vitest *)",
+      "Bash(npx tsc *)",
+      "Bash(npx oxlint *)"
+    ]
+  }
+}

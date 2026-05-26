@@ -1,0 +1,36 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "categories": {
+    "correctness": "error",
+    "suspicious": "warn",
+    "perf": "warn"
+  },
+  "plugins": ["unicorn", "typescript", "oxc", "vue"],
+  "rules": {
+    "no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    // Helper functions near usage is preferred
+    "unicorn/consistent-function-scoping": "off",
+    "no-await-in-loop": "off",
+    // Too noisy with TypeScript enums and type narrowing
+    "no-shadow": "off",
+    // .sort() is fine for local/intermediate arrays
+    "unicorn/no-array-sort": "off"
+  },
+  "overrides": [
+    {
+      "files": ["**/*.test.{ts,vue}", "**/*.spec.{ts,vue}", "**/test/**"],
+      "plugins": ["unicorn", "typescript", "oxc", "vue", "vitest"]
+    }
+  ],
+  "ignorePatterns": ["dist", "build", "public", "node_modules"],
+  "env": {
+    "browser": true
+  }
+}

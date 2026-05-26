@@ -1,0 +1,254 @@
+{
+  "generic": {
+    "start": "Anza",
+    "stop": "Simama",
+    "clear": "Futa",
+    "backToMenuArrow": "←",
+    "back": "Rudi",
+    "hz": "Hz",
+    "previewSoundLabel": "Ona sauti yako",
+    "toggleDarkMode": "Geuza hali ya giza",
+    "toggleFullscreen": "Geuza skrini nzima",
+    "fullscreen": "Skrini nzima",
+    "settings": "Mipangilio",
+    "showNoteTarget": "Onyesha noti lengo",
+    "pageNotFound": "Ukurasa haukupatikana",
+    "previewButton": "♪",
+    "darkMode": "🌙",
+    "lightMode": "☀️",
+    "muteButton": "Nyamazisha",
+    "tooLow": "♭ Chini sana",
+    "tooHigh": "Juu sana ♯",
+    "play": "Cheza",
+    "restart": "Anza tena",
+    "holdDuration": "Muda wa kushikilia:",
+    "gameLength": "Muda wa mchezo:",
+    "difficulty": "Ugumu:",
+    "difficulty_easy": "Rahisi",
+    "difficulty_normal": "Kawaida",
+    "difficulty_hard": "Ngumu",
+    "voiceRange": "Kiwango cha sauti:",
+    "congratulations": "Hongera!",
+    "gameOver": "Mchezo umeisha",
+    "playAgain": "Cheza Tena",
+    "score": "Alama",
+    "time": "Muda"
+  },
+  "errors": {
+    "microphoneAccess": "Imeshindwa kufikia maikrofoni",
+    "microphoneDenied": "Maikrofoni imezuiwa. Iwashe katika mipangilio ya kivinjari chako kisha upakue upya ukurasa."
+  },
+  "settings": {
+    "language": "Lugha",
+    "title": "Mipangilio",
+    "micSensitivity": {
+      "label": "Usikivu wa kipaza sauti",
+      "description": "Sauti iwe wazi kiasi gani ili ihesabiwe kama noti.",
+      "forgiving": "Lainifu zaidi",
+      "strict": "Kali zaidi"
+    },
+    "resetToDefaults": "Rejesha chaguomsingi",
+    "reload": "Pakia upya programu"
+  },
+  "sounds": {
+    "toneSound": "Sauti ya toni:",
+    "piano": "Piano",
+    "keyboard": "Kibodi",
+    "bell": "Kengele",
+    "bass": "Besi",
+    "square": "Mraba",
+    "tuning": "Uma wa Kupiga Toni"
+  },
+  "home": {
+    "title": "Uzoefu wa Kuimba",
+    "subtitle": "Chagua programu ili kuanza",
+    "programs": {
+      "pitchDetector": {
+        "name": "Kipimo cha Sauti",
+        "description": "Gundua kiwango cha sauti yako ya kuimba moja kwa moja. Angalia noti, oktavi, na jinsi unavyoimba kwa usahihi."
+      },
+      "doReMi": {
+        "name": "Mchezo wa DO RE MI",
+        "description": "Imba kupitia mizani — DO RE MI FA SO LA TI DO. Shikilia kila noti kwa sekunde chache ili kuendelea."
+      },
+      "tuner": {
+        "name": "Kirekebishaji cha Ala za Muziki",
+        "description": "Piga nyuzi — angalia noti, upotevu wa senti, na sikia mlio wa kengele wakati nyuzi imelinganishwa kikamilifu."
+      },
+      "toneDetector": {
+        "name": "Kipimo cha Toni Nyingi",
+        "description": "Gundua toni nyingi kwa wakati mmoja moja kwa moja. Imba harmoni na uone kila toni inayosikika."
+      },
+      "singTone": {
+        "name": "Mchezo wa Kuimba Toni",
+        "description": "Toni ya nasibu inachezwa — iimbe tena! Linganisha toni tofauti mfululizo ili kushinda."
+      },
+      "pitchGame": {
+        "name": "Mchezo wa Pitch",
+        "description": "Noti za lengo zinaingia zikiteleza — imba kila moja na uishikilie kupata pointi. Kimbiza muda na piga nyingi kadri uwezavyo."
+      },
+      "warmUp": {
+        "name": "Kuipasha Sauti",
+        "description": "Ipashe sauti yako kwa mfululizo wa toni unaoongozwa — shikilia kila toni ili kuendelea."
+      },
+      "singingTools": {
+        "name": "Zana za Muziki",
+        "description": "Kigunduzi cha sauti, kuipasha sauti, kifaa cha kuoanisha, na kigunduzi cha toni."
+      },
+      "singingGames": {
+        "name": "Michezo ya Kuimba",
+        "description": "Michezo ya kuzoeza sikio na sauti yako."
+      },
+      "singFly": {
+        "name": "Imbaruka",
+        "description": "Imba ili ndege apite kwenye mianya"
+      }
+    },
+    "privacy": "Faragha yako ni salama — programu hii inafanya kazi 100% kwenye kivinjari chako. Hakuna sauti inayorekodiwa au kutumwa popote."
+  },
+  "tools": {
+    "title": "Zana za Muziki",
+    "subtitle": "Chagua zana"
+  },
+  "games": {
+    "title": "Michezo ya Kuimba",
+    "subtitle": "Chagua mchezo"
+  },
+  "warmUp": {
+    "title": "Kuipasha sauti",
+    "voice": "Sauti:",
+    "sequences": "Mfuatano:",
+    "semitoneStep": "Hatua:",
+    "pattern": "Mtindo:",
+    "patternGroups": {
+      "basic": "Msingi",
+      "playful": "Cheza",
+      "advanced": "Juu"
+    },
+    "patterns": {
+      "fiveNoteMajor": "Noti tano kuu (1-2-3-4-5-4-3-2-1)",
+      "threeNoteMajor": "Noti tatu (1-2-3-2-1)",
+      "majorTriad": "Tatuano kuu (1-3-5-3-1)",
+      "descendingFiveNote": "Noti tano kushuka (5-4-3-2-1)",
+      "fiveNoteMinor": "Noti tano ndogo",
+      "octaveArpeggio": "Arpeggio ya oktavo (1-3-5-8-5-3-1)",
+      "octaveLeap": "Ruka la oktavo (1-8-1)",
+      "fullOctaveScale": "Skeli kamili ya oktavo",
+      "majorNinthArpeggio": "Arpeggio ya tisa (1-3-5-8-9-8-5-3-1)",
+      "bouncyBall": "Mpira wa kuruka (1-3-1-5-1-8-1)",
+      "pogoStick": "Fimbo ya kuruka (1-5-1-5-1-8)",
+      "trampoline": "Trampolini (1-8-5-8-3-8-1)",
+      "frogHops": "Ruka la chura (1-5-3-7-5-8)",
+      "zigZag": "Mzigzag (1-3-2-4-3-5)",
+      "crisscross": "Mpishano (1-5-2-6-3-7-4-8)",
+      "echo": "Mwangwi (5-3-1-5-3-1)",
+      "questionAnswer": "Swali na jibu (1-3-5-3-5-3-1-3)",
+      "cuckoo": "Kekeo (5-3-5-3-1)",
+      "mouseElephant": "Panya na tembo (1-2-1-8-7-8)",
+      "yodel": "Yodel (1-8-3-8-5-8)",
+      "rollerCoaster": "Gari la kucheza (1-3-5-8-7-5-3-1)",
+      "rocketShip": "Roketi (1-2-3-5-8-12)",
+      "slideDown": "Telezo (8-6-4-2-1)"
+    },
+    "subtitle": "Imba kifungu. Kila raundi inapanda nusu noti.",
+    "perTone": "kwa toni",
+    "done": "Kuipasha sauti kumekamilika!",
+    "listeningToReference": "Inasikiliza rejeleo…",
+    "nextPhrase": "Kifungu kifuatacho…",
+    "singHighlightedNote": "Imba noti iliyoangaziwa",
+    "startToneInline": "toni ya kuanza",
+    "sequencesUnit": "mfuatano",
+    "semitonesUnit": "nusu-toni"
+  },
+  "doReMi": {
+    "title": "Mchezo wa DO RE MI",
+    "singNoteFor": "Imba kila noti kwa sekunde {seconds} ili kuendelea",
+    "congratulationsMessage": "Umekamilisha mizani ya {mode} ukianzia {startTone} ukishikilia kila noti kwa sekunde {seconds}!",
+    "time": "⏱ Muda:",
+    "singThisNote": "Imba hii:",
+    "youreSinging": "Unaimba:",
+    "perfect": "Kamili",
+    "cents": "senti",
+    "allowedRange": "Kiwango kinachoruhusiwa: ±50 senti · Lengo: {hz} Hz",
+    "playSolfege": "Cheza {solfege}",
+    "scaleMode": "Aina ya mizani:",
+    "startTone": "Toni ya kuanzia:",
+    "doReMiButton": "Do Re Mi",
+    "currentHz": "Wewe: {hz} Hz",
+    "pickToneHeader": "Chagua toni yako ya kuanzia",
+    "pickToneFooter": "⭐ = mwanzo uliopendekezwa",
+    "voiceTier": {
+      "high": "👧 Juu – wasichana & wanawake",
+      "mid": "👧👦 Rahisi kwa wote",
+      "low": "👨 Chini – wanaume & wavulana"
+    }
+  },
+  "pitchDetector": {
+    "listening": "Inasikiliza...",
+    "flat": "♭ Chini",
+    "inTune": "Sahihi",
+    "sharp": "Juu ♯",
+    "clarity": "Uwazi",
+    "cents": "senti",
+    "replaySound": "Cheza sauti tena\n(sekunde 30 za mwisho)"
+  },
+  "voiceRanges": {
+    "full": "Kamili",
+    "everyone": "Kila mtu",
+    "kids": "Watoto (6–11)",
+    "comfyWomen": "Rahisi – wanawake",
+    "comfyMen": "Rahisi – wanaume",
+    "soprano": "Soprano",
+    "mezzoSoprano": "Mezzo-Soprano",
+    "alto": "Alto",
+    "tenor": "Tenori",
+    "baritone": "Baritoni",
+    "bass": "Besi"
+  },
+  "toneDetector": {
+    "listening": "Inasikiliza...",
+    "tonesDetected": "Toni {count} zimegunduliwa",
+    "pressStart": "Bonyeza Anza kugundua toni",
+    "pageDescription": "Hugundua toni nyingi kwa wakati mmoja (C2–C7). Imba harmoni, piga noti kadhaa na uone kila toni ikionyeshwa moja kwa moja.",
+    "sensitivityDescription": "Inadhibiti ni toni ngapi zinakamatwa. Punguza kuchuja overtoni unapoimba au kupiga noti moja. Ongeza kugundua toni nyingi zaidi zinazosikika kwa wakati mmoja katika harmoni au kodi.",
+    "noiseGateDescription": "Huweka kiwango cha chini cha sauti kinachohitajika kugundua toni. Ongeza ukiona toni za uongo wakati wa ukimya. Punguza kukamata sauti ndogo zaidi.",
+    "sensitivity": "Unyeti",
+    "noiseGate": "Lango la kelele",
+    "strict": "Toni chache",
+    "loose": "Toni zaidi",
+    "quiet": "Kuchuja kidogo",
+    "loud": "Kuchuja zaidi"
+  },
+  "singTone": {
+    "title": "Mchezo wa Kuimba Toni",
+    "subtitle": "Toni ya nasibu inachezwa — iimbe tena kulinganisha!",
+    "play": "Cheza",
+    "singThisNote": "Imba hii:",
+    "rounds": "Raundi:",
+    "congratulationsMessage": "Umelinganisha toni zote {rounds} katika sekunde {seconds} na muda wa kushikilia wa sekunde {holdDuration}!",
+    "roundProgress": "{current} / {total}",
+    "settingsSummary": "Imba toni {rounds} na muda wa kushikilia wa sekunde {holdDuration}"
+  },
+  "tuner": {
+    "tuning": "Kurekebisha",
+    "guitar": "Gitaa",
+    "ukulele": "Ukulele",
+    "custom": "Maalum",
+    "tuningGroups": {
+      "standard": "Kawaida",
+      "drop": "Drop",
+      "open": "Wazi",
+      "alternate": "Mbadala"
+    },
+    "tuningItems": {
+      "ebStandard": "Eb kawaida",
+      "openG": "Wazi G",
+      "openD": "Wazi D",
+      "openC": "Wazi C"
+    }
+  },
+  "singFly": {
+    "title": "Imbaruka",
+    "subtitle": "Imba kila noti upite kwenye mwanya"
+  }
+}

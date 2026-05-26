@@ -1,0 +1,254 @@
+{
+  "generic": {
+    "start": "開始",
+    "stop": "停止",
+    "clear": "クリア",
+    "backToMenuArrow": "←",
+    "back": "戻る",
+    "hz": "Hz",
+    "previewSoundLabel": "自分の声を見る",
+    "toggleDarkMode": "ダークモードを切り替え",
+    "toggleFullscreen": "フルスクリーンを切り替え",
+    "fullscreen": "フルスクリーン",
+    "settings": "設定",
+    "showNoteTarget": "目標音符を表示",
+    "pageNotFound": "ページが見つかりません",
+    "previewButton": "♪",
+    "darkMode": "🌙",
+    "lightMode": "☀️",
+    "muteButton": "ミュート",
+    "tooLow": "♭ 低すぎます",
+    "tooHigh": "高すぎます ♯",
+    "play": "再生",
+    "restart": "再スタート",
+    "holdDuration": "キープ時間:",
+    "gameLength": "ゲームの長さ:",
+    "difficulty": "むずかしさ:",
+    "difficulty_easy": "かんたん",
+    "difficulty_normal": "ふつう",
+    "difficulty_hard": "むずかしい",
+    "voiceRange": "声域:",
+    "congratulations": "おめでとう!",
+    "gameOver": "ゲーム終了",
+    "playAgain": "もう一度",
+    "score": "スコア",
+    "time": "タイム"
+  },
+  "errors": {
+    "microphoneAccess": "マイクにアクセスできませんでした",
+    "microphoneDenied": "マイクへのアクセスがブロックされています。ブラウザの設定で有効にしてから、ページを再読み込みしてください。"
+  },
+  "settings": {
+    "language": "言語",
+    "title": "設定",
+    "micSensitivity": {
+      "label": "マイクの感度",
+      "description": "どれだけクリアな音なら音符として数えるか。",
+      "forgiving": "ゆるめ",
+      "strict": "きびしめ"
+    },
+    "resetToDefaults": "初期設定に戻す",
+    "reload": "アプリを再読み込み"
+  },
+  "sounds": {
+    "toneSound": "音色:",
+    "piano": "ピアノ",
+    "keyboard": "キーボード",
+    "bell": "ベル",
+    "bass": "ベース",
+    "square": "矩形波",
+    "tuning": "音叉"
+  },
+  "home": {
+    "title": "歌唱体験",
+    "subtitle": "始めるプログラムを選んでください",
+    "programs": {
+      "pitchDetector": {
+        "name": "ピッチ検出",
+        "description": "歌っている音程をリアルタイムで検出します。音名、オクターブ、どれだけ音程が合っているかを確認できます。"
+      },
+      "doReMi": {
+        "name": "ドレミゲーム",
+        "description": "ド レ ミ ファ ソ ラ シ ドの音階を順に歌いましょう。各音を数秒キープすると次に進みます。"
+      },
+      "tuner": {
+        "name": "楽器チューナー",
+        "description": "弦をはじいてください — 音名とセント偏差を確認でき、完全に合うとチャイムが鳴ります。"
+      },
+      "toneDetector": {
+        "name": "音検出",
+        "description": "複数の音を同時にリアルタイムで検出します。ハモって、どの音が鳴っているかを確認できます。"
+      },
+      "singTone": {
+        "name": "音まねゲーム",
+        "description": "ランダムな音が再生されます。まねして歌いましょう。異なる音を連続で一致するとクリアです。"
+      },
+      "pitchGame": {
+        "name": "ピッチゲーム",
+        "description": "ターゲットの音が流れてきます。一つずつ歌って伸ばすと得点。時間内にできるだけ多く当てよう。"
+      },
+      "warmUp": {
+        "name": "ボイスウォームアップ",
+        "description": "ガイド付きの音階で声を温めましょう。各音を保持すると次に進みます。"
+      },
+      "singingTools": {
+        "name": "音楽ツール",
+        "description": "ピッチ検出、ウォームアップ、チューナー、トーン検出。"
+      },
+      "singingGames": {
+        "name": "歌のゲーム",
+        "description": "耳と声を鍛えるゲーム。"
+      },
+      "singFly": {
+        "name": "歌飛び",
+        "description": "歌って、鳥をすき間に飛ばそう"
+      }
+    },
+    "privacy": "プライバシーは守られます。このアプリは100%ブラウザ内で動作します。音声が録音されたり送信されたりすることはありません。"
+  },
+  "tools": {
+    "title": "音楽ツール",
+    "subtitle": "ツールを選んでね"
+  },
+  "games": {
+    "title": "歌のゲーム",
+    "subtitle": "ゲームを選んでね"
+  },
+  "warmUp": {
+    "title": "ウォームアップ",
+    "voice": "声：",
+    "sequences": "シーケンス：",
+    "semitoneStep": "ステップ：",
+    "pattern": "パターン：",
+    "patternGroups": {
+      "basic": "基本",
+      "playful": "あそび",
+      "advanced": "上級"
+    },
+    "patterns": {
+      "fiveNoteMajor": "5音メジャー (1-2-3-4-5-4-3-2-1)",
+      "threeNoteMajor": "3音 (1-2-3-2-1)",
+      "majorTriad": "メジャー三和音 (1-3-5-3-1)",
+      "descendingFiveNote": "5音下行 (5-4-3-2-1)",
+      "fiveNoteMinor": "5音マイナー",
+      "octaveArpeggio": "オクターブ・アルペジオ (1-3-5-8-5-3-1)",
+      "octaveLeap": "オクターブ跳躍 (1-8-1)",
+      "fullOctaveScale": "フル・オクターブ音階",
+      "majorNinthArpeggio": "9度アルペジオ (1-3-5-8-9-8-5-3-1)",
+      "bouncyBall": "はずむボール (1-3-1-5-1-8-1)",
+      "pogoStick": "ホッピング (1-5-1-5-1-8)",
+      "trampoline": "トランポリン (1-8-5-8-3-8-1)",
+      "frogHops": "カエルジャンプ (1-5-3-7-5-8)",
+      "zigZag": "ジグザグ (1-3-2-4-3-5)",
+      "crisscross": "クロス (1-5-2-6-3-7-4-8)",
+      "echo": "やまびこ (5-3-1-5-3-1)",
+      "questionAnswer": "コール&レスポンス (1-3-5-3-5-3-1-3)",
+      "cuckoo": "カッコウ (5-3-5-3-1)",
+      "mouseElephant": "ねずみとぞう (1-2-1-8-7-8)",
+      "yodel": "ヨーデル (1-8-3-8-5-8)",
+      "rollerCoaster": "ジェットコースター (1-3-5-8-7-5-3-1)",
+      "rocketShip": "ロケット (1-2-3-5-8-12)",
+      "slideDown": "すべりだい (8-6-4-2-1)"
+    },
+    "subtitle": "フレーズを歌ってください。各ラウンドで半音ずつ上がります。",
+    "perTone": "各音",
+    "done": "ウォームアップ完了！",
+    "listeningToReference": "リファレンスを聴いています…",
+    "nextPhrase": "次のフレーズ…",
+    "singHighlightedNote": "ハイライトされた音を歌ってください",
+    "startToneInline": "開始音",
+    "sequencesUnit": "シーケンス",
+    "semitonesUnit": "半音"
+  },
+  "doReMi": {
+    "title": "ドレミゲーム",
+    "singNoteFor": "各音を{seconds}秒キープすると次に進みます",
+    "congratulationsMessage": "{startTone}から始まる{mode}スケールを各音{seconds}秒キープして最後まで歌い切りました!",
+    "time": "⏱ 時間:",
+    "singThisNote": "この音を歌って:",
+    "youreSinging": "今の音:",
+    "perfect": "ぴったり",
+    "cents": "セント",
+    "allowedRange": "許容範囲: ±50セント ・ 目標: {hz} Hz",
+    "playSolfege": "{solfege}を再生",
+    "scaleMode": "スケールモード:",
+    "startTone": "開始音:",
+    "doReMiButton": "ドレミ",
+    "currentHz": "あなた: {hz} Hz",
+    "pickToneHeader": "開始音を選んでください",
+    "pickToneFooter": "⭐ = おすすめの開始音",
+    "voiceTier": {
+      "high": "👧 高め – 女の子・女性向け",
+      "mid": "👧👦 みんなに快適",
+      "low": "👨 低め – 男性・男の子向け"
+    }
+  },
+  "pitchDetector": {
+    "listening": "聴いています...",
+    "flat": "♭ フラット",
+    "inTune": "合っています",
+    "sharp": "シャープ ♯",
+    "clarity": "明瞭さ",
+    "cents": "セント",
+    "replaySound": "音を再生\n（直近30秒）"
+  },
+  "voiceRanges": {
+    "full": "フル",
+    "everyone": "みんな",
+    "kids": "子ども (6–11)",
+    "comfyWomen": "ラクに – 女性",
+    "comfyMen": "ラクに – 男性",
+    "soprano": "ソプラノ",
+    "mezzoSoprano": "メゾソプラノ",
+    "alto": "アルト",
+    "tenor": "テノール",
+    "baritone": "バリトン",
+    "bass": "バス"
+  },
+  "toneDetector": {
+    "listening": "聴いています...",
+    "tonesDetected": "{count}音を検出",
+    "pressStart": "開始を押すと音を検出します",
+    "pageDescription": "複数の音を同時に検出します（C2-C7）。ハモったり複数の音をハミングしたりして、各音をリアルタイムで確認できます。",
+    "sensitivityDescription": "拾う音の数を調整します。歌声や単音の演奏で倍音を減らしたい場合は下げてください。ハーモニーや和音でより多くの同時音を検出したい場合は上げてください。",
+    "noiseGateDescription": "音を検出するために必要な最小音量を設定します。無音時に誤検出が出る場合は上げてください。小さな音も拾いたい場合は下げてください。",
+    "sensitivity": "感度",
+    "noiseGate": "ノイズゲート",
+    "strict": "少なめ",
+    "loose": "多め",
+    "quiet": "弱め",
+    "loud": "強め"
+  },
+  "singTone": {
+    "title": "音まねゲーム",
+    "subtitle": "ランダムな音が再生されます。まねして歌って一致させましょう!",
+    "play": "再生",
+    "singThisNote": "この音を歌って:",
+    "rounds": "ラウンド数:",
+    "congratulationsMessage": "{holdDuration}秒キープで全{rounds}音を{seconds}秒で一致させました!",
+    "roundProgress": "{current} / {total}",
+    "settingsSummary": "{holdDuration}秒キープで{rounds}音を歌う"
+  },
+  "tuner": {
+    "tuning": "チューニング",
+    "guitar": "ギター",
+    "ukulele": "ウクレレ",
+    "custom": "カスタム",
+    "tuningGroups": {
+      "standard": "スタンダード",
+      "drop": "ドロップ",
+      "open": "オープン",
+      "alternate": "オルタネート"
+    },
+    "tuningItems": {
+      "ebStandard": "Eb スタンダード",
+      "openG": "オープン G",
+      "openD": "オープン D",
+      "openC": "オープン C"
+    }
+  },
+  "singFly": {
+    "title": "歌飛び",
+    "subtitle": "音を歌って、すき間を通り抜けよう"
+  }
+}

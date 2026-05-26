@@ -1,0 +1,254 @@
+{
+  "generic": {
+    "start": "ابدأ",
+    "stop": "توقف",
+    "clear": "مسح",
+    "backToMenuArrow": "→",
+    "back": "رجوع",
+    "hz": "Hz",
+    "previewSoundLabel": "شاهد صوتك",
+    "toggleDarkMode": "تبديل الوضع الداكن",
+    "toggleFullscreen": "تبديل ملء الشاشة",
+    "fullscreen": "ملء الشاشة",
+    "settings": "الإعدادات",
+    "showNoteTarget": "إظهار هدف النغمة",
+    "pageNotFound": "الصفحة غير موجودة",
+    "previewButton": "♪",
+    "darkMode": "🌙",
+    "lightMode": "☀️",
+    "muteButton": "كتم",
+    "tooLow": "♭ منخفض جداً",
+    "tooHigh": "مرتفع جداً ♯",
+    "play": "تشغيل",
+    "restart": "إعادة",
+    "holdDuration": "مدة الإمساك:",
+    "gameLength": "مدة اللعبة:",
+    "difficulty": "الصعوبة:",
+    "difficulty_easy": "سهل",
+    "difficulty_normal": "عادي",
+    "difficulty_hard": "صعب",
+    "voiceRange": "نطاق الصوت:",
+    "congratulations": "تهانينا!",
+    "gameOver": "انتهت اللعبة",
+    "playAgain": "العب مرة أخرى",
+    "score": "النتيجة",
+    "time": "الوقت"
+  },
+  "errors": {
+    "microphoneAccess": "فشل الوصول إلى الميكروفون",
+    "microphoneDenied": "الميكروفون محظور. فعّله في إعدادات المتصفح وأعد تحميل الصفحة."
+  },
+  "settings": {
+    "language": "اللغة",
+    "title": "الإعدادات",
+    "micSensitivity": {
+      "label": "حساسية الميكروفون",
+      "description": "ما مدى وضوح الصوت ليُحتسب نغمة.",
+      "forgiving": "أكثر تساهلًا",
+      "strict": "أكثر صرامة"
+    },
+    "resetToDefaults": "إعادة الضبط الافتراضي",
+    "reload": "إعادة تحميل التطبيق"
+  },
+  "sounds": {
+    "toneSound": "صوت النغمة:",
+    "piano": "بيانو",
+    "keyboard": "لوحة المفاتيح",
+    "bell": "جرس",
+    "bass": "باس",
+    "square": "مربع",
+    "tuning": "شوكة ضبط"
+  },
+  "home": {
+    "title": "تجربة الغناء",
+    "subtitle": "اختر برنامجاً للبدء",
+    "programs": {
+      "pitchDetector": {
+        "name": "كاشف النغمة",
+        "description": "اكتشف نغمة غنائك في الوقت الفعلي. شاهد النوتة والأوكتاف ومدى دقة أدائك."
+      },
+      "doReMi": {
+        "name": "لعبة DO RE MI",
+        "description": "غنِّ السلم الموسيقي — DO RE MI FA SO LA TI DO. أمسك كل نوتة لبضع ثوانٍ للتقدم."
+      },
+      "tuner": {
+        "name": "مضبط الآلة الموسيقية",
+        "description": "اعزف على وتر — شاهد النغمة وانحراف السنتات واستمع لرنين عندما يكون الوتر مضبوطاً تماماً."
+      },
+      "toneDetector": {
+        "name": "كاشف النغمات",
+        "description": "اكتشف نغمات متعددة متزامنة في الوقت الفعلي. غنِّ هارموني وشاهد النوتات التي تصدر."
+      },
+      "singTone": {
+        "name": "لعبة غناء النغمة",
+        "description": "يتم تشغيل نغمة عشوائية — غنِّها لتطابقها! طابق نغمات مختلفة متتالية للفوز."
+      },
+      "pitchGame": {
+        "name": "لعبة النغمة",
+        "description": "نغمات هدف تنزلق — غنِّ كل واحدة وثبّتها لتسجّل نقاطًا. تسابق مع الوقت وأصب أكبر عدد ممكن."
+      },
+      "warmUp": {
+        "name": "إحماء الصوت",
+        "description": "أحمِ صوتك من خلال تسلسل نغمات موجَّه — استمر في كل نغمة للانتقال إلى التالية."
+      },
+      "singingTools": {
+        "name": "أدوات الموسيقى",
+        "description": "كاشف النغمة، إحماء الصوت، موالف الآلات، وكاشف النغمات المتعدد."
+      },
+      "singingGames": {
+        "name": "ألعاب الغناء",
+        "description": "ألعاب لتدريب أذنك وصوتك."
+      },
+      "singFly": {
+        "name": "غنِّ وطِر",
+        "description": "غنّي عشان الطائر يعدّي من الفجوات"
+      }
+    },
+    "privacy": "خصوصيتك آمنة — يعمل هذا التطبيق بالكامل في متصفحك. لا يتم تسجيل أي صوت أو إرساله."
+  },
+  "tools": {
+    "title": "أدوات الموسيقى",
+    "subtitle": "اختر أداة"
+  },
+  "games": {
+    "title": "ألعاب الغناء",
+    "subtitle": "اختر لعبة"
+  },
+  "warmUp": {
+    "title": "إحماء",
+    "voice": "الصوت:",
+    "sequences": "التسلسلات:",
+    "semitoneStep": "خطوة:",
+    "pattern": "النمط:",
+    "patternGroups": {
+      "basic": "أساسي",
+      "playful": "مرح",
+      "advanced": "متقدم"
+    },
+    "patterns": {
+      "fiveNoteMajor": "خمس نغمات كبير (1-2-3-4-5-4-3-2-1)",
+      "threeNoteMajor": "ثلاث نغمات (1-2-3-2-1)",
+      "majorTriad": "ثلاثية كبيرة (1-3-5-3-1)",
+      "descendingFiveNote": "خمس نغمات نازلة (5-4-3-2-1)",
+      "fiveNoteMinor": "خمس نغمات صغير",
+      "octaveArpeggio": "أربيجيو أوكتاف (1-3-5-8-5-3-1)",
+      "octaveLeap": "قفزة أوكتاف (1-8-1)",
+      "fullOctaveScale": "سلم أوكتاف كامل",
+      "majorNinthArpeggio": "أربيجيو تاسعة (1-3-5-8-9-8-5-3-1)",
+      "bouncyBall": "كرة قافزة (1-3-1-5-1-8-1)",
+      "pogoStick": "عصا قافزة (1-5-1-5-1-8)",
+      "trampoline": "ترامبولين (1-8-5-8-3-8-1)",
+      "frogHops": "قفزات الضفدع (1-5-3-7-5-8)",
+      "zigZag": "متعرج (1-3-2-4-3-5)",
+      "crisscross": "متقاطع (1-5-2-6-3-7-4-8)",
+      "echo": "صدى (5-3-1-5-3-1)",
+      "questionAnswer": "سؤال وجواب (1-3-5-3-5-3-1-3)",
+      "cuckoo": "وقواق (5-3-5-3-1)",
+      "mouseElephant": "فأر وفيل (1-2-1-8-7-8)",
+      "yodel": "يودل (1-8-3-8-5-8)",
+      "rollerCoaster": "أفعوانية (1-3-5-8-7-5-3-1)",
+      "rocketShip": "صاروخ (1-2-3-5-8-12)",
+      "slideDown": "زحليقة (8-6-4-2-1)"
+    },
+    "subtitle": "غنِّ العبارة. كل جولة ترتفع نصف درجة.",
+    "perTone": "لكل نغمة",
+    "done": "اكتمل الإحماء!",
+    "listeningToReference": "الاستماع إلى المرجع…",
+    "nextPhrase": "العبارة التالية…",
+    "singHighlightedNote": "غنِّ النغمة المميزة",
+    "startToneInline": "نغمة البداية",
+    "sequencesUnit": "تسلسلات",
+    "semitonesUnit": "أنصاف نغمات"
+  },
+  "doReMi": {
+    "title": "لعبة DO RE MI",
+    "singNoteFor": "غنِّ كل نوتة لمدة {seconds} ثوانٍ للتقدم",
+    "congratulationsMessage": "لقد أكملت سلم {mode} بدءًا من {startTone} مع إمساك كل نوتة لمدة {seconds} ثوانٍ!",
+    "time": "⏱ الوقت:",
+    "singThisNote": "غنِّ هذه:",
+    "youreSinging": "أنت تغني:",
+    "perfect": "ممتاز",
+    "cents": "سنت",
+    "allowedRange": "النطاق المسموح: ±50 سنت · الهدف: {hz} Hz",
+    "playSolfege": "تشغيل {solfege}",
+    "scaleMode": "نوع السلم:",
+    "startTone": "النغمة الأولى:",
+    "doReMiButton": "Do Re Mi",
+    "currentHz": "أنت: {hz} Hz",
+    "pickToneHeader": "اختر نغمتك الأولى",
+    "pickToneFooter": "⭐ = البداية الموصى بها",
+    "voiceTier": {
+      "high": "👧 عالٍ – فتيات ونساء",
+      "mid": "👧👦 مريح للجميع",
+      "low": "👨 منخفض – رجال وأولاد"
+    }
+  },
+  "pitchDetector": {
+    "listening": "يستمع…",
+    "flat": "♭ منخفض",
+    "inTune": "متناغم",
+    "sharp": "مرتفع ♯",
+    "clarity": "الوضوح",
+    "cents": "سنت",
+    "replaySound": "إعادة تشغيل الصوت\n(آخر 30 ثانية)"
+  },
+  "voiceRanges": {
+    "full": "كامل",
+    "everyone": "الجميع",
+    "kids": "أطفال (6–11)",
+    "comfyWomen": "مريح – نساء",
+    "comfyMen": "مريح – رجال",
+    "soprano": "سوبرانو",
+    "mezzoSoprano": "ميزو سوبرانو",
+    "alto": "آلتو",
+    "tenor": "تينور",
+    "baritone": "باريتون",
+    "bass": "باص"
+  },
+  "toneDetector": {
+    "listening": "يستمع…",
+    "tonesDetected": "تم العثور على {count} نغمات",
+    "pressStart": "اضغط ابدأ لاكتشاف النغمات",
+    "pageDescription": "اكتشف نغمات متعددة في وقت واحد (C2–C7). غنِّ هارموني أو دندن عدة نوتات وشاهد كل نغمة في الوقت الفعلي.",
+    "sensitivityDescription": "يتحكم في عدد النغمات المكتشفة. خفّضه لتصفية التوافقيات عند غناء أو عزف نوتة واحدة. ارفعه لاكتشاف المزيد من النغمات المتزامنة.",
+    "noiseGateDescription": "يحدد الحد الأدنى لمستوى الصوت المطلوب لاكتشاف نغمة. ارفعه إذا ظهرت نغمات زائفة أثناء الصمت. خفّضه لالتقاط الأصوات الأهدأ.",
+    "sensitivity": "الحساسية",
+    "noiseGate": "بوابة الضوضاء",
+    "strict": "نغمات أقل",
+    "loose": "نغمات أكثر",
+    "quiet": "تصفية أقل",
+    "loud": "تصفية أكثر"
+  },
+  "singTone": {
+    "title": "لعبة غناء النغمة",
+    "subtitle": "يتم تشغيل نغمة عشوائية — غنِّها لتطابقها!",
+    "play": "تشغيل",
+    "singThisNote": "غنِّ هذه:",
+    "rounds": "الجولات:",
+    "congratulationsMessage": "لقد طابقت جميع النغمات الـ {rounds} في {seconds} ثانية بمدة إمساك {holdDuration} ثانية!",
+    "roundProgress": "{current} / {total}",
+    "settingsSummary": "غنِّ {rounds} نغمات بمدة إمساك {holdDuration} ثانية"
+  },
+  "tuner": {
+    "tuning": "التوليف",
+    "guitar": "غيتار",
+    "ukulele": "يوكليلي",
+    "custom": "مخصص",
+    "tuningGroups": {
+      "standard": "قياسي",
+      "drop": "دروب",
+      "open": "مفتوح",
+      "alternate": "بديل"
+    },
+    "tuningItems": {
+      "ebStandard": "Eb قياسي",
+      "openG": "مفتوح G",
+      "openD": "مفتوح D",
+      "openC": "مفتوح C"
+    }
+  },
+  "singFly": {
+    "title": "غنِّ وطِر",
+    "subtitle": "غنّي كل نغمة وعدّي الفجوة"
+  }
+}
