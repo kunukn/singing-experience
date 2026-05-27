@@ -33,4 +33,4 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          npx --no-install gh-pages -d dist --nojekyll --message "deploy: $(git log -1 --pretty=%s)"
+          npx --no-install gh-pages -d dist --dotfiles --remove "**" --nojekyll --message "deploy: $(git log -1 --pretty=%s)"
