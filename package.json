@@ -22,7 +22,6 @@
     "test:ui": "vitest --ui",
     "check": "node scripts/check.js",
     "check:fix": "npm run format && npm run check",
-    "deploy": "gh-pages -d dist",
     "prepare": "husky"
   },
   "dependencies": {
@@ -51,7 +50,6 @@
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitest/ui": "^4.1.6",
     "@vue/test-utils": "^2.4.10",
-    "gh-pages": "^6.3.0",
     "happy-dom": "^20.9.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.2",

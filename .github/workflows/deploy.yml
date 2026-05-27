@@ -30,7 +30,12 @@ jobs:
 
       - name: Deploy to gh-pages branch
         run: |
+          commit_message=$(git log -1 --pretty=%s)
+          cd dist
+          touch .nojekyll
+          git init -q -b gh-pages
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}
-          npx --no-install gh-pages -d dist --dotfiles --remove "**" --nojekyll --message "deploy: $(git log -1 --pretty=%s)"
+          git add -A
+          git commit -q -m "deploy: $commit_message"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" gh-pages
