@@ -51,6 +51,11 @@ type singToneOptions = {
   midiMin?: number
   midiMax?: number
   pitchDetection?: PitchDetectionProvider
+  /* Debug/test override: forces the first round's target MIDI instead of
+   * picking it randomly. Subsequent rounds stay random. Used by the test page
+   * to deterministically render edge cases (e.g. the highest tone, to check
+   * the target circle isn't clipped). */
+  firstTargetMidi?: MaybeRefOrGetter<number | null>
 }
 
 export {
@@ -261,7 +266,7 @@ export function useSingTone(options: singToneOptions = {}) {
      * isListening synchronously, so the test page / unit tests still start. */
     if (isListening.value) send({ type: 'START' })
 
-    const midi = generateRandomMidi()
+    const midi = toValue(options.firstTargetMidi) ?? generateRandomMidi()
     targetMidi.value = midi
     completedCount.value = 0
     await playTargetTone(midi)

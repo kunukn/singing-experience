@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { NoteName } from '@/utils/noteUtils'
 import { midiToFrequency, NOTE_NAMES } from '@/utils/noteUtils'
+import { VOICE_RANGES } from '@/constants/voiceRanges'
 import SingToneDisplay from './SingToneDisplay.vue'
 import {
   DEFAULT_HOLD_DURATION_MS,
@@ -11,6 +12,13 @@ import {
 const selectedRangeIndex = ref(4)
 const selectedDurationSec = ref(DEFAULT_HOLD_DURATION_MS / 1000)
 const selectedRounds = ref(DEFAULT_TOTAL_ROUNDS)
+
+/* Force the first target to the highest note in the selected range so the
+ * target circle renders at the top of the canvas — used to verify it isn't
+ * clipped. Set to null to restore fully-random first targets. */
+const firstTargetMidi = computed(
+  () => VOICE_RANGES[selectedRangeIndex.value].midiMax,
+)
 
 const selectedNote = ref<NoteName>('B')
 const selectedOctave = ref(3)
@@ -26,7 +34,7 @@ const detection = useSimulatedPitchDetection({
   jitter: selectedJitter,
 })
 
-const game = useSingTone({ pitchDetection: detection })
+const game = useSingTone({ pitchDetection: detection, firstTargetMidi })
 
 const { isPreviewEnabled } = useSettings()
 
