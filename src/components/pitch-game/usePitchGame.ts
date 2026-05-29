@@ -21,6 +21,10 @@ export type GameSummary = {
   totalTargets: number
   voiceRangeLabelKey: string
   voiceRangeNoteRange: string
+  /* How the round ended — 'natural' when the timer elapsed or every target
+   * resolved, 'manual' when the player hit Stop. Drives whether the Display
+   * celebrates with confetti. */
+  endReason: 'natural' | 'manual'
 }
 
 type UseGameOptions = {
@@ -224,7 +228,7 @@ export function useGame(options: UseGameOptions) {
     }, totalMs)
   }
 
-  function stopGame() {
+  function stopGame(reason: GameSummary['endReason'] = 'natural') {
     /* The machine is the sole exit from 'playing', so this guard makes a
      * double call (Stop + end-timer, or all-resolved + Stop) a structural
      * no-op without an extra flag. */
@@ -247,6 +251,7 @@ export function useGame(options: UseGameOptions) {
       totalTargets: targets.value.length,
       voiceRangeLabelKey: options.voiceRange.value.labelKey,
       voiceRangeNoteRange: options.voiceRange.value.noteRange,
+      endReason: reason,
     }
 
     /* summary set above, before the state flips, so a watch(gameState) seeing

@@ -146,7 +146,8 @@ watch(
   () => gameState.value,
   (state) => {
     if (state === 'complete') {
-      if (score.value >= 1) {
+      /* Only celebrate a natural finish — a manual Stop must not fire confetti. */
+      if (score.value >= 1 && summary.value?.endReason === 'natural') {
         fireConfetti()
       }
 
@@ -284,7 +285,7 @@ async function handleStart() {
 }
 
 function handleStop() {
-  stopGame()
+  stopGame('manual')
 }
 
 function handleReset() {
