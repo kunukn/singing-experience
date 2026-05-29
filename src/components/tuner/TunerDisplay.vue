@@ -411,7 +411,7 @@ watch(
 
 <template>
   <div class="flex flex-1 flex-col items-center gap-4">
-    <div class="flex min-h-10.5 items-center gap-2">
+    <div class="flex items-center gap-2">
       <label class="text-sm text-(--p-text-muted-color)">
         {{ t('tuner.tuning') }}
       </label>
@@ -449,14 +449,14 @@ watch(
       <PrimeButton
         v-if="!isListening"
         severity="secondary"
+        size="small"
         rounded
-        class="aspect-square w-10.5"
+        icon="pi pi-volume-up"
+        class="min-h-8.75 min-w-8.75"
         :class="{ 'string-playing': isPlayingSequence }"
         :aria-label="t('generic.previewButton')"
         @click="toggleTuningPreview"
-      >
-        {{ t('generic.previewButton') }}
-      </PrimeButton>
+      />
     </div>
 
     <div class="mb-4">

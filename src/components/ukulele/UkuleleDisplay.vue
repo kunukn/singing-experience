@@ -301,14 +301,14 @@ watch(
       <PrimeButton
         v-if="!isListening"
         severity="secondary"
+        size="small"
         rounded
-        class="aspect-square w-10.5"
+        icon="pi pi-volume-up"
+        class="min-h-8.75 min-w-8.75"
         :class="{ 'string-playing': isPlayingSequence }"
         :aria-label="t('generic.previewButton')"
         @click="toggleTuningPreview"
-      >
-        {{ t('generic.previewButton') }}
-      </PrimeButton>
+      />
     </div>
 
     <div class="mb-4">
