@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useBreakpoints, breakpointsTailwind } from '@vueuse/core'
+
 type Props = {
   iconOn: string
   iconOff: string
@@ -9,25 +11,29 @@ type Props = {
 defineProps<Props>()
 
 const modelValue = defineModel<boolean>({ required: true })
+
+/* Show the text label from Tailwind's md (768px) up; below that PrimeVue renders the button
+ * icon-only — a native circle (rounded + p-button-icon-only), no CSS overrides needed. */
+const breakpoints = useBreakpoints(breakpointsTailwind)
+const isLabelVisible = breakpoints.greaterOrEqual('md')
 </script>
 
 <template>
   <PrimeButton
     :class="[
-      'min-h-8.75', // match the labeled-state height so icon-only mode does not collapse
+      'min-h-8.75 min-w-8.75', // pin icon-only circle to 35px so it aligns with the sibling selects/Start
       modelValue ? 'border border-(--p-green-500)!' : 'opacity-50',
     ]"
     severity="secondary"
     text
     rounded
     size="small"
+    :icon="modelValue ? iconOn : iconOff"
+    :label="isLabelVisible ? label : undefined"
     :aria-pressed="modelValue"
     :aria-label="label"
     :title="label"
     :disabled="disabled"
     @click="modelValue = !modelValue"
-  >
-    <i :class="modelValue ? iconOn : iconOff" />
-    <span class="ms-0 hidden md:inline">{{ label }}</span>
-  </PrimeButton>
+  />
 </template>
