@@ -40,13 +40,17 @@ type GridNote = {
   octave: number
 }
 
-const PADDING_TOP = 16
-const PADDING_BOTTOM = 16
-const LABEL_WIDTH = 40
-const PADDING_RIGHT = 16
 /* Target dot radii */
 const TARGET_RADIUS = 10
 const TARGET_GLOW_RADIUS = 16
+/* Vertical padding must clear the target dot's glow radius plus the
+ * hold-ring half-stroke (~1.5px) so the dot isn't clipped at the
+ * highest/lowest note; +4px breathing room avoids anti-alias clipping
+ * against the canvas edge. */
+const PADDING_TOP = TARGET_GLOW_RADIUS + 6
+const PADDING_BOTTOM = TARGET_GLOW_RADIUS + 6
+const LABEL_WIDTH = 40
+const PADDING_RIGHT = 16
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const containerRef = ref<HTMLElement | null>(null)
