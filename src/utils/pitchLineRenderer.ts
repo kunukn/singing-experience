@@ -115,6 +115,9 @@ type DrawPitchLineOptions = {
   /* Draw the note label at all. PitchHistory passes false when it has no
    * resolved preview label (matching its old `if (previewNoteLabel)` guard). */
   showLabel?: boolean
+  /* Draw the dot at the anchor X. PitchHistory passes false while listening so
+   * the dashed reference line stays but the redundant center dot is hidden. */
+  showDot?: boolean
   hideLabelWhenCorrect?: boolean
   /* null → no cents suffix (SingTone). A number → append "±N¢" when the sung
    * pitch deviates more than this many cents (PitchHistory 20, WarmUp 30). */
@@ -146,6 +149,7 @@ export function drawPitchLine(
     dotX,
     isCorrect = false,
     showLabel = true,
+    showDot = true,
     hideLabelWhenCorrect = false,
     centsThreshold = null,
     isRtl = false,
@@ -177,10 +181,12 @@ export function drawPitchLine(
   ctx.setLineDash([])
 
   /* Dot at the anchor X. */
-  ctx.beginPath()
-  ctx.arc(dotX, clampedY, PITCH_LINE_STYLE.dotRadius, 0, Math.PI * 2)
-  ctx.fillStyle = colors.dot
-  ctx.fill()
+  if (showDot) {
+    ctx.beginPath()
+    ctx.arc(dotX, clampedY, PITCH_LINE_STYLE.dotRadius, 0, Math.PI * 2)
+    ctx.fillStyle = colors.dot
+    ctx.fill()
+  }
 
   /* Note label — hidden when on target (the target label already covers it). */
   if (showLabel && !(hideLabelWhenCorrect && isCorrect)) {

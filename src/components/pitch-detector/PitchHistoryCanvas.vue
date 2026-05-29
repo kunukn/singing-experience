@@ -166,7 +166,10 @@ function drawPreviewIndicator(
     centsThreshold: 20,
     isRtl: props.isRtl ?? false,
     noteLabel: props.previewNoteLabel,
-    showLabel: !!props.previewNoteLabel,
+    /* While listening, keep only the dashed reference line: the center dot and
+     * label are redundant with the live head dot, which carries the label instead. */
+    showDot: !props.isListening,
+    showLabel: !props.isListening && !!props.previewNoteLabel,
   })
 }
 
@@ -451,6 +454,31 @@ function drawChart() {
     ctx.arc(headX, headY, 5, 0, Math.PI * 2)
     ctx.fillStyle = headColor
     ctx.fill()
+
+    /* While listening, the note label lives on the live head dot (not the
+     * center preview dot). Drawn above the dot in the sustained-marker style. */
+    if (props.isListening && props.previewNoteLabel) {
+      ctx.font = '12px monospace'
+      ctx.textAlign = 'center'
+      ctx.textBaseline = 'middle'
+
+      const labelX = headX
+      const labelY = headY - 13 // px above the dot — matches sustained markers
+      const textMetrics = ctx.measureText(props.previewNoteLabel)
+      const padH = 3
+      const padV = 1
+      const bgW = textMetrics.width + padH * 2
+      const bgH = 12 + padV * 2
+      const bgR = 3 // corner radius for the label background pill
+
+      ctx.fillStyle = labelBgColor
+      ctx.beginPath()
+      ctx.roundRect(labelX - bgW / 2, labelY - bgH / 2, bgW, bgH, bgR)
+      ctx.fill()
+
+      ctx.fillStyle = markerLabelColor
+      ctx.fillText(props.previewNoteLabel, labelX, labelY)
+    }
   }
 
   /* Idle preview indicator — orange circle + dashed line + optional note label */
