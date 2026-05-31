@@ -129,16 +129,10 @@ Use **camelCase** for component props in Vue templates, matching the JavaScript 
 ```vue
 <!-- ❌ Wrong - kebab-case props and unnecessary comment -->
 <!-- Todo list -->
-<TodoList
-  :current-item-index="currentItemIndex"
-  :is-loading="isLoading"
-/>
+<TodoList :current-item-index="currentItemIndex" :is-loading="isLoading" />
 
 <!-- ✅ Correct - camelCase props, no redundant comment -->
-<TodoList
-  :currentItemIndex="currentItemIndex"
-  :isLoading="isLoading"
-/>
+<TodoList :currentItemIndex="currentItemIndex" :isLoading="isLoading" />
 ```
 
 ### Auto Imports
@@ -324,11 +318,32 @@ const filter = { Q: 2, type: 'lowpass', rolloff: -12 }
 const filter = { Q: 2, type: 'lowpass', rolloff: -12 }
 ```
 
+### Bug Discovery Logging
+
+**CRITICAL**: Don't silently ignore bugs and don't silently fix them either. If you notice a bug that is **out of scope** for the current task — UI glitch, logic error, perf issue, a11y defect, broken type, stale doc, anything — append an entry to [BUGS.md](../BUGS.md) at the repo root instead of expanding the diff.
+
+In-scope bugs (the thing you were asked to fix or are clearly inside the change you're making) are still fixed normally.
+
+**Rule of thumb**: if fixing it would touch a file outside what the user asked for, log it; do not fix it.
+
+**Entry format** (append to the bottom of `BUGS.md`, newest at the bottom):
+
+```text
+<YYYY-MM-DD>
+Component: <file path or component name>
+Expected: <what should happen>
+Actual: <what currently happens>
+Repro: <one-line steps to reproduce>
+Workaround: <none, or a short note>
+```
+
+After logging, mention the entry in your end-of-turn summary so the user knows it was captured. Do not apply the fix unless the user explicitly asks for it.
+
 ### i18n Copy & Translations
 
 Translation/i18n copy rules live in [.github/instructions/translation.instructions.md](./instructions/translation.instructions.md) (applies to `src/locales/*.json`).
 
-### TypeScript Verification
+### Code Verification
 
 **CRITICAL**: After completing all code changes, **always** run `npm run check:fix` as the final step to verify there are no errors. Do not consider the task complete until this command passes successfully. If errors are found, fix them before finishing.
 
