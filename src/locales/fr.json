@@ -257,6 +257,14 @@
     "subtitle": "Joue une partie harmonique et chante avec",
     "voz": "Voz",
     "startTone": "Tonique de départ :",
-    "tempo": "Tempo :"
+    "tempo": "Tempo :",
+    "vozLabels": {
+      "mika": "MIKA",
+      "high": "High part",
+      "lessHigh": "Less high part",
+      "oneTone": "One tone part",
+      "lessLow": "Less low part",
+      "low": "Low part"
+    }
   }
 }

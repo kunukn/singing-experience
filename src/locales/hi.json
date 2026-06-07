@@ -257,6 +257,14 @@
     "subtitle": "Play a vocal harmony part and sing along",
     "voz": "Voz",
     "startTone": "प्रारंभिक स्वर:",
-    "tempo": "गति:"
+    "tempo": "गति:",
+    "vozLabels": {
+      "mika": "MIKA",
+      "high": "High part",
+      "lessHigh": "Less high part",
+      "oneTone": "One tone part",
+      "lessLow": "Less low part",
+      "low": "Low part"
+    }
   }
 }

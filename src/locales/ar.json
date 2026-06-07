@@ -257,6 +257,14 @@
     "subtitle": "Play a vocal harmony part and sing along",
     "voz": "Voz",
     "startTone": "نبرة البداية:",
-    "tempo": "السرعة:"
+    "tempo": "السرعة:",
+    "vozLabels": {
+      "mika": "MIKA",
+      "high": "High part",
+      "lessHigh": "Less high part",
+      "oneTone": "One tone part",
+      "lessLow": "Less low part",
+      "low": "Low part"
+    }
   }
 }

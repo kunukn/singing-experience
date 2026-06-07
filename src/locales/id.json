@@ -257,6 +257,14 @@
     "subtitle": "Mainkan bagian harmoni vokal dan ikut bernyanyi",
     "voz": "Voz",
     "startTone": "Nada awal:",
-    "tempo": "Tempo:"
+    "tempo": "Tempo:",
+    "vozLabels": {
+      "mika": "MIKA",
+      "high": "High part",
+      "lessHigh": "Less high part",
+      "oneTone": "One tone part",
+      "lessLow": "Less low part",
+      "low": "Low part"
+    }
   }
 }

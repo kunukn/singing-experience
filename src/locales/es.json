@@ -257,6 +257,14 @@
     "subtitle": "Toca una parte de armonía y canta",
     "voz": "Voz",
     "startTone": "Tono inicial:",
-    "tempo": "Tempo:"
+    "tempo": "Tempo:",
+    "vozLabels": {
+      "mika": "MIKA",
+      "high": "High part",
+      "lessHigh": "Less high part",
+      "oneTone": "One tone part",
+      "lessLow": "Less low part",
+      "low": "Low part"
+    }
   }
 }

@@ -63,10 +63,27 @@ const currentToneLabel = computed(() => {
   return midiToToneLabel(startToneMidi.value + note.midiOffset)
 })
 
-const vozOptions = Array.from({ length: 6 }, (_, index) => ({
-  label: `Voz ${index + 1}`,
-  value: index,
-}))
+/* Descriptive part labels, ordered by VOZ_MELODIES index. "MIKA" is the artist
+ * name (Grace Kelly is a MIKA song) and stays untranslated. */
+const VOZ_LABEL_KEYS = [
+  'mika',
+  'high',
+  'lessHigh',
+  'oneTone',
+  'lessLow',
+  'low',
+] as const
+
+const vozOptions = computed(() =>
+  VOZ_LABEL_KEYS.map((key, index) => ({
+    label: t(`graceKelly.vozLabels.${key}`),
+    value: index,
+  })),
+)
+
+const vozLabel = computed(() =>
+  t(`graceKelly.vozLabels.${VOZ_LABEL_KEYS[vozIndex.value]}`),
+)
 
 /* BPM = dotted quarter (the 6/8 beat unit). "BPM" kept untranslated. */
 const bpmOptions = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150].map(
@@ -179,7 +196,7 @@ function handleToggle() {
 
     <GraceKellySheet
       :melody="VOZ_MELODIES[vozIndex]"
-      :vozLabel="`Voz ${vozIndex + 1}`"
+      :vozLabel="vozLabel"
       :bpm="bpm"
       :activeNoteIndex="activeNoteIndex"
     />

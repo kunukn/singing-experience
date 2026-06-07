@@ -257,6 +257,14 @@
     "subtitle": "和声パートを選んで一緒に歌おう",
     "voz": "Voz",
     "startTone": "開始音:",
-    "tempo": "テンポ:"
+    "tempo": "テンポ:",
+    "vozLabels": {
+      "mika": "MIKA",
+      "high": "High part",
+      "lessHigh": "Less high part",
+      "oneTone": "One tone part",
+      "lessLow": "Less low part",
+      "low": "Low part"
+    }
   }
 }

@@ -257,6 +257,14 @@
     "subtitle": "选择一个和声声部，跟着唱",
     "voz": "Voz",
     "startTone": "起始音:",
-    "tempo": "速度:"
+    "tempo": "速度:",
+    "vozLabels": {
+      "mika": "MIKA",
+      "high": "High part",
+      "lessHigh": "Less high part",
+      "oneTone": "One tone part",
+      "lessLow": "Less low part",
+      "low": "Low part"
+    }
   }
 }

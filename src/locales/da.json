@@ -257,6 +257,14 @@
     "subtitle": "Spil en harmonistemme og syng med",
     "voz": "Voz",
     "startTone": "Starttone:",
-    "tempo": "Tempo:"
+    "tempo": "Tempo:",
+    "vozLabels": {
+      "mika": "MIKA",
+      "high": "High part",
+      "lessHigh": "Less high part",
+      "oneTone": "One tone part",
+      "lessLow": "Less low part",
+      "low": "Low part"
+    }
   }
 }
