@@ -6,9 +6,9 @@
  * When the user selects a start tone other than C3, a transposition delta is
  * added to every midiOffset at playback time — no data changes needed.
  *
- * Voz 3, Voz 4 (the one-tone C4 part), Voz 5 and Voz 6 are real transcriptions
- * from the Grace Kelly TikTok challenge sheet.
- * ⚠ PLACEHOLDER: Voz 1–2 currently duplicate Voz 4 until their real melodies are
+ * Voz 2, Voz 3, Voz 4 (the one-tone C4 part), Voz 5 and Voz 6 are real
+ * transcriptions from the Grace Kelly TikTok challenge sheet.
+ * ⚠ PLACEHOLDER: Voz 1 currently duplicates Voz 4 until its real melody is
  *    transcribed. */
 
 export type VozNote = {
@@ -244,11 +244,65 @@ const VOZ_3: VozMelody = {
   ],
 }
 
-/* Voz 1–2 are placeholders that duplicate Voz 4 until their real melodies are
+/* Voz 2 — real transcription. The highest voice in the challenge. 6/8, range
+ * E4–C5 (within one octave); starts on E4, ends on G4. Opens with a 3-eighth
+ * pickup (anacrusis); ends on a G4 tied across the barline into a final
+ * dotted-quarter G4 (which balances the pickup). */
+const VOZ_2: VozMelody = {
+  anacrusisEighths: 3,
+  notes: [
+    /* pickup */
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    /* bar 1 */
+    { midiOffset: 16, eighthNotes: 3 }, // E4 ♩.
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    /* bar 2 */
+    { midiOffset: 16, eighthNotes: 3 }, // E4 ♩.
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    /* bar 3 — rising E F G (quarters) */
+    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩
+    { midiOffset: 17, eighthNotes: 2 }, // F4 ♩
+    { midiOffset: 19, eighthNotes: 2 }, // G4 ♩
+    /* bar 4 — A4 plateau */
+    { midiOffset: 21, eighthNotes: 3 }, // A4 ♩.
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    /* bar 5 — high C5 plateau */
+    { midiOffset: 24, eighthNotes: 2 }, // C5 ♩
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
+    /* bar 6 — B4 plateau */
+    { midiOffset: 23, eighthNotes: 2 }, // B4 ♩
+    { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
+    { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
+    { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
+    { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
+    /* bar 7 — A4 ×4, upper-neighbor B4, then G4 tied into final */
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
+    { midiOffset: 19, eighthNotes: 1, tie: true }, // G4 ♪ — tied into final note
+    /* final bar — held G4 (balances the pickup) */
+    { midiOffset: 19, eighthNotes: 3 }, // G4 ♩.
+  ],
+}
+
+/* Voz 1 is a placeholder that duplicates Voz 4 until its real melody is
  * transcribed. Sharing one object is safe — melody data is never mutated. */
 export const VOZ_MELODIES: VozMelody[] = [
   VOZ_4, // Voz 1 (placeholder)
-  VOZ_4, // Voz 2 (placeholder)
+  VOZ_2, // Voz 2
   VOZ_3, // Voz 3
   VOZ_4, // Voz 4
   VOZ_5, // Voz 5
