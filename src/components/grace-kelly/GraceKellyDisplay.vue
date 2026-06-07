@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { NOTE_NAMES } from '@/utils/noteUtils'
 import { VOZ_MELODIES } from './graceKellyMelodies'
+import {
+  GRACE_KELLY_LYRIC_LINES,
+  GRACE_KELLY_SYLLABLES,
+} from './graceKellyLyrics'
 import type { GraceKellyResult } from './useGraceKelly'
 
 type Props = {
@@ -61,6 +65,37 @@ const currentToneLabel = computed(() => {
   if (!note) return null
 
   return midiToToneLabel(startToneMidi.value + note.midiOffset)
+})
+
+/* Flat reading-order index of the syllable currently being sung — the last
+ * syllable whose starting tone has been reached. Held/tied tones keep the
+ * previous syllable lit (the final "like" sustains over tones 32–34). -1 when
+ * idle, so all syllables render in the default color. */
+const activeSyllableIndex = computed(() => {
+  if (activeNoteIndex.value === null) return -1
+
+  let active = -1
+  for (let index = 0; index < GRACE_KELLY_SYLLABLES.length; index++) {
+    if (GRACE_KELLY_SYLLABLES[index].noteIndex <= activeNoteIndex.value) {
+      active = index
+    } else {
+      break
+    }
+  }
+
+  return active
+})
+
+/* Lyric lines with each syllable tagged with its flat reading-order index, so
+ * the template can match against activeSyllableIndex without a running counter. */
+const lyricLines = computed(() => {
+  let flatIndex = 0
+
+  return GRACE_KELLY_LYRIC_LINES.map((line) =>
+    line.map((word) =>
+      word.map((syllable) => ({ ...syllable, flatIndex: flatIndex++ })),
+    ),
+  )
 })
 
 /* Descriptive part labels, ordered by VOZ_MELODIES index. "MIKA" is the artist
@@ -206,10 +241,20 @@ function handleToggle() {
     />
 
     <div>
-      <p>I could be brown, I could be blue</p>
-      <p>I could be violet sky</p>
-      <p>I could be hurtful, I could be purple</p>
-      <p>I could be anything you like</p>
+      <p v-for="(line, lineIndex) in lyricLines" :key="lineIndex">
+        <template v-for="(word, wordIndex) in line" :key="wordIndex">
+          {{ wordIndex > 0 ? ' ' : '' }}
+          <span
+            v-for="syllable in word"
+            :key="syllable.flatIndex"
+            :class="{
+              'text-(--p-green-600) dark:text-(--p-green-400)':
+                syllable.flatIndex === activeSyllableIndex,
+            }"
+            >{{ syllable.text }}</span
+          >
+        </template>
+      </p>
     </div>
   </div>
 </template>
