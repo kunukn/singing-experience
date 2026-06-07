@@ -69,10 +69,12 @@ const vozOptions = Array.from({ length: 6 }, (_, index) => ({
 }))
 
 /* BPM = dotted quarter (the 6/8 beat unit). "BPM" kept untranslated. */
-const bpmOptions = [50, 60, 70, 80, 90, 100, 110, 120, 130].map((value) => ({
-  label: `${value} BPM`,
-  value,
-}))
+const bpmOptions = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150].map(
+  (value) => ({
+    label: `${value} BPM`,
+    value,
+  }),
+)
 
 function handleToggle() {
   if (isPlaying.value) {
