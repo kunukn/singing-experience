@@ -69,13 +69,12 @@ const VOZ_4: VozMelody = {
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    /* bar 7 */
+    /* bar 7 — C4 ×4 (was ×5), then C4 tied into final */
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1, tie: true }, // C4 ♪ — tied into final note
+    { midiOffset: 12, eighthNotes: 2, tie: true }, // C4 ♩ — tied into final note
     /* final bar — held C4 (balances the pickup) */
     { midiOffset: 12, eighthNotes: 3 }, // C4 ♩.
   ],
@@ -122,13 +121,12 @@ const VOZ_6: VozMelody = {
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
-    /* bar 7 */
-    { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
+    /* bar 7 — F3 ×3 (was ×4), G3, then C3 tied into final */
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
-    { midiOffset: 0, eighthNotes: 1, tie: true }, // C3 ♪ — tied into final note
+    { midiOffset: 0, eighthNotes: 2, tie: true }, // C3 ♩ — tied into final note
     /* final bar — held C3 (balances the pickup) */
     { midiOffset: 0, eighthNotes: 3 }, // C3 ♩.
   ],
@@ -177,13 +175,12 @@ const VOZ_5: VozMelody = {
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
-    /* bar 7 — A3 ×4, B3, then G3 tied into final */
-    { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
+    /* bar 7 — A3 ×3 (was ×4), B3, then G3 tied into final */
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
-    { midiOffset: 7, eighthNotes: 1, tie: true }, // G3 ♪ — tied into final note
+    { midiOffset: 7, eighthNotes: 2, tie: true }, // G3 ♩ — tied into final note
     /* final bar — held G3 (balances the pickup) */
     { midiOffset: 7, eighthNotes: 3 }, // G3 ♩.
   ],
@@ -231,13 +228,12 @@ const VOZ_3: VozMelody = {
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
-    /* bar 7 — D4 ×4, upper-neighbor F4, then E4 tied into final */
-    { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
+    /* bar 7 — D4 ×3 (was ×4), upper-neighbor F4, then E4 tied into final */
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
     { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
-    { midiOffset: 16, eighthNotes: 1, tie: true }, // E4 ♪ — tied into final note
+    { midiOffset: 16, eighthNotes: 2, tie: true }, // E4 ♩ — tied into final note
     /* final bar — held E4 (balances the pickup) */
     { midiOffset: 16, eighthNotes: 3 }, // E4 ♩.
   ],
@@ -285,13 +281,12 @@ const VOZ_2: VozMelody = {
     { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
     { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
     { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
-    /* bar 7 — A4 ×4, upper-neighbor B4, then G4 tied into final */
-    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    /* bar 7 — A4 ×3 (was ×4), upper-neighbor B4, then G4 tied into final */
     { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
     { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
     { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
     { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
-    { midiOffset: 19, eighthNotes: 1, tie: true }, // G4 ♪ — tied into final note
+    { midiOffset: 19, eighthNotes: 2, tie: true }, // G4 ♩ — tied into final note
     /* final bar — held G4 (balances the pickup) */
     { midiOffset: 19, eighthNotes: 3 }, // G4 ♩.
   ],
@@ -340,13 +335,12 @@ const VOZ_1: VozMelody = {
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
-    /* bar 7 — F4 ×4 (FA'), G4 (SOL'), then E4 (MI') tied into final */
-    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
+    /* bar 7 — F4 ×3 (was ×4, FA'), G4 (SOL'), then E4 (MI') tied into final */
     { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
     { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
     { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
-    { midiOffset: 16, eighthNotes: 1, tie: true }, // E4 ♪ — tied into final note
+    { midiOffset: 16, eighthNotes: 2, tie: true }, // E4 ♩ — tied into final note
     /* final bar — held E4 (balances the pickup) */
     { midiOffset: 16, eighthNotes: 3 }, // E4 ♩.
   ],
