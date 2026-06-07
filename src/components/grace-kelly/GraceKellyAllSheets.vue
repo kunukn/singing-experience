@@ -12,6 +12,16 @@ type Props = {
 
 const props = defineProps<Props>()
 
+/* Compact vertical layout for the stacked all-parts view: a smaller title
+ * font and trimmed top/bottom padding shrink each staff's height without
+ * scaling the notes. */
+const COMPACT_RENDER = {
+  add_classes: true,
+  paddingtop: 4,
+  paddingbottom: 4,
+  format: { titlefont: 'serif 13' },
+} as const
+
 const scrollRef = ref<HTMLDivElement | null>(null)
 const staffContainers = ref<HTMLElement[]>([])
 /* Note elements per staff, indexed [staffIndex][noteIndex] — all melodies share
@@ -37,7 +47,7 @@ async function renderSheets() {
   const probeWidth = estimateStaffWidth(VOZ_MELODIES[0].notes.length)
   for (let index = 0; index < VOZ_MELODIES.length; index++) {
     renderAbc(containers[index], abcStrings[index], {
-      add_classes: true,
+      ...COMPACT_RENDER,
       staffwidth: probeWidth,
     })
   }
@@ -51,7 +61,7 @@ async function renderSheets() {
     Math.ceil(Math.max(...containers.map(measureMusicWidth))) + TRAILING_MARGIN
   for (let index = 0; index < VOZ_MELODIES.length; index++) {
     renderAbc(containers[index], abcStrings[index], {
-      add_classes: true,
+      ...COMPACT_RENDER,
       staffwidth: sharedWidth,
     })
   }

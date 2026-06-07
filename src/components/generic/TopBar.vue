@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { t } = useI18n()
-const betaPages = new Set(['/singfly', '/pitch-game'])
+const betaPages = new Set(['/singfly', '/pitch-game', '/grace-kelly-challenge'])
 const alphaPages = new Set(['/tone-detector'])
 const route = useRoute()
 const isHome = computed(() => route.path === '/')
