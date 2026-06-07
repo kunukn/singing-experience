@@ -31,6 +31,7 @@ declare module 'vue' {
     FullscreenToggle: typeof import('./components/generic/FullscreenToggle.vue')['default']
     GamesPage: typeof import('./components/GamesPage.vue')['default']
     GitHubIcon: typeof import('./components/icons/GitHubIcon.vue')['default']
+    GraceKellyAllSheets: typeof import('./components/grace-kelly/GraceKellyAllSheets.vue')['default']
     GraceKellyDisplay: typeof import('./components/grace-kelly/GraceKellyDisplay.vue')['default']
     GraceKellyPage: typeof import('./components/grace-kelly/GraceKellyPage.vue')['default']
     GraceKellySheet: typeof import('./components/grace-kelly/GraceKellySheet.vue')['default']

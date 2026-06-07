@@ -258,6 +258,7 @@
     "voz": "Voz",
     "startTone": "نبرة البداية:",
     "tempo": "السرعة:",
+    "showAllParts": "كل الأصوات",
     "vozLabels": {
       "lead": "Lead",
       "reallyHigh": "Really high part",

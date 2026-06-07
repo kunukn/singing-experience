@@ -258,6 +258,7 @@
     "voz": "Voz",
     "startTone": "Tono inicial:",
     "tempo": "Tempo:",
+    "showAllParts": "Todas las voces",
     "vozLabels": {
       "lead": "Lead",
       "reallyHigh": "Really high part",

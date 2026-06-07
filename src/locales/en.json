@@ -258,13 +258,14 @@
     "voz": "Voz",
     "startTone": "Start tone:",
     "tempo": "Tempo:",
+    "showAllParts": "All parts",
     "vozLabels": {
       "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "reallyHigh": "Really high",
+      "high": "High",
+      "oneTone": "One tone",
+      "lessLow": "Less low",
+      "low": "Low"
     }
   }
 }

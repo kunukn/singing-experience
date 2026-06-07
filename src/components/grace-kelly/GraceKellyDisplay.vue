@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import { NOTE_NAMES } from '@/utils/noteUtils'
-import { VOZ_MELODIES } from './graceKellyMelodies'
+import { useLocalStorage } from '@vueuse/core'
 import {
   GRACE_KELLY_LYRIC_LINES,
   GRACE_KELLY_SYLLABLES,
 } from './graceKellyLyrics'
+import { VOZ_MELODIES } from './graceKellyMelodies'
 import type { GraceKellyResult } from './useGraceKelly'
 
 type Props = {
@@ -120,6 +121,14 @@ const vozLabel = computed(() =>
   t(`graceKelly.vozLabels.${VOZ_LABEL_KEYS[vozIndex.value]}`),
 )
 
+/* All six part labels, ordered by VOZ_MELODIES index — titles for the overview. */
+const allVozLabels = computed(() =>
+  VOZ_LABEL_KEYS.map((key) => t(`graceKelly.vozLabels.${key}`)),
+)
+
+/* Toggles the all-parts overview below the lyrics; persists across reloads. */
+const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
+
 /* BPM = dotted quarter (the 6/8 beat unit). "BPM" kept untranslated. */
 const bpmOptions = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150].map(
   (value) => ({
@@ -155,6 +164,7 @@ function handleToggle() {
         size="small"
         :disabled="isPlaying"
         class="flex-1"
+        scrollHeight="370px"
       >
         <template #header>
           <div
@@ -203,6 +213,11 @@ function handleToggle() {
 
       <ToneModeSelect v-model="toneMode" class="min-w-30 flex-1" />
 
+      <label class="flex items-center gap-2 text-sm">
+        <PrimeToggleSwitch v-model="showAllParts" />
+        {{ t('graceKelly.showAllParts') }}
+      </label>
+
       <PrimeButton
         class="ms-auto min-w-24"
         :severity="isPlaying ? 'danger' : 'success'"
@@ -214,7 +229,8 @@ function handleToggle() {
       </PrimeButton>
     </div>
 
-    <div class="mt-4 flex min-h-[2rem] flex-wrap items-center gap-4">
+    <p>Music by Mika</p>
+    <div class="flex min-h-[2rem] flex-wrap items-center gap-4">
       <div
         class="flex flex-col items-center gap-2 text-center text-(--p-text-muted-color)"
       >
@@ -256,5 +272,12 @@ function handleToggle() {
         </template>
       </p>
     </div>
+
+    <GraceKellyAllSheets
+      v-if="showAllParts"
+      :bpm="bpm"
+      :activeNoteIndex="activeNoteIndex"
+      :vozLabels="allVozLabels"
+    />
   </div>
 </template>

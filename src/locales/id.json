@@ -258,6 +258,7 @@
     "voz": "Voz",
     "startTone": "Nada awal:",
     "tempo": "Tempo:",
+    "showAllParts": "Semua suara",
     "vozLabels": {
       "lead": "Lead",
       "reallyHigh": "Really high part",

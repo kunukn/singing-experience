@@ -254,6 +254,7 @@
     "voz": "Voz",
     "startTone": "Start tone:",
     "tempo": "Tempo:",
+    "showAllParts": "All parts",
     "vozLabels": {
       "lead": "Lead",
       "reallyHigh": "Really high part",

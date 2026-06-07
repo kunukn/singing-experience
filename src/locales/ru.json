@@ -258,6 +258,7 @@
     "voz": "Voz",
     "startTone": "Начальная нота:",
     "tempo": "Темп:",
+    "showAllParts": "Все партии",
     "vozLabels": {
       "lead": "Lead",
       "reallyHigh": "Really high part",

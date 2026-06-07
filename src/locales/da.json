@@ -258,6 +258,7 @@
     "voz": "Voz",
     "startTone": "Starttone:",
     "tempo": "Tempo:",
+    "showAllParts": "Alle stemmer",
     "vozLabels": {
       "lead": "Lead",
       "reallyHigh": "Really high part",

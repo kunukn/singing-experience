@@ -258,6 +258,7 @@
     "voz": "Voz",
     "startTone": "起始音:",
     "tempo": "速度:",
+    "showAllParts": "所有声部",
     "vozLabels": {
       "lead": "Lead",
       "reallyHigh": "Really high part",

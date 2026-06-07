@@ -258,6 +258,7 @@
     "voz": "Voz",
     "startTone": "শুরুর সুর:",
     "tempo": "গতি:",
+    "showAllParts": "সব অংশ",
     "vozLabels": {
       "lead": "Lead",
       "reallyHigh": "Really high part",

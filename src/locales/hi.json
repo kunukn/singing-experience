@@ -258,6 +258,7 @@
     "voz": "Voz",
     "startTone": "प्रारंभिक स्वर:",
     "tempo": "गति:",
+    "showAllParts": "सभी आवाज़ें",
     "vozLabels": {
       "lead": "Lead",
       "reallyHigh": "Really high part",
