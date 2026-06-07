@@ -275,7 +275,6 @@ function handleToggle() {
 
     <GraceKellyAllSheets
       v-if="showAllParts"
-      :bpm="bpm"
       :activeNoteIndex="activeNoteIndex"
       :vozLabels="allVozLabels"
     />

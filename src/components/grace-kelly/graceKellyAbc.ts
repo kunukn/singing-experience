@@ -49,6 +49,7 @@ export function vozMelodyToAbcString(
   melody: VozMelody,
   label: string,
   bpm = 120,
+  showTempo = true,
 ): string {
   /* 6/8 = 6 eighth notes per measure */
   const EIGHTHS_PER_MEASURE = 6
@@ -109,7 +110,8 @@ export function vozMelodyToAbcString(
     `T:${label}`,
     'M:6/8',
     'L:1/8',
-    `Q:3/8=${bpm}`,
+    /* Tempo marking is optional — some sheets render without the BPM header. */
+    ...(showTempo ? [`Q:3/8=${bpm}`] : []),
     /* 8vb treble clef — notes sound an octave below where they are drawn,
      * matching the source score (Voz 4–6 are written treble-8vb). */
     'K:C clef=treble-8',

@@ -5,7 +5,6 @@ import { vozMelodyToAbcString, estimateStaffWidth } from './graceKellyAbc'
 import { measureMusicWidth } from './graceKellyStaffRender'
 
 type Props = {
-  bpm: number
   activeNoteIndex: number | null
   /* Part labels ordered by VOZ_MELODIES index (used as each staff's title). */
   vozLabels: string[]
@@ -24,7 +23,13 @@ async function renderSheets() {
   if (containers.length < VOZ_MELODIES.length) return
 
   const abcStrings = VOZ_MELODIES.map((melody, index) =>
-    vozMelodyToAbcString(melody, props.vozLabels[index] ?? '', props.bpm),
+    /* Pass showTempo=false so the BPM header is hidden on the combined sheet. */
+    vozMelodyToAbcString(
+      melody,
+      props.vozLabels[index] ?? '',
+      undefined,
+      false,
+    ),
   )
 
   /* Pass 1 — render each staff at an oversized width so abcjs keeps it on one
@@ -62,7 +67,7 @@ onMounted(() => {
 })
 
 watch(
-  () => [props.bpm, props.vozLabels],
+  () => props.vozLabels,
   () => {
     void renderSheets()
   },
