@@ -6,10 +6,9 @@
  * When the user selects a start tone other than C3, a transposition delta is
  * added to every midiOffset at playback time — no data changes needed.
  *
- * Voz 2, Voz 3, Voz 4 (the one-tone C4 part), Voz 5 and Voz 6 are real
- * transcriptions from the Grace Kelly TikTok challenge sheet.
- * ⚠ PLACEHOLDER: Voz 1 currently duplicates Voz 4 until its real melody is
- *    transcribed. */
+ * All six voices are real transcriptions from the Grace Kelly TikTok challenge
+ * sheet: Voz 1 is the MIKA lead vocal; Voz 4 is the one-tone C4 part; Voz 2–3
+ * and Voz 5–6 are the harmony voices. */
 
 export type VozNote = {
   /* Semitones from C3 (MIDI 48). 0 = C3, 4 = E3, 7 = G3, 12 = C4, etc. */
@@ -298,10 +297,63 @@ const VOZ_2: VozMelody = {
   ],
 }
 
-/* Voz 1 is a placeholder that duplicates Voz 4 until its real melody is
- * transcribed. Sharing one object is safe — melody data is never mutated. */
+/* Voz 1 — real transcription. The MIKA lead vocal; spans nearly two octaves
+ * (range C3–A4, the only voice wider than an octave). 6/8, starts on C3 and
+ * climbs through the registers to a peak A4, then settles to E4. Opens with a
+ * 3-eighth pickup (anacrusis); ends on an E4 tied across the barline into a
+ * final dotted-quarter E4 (which balances the pickup). */
+const VOZ_1: VozMelody = {
+  anacrusisEighths: 3,
+  notes: [
+    /* pickup */
+    { midiOffset: 0, eighthNotes: 1 }, // C3 ♪ (DO)
+    { midiOffset: 0, eighthNotes: 1 }, // C3 ♪ (DO)
+    { midiOffset: 0, eighthNotes: 1 }, // C3 ♪ (DO)
+    /* bar 1 — E3 plateau (MI) */
+    { midiOffset: 4, eighthNotes: 3 }, // E3 ♩.
+    { midiOffset: 4, eighthNotes: 1 }, // E3 ♪
+    { midiOffset: 4, eighthNotes: 1 }, // E3 ♪
+    { midiOffset: 4, eighthNotes: 1 }, // E3 ♪
+    /* bar 2 — G3 plateau (SOL) */
+    { midiOffset: 7, eighthNotes: 3 }, // G3 ♩.
+    { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
+    { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
+    { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
+    /* bar 3 — E4 quarters (MI', up an octave) */
+    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩
+    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩
+    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩
+    /* bar 4 — F4 plateau (FA') */
+    { midiOffset: 17, eighthNotes: 3 }, // F4 ♩.
+    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
+    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
+    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
+    /* bar 5 — peak A4 plateau (LA') */
+    { midiOffset: 21, eighthNotes: 2 }, // A4 ♩
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
+    /* bar 6 — G4 plateau (SOL') */
+    { midiOffset: 19, eighthNotes: 2 }, // G4 ♩
+    { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
+    { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
+    { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
+    { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
+    /* bar 7 — F4 ×4 (FA'), G4 (SOL'), then E4 (MI') tied into final */
+    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
+    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
+    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
+    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
+    { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
+    { midiOffset: 16, eighthNotes: 1, tie: true }, // E4 ♪ — tied into final note
+    /* final bar — held E4 (balances the pickup) */
+    { midiOffset: 16, eighthNotes: 3 }, // E4 ♩.
+  ],
+}
+
 export const VOZ_MELODIES: VozMelody[] = [
-  VOZ_4, // Voz 1 (placeholder)
+  VOZ_1, // Voz 1
   VOZ_2, // Voz 2
   VOZ_3, // Voz 3
   VOZ_4, // Voz 4
