@@ -32,7 +32,8 @@
     "gameOver": "ゲーム終了",
     "playAgain": "もう一度",
     "score": "スコア",
-    "time": "タイム"
+    "time": "タイム",
+    "reset": "リセット"
   },
   "errors": {
     "microphoneAccess": "マイクにアクセスできませんでした",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "歌飛び",
     "subtitle": "音を歌って、すき間を通り抜けよう"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "和声パートを選んで一緒に歌おう",
+    "voz": "Voz",
+    "startTone": "開始音:",
+    "tempo": "テンポ:"
   }
 }

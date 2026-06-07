@@ -32,7 +32,8 @@
     "gameOver": "Permainan selesai",
     "playAgain": "Main Lagi",
     "score": "Skor",
-    "time": "Waktu"
+    "time": "Waktu",
+    "reset": "Reset"
   },
   "errors": {
     "microphoneAccess": "Gagal mengakses mikrofon",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "Nyanyibang",
     "subtitle": "Nyanyikan tiap nada buat lewat celah"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "Mainkan bagian harmoni vokal dan ikut bernyanyi",
+    "voz": "Voz",
+    "startTone": "Nada awal:",
+    "tempo": "Tempo:"
   }
 }

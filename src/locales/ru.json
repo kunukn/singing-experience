@@ -32,7 +32,8 @@
     "gameOver": "Игра окончена",
     "playAgain": "Играть снова",
     "score": "Счёт",
-    "time": "Время"
+    "time": "Время",
+    "reset": "Сбросить"
   },
   "errors": {
     "microphoneAccess": "Не удалось получить доступ к микрофону",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "Пой-лети",
     "subtitle": "Спой каждую ноту и пролети сквозь щель"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "Play a vocal harmony part and sing along",
+    "voz": "Voz",
+    "startTone": "Начальная нота:",
+    "tempo": "Темп:"
   }
 }

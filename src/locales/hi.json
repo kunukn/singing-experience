@@ -32,7 +32,8 @@
     "gameOver": "खेल खत्म",
     "playAgain": "फिर से खेलें",
     "score": "स्कोर",
-    "time": "समय"
+    "time": "समय",
+    "reset": "रीसेट"
   },
   "errors": {
     "microphoneAccess": "माइक्रोफ़ोन तक पहुँच नहीं हो सकी",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "गा उड़",
     "subtitle": "हर सुर गाओ और छेद से निकलो"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "Play a vocal harmony part and sing along",
+    "voz": "Voz",
+    "startTone": "प्रारंभिक स्वर:",
+    "tempo": "गति:"
   }
 }

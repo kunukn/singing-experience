@@ -32,7 +32,8 @@
     "gameOver": "Fin del juego",
     "playAgain": "Jugar de nuevo",
     "score": "Puntos",
-    "time": "Tiempo"
+    "time": "Tiempo",
+    "reset": "Reiniciar"
   },
   "errors": {
     "microphoneAccess": "No se pudo acceder al micrófono",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "Cantavuela",
     "subtitle": "Canta cada nota y pasa por el hueco"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "Toca una parte de armonía y canta",
+    "voz": "Voz",
+    "startTone": "Tono inicial:",
+    "tempo": "Tempo:"
   }
 }

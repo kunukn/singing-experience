@@ -32,7 +32,8 @@
     "gameOver": "খেলা শেষ",
     "playAgain": "আবার খেলুন",
     "score": "স্কোর",
-    "time": "সময়"
+    "time": "সময়",
+    "reset": "রিসেট"
   },
   "errors": {
     "microphoneAccess": "মাইক্রোফোন অ্যাক্সেস করতে ব্যর্থ",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "গেয়ে ওড়ো",
     "subtitle": "প্রতিটি সুর গাও আর ফাঁক দিয়ে যাও"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "Play a vocal harmony part and sing along",
+    "voz": "Voz",
+    "startTone": "শুরুর সুর:",
+    "tempo": "গতি:"
   }
 }

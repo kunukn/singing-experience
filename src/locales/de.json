@@ -32,7 +32,8 @@
     "gameOver": "Spiel vorbei",
     "playAgain": "Nochmal spielen",
     "score": "Punkte",
-    "time": "Zeit"
+    "time": "Zeit",
+    "reset": "Zurücksetzen"
   },
   "errors": {
     "microphoneAccess": "Zugriff auf das Mikrofon fehlgeschlagen",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "Singflug",
     "subtitle": "Singe jeden Ton und flieg durch die Lücke"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "Spiele eine Harmoniestimme und sing mit",
+    "voz": "Voz",
+    "startTone": "Startton:",
+    "tempo": "Tempo:"
   }
 }

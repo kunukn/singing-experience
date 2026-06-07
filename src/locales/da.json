@@ -32,7 +32,8 @@
     "gameOver": "Spillet er slut",
     "playAgain": "Spil igen",
     "score": "Score",
-    "time": "Tid"
+    "time": "Tid",
+    "reset": "Nulstil"
   },
   "errors": {
     "microphoneAccess": "Kunne ikke få adgang til mikrofonen",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "Syngflyv",
     "subtitle": "Syng hver tone og flyv gennem hullet"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "Spil en harmonistemme og syng med",
+    "voz": "Voz",
+    "startTone": "Starttone:",
+    "tempo": "Tempo:"
   }
 }

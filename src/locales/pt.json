@@ -32,7 +32,8 @@
     "gameOver": "Fim de jogo",
     "playAgain": "Jogar novamente",
     "score": "Pontos",
-    "time": "Tempo"
+    "time": "Tempo",
+    "reset": "Reiniciar"
   },
   "errors": {
     "microphoneAccess": "Falha ao acessar o microfone",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "Cantavoa",
     "subtitle": "Canta cada nota e passa pelo buraco"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "Toca uma parte harmônica e canta junto",
+    "voz": "Voz",
+    "startTone": "Tom inicial:",
+    "tempo": "Tempo:"
   }
 }

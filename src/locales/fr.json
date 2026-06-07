@@ -32,7 +32,8 @@
     "gameOver": "Partie terminée",
     "playAgain": "Rejouer",
     "score": "Score",
-    "time": "Temps"
+    "time": "Temps",
+    "reset": "Réinitialiser"
   },
   "errors": {
     "microphoneAccess": "Impossible d'accéder au microphone",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "Chantevole",
     "subtitle": "Chante chaque note et passe le trou"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "Joue une partie harmonique et chante avec",
+    "voz": "Voz",
+    "startTone": "Tonique de départ :",
+    "tempo": "Tempo :"
   }
 }

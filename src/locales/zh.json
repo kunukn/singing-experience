@@ -32,7 +32,8 @@
     "gameOver": "游戏结束",
     "playAgain": "再玩一次",
     "score": "得分",
-    "time": "时间"
+    "time": "时间",
+    "reset": "重置"
   },
   "errors": {
     "microphoneAccess": "无法访问麦克风",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "唱飞",
     "subtitle": "唱出每个音，飞过缺口"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "选择一个和声声部，跟着唱",
+    "voz": "Voz",
+    "startTone": "起始音:",
+    "tempo": "速度:"
   }
 }

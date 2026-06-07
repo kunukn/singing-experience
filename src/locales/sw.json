@@ -32,7 +32,8 @@
     "gameOver": "Mchezo umeisha",
     "playAgain": "Cheza Tena",
     "score": "Alama",
-    "time": "Muda"
+    "time": "Muda",
+    "reset": "Weka upya"
   },
   "errors": {
     "microphoneAccess": "Imeshindwa kufikia maikrofoni",
@@ -250,5 +251,12 @@
   "singFly": {
     "title": "Imbaruka",
     "subtitle": "Imba kila noti upite kwenye mwanya"
+  },
+  "graceKelly": {
+    "title": "Grace Kelly",
+    "subtitle": "Play a vocal harmony part and sing along",
+    "voz": "Voz",
+    "startTone": "Toni ya kuanza:",
+    "tempo": "Tempo:"
   }
 }
