@@ -108,7 +108,7 @@ watch(
 <template>
   <div
     ref="scrollRef"
-    class="w-full overflow-x-auto rounded border border-(--p-content-border-color)"
+    class="mx-auto w-fit max-w-full overflow-x-auto rounded border border-(--p-content-border-color)"
   >
     <div ref="containerRef" class="min-w-max py-2" />
   </div>
