@@ -8,16 +8,26 @@ useConfettiStore().registerFireConfetti(fireConfetti)
 useDocumentDirection()
 useDocumentMeta()
 useFaviconPermissionColor()
+
+const route = useRoute()
+/* Pages default to a centered max-w-3xl column; a page can opt into the full
+ * viewport width via `definePage({ meta: { fullWidth: true } })` (e.g. the
+ * Grace Kelly sheet, which scrolls horizontally and wants all the space). */
+const contentClass = computed(() =>
+  route.meta.fullWidth ? 'w-full' : 'mx-auto w-full max-w-3xl',
+)
 </script>
 
 <template>
-  <div class="relative mx-auto flex w-full max-w-3xl grow flex-col px-0 py-0">
+  <div class="relative flex w-full grow flex-col px-0 py-0">
     <canvas
       ref="confettiCanvas"
-      class="pointer-events-none absolute inset-0 z-50 h-full w-full max-w-3xl"
+      class="pointer-events-none absolute inset-0 z-50 mx-auto h-full w-full max-w-3xl"
     />
-    <TopBar />
-    <RouterView />
-    <ErrorToast />
+    <TopBar class="mx-auto w-full max-w-3xl" />
+    <div :class="contentClass">
+      <RouterView />
+    </div>
+    <ErrorToast class="mx-auto max-w-3xl" />
   </div>
 </template>

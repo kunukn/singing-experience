@@ -203,6 +203,12 @@ export default defineConfig(({ command }) => ({
       '~': fileURLToPath(new URL('.', import.meta.url)),
     },
   },
+  build: {
+    /* abcjs (~500 kB) is the largest chunk; it's a lazy-loaded vendor lib
+     * (see GraceKellySheet.vue) so it never bloats the initial load. Raise
+     * the warning ceiling above it while still catching new regressions. */
+    chunkSizeWarningLimit: 600,
+  },
   test: {
     environment: 'happy-dom',
   },

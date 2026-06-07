@@ -1,4 +1,6 @@
-<script setup lang="ts"></script>
+<route lang="json">
+{ "meta": { "fullWidth": true } }
+</route>
 
 <template>
   <div data-page="grace-kelly">

@@ -66,9 +66,9 @@ const currentToneLabel = computed(() => {
 /* Descriptive part labels, ordered by VOZ_MELODIES index. "MIKA" is the artist
  * name (Grace Kelly is a MIKA song) and stays untranslated. */
 const VOZ_LABEL_KEYS = [
-  'mika',
+  'lead',
+  'reallyHigh',
   'high',
-  'lessHigh',
   'oneTone',
   'lessLow',
   'low',
@@ -109,7 +109,9 @@ function handleToggle() {
     class="flex flex-1 flex-col items-center gap-4"
     data-testid="grace-kelly-display"
   >
-    <div class="flex w-full flex-wrap items-center gap-2 sm:gap-4">
+    <div
+      class="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-2 sm:gap-4"
+    >
       <PrimeSelect
         v-model="vozIndex"
         :options="vozOptions"
@@ -181,17 +183,19 @@ function handleToggle() {
       <div
         class="flex flex-col items-center gap-2 text-center text-(--p-text-muted-color)"
       >
-        <p class="text-sm">
+        <p class="text-sm leading-none">
           {{ t('graceKelly.subtitle') }}
         </p>
       </div>
-      <p
-        v-if="currentToneLabel"
-        class="text-2xl font-semibold text-(--p-primary-color)"
-        data-testid="grace-kelly-current-tone"
-      >
-        {{ currentToneLabel }}
-      </p>
+      <div class="min-w-10">
+        <p
+          v-if="currentToneLabel"
+          class="text-2xl font-semibold text-(--p-primary-color) tabular-nums"
+          data-testid="grace-kelly-current-tone"
+        >
+          {{ currentToneLabel }}
+        </p>
+      </div>
     </div>
 
     <GraceKellySheet

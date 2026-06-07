@@ -259,9 +259,9 @@
     "startTone": "Start tone:",
     "tempo": "Tempo:",
     "vozLabels": {
-      "mika": "MIKA",
+      "lead": "Lead",
+      "reallyHigh": "Really high part",
       "high": "High part",
-      "lessHigh": "Less high part",
       "oneTone": "One tone part",
       "lessLow": "Less low part",
       "low": "Low part"
