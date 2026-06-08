@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { NOTE_NAMES } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
+import { ALLOWED_BPMS } from './graceKellyConstants'
 import {
   GRACE_KELLY_LYRIC_LINES,
   GRACE_KELLY_SYLLABLES,
@@ -129,13 +130,10 @@ const allVozLabels = computed(() =>
 /* Toggles the all-parts overview below the lyrics; persists across reloads. */
 const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
 
-/* BPM = dotted quarter (the 6/8 beat unit). "BPM" kept untranslated. */
-const bpmOptions = [50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150].map(
-  (value) => ({
-    label: `${value} BPM`,
-    value,
-  }),
-)
+const bpmOptions = ALLOWED_BPMS.map((value) => ({
+  label: `${value} BPM`,
+  value,
+}))
 
 function handleToggle() {
   if (isPlaying.value) {

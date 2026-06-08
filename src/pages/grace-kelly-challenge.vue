@@ -1,5 +1,5 @@
 <route lang="json">
-{ "meta": { "fullWidth": true } }
+{ "alias": "/grace-kelly", "meta": { "fullWidth": true } }
 </route>
 
 <template>
