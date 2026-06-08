@@ -12,14 +12,23 @@ useFaviconPermissionColor()
 const route = useRoute()
 /* Pages default to a centered max-w-3xl column; a page can opt into the full
  * viewport width via `definePage({ meta: { fullWidth: true } })` (e.g. the
- * Grace Kelly sheet, which scrolls horizontally and wants all the space). */
+ * Grace Kelly sheet, which scrolls horizontally and wants all the space).
+ *
+ * The wrapper is a growing flex column and stretches its single `[data-page]`
+ * child to the same — so a page's own `grow`/`mt-auto` (e.g. the landing
+ * footer) has the full viewport height to work against. Without this, height
+ * stops propagating here and bottom-aligned content collapses upward. */
+const contentLayout =
+  'flex grow flex-col [&>[data-page]]:flex [&>[data-page]]:grow [&>[data-page]]:flex-col'
 const contentClass = computed(() =>
-  route.meta.fullWidth ? 'w-full' : 'mx-auto w-full max-w-3xl',
+  route.meta.fullWidth
+    ? `${contentLayout} w-full`
+    : `${contentLayout} mx-auto w-full max-w-3xl`,
 )
 </script>
 
 <template>
-  <div class="relative flex w-full grow flex-col px-0 py-0">
+  <div class="relative flex w-full flex-1 grow flex-col px-0 py-0">
     <canvas
       ref="confettiCanvas"
       class="pointer-events-none absolute inset-0 z-50 mx-auto h-full w-full max-w-3xl"
