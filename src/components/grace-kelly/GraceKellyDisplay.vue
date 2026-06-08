@@ -130,7 +130,7 @@ const allVozLabels = computed(() =>
 /* Toggles the all-parts overview below the lyrics; persists across reloads. */
 const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
 
-const bpmOptions = ALLOWED_BPMS.map((value) => ({
+const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
   label: `${value} BPM`,
   value,
 }))

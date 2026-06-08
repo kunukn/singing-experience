@@ -103,6 +103,10 @@
       "singFly": {
         "name": "Nyanyibang",
         "description": "Nyanyi biar burungnya lewat celah"
+      },
+      "graceKelly": {
+        "name": "Tantangan Grace Kelly",
+        "description": "Nyanyi bareng \"Grace Kelly\" dari MIKA. Pilih suara dan ikuti nadanya."
       }
     },
     "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Tidak ada audio yang direkam atau dikirim ke mana pun."

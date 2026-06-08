@@ -103,6 +103,10 @@
       "singFly": {
         "name": "Syngflyv",
         "description": "Syng og få fuglen gennem hullerne"
+      },
+      "graceKelly": {
+        "name": "Grace Kelly-udfordring",
+        "description": "Syng med på MIKAs \"Grace Kelly\". Vælg en stemme og følg tonerne."
       }
     },
     "privacy": "Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."

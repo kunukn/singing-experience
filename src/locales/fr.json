@@ -103,6 +103,10 @@
       "singFly": {
         "name": "Chantevole",
         "description": "Chante pour faire passer l'oiseau dans les trous"
+      },
+      "graceKelly": {
+        "name": "Défi Grace Kelly",
+        "description": "Chante sur \"Grace Kelly\" de MIKA. Choisis une voix et suis les notes."
       }
     },
     "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Aucun son n'est enregistré ni envoyé."

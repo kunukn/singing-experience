@@ -103,6 +103,10 @@
       "singFly": {
         "name": "Singflug",
         "description": "Singe, damit der Vogel durch die Lücken fliegt"
+      },
+      "graceKelly": {
+        "name": "Grace Kelly Challenge",
+        "description": "Sing zu MIKAs \"Grace Kelly\" mit. Wähl eine Stimme und folge den Tönen."
       }
     },
     "privacy": "Deine Privatsphäre ist geschützt – diese App läuft vollständig im Browser. Kein Audio wird aufgezeichnet oder übertragen."

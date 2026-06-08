@@ -25,6 +25,11 @@ export const games: Program[] = [
     icon: '🐦',
     route: '/singfly',
   },
+  {
+    key: 'graceKelly',
+    icon: '👑',
+    route: '/grace-kelly-challenge',
+  },
 ]
 
 export const tools: Program[] = [
