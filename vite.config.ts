@@ -154,7 +154,7 @@ export default defineConfig(({ command, mode }) => {
         registerType: 'autoUpdate',
         manifest: {
           name: 'Singing Experience',
-          short_name: 'Singing',
+          short_name: 'Syng',
           description:
             'Real-time vocal pitch detector and DO RE MI singing game. Practice singing, train your ear, detect notes — free, private, works offline.',
           theme_color: '#4f46e5',
@@ -177,8 +177,7 @@ export default defineConfig(({ command, mode }) => {
            * the original.
            */
           icons: (() => {
-            const suffix =
-              env.VITE_USE_HISTORY_ROUTING === '0' ? '' : '-syng'
+            const suffix = env.VITE_USE_HISTORY_ROUTING === '0' ? '' : '-syng'
             return [
               {
                 src: `icons/pwa-192x192${suffix}.png`,
