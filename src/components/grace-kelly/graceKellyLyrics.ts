@@ -1,11 +1,11 @@
 /* Grace Kelly lyrics, split into syllables and aligned to the melody's tones.
  *
- * All six Voz melodies share an identical 35-note rhythm (only pitches differ),
+ * All six Voz melodies share an identical 34-note rhythm (only pitches differ),
  * so this single syllable→note mapping drives the sung-syllable highlight for
- * every voice. The lyrics yield 33 syllables across 35 tones; the final two
- * held/tied tones (33–34) carry no new syllable, so the closing "like" stays
- * lit through the ending (handled by the "last syllable reached" rule in the
- * display component).
+ * every voice. The lyrics yield 33 syllables across 34 tones; the final tone
+ * (33) carries no new syllable, so the closing "like" stays lit through the
+ * ending (handled by the "last syllable reached" rule in the display
+ * component).
  *
  * Multi-syllable words are stored as adjacent syllables (no internal space) so
  * each tone lights exactly one syllable while the word still reads seamlessly. */

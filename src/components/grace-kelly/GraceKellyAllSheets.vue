@@ -25,7 +25,7 @@ const COMPACT_RENDER = {
 const scrollRef = ref<HTMLDivElement | null>(null)
 const staffContainers = ref<HTMLElement[]>([])
 /* Note elements per staff, indexed [staffIndex][noteIndex] — all melodies share
- * the same 35-note rhythm, so a single activeNoteIndex maps onto every staff. */
+ * the same 34-note rhythm, so a single activeNoteIndex maps onto every staff. */
 const noteElementsByStaff = ref<Element[][]>([])
 
 async function renderSheets() {

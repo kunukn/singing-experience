@@ -70,7 +70,7 @@ const currentToneLabel = computed(() => {
 
 /* Flat reading-order index of the syllable currently being sung — the last
  * syllable whose starting tone has been reached. Held/tied tones keep the
- * previous syllable lit (the final "like" sustains over tones 32–34). -1 when
+ * previous syllable lit (the final "like" sustains over tones 32–33). -1 when
  * idle, so all syllables render in the default color. */
 const activeSyllableIndex = computed(() => {
   if (activeNoteIndex.value === null) return -1

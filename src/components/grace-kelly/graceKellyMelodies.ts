@@ -29,8 +29,7 @@ export type VozMelody = {
 
 /* Voz 4 — the "one-tone" harmony: a single pitch (C4) sung throughout, sharing
  * Voz 6's exact tempo and rhythm. Treble clef 8vb; opens with a 3-eighth pickup
- * (anacrusis) and ends on a C4 tied across the barline into a final dotted
- * quarter (which balances the pickup). */
+ * (anacrusis) and ends on a plain C4 quarter. */
 const VOZ_4: VozMelody = {
   anacrusisEighths: 3,
   notes: [
@@ -69,20 +68,17 @@ const VOZ_4: VozMelody = {
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    /* bar 7 — C4 ×4 (was ×5), then C4 tied into final */
+    /* bar 7 — C4 ×4 (was ×5), then ends on a C4 quarter */
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 2, tie: true }, // C4 ♩ — tied into final note
-    /* final bar — held C4 (balances the pickup) */
-    { midiOffset: 12, eighthNotes: 3 }, // C4 ♩.
+    { midiOffset: 12, eighthNotes: 2 }, // C4 ♩ — final note
   ],
 }
 
 /* Voz 6 — real transcription. Treble clef 8vb, 6/8, low register (C3–G3).
- * Opens with a 3-eighth pickup (anacrusis); ends on a C3 tied across the
- * barline into a final dotted-quarter C3 (which balances the pickup). */
+ * Opens with a 3-eighth pickup (anacrusis); ends on a plain C3 quarter. */
 const VOZ_6: VozMelody = {
   anacrusisEighths: 3,
   notes: [
@@ -121,22 +117,19 @@ const VOZ_6: VozMelody = {
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
-    /* bar 7 — F3 ×3 (was ×4), G3, then C3 tied into final */
+    /* bar 7 — F3 ×3 (was ×4), G3, then ends on a C3 quarter */
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
-    { midiOffset: 0, eighthNotes: 2, tie: true }, // C3 ♩ — tied into final note
-    /* final bar — held C3 (balances the pickup) */
-    { midiOffset: 0, eighthNotes: 3 }, // C3 ♩.
+    { midiOffset: 0, eighthNotes: 2 }, // C3 ♩ — final note
   ],
 }
 
 /* Voz 5 — real transcription. Treble clef 8vb, 6/8, low register (G3–B3).
  * Shares Voz 4's exact tempo and rhythm; opens with a 3-eighth pickup
  * (anacrusis). Long plateaus: G3 (×14) → A3 (×9) → B3 (×5) → A3 (×4) → B3,
- * then ends on a G3 tied across the barline into a final dotted-quarter G3
- * (which balances the pickup). */
+ * then ends on a plain G3 quarter. */
 const VOZ_5: VozMelody = {
   anacrusisEighths: 3,
   notes: [
@@ -175,21 +168,19 @@ const VOZ_5: VozMelody = {
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
-    /* bar 7 — A3 ×3 (was ×4), B3, then G3 tied into final */
+    /* bar 7 — A3 ×3 (was ×4), B3, then ends on a G3 quarter */
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
-    { midiOffset: 7, eighthNotes: 2, tie: true }, // G3 ♩ — tied into final note
-    /* final bar — held G3 (balances the pickup) */
-    { midiOffset: 7, eighthNotes: 3 }, // G3 ♩.
+    { midiOffset: 7, eighthNotes: 2 }, // G3 ♩ — final note
   ],
 }
 
 /* Voz 3 — real transcription. The higher-voiced singer (Voz 6 is the lowest).
  * 6/8, range G3–F4 (within one octave, per the Grace Kelly challenge); starts on
- * C4, ends on E4. Opens with a 3-eighth pickup (anacrusis); ends on an E4 tied
- * across the barline into a final dotted-quarter E4 (which balances the pickup). */
+ * C4, ends on E4. Opens with a 3-eighth pickup (anacrusis); ends on a plain
+ * E4 quarter. */
 const VOZ_3: VozMelody = {
   anacrusisEighths: 3,
   notes: [
@@ -228,21 +219,18 @@ const VOZ_3: VozMelody = {
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
-    /* bar 7 — D4 ×3 (was ×4), upper-neighbor F4, then E4 tied into final */
+    /* bar 7 — D4 ×3 (was ×4), upper-neighbor F4, then ends on an E4 quarter */
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
     { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
     { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
-    { midiOffset: 16, eighthNotes: 2, tie: true }, // E4 ♩ — tied into final note
-    /* final bar — held E4 (balances the pickup) */
-    { midiOffset: 16, eighthNotes: 3 }, // E4 ♩.
+    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩ — final note
   ],
 }
 
 /* Voz 2 — real transcription. The highest voice in the challenge. 6/8, range
  * E4–C5 (within one octave); starts on E4, ends on G4. Opens with a 3-eighth
- * pickup (anacrusis); ends on a G4 tied across the barline into a final
- * dotted-quarter G4 (which balances the pickup). */
+ * pickup (anacrusis); ends on a plain G4 quarter. */
 const VOZ_2: VozMelody = {
   anacrusisEighths: 3,
   notes: [
@@ -281,22 +269,19 @@ const VOZ_2: VozMelody = {
     { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
     { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
     { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
-    /* bar 7 — A4 ×3 (was ×4), upper-neighbor B4, then G4 tied into final */
+    /* bar 7 — A4 ×3 (was ×4), upper-neighbor B4, then ends on a G4 quarter */
     { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
     { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
     { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
     { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
-    { midiOffset: 19, eighthNotes: 2, tie: true }, // G4 ♩ — tied into final note
-    /* final bar — held G4 (balances the pickup) */
-    { midiOffset: 19, eighthNotes: 3 }, // G4 ♩.
+    { midiOffset: 19, eighthNotes: 2 }, // G4 ♩ — final note
   ],
 }
 
 /* Voz 1 — real transcription. The MIKA lead vocal; spans nearly two octaves
  * (range C3–A4, the only voice wider than an octave). 6/8, starts on C3 and
  * climbs through the registers to a peak A4, then settles to E4. Opens with a
- * 3-eighth pickup (anacrusis); ends on an E4 tied across the barline into a
- * final dotted-quarter E4 (which balances the pickup). */
+ * 3-eighth pickup (anacrusis); ends on a plain E4 quarter. */
 const VOZ_1: VozMelody = {
   anacrusisEighths: 3,
   notes: [
@@ -335,14 +320,12 @@ const VOZ_1: VozMelody = {
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
-    /* bar 7 — F4 ×3 (was ×4, FA'), G4 (SOL'), then E4 (MI') tied into final */
+    /* bar 7 — F4 ×3 (was ×4, FA'), G4 (SOL'), ends on E4 (MI') quarter */
     { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
     { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
     { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
-    { midiOffset: 16, eighthNotes: 2, tie: true }, // E4 ♩ — tied into final note
-    /* final bar — held E4 (balances the pickup) */
-    { midiOffset: 16, eighthNotes: 3 }, // E4 ♩.
+    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩ — final note
   ],
 }
 
