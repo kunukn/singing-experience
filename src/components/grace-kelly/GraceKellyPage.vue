@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { C3_MIDI } from '@/utils/noteUtils'
+import { G2_MIDI } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import GraceKellyDisplay from './GraceKellyDisplay.vue'
 import {
@@ -13,7 +13,7 @@ import { useGraceKelly } from './useGraceKelly'
 
 const DEFAULT_VOZ_INDEX = VOZ_MELODIES.length - 1
 const VOZ_COUNT = VOZ_MELODIES.length
-const DEFAULT_START_TONE_MIDI = C3_MIDI // 48
+const DEFAULT_START_TONE_MIDI = G2_MIDI // 43
 
 const vozIndex = useLocalStorage('syng.graceKellyVozIndex', DEFAULT_VOZ_INDEX)
 if (

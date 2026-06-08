@@ -124,6 +124,9 @@ export function frequencyToNoteName(hz: number): string | null {
 /* MIDI note number for C3 (middle-ish C in scientific pitch notation) */
 const C3_MIDI = 48
 
+/* MIDI note number for G2 (scientific pitch notation) */
+const G2_MIDI = 43
+
 const SOLFEGE_LABELS = ['DO', 'RE', 'MI', 'FA', 'SO', 'LA', 'TI', 'DO'] as const
 
 /*
@@ -574,6 +577,7 @@ export {
   buildMajorScale,
   buildScale,
   C3_MIDI,
+  G2_MIDI,
   MAJOR_SCALE_SEMITONES,
   midiRangeToScaleNotes,
   midiToNoteLabel,

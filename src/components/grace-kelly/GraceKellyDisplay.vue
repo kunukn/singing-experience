@@ -230,7 +230,7 @@ function handleToggle() {
     </div>
 
     <p>Music by Mika</p>
-    <div class="flex min-h-[2rem] flex-wrap items-center gap-4">
+    <div class="flex min-h-8 flex-wrap items-center gap-4">
       <div
         class="flex flex-col items-center gap-2 text-center text-(--p-text-muted-color)"
       >
