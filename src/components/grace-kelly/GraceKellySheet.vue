@@ -10,6 +10,10 @@ type Props = {
   startToneMidi: number
   bpm: number
   activeNoteIndex: number | null
+  /* ABC `w:` lyric line drawn under the staff; omit to render notes only. */
+  lyrics?: string
+  /* Flat reading-order index of the syllable to highlight; -1/null = none. */
+  activeSyllableIndex?: number | null
 }
 
 const props = defineProps<Props>()
@@ -17,6 +21,7 @@ const props = defineProps<Props>()
 const containerRef = ref<HTMLDivElement | null>(null)
 const scrollRef = ref<HTMLDivElement | null>(null)
 const noteElements = ref<Element[]>([])
+const lyricElements = ref<Element[]>([])
 
 async function renderSheet() {
   if (!containerRef.value) return
@@ -26,6 +31,8 @@ async function renderSheet() {
     props.vozLabel,
     props.startToneMidi,
     props.bpm,
+    true,
+    props.lyrics,
   )
 
   /* Pass 1 — render at an oversized width so abcjs keeps everything on one
@@ -53,6 +60,11 @@ async function renderSheet() {
 
   noteElements.value = [
     ...(containerRef.value?.querySelectorAll('.abcjs-note') ?? []),
+  ]
+  /* One `.abcjs-lyric` element per lyric'd note, in reading order, so the index
+   * matches the flat syllable index used by activeSyllableIndex. */
+  lyricElements.value = [
+    ...(containerRef.value?.querySelectorAll('.abcjs-lyric') ?? []),
   ]
 }
 
@@ -92,6 +104,21 @@ watch(
     })
   },
 )
+
+watch(
+  () => props.activeSyllableIndex,
+  (index) => {
+    for (const element of lyricElements.value) {
+      element.classList.remove('syllable-active')
+    }
+
+    /* -1 (idle) and null both mean "no syllable lit". The active note's column
+     * is already scrolled into view by the note watch, carrying its lyric. */
+    if (index === null || index === undefined || index < 0) return
+
+    lyricElements.value[index]?.classList.add('syllable-active')
+  },
+)
 </script>
 
 <template>
@@ -106,6 +133,10 @@ watch(
 <style scoped>
 :deep(.note-active path),
 :deep(.note-active rect) {
+  fill: var(--p-primary-color);
+}
+
+:deep(.syllable-active) {
   fill: var(--p-primary-color);
 }
 </style>

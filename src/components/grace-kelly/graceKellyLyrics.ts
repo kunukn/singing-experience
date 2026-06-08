@@ -75,3 +75,15 @@ export const GRACE_KELLY_LYRIC_LINES: LyricLine[] = [
  * display resolve the active syllable without re-flattening the nested lines. */
 export const GRACE_KELLY_SYLLABLES: ReadonlyArray<{ noteIndex: number }> =
   GRACE_KELLY_LYRIC_LINES.flat(2).map(({ noteIndex }) => ({ noteIndex }))
+
+/* ABC `w:` lyric line — each space-separated token aligns to one note, with
+ * intra-word syllables joined by `-` (the ABC intra-word separator).
+ * Reconstructed from the same syllable data that drives the highlight, so it
+ * stays in lockstep with the melody. The 33 syllables align to notes 0–32; the
+ * final held tone (33) carries no syllable. */
+export const GRACE_KELLY_LYRIC_ABC: string = GRACE_KELLY_LYRIC_LINES.map(
+  (line) =>
+    line
+      .map((word) => word.map((syllable) => syllable.text).join('-'))
+      .join(' '),
+).join(' ')

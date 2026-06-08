@@ -7,6 +7,7 @@ import {
   START_TONE_MIDI_MIN,
 } from './graceKellyConstants'
 import {
+  GRACE_KELLY_LYRIC_ABC,
   GRACE_KELLY_LYRIC_LINES,
   GRACE_KELLY_SYLLABLES,
 } from './graceKellyLyrics'
@@ -255,6 +256,8 @@ function handleToggle() {
       :startToneMidi="startToneMidi"
       :bpm="bpm"
       :activeNoteIndex="activeNoteIndex"
+      :lyrics="GRACE_KELLY_LYRIC_ABC"
+      :activeSyllableIndex="activeSyllableIndex"
     />
 
     <div>

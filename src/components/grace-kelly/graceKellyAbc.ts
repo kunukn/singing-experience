@@ -85,6 +85,7 @@ export function vozMelodyToAbcString(
   startToneMidi: number,
   bpm = 120,
   showTempo = true,
+  lyrics?: string,
 ): string {
   /* 6/8 = 6 eighth notes per measure */
   const EIGHTHS_PER_MEASURE = 6
@@ -173,5 +174,8 @@ export function vozMelodyToAbcString(
      * key, so the diatonic melody needs no per-note accidentals. */
     `K:${key.abcKey} clef=treble-8`,
     body.trim(),
+    /* A `w:` line after the music aligns each space-separated syllable to a
+     * note, drawing the lyrics under the staff. Omitted when no lyrics given. */
+    ...(lyrics ? [`w:${lyrics}`] : []),
   ].join('\n')
 }
