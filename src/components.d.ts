@@ -33,6 +33,7 @@ declare module 'vue' {
     GitHubIcon: typeof import('./components/icons/GitHubIcon.vue')['default']
     GraceKellyAllSheets: typeof import('./components/grace-kelly/GraceKellyAllSheets.vue')['default']
     GraceKellyDisplay: typeof import('./components/grace-kelly/GraceKellyDisplay.vue')['default']
+    GraceKellyLyrics: typeof import('./components/grace-kelly/GraceKellyLyrics.vue')['default']
     GraceKellyPage: typeof import('./components/grace-kelly/GraceKellyPage.vue')['default']
     GraceKellySettingsRow: typeof import('./components/grace-kelly/GraceKellySettingsRow.vue')['default']
     GraceKellySheet: typeof import('./components/grace-kelly/GraceKellySheet.vue')['default']
