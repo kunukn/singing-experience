@@ -60,9 +60,50 @@ async function waitForServer(url, timeoutMs) {
   throw new Error(`Server at ${url} did not start within ${timeoutMs}ms`)
 }
 
-async function main() {
-  let previewProcess
+let previewProcess
 
+/* Kill the preview server and any children it spawned.
+ * On POSIX the server runs as its own process-group leader (detached),
+ * so we signal the whole group with a negative PID to avoid orphaning
+ * grandchildren when this script is itself killed by a signal. */
+function killPreview() {
+  if (!previewProcess || previewProcess.killed) return
+
+  const { pid } = previewProcess
+  try {
+    if (isWin) {
+      previewProcess.kill()
+    } else {
+      process.kill(-pid, 'SIGTERM')
+      /* Escalate if it ignores SIGTERM. unref so this timer never keeps
+       * the event loop alive on a clean exit. */
+      setTimeout(() => {
+        try {
+          process.kill(-pid, 'SIGKILL')
+        } catch {
+          /* already gone */
+        }
+      }, 2_000).unref()
+    }
+  } catch {
+    /* process group already gone */
+  }
+}
+
+/* Signal/exit handlers guarantee cleanup even when the `finally` below
+ * never runs — e.g. when check.js's watchdog SIGTERM/SIGKILLs this
+ * process. Without these, the preview server reparents to PID 1 and leaks. */
+process.on('exit', killPreview)
+process.on('SIGINT', () => {
+  killPreview()
+  process.exit(130)
+})
+process.on('SIGTERM', () => {
+  killPreview()
+  process.exit(143)
+})
+
+async function main() {
   try {
     const port = await getFreePort()
     const previewUrl = `http://localhost:${port}`
@@ -74,7 +115,9 @@ async function main() {
       ['preview', '--port', String(port)],
       {
         stdio: 'pipe',
-        detached: false,
+        /* Own process group on POSIX so killPreview can take down the
+         * whole tree; shell:true on Windows where detached groups differ. */
+        detached: !isWin,
         shell: isWin,
       },
     )
@@ -145,9 +188,7 @@ async function main() {
     console.error('❌ FAILURE:', err.message)
     process.exit(1)
   } finally {
-    if (previewProcess) {
-      previewProcess.kill()
-    }
+    killPreview()
   }
 }
 

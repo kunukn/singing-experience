@@ -141,7 +141,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       </PrimeButton>
     </div>
 
-    <div class="flex min-h-8 flex-wrap items-center gap-2 md:gap-4">
+    <div class="flex min-h-8 flex-wrap items-center gap-2">
       <div
         class="flex flex-col items-center gap-2 text-center text-(--p-text-muted-color)"
       >

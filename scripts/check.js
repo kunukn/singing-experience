@@ -41,6 +41,12 @@ const DEFAULT_TIMEOUT_MS = 60_000
 /* Build can legitimately take longer on cold caches / loaded machines.
  * Override with CHECK_BUILD_TIMEOUT_MS=300000 npm run check when probing. */
 const BUILD_TIMEOUT_MS = Number(process.env.CHECK_BUILD_TIMEOUT_MS) || 60_000
+/* Validate spins up a preview server and drives Playwright across 3 pages;
+ * a cold browser launch alone can approach the default 60s. Give it room so
+ * the watchdog doesn't SIGKILL a legitimately-slow run mid-flight — which
+ * would orphan the preview server it spawned. Override when probing. */
+const VALIDATE_TIMEOUT_MS =
+  Number(process.env.CHECK_VALIDATE_TIMEOUT_MS) || 120_000
 const KILL_GRACE_MS = 2_000
 const HEARTBEAT_MS = 10_000
 
@@ -264,6 +270,7 @@ const validateResult = await runTask({
   name: 'Validate',
   cmd: 'node',
   args: ['scripts/validate-build.js'],
+  timeoutMs: VALIDATE_TIMEOUT_MS,
   stream: true,
 })
 
