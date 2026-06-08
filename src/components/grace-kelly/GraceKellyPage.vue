@@ -2,15 +2,17 @@
 import { C3_MIDI } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import GraceKellyDisplay from './GraceKellyDisplay.vue'
-import { ALLOWED_BPMS, DEFAULT_BPM } from './graceKellyConstants'
+import {
+  ALLOWED_BPMS,
+  DEFAULT_BPM,
+  START_TONE_MIDI_MAX,
+  START_TONE_MIDI_MIN,
+} from './graceKellyConstants'
 import { VOZ_MELODIES } from './graceKellyMelodies'
 import { useGraceKelly } from './useGraceKelly'
 
 const DEFAULT_VOZ_INDEX = VOZ_MELODIES.length - 1
 const VOZ_COUNT = VOZ_MELODIES.length
-/* E2 = MIDI 40, A3 = MIDI 57 */
-const START_TONE_MIDI_MIN = 40
-const START_TONE_MIDI_MAX = 57
 const DEFAULT_START_TONE_MIDI = C3_MIDI // 48
 
 const vozIndex = useLocalStorage('syng.graceKellyVozIndex', DEFAULT_VOZ_INDEX)

@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { NOTE_NAMES } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
-import { ALLOWED_BPMS } from './graceKellyConstants'
+import {
+  ALLOWED_BPMS,
+  START_TONE_MIDI_MAX,
+  START_TONE_MIDI_MIN,
+} from './graceKellyConstants'
 import {
   GRACE_KELLY_LYRIC_LINES,
   GRACE_KELLY_SYLLABLES,
@@ -45,10 +49,8 @@ function midiToToneLabel(midi: number): string {
   return `${NOTE_NAMES[noteIndex]}${octave}`
 }
 
-/* Start-tone range E2 (MIDI 40) – A3 (MIDI 57), descending (high → low).
+/* Start-tone options, descending (high → low), built from the shared range.
  * Generated locally because the shared START_TONE_OPTIONS bottoms out at G2. */
-const START_TONE_MIDI_MIN = 40 // E2
-const START_TONE_MIDI_MAX = 57 // A3
 const startToneOptions = Array.from(
   { length: START_TONE_MIDI_MAX - START_TONE_MIDI_MIN + 1 },
   (_, index) => {
