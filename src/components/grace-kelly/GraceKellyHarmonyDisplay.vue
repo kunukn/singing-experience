@@ -153,9 +153,11 @@ function toggleVoz(index: number, enabled: boolean) {
       </PrimeButton>
     </div>
 
-    <p class="text-sm leading-none text-(--p-text-muted-color)">
-      {{ t('graceKelly.harmony.subtitle') }}
-    </p>
+    <div class="flex min-h-[2rem] flex-col justify-center">
+      <p class="text-sm leading-none text-(--p-text-muted-color)">
+        {{ t('graceKelly.harmony.subtitle') }}
+      </p>
+    </div>
 
     <GraceKellyAllSheets
       v-if="selectedVozIndices.length > 0"

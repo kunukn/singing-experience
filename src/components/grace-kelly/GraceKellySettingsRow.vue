@@ -144,7 +144,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     </div>
 
     <div class="settings-item">
-      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+      <label class="hidden text-sm text-(--p-text-muted-color) lg:block">{{
         t('sounds.toneSound')
       }}</label>
       <ToneModeSelect v-model="toneMode" />
@@ -158,19 +158,12 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 .settings-row {
   @apply flex w-full snap-x snap-mandatory items-center justify-center-safe gap-4 overflow-x-auto px-6 pb-2;
   @apply sm:mb-4;
-  @apply md:grid md:w-auto md:snap-none md:grid-cols-[auto_1fr_auto_1fr] md:overflow-visible md:px-0 md:pb-0;
+  /* One row from md up: 8 columns so all four items (each col-span-2) sit side by side. */
+  @apply md:grid md:w-auto md:snap-none md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr] md:overflow-visible md:px-0 md:pb-0;
 
   /* Match the container's px-6 so snap-start aligns the first/last item at scrollLeft 0/max,
    * keeping the conditional edge mask in sync with the true scroll boundaries. */
   scroll-padding-inline: 1.5rem;
-}
-
-/* Harmony tab drops the Voz select → 3 items. Widen to 3 label/control pairs so
- * they sit on one row instead of leaving a lone item wrapping below. */
-@media (min-width: 768px) {
-  .settings-row.no-voz {
-    grid-template-columns: auto 1fr auto 1fr auto 1fr;
-  }
 }
 
 /* Edge fade — signals horizontal scrollability on iOS where scrollbars auto-hide.
