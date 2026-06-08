@@ -77,28 +77,30 @@ watch(activeTab, () => {
 </script>
 
 <template>
-  <PrimeTabs v-model:value="activeTab">
-    <PrimeTabList>
-      <PrimeTab value="sing">{{ t('graceKelly.tabs.singAlong') }}</PrimeTab>
-      <PrimeTab value="harmony">{{ t('graceKelly.tabs.harmony') }}</PrimeTab>
-    </PrimeTabList>
-    <PrimeTabPanels class="px-0">
-      <PrimeTabPanel value="sing">
-        <GraceKellyDisplay
-          :game="game"
-          v-model:vozIndex="vozIndex"
-          v-model:startToneMidi="startToneMidi"
-          v-model:bpm="bpm"
-        />
-      </PrimeTabPanel>
-      <PrimeTabPanel value="harmony">
-        <GraceKellyHarmonyDisplay
-          :game="harmonyGame"
-          v-model:startToneMidi="startToneMidi"
-          v-model:bpm="bpm"
-          v-model:selectedVozIndices="selectedVozIndices"
-        />
-      </PrimeTabPanel>
-    </PrimeTabPanels>
-  </PrimeTabs>
+  <div class="mx-auto w-full max-w-400">
+    <PrimeTabs v-model:value="activeTab">
+      <PrimeTabList>
+        <PrimeTab value="sing">{{ t('graceKelly.tabs.singAlong') }}</PrimeTab>
+        <PrimeTab value="harmony">{{ t('graceKelly.tabs.harmony') }}</PrimeTab>
+      </PrimeTabList>
+      <PrimeTabPanels class="px-0">
+        <PrimeTabPanel value="sing">
+          <GraceKellyDisplay
+            :game="game"
+            v-model:vozIndex="vozIndex"
+            v-model:startToneMidi="startToneMidi"
+            v-model:bpm="bpm"
+          />
+        </PrimeTabPanel>
+        <PrimeTabPanel value="harmony">
+          <GraceKellyHarmonyDisplay
+            :game="harmonyGame"
+            v-model:startToneMidi="startToneMidi"
+            v-model:bpm="bpm"
+            v-model:selectedVozIndices="selectedVozIndices"
+          />
+        </PrimeTabPanel>
+      </PrimeTabPanels>
+    </PrimeTabs>
+  </div>
 </template>
