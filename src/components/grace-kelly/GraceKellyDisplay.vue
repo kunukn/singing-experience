@@ -238,7 +238,7 @@ function handleToggle() {
           {{ t('graceKelly.subtitle') }}
         </p>
       </div>
-      <div class="min-w-10">
+      <div class="min-w-11">
         <p
           v-if="currentToneLabel"
           class="text-2xl font-semibold text-(--p-primary-color) tabular-nums"
