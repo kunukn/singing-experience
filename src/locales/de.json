@@ -2,6 +2,8 @@
   "generic": {
     "start": "Start",
     "stop": "Stopp",
+    "pause": "Pause",
+    "resume": "Weiter",
     "clear": "Löschen",
     "backToMenuArrow": "←",
     "back": "Zurück",

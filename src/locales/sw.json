@@ -2,6 +2,8 @@
   "generic": {
     "start": "Anza",
     "stop": "Simama",
+    "pause": "Pumzika",
+    "resume": "Endelea",
     "clear": "Futa",
     "backToMenuArrow": "←",
     "back": "Rudi",

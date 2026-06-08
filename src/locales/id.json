@@ -2,6 +2,8 @@
   "generic": {
     "start": "Mulai",
     "stop": "Berhenti",
+    "pause": "Jeda",
+    "resume": "Lanjut",
     "clear": "Hapus",
     "backToMenuArrow": "←",
     "back": "Kembali",

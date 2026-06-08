@@ -2,6 +2,8 @@
   "generic": {
     "start": "開始",
     "stop": "停止",
+    "pause": "一時停止",
+    "resume": "再開",
     "clear": "クリア",
     "backToMenuArrow": "←",
     "back": "戻る",

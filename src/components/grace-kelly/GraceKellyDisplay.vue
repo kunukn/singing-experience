@@ -40,7 +40,12 @@ const toneMode = computed({
 })
 setToneMode(storedToneMode.value)
 
-const { isPlaying, isDone, activeNoteIndex, start, stop } = props.game
+const { isPlaying, isPaused, activeNoteIndex, start, pause, resume, stop } =
+  props.game
+
+/* True while a sequence is playing or paused — the part/tone/tempo selects stay
+ * locked for both so the running timeline can't be changed underneath it. */
+const isRunning = computed(() => isPlaying.value || isPaused.value)
 
 /* MIDI note → display label, e.g. 48 → "C3". */
 function midiToToneLabel(midi: number): string {
@@ -137,16 +142,6 @@ const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
   label: `${value} BPM`,
   value,
 }))
-
-function handleToggle() {
-  if (isPlaying.value) {
-    stop()
-  } else if (isDone.value) {
-    start(startToneMidi.value, vozIndex.value, bpm.value)
-  } else {
-    start(startToneMidi.value, vozIndex.value, bpm.value)
-  }
-}
 </script>
 
 <template>
@@ -163,7 +158,7 @@ function handleToggle() {
         optionLabel="label"
         optionValue="value"
         size="small"
-        :disabled="isPlaying"
+        :disabled="isRunning"
         class="flex-1"
         scrollHeight="370px"
       >
@@ -182,7 +177,7 @@ function handleToggle() {
         optionLabel="label"
         optionValue="midiNote"
         size="small"
-        :disabled="isPlaying"
+        :disabled="isRunning"
         class="flex-1"
       >
         <template #header>
@@ -200,7 +195,7 @@ function handleToggle() {
         optionLabel="label"
         optionValue="value"
         size="small"
-        :disabled="isPlaying"
+        :disabled="isRunning"
         class="flex-1"
       >
         <template #header>
@@ -219,15 +214,49 @@ function handleToggle() {
         {{ t('graceKelly.showAllParts') }}
       </label>
 
-      <PrimeButton
-        class="ms-auto min-w-24"
-        :severity="isPlaying ? 'danger' : 'success'"
-        size="small"
-        rounded
-        @click="handleToggle"
-      >
-        {{ isPlaying ? t('generic.stop') : t('generic.start') }}
-      </PrimeButton>
+      <div class="ms-auto flex gap-2">
+        <PrimeButton
+          v-if="isPlaying"
+          class="min-w-24"
+          severity="warn"
+          size="small"
+          rounded
+          @click="pause"
+        >
+          {{ t('generic.pause') }}
+        </PrimeButton>
+        <PrimeButton
+          v-else-if="isPaused"
+          class="min-w-24"
+          severity="success"
+          size="small"
+          rounded
+          @click="resume"
+        >
+          {{ t('generic.resume') }}
+        </PrimeButton>
+        <PrimeButton
+          v-else
+          class="min-w-24"
+          severity="success"
+          size="small"
+          rounded
+          @click="start(startToneMidi, vozIndex, bpm)"
+        >
+          {{ t('generic.start') }}
+        </PrimeButton>
+
+        <PrimeButton
+          v-if="isRunning"
+          severity="danger"
+          size="small"
+          rounded
+          class="min-w-24"
+          @click="stop"
+        >
+          {{ t('generic.stop') }}
+        </PrimeButton>
+      </div>
     </div>
 
     <p>Music by Mika</p>

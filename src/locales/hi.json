@@ -2,6 +2,8 @@
   "generic": {
     "start": "शुरू",
     "stop": "रोकें",
+    "pause": "रुको",
+    "resume": "जारी रखो",
     "clear": "साफ़ करें",
     "backToMenuArrow": "←",
     "back": "वापस",

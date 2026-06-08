@@ -2,6 +2,8 @@
   "generic": {
     "start": "ابدأ",
     "stop": "توقف",
+    "pause": "إيقاف مؤقت",
+    "resume": "متابعة",
     "clear": "مسح",
     "backToMenuArrow": "→",
     "back": "رجوع",

@@ -2,6 +2,8 @@
   "generic": {
     "start": "Aallartitsit",
     "stop": "Unikkit",
+    "pause": "Unitsikkit",
+    "resume": "Nangikkit",
     "clear": "Peerit",
     "backToMenuArrow": "←",
     "back": "Uteqqigit",

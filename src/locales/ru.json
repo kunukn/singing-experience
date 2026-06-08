@@ -2,6 +2,8 @@
   "generic": {
     "start": "Старт",
     "stop": "Стоп",
+    "pause": "Пауза",
+    "resume": "Продолжить",
     "clear": "Очистить",
     "backToMenuArrow": "←",
     "back": "Назад",

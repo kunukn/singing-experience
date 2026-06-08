@@ -2,6 +2,8 @@
   "generic": {
     "start": "শুরু",
     "stop": "বন্ধ",
+    "pause": "বিরতি",
+    "resume": "চালিয়ে যাও",
     "clear": "মুছে ফেলো",
     "backToMenuArrow": "←",
     "back": "ফিরুন",
