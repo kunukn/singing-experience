@@ -1,12 +1,14 @@
 import type { VozMelody } from './graceKellyMelodies'
 
 /* The sheet notates each voice at its real sounding pitch, transposed by the
- * selected start tone. It uses an 8vb treble clef (clef=treble-8): every note
- * sounds an octave lower than it is drawn, so the written pitch is the sounding
- * pitch plus 12. Notes are stored as semitone offsets from the tonic (start
- * tone); since the melodies are fully diatonic, the whole part lands in the
- * start tone's major key, which we emit as a key signature — no per-note
- * accidentals needed. */
+ * selected start tone. Most voices use an 8vb treble clef (clef=treble-8):
+ * every note sounds an octave lower than it is drawn, so the written pitch is
+ * the sounding pitch plus 12 — this keeps the low voices off ledger lines. The
+ * high voices (Voz 1–3, melody.clef === 'treble') use a plain treble clef and
+ * are drawn at true pitch (no "8"). Notes are stored as semitone offsets from
+ * the tonic (start tone); since the melodies are fully diatonic, the whole part
+ * lands in the start tone's major key, which we emit as a key signature — no
+ * per-note accidentals needed. */
 
 /* Tonic pitch class (0 = C) → major key signature + the key's tonic letter.
  * Black-key tonics use their conventional major spelling (Db/Eb/Ab/Bb, F#). */
@@ -99,10 +101,15 @@ export function vozMelodyToAbcString(
   const pitchClass = ((startToneMidi % 12) + 12) % 12
   const key = PITCHCLASS_TO_KEY[pitchClass]
 
-  /* 8vb clef draws an octave above the sounding pitch, so the written tonic is
-   * startTone + 12. Anchor the tonic onto the diatonic staff "ladder" (one step
-   * per letter) so each note's octave marks follow from its scale degree. */
-  const writtenTonicMidi = startToneMidi + 12
+  /* 'treble-8' (8vb) is the default; the high voices opt into a plain treble. */
+  const useOctaveDownClef = melody.clef !== 'treble'
+  const clefToken = useOctaveDownClef ? 'treble-8' : 'treble'
+
+  /* An 8vb clef draws an octave above the sounding pitch, so the written tonic
+   * is startTone + 12; a plain treble clef draws at true pitch. Anchor the tonic
+   * onto the diatonic staff "ladder" (one step per letter) so each note's octave
+   * marks follow from its scale degree. */
+  const writtenTonicMidi = startToneMidi + (useOctaveDownClef ? 12 : 0)
   const tonicStaffOctave =
     Math.round((writtenTonicMidi - NAT[key.letter]) / 12) - 1
   const tonicLadder = tonicStaffOctave * 7 + LETTER_TO_DIATONIC[key.letter]
@@ -169,10 +176,11 @@ export function vozMelodyToAbcString(
     'L:1/8',
     /* Tempo marking is optional — some sheets render without the BPM header. */
     ...(showTempo ? [`Q:3/8=${bpm}`] : []),
-    /* 8vb treble clef — notes sound an octave below where they are drawn,
-     * matching the source score. The key signature is the start tone's major
-     * key, so the diatonic melody needs no per-note accidentals. */
-    `K:${key.abcKey} clef=treble-8`,
+    /* Treble clef — 8vb for the low voices (notes sound an octave below where
+     * drawn, matching the source score), plain treble for the high voices. The
+     * key signature is the start tone's major key, so the diatonic melody needs
+     * no per-note accidentals. */
+    `K:${key.abcKey} clef=${clefToken}`,
     body.trim(),
     /* A `w:` line after the music aligns each space-separated syllable to a
      * note, drawing the lyrics under the staff. Omitted when no lyrics given. */

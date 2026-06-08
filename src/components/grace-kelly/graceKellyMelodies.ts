@@ -7,7 +7,7 @@
  * added to every midiOffset at playback time — no data changes needed.
  *
  * All six voices are real transcriptions from the Grace Kelly TikTok challenge
- * sheet: Voz 1 is the MIKA lead vocal; Voz 4 is the one-tone C4 part; Voz 2–3
+ * sheet: Voz 1 is the Mika lead vocal; Voz 4 is the one-tone C4 part; Voz 2–3
  * and Voz 5–6 are the harmony voices. */
 
 export type VozNote = {
@@ -25,6 +25,11 @@ export type VozMelody = {
   /* Pickup length in eighth notes before the first full 6/8 bar (0 = none).
    * The first barline is drawn after this many eighths; the rest every 6. */
   anacrusisEighths?: number
+  /* Notation clef. 'treble-8' (default) is the 8vb treble clef — notes sound an
+   * octave below where drawn, keeping the low voices off ledger lines. 'treble'
+   * is a plain treble clef for the high voices (Voz 1–3), which sit on the staff
+   * at true pitch with no octave-down "8". Display only; does not affect sound. */
+  clef?: 'treble' | 'treble-8'
 }
 
 /* Voz 4 — the "one-tone" harmony: a single pitch (C4) sung throughout, sharing
@@ -178,154 +183,159 @@ const VOZ_5: VozMelody = {
 }
 
 /* Voz 3 — real transcription. The higher-voiced singer (Voz 6 is the lowest).
- * 6/8, range G3–F4 (within one octave, per the Grace Kelly challenge); starts on
- * C4, ends on E4. Opens with a 3-eighth pickup (anacrusis); ends on a plain
- * E4 quarter. */
+ * 6/8, range G4–F5 (within one octave, per the Grace Kelly challenge); starts on
+ * C5, ends on E5. Opens with a 3-eighth pickup (anacrusis); ends on a plain
+ * E5 quarter. Plain treble clef (high voice — no 8vb octave marking). */
 const VOZ_3: VozMelody = {
   anacrusisEighths: 3,
+  clef: 'treble',
   notes: [
     /* pickup */
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
     /* bar 1 */
-    { midiOffset: 12, eighthNotes: 3 }, // C4 ♩.
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
+    { midiOffset: 24, eighthNotes: 3 }, // C5 ♩.
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
     /* bar 2 */
-    { midiOffset: 12, eighthNotes: 3 }, // C4 ♩.
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
+    { midiOffset: 24, eighthNotes: 3 }, // C5 ♩.
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
+    { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
     /* bar 3 — descending C A G (quarters) */
-    { midiOffset: 12, eighthNotes: 2 }, // C4 ♩
-    { midiOffset: 9, eighthNotes: 2 }, // A3 ♩
-    { midiOffset: 7, eighthNotes: 2 }, // G3 ♩
-    /* bar 4 — A3 plateau */
-    { midiOffset: 9, eighthNotes: 3 }, // A3 ♩.
-    { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
-    { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
-    { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
-    /* bar 5 — C4 plateau */
-    { midiOffset: 12, eighthNotes: 2 }, // C4 ♩
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    /* bar 6 — D4 plateau */
-    { midiOffset: 14, eighthNotes: 2 }, // D4 ♩
-    { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
-    { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
-    { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
-    { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
-    /* bar 7 — D4 ×3 (was ×4), upper-neighbor F4, then ends on an E4 quarter */
-    { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
-    { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
-    { midiOffset: 14, eighthNotes: 1 }, // D4 ♪
-    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
-    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩ — final note
-  ],
-}
-
-/* Voz 2 — real transcription. The highest voice in the challenge. 6/8, range
- * E4–C5 (within one octave); starts on E4, ends on G4. Opens with a 3-eighth
- * pickup (anacrusis); ends on a plain G4 quarter. */
-const VOZ_2: VozMelody = {
-  anacrusisEighths: 3,
-  notes: [
-    /* pickup */
-    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
-    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
-    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
-    /* bar 1 */
-    { midiOffset: 16, eighthNotes: 3 }, // E4 ♩.
-    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
-    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
-    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
-    /* bar 2 */
-    { midiOffset: 16, eighthNotes: 3 }, // E4 ♩.
-    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
-    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
-    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
-    /* bar 3 — rising E F G (quarters) */
-    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩
-    { midiOffset: 17, eighthNotes: 2 }, // F4 ♩
+    { midiOffset: 24, eighthNotes: 2 }, // C5 ♩
+    { midiOffset: 21, eighthNotes: 2 }, // A4 ♩
     { midiOffset: 19, eighthNotes: 2 }, // G4 ♩
     /* bar 4 — A4 plateau */
     { midiOffset: 21, eighthNotes: 3 }, // A4 ♩.
     { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
     { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
     { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
-    /* bar 5 — high C5 plateau */
+    /* bar 5 — C5 plateau */
     { midiOffset: 24, eighthNotes: 2 }, // C5 ♩
     { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
     { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
     { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
     { midiOffset: 24, eighthNotes: 1 }, // C5 ♪
-    /* bar 6 — B4 plateau */
-    { midiOffset: 23, eighthNotes: 2 }, // B4 ♩
-    { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
-    { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
-    { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
-    { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
-    /* bar 7 — A4 ×3 (was ×4), upper-neighbor B4, then ends on a G4 quarter */
-    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
-    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
-    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
-    { midiOffset: 23, eighthNotes: 1 }, // B4 ♪
-    { midiOffset: 19, eighthNotes: 2 }, // G4 ♩ — final note
+    /* bar 6 — D5 plateau */
+    { midiOffset: 26, eighthNotes: 2 }, // D5 ♩
+    { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
+    { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
+    { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
+    { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
+    /* bar 7 — D5 ×3 (was ×4), upper-neighbor F5, then ends on an E5 quarter */
+    { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
+    { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
+    { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
+    { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
+    { midiOffset: 28, eighthNotes: 2 }, // E5 ♩ — final note
   ],
 }
 
-/* Voz 1 — real transcription. The MIKA lead vocal; spans nearly two octaves
- * (range C3–A4, the only voice wider than an octave). 6/8, starts on C3 and
- * climbs through the registers to a peak A4, then settles to E4. Opens with a
- * 3-eighth pickup (anacrusis); ends on a plain E4 quarter. */
-const VOZ_1: VozMelody = {
+/* Voz 2 — real transcription. The highest voice in the challenge. 6/8, range
+ * E5–C6 (within one octave); starts on E5, ends on G5. Opens with a 3-eighth
+ * pickup (anacrusis); ends on a plain G5 quarter. Plain treble clef (high
+ * voice — no 8vb octave marking). */
+const VOZ_2: VozMelody = {
   anacrusisEighths: 3,
+  clef: 'treble',
   notes: [
     /* pickup */
-    { midiOffset: 0, eighthNotes: 1 }, // C3 ♪ (DO)
-    { midiOffset: 0, eighthNotes: 1 }, // C3 ♪ (DO)
-    { midiOffset: 0, eighthNotes: 1 }, // C3 ♪ (DO)
-    /* bar 1 — E3 plateau (MI) */
-    { midiOffset: 4, eighthNotes: 3 }, // E3 ♩.
-    { midiOffset: 4, eighthNotes: 1 }, // E3 ♪
-    { midiOffset: 4, eighthNotes: 1 }, // E3 ♪
-    { midiOffset: 4, eighthNotes: 1 }, // E3 ♪
-    /* bar 2 — G3 plateau (SOL) */
-    { midiOffset: 7, eighthNotes: 3 }, // G3 ♩.
-    { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
-    { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
-    { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
-    /* bar 3 — E4 quarters (MI', up an octave) */
-    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩
-    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩
-    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩
-    /* bar 4 — F4 plateau (FA') */
-    { midiOffset: 17, eighthNotes: 3 }, // F4 ♩.
-    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
-    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
-    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
-    /* bar 5 — peak A4 plateau (LA') */
-    { midiOffset: 21, eighthNotes: 2 }, // A4 ♩
-    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
-    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
-    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
-    { midiOffset: 21, eighthNotes: 1 }, // A4 ♪
-    /* bar 6 — G4 plateau (SOL') */
-    { midiOffset: 19, eighthNotes: 2 }, // G4 ♩
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪
+    /* bar 1 */
+    { midiOffset: 28, eighthNotes: 3 }, // E5 ♩.
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪
+    /* bar 2 */
+    { midiOffset: 28, eighthNotes: 3 }, // E5 ♩.
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪
+    /* bar 3 — rising E F G (quarters) */
+    { midiOffset: 28, eighthNotes: 2 }, // E5 ♩
+    { midiOffset: 29, eighthNotes: 2 }, // F5 ♩
+    { midiOffset: 31, eighthNotes: 2 }, // G5 ♩
+    /* bar 4 — A5 plateau */
+    { midiOffset: 33, eighthNotes: 3 }, // A5 ♩.
+    { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
+    { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
+    { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
+    /* bar 5 — high C6 plateau */
+    { midiOffset: 36, eighthNotes: 2 }, // C6 ♩
+    { midiOffset: 36, eighthNotes: 1 }, // C6 ♪
+    { midiOffset: 36, eighthNotes: 1 }, // C6 ♪
+    { midiOffset: 36, eighthNotes: 1 }, // C6 ♪
+    { midiOffset: 36, eighthNotes: 1 }, // C6 ♪
+    /* bar 6 — B5 plateau */
+    { midiOffset: 35, eighthNotes: 2 }, // B5 ♩
+    { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
+    { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
+    { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
+    { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
+    /* bar 7 — A5 ×3 (was ×4), upper-neighbor B5, then ends on a G5 quarter */
+    { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
+    { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
+    { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
+    { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
+    { midiOffset: 31, eighthNotes: 2 }, // G5 ♩ — final note
+  ],
+}
+
+/* Voz 1 — real transcription. The Mika lead vocal; spans nearly two octaves
+ * (range C4–A5, the only voice wider than an octave). 6/8, starts on C4 and
+ * climbs through the registers to a peak A5, then settles to E5. Opens with a
+ * 3-eighth pickup (anacrusis); ends on a plain E5 quarter. Plain treble clef
+ * (high voice — no 8vb octave marking). */
+const VOZ_1: VozMelody = {
+  anacrusisEighths: 3,
+  clef: 'treble',
+  notes: [
+    /* pickup */
+    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪ (DO)
+    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪ (DO)
+    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪ (DO)
+    /* bar 1 — E4 plateau (MI) */
+    { midiOffset: 16, eighthNotes: 3 }, // E4 ♩.
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    { midiOffset: 16, eighthNotes: 1 }, // E4 ♪
+    /* bar 2 — G4 plateau (SOL) */
+    { midiOffset: 19, eighthNotes: 3 }, // G4 ♩.
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
     { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
-    { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
-    /* bar 7 — F4 ×3 (was ×4, FA'), G4 (SOL'), ends on E4 (MI') quarter */
-    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
-    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
-    { midiOffset: 17, eighthNotes: 1 }, // F4 ♪
-    { midiOffset: 19, eighthNotes: 1 }, // G4 ♪
-    { midiOffset: 16, eighthNotes: 2 }, // E4 ♩ — final note
+    /* bar 3 — E5 quarters (MI', up an octave) */
+    { midiOffset: 28, eighthNotes: 2 }, // E5 ♩
+    { midiOffset: 28, eighthNotes: 2 }, // E5 ♩
+    { midiOffset: 28, eighthNotes: 2 }, // E5 ♩
+    /* bar 4 — F5 plateau (FA') */
+    { midiOffset: 29, eighthNotes: 3 }, // F5 ♩.
+    { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
+    { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
+    { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
+    /* bar 5 — peak A5 plateau (LA') */
+    { midiOffset: 33, eighthNotes: 2 }, // A5 ♩
+    { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
+    { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
+    { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
+    { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
+    /* bar 6 — G5 plateau (SOL') */
+    { midiOffset: 31, eighthNotes: 2 }, // G5 ♩
+    { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
+    { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
+    { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
+    { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
+    /* bar 7 — F5 ×3 (was ×4, FA'), G5 (SOL'), ends on E5 (MI') quarter */
+    { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
+    { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
+    { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
+    { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
+    { midiOffset: 28, eighthNotes: 2 }, // E5 ♩ — final note
   ],
 }
 

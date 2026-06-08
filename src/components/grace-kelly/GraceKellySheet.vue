@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { renderAbc } from 'abcjs'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
+import { renderAbc } from 'abcjs'
+import { estimateStaffWidth, vozMelodyToAbcString } from './graceKellyAbc'
 import type { VozMelody } from './graceKellyMelodies'
-import { vozMelodyToAbcString, estimateStaffWidth } from './graceKellyAbc'
 import { measureMusicWidth } from './graceKellyStaffRender'
 
 type Props = {
