@@ -1,41 +1,73 @@
 import type { VozMelody } from './graceKellyMelodies'
 
-/* The sheet uses an 8vb treble clef (clef=treble-8), matching the source score:
- * every note sounds an octave lower than it is drawn. A note drawn at middle C
- * (ABC `C` = written MIDI 60) therefore sounds as C3 — which is midiOffset 0.
- * So midiOffset 0 maps to written MIDI 60 for display purposes. (Audio uses the
- * real sounding pitch via startToneMidi + offset; this base is display-only.) */
-const ABC_WRITTEN_BASE = 60
+/* The sheet notates each voice at its real sounding pitch, transposed by the
+ * selected start tone. It uses an 8vb treble clef (clef=treble-8): every note
+ * sounds an octave lower than it is drawn, so the written pitch is the sounding
+ * pitch plus 12. Notes are stored as semitone offsets from the tonic (start
+ * tone); since the melodies are fully diatonic, the whole part lands in the
+ * start tone's major key, which we emit as a key signature — no per-note
+ * accidentals needed. */
 
-/* ABC note name per semitone within an octave (0 = C, accidentals use ^ prefix). */
-const SEMITONE_TO_ABC = [
-  'C',
-  '^C',
-  'D',
-  '^D',
-  'E',
-  'F',
-  '^F',
-  'G',
-  '^G',
-  'A',
-  '^A',
-  'B',
+/* Tonic pitch class (0 = C) → major key signature + the key's tonic letter.
+ * Black-key tonics use their conventional major spelling (Db/Eb/Ab/Bb, F#). */
+const PITCHCLASS_TO_KEY: { abcKey: string; letter: string }[] = [
+  { abcKey: 'C', letter: 'C' }, // 0
+  { abcKey: 'Db', letter: 'D' }, // 1
+  { abcKey: 'D', letter: 'D' }, // 2
+  { abcKey: 'Eb', letter: 'E' }, // 3
+  { abcKey: 'E', letter: 'E' }, // 4
+  { abcKey: 'F', letter: 'F' }, // 5
+  { abcKey: 'F#', letter: 'F' }, // 6
+  { abcKey: 'G', letter: 'G' }, // 7
+  { abcKey: 'Ab', letter: 'A' }, // 8
+  { abcKey: 'A', letter: 'A' }, // 9
+  { abcKey: 'Bb', letter: 'B' }, // 10
+  { abcKey: 'B', letter: 'B' }, // 11
 ]
 
-/* Converts an absolute MIDI note number to an ABC notation pitch string.
- * ABC octave convention: uppercase `C` = middle C (C4 / MIDI 60); `c` = C5;
- * `C,` = C3; lower octaves add commas, higher octaves add apostrophes. */
-function midiToAbcPitch(midi: number): string {
-  const semitone = ((midi % 12) + 12) % 12
-  const name = SEMITONE_TO_ABC[semitone]
+/* Semitone above the tonic → 0-based major-scale degree (do=0, re=1, … ti=6).
+ * The melodies are diatonic, so every note's `midiOffset % 12` is one of these
+ * keys. A chromatic offset would be absent here and must not be added without
+ * first teaching this module to emit explicit accidentals. */
+const MAJOR_DEGREE: Record<number, number> = {
+  0: 0, // do
+  2: 1, // re
+  4: 2, // mi
+  5: 3, // fa
+  7: 4, // sol
+  9: 5, // la
+  11: 6, // ti
+}
 
-  if (midi >= 84) return name.toLowerCase() + "'" // C6+: lowercase + '
-  if (midi >= 72) return name.toLowerCase() // C5–B5: lowercase
-  if (midi >= 60) return name // C4–B4 (middle-C octave): uppercase
-  if (midi >= 48) return name + ',' // C3–B3: uppercase + ,
-  if (midi >= 36) return name + ',,' // C2–B2: uppercase + ,,
-  return name + ',,,' // C1–B1: uppercase + ,,,
+const DIATONIC_TO_LETTER = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
+const LETTER_TO_DIATONIC: Record<string, number> = {
+  C: 0,
+  D: 1,
+  E: 2,
+  F: 3,
+  G: 4,
+  A: 5,
+  B: 6,
+}
+/* Natural (no-accidental) pitch class of each letter — used to anchor the
+ * tonic's staff octave. */
+const NAT: Record<string, number> = {
+  C: 0,
+  D: 2,
+  E: 4,
+  F: 5,
+  G: 7,
+  A: 9,
+  B: 11,
+}
+
+/* Converts a staff letter + scientific octave to an ABC pitch token.
+ * ABC octave convention: uppercase `C` = middle C (C4); `c` = C5; `C,` = C3;
+ * lower octaves add commas, higher octaves add apostrophes. */
+function abcOctaveToken(letter: string, octave: number): string {
+  if (octave >= 5) return letter.toLowerCase() + "'".repeat(octave - 5)
+
+  return letter + ','.repeat(4 - octave)
 }
 
 /* Returns a staffwidth that fits all notes on one line (prevents abcjs wrapping). */
@@ -43,11 +75,14 @@ export function estimateStaffWidth(noteCount: number): number {
   return Math.max(900, noteCount * 80)
 }
 
-/* Converts a VozMelody to an ABC notation string ready for abcjs.renderAbc.
- * The key is always C major (display stays fixed; audio transposes via startTone). */
+/* Converts a VozMelody to an ABC notation string ready for abcjs.renderAbc,
+ * transposed so the tonic sounds at `startToneMidi`. The key signature is the
+ * major key of the start tone; since the melody is diatonic, the note body
+ * carries no accidentals. */
 export function vozMelodyToAbcString(
   melody: VozMelody,
   label: string,
+  startToneMidi: number,
   bpm = 120,
   showTempo = true,
 ): string {
@@ -59,6 +94,17 @@ export function vozMelodyToAbcString(
    * the same beat and break the beam at beat boundaries, longer notes, and
    * barlines — the standard 6/8 engraving. */
   const BEAT_EIGHTHS = 3
+
+  const pitchClass = ((startToneMidi % 12) + 12) % 12
+  const key = PITCHCLASS_TO_KEY[pitchClass]
+
+  /* 8vb clef draws an octave above the sounding pitch, so the written tonic is
+   * startTone + 12. Anchor the tonic onto the diatonic staff "ladder" (one step
+   * per letter) so each note's octave marks follow from its scale degree. */
+  const writtenTonicMidi = startToneMidi + 12
+  const tonicStaffOctave =
+    Math.round((writtenTonicMidi - NAT[key.letter]) / 12) - 1
+  const tonicLadder = tonicStaffOctave * 7 + LETTER_TO_DIATONIC[key.letter]
 
   let body = ''
   let barPos = 0 // eighths elapsed in the current bar (note start position)
@@ -73,8 +119,18 @@ export function vozMelodyToAbcString(
   let previousBeat = -1
 
   for (const note of melody.notes) {
-    const writtenMidi = ABC_WRITTEN_BASE + note.midiOffset
-    const pitch = midiToAbcPitch(writtenMidi)
+    const within = ((note.midiOffset % 12) + 12) % 12
+    const degree = MAJOR_DEGREE[within]
+    if (degree === undefined) {
+      debugLog(
+        `[graceKelly] non-diatonic midiOffset ${note.midiOffset} cannot be spelled in a key signature`,
+      )
+    }
+    const ladder =
+      tonicLadder + Math.floor(note.midiOffset / 12) * 7 + (degree ?? 0)
+    const staffOctave = Math.floor(ladder / 7)
+    const letter = DIATONIC_TO_LETTER[((ladder % 7) + 7) % 7]
+    const pitch = abcOctaveToken(letter, staffOctave)
     /* L:1/8 means duration 1 = eighth note; omit "1" suffix per ABC spec */
     const duration = note.eighthNotes === 1 ? '' : String(note.eighthNotes)
     /* ABC tie "-" must directly follow the note, before any barline (C- | C) */
@@ -113,8 +169,9 @@ export function vozMelodyToAbcString(
     /* Tempo marking is optional — some sheets render without the BPM header. */
     ...(showTempo ? [`Q:3/8=${bpm}`] : []),
     /* 8vb treble clef — notes sound an octave below where they are drawn,
-     * matching the source score (Voz 4–6 are written treble-8vb). */
-    'K:C clef=treble-8',
+     * matching the source score. The key signature is the start tone's major
+     * key, so the diatonic melody needs no per-note accidentals. */
+    `K:${key.abcKey} clef=treble-8`,
     body.trim(),
   ].join('\n')
 }

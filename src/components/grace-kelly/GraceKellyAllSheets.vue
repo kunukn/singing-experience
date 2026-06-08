@@ -6,6 +6,7 @@ import { measureMusicWidth } from './graceKellyStaffRender'
 
 type Props = {
   activeNoteIndex: number | null
+  startToneMidi: number
   /* Part labels ordered by VOZ_MELODIES index (used as each staff's title). */
   vozLabels: string[]
 }
@@ -37,6 +38,7 @@ async function renderSheets() {
     vozMelodyToAbcString(
       melody,
       props.vozLabels[index] ?? '',
+      props.startToneMidi,
       undefined,
       false,
     ),
@@ -77,7 +79,7 @@ onMounted(() => {
 })
 
 watch(
-  () => props.vozLabels,
+  () => [props.vozLabels, props.startToneMidi],
   () => {
     void renderSheets()
   },

@@ -252,6 +252,7 @@ function handleToggle() {
     <GraceKellySheet
       :melody="VOZ_MELODIES[vozIndex]"
       :vozLabel="vozLabel"
+      :startToneMidi="startToneMidi"
       :bpm="bpm"
       :activeNoteIndex="activeNoteIndex"
     />
@@ -276,6 +277,7 @@ function handleToggle() {
     <GraceKellyAllSheets
       v-if="showAllParts"
       :activeNoteIndex="activeNoteIndex"
+      :startToneMidi="startToneMidi"
       :vozLabels="allVozLabels"
     />
   </div>

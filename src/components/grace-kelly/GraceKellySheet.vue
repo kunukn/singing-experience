@@ -7,6 +7,7 @@ import { measureMusicWidth } from './graceKellyStaffRender'
 type Props = {
   melody: VozMelody
   vozLabel: string
+  startToneMidi: number
   bpm: number
   activeNoteIndex: number | null
 }
@@ -23,6 +24,7 @@ async function renderSheet() {
   const abcString = vozMelodyToAbcString(
     props.melody,
     props.vozLabel,
+    props.startToneMidi,
     props.bpm,
   )
 
@@ -59,7 +61,7 @@ onMounted(() => {
 })
 
 watch(
-  () => [props.melody, props.vozLabel, props.bpm],
+  () => [props.melody, props.vozLabel, props.startToneMidi, props.bpm],
   () => {
     void renderSheet()
   },
