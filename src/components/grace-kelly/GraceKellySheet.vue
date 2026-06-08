@@ -69,10 +69,11 @@ async function renderSheet() {
     props.lyrics,
   )
 
-  /* abcjs renders the `C:` (composer) header field right-aligned under the
-   * title. Inject it right after the `T:` line so the credit shows on the
-   * sheet — scoped to this component, leaving the shared ABC builder untouched. */
-  const abcString = baseAbcString.replace(/^(T:.*)$/m, '$1\nC:Music by MIKA')
+  /* The voice title (`vozLabel`) is shown outside this component as plain HTML,
+   * so drop the builder's `T:` line from the sheet and swap in the `C:` (composer)
+   * credit, which abcjs draws right-aligned at the top. Scoped to this component,
+   * leaving the shared ABC builder untouched. */
+  const abcString = baseAbcString.replace(/^T:.*$/m, 'C:Music by MIKA')
 
   /* Pass 1 — render at an oversized width so abcjs keeps everything on one
    * line (it wraps only when staffwidth is smaller than the music needs). */

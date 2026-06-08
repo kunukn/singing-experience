@@ -102,12 +102,12 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       :isRunning="isRunning"
     />
 
-    <label class="flex items-center gap-2 text-sm">
+    <label class="flex items-center gap-2 text-sm sm:mb-4">
       <PrimeToggleSwitch v-model="showAllParts" />
       {{ t('graceKelly.showAllParts') }}
     </label>
 
-    <div class="mt-4 flex min-w-50 items-baseline gap-2">
+    <div class="flex min-w-50 items-baseline gap-2">
       <PrimeButton
         v-if="isRunning"
         severity="danger"
@@ -151,18 +151,27 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       </PrimeButton>
     </div>
 
-    <GraceKellySheet
-      ref="sheetRef"
-      :melody="VOZ_MELODIES[vozIndex]"
-      :vozLabel="vozLabel"
-      :startToneMidi="startToneMidi"
-      :bpm="bpm"
-      :activeNoteIndex="activeNoteIndex"
-      :isDone="isDone"
-      :lyrics="GRACE_KELLY_LYRIC_ABC"
-      :activeSyllableIndex="activeSyllableIndex"
-      :currentToneLabel="currentToneLabel"
-    />
+    <div class="w-full max-w-full">
+      <div class="mb-1 flex items-center justify-center gap-2">
+        <p>{{ t('graceKelly.subtitle') }}:</p>
+        <h2 class="text-lg font-semibold text-(--p-text-color)">
+          {{ vozLabel }}
+        </h2>
+      </div>
+
+      <GraceKellySheet
+        ref="sheetRef"
+        :melody="VOZ_MELODIES[vozIndex]"
+        :vozLabel="vozLabel"
+        :startToneMidi="startToneMidi"
+        :bpm="bpm"
+        :activeNoteIndex="activeNoteIndex"
+        :isDone="isDone"
+        :lyrics="GRACE_KELLY_LYRIC_ABC"
+        :activeSyllableIndex="activeSyllableIndex"
+        :currentToneLabel="currentToneLabel"
+      />
+    </div>
 
     <GraceKellyLyrics
       :activeSyllableIndex="activeSyllableIndex"
