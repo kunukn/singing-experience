@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import { NOTE_NAMES } from '@/utils/noteUtils'
+import { midiToNoteLabel } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
-import {
-  ALLOWED_BPMS,
-  START_TONE_MIDI_MAX,
-  START_TONE_MIDI_MIN,
-} from './graceKellyConstants'
+import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
+import { VOZ_LABEL_KEYS } from './graceKellyConstants'
 import {
   GRACE_KELLY_LYRIC_ABC,
   GRACE_KELLY_LYRIC_LINES,
@@ -26,20 +23,6 @@ const bpm = defineModel<number>('bpm', { required: true })
 
 const { t } = useI18n()
 
-const { setToneMode, warmUp } = useTonePlayer()
-const { toneMode: storedToneMode } = storeToRefs(useToneModeStore())
-const toneMode = computed({
-  get: () => storedToneMode.value,
-  set: (mode) => {
-    storedToneMode.value = mode
-    setToneMode(mode)
-    void warmUp().catch((error) =>
-      debugLog('[GraceKelly] warmUp on tone-mode change failed', error),
-    )
-  },
-})
-setToneMode(storedToneMode.value)
-
 const {
   isPlaying,
   isPaused,
@@ -55,25 +38,6 @@ const {
  * locked for both so the running timeline can't be changed underneath it. */
 const isRunning = computed(() => isPlaying.value || isPaused.value)
 
-/* MIDI note → display label, e.g. 48 → "C3". */
-function midiToToneLabel(midi: number): string {
-  const noteIndex = ((midi % 12) + 12) % 12
-  const octave = Math.floor(midi / 12) - 1
-
-  return `${NOTE_NAMES[noteIndex]}${octave}`
-}
-
-/* Start-tone options, descending (high → low), built from the shared range.
- * Generated locally because the shared START_TONE_OPTIONS bottoms out at G2. */
-const startToneOptions = Array.from(
-  { length: START_TONE_MIDI_MAX - START_TONE_MIDI_MIN + 1 },
-  (_, index) => {
-    const midiNote = START_TONE_MIDI_MAX - index
-
-    return { label: midiToToneLabel(midiNote), midiNote }
-  },
-)
-
 /* Sounding pitch of the note currently highlighted during playback (the start
  * tone transposes the melody, so the played pitch is startTone + offset). */
 const currentToneLabel = computed(() => {
@@ -82,7 +46,7 @@ const currentToneLabel = computed(() => {
   const note = VOZ_MELODIES[vozIndex.value].notes[activeNoteIndex.value]
   if (!note) return null
 
-  return midiToToneLabel(startToneMidi.value + note.midiOffset)
+  return midiToNoteLabel(startToneMidi.value + note.midiOffset).label
 })
 
 /* Flat reading-order index of the syllable currently being sung — the last
@@ -116,24 +80,6 @@ const lyricLines = computed(() => {
   )
 })
 
-/* Descriptive part labels, ordered by VOZ_MELODIES index. "MIKA" is the artist
- * name (Grace Kelly is a MIKA song) and stays untranslated. */
-const VOZ_LABEL_KEYS = [
-  'lead',
-  'reallyHigh',
-  'high',
-  'oneTone',
-  'lessLow',
-  'low',
-] as const
-
-const vozOptions = computed(() =>
-  VOZ_LABEL_KEYS.map((key, index) => ({
-    label: t(`graceKelly.vozLabels.${key}`),
-    value: index,
-  })),
-)
-
 const vozLabel = computed(() =>
   t(`graceKelly.vozLabels.${VOZ_LABEL_KEYS[vozIndex.value]}`),
 )
@@ -145,83 +91,24 @@ const allVozLabels = computed(() =>
 
 /* Toggles the all-parts overview below the lyrics; persists across reloads. */
 const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
-
-const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
-  label: `${value} BPM`,
-  value,
-}))
 </script>
 
 <template>
   <div
-    class="flex flex-1 flex-col items-center gap-4"
+    class="flex flex-1 flex-col items-center gap-4 pb-4"
     data-testid="grace-kelly-display"
   >
-    <div
-      class="mx-auto flex w-full max-w-3xl flex-wrap items-center gap-2 sm:gap-4"
-    >
-      <PrimeSelect
-        v-model="vozIndex"
-        :options="vozOptions"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-        :disabled="isRunning"
-        class="flex-1"
-        scrollHeight="370px"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('graceKelly.voz') }}
-          </div>
-        </template>
-      </PrimeSelect>
+    <GraceKellySettingsRow
+      v-model:vozIndex="vozIndex"
+      v-model:startToneMidi="startToneMidi"
+      v-model:bpm="bpm"
+      :isRunning="isRunning"
+    />
 
-      <PrimeSelect
-        v-model="startToneMidi"
-        :options="startToneOptions"
-        optionLabel="label"
-        optionValue="midiNote"
-        size="small"
-        :disabled="isRunning"
-        class="flex-1"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('graceKelly.startTone') }}
-          </div>
-        </template>
-      </PrimeSelect>
-
-      <PrimeSelect
-        v-model="bpm"
-        :options="bpmOptions"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-        :disabled="isRunning"
-        class="flex-1"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('graceKelly.tempo') }}
-          </div>
-        </template>
-      </PrimeSelect>
-
-      <ToneModeSelect v-model="toneMode" class="min-w-30 flex-1" />
-
-      <label class="flex items-center gap-2 text-sm">
-        <PrimeToggleSwitch v-model="showAllParts" />
-        {{ t('graceKelly.showAllParts') }}
-      </label>
-    </div>
+    <label class="flex items-center gap-2 text-sm">
+      <PrimeToggleSwitch v-model="showAllParts" />
+      {{ t('graceKelly.showAllParts') }}
+    </label>
 
     <div class="flex min-w-50 items-baseline gap-2">
       <PrimeButton
