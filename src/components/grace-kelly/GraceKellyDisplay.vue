@@ -37,6 +37,16 @@ const {
  * locked for both so the running timeline can't be changed underneath it. */
 const isRunning = computed(() => isPlaying.value || isPaused.value)
 
+const sheetRef = ref<{
+  scrollToSyllable: (index: number) => void
+} | null>(null)
+
+/* Lyric syllables are tappable only when idle or done — during playback the sheet
+ * auto-scrolls to the active note, so a tap would fight it. */
+function scrollSheetToSyllable(flatIndex: number) {
+  sheetRef.value?.scrollToSyllable(flatIndex)
+}
+
 /* Sounding pitch of the note currently highlighted during playback (the start
  * tone transposes the melody, so the played pitch is startTone + offset). */
 const currentToneLabel = computed(() => {
@@ -97,7 +107,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       {{ t('graceKelly.showAllParts') }}
     </label>
 
-    <div class="flex min-w-50 items-baseline gap-2">
+    <div class="mt-4 flex min-w-50 items-baseline gap-2">
       <PrimeButton
         v-if="isRunning"
         severity="danger"
@@ -141,17 +151,8 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       </PrimeButton>
     </div>
 
-    <div class="flex min-h-8 flex-wrap items-center gap-2">
-      <div
-        class="flex flex-col items-center gap-2 text-center text-(--p-text-muted-color)"
-      >
-        <p class="text-sm leading-none">
-          {{ t('graceKelly.subtitle') }}
-        </p>
-      </div>
-    </div>
-
     <GraceKellySheet
+      ref="sheetRef"
       :melody="VOZ_MELODIES[vozIndex]"
       :vozLabel="vozLabel"
       :startToneMidi="startToneMidi"
@@ -163,7 +164,11 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       :currentToneLabel="currentToneLabel"
     />
 
-    <GraceKellyLyrics :activeSyllableIndex="activeSyllableIndex" />
+    <GraceKellyLyrics
+      :activeSyllableIndex="activeSyllableIndex"
+      :isInteractive="!isRunning"
+      @syllableClick="scrollSheetToSyllable"
+    />
 
     <GraceKellyAllSheets
       v-if="showAllParts"

@@ -196,6 +196,20 @@ watch(
     lyricElements.value[index]?.classList.add('syllable-active')
   },
 )
+
+/* Scroll the staff so the lyric'd note matching the given flat syllable index is
+ * centered. The flat index lines up with `lyricElements` reading order (the same
+ * index used by activeSyllableIndex), so callers can hand over a lyric index
+ * directly. No-op when the staff doesn't overflow (e.g. desktop, no scrollbar). */
+function scrollToSyllable(index: number) {
+  lyricElements.value[index]?.scrollIntoView({
+    behavior: 'smooth',
+    inline: 'center',
+    block: 'nearest',
+  })
+}
+
+defineExpose({ scrollToSyllable })
 </script>
 
 <template>
