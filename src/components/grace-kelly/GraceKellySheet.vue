@@ -10,6 +10,9 @@ type Props = {
   startToneMidi: number
   bpm: number
   activeNoteIndex: number | null
+  /* True once the song finished on its own — keeps the scroll parked at the end
+   * instead of resetting to the start. A stop/restart leaves this false. */
+  isDone?: boolean
   /* ABC `w:` lyric line drawn under the staff; omit to render notes only. */
   lyrics?: string
   /* Flat reading-order index of the syllable to highlight; -1/null = none. */
@@ -93,7 +96,9 @@ watch(
     }
 
     if (index === null) {
-      if (scrollRef.value) scrollRef.value.scrollLeft = 0
+      /* Song ended naturally → leave the scroll at the end. Stop/restart clears
+       * the highlight with isDone false, so it still snaps back to the start. */
+      if (!props.isDone && scrollRef.value) scrollRef.value.scrollLeft = 0
 
       return
     }

@@ -40,8 +40,16 @@ const toneMode = computed({
 })
 setToneMode(storedToneMode.value)
 
-const { isPlaying, isPaused, activeNoteIndex, start, pause, resume, stop } =
-  props.game
+const {
+  isPlaying,
+  isPaused,
+  isDone,
+  activeNoteIndex,
+  start,
+  pause,
+  resume,
+  stop,
+} = props.game
 
 /* True while a sequence is playing or paused — the part/tone/tempo selects stay
  * locked for both so the running timeline can't be changed underneath it. */
@@ -267,7 +275,7 @@ const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
           {{ t('graceKelly.subtitle') }}
         </p>
       </div>
-      <div class="min-w-11">
+      <div class="min-w-12">
         <p
           v-if="currentToneLabel"
           class="text-2xl font-semibold text-(--p-primary-color) tabular-nums"
@@ -284,6 +292,7 @@ const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
       :startToneMidi="startToneMidi"
       :bpm="bpm"
       :activeNoteIndex="activeNoteIndex"
+      :isDone="isDone"
       :lyrics="GRACE_KELLY_LYRIC_ABC"
       :activeSyllableIndex="activeSyllableIndex"
     />
@@ -308,6 +317,7 @@ const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
     <GraceKellyAllSheets
       v-if="showAllParts"
       :activeNoteIndex="activeNoteIndex"
+      :isDone="isDone"
       :activeSyllableIndex="activeSyllableIndex"
       :startToneMidi="startToneMidi"
       :vozLabels="allVozLabels"
