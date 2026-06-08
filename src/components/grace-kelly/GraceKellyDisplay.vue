@@ -149,15 +149,6 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
           {{ t('graceKelly.subtitle') }}
         </p>
       </div>
-      <div class="min-w-12">
-        <p
-          v-if="currentToneLabel"
-          class="text-2xl font-semibold text-(--p-primary-color) tabular-nums"
-          data-testid="grace-kelly-current-tone"
-        >
-          {{ currentToneLabel }}
-        </p>
-      </div>
     </div>
 
     <GraceKellySheet
@@ -169,6 +160,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       :isDone="isDone"
       :lyrics="GRACE_KELLY_LYRIC_ABC"
       :activeSyllableIndex="activeSyllableIndex"
+      :currentToneLabel="currentToneLabel"
     />
 
     <GraceKellyLyrics :activeSyllableIndex="activeSyllableIndex" />

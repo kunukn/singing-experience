@@ -18,6 +18,9 @@ type Props = {
   lyrics?: string
   /* Flat reading-order index of the syllable to highlight; -1/null = none. */
   activeSyllableIndex?: number | null
+  /* Sounding pitch of the active note, drawn as a label floating above it;
+   * omit/null to hide. */
+  currentToneLabel?: string | null
 }
 
 const props = defineProps<Props>()
@@ -26,6 +29,33 @@ const containerRef = ref<HTMLDivElement | null>(null)
 const scrollRef = ref<HTMLDivElement | null>(null)
 const noteElements = ref<Element[]>([])
 const lyricElements = ref<Element[]>([])
+
+/* Pixel offset of the floating tone label within the scrolling content, centered
+ * above the active note; null hides it. Lives in content coordinates so it scrolls
+ * with the staff for free. */
+const toneLabelPosition = ref<{ left: number; top: number } | null>(null)
+
+function updateToneLabelPosition(index: number | null) {
+  if (index === null || !containerRef.value) {
+    toneLabelPosition.value = null
+
+    return
+  }
+
+  const element = noteElements.value[index]
+  if (!element) {
+    toneLabelPosition.value = null
+
+    return
+  }
+
+  const noteRect = element.getBoundingClientRect()
+  const containerRect = containerRef.value.getBoundingClientRect()
+  toneLabelPosition.value = {
+    left: noteRect.left - containerRect.left + noteRect.width / 2,
+    top: noteRect.top - containerRect.top,
+  }
+}
 
 async function renderSheet() {
   if (!containerRef.value) return
@@ -82,6 +112,8 @@ async function renderSheet() {
   if (noteIndex !== null)
     noteElements.value[noteIndex]?.classList.add('note-active')
 
+  updateToneLabelPosition(noteIndex)
+
   const syllableIndex = props.activeSyllableIndex
   if (
     syllableIndex !== null &&
@@ -128,6 +160,8 @@ watch(
     }
 
     if (index === null) {
+      updateToneLabelPosition(null)
+
       /* Song ended naturally → leave the scroll at the end. Stop/restart clears
        * the highlight with isDone false, so it still snaps back to the start. */
       if (!props.isDone && scrollRef.value) scrollRef.value.scrollLeft = 0
@@ -139,6 +173,7 @@ watch(
     if (!element) return
 
     element.classList.add('note-active')
+    updateToneLabelPosition(index)
     element.scrollIntoView({
       behavior: 'smooth',
       inline: 'center',
@@ -168,7 +203,19 @@ watch(
     ref="scrollRef"
     class="mx-auto w-fit max-w-full overflow-x-auto rounded border border-(--p-content-border-color)"
   >
-    <div ref="containerRef" class="min-w-max py-2" />
+    <div class="relative min-w-max">
+      <div ref="containerRef" class="py-0.5" />
+      <span
+        v-if="currentToneLabel && toneLabelPosition"
+        class="pointer-events-none absolute -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-primary-color) tabular-nums"
+        :style="{
+          left: `${toneLabelPosition.left + 5}px`,
+          top: `${toneLabelPosition.top - 14}px`,
+        }"
+      >
+        {{ currentToneLabel }}
+      </span>
+    </div>
   </div>
 </template>
 
