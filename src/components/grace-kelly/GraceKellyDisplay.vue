@@ -213,59 +213,58 @@ const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
         <PrimeToggleSwitch v-model="showAllParts" />
         {{ t('graceKelly.showAllParts') }}
       </label>
-
-      <div class="ms-auto flex gap-2">
-        <PrimeButton
-          v-if="isPlaying"
-          class="min-w-24"
-          severity="warn"
-          size="small"
-          rounded
-          @click="pause"
-        >
-          {{ t('generic.pause') }}
-        </PrimeButton>
-        <PrimeButton
-          v-else-if="isPaused"
-          class="min-w-24"
-          severity="success"
-          size="small"
-          rounded
-          @click="resume"
-        >
-          {{ t('generic.resume') }}
-        </PrimeButton>
-        <PrimeButton
-          v-else
-          class="min-w-24"
-          severity="success"
-          size="small"
-          rounded
-          @click="start(startToneMidi, vozIndex, bpm)"
-        >
-          {{ t('generic.start') }}
-        </PrimeButton>
-
-        <PrimeButton
-          v-if="isRunning"
-          severity="danger"
-          size="small"
-          rounded
-          class="min-w-24"
-          @click="stop"
-        >
-          {{ t('generic.stop') }}
-        </PrimeButton>
-      </div>
     </div>
 
-    <p>Music by Mika</p>
+    <div class="flex min-w-50 items-baseline gap-2">
+      <PrimeButton
+        v-if="isRunning"
+        severity="danger"
+        size="small"
+        rounded
+        class="min-w-24"
+        @click="stop"
+      >
+        {{ t('generic.stop') }}
+      </PrimeButton>
+
+      <PrimeButton
+        v-if="isPlaying"
+        class="min-w-24"
+        severity="warn"
+        size="small"
+        rounded
+        @click="pause"
+      >
+        {{ t('generic.pause') }}
+      </PrimeButton>
+      <PrimeButton
+        v-if="isPaused"
+        class="min-w-24"
+        severity="success"
+        size="small"
+        rounded
+        @click="resume"
+      >
+        {{ t('generic.resume') }}
+      </PrimeButton>
+      <PrimeButton
+        v-if="!isRunning"
+        class="min-w-24"
+        severity="success"
+        size="small"
+        rounded
+        @click="start(startToneMidi, vozIndex, bpm)"
+      >
+        {{ t('generic.start') }}
+      </PrimeButton>
+    </div>
+
     <div class="flex min-h-8 flex-wrap items-center gap-4">
       <div
         class="flex flex-col items-center gap-2 text-center text-(--p-text-muted-color)"
       >
         <p class="text-sm leading-none">
-          {{ t('graceKelly.subtitle') }}
+          {{ t('graceKelly.subtitle') }}. Music by Mika.
         </p>
       </div>
       <div class="min-w-11">
