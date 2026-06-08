@@ -136,6 +136,13 @@ export default defineConfig(({ command, mode }) => {
             const v4Renames: Record<string, string> = {
               PrimeSelect: 'primevue/select',
               PrimeToggleSwitch: 'primevue/toggleswitch',
+              /* PrimeVue 4's new Tabs API — the resolver still only knows the
+               * deprecated TabView/TabPanel, so map these by hand. */
+              PrimeTabs: 'primevue/tabs',
+              PrimeTabList: 'primevue/tablist',
+              PrimeTab: 'primevue/tab',
+              PrimeTabPanels: 'primevue/tabpanels',
+              PrimeTabPanel: 'primevue/tabpanel',
             }
 
             return v4Renames[name] ? { from: v4Renames[name] } : undefined

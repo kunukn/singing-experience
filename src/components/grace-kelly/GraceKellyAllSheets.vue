@@ -15,9 +15,17 @@ type Props = {
   startToneMidi: number
   /* Part labels ordered by VOZ_MELODIES index (used as each staff's title). */
   vozLabels: string[]
+  /* Which voices to render, by VOZ_MELODIES index, in display order. Defaults to
+   * all six — the harmony tab passes a filtered subset to show/hide parts. */
+  vozIndices?: number[]
 }
 
 const props = defineProps<Props>()
+
+/* Resolved voices to render — the given subset, or all six by default. */
+const renderedVozIndices = computed(
+  () => props.vozIndices ?? VOZ_MELODIES.map((_, index) => index),
+)
 
 /* Compact vertical layout for the stacked all-parts view: a smaller title
  * font and trimmed top/bottom padding shrink each staff's height without
@@ -39,15 +47,18 @@ const noteElementsByStaff = ref<Element[][]>([])
 const lyricElementsByStaff = ref<Element[][]>([])
 
 async function renderSheets() {
-  const containers = staffContainers.value
-  if (containers.length < VOZ_MELODIES.length) return
+  const vozIndices = renderedVozIndices.value
+  /* Containers are positional (one per rendered voice); slice to the active
+   * count so a freshly-toggled subset doesn't measure stale trailing staves. */
+  const containers = staffContainers.value.slice(0, vozIndices.length)
+  if (containers.length < vozIndices.length) return
 
-  const abcStrings = VOZ_MELODIES.map((melody, index) =>
+  const abcStrings = vozIndices.map((vozIndex) =>
     /* Pass showTempo=false so the BPM header is hidden on the combined sheet;
      * the shared lyric line draws under every staff. */
     vozMelodyToAbcString(
-      melody,
-      props.vozLabels[index] ?? '',
+      VOZ_MELODIES[vozIndex],
+      props.vozLabels[vozIndex] ?? '',
       props.startToneMidi,
       undefined,
       false,
@@ -58,7 +69,7 @@ async function renderSheets() {
   /* Pass 1 — render each staff at an oversized width so abcjs keeps it on one
    * line, then measure each staff's natural music width. */
   const probeWidth = estimateStaffWidth(VOZ_MELODIES[0].notes.length)
-  for (let index = 0; index < VOZ_MELODIES.length; index++) {
+  for (let index = 0; index < containers.length; index++) {
     renderAbc(containers[index], abcStrings[index], {
       ...COMPACT_RENDER,
       staffwidth: probeWidth,
@@ -68,11 +79,11 @@ async function renderSheets() {
   await nextTick()
 
   /* Pass 2 — re-render every staff at one shared width (the widest measured) so
-   * the bars line up column-for-column across all six parts. */
+   * the bars line up column-for-column across the rendered parts. */
   const TRAILING_MARGIN = 24
   const sharedWidth =
     Math.ceil(Math.max(...containers.map(measureMusicWidth))) + TRAILING_MARGIN
-  for (let index = 0; index < VOZ_MELODIES.length; index++) {
+  for (let index = 0; index < containers.length; index++) {
     renderAbc(containers[index], abcStrings[index], {
       ...COMPACT_RENDER,
       staffwidth: sharedWidth,
@@ -93,8 +104,11 @@ onMounted(() => {
 })
 
 watch(
-  () => [props.vozLabels, props.startToneMidi],
-  () => {
+  () => [props.vozLabels, props.startToneMidi, renderedVozIndices.value],
+  async () => {
+    /* Wait for the v-for to add/remove staff containers before re-rendering so
+     * a newly-toggled subset measures against the right number of staves. */
+    await nextTick()
     void renderSheets()
   },
   { deep: true },
@@ -162,11 +176,11 @@ watch(
   >
     <div class="flex min-w-max flex-col gap-2 py-2">
       <div
-        v-for="index in VOZ_MELODIES.length"
-        :key="index"
+        v-for="(vozIndex, position) in renderedVozIndices"
+        :key="vozIndex"
         :ref="
           (el) => {
-            if (el) staffContainers[index - 1] = el as HTMLElement
+            if (el) staffContainers[position] = el as HTMLElement
           }
         "
       />

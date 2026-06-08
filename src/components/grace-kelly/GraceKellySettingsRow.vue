@@ -12,11 +12,14 @@ type Props = {
   /* True while a sequence is playing or paused — the selects stay locked so the
    * running timeline can't be changed underneath it. */
   isRunning: boolean
+  /* Show the single-voice (Voz) select. The harmony tab hides it — it picks
+   * voices via per-part toggles instead. */
+  showVoz?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { showVoz: true })
 
-const vozIndex = defineModel<number>('vozIndex', { required: true })
+const vozIndex = defineModel<number>('vozIndex')
 const startToneMidi = defineModel<number>('startToneMidi', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
 
@@ -67,9 +70,13 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
   <div
     ref="rowRef"
     class="settings-row"
-    :class="{ 'mask-start': canScrollStart, 'mask-end': canScrollEnd }"
+    :class="{
+      'mask-start': canScrollStart,
+      'mask-end': canScrollEnd,
+      'no-voz': !props.showVoz,
+    }"
   >
-    <div class="settings-item">
+    <div v-if="props.showVoz" class="settings-item">
       <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('graceKelly.voz')
       }}</label>
@@ -156,6 +163,14 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
   /* Match the container's px-6 so snap-start aligns the first/last item at scrollLeft 0/max,
    * keeping the conditional edge mask in sync with the true scroll boundaries. */
   scroll-padding-inline: 1.5rem;
+}
+
+/* Harmony tab drops the Voz select → 3 items. Widen to 3 label/control pairs so
+ * they sit on one row instead of leaving a lone item wrapping below. */
+@media (min-width: 768px) {
+  .settings-row.no-voz {
+    grid-template-columns: auto 1fr auto 1fr auto 1fr;
+  }
 }
 
 /* Edge fade — signals horizontal scrollability on iOS where scrollbars auto-hide.
