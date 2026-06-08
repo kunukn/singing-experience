@@ -166,6 +166,12 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
   scroll-padding-inline: 1.5rem;
 }
 
+/* Harmony tab hides the Voz select — drop to 6 columns so the remaining three
+ * items center without two phantom trailing columns pulling them off-center. */
+.settings-row.no-voz {
+  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr];
+}
+
 /* Edge fade — signals horizontal scrollability on iOS where scrollbars auto-hide.
  * Applied only on the side(s) that can actually be scrolled toward. */
 .settings-row.mask-start.mask-end {
