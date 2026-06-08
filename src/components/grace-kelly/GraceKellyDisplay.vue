@@ -264,7 +264,7 @@ const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
         class="flex flex-col items-center gap-2 text-center text-(--p-text-muted-color)"
       >
         <p class="text-sm leading-none">
-          {{ t('graceKelly.subtitle') }}. Music by Mika.
+          {{ t('graceKelly.subtitle') }}
         </p>
       </div>
       <div class="min-w-11">
@@ -288,7 +288,7 @@ const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
       :activeSyllableIndex="activeSyllableIndex"
     />
 
-    <div>
+    <div class="my-4">
       <p v-for="(line, lineIndex) in lyricLines" :key="lineIndex">
         <template v-for="(word, wordIndex) in line" :key="wordIndex">
           {{ wordIndex > 0 ? ' ' : '' }}

@@ -26,7 +26,7 @@ const lyricElements = ref<Element[]>([])
 async function renderSheet() {
   if (!containerRef.value) return
 
-  const abcString = vozMelodyToAbcString(
+  const baseAbcString = vozMelodyToAbcString(
     props.melody,
     props.vozLabel,
     props.startToneMidi,
@@ -34,6 +34,11 @@ async function renderSheet() {
     true,
     props.lyrics,
   )
+
+  /* abcjs renders the `C:` (composer) header field right-aligned under the
+   * title. Inject it right after the `T:` line so the credit shows on the
+   * sheet — scoped to this component, leaving the shared ABC builder untouched. */
+  const abcString = baseAbcString.replace(/^(T:.*)$/m, '$1\nC:Music by Mika')
 
   /* Pass 1 — render at an oversized width so abcjs keeps everything on one
    * line (it wraps only when staffwidth is smaller than the music needs). */
