@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { renderAbc } from 'abcjs'
+import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import type { VozMelody } from './graceKellyMelodies'
 import { vozMelodyToAbcString, estimateStaffWidth } from './graceKellyAbc'
 import { measureMusicWidth } from './graceKellyStaffRender'
@@ -74,11 +75,42 @@ async function renderSheet() {
   lyricElements.value = [
     ...(containerRef.value?.querySelectorAll('.abcjs-lyric') ?? []),
   ]
+
+  /* A re-render (resize / tab reveal) rebuilds the elements, so re-apply any
+   * active highlight the watchers set before this render replaced the SVG. */
+  const noteIndex = props.activeNoteIndex
+  if (noteIndex !== null)
+    noteElements.value[noteIndex]?.classList.add('note-active')
+
+  const syllableIndex = props.activeSyllableIndex
+  if (
+    syllableIndex !== null &&
+    syllableIndex !== undefined &&
+    syllableIndex >= 0
+  ) {
+    lyricElements.value[syllableIndex]?.classList.add('syllable-active')
+  }
 }
 
 onMounted(() => {
   void renderSheet()
 })
+
+/* abcjs bakes a fixed pixel width into the SVG at render time. Re-render when the
+ * available width changes — on window resize, and (critically) when the staff is
+ * first laid out with a real width after its tab panel becomes visible, since a
+ * render measured at width 0 stays stuck at the oversized probe width. Observing
+ * the parent (not the w-fit scroll box) avoids a content-driven feedback loop. */
+const rerenderOnResize = useDebounceFn(() => {
+  void renderSheet()
+}, 150)
+
+useResizeObserver(
+  () => scrollRef.value?.parentElement ?? null,
+  ([entry]) => {
+    if (entry.contentRect.width > 0) rerenderOnResize()
+  },
+)
 
 watch(
   () => [props.melody, props.vozLabel, props.startToneMidi, props.bpm],

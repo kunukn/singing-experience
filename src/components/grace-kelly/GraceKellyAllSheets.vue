@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { renderAbc } from 'abcjs'
+import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { GRACE_KELLY_LYRIC_ABC } from './graceKellyLyrics'
 import { VOZ_MELODIES } from './graceKellyMelodies'
 import { vozMelodyToAbcString, estimateStaffWidth } from './graceKellyAbc'
@@ -97,11 +98,47 @@ async function renderSheets() {
   lyricElementsByStaff.value = containers.map((container) => [
     ...container.querySelectorAll('.abcjs-lyric'),
   ])
+
+  /* A re-render (resize / tab reveal) rebuilds the elements, so re-apply any
+   * active highlight the watchers set before this render replaced the SVGs. */
+  const noteIndex = props.activeNoteIndex
+  if (noteIndex !== null) {
+    for (const staff of noteElementsByStaff.value) {
+      staff[noteIndex]?.classList.add('note-active')
+    }
+  }
+
+  const syllableIndex = props.activeSyllableIndex
+  if (
+    syllableIndex !== null &&
+    syllableIndex !== undefined &&
+    syllableIndex >= 0
+  ) {
+    for (const staff of lyricElementsByStaff.value) {
+      staff[syllableIndex]?.classList.add('syllable-active')
+    }
+  }
 }
 
 onMounted(() => {
   void renderSheets()
 })
+
+/* abcjs bakes a fixed pixel width into each staff's SVG at render time. Re-render
+ * when the available width changes — on window resize, and (critically) when the
+ * stack is first laid out with a real width after its tab panel becomes visible,
+ * since a render measured at width 0 stays stuck at the oversized probe width.
+ * Observing the parent (not the w-fit scroll box) avoids a feedback loop. */
+const rerenderOnResize = useDebounceFn(() => {
+  void renderSheets()
+}, 150)
+
+useResizeObserver(
+  () => scrollRef.value?.parentElement ?? null,
+  ([entry]) => {
+    if (entry.contentRect.width > 0) rerenderOnResize()
+  },
+)
 
 watch(
   () => [props.vozLabels, props.startToneMidi, renderedVozIndices.value],

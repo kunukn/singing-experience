@@ -51,16 +51,19 @@ const activeSyllableIndex = computed(() => {
   return active
 })
 
-/* All six part labels, ordered by VOZ_MELODIES index — staff titles + toggles. */
+/* All six part labels, indexed by VOZ_MELODIES index — GraceKellyAllSheets reads
+ * vozLabels[vozIndex], so this must stay in true index order (not reversed). */
 const allVozLabels = computed(() =>
-  VOZ_LABEL_KEYS.toReversed().map((key) => t(`graceKelly.vozLabels.${key}`)),
+  VOZ_LABEL_KEYS.map((key) => t(`graceKelly.vozLabels.${key}`)),
 )
 
+/* Toggles displayed low → high (reversed order) while keeping the real
+ * VOZ_MELODIES index, so each toggle drives the voice its label names. */
 const partToggles = computed(() =>
-  VOZ_LABEL_KEYS.toReversed().map((key, index) => ({
+  VOZ_LABEL_KEYS.map((key, index) => ({
     index,
     label: t(`graceKelly.vozLabels.${key}`),
-  })),
+  })).reverse(),
 )
 
 function isVozSelected(index: number) {
