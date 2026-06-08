@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { renderAbc } from 'abcjs'
+import { GRACE_KELLY_LYRIC_ABC } from './graceKellyLyrics'
 import { VOZ_MELODIES } from './graceKellyMelodies'
 import { vozMelodyToAbcString, estimateStaffWidth } from './graceKellyAbc'
 import { measureMusicWidth } from './graceKellyStaffRender'
 
 type Props = {
   activeNoteIndex: number | null
+  /* Flat reading-order index of the syllable to highlight; -1/null = none. */
+  activeSyllableIndex?: number | null
   startToneMidi: number
   /* Part labels ordered by VOZ_MELODIES index (used as each staff's title). */
   vozLabels: string[]
@@ -28,19 +31,24 @@ const staffContainers = ref<HTMLElement[]>([])
 /* Note elements per staff, indexed [staffIndex][noteIndex] — all melodies share
  * the same 34-note rhythm, so a single activeNoteIndex maps onto every staff. */
 const noteElementsByStaff = ref<Element[][]>([])
+/* Lyric elements per staff, indexed [staffIndex][syllableIndex] — every staff
+ * shares one lyric mapping, so a single activeSyllableIndex maps onto each. */
+const lyricElementsByStaff = ref<Element[][]>([])
 
 async function renderSheets() {
   const containers = staffContainers.value
   if (containers.length < VOZ_MELODIES.length) return
 
   const abcStrings = VOZ_MELODIES.map((melody, index) =>
-    /* Pass showTempo=false so the BPM header is hidden on the combined sheet. */
+    /* Pass showTempo=false so the BPM header is hidden on the combined sheet;
+     * the shared lyric line draws under every staff. */
     vozMelodyToAbcString(
       melody,
       props.vozLabels[index] ?? '',
       props.startToneMidi,
       undefined,
       false,
+      GRACE_KELLY_LYRIC_ABC,
     ),
   )
 
@@ -71,6 +79,9 @@ async function renderSheets() {
   await nextTick()
   noteElementsByStaff.value = containers.map((container) => [
     ...container.querySelectorAll('.abcjs-note'),
+  ])
+  lyricElementsByStaff.value = containers.map((container) => [
+    ...container.querySelectorAll('.abcjs-lyric'),
   ])
 }
 
@@ -120,6 +131,23 @@ watch(
     }
   },
 )
+
+watch(
+  () => props.activeSyllableIndex,
+  (index) => {
+    for (const staff of lyricElementsByStaff.value) {
+      for (const element of staff) element.classList.remove('syllable-active')
+    }
+
+    /* -1 (idle) and null both mean "no syllable lit". The active note's column
+     * is already centered by the note watch, carrying its lyric. */
+    if (index === null || index === undefined || index < 0) return
+
+    for (const staff of lyricElementsByStaff.value) {
+      staff[index]?.classList.add('syllable-active')
+    }
+  },
+)
 </script>
 
 <template>
@@ -144,6 +172,10 @@ watch(
 <style scoped>
 :deep(.note-active path),
 :deep(.note-active rect) {
+  fill: var(--p-primary-color);
+}
+
+:deep(.syllable-active) {
   fill: var(--p-primary-color);
 }
 </style>

@@ -280,6 +280,7 @@ function handleToggle() {
     <GraceKellyAllSheets
       v-if="showAllParts"
       :activeNoteIndex="activeNoteIndex"
+      :activeSyllableIndex="activeSyllableIndex"
       :startToneMidi="startToneMidi"
       :vozLabels="allVozLabels"
     />
