@@ -7,7 +7,7 @@
  * added to every midiOffset at playback time — no data changes needed.
  *
  * All six voices are real transcriptions from the Grace Kelly TikTok challenge
- * sheet: Voz 1 is the Mika lead vocal; Voz 4 is the one-tone C4 part; Voz 2–3
+ * sheet: Voz 1 is the MIKA lead vocal; Voz 4 is the one-tone C4 part; Voz 2–3
  * and Voz 5–6 are the harmony voices. */
 
 export type VozNote = {
@@ -25,6 +25,11 @@ export type VozMelody = {
   /* Pickup length in eighth notes before the first full 6/8 bar (0 = none).
    * The first barline is drawn after this many eighths; the rest every 6. */
   anacrusisEighths?: number
+  /* Visual-only eighth rests appended to the closing bar so the pickup
+   * (anacrusisEighths) and the final bar sum to one full 6/8 measure — a
+   * balanced sheet. Notation only: the players read `notes`, never this field,
+   * so no trailing silence is scheduled. */
+  trailingRestEighths?: number
   /* Notation clef. 'treble-8' (default) is the 8vb treble clef — notes sound an
    * octave below where drawn, keeping the low voices off ledger lines. 'treble'
    * is a plain treble clef for the high voices (Voz 1–3), which sit on the staff
@@ -37,6 +42,7 @@ export type VozMelody = {
  * (anacrusis) and ends on a plain C4 quarter. */
 const VOZ_4: VozMelody = {
   anacrusisEighths: 3,
+  trailingRestEighths: 2,
   notes: [
     /* pickup */
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
@@ -73,12 +79,14 @@ const VOZ_4: VozMelody = {
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    /* bar 7 — C4 ×4 (was ×5), then ends on a C4 quarter */
+    /* bar 7 — C4 ×3, then a C4 quarter ("you"), ending on a C4 eighth ("like") */
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 2 }, // C4 ♩ — final note
+    { midiOffset: 12, eighthNotes: 2 }, // C4 ♩ — "you" (second-to-last, quarter)
+    { midiOffset: 12, eighthNotes: 1, tie: true }, // C4 ♪ — "like" (fills the bar, tied...)
+    /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
+    { midiOffset: 12, eighthNotes: 1 }, // C4 ♪ — ...held over
   ],
 }
 
@@ -86,6 +94,7 @@ const VOZ_4: VozMelody = {
  * Opens with a 3-eighth pickup (anacrusis); ends on a plain C3 quarter. */
 const VOZ_6: VozMelody = {
   anacrusisEighths: 3,
+  trailingRestEighths: 2,
   notes: [
     /* pickup */
     { midiOffset: 0, eighthNotes: 1 }, // C3 ♪
@@ -122,12 +131,14 @@ const VOZ_6: VozMelody = {
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
-    /* bar 7 — F3 ×3 (was ×4), G3, then ends on a C3 quarter */
+    /* bar 7 — F3 ×3, then a G3 quarter ("you"), ending on a C3 eighth ("like") */
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
-    { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
-    { midiOffset: 0, eighthNotes: 2 }, // C3 ♩ — final note
+    { midiOffset: 7, eighthNotes: 2 }, // G3 ♩ — "you" (second-to-last, quarter)
+    { midiOffset: 0, eighthNotes: 1, tie: true }, // C3 ♪ — "like" (fills the bar, tied...)
+    /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
+    { midiOffset: 0, eighthNotes: 1 }, // C3 ♪ — ...held over
   ],
 }
 
@@ -137,6 +148,7 @@ const VOZ_6: VozMelody = {
  * then ends on a plain G3 quarter. */
 const VOZ_5: VozMelody = {
   anacrusisEighths: 3,
+  trailingRestEighths: 2,
   notes: [
     /* pickup */
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
@@ -173,12 +185,14 @@ const VOZ_5: VozMelody = {
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
-    /* bar 7 — A3 ×3 (was ×4), B3, then ends on a G3 quarter */
+    /* bar 7 — A3 ×3, then a B3 quarter ("you"), ending on a G3 eighth ("like") */
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
-    { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
-    { midiOffset: 7, eighthNotes: 2 }, // G3 ♩ — final note
+    { midiOffset: 11, eighthNotes: 2 }, // B3 ♩ — "you" (second-to-last, quarter)
+    { midiOffset: 7, eighthNotes: 1, tie: true }, // G3 ♪ — "like" (fills the bar, tied...)
+    /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
+    { midiOffset: 7, eighthNotes: 1 }, // G3 ♪ — ...held over
   ],
 }
 
@@ -188,6 +202,7 @@ const VOZ_5: VozMelody = {
  * E5 quarter. Plain treble clef (high voice — no 8vb octave marking). */
 const VOZ_3: VozMelody = {
   anacrusisEighths: 3,
+  trailingRestEighths: 2,
   clef: 'treble',
   notes: [
     /* pickup */
@@ -225,12 +240,14 @@ const VOZ_3: VozMelody = {
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
-    /* bar 7 — D5 ×3 (was ×4), upper-neighbor F5, then ends on an E5 quarter */
+    /* bar 7 — D5 ×3, then an F5 quarter ("you"), ending on an E5 eighth ("like") */
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
-    { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
-    { midiOffset: 28, eighthNotes: 2 }, // E5 ♩ — final note
+    { midiOffset: 29, eighthNotes: 2 }, // F5 ♩ — "you" (second-to-last, quarter)
+    { midiOffset: 28, eighthNotes: 1, tie: true }, // E5 ♪ — "like" (fills the bar, tied...)
+    /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪ — ...held over
   ],
 }
 
@@ -240,6 +257,7 @@ const VOZ_3: VozMelody = {
  * voice — no 8vb octave marking). */
 const VOZ_2: VozMelody = {
   anacrusisEighths: 3,
+  trailingRestEighths: 2,
   clef: 'treble',
   notes: [
     /* pickup */
@@ -277,22 +295,25 @@ const VOZ_2: VozMelody = {
     { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
     { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
     { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
-    /* bar 7 — A5 ×3 (was ×4), upper-neighbor B5, then ends on a G5 quarter */
+    /* bar 7 — A5 ×3, then a B5 quarter ("you"), ending on a G5 eighth ("like") */
     { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
     { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
     { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
-    { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
-    { midiOffset: 31, eighthNotes: 2 }, // G5 ♩ — final note
+    { midiOffset: 35, eighthNotes: 2 }, // B5 ♩ — "you" (second-to-last, quarter)
+    { midiOffset: 31, eighthNotes: 1, tie: true }, // G5 ♪ — "like" (fills the bar, tied...)
+    /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
+    { midiOffset: 31, eighthNotes: 1 }, // G5 ♪ — ...held over
   ],
 }
 
-/* Voz 1 — real transcription. The Mika lead vocal; spans nearly two octaves
+/* Voz 1 — real transcription. The MIKA lead vocal; spans nearly two octaves
  * (range C4–A5, the only voice wider than an octave). 6/8, starts on C4 and
  * climbs through the registers to a peak A5, then settles to E5. Opens with a
  * 3-eighth pickup (anacrusis); ends on a plain E5 quarter. Plain treble clef
  * (high voice — no 8vb octave marking). */
 const VOZ_1: VozMelody = {
   anacrusisEighths: 3,
+  trailingRestEighths: 2,
   clef: 'treble',
   notes: [
     /* pickup */
@@ -330,12 +351,14 @@ const VOZ_1: VozMelody = {
     { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
     { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
     { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
-    /* bar 7 — F5 ×3 (was ×4, FA'), G5 (SOL'), ends on E5 (MI') quarter */
+    /* bar 7 — F5 ×3 (FA'), then a G5 quarter (SOL', "you"), ending on an E5 eighth (MI', "like") */
     { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
     { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
     { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
-    { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
-    { midiOffset: 28, eighthNotes: 2 }, // E5 ♩ — final note
+    { midiOffset: 31, eighthNotes: 2 }, // G5 ♩ — "you" (second-to-last, quarter)
+    { midiOffset: 28, eighthNotes: 1, tie: true }, // E5 ♪ — "like" (fills the bar, tied...)
+    /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
+    { midiOffset: 28, eighthNotes: 1 }, // E5 ♪ — ...held over
   ],
 }
 

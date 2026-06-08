@@ -12,8 +12,8 @@ export const DEFAULT_BPM = 100
 export const START_TONE_MIDI_MIN = 36 // C2
 export const START_TONE_MIDI_MAX = 48 // C3
 
-/* Descriptive part labels, ordered by VOZ_MELODIES index. "Mika" is the artist
- * name (Grace Kelly is a Mika song) and stays untranslated. Shared by the
+/* Descriptive part labels, ordered by VOZ_MELODIES index. "MIKA" is the artist
+ * name (Grace Kelly is a MIKA song) and stays untranslated. Shared by the
  * settings row (the Voz dropdown) and the display (current/overview labels). */
 export const VOZ_LABEL_KEYS = [
   'lead',

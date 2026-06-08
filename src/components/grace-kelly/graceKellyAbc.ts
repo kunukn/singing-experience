@@ -169,6 +169,15 @@ export function vozMelodyToAbcString(
     }
   }
 
+  /* Append visual-only trailing rests to balance the closing bar against the
+   * pickup. These live in the ABC only (never in melody.notes), so the players
+   * schedule no trailing silence — purely a notational nicety. A bare `z` is an
+   * eighth rest under L:1/8, so N eighth rests render as `z z …`. */
+  if (melody.trailingRestEighths && melody.trailingRestEighths > 0) {
+    const rests = Array.from({ length: melody.trailingRestEighths }, () => 'z')
+    body += (body.endsWith(' ') ? '' : ' ') + rests.join(' ')
+  }
+
   return [
     'X:1',
     `T:${label}`,
