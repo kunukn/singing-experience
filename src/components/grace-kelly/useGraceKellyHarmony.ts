@@ -1,4 +1,6 @@
 import { midiToFrequency } from '@/utils/noteUtils'
+import type { ToneEngine } from '@/composables/toneEngine'
+import { defaultToneEngine } from '@/composables/toneEngine'
 import { DEFAULT_BPM } from './graceKellyConstants'
 import { graceKellyMachine, type GraceKellyPhase } from './graceKellyMachine'
 import { VOZ_MELODIES } from './graceKellyMelodies'
@@ -14,14 +16,27 @@ const SCHEDULE_AHEAD_S = 0.05
 
 export type GraceKellyHarmonyResult = ReturnType<typeof useGraceKellyHarmony>
 
+type Options = {
+  /* Injectable audio engine — defaults to the shared singleton. Tests pass a
+   * mock to assert scheduling without touching Tone.js. */
+  toneEngine?: ToneEngine
+}
+
 /* Multi-voice sibling of useGraceKelly: plays any subset of the six parts
  * together against one shared timeline. All melodies share the same 34-note
  * rhythm, so a single activeNoteIndex highlights every staff while each
  * selected voice contributes its own transposed pitch. */
-export function useGraceKellyHarmony() {
+export function useGraceKellyHarmony(options: Options = {}) {
   const { snapshot, send } = useMachine(graceKellyMachine)
-  const { warmUp, playToneAt, getNow, scheduleDraw, cancelScheduled } =
-    useTonePlayer()
+  const engine = options.toneEngine ?? defaultToneEngine
+  const {
+    warmUp,
+    getNow,
+    scheduleDraw,
+    cancelScheduled,
+    setHarmonyVoiceCount,
+    playHarmonyVoiceAt,
+  } = engine
 
   const phase = computed<GraceKellyPhase>(
     () => snapshot.value.value as GraceKellyPhase,
@@ -67,11 +82,13 @@ export function useGraceKellyHarmony() {
     }
     const endCursor = cursor
 
-    /* Pass B — schedule the audio for each selected voice independently, merging
-     * a tied run of same-pitch notes into a single sustained tone (no
-     * re-articulation across the tie). A resume that lands mid-tie simply starts
-     * a fresh run at fromIndex (re-articulated). */
-    for (const vozIndex of currentVozIndices) {
+    /* Pass B — schedule the audio for each selected voice on its own monophonic
+     * pool voice (bounded polyphony — one voice per line). Merge a tied run of
+     * same-pitch notes into a single sustained tone (no re-articulation across
+     * the tie). A resume that lands mid-tie simply starts a fresh run at
+     * fromIndex (re-articulated). */
+    setHarmonyVoiceCount(currentVozIndices.length)
+    currentVozIndices.forEach((vozIndex, voiceSlot) => {
       const notes = VOZ_MELODIES[vozIndex].notes
       let index = fromIndex
       while (index < notes.length) {
@@ -85,10 +102,10 @@ export function useGraceKellyHarmony() {
           currentStartToneMidi + notes[index].midiOffset,
         )
         const durationS = runEighths * eighthSeconds * ARTICULATION
-        playToneAt(freq, durationS, noteStartTimes[index])
+        playHarmonyVoiceAt(voiceSlot, freq, durationS, noteStartTimes[index])
         index = last + 1
       }
-    }
+    })
 
     /* Transition to done and clear highlight after the last note expires */
     scheduleDraw(() => {

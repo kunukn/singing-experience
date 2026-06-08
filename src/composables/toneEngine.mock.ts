@@ -33,6 +33,8 @@ export function createMockToneEngine(
         clearTimeout(drawTimers.pop())
       }
     }),
+    setHarmonyVoiceCount: vi.fn(),
+    playHarmonyVoiceAt: vi.fn(),
     ...overrides,
   }
 }
