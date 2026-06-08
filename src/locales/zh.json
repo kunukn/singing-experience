@@ -261,7 +261,7 @@
   "graceKelly": {
     "title": "Grace Kelly",
     "subtitle": "选择一个和声声部，跟着唱",
-    "voz": "Voz",
+    "voz": "声部:",
     "startTone": "起始音:",
     "tempo": "速度:",
     "showAllParts": "所有声部",
