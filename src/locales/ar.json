@@ -260,18 +260,25 @@
   },
   "graceKelly": {
     "title": "Grace Kelly",
-    "subtitle": "Pick a part and sing along",
+    "subtitle": "اختر صوتًا وغنِّ معه",
     "voz": "الصوت:",
-    "startTone": "نبرة البداية:",
+    "startTone": "النغمة الأولى:",
     "tempo": "السرعة:",
     "showAllParts": "كل الأصوات",
+    "tabs": {
+      "singAlong": "غنِّ معنا",
+      "harmony": "تناغم"
+    },
+    "harmony": {
+      "subtitle": "شغّل الأصوات وشغّلها معًا"
+    },
     "vozLabels": {
-      "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "lead": "الرئيسي",
+      "reallyHigh": "عالٍ جدًا",
+      "high": "عالٍ",
+      "oneTone": "نغمة واحدة",
+      "lessLow": "أقل انخفاضًا",
+      "low": "منخفض"
     }
   }
 }

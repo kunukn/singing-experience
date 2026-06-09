@@ -260,18 +260,25 @@
   },
   "graceKelly": {
     "title": "Grace Kelly",
-    "subtitle": "Pick a part and sing along",
+    "subtitle": "একটি অংশ বেছে নাও আর সাথে গাও",
     "voz": "অংশ:",
     "startTone": "শুরুর সুর:",
     "tempo": "গতি:",
     "showAllParts": "সব অংশ",
+    "tabs": {
+      "singAlong": "সাথে গাও",
+      "harmony": "হারমনি"
+    },
+    "harmony": {
+      "subtitle": "অংশ চালু/বন্ধ করো, একসাথে বাজাও"
+    },
     "vozLabels": {
-      "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "lead": "লিড",
+      "reallyHigh": "খুব উঁচু",
+      "high": "উঁচু",
+      "oneTone": "এক সুর",
+      "lessLow": "কম নিচু",
+      "low": "নিচু"
     }
   }
 }

@@ -260,18 +260,25 @@
   },
   "graceKelly": {
     "title": "Grace Kelly",
-    "subtitle": "Escolhe uma voz e canta junto",
+    "subtitle": "Escolhe uma voz e canta",
     "voz": "Voz:",
-    "startTone": "Tom inicial:",
+    "startTone": "Nota inicial:",
     "tempo": "Tempo:",
     "showAllParts": "Todas as vozes",
+    "tabs": {
+      "singAlong": "Canta junto",
+      "harmony": "Harmonia"
+    },
+    "harmony": {
+      "subtitle": "Liga as vozes e toca juntas"
+    },
     "vozLabels": {
       "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "reallyHigh": "Muito aguda",
+      "high": "Aguda",
+      "oneTone": "Uma nota",
+      "lessLow": "Menos grave",
+      "low": "Grave"
     }
   }
 }

@@ -265,13 +265,20 @@
     "startTone": "Starttone:",
     "tempo": "Tempo:",
     "showAllParts": "Alle stemmer",
+    "tabs": {
+      "singAlong": "Syng med",
+      "harmony": "Harmoni"
+    },
+    "harmony": {
+      "subtitle": "Tænd stemmer, spil sammen"
+    },
     "vozLabels": {
       "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "reallyHigh": "Rigtig høj",
+      "high": "Høj",
+      "oneTone": "Én tone",
+      "lessLow": "Mindre dyb",
+      "low": "Dyb"
     }
   }
 }

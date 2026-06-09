@@ -260,18 +260,25 @@
   },
   "graceKelly": {
     "title": "Grace Kelly",
-    "subtitle": "选择一个和声声部，跟着唱",
+    "subtitle": "选个声部，跟着唱",
     "voz": "声部:",
     "startTone": "起始音:",
     "tempo": "速度:",
     "showAllParts": "所有声部",
+    "tabs": {
+      "singAlong": "跟着唱",
+      "harmony": "和声"
+    },
+    "harmony": {
+      "subtitle": "开关声部，一起播放"
+    },
     "vozLabels": {
-      "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "lead": "主旋律",
+      "reallyHigh": "很高",
+      "high": "高",
+      "oneTone": "单音",
+      "lessLow": "不太低",
+      "low": "低"
     }
   }
 }

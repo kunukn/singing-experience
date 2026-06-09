@@ -153,7 +153,7 @@ function toggleVoz(index: number, enabled: boolean) {
       </PrimeButton>
     </div>
 
-    <div class="flex min-h-[2rem] flex-col justify-center">
+    <div class="flex min-h-8 flex-col justify-center">
       <p class="text-sm leading-none text-(--p-text-muted-color)">
         {{ t('graceKelly.harmony.subtitle') }}
       </p>

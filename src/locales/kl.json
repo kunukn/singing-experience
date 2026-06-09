@@ -256,18 +256,25 @@
   },
   "graceKelly": {
     "title": "Grace Kelly",
-    "subtitle": "Pick a part and sing along",
-    "voz": "Part:",
-    "startTone": "Start tone:",
+    "subtitle": "Nipi toqqarlugu erinarsorlutillu",
+    "voz": "Nipi:",
+    "startTone": "Aallartivik:",
     "tempo": "Tempo:",
-    "showAllParts": "All parts",
+    "showAllParts": "Nipit tamaasa",
+    "tabs": {
+      "singAlong": "Ilagalugu erinarsorit",
+      "harmony": "Harmoni"
+    },
+    "harmony": {
+      "subtitle": "Nipit ikkussinnaavatit, ataatsimut atuarlugit"
+    },
     "vozLabels": {
       "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "reallyHigh": "Qutsitsorujussuaq",
+      "high": "Qutsitsoq",
+      "oneTone": "Nipi ataaseq",
+      "lessLow": "Annikitsumik appasitsoq",
+      "low": "Appasitsoq"
     }
   }
 }

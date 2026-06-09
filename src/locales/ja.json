@@ -260,18 +260,25 @@
   },
   "graceKelly": {
     "title": "Grace Kelly",
-    "subtitle": "和声パートを選んで一緒に歌おう",
+    "subtitle": "パートを選んで一緒に歌おう",
     "voz": "パート:",
     "startTone": "開始音:",
     "tempo": "テンポ:",
     "showAllParts": "すべてのパート",
+    "tabs": {
+      "singAlong": "いっしょに歌う",
+      "harmony": "ハーモニー"
+    },
+    "harmony": {
+      "subtitle": "パートをオン/オフして一緒に鳴らそう"
+    },
     "vozLabels": {
-      "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "lead": "リード",
+      "reallyHigh": "とても高い",
+      "high": "高い",
+      "oneTone": "ひとつの音",
+      "lessLow": "少し低い",
+      "low": "低い"
     }
   }
 }

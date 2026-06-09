@@ -77,7 +77,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     }"
   >
     <div v-if="props.showVoz" class="settings-item">
-      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+      <label class="text-sm text-(--p-text-muted-color) md:block">{{
         t('graceKelly.voz')
       }}</label>
       <PrimeSelect
@@ -100,7 +100,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     </div>
 
     <div class="settings-item">
-      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+      <label class="text-sm text-(--p-text-muted-color) md:block">{{
         t('graceKelly.startTone')
       }}</label>
       <PrimeSelect
@@ -122,7 +122,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     </div>
 
     <div class="settings-item">
-      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+      <label class="text-sm text-(--p-text-muted-color) md:block">{{
         t('graceKelly.tempo')
       }}</label>
       <PrimeSelect

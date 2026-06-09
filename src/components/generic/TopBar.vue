@@ -35,8 +35,8 @@ const isLandingPage = computed(() => route.path === '/')
       value="Beta"
     />
     <div class="flex items-center gap-2">
-      <SettingsPanel />
       <LanguageSwitcher v-if="isLandingPage" />
+      <SettingsPanel />
     </div>
   </div>
 </template>

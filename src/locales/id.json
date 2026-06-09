@@ -260,18 +260,25 @@
   },
   "graceKelly": {
     "title": "Grace Kelly",
-    "subtitle": "Pilih bagian dan ikut bernyanyi",
+    "subtitle": "Pilih suara dan ikut bernyanyi",
     "voz": "Suara:",
     "startTone": "Nada awal:",
     "tempo": "Tempo:",
     "showAllParts": "Semua suara",
+    "tabs": {
+      "singAlong": "Ikut nyanyi",
+      "harmony": "Harmoni"
+    },
+    "harmony": {
+      "subtitle": "Nyalakan suara, mainkan bersama"
+    },
     "vozLabels": {
       "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "reallyHigh": "Sangat tinggi",
+      "high": "Tinggi",
+      "oneTone": "Satu nada",
+      "lessLow": "Kurang rendah",
+      "low": "Rendah"
     }
   }
 }

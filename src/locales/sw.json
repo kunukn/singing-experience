@@ -260,18 +260,25 @@
   },
   "graceKelly": {
     "title": "Grace Kelly",
-    "subtitle": "Pick a part and sing along",
+    "subtitle": "Chagua sehemu na uimbe pamoja",
     "voz": "Sehemu:",
-    "startTone": "Toni ya kuanza:",
+    "startTone": "Noti ya kuanza:",
     "tempo": "Tempo:",
     "showAllParts": "Sehemu zote",
+    "tabs": {
+      "singAlong": "Imba pamoja",
+      "harmony": "Harmoni"
+    },
+    "harmony": {
+      "subtitle": "Washa sehemu, zicheze pamoja"
+    },
     "vozLabels": {
       "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "reallyHigh": "Juu sana",
+      "high": "Juu",
+      "oneTone": "Noti moja",
+      "lessLow": "Chini kidogo",
+      "low": "Chini"
     }
   }
 }

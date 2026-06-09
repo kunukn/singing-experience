@@ -262,16 +262,23 @@
     "title": "Grace Kelly",
     "subtitle": "Choisis une voix et chante",
     "voz": "Voix :",
-    "startTone": "Tonique de départ :",
+    "startTone": "Note de départ :",
     "tempo": "Tempo :",
     "showAllParts": "Toutes les voix",
+    "tabs": {
+      "singAlong": "Chante avec",
+      "harmony": "Harmonie"
+    },
+    "harmony": {
+      "subtitle": "Active les voix, joue-les ensemble"
+    },
     "vozLabels": {
       "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "reallyHigh": "Très aigu",
+      "high": "Aigu",
+      "oneTone": "Une note",
+      "lessLow": "Moins grave",
+      "low": "Grave"
     }
   }
 }

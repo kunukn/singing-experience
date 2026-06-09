@@ -265,13 +265,20 @@
     "startTone": "Startton:",
     "tempo": "Tempo:",
     "showAllParts": "Alle Stimmen",
+    "tabs": {
+      "singAlong": "Mitsingen",
+      "harmony": "Harmonie"
+    },
+    "harmony": {
+      "subtitle": "Stimmen an/aus, zusammen spielen"
+    },
     "vozLabels": {
       "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "reallyHigh": "Sehr hoch",
+      "high": "Hoch",
+      "oneTone": "Ein Ton",
+      "lessLow": "Weniger tief",
+      "low": "Tief"
     }
   }
 }

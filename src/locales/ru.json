@@ -260,18 +260,25 @@
   },
   "graceKelly": {
     "title": "Grace Kelly",
-    "subtitle": "Pick a part and sing along",
+    "subtitle": "Выбери партию и пой",
     "voz": "Партия:",
     "startTone": "Начальная нота:",
     "tempo": "Темп:",
     "showAllParts": "Все партии",
+    "tabs": {
+      "singAlong": "Пой вместе",
+      "harmony": "Гармония"
+    },
+    "harmony": {
+      "subtitle": "Включай партии и играй вместе"
+    },
     "vozLabels": {
-      "lead": "Lead",
-      "reallyHigh": "Really high part",
-      "high": "High part",
-      "oneTone": "One tone part",
-      "lessLow": "Less low part",
-      "low": "Low part"
+      "lead": "Лид",
+      "reallyHigh": "Очень высокая",
+      "high": "Высокая",
+      "oneTone": "Одна нота",
+      "lessLow": "Менее низкая",
+      "low": "Низкая"
     }
   }
 }
