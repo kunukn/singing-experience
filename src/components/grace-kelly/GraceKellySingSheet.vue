@@ -23,6 +23,9 @@ type Props = {
   lyrics?: string
   /* Flat reading-order index of the syllable to highlight; -1/null = none. */
   activeSyllableIndex?: number | null
+  /* Reading-order indices of notes the singer got right, painted green in the
+   * result state. Empty/omitted during play and idle. */
+  correctNoteIndices?: number[]
   /* Sounding pitch of the active note, drawn as a label floating above it;
    * omit/null to hide. */
   currentToneLabel?: string | null
@@ -101,6 +104,20 @@ function updateToneLabelPosition(index: number | null) {
   toneLabelPosition.value = {
     left: noteRect.left - containerRect.left + noteRect.width / 2,
     top: noteRect.top - containerRect.top,
+  }
+}
+
+/* Paint the given notes green (result-state correctness feedback) and clear any
+ * previous green. Reuses the per-index notehead access the active-highlight uses. */
+function applyCorrectNotes(indices: number[] | undefined) {
+  for (const element of noteElements.value) {
+    element.classList.remove('note-correct')
+  }
+
+  if (!indices) return
+
+  for (const index of indices) {
+    noteElements.value[index]?.classList.add('note-correct')
   }
 }
 
@@ -193,6 +210,8 @@ async function renderSheet() {
   if (noteIndex !== null)
     noteElements.value[noteIndex]?.classList.add('note-active')
 
+  applyCorrectNotes(props.correctNoteIndices)
+
   updateToneLabelPosition(noteIndex)
   calibratePitchToY()
 
@@ -276,6 +295,13 @@ watch(
     if (index === null || index === undefined || index < 0) return
 
     lyricElements.value[index]?.classList.add('syllable-active')
+  },
+)
+
+watch(
+  () => props.correctNoteIndices,
+  (indices) => {
+    applyCorrectNotes(indices)
   },
 )
 
@@ -370,6 +396,12 @@ defineExpose({ scrollToSyllable })
 :deep(.note-active path),
 :deep(.note-active rect) {
   fill: var(--p-primary-color);
+}
+
+/* Result-state correctness feedback — noteheads the singer got right. */
+:deep(.note-correct path),
+:deep(.note-correct rect) {
+  fill: var(--p-green-400);
 }
 
 :deep(.syllable-active) {

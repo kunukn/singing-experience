@@ -23,6 +23,10 @@ type UsePitchDetectionOptions = {
    * frame reports no pitch (frequency/noteInfo null, isClean false). When
    * omitted, falls back to the global user setting (useSettings). */
   clarityThreshold?: number
+  /* Override the onset debounce (ms a clean signal must hold before a pitch is
+   * reported). Lower = snappier note re-onset for fast melodies, at the cost of
+   * more attack-transient flicker. Defaults to ONSET_DEBOUNCE_MS. */
+  onsetDebounceMs?: number
 }
 
 /* Practical singing range: ~B1 (60 Hz) to ~F#6 (1500 Hz), covering bass to soprano. */
@@ -41,6 +45,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
   const clarityThreshold = computed(
     () => options.clarityThreshold ?? globalClarity.value,
   )
+  const onsetDebounceMs = options.onsetDebounceMs ?? ONSET_DEBOUNCE_MS
 
   const { t } = useI18n()
   const frequency = ref<number | null>(null)
@@ -108,7 +113,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
         cleanSinceTimestamp = now
       }
 
-      if (now - cleanSinceTimestamp >= ONSET_DEBOUNCE_MS) {
+      if (now - cleanSinceTimestamp >= onsetDebounceMs) {
         frequency.value = Math.round(smoothedFrequency * 10) / 10 // 0.1 Hz precision
         const detected = frequencyToNote(smoothedFrequency, prevMidi)
         noteInfo.value = detected

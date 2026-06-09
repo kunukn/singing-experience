@@ -81,7 +81,11 @@ const {
   error,
   start: startMic,
   stop: stopMic,
-} = usePitchDetection()
+} = usePitchDetection({
+  /* Snappier note re-onset than the 40ms default — fast melodies re-articulate
+   * many short notes, and the lag would otherwise eat the start of each one. */
+  onsetDebounceMs: 20,
+})
 
 /* True while a sequence is playing or paused — the part/tone/tempo selects stay
  * locked for both so the running timeline can't be changed underneath it. */
@@ -109,6 +113,7 @@ const {
 
 /* Begin the silent timeline and open the mic together. */
 function startSinging() {
+  showResult.value = false
   resetSingScore()
   start(startToneMidi.value, vozIndex.value, bpm.value)
   void startMic()
@@ -209,27 +214,53 @@ const isOnPitchForScore = computed(() => {
   )
 })
 
-/* Score the run by "voiced accuracy" — of the time the singer was actually
- * singing, what fraction was on the target pitch. Gates the end-of-song
- * confetti and drives the result percentage. */
+/* Total notes in the current melody — the per-note score denominator. */
+const noteCount = computed(() => VOZ_MELODIES[vozIndex.value].notes.length)
+
+/* Score the run note by note — each notehead is correct when most of the time
+ * the singer voiced it landed on pitch. Gates the end-of-song confetti, drives
+ * the result percentage, and surfaces which notes to color green. Scored
+ * against the SING timeline's active note (singActiveNoteIndex), not the
+ * preview's. */
 const {
   reachedThreshold,
   reset: resetSingScore,
   onPitchRatio,
+  correctNoteIndices,
 } = useGraceKellySingScore({
   isPlaying,
   isVoiced,
   isOnPitch: isOnPitchForScore,
+  activeNoteIndex: singActiveNoteIndex,
+  noteCount,
 })
 
 const scorePercent = computed(() => Math.round(onPitchRatio.value * 100))
 
+/* Drives the result panel + the green noteheads. Set when the song finishes on
+ * its own; cleared on a fresh sing and when the singer changes part/tone/tempo
+ * at the result screen (so a stale green map never sits over a new melody). */
+const showResult = ref(false)
+
+/* Correct-note indices to paint green — only while the result panel is up, so
+ * the sheet stays clean during play and idle. */
+const resultNoteIndices = computed(() =>
+  showResult.value ? correctNoteIndices.value : [],
+)
+
 const { fireConfetti } = useConfettiStore()
 
-/* Celebrate only on a natural finish (singIsDone, never a manual stop) when the
- * singer held pitch for at least the threshold fraction of the song. */
+/* Reveal the result on a natural finish (singIsDone, never a manual stop) and
+ * celebrate when enough notes were correct. */
 watch(singIsDone, (done) => {
-  if (done && reachedThreshold.value) fireConfetti()
+  if (!done) return
+
+  showResult.value = true
+  if (reachedThreshold.value) fireConfetti()
+})
+
+watch([vozIndex, startToneMidi, bpm], () => {
+  showResult.value = false
 })
 
 /* The singer's own de-flickered note label, stacked above the target tone
@@ -274,7 +305,7 @@ const vozLabel = computed(() =>
       :showToneMode="false"
     />
 
-    <div v-if="singIsDone" class="flex flex-col items-center gap-1">
+    <div v-if="showResult" class="flex flex-col items-center gap-1">
       <p
         class="text-3xl font-bold tabular-nums"
         :class="
@@ -326,7 +357,7 @@ const vozLabel = computed(() =>
         :disabled="isPreviewPlaying"
         @click="startSinging"
       >
-        {{ singIsDone ? t('generic.playAgain') : t('graceKelly.sing') }}
+        {{ showResult ? t('generic.playAgain') : t('graceKelly.sing') }}
       </PrimeButton>
 
       <PrimeButton
@@ -372,6 +403,7 @@ const vozLabel = computed(() =>
         :bpm="bpm"
         :activeNoteIndex="activeNoteIndex"
         :isDone="isDone"
+        :correctNoteIndices="resultNoteIndices"
         :lyrics="GRACE_KELLY_LYRIC_ABC"
         :activeSyllableIndex="activeSyllableIndex"
         :currentToneLabel="currentToneLabel"
