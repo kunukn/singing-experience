@@ -25,6 +25,13 @@ type Props = {
 
 const props = defineProps<Props>()
 
+/* abcjs font strings are '<family> <size>'. Sans-serif for the composer credit
+ * and the lyric line under the staff. */
+const SANS_FONTS = {
+  composerfont: 'sans-serif 13',
+  vocalfont: 'sans-serif 13',
+} as const
+
 const containerRef = ref<HTMLDivElement | null>(null)
 const scrollRef = ref<HTMLDivElement | null>(null)
 const noteElements = ref<Element[]>([])
@@ -81,6 +88,7 @@ async function renderSheet() {
   renderAbc(containerRef.value, abcString, {
     add_classes: true,
     staffwidth: probeWidth,
+    format: SANS_FONTS,
   })
 
   /* Pass 2 — measure the music's natural width and re-render at that width so
@@ -94,6 +102,7 @@ async function renderSheet() {
     renderAbc(containerRef.value, abcString, {
       add_classes: true,
       staffwidth: Math.ceil(musicWidth) + TRAILING_MARGIN,
+      format: SANS_FONTS,
     })
     await nextTick()
   }

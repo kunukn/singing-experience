@@ -35,7 +35,9 @@ const COMPACT_RENDER = {
   add_classes: true,
   paddingtop: 4,
   paddingbottom: 4,
-  format: { titlefont: 'serif 13' },
+  /* abcjs font strings are '<family> <size>'. Sans-serif for the staff title
+   * and the lyric line under each staff. */
+  format: { titlefont: 'sans-serif 13', vocalfont: 'sans-serif 13' },
 } as const
 
 const scrollRef = ref<HTMLDivElement | null>(null)
