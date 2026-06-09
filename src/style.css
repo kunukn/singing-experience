@@ -23,3 +23,13 @@
     @apply flex h-full w-full grow flex-col px-4;
   }
 }
+
+/* PrimeVue's blockScroll adds `.p-overflow-hidden` with a `padding-right` equal
+ * to the scrollbar width to compensate for the scrollbar it removes. With
+ * `scrollbar-gutter: stable` above, that space is already permanently reserved,
+ * so the extra padding double-compensates and shifts page content inward when a
+ * Drawer finishes opening. Cancel it. (Unlayered + element-qualified so it wins
+ * over PrimeVue's `.p-overflow-hidden` rule.) */
+body.p-overflow-hidden {
+  padding-right: 0;
+}
