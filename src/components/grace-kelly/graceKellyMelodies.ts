@@ -13,11 +13,19 @@
 export type VozNote = {
   /* Semitones from C3 (MIDI 48). 0 = C3, 4 = E3, 7 = G3, 12 = C4, etc. */
   midiOffset: number
-  /* Duration in eighth-note units. 1 = ♪, 2 = ♩, 3 = ♩. (dotted quarter), 6 = 𝅗𝅥. */
+  /* Duration in eighth-note units. 1 = ♪, 1.5 = ♪. (dotted eighth), 2 = ♩,
+   * 3 = ♩. (dotted quarter), 6 = 𝅗𝅥. Half-units render as ABC fractions
+   * (1.5 → 3/2, 0.5 → 1/2). */
   eighthNotes: number
   /* When true, this note is tied to the next note (same pitch, sustained —
    * no re-articulation). Used to hold a note across a barline. */
   tie?: boolean
+  /* Silent eighth-note units inserted after this note before the next note
+   * begins. The note sounds for `eighthNotes`, then rests for this long; the
+   * sheet draws the note followed by a rest of this duration. Lets a note be
+   * clipped short (e.g. a dotted-eighth note + a sixteenth rest) without adding
+   * a timeline entry, so note indices and lyric alignment stay fixed. */
+  restAfterEighths?: number
 }
 
 export type VozMelody = {
@@ -79,12 +87,13 @@ const VOZ_4: VozMelody = {
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    /* bar 7 — C4 ×3, then a C4 quarter ("you"), ending on a C4 eighth ("like") */
+    /* bar 7 — C4 ×3, then a clipped C4 dotted-eighth ("you"), ending on a
+     * lengthened C4 dotted-eighth ("like") held across the barline */
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪
-    { midiOffset: 12, eighthNotes: 2 }, // C4 ♩ — "you" (second-to-last, quarter)
-    { midiOffset: 12, eighthNotes: 1, tie: true }, // C4 ♪ — "like" (fills the bar, tied...)
+    { midiOffset: 12, eighthNotes: 1.5 }, // C4 ♪. — "you" (dotted eighth)
+    { midiOffset: 12, eighthNotes: 1.5, tie: true }, // C4 ♪. — "like" (dotted eighth, fills the bar, tied...)
     /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
     { midiOffset: 12, eighthNotes: 1 }, // C4 ♪ — ...held over
   ],
@@ -131,12 +140,13 @@ const VOZ_6: VozMelody = {
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪
-    /* bar 7 — F3 ×3, then a G3 quarter ("you"), ending on a C3 eighth ("like") */
+    /* bar 7 — F3 ×3, then a clipped G3 dotted-eighth ("you"), ending on a
+     * lengthened C3 dotted-eighth ("like") held across the barline */
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
     { midiOffset: 5, eighthNotes: 1 }, // F3 ♪
-    { midiOffset: 7, eighthNotes: 2 }, // G3 ♩ — "you" (second-to-last, quarter)
-    { midiOffset: 0, eighthNotes: 1, tie: true }, // C3 ♪ — "like" (fills the bar, tied...)
+    { midiOffset: 7, eighthNotes: 1.5 }, // G3 ♪. — "you" (dotted eighth)
+    { midiOffset: 0, eighthNotes: 1.5, tie: true }, // C3 ♪. — "like" (dotted eighth, fills the bar, tied...)
     /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
     { midiOffset: 0, eighthNotes: 1 }, // C3 ♪ — ...held over
   ],
@@ -185,12 +195,13 @@ const VOZ_5: VozMelody = {
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
     { midiOffset: 11, eighthNotes: 1 }, // B3 ♪
-    /* bar 7 — A3 ×3, then a B3 quarter ("you"), ending on a G3 eighth ("like") */
+    /* bar 7 — A3 ×3, then a clipped B3 dotted-eighth ("you"), ending on a
+     * lengthened G3 dotted-eighth ("like") held across the barline */
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
     { midiOffset: 9, eighthNotes: 1 }, // A3 ♪
-    { midiOffset: 11, eighthNotes: 2 }, // B3 ♩ — "you" (second-to-last, quarter)
-    { midiOffset: 7, eighthNotes: 1, tie: true }, // G3 ♪ — "like" (fills the bar, tied...)
+    { midiOffset: 11, eighthNotes: 1.5 }, // B3 ♪. — "you" (dotted eighth)
+    { midiOffset: 7, eighthNotes: 1.5, tie: true }, // G3 ♪. — "like" (dotted eighth, fills the bar, tied...)
     /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
     { midiOffset: 7, eighthNotes: 1 }, // G3 ♪ — ...held over
   ],
@@ -240,12 +251,13 @@ const VOZ_3: VozMelody = {
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
-    /* bar 7 — D5 ×3, then an F5 quarter ("you"), ending on an E5 eighth ("like") */
+    /* bar 7 — D5 ×3, then a clipped F5 dotted-eighth ("you"), ending on a
+     * lengthened E5 dotted-eighth ("like") held across the barline */
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
     { midiOffset: 26, eighthNotes: 1 }, // D5 ♪
-    { midiOffset: 29, eighthNotes: 2 }, // F5 ♩ — "you" (second-to-last, quarter)
-    { midiOffset: 28, eighthNotes: 1, tie: true }, // E5 ♪ — "like" (fills the bar, tied...)
+    { midiOffset: 29, eighthNotes: 1.5 }, // F5 ♪. — "you" (dotted eighth)
+    { midiOffset: 28, eighthNotes: 1.5, tie: true }, // E5 ♪. — "like" (dotted eighth, fills the bar, tied...)
     /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
     { midiOffset: 28, eighthNotes: 1 }, // E5 ♪ — ...held over
   ],
@@ -295,12 +307,13 @@ const VOZ_2: VozMelody = {
     { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
     { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
     { midiOffset: 35, eighthNotes: 1 }, // B5 ♪
-    /* bar 7 — A5 ×3, then a B5 quarter ("you"), ending on a G5 eighth ("like") */
+    /* bar 7 — A5 ×3, then a clipped B5 dotted-eighth ("you"), ending on a
+     * lengthened G5 dotted-eighth ("like") held across the barline */
     { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
     { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
     { midiOffset: 33, eighthNotes: 1 }, // A5 ♪
-    { midiOffset: 35, eighthNotes: 2 }, // B5 ♩ — "you" (second-to-last, quarter)
-    { midiOffset: 31, eighthNotes: 1, tie: true }, // G5 ♪ — "like" (fills the bar, tied...)
+    { midiOffset: 35, eighthNotes: 1.5 }, // B5 ♪. — "you" (dotted eighth)
+    { midiOffset: 31, eighthNotes: 1.5, tie: true }, // G5 ♪. — "like" (dotted eighth, fills the bar, tied...)
     /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
     { midiOffset: 31, eighthNotes: 1 }, // G5 ♪ — ...held over
   ],
@@ -351,12 +364,13 @@ const VOZ_1: VozMelody = {
     { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
     { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
     { midiOffset: 31, eighthNotes: 1 }, // G5 ♪
-    /* bar 7 — F5 ×3 (FA'), then a G5 quarter (SOL', "you"), ending on an E5 eighth (MI', "like") */
+    /* bar 7 — F5 ×3 (FA'), then a clipped G5 dotted-eighth (SOL', "you"), ending
+     * on a lengthened E5 dotted-eighth (MI', "like") held across the barline */
     { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
     { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
     { midiOffset: 29, eighthNotes: 1 }, // F5 ♪
-    { midiOffset: 31, eighthNotes: 2 }, // G5 ♩ — "you" (second-to-last, quarter)
-    { midiOffset: 28, eighthNotes: 1, tie: true }, // E5 ♪ — "like" (fills the bar, tied...)
+    { midiOffset: 31, eighthNotes: 1.5 }, // G5 ♪. — "you" (dotted eighth)
+    { midiOffset: 28, eighthNotes: 1.5, tie: true }, // E5 ♪. — "like" (dotted eighth, fills the bar, tied...)
     /* bar 8 — tied continuation: "like" held an extra eighth across the barline */
     { midiOffset: 28, eighthNotes: 1 }, // E5 ♪ — ...held over
   ],

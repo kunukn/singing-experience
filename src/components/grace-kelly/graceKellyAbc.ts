@@ -77,6 +77,21 @@ export function estimateStaffWidth(noteCount: number): number {
   return Math.max(900, noteCount * 80)
 }
 
+/* Formats a duration in eighth-note units (the L:1/8 unit) as an ABC length
+ * token. Whole units render bare per the ABC spec (1 → '', 2 → '2', 3 → '3');
+ * half units render as an x/2 fraction (1.5 → '3/2' dotted eighth, 0.5 → '1/2'
+ * sixteenth). Only whole and half eighths occur in these transcriptions. */
+function abcDurationToken(eighthNotes: number): string {
+  /* Work in half-eighth units so 1.5 → 3 halves — integer math, no float compare. */
+  const halves = Math.round(eighthNotes * 2)
+  if (halves % 2 === 0) {
+    const whole = halves / 2
+    return whole === 1 ? '' : String(whole)
+  }
+
+  return `${halves}/2`
+}
+
 /* Converts a VozMelody to an ABC notation string ready for abcjs.renderAbc,
  * transposed so the tonic sounds at `startToneMidi`. The key signature is the
  * major key of the start tone; since the melody is diatonic, the note body
@@ -139,12 +154,13 @@ export function vozMelodyToAbcString(
     const staffOctave = Math.floor(ladder / 7)
     const letter = DIATONIC_TO_LETTER[((ladder % 7) + 7) % 7]
     const pitch = abcOctaveToken(letter, staffOctave)
-    /* L:1/8 means duration 1 = eighth note; omit "1" suffix per ABC spec */
-    const duration = note.eighthNotes === 1 ? '' : String(note.eighthNotes)
+    const duration = abcDurationToken(note.eighthNotes)
     /* ABC tie "-" must directly follow the note, before any barline (C- | C) */
     const tie = note.tie ? '-' : ''
 
     const beat = Math.floor(barPos / BEAT_EIGHTHS)
+    /* Only a plain eighth beams; longer or dotted notes (eighthNotes !== 1) carry
+     * their own flag and break the beam. */
     const beamable = note.eighthNotes === 1
 
     if (!atBarStart) {
@@ -156,8 +172,17 @@ export function vozMelodyToAbcString(
 
     body += pitch + duration + tie
 
-    barPos += note.eighthNotes
-    previousBeamable = beamable
+    /* A clipped note (restAfterEighths) is drawn as the note followed by a rest
+     * that fills the remaining time — e.g. a dotted-eighth note + a sixteenth
+     * rest. The rest is notation + scheduled silence only; it adds no entry to
+     * melody.notes, so note indexing and lyric alignment are unaffected. */
+    if (note.restAfterEighths && note.restAfterEighths > 0) {
+      body += ' z' + abcDurationToken(note.restAfterEighths)
+    }
+
+    barPos += note.eighthNotes + (note.restAfterEighths ?? 0)
+    /* A trailing rest breaks the beam — the next note can't beam back across it. */
+    previousBeamable = beamable && !note.restAfterEighths
     previousBeat = beat
     atBarStart = false
 

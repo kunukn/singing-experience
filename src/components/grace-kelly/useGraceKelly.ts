@@ -57,7 +57,11 @@ export function useGraceKelly() {
       scheduleDraw(() => {
         activeNoteIndex.value = noteIndex
       }, cursor)
-      cursor += notes[index].eighthNotes * eighthSeconds
+      /* Advance past the note plus any trailing rest so the next note starts on
+       * time even when this one is clipped short (restAfterEighths). */
+      cursor +=
+        (notes[index].eighthNotes + (notes[index].restAfterEighths ?? 0)) *
+        eighthSeconds
     }
     const endCursor = cursor
 
