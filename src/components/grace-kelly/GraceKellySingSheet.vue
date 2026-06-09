@@ -115,7 +115,14 @@ function calibratePitchToY() {
     const note = props.melody.notes[index]
     if (!note) return
 
-    const rect = element.getBoundingClientRect()
+    /* The .abcjs-note group bbox spans the stem + beam, so its center drifts off
+     * the notehead by a pitch- and note-type-dependent amount (a beamed eighth
+     * vs a dotted quarter of the same pitch land at different Ys), which skews
+     * the MIDI→Y fit and throws the pitch line off — badly once extrapolated an
+     * octave beyond the melody's range. Sample the notehead glyph itself (abcjs
+     * tags it) for the true staff position; fall back to the group if absent. */
+    const head = element.querySelector('.abcjs-notehead') ?? element
+    const rect = head.getBoundingClientRect()
     samples.push({
       midi: props.startToneMidi + note.midiOffset,
       y: rect.top - rootRect.top + rect.height / 2,

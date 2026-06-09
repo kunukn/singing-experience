@@ -12,12 +12,13 @@ export type PitchSample = {
 
 /*
  * Fallback vertical spacing when the melody can't supply two distinct pitches
- * to fit a slope (e.g. the Voz 4 "one tone" part). abcjs staff lines sit ~6px
- * apart and a line→space step is one diatonic degree (~1.8 semitones on
- * average), so ~3.5px per semitone is a reasonable stand-in. Negative because
- * higher pitch = smaller Y (further up the page).
+ * to fit a slope (e.g. the Voz 4 "one tone" part). Measured from the rendered
+ * staff at abcjs's default scale: ~3.9px per diatonic step, and a diatonic step
+ * averages 12/7 ≈ 1.71 semitones, so ~3.9 / 1.71 ≈ 2.1px per semitone. Negative
+ * because higher pitch = smaller Y (further up the page). Scale-invariant since
+ * the sheet renders abcjs at its default scale (no `scale` option).
  */
-const FALLBACK_PIXELS_PER_SEMITONE = -3.5
+const FALLBACK_PIXELS_PER_SEMITONE = -2.1
 
 /**
  * Build a linear MIDI→Y mapping from the rendered noteheads via least-squares
