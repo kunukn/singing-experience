@@ -4,7 +4,7 @@
 const STAFF_FONT_FAMILY = 'sans-serif'
 /* The `w:` lyric line under the staff; 1px smaller than labels so syllables read
  * less crowded. */
-export const STAFF_LYRIC_FONT = `${STAFF_FONT_FAMILY} 12`
+export const STAFF_LYRIC_FONT = `${STAFF_FONT_FAMILY} 11`
 /* Staff title and composer credit drawn above the staff. */
 export const STAFF_LABEL_FONT = `${STAFF_FONT_FAMILY} 13`
 
