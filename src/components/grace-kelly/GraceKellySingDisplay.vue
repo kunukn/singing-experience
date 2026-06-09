@@ -19,6 +19,9 @@ type Props = {
   /* A silent game instance (useGraceKelly({ silent: true })) — drives the sheet
    * timeline with no playback so the singer supplies the sound. */
   game: GraceKellyResult
+  /* An audible instance — the ♪/Mute toggle plays the melody out loud so the
+   * singer can hear it first. Never active at the same time as `game`. */
+  previewGame: GraceKellyResult
 }
 
 const props = defineProps<Props>()
@@ -32,13 +35,40 @@ const { t } = useI18n()
 const {
   isPlaying,
   isPaused,
-  isDone,
-  activeNoteIndex,
+  isDone: singIsDone,
+  activeNoteIndex: singActiveNoteIndex,
   start,
   pause,
   resume,
   stop,
 } = props.game
+
+/* Audible ♪/Mute melody preview — its own non-silent timeline, never running
+ * at the same time as the silent sing timeline above. */
+const {
+  isPlaying: isPreviewPlaying,
+  isDone: isPreviewDone,
+  activeNoteIndex: previewActiveNoteIndex,
+  start: startPreview,
+  stop: stopPreview,
+} = props.previewGame
+
+/* The sheet reads one timeline at a time; surface whichever is active. The two
+ * are mutually exclusive, so a simple coalesce / OR is unambiguous. */
+const activeNoteIndex = computed(
+  () => previewActiveNoteIndex.value ?? singActiveNoteIndex.value,
+)
+const isDone = computed(() => singIsDone.value || isPreviewDone.value)
+
+function togglePreview() {
+  if (isPreviewPlaying.value) {
+    stopPreview()
+
+    return
+  }
+
+  void startPreview(startToneMidi.value, vozIndex.value, bpm.value)
+}
 
 /* Live microphone pitch — its own AudioContext, independent of the (muted)
  * Tone engine driving the timeline. */
@@ -54,6 +84,26 @@ const {
 /* True while a sequence is playing or paused — the part/tone/tempo selects stay
  * locked for both so the running timeline can't be changed underneath it. */
 const isRunning = computed(() => isPlaying.value || isPaused.value)
+
+/* Either timeline busy — locks the selects/lyrics so the part/tone/tempo can't
+ * change underneath a running sing OR an audible preview. */
+const isBusy = computed(() => isRunning.value || isPreviewPlaying.value)
+
+const { isPreviewEnabled } = useSettings()
+
+/* "See your voice" idle preview — listens only while NOT running, so it never
+ * competes with the sing-flow mic above for the stream. Toggling the button on
+ * requests mic permission; if denied, useIdlePreview flips isPreviewEnabled
+ * back off and micPermission disables the toggle. */
+const {
+  previewMidi,
+  rawFrequency: previewFrequency,
+  micPermission,
+} = useIdlePreview({
+  isGameActive: isRunning,
+  isPlayingSequence: isPreviewPlaying,
+  isEnabled: isPreviewEnabled,
+})
 
 /* Begin the silent timeline and open the mic together. */
 function startSinging() {
@@ -110,10 +160,22 @@ const targetFrequency = computed(() => {
 /* Continuous MIDI of the singer's live pitch (raw, not rounded), for the pitch
  * line's vertical position; null when no clean pitch is detected. */
 const sungMidi = computed(() => {
-  if (!isListening.value || !isClean.value || frequency.value === null)
-    return null
+  if (isRunning.value) {
+    if (!isListening.value || !isClean.value || frequency.value === null)
+      return null
 
-  return frequencyToMidi(frequency.value)
+    return frequencyToMidi(frequency.value)
+  }
+
+  /* Never show the live pitch line while the melody plays audibly — even with
+   * "See your voice" on — or the mic would echo the speaker back as a line. */
+  if (isPreviewPlaying.value) return null
+
+  /* Idle "See your voice" preview — previewMidi is null while preview is off or
+   * during the deaf window, which hides the pitch line. */
+  if (previewMidi.value === null || previewFrequency.value === null) return null
+
+  return frequencyToMidi(previewFrequency.value)
 })
 
 /* True when the sung pitch is within tolerance of the active note — turns the
@@ -157,7 +219,7 @@ const vozLabel = computed(() =>
       v-model:vozIndex="vozIndex"
       v-model:startToneMidi="startToneMidi"
       v-model:bpm="bpm"
-      :isRunning="isRunning"
+      :isRunning="isBusy"
       :showToneMode="false"
     />
 
@@ -199,10 +261,35 @@ const vozLabel = computed(() =>
         severity="success"
         size="small"
         rounded
+        :disabled="isPreviewPlaying"
         @click="startSinging"
       >
-        {{ t('generic.start') }}
+        {{ t('graceKelly.sing') }}
       </PrimeButton>
+
+      <PrimeButton
+        v-if="!isRunning"
+        class="min-w-24"
+        :class="{ 'toggle-sequence-idle': !isPreviewPlaying }"
+        :severity="isPreviewPlaying ? 'warn' : 'secondary'"
+        size="small"
+        rounded
+        @click="togglePreview"
+      >
+        {{
+          isPreviewPlaying
+            ? t('generic.muteButton')
+            : t('generic.previewButton')
+        }}
+      </PrimeButton>
+
+      <ToggleIconButton
+        v-model="isPreviewEnabled"
+        iconOn="pi pi-microphone"
+        iconOff="pi pi-microphone"
+        :label="t('generic.previewSoundLabel')"
+        :disabled="micPermission === 'denied' || isBusy"
+      />
     </div>
 
     <p v-if="error" class="text-sm text-(--p-red-400)">{{ error }}</p>
@@ -233,8 +320,15 @@ const vozLabel = computed(() =>
 
     <GraceKellyLyrics
       :activeSyllableIndex="activeSyllableIndex"
-      :isInteractive="!isRunning"
+      :isInteractive="!isBusy"
       @syllableClick="scrollSheetToSyllable"
     />
   </div>
 </template>
+
+<style scoped lang="css">
+.toggle-sequence-idle {
+  padding-block: 0;
+  font-size: 1.2rem;
+}
+</style>

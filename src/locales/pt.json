@@ -261,6 +261,7 @@
   "graceKelly": {
     "title": "Grace Kelly",
     "subtitle": "Escolhe uma voz e canta",
+    "sing": "Canta",
     "voz": "Voz:",
     "startTone": "Nota inicial:",
     "tempo": "Tempo:",

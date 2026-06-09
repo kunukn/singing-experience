@@ -71,6 +71,9 @@ const harmonyGame = useGraceKellyHarmony()
 /* Silent timeline for the "Sing live" tab — advances the sheet on the BPM clock
  * with no playback; the singer's mic supplies the sound. */
 const singGame = useGraceKelly({ silent: true })
+/* Audible instance for the "Sing live" tab's ♪/Mute preview — plays the melody
+ * out loud so the singer can hear it before singing. */
+const singPreviewGame = useGraceKelly()
 
 /* One shared audio engine drives every tab — stop any in-flight playback when
  * switching so the inactive tab can't keep scheduling notes underneath. */
@@ -78,6 +81,7 @@ watch(activeTab, () => {
   game.stop()
   harmonyGame.stop()
   singGame.stop()
+  singPreviewGame.stop()
 })
 </script>
 
@@ -109,6 +113,7 @@ watch(activeTab, () => {
         <PrimeTabPanel value="sing-live">
           <GraceKellySingDisplay
             :game="singGame"
+            :previewGame="singPreviewGame"
             v-model:vozIndex="vozIndex"
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
