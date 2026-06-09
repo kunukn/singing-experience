@@ -252,4 +252,10 @@ defineExpose({ scrollToSyllable })
 :deep(.syllable-active) {
   fill: var(--p-primary-color);
 }
+
+/* Dim the staff part-title to match the stacked sheet view; SVG text color is
+ * `fill`, not `color`. */
+:deep(.abcjs-title) {
+  fill: var(--p-text-muted-color);
+}
 </style>

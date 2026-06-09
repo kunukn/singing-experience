@@ -236,4 +236,10 @@ watch(
 :deep(.syllable-active) {
   fill: var(--p-primary-color);
 }
+
+/* Dim the staff part-titles ("Melody", "Really high", …) so the stacked sheet
+ * reads as less busy; SVG text color is `fill`, not `color`. */
+:deep(.abcjs-title) {
+  fill: var(--p-text-muted-color);
+}
 </style>
