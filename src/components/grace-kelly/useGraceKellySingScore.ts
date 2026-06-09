@@ -4,45 +4,46 @@ import type { Ref } from 'vue'
  * celebration to fire. 0.8 = 80%. */
 const CONFETTI_THRESHOLD = 0.8
 
-/* A note counts as correct when at least this fraction of the time the singer
- * was voicing during that note landed on the target pitch. */
-const NOTE_PASS_RATIO = 0.5
+/* A note counts as correct once the singer has been on its target pitch for this
+ * long in total — regardless of how much wrong-pitch time surrounds it. Hitting
+ * the note for a real moment is enough; you don't have to spend the *majority*
+ * of the note on it. */
+const MIN_ON_PITCH_MS = 100
 
-/* Ignore notes the singer barely voiced (a stray frame or two of bleed from a
- * neighbouring note). Below this the note is treated as "not sung" → incorrect,
- * so a single grazing frame can't mark a note green. */
-const MIN_VOICED_MS = 40
+/* For short/fast notes a flat 100ms can exceed the note itself, so the dwell
+ * needed is capped at this fraction of the note's duration (e.g. a 167ms eighth
+ * needs ~83ms, not 100ms). */
+const DWELL_FRACTION = 0.5
 
 /*
- * Scores a live sing run note by note. Each frame, the voiced/on-pitch time is
- * added to a bucket for the note the timeline is currently on. When the run
- * ends, every note is graded: correct if the singer was on-pitch for at least
- * NOTE_PASS_RATIO of the time they were voicing it. The overall score is simply
- * correct notes ÷ total notes, and `correctNoteIndices` drives the green
- * notehead feedback on the sheet.
+ * Scores a live sing run note by note. Each frame, the on-pitch time is added to
+ * a bucket for the note the timeline is currently on. When the run ends, every
+ * note is graded correct if the singer was on its target pitch for at least
+ * `min(MIN_ON_PITCH_MS, DWELL_FRACTION × noteDuration)` — a minimum dwell, not a
+ * majority. The overall score is correct notes ÷ total notes, and
+ * `correctNoteIndices` drives the green notehead feedback on the sheet.
  *
  * The requestAnimationFrame loop runs only while `isPlaying`, so pauses are
  * excluded.
  */
 export function useGraceKellySingScore(params: {
   isPlaying: Ref<boolean>
-  /* True while a clean sung pitch is detected (frequency !== null). */
-  isVoiced: Ref<boolean>
-  /* True while the sung pitch is within scoring tolerance of the target note. */
+  /* True while the sung pitch is within scoring tolerance of the target note.
+   * Implies a clean voiced pitch (it's false when no pitch is detected). */
   isOnPitch: Ref<boolean>
   /* Reading-order index of the note the timeline is currently on; null between
    * notes. Indexes line up with the melody's `notes` array and the sheet's
    * rendered noteheads. */
   activeNoteIndex: Ref<number | null>
-  /* Total notes in the current melody — the score denominator. */
-  noteCount: Ref<number>
+  /* Sounding duration of each note in ms, indexed in reading order. Its length
+   * is the score denominator (total notes). */
+  noteDurationsMs: Ref<number[]>
 }) {
-  const { isPlaying, isVoiced, isOnPitch, activeNoteIndex, noteCount } = params
+  const { isPlaying, isOnPitch, activeNoteIndex, noteDurationsMs } = params
 
-  /* Per-note accumulators, indexed by reading-order note index. Plain arrays
-   * (not refs) — mutated every frame, then snapshotted into the reactive
+  /* Per-note on-pitch time, indexed by reading-order note index. Plain array
+   * (not a ref) — mutated every frame, then graded into the reactive
    * `noteResults` when the run ends. */
-  let noteVoicedMs: number[] = []
   let noteOnPitchMs: number[] = []
 
   /* One boolean per note: true = sung correctly. Populated when the run ends. */
@@ -53,24 +54,24 @@ export function useGraceKellySingScore(params: {
 
   function tick(timestamp: number) {
     const index = activeNoteIndex.value
-    if (lastTimestamp !== null && isVoiced.value && index !== null) {
-      const delta = timestamp - lastTimestamp
-      noteVoicedMs[index] = (noteVoicedMs[index] ?? 0) + delta
-      if (isOnPitch.value)
-        noteOnPitchMs[index] = (noteOnPitchMs[index] ?? 0) + delta
+    if (lastTimestamp !== null && isOnPitch.value && index !== null) {
+      noteOnPitchMs[index] =
+        (noteOnPitchMs[index] ?? 0) + (timestamp - lastTimestamp)
     }
     lastTimestamp = timestamp
     rafId = requestAnimationFrame(tick)
   }
 
-  /* Grade every note from its bucket. Called when the run ends. */
+  /* Grade every note from its on-pitch bucket. Called when the run ends. */
   function recomputeResults() {
+    const durations = noteDurationsMs.value
     const results: boolean[] = []
-    for (let index = 0; index < noteCount.value; index++) {
-      const voiced = noteVoicedMs[index] ?? 0
-      const onPitch = noteOnPitchMs[index] ?? 0
-      results[index] =
-        voiced >= MIN_VOICED_MS && onPitch / voiced >= NOTE_PASS_RATIO
+    for (let index = 0; index < durations.length; index++) {
+      const dwellNeeded = Math.min(
+        MIN_ON_PITCH_MS,
+        DWELL_FRACTION * durations[index],
+      )
+      results[index] = (noteOnPitchMs[index] ?? 0) >= dwellNeeded
     }
     noteResults.value = results
   }
@@ -91,7 +92,6 @@ export function useGraceKellySingScore(params: {
 
   /* Zero the accumulators and results for a fresh run. Call on each new start(). */
   function reset() {
-    noteVoicedMs = []
     noteOnPitchMs = []
     noteResults.value = []
   }

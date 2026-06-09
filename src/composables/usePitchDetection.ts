@@ -27,6 +27,14 @@ type UsePitchDetectionOptions = {
    * reported). Lower = snappier note re-onset for fast melodies, at the cost of
    * more attack-transient flicker. Defaults to ONSET_DEBOUNCE_MS. */
   onsetDebounceMs?: number
+  /* Request a RAW mic stream — echo cancellation, noise suppression and auto
+   * gain control OFF. The browser defaults (all on) actively degrade pitch
+   * detection: noise suppression treats a sustained tone as background hiss and
+   * gates it, AGC ducks steady notes, and echo cancellation erases any sound the
+   * device itself is playing. Use for singing/pitch games where the input is a
+   * held musical tone. Leave off for games that play reference tones through the
+   * speaker while listening (they rely on echo cancellation + deaf windows). */
+  rawAudio?: boolean
 }
 
 /* Practical singing range: ~B1 (60 Hz) to ~F#6 (1500 Hz), covering bass to soprano. */
@@ -141,7 +149,15 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
     error.value = null
 
     try {
-      mediaStream = await acquireMicStream({ audio: true })
+      mediaStream = await acquireMicStream({
+        audio: options.rawAudio
+          ? {
+              echoCancellation: false,
+              noiseSuppression: false,
+              autoGainControl: false,
+            }
+          : true,
+      })
       audioContext = new AudioContext()
       analyserNode = audioContext.createAnalyser()
       // 2048-sample FFT: ~23 ms window at 44.1 kHz — good pitch resolution with low latency

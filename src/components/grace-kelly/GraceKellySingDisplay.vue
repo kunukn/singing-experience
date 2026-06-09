@@ -85,6 +85,12 @@ const {
   /* Snappier note re-onset than the 40ms default — fast melodies re-articulate
    * many short notes, and the lag would otherwise eat the start of each one. */
   onsetDebounceMs: 20,
+  /* Between the 0.90 default and SingFly's 0.50 — admits softer / decaying notes
+   * so they still register during the fast melody; tunable. */
+  clarityThreshold: 0.6,
+  /* Raw stream — the browser's default noise suppression / AGC gate sustained
+   * sung tones; the "Sing live" timeline is silent so there's no echo to cancel. */
+  rawAudio: true,
 })
 
 /* True while a sequence is playing or paused — the part/tone/tempo selects stay
@@ -194,10 +200,6 @@ const isOnPitch = computed(() => {
   return isWithinTolerance(frequency.value, targetFrequency.value)
 })
 
-/* True while the singer is producing a clean tone — the score's denominator
- * counts only this time, so breaths and consonants never hurt. */
-const isVoiced = computed(() => frequency.value !== null)
-
 /* On-pitch tolerance used for scoring only — distinct from the ±25¢ `isOnPitch`
  * that drives the visual pitch line. 40¢ is under half a semitone: forgiving of
  * normal vibrato/drift and child voices, but tight enough that a genuinely wrong
@@ -214,11 +216,18 @@ const isOnPitchForScore = computed(() => {
   )
 })
 
-/* Total notes in the current melody — the per-note score denominator. */
-const noteCount = computed(() => VOZ_MELODIES[vozIndex.value].notes.length)
+/* Sounding duration of each note in ms — the per-note dwell thresholds and the
+ * score denominator derive from this. 6/8: a dotted-quarter beat split in 3. */
+const noteDurationsMs = computed(() => {
+  const eighthMs = (60 / bpm.value / 3) * 1000
 
-/* Score the run note by note — each notehead is correct when most of the time
- * the singer voiced it landed on pitch. Gates the end-of-song confetti, drives
+  return VOZ_MELODIES[vozIndex.value].notes.map(
+    (note) => note.eighthNotes * eighthMs,
+  )
+})
+
+/* Score the run note by note — each notehead is correct once the singer held
+ * its target pitch for a minimum dwell. Gates the end-of-song confetti, drives
  * the result percentage, and surfaces which notes to color green. Scored
  * against the SING timeline's active note (singActiveNoteIndex), not the
  * preview's. */
@@ -229,10 +238,9 @@ const {
   correctNoteIndices,
 } = useGraceKellySingScore({
   isPlaying,
-  isVoiced,
   isOnPitch: isOnPitchForScore,
   activeNoteIndex: singActiveNoteIndex,
-  noteCount,
+  noteDurationsMs,
 })
 
 const scorePercent = computed(() => Math.round(onPitchRatio.value * 100))
