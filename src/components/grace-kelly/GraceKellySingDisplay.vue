@@ -14,6 +14,7 @@ import {
 import { VOZ_MELODIES } from './graceKellyMelodies'
 import { isOnPitch as isWithinTolerance } from './graceKellySingPitch'
 import { useStableSungLabel } from './useStableSungLabel'
+import { useGraceKellySingScore } from './useGraceKellySingScore'
 import type { GraceKellyResult } from './useGraceKelly'
 
 type Props = {
@@ -108,6 +109,7 @@ const {
 
 /* Begin the silent timeline and open the mic together. */
 function startSinging() {
+  resetSingScore()
   start(startToneMidi.value, vozIndex.value, bpm.value)
   void startMic()
 }
@@ -185,6 +187,21 @@ const isOnPitch = computed(() => {
   if (frequency.value === null || targetFrequency.value === null) return false
 
   return isWithinTolerance(frequency.value, targetFrequency.value)
+})
+
+/* Score the run by duration — what fraction of active playing time was sung
+ * on-pitch — to gate the end-of-song confetti. */
+const { reachedThreshold, reset: resetSingScore } = useGraceKellySingScore({
+  isPlaying,
+  isOnPitch,
+})
+
+const { fireConfetti } = useConfettiStore()
+
+/* Celebrate only on a natural finish (singIsDone, never a manual stop) when the
+ * singer held pitch for at least the threshold fraction of the song. */
+watch(singIsDone, (done) => {
+  if (done && reachedThreshold.value) fireConfetti()
 })
 
 /* The singer's own de-flickered note label, stacked above the target tone
