@@ -3,8 +3,8 @@ import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
 import { estimateStaffWidth, vozMelodyToAbcString } from './graceKellyAbc'
 import type { VozMelody } from './graceKellyMelodies'
-import { measureMusicWidth } from './graceKellyStaffRender'
 import { buildPitchToY, type PitchSample } from './graceKellySingPitch'
+import { measureMusicWidth } from './graceKellyStaffRender'
 
 type Props = {
   melody: VozMelody
@@ -321,6 +321,24 @@ defineExpose({ scrollToSyllable })
           {{ sungToneLabel }}
         </span>
       </div>
+    </div>
+
+    <!--
+      Idle "See your voice": the detected sung note parked at a fixed spot in the
+      sheet (no active note to anchor to). Pinned to the root like the pitch line
+      so it stays put within the visible sheet. Always yellow — there is no target
+      note to match in idle. Mutually exclusive with the anchored singer chip,
+      which requires toneLabelPosition.
+    -->
+    <div
+      v-if="sungToneLabel && !toneLabelPosition"
+      class="pointer-events-none absolute inset-x-0 top-8 flex justify-center"
+    >
+      <span
+        class="rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-yellow-400) tabular-nums"
+      >
+        {{ sungToneLabel }}
+      </span>
     </div>
 
     <!--
