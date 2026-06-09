@@ -4,6 +4,7 @@ import {
   midiToFrequency,
   midiToNoteLabel,
 } from '@/utils/noteUtils'
+import { OFF_CENTS } from '@/utils/pitchColors'
 import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
 import GraceKellySingSheet from './GraceKellySingSheet.vue'
 import { VOZ_LABEL_KEYS } from './graceKellyConstants'
@@ -189,15 +190,30 @@ const isOnPitch = computed(() => {
   return isWithinTolerance(frequency.value, targetFrequency.value)
 })
 
-/* Score the run by duration — what fraction of active playing time was sung
- * on-pitch — to gate the end-of-song confetti. */
+/* True while the singer is producing a clean tone — the score's denominator
+ * counts only this time, so breaths and consonants never hurt. */
+const isVoiced = computed(() => frequency.value !== null)
+
+/* On-pitch judged at the wider ±50¢ "right note, not the neighbor" tolerance
+ * for scoring — distinct from the ±25¢ `isOnPitch` that drives the visual pitch
+ * line. Only a genuinely wrong tone (≥ half a semitone off) costs points. */
+const isOnPitchForScore = computed(() => {
+  if (frequency.value === null || targetFrequency.value === null) return false
+
+  return isWithinTolerance(frequency.value, targetFrequency.value, OFF_CENTS)
+})
+
+/* Score the run by "voiced accuracy" — of the time the singer was actually
+ * singing, what fraction was on the target pitch. Gates the end-of-song
+ * confetti and drives the result percentage. */
 const {
   reachedThreshold,
   reset: resetSingScore,
   onPitchRatio,
 } = useGraceKellySingScore({
   isPlaying,
-  isOnPitch,
+  isVoiced,
+  isOnPitch: isOnPitchForScore,
 })
 
 const scorePercent = computed(() => Math.round(onPitchRatio.value * 100))
