@@ -267,7 +267,8 @@
     "showAllParts": "Все партии",
     "tabs": {
       "singAlong": "Пой вместе",
-      "harmony": "Гармония"
+      "harmony": "Гармония",
+      "sing": "Пой вживую"
     },
     "harmony": {
       "subtitle": "Включай партии и играй вместе"

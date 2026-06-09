@@ -267,7 +267,8 @@
     "showAllParts": "所有声部",
     "tabs": {
       "singAlong": "跟着唱",
-      "harmony": "和声"
+      "harmony": "和声",
+      "sing": "现场唱"
     },
     "harmony": {
       "subtitle": "开关声部，一起播放"

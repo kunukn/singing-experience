@@ -267,7 +267,8 @@
     "showAllParts": "Alle stemmer",
     "tabs": {
       "singAlong": "Syng med",
-      "harmony": "Harmoni"
+      "harmony": "Harmoni",
+      "sing": "Syng live"
     },
     "harmony": {
       "subtitle": "Tænd stemmer, spil sammen"

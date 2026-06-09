@@ -3,6 +3,7 @@ import { G2_MIDI } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import GraceKellyDisplay from './GraceKellyDisplay.vue'
 import GraceKellyHarmonyDisplay from './GraceKellyHarmonyDisplay.vue'
+import GraceKellySingDisplay from './GraceKellySingDisplay.vue'
 import {
   ALLOWED_BPMS,
   DEFAULT_BPM,
@@ -67,12 +68,16 @@ const activeTab = useLocalStorage('syng.graceKellyTab', 'sing')
 
 const game = useGraceKelly()
 const harmonyGame = useGraceKellyHarmony()
+/* Silent timeline for the "Sing live" tab — advances the sheet on the BPM clock
+ * with no playback; the singer's mic supplies the sound. */
+const singGame = useGraceKelly({ silent: true })
 
-/* One shared audio engine drives both tabs — stop any in-flight playback when
+/* One shared audio engine drives every tab — stop any in-flight playback when
  * switching so the inactive tab can't keep scheduling notes underneath. */
 watch(activeTab, () => {
   game.stop()
   harmonyGame.stop()
+  singGame.stop()
 })
 </script>
 
@@ -82,6 +87,7 @@ watch(activeTab, () => {
       <PrimeTabList>
         <PrimeTab value="sing">{{ t('graceKelly.tabs.singAlong') }}</PrimeTab>
         <PrimeTab value="harmony">{{ t('graceKelly.tabs.harmony') }}</PrimeTab>
+        <PrimeTab value="sing-live">{{ t('graceKelly.tabs.sing') }}</PrimeTab>
       </PrimeTabList>
       <PrimeTabPanels class="px-0">
         <PrimeTabPanel value="sing">
@@ -98,6 +104,14 @@ watch(activeTab, () => {
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
             v-model:selectedVozIndices="selectedVozIndices"
+          />
+        </PrimeTabPanel>
+        <PrimeTabPanel value="sing-live">
+          <GraceKellySingDisplay
+            :game="singGame"
+            v-model:vozIndex="vozIndex"
+            v-model:startToneMidi="startToneMidi"
+            v-model:bpm="bpm"
           />
         </PrimeTabPanel>
       </PrimeTabPanels>

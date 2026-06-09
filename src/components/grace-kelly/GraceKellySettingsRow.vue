@@ -15,9 +15,15 @@ type Props = {
   /* Show the single-voice (Voz) select. The harmony tab hides it — it picks
    * voices via per-part toggles instead. */
   showVoz?: boolean
+  /* Show the tone-sound (timbre) select. The "Sing live" tab hides it — there
+   * is no playback there, so the timbre choice is meaningless. */
+  showToneMode?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), { showVoz: true })
+const props = withDefaults(defineProps<Props>(), {
+  showVoz: true,
+  showToneMode: true,
+})
 
 const vozIndex = defineModel<number>('vozIndex')
 const startToneMidi = defineModel<number>('startToneMidi', { required: true })
@@ -74,6 +80,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       'mask-start': canScrollStart,
       'mask-end': canScrollEnd,
       'no-voz': !props.showVoz,
+      'no-tone': !props.showToneMode,
     }"
   >
     <div v-if="props.showVoz" class="settings-item">
@@ -143,7 +150,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       </PrimeSelect>
     </div>
 
-    <div class="settings-item">
+    <div v-if="props.showToneMode" class="settings-item">
       <label class="hidden text-sm text-(--p-text-muted-color) lg:block">{{
         t('sounds.toneSound')
       }}</label>
@@ -166,9 +173,11 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
   scroll-padding-inline: 1.5rem;
 }
 
-/* Harmony tab hides the Voz select — drop to 6 columns so the remaining three
- * items center without two phantom trailing columns pulling them off-center. */
-.settings-row.no-voz {
+/* Harmony tab hides the Voz select, the Sing-live tab hides the tone-sound
+ * select — either way three items remain, so drop to 6 columns to center them
+ * without two phantom trailing columns pulling them off-center. */
+.settings-row.no-voz,
+.settings-row.no-tone {
   @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr];
 }
 

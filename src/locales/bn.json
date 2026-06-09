@@ -267,7 +267,8 @@
     "showAllParts": "সব অংশ",
     "tabs": {
       "singAlong": "সাথে গাও",
-      "harmony": "হারমনি"
+      "harmony": "হারমনি",
+      "sing": "লাইভ গাও"
     },
     "harmony": {
       "subtitle": "অংশ চালু/বন্ধ করো, একসাথে বাজাও"

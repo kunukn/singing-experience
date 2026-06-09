@@ -14,7 +14,14 @@ const SCHEDULE_AHEAD_S = 0.05
 
 export type GraceKellyResult = ReturnType<typeof useGraceKelly>
 
-export function useGraceKelly() {
+type Options = {
+  /* Drive the visual timeline only — skip all audio scheduling so the sheet
+   * advances on the BPM clock with no playback. Used by the "Sing live" tab,
+   * where the singer supplies the sound. */
+  silent?: boolean
+}
+
+export function useGraceKelly(options: Options = {}) {
   const { snapshot, send } = useMachine(graceKellyMachine)
   const { warmUp, playToneAt, getNow, scheduleDraw, cancelScheduled } =
     useTonePlayer()
@@ -80,7 +87,8 @@ export function useGraceKelly() {
         currentStartToneMidi + notes[index].midiOffset,
       )
       const durationS = runEighths * eighthSeconds * ARTICULATION
-      playToneAt(freq, durationS, noteStartTimes[index])
+      if (!options.silent) playToneAt(freq, durationS, noteStartTimes[index])
+
       index = last + 1
     }
 

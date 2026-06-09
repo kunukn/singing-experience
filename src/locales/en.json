@@ -267,7 +267,8 @@
     "showAllParts": "All parts",
     "tabs": {
       "singAlong": "Sing along",
-      "harmony": "Harmony"
+      "harmony": "Harmony",
+      "sing": "Sing live"
     },
     "harmony": {
       "subtitle": "Toggle parts, play together"

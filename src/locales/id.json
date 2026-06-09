@@ -267,7 +267,8 @@
     "showAllParts": "Semua suara",
     "tabs": {
       "singAlong": "Ikut nyanyi",
-      "harmony": "Harmoni"
+      "harmony": "Harmoni",
+      "sing": "Nyanyi langsung"
     },
     "harmony": {
       "subtitle": "Nyalakan suara, mainkan bersama"

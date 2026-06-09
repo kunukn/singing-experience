@@ -267,7 +267,8 @@
     "showAllParts": "Todas as vozes",
     "tabs": {
       "singAlong": "Canta junto",
-      "harmony": "Harmonia"
+      "harmony": "Harmonia",
+      "sing": "Canta ao vivo"
     },
     "harmony": {
       "subtitle": "Liga as vozes e toca juntas"

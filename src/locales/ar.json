@@ -267,7 +267,8 @@
     "showAllParts": "كل الأصوات",
     "tabs": {
       "singAlong": "غنِّ معنا",
-      "harmony": "تناغم"
+      "harmony": "تناغم",
+      "sing": "غنِّ مباشرةً"
     },
     "harmony": {
       "subtitle": "شغّل الأصوات وشغّلها معًا"

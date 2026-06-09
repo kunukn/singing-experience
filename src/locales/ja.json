@@ -267,7 +267,8 @@
     "showAllParts": "すべてのパート",
     "tabs": {
       "singAlong": "いっしょに歌う",
-      "harmony": "ハーモニー"
+      "harmony": "ハーモニー",
+      "sing": "ライブで歌う"
     },
     "harmony": {
       "subtitle": "パートをオン/オフして一緒に鳴らそう"

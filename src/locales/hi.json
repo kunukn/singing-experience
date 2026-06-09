@@ -267,7 +267,8 @@
     "showAllParts": "सभी आवाज़ें",
     "tabs": {
       "singAlong": "साथ गाओ",
-      "harmony": "हार्मनी"
+      "harmony": "हार्मनी",
+      "sing": "लाइव गाओ"
     },
     "harmony": {
       "subtitle": "आवाज़ें चालू/बंद करो, साथ बजाओ"

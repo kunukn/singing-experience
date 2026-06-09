@@ -267,7 +267,8 @@
     "showAllParts": "Toutes les voix",
     "tabs": {
       "singAlong": "Chante avec",
-      "harmony": "Harmonie"
+      "harmony": "Harmonie",
+      "sing": "Chante en direct"
     },
     "harmony": {
       "subtitle": "Active les voix, joue-les ensemble"
