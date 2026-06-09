@@ -10,7 +10,7 @@ function prewarmAudio() {
 </script>
 
 <template>
-  <div class="flex grow flex-col items-center pt-1">
+  <div class="flex grow flex-col items-center pt-1 pb-4">
     <h2 class="product-title mb-2 font-bold">{{ t('games.title') }}</h2>
 
     <p class="mb-4 text-(--p-text-muted-color)">
