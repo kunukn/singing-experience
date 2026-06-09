@@ -4,7 +4,6 @@ import {
   midiToFrequency,
   midiToNoteLabel,
 } from '@/utils/noteUtils'
-import { OFF_CENTS } from '@/utils/pitchColors'
 import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
 import GraceKellySingSheet from './GraceKellySingSheet.vue'
 import { VOZ_LABEL_KEYS } from './graceKellyConstants'
@@ -194,13 +193,20 @@ const isOnPitch = computed(() => {
  * counts only this time, so breaths and consonants never hurt. */
 const isVoiced = computed(() => frequency.value !== null)
 
-/* On-pitch judged at the wider ±50¢ "right note, not the neighbor" tolerance
- * for scoring — distinct from the ±25¢ `isOnPitch` that drives the visual pitch
- * line. Only a genuinely wrong tone (≥ half a semitone off) costs points. */
+/* On-pitch tolerance used for scoring only — distinct from the ±25¢ `isOnPitch`
+ * that drives the visual pitch line. 30¢ is just over a quarter-semitone:
+ * forgiving of normal vibrato/drift, but tight enough that a genuinely wrong
+ * tone (≥ ~a third of a semitone off) costs points. */
+const SCORE_TOLERANCE_CENTS = 30
+
 const isOnPitchForScore = computed(() => {
   if (frequency.value === null || targetFrequency.value === null) return false
 
-  return isWithinTolerance(frequency.value, targetFrequency.value, OFF_CENTS)
+  return isWithinTolerance(
+    frequency.value,
+    targetFrequency.value,
+    SCORE_TOLERANCE_CENTS,
+  )
 })
 
 /* Score the run by "voiced accuracy" — of the time the singer was actually
