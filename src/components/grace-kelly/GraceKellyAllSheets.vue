@@ -4,7 +4,11 @@ import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { GRACE_KELLY_LYRIC_ABC } from './graceKellyLyrics'
 import { VOZ_MELODIES } from './graceKellyMelodies'
 import { vozMelodyToAbcString, estimateStaffWidth } from './graceKellyAbc'
-import { measureMusicWidth } from './graceKellyStaffRender'
+import {
+  measureMusicWidth,
+  STAFF_LABEL_FONT,
+  STAFF_LYRIC_FONT,
+} from './graceKellyStaffRender'
 
 type Props = {
   activeNoteIndex: number | null
@@ -35,9 +39,8 @@ const COMPACT_RENDER = {
   add_classes: true,
   paddingtop: 4,
   paddingbottom: 4,
-  /* abcjs font strings are '<family> <size>'. Sans-serif for the staff title
-   * and the lyric line under each staff. */
-  format: { titlefont: 'sans-serif 13', vocalfont: 'sans-serif 13' },
+  /* Sans-serif for the staff title and the lyric line under each staff. */
+  format: { titlefont: STAFF_LABEL_FONT, vocalfont: STAFF_LYRIC_FONT },
 } as const
 
 const scrollRef = ref<HTMLDivElement | null>(null)

@@ -3,7 +3,11 @@ import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
 import { estimateStaffWidth, vozMelodyToAbcString } from './graceKellyAbc'
 import type { VozMelody } from './graceKellyMelodies'
-import { measureMusicWidth } from './graceKellyStaffRender'
+import {
+  measureMusicWidth,
+  STAFF_LABEL_FONT,
+  STAFF_LYRIC_FONT,
+} from './graceKellyStaffRender'
 
 type Props = {
   melody: VozMelody
@@ -25,11 +29,10 @@ type Props = {
 
 const props = defineProps<Props>()
 
-/* abcjs font strings are '<family> <size>'. Sans-serif for the composer credit
- * and the lyric line under the staff. */
+/* Sans-serif for the composer credit and the lyric line under the staff. */
 const SANS_FONTS = {
-  composerfont: 'sans-serif 13',
-  vocalfont: 'sans-serif 13',
+  composerfont: STAFF_LABEL_FONT,
+  vocalfont: STAFF_LYRIC_FONT,
 } as const
 
 const containerRef = ref<HTMLDivElement | null>(null)
