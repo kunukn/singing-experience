@@ -13,6 +13,7 @@ import {
 } from './graceKellyLyrics'
 import { VOZ_MELODIES } from './graceKellyMelodies'
 import { isOnPitch as isWithinTolerance } from './graceKellySingPitch'
+import { useStableSungLabel } from './useStableSungLabel'
 import type { GraceKellyResult } from './useGraceKelly'
 
 type Props = {
@@ -186,6 +187,11 @@ const isOnPitch = computed(() => {
   return isWithinTolerance(frequency.value, targetFrequency.value)
 })
 
+/* The singer's own de-flickered note label, stacked above the target tone
+ * label on the sheet. Driven by the same `sungMidi` (so it inherits its
+ * idle/preview/running null-gating); held 80ms before showing to avoid strobe. */
+const { stableSungLabel } = useStableSungLabel({ sungMidi })
+
 /* Flat reading-order index of the syllable currently being sung — the last
  * syllable whose starting tone has been reached. Held/tied tones keep the
  * previous syllable lit (the final "like" sustains over tones 32–33). -1 when
@@ -313,6 +319,7 @@ const vozLabel = computed(() =>
         :lyrics="GRACE_KELLY_LYRIC_ABC"
         :activeSyllableIndex="activeSyllableIndex"
         :currentToneLabel="currentToneLabel"
+        :sungToneLabel="stableSungLabel"
         :sungMidi="sungMidi"
         :isOnPitch="isOnPitch"
       />

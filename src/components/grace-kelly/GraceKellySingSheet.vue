@@ -22,6 +22,10 @@ type Props = {
   /* Sounding pitch of the active note, drawn as a label floating above it;
    * omit/null to hide. */
   currentToneLabel?: string | null
+  /* Singer's de-flickered live note label, stacked above the target label;
+   * green (--p-primary-color) when it matches currentToneLabel, yellow
+   * otherwise. omit/null to hide. */
+  sungToneLabel?: string | null
   /* Continuous MIDI value of the singer's live pitch (raw, not rounded); null
    * when silent. Drives the vertical position of the pitch line. */
   sungMidi?: number | null
@@ -31,6 +35,14 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+
+/* Green only when the singer's note label reads the same as the target's, so
+ * the color always agrees with the two stacked labels on screen. */
+const isSungMatch = computed(
+  () =>
+    props.sungToneLabel != null &&
+    props.sungToneLabel === props.currentToneLabel,
+)
 
 /* abcjs font strings are '<family> <size>'. Sans-serif for the composer credit
  * and the lyric line under the staff. */
@@ -289,6 +301,24 @@ defineExpose({ scrollToSyllable })
           }"
         >
           {{ currentToneLabel }}
+        </span>
+
+        <!--
+          Singer's live note, stacked above the target label (extra 18px lift).
+          Green when it matches the target label, yellow otherwise.
+        -->
+        <span
+          v-if="sungToneLabel && toneLabelPosition"
+          class="pointer-events-none absolute -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold tabular-nums transition-colors duration-100"
+          :class="
+            isSungMatch ? 'text-(--p-primary-color)' : 'text-(--p-yellow-400)'
+          "
+          :style="{
+            left: `${toneLabelPosition.left + 5}px`,
+            top: `${toneLabelPosition.top - 14 - 18}px`,
+          }"
+        >
+          {{ sungToneLabel }}
         </span>
       </div>
     </div>
