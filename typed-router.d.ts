@@ -20,9 +20,9 @@ import type {
 
 declare module 'vue-router' {
   interface TypesConfig {
-    ParamParsers:
-      | never
+    _ParamParsers: {}
     RouteNamedMap: import('vue-router/auto-routes').RouteNamedMap
+    _RouteFileInfoMap: import('vue-router/auto-routes')._RouteFileInfoMap
   }
 }
 
@@ -203,17 +203,23 @@ declare module 'vue-router/auto-routes' {
         | '/'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/[...pathMatch].vue': {
       routes:
         | '/[...pathMatch]'
       views:
         | never
+      pathParamNames:
+        | 'pathMatch'
     }
     'src/pages/do-re-mi.vue': {
       routes:
         | '/do-re-mi'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/do-re-mi-test.vue': {
@@ -221,11 +227,15 @@ declare module 'vue-router/auto-routes' {
         | '/do-re-mi-test'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/games.vue': {
       routes:
         | '/games'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/grace-kelly-challenge.vue': {
@@ -233,11 +243,15 @@ declare module 'vue-router/auto-routes' {
         | '/grace-kelly-challenge'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/pitch-detector.vue': {
       routes:
         | '/pitch-detector'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/pitch-detector-test.vue': {
@@ -245,11 +259,15 @@ declare module 'vue-router/auto-routes' {
         | '/pitch-detector-test'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/pitch-game.vue': {
       routes:
         | '/pitch-game'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/pitch-game-test.vue': {
@@ -257,11 +275,15 @@ declare module 'vue-router/auto-routes' {
         | '/pitch-game-test'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/sing-tone.vue': {
       routes:
         | '/sing-tone'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/sing-tone-test.vue': {
@@ -269,11 +291,15 @@ declare module 'vue-router/auto-routes' {
         | '/sing-tone-test'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/singfly.vue': {
       routes:
         | '/singfly'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/singfly-test.vue': {
@@ -281,11 +307,15 @@ declare module 'vue-router/auto-routes' {
         | '/singfly-test'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/tone-detector.vue': {
       routes:
         | '/tone-detector'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/tone-detector-test.vue': {
@@ -293,11 +323,15 @@ declare module 'vue-router/auto-routes' {
         | '/tone-detector-test'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/tools.vue': {
       routes:
         | '/tools'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/tuner.vue': {
@@ -305,11 +339,15 @@ declare module 'vue-router/auto-routes' {
         | '/tuner'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/tuner-test.vue': {
       routes:
         | '/tuner-test'
       views:
+        | never
+      pathParamNames:
         | never
     }
     'src/pages/ukulele.vue': {
@@ -317,17 +355,23 @@ declare module 'vue-router/auto-routes' {
         | '/ukulele'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/warm-up.vue': {
       routes:
         | '/warm-up'
       views:
         | never
+      pathParamNames:
+        | never
     }
     'src/pages/warm-up-test.vue': {
       routes:
         | '/warm-up-test'
       views:
+        | never
+      pathParamNames:
         | never
     }
   }

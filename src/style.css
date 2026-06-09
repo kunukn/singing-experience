@@ -5,6 +5,10 @@
 @layer base {
   html {
     @apply h-full;
+    /* Reserve scrollbar space so toggling overflow:hidden (e.g. PrimeVue's
+     * blockScroll on the settings Drawer) never changes the viewport width
+     * and snaps fixed-positioned overlays sideways. */
+    scrollbar-gutter: stable;
   }
 
   body {
