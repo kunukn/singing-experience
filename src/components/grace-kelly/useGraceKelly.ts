@@ -1,4 +1,5 @@
 import { useMachine } from '@xstate/vue'
+import type { Ref } from 'vue'
 import { midiToFrequency } from '@/utils/noteUtils'
 import { DEFAULT_BPM } from './graceKellyConstants'
 import { graceKellyMachine, type GraceKellyPhase } from './graceKellyMachine'
@@ -19,12 +20,27 @@ type Options = {
    * advances on the BPM clock with no playback. Used by the "Sing live" tab,
    * where the singer supplies the sound. */
   silent?: boolean
+  /* When this ref is true, play a metronome click on every dotted-quarter beat
+   * (with an accented bar downbeat) plus a one-bar count-in before the first
+   * note. Read at schedule time. Only the "Sing live" instance passes it. */
+  metronomeEnabled?: Ref<boolean>
 }
+
+/* 6/8 beat math: a dotted-quarter pulse is 3 eighth notes; a bar is 2 pulses. */
+const BEAT_EIGHTHS = 3
+/* One full bar of count-in (2 dotted-quarter beats) before the first note. */
+const COUNT_IN_BEATS = 2
 
 export function useGraceKelly(options: Options = {}) {
   const { snapshot, send } = useMachine(graceKellyMachine)
-  const { warmUp, playToneAt, getNow, scheduleDraw, cancelScheduled } =
-    useTonePlayer()
+  const {
+    warmUp,
+    playToneAt,
+    playClickAt,
+    getNow,
+    scheduleDraw,
+    cancelScheduled,
+  } = useTonePlayer()
 
   const phase = computed<GraceKellyPhase>(
     () => snapshot.value.value as GraceKellyPhase,
@@ -48,15 +64,25 @@ export function useGraceKelly(options: Options = {}) {
    * sound stay locked together (both sheets read activeNoteIndex). Used by both
    * start() (fromIndex 0) and resume() (fromIndex = paused note). */
   function scheduleFrom(fromIndex: number) {
-    const notes = VOZ_MELODIES[currentVozIndex].notes
+    const melody = VOZ_MELODIES[currentVozIndex]
+    const notes = melody.notes
 
     /* Eighth-note duration for the chosen tempo (bpm = dotted quarter, the 6/8
      * beat unit): dotted quarter = 60/bpm s, split across 3 eighth notes. */
     const eighthSeconds = 60 / currentBpm / 3
 
+    /* When the metronome is on, delay the first note by a one-bar count-in so
+     * the singer hears the tempo and entry before they have to sing. Only on a
+     * fresh start — a resume picks up mid-stream with no lead-in. */
+    const metronomeOn = options.metronomeEnabled?.value ?? false
+    const withCountIn = metronomeOn && fromIndex === 0
+    const countInS = withCountIn
+      ? COUNT_IN_BEATS * BEAT_EIGHTHS * eighthSeconds
+      : 0
+
     /* Pass A — schedule the highlight for every remaining notehead and build the
      * per-note timeline. Each note (including tied ones) highlights in turn. */
-    let cursor = getNow() + SCHEDULE_AHEAD_S
+    let cursor = getNow() + SCHEDULE_AHEAD_S + countInS
     const noteStartTimes: number[] = []
     for (let index = fromIndex; index < notes.length; index++) {
       noteStartTimes[index] = cursor
@@ -92,11 +118,70 @@ export function useGraceKelly(options: Options = {}) {
       index = last + 1
     }
 
+    /* Metronome clicks — scheduled against the same noteStartTimes baseline so
+     * each beat lands sample-locked to the highlights, never drifting. */
+    if (metronomeOn) {
+      scheduleMetronome(
+        fromIndex,
+        notes,
+        eighthSeconds,
+        noteStartTimes,
+        withCountIn,
+        melody.anacrusisEighths ?? 0,
+      )
+    }
+
     /* Transition to done and clear highlight after the last note expires */
     scheduleDraw(() => {
       activeNoteIndex.value = null
       send({ type: 'DONE' })
     }, endCursor)
+  }
+
+  /* Schedules the metronome for the remaining timeline: a one-bar count-in (on a
+   * fresh start) then a click on every dotted-quarter beat, accenting each bar
+   * downbeat. Beat times are derived from the song's eighth grid so they line up
+   * with the notes regardless of where a resume begins. */
+  function scheduleMetronome(
+    fromIndex: number,
+    notes: (typeof VOZ_MELODIES)[number]['notes'],
+    eighthSeconds: number,
+    noteStartTimes: number[],
+    withCountIn: boolean,
+    anacrusisEighths: number,
+  ) {
+    /* Eighths elapsed from the song start up to (not including) note `upTo`. */
+    const eighthsBefore = (upTo: number) => {
+      let sum = 0
+      for (let index = 0; index < upTo; index++) {
+        sum += notes[index].eighthNotes + (notes[index].restAfterEighths ?? 0)
+      }
+
+      return sum
+    }
+
+    const startEighth = eighthsBefore(fromIndex)
+    const totalEighths = eighthsBefore(notes.length)
+    /* Audio-clock time of song eighth 0, back-computed so resume stays aligned. */
+    const songStartS = noteStartTimes[fromIndex] - startEighth * eighthSeconds
+    const barEighths = 2 * BEAT_EIGHTHS
+
+    if (withCountIn) {
+      for (let beat = 0; beat < COUNT_IN_BEATS; beat++) {
+        const whenS =
+          songStartS - (COUNT_IN_BEATS - beat) * BEAT_EIGHTHS * eighthSeconds
+        playClickAt(whenS, beat === 0) // accent the first count-in beat
+      }
+    }
+
+    /* First beat at or after the resume point, snapped to the dotted-quarter grid. */
+    const firstBeat = Math.ceil(startEighth / BEAT_EIGHTHS) * BEAT_EIGHTHS
+    for (let e = firstBeat; e < totalEighths; e += BEAT_EIGHTHS) {
+      /* Bar downbeats (accented) fall `anacrusisEighths` into the grid, every bar. */
+      const accent =
+        (((e - anacrusisEighths) % barEighths) + barEighths) % barEighths === 0
+      playClickAt(songStartS + e * eighthSeconds, accent)
+    }
   }
 
   async function start(startToneMidi: number, vozIndex: number, bpm: number) {

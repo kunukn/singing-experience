@@ -18,6 +18,7 @@ export function createMockToneEngine(
     warmUp: vi.fn().mockResolvedValue(undefined),
     playTone: vi.fn().mockResolvedValue(undefined),
     playToneAt: vi.fn(),
+    playClickAt: vi.fn(),
     playBellFeedback: vi.fn().mockResolvedValue(undefined),
     setToneMode: vi.fn((mode: ToneMode) => {
       toneMode.value = mode

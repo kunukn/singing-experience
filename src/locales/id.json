@@ -282,6 +282,7 @@
       "lessLow": "Kurang rendah",
       "low": "Rendah"
     },
-    "scoreCorrect": "{percent}% benar"
+    "scoreCorrect": "{percent}% benar",
+    "metronome": "Ketukan"
   }
 }

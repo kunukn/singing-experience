@@ -282,6 +282,7 @@
       "lessLow": "कम नीची",
       "low": "नीची"
     },
-    "scoreCorrect": "{percent}% सही"
+    "scoreCorrect": "{percent}% सही",
+    "metronome": "ताल"
   }
 }

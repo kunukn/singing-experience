@@ -282,6 +282,7 @@
       "lessLow": "不太低",
       "low": "低"
     },
-    "scoreCorrect": "{percent}% 正确"
+    "scoreCorrect": "{percent}% 正确",
+    "metronome": "节拍"
   }
 }

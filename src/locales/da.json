@@ -282,6 +282,7 @@
       "lessLow": "Mindre dyb",
       "low": "Dyb"
     },
-    "scoreCorrect": "{percent}% rigtigt"
+    "scoreCorrect": "{percent}% rigtigt",
+    "metronome": "Takt"
   }
 }

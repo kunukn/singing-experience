@@ -282,6 +282,7 @@
       "lessLow": "Chini kidogo",
       "low": "Chini"
     },
-    "scoreCorrect": "{percent}% sahihi"
+    "scoreCorrect": "{percent}% sahihi",
+    "metronome": "Mdundo"
   }
 }

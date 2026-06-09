@@ -282,6 +282,7 @@
       "lessLow": "أقل انخفاضًا",
       "low": "منخفض"
     },
-    "scoreCorrect": "{percent}% صحيح"
+    "scoreCorrect": "{percent}% صحيح",
+    "metronome": "إيقاع"
   }
 }

@@ -282,6 +282,7 @@
       "lessLow": "少し低い",
       "low": "低い"
     },
-    "scoreCorrect": "{percent}% 正解"
+    "scoreCorrect": "{percent}% 正解",
+    "metronome": "ビート"
   }
 }

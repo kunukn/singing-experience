@@ -282,6 +282,7 @@
       "lessLow": "Менее низкая",
       "low": "Низкая"
     },
-    "scoreCorrect": "{percent}% правильно"
+    "scoreCorrect": "{percent}% правильно",
+    "metronome": "Ритм"
   }
 }

@@ -278,6 +278,7 @@
       "lessLow": "Annikitsumik appasitsoq",
       "low": "Appasitsoq"
     },
-    "scoreCorrect": "{percent}% eqqortoq"
+    "scoreCorrect": "{percent}% eqqortoq",
+    "metronome": "Takt"
   }
 }

@@ -66,11 +66,18 @@ if (!isValidVozSelection) {
 
 const activeTab = useLocalStorage('syng.graceKellyTab', 'sing')
 
+/* "Sing live" metronome — a click track + count-in to guide the beat. Default
+ * on since it's a singing aid; toggled from the Sing live controls. */
+const isMetronomeEnabled = useLocalStorage('syng.graceKellyMetronome', true)
+
 const game = useGraceKelly()
 const harmonyGame = useGraceKellyHarmony()
 /* Silent timeline for the "Sing live" tab — advances the sheet on the BPM clock
- * with no playback; the singer's mic supplies the sound. */
-const singGame = useGraceKelly({ silent: true })
+ * with no playback; the singer's mic supplies the sound (plus the metronome). */
+const singGame = useGraceKelly({
+  silent: true,
+  metronomeEnabled: isMetronomeEnabled,
+})
 /* Audible instance for the "Sing live" tab's ♪/Mute preview — plays the melody
  * out loud so the singer can hear it before singing. */
 const singPreviewGame = useGraceKelly()
@@ -117,6 +124,7 @@ watch(activeTab, () => {
             v-model:vozIndex="vozIndex"
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
+            v-model:isMetronomeEnabled="isMetronomeEnabled"
           />
         </PrimeTabPanel>
       </PrimeTabPanels>

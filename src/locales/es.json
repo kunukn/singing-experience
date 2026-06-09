@@ -282,6 +282,7 @@
       "lessLow": "Menos grave",
       "low": "Grave"
     },
-    "scoreCorrect": "{percent}% correcto"
+    "scoreCorrect": "{percent}% correcto",
+    "metronome": "Ritmo"
   }
 }

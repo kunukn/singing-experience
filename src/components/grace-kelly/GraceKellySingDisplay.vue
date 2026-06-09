@@ -31,6 +31,9 @@ const props = defineProps<Props>()
 const vozIndex = defineModel<number>('vozIndex', { required: true })
 const startToneMidi = defineModel<number>('startToneMidi', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
+const isMetronomeEnabled = defineModel<boolean>('isMetronomeEnabled', {
+  required: true,
+})
 
 const { t } = useI18n()
 
@@ -390,6 +393,14 @@ const vozLabel = computed(() =>
         iconOff="pi pi-microphone"
         :label="t('generic.previewSoundLabel')"
         :disabled="micPermission === 'denied' || isBusy"
+      />
+
+      <ToggleIconButton
+        v-model="isMetronomeEnabled"
+        iconOn="pi pi-stopwatch"
+        iconOff="pi pi-stopwatch"
+        :label="t('graceKelly.metronome')"
+        :disabled="isBusy"
       />
     </div>
 
