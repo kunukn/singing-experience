@@ -6,7 +6,7 @@ const route = useRoute()
 const isHome = computed(() => route.path === '/')
 const isAlphaPage = computed(() => alphaPages.has(route.path))
 const isBetaPage = computed(() => betaPages.has(route.path))
-const isLandingPage = computed(() => route.path === '/')
+const isLandingPage = computed(() => route.meta.isLandingPage === true)
 </script>
 
 <template>
