@@ -281,6 +281,7 @@
       "oneTone": "Uma nota",
       "lessLow": "Menos grave",
       "low": "Grave"
-    }
+    },
+    "scoreCorrect": "{percent}% correto"
   }
 }

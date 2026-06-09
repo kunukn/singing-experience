@@ -281,6 +281,7 @@
       "oneTone": "Én tone",
       "lessLow": "Mindre dyb",
       "low": "Dyb"
-    }
+    },
+    "scoreCorrect": "{percent}% rigtigt"
   }
 }

@@ -281,6 +281,7 @@
       "oneTone": "单音",
       "lessLow": "不太低",
       "low": "低"
-    }
+    },
+    "scoreCorrect": "{percent}% 正确"
   }
 }

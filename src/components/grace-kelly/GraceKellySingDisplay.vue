@@ -191,10 +191,16 @@ const isOnPitch = computed(() => {
 
 /* Score the run by duration — what fraction of active playing time was sung
  * on-pitch — to gate the end-of-song confetti. */
-const { reachedThreshold, reset: resetSingScore } = useGraceKellySingScore({
+const {
+  reachedThreshold,
+  reset: resetSingScore,
+  onPitchRatio,
+} = useGraceKellySingScore({
   isPlaying,
   isOnPitch,
 })
+
+const scorePercent = computed(() => Math.round(onPitchRatio.value * 100))
 
 const { fireConfetti } = useConfettiStore()
 
@@ -246,6 +252,17 @@ const vozLabel = computed(() =>
       :showToneMode="false"
     />
 
+    <div v-if="singIsDone" class="flex flex-col items-center gap-1">
+      <p
+        class="text-3xl font-bold tabular-nums"
+        :class="
+          reachedThreshold ? 'text-(--p-green-400)' : 'text-(--p-text-color)'
+        "
+      >
+        {{ t('graceKelly.scoreCorrect', { percent: scorePercent }) }}
+      </p>
+    </div>
+
     <div class="flex min-w-50 items-baseline gap-2">
       <PrimeButton
         v-if="isRunning"
@@ -287,7 +304,7 @@ const vozLabel = computed(() =>
         :disabled="isPreviewPlaying"
         @click="startSinging"
       >
-        {{ t('graceKelly.sing') }}
+        {{ singIsDone ? t('generic.playAgain') : t('graceKelly.sing') }}
       </PrimeButton>
 
       <PrimeButton

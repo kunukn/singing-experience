@@ -281,6 +281,7 @@
       "oneTone": "نغمة واحدة",
       "lessLow": "أقل انخفاضًا",
       "low": "منخفض"
-    }
+    },
+    "scoreCorrect": "{percent}% صحيح"
   }
 }

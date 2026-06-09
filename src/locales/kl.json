@@ -277,6 +277,7 @@
       "oneTone": "Nipi ataaseq",
       "lessLow": "Annikitsumik appasitsoq",
       "low": "Appasitsoq"
-    }
+    },
+    "scoreCorrect": "{percent}% eqqortoq"
   }
 }

@@ -281,6 +281,7 @@
       "oneTone": "एक स्वर",
       "lessLow": "कम नीची",
       "low": "नीची"
-    }
+    },
+    "scoreCorrect": "{percent}% सही"
   }
 }

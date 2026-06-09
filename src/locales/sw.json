@@ -281,6 +281,7 @@
       "oneTone": "Noti moja",
       "lessLow": "Chini kidogo",
       "low": "Chini"
-    }
+    },
+    "scoreCorrect": "{percent}% sahihi"
   }
 }
