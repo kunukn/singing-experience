@@ -103,14 +103,21 @@ The same effort moved the per-note scoring to a model this debugging confirmed i
 
 The live data confirmed these are not the bottleneck — detected pitches were accurate; the mic stream was the limiting factor.
 
-## Open Follow-up — Other Game Programs
+## Follow-up — Other Game Programs (RESOLVED 2026-06-10)
 
-The same `rawAudio` win very likely applies to the other voice games, all of which use [usePitchDetection.ts](../../src/composables/usePitchDetection.ts): DoReMi, Warm-up, SingFly, and the pitch/tone detectors. **It was not changed globally** because games that **play reference tones through the speaker while listening** (DoReMi, Warm-up) currently rely on echo cancellation plus their "deaf window" logic to avoid detecting their own playback. Turning AEC off for them needs care — likely longer/again-armed deaf windows, or disabling only `noiseSuppression` + `autoGainControl` (the two clear wins) while keeping `echoCancellation` where playback overlaps listening.
+The `rawAudio` win was rolled out to every voice game, all of which use [usePitchDetection.ts](../../src/composables/usePitchDetection.ts). Because games that **play reference tones through the speaker while listening** rely on echo cancellation plus their "deaf window" logic to avoid detecting their own playback, the rollout used **two** mic-stream profiles instead of turning AEC off globally:
 
-Suggested next-day plan:
-1. Trial `rawAudio` on a non-overlapping listener first (e.g. the standalone pitch detector / tuner).
-2. For DoReMi / Warm-up, test disabling only `noiseSuppression` + `autoGainControl`; measure whether reference-tone bleed appears during listening windows.
-3. Consider promoting raw audio to the default once each game's playback/listen overlap is verified safe.
+- **`rawAudio`** — echo cancellation, noise suppression and AGC all OFF. For games that are **silent while listening** (no speaker output to echo-cancel): **Grace Kelly Sing, SingFly**.
+- **`softRawAudio`** — noise suppression + AGC off (the two clear wins for sung tones) but **echo cancellation kept ON**. For games that **play reference tones while listening**, so the mic still rejects their own playback while their existing deaf windows mask the overlap: **DoReMi, Warm-up, Sing-tone, Pitch-game, Pitch-detector, Tuner, Ukulele**, and the shared **`useIdlePreview`** (idle-screen mic preview).
+
+Both options live on [usePitchDetection.ts](../../src/composables/usePitchDetection.ts) (`resolveAudioConstraints()`); `rawAudio` takes precedence over `softRawAudio` if both are set.
+
+Rollout followed the planned staging, each step real-mic-verified before the next:
+1. `softRawAudio` trialled on the lowest-risk listeners first (Pitch-detector, Tuner) — confirmed no reference-tone bleed with EC kept on.
+2. Extended to the remaining tone-playing games (DoReMi, Warm-up, Sing-tone, Pitch-game, Ukulele) — verified deaf windows + EC still mask their own playback.
+3. Applied to the shared `useIdlePreview`.
+
+Raw audio was **not** promoted to the global default: silent vs. tone-playing games need different profiles, so the choice stays explicit per call site.
 
 ## Key Takeaways
 
