@@ -79,8 +79,11 @@ const singGame = useGraceKelly({
   metronomeEnabled: isMetronomeEnabled,
 })
 /* Audible instance for the "Sing live" tab's ♪/Mute preview — plays the melody
- * out loud so the singer can hear it before singing. */
-const singPreviewGame = useGraceKelly()
+ * out loud so the singer can hear it before singing. Shares the metronome ref so
+ * the click track + count-in play under the preview too when the Beat toggle is on. */
+const singPreviewGame = useGraceKelly({
+  metronomeEnabled: isMetronomeEnabled,
+})
 
 /* One shared audio engine drives every tab — stop any in-flight playback when
  * switching so the inactive tab can't keep scheduling notes underneath. */

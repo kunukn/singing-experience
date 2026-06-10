@@ -20,16 +20,16 @@ type Options = {
    * advances on the BPM clock with no playback. Used by the "Sing live" tab,
    * where the singer supplies the sound. */
   silent?: boolean
-  /* When this ref is true, play a metronome click on every dotted-quarter beat
-   * (with an accented bar downbeat) plus a one-bar count-in before the first
-   * note. Read at schedule time. Only the "Sing live" instance passes it. */
+  /* When this ref is true, play one metronome click per bar (on the downbeat)
+   * plus a single one-beat count-in before the pickup. Read at schedule time.
+   * Only the "Sing live" instance passes it. */
   metronomeEnabled?: Ref<boolean>
 }
 
 /* 6/8 beat math: a dotted-quarter pulse is 3 eighth notes; a bar is 2 pulses. */
 const BEAT_EIGHTHS = 3
-/* One full bar of count-in (2 dotted-quarter beats) before the first note. */
-const COUNT_IN_BEATS = 2
+/* A single dotted-quarter beat of count-in, landing one beat before the pickup. */
+const COUNT_IN_BEATS = 1
 
 export function useGraceKelly(options: Options = {}) {
   const { snapshot, send } = useMachine(graceKellyMachine)
@@ -71,7 +71,7 @@ export function useGraceKelly(options: Options = {}) {
      * beat unit): dotted quarter = 60/bpm s, split across 3 eighth notes. */
     const eighthSeconds = 60 / currentBpm / 3
 
-    /* When the metronome is on, delay the first note by a one-bar count-in so
+    /* When the metronome is on, delay the first note by a one-beat count-in so
      * the singer hears the tempo and entry before they have to sing. Only on a
      * fresh start — a resume picks up mid-stream with no lead-in. */
     const metronomeOn = options.metronomeEnabled?.value ?? false
@@ -138,10 +138,10 @@ export function useGraceKelly(options: Options = {}) {
     }, endCursor)
   }
 
-  /* Schedules the metronome for the remaining timeline: a one-bar count-in (on a
-   * fresh start) then a click on every dotted-quarter beat, accenting each bar
-   * downbeat. Beat times are derived from the song's eighth grid so they line up
-   * with the notes regardless of where a resume begins. */
+  /* Schedules the metronome for the remaining timeline: a one-beat count-in (on a
+   * fresh start) then a single click per bar, on each downbeat. Beat times are
+   * derived from the song's eighth grid so they line up with the notes
+   * regardless of where a resume begins. */
   function scheduleMetronome(
     fromIndex: number,
     notes: (typeof VOZ_MELODIES)[number]['notes'],
@@ -174,13 +174,16 @@ export function useGraceKelly(options: Options = {}) {
       }
     }
 
-    /* First beat at or after the resume point, snapped to the dotted-quarter grid. */
-    const firstBeat = Math.ceil(startEighth / BEAT_EIGHTHS) * BEAT_EIGHTHS
-    for (let e = firstBeat; e < totalEighths; e += BEAT_EIGHTHS) {
-      /* Bar downbeats (accented) fall `anacrusisEighths` into the grid, every bar. */
-      const accent =
-        (((e - anacrusisEighths) % barEighths) + barEighths) % barEighths === 0
-      playClickAt(songStartS + e * eighthSeconds, accent)
+    /* One click per bar on the downbeat. Downbeats fall `anacrusisEighths` into
+     * the grid, then every full bar; find the first one at or after the resume
+     * point and step a bar at a time. */
+    const downbeatPhase =
+      ((anacrusisEighths % barEighths) + barEighths) % barEighths
+    const firstDownbeat =
+      startEighth +
+      ((((downbeatPhase - startEighth) % barEighths) + barEighths) % barEighths)
+    for (let e = firstDownbeat; e < totalEighths; e += barEighths) {
+      playClickAt(songStartS + e * eighthSeconds, true) // every kept click is a bar downbeat
     }
   }
 
