@@ -23,7 +23,10 @@ const {
   error,
   start,
   stop,
-} = usePitchDetection()
+  /* softRawAudio — noise suppression / AGC fight a steady plucked-string tone,
+   * but echo cancellation stays on because the guitar/uke sampler plays through
+   * the speaker while the mic listens. */
+} = usePitchDetection({ softRawAudio: true })
 
 watch(selectedInstrument, () => {
   stop()

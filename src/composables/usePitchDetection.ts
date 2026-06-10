@@ -35,6 +35,12 @@ type UsePitchDetectionOptions = {
    * held musical tone. Leave off for games that play reference tones through the
    * speaker while listening (they rely on echo cancellation + deaf windows). */
   rawAudio?: boolean
+  /* The two clear wins for sung-tone detection (noise suppression + auto gain
+   * control OFF) while KEEPING echo cancellation ON. For games that play
+   * reference tones through the speaker while listening — softer/steadier notes
+   * register, but the mic still rejects the device's own playback. Ignored when
+   * `rawAudio` is set (rawAudio is the stronger, EC-off variant). */
+  softRawAudio?: boolean
 }
 
 /* Practical singing range: ~B1 (60 Hz) to ~F#6 (1500 Hz), covering bass to soprano. */
@@ -143,21 +149,37 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
     }
   }
 
+  /* rawAudio: EC+NS+AGC off (silent games — nothing plays while listening).
+   * softRawAudio: NS+AGC off but EC kept on (games that play reference tones
+   * while listening, so the mic still rejects their own playback). Default true
+   * = browser defaults (all on). */
+  function resolveAudioConstraints(): MediaStreamConstraints['audio'] {
+    if (options.rawAudio) {
+      return {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false,
+      }
+    }
+
+    if (options.softRawAudio) {
+      return {
+        echoCancellation: true,
+        noiseSuppression: false,
+        autoGainControl: false,
+      }
+    }
+
+    return true
+  }
+
   async function start() {
     if (isListening.value) return
 
     error.value = null
 
     try {
-      mediaStream = await acquireMicStream({
-        audio: options.rawAudio
-          ? {
-              echoCancellation: false,
-              noiseSuppression: false,
-              autoGainControl: false,
-            }
-          : true,
-      })
+      mediaStream = await acquireMicStream({ audio: resolveAudioConstraints() })
       audioContext = new AudioContext()
       analyserNode = audioContext.createAnalyser()
       // 2048-sample FFT: ~23 ms window at 44.1 kHz — good pitch resolution with low latency

@@ -16,7 +16,10 @@ if (
   selectedRangeIndex.value = DEFAULT_RANGE_INDEX
 }
 
-const detection = usePitchDetection()
+/* softRawAudio — noise suppression / AGC gate sustained tones, but echo
+ * cancellation stays on because reference/preview tones can play through the
+ * speaker while the mic listens. */
+const detection = usePitchDetection({ softRawAudio: true })
 </script>
 
 <template>
