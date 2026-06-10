@@ -85,7 +85,11 @@ export function useSingTone(options: singToneOptions = {}) {
     frequency,
     start: startDetection,
     stop: stopDetection,
-  } = options.pitchDetection ?? usePitchDetection()
+  } = options.pitchDetection ??
+  /* softRawAudio — NS/AGC off so the held sung tone registers, EC kept on
+   * because the target tone plays through the speaker while the mic listens
+   * (the deafUntilMs window masks the overlap). */
+  usePitchDetection({ softRawAudio: true })
 
   const targetMidi = ref<number | null>(null)
   const completedCount = ref(0)

@@ -10,7 +10,10 @@ const {
   error,
   start,
   stop,
-} = usePitchDetection()
+  /* softRawAudio — NS/AGC fight a steady plucked-string tone, but echo
+   * cancellation stays on because the ukulele sampler plays through the speaker
+   * while the mic listens. */
+} = usePitchDetection({ softRawAudio: true })
 
 onUnmounted(() => {
   stop()

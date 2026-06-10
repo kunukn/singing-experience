@@ -12,7 +12,10 @@ export function useIdlePreview(options: IdlePreviewOptions) {
 
   const { state: micPermission, requestPermission } = useMicrophonePermission()
 
-  const detection = usePitchDetection()
+  /* softRawAudio — NS/AGC off so a held preview note registers, EC kept on
+   * because idle screens can play a reference tone through the speaker while the
+   * preview mic listens (IDLE_DEAF_PERIOD_MS masks the overlap). */
+  const detection = usePitchDetection({ softRawAudio: true })
 
   const isDeaf = ref(false)
   let deafTimer: ReturnType<typeof setTimeout> | null = null

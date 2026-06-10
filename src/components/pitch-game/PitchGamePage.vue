@@ -35,7 +35,10 @@ if (!GAME_DURATION_OPTIONS.includes(gameDurationSec.value as GameDurationSec)) {
   gameDurationSec.value = 20
 }
 
-const detection = usePitchDetection()
+/* softRawAudio — NS/AGC off so steady sung notes register, EC kept on because
+ * reference tones can play through the speaker while the mic listens (a deaf
+ * window masks the overlap). */
+const detection = usePitchDetection({ softRawAudio: true })
 </script>
 
 <template>

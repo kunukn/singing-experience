@@ -90,7 +90,11 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     frequency,
     start: startDetection,
     stop: stopDetection,
-  } = options.pitchDetection ?? usePitchDetection()
+  } = options.pitchDetection ??
+  /* softRawAudio — NS/AGC off so steady sung notes register, EC kept on
+   * because the scale plays reference tones through the speaker while the mic
+   * listens (deaf windows mask the brief overlap). */
+  usePitchDetection({ softRawAudio: true })
 
   const currentStepIndex = ref(0)
   const holdTimeMs = ref(0)

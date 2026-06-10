@@ -240,7 +240,11 @@ export function useWarmUpGame(options: WarmUpGameOptions = {}) {
     frequency,
     start: startDetection,
     stop: stopDetection,
-  } = options.pitchDetection ?? usePitchDetection()
+  } = options.pitchDetection ??
+  /* softRawAudio — NS/AGC off so steady sung notes register, EC kept on
+   * because the warm-up plays reference tones through the speaker while the
+   * mic listens (the isDeaf window masks the overlap). */
+  usePitchDetection({ softRawAudio: true })
 
   const { isPlayingSequence, currentPlayingIndex, playSequence, stopSequence } =
     useDoReMiPlaySequence()
