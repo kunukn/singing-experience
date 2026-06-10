@@ -13,9 +13,9 @@ import {
 } from './graceKellyLyrics'
 import { VOZ_MELODIES } from './graceKellyMelodies'
 import { isOnPitch as isWithinTolerance } from './graceKellySingPitch'
-import { useStableSungLabel } from './useStableSungLabel'
-import { useGraceKellySingScore } from './useGraceKellySingScore'
 import type { GraceKellyResult } from './useGraceKelly'
+import { useGraceKellySingScore } from './useGraceKellySingScore'
+import { useStableSungLabel } from './useStableSungLabel'
 
 type Props = {
   /* A silent game instance (useGraceKelly({ silent: true })) — drives the sheet
@@ -313,7 +313,6 @@ const vozLabel = computed(() =>
       v-model:startToneMidi="startToneMidi"
       v-model:bpm="bpm"
       :isRunning="isBusy"
-      :showToneMode="false"
     />
 
     <div v-if="showResult" class="flex flex-col items-center gap-1">
