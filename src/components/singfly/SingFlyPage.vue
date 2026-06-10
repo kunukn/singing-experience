@@ -12,6 +12,10 @@ const { rangeIndex, gameDurationSec, difficulty } = useSingFlySettings()
  * accidental death the player never sang). See SINGFLY_CLARITY_THRESHOLD. */
 const detection = usePitchDetection({
   clarityThreshold: SINGFLY_CLARITY_THRESHOLD,
+  /* Raw stream — noise suppression / AGC gate sustained sung tones. SingFly is
+   * silent while listening (the bird flies on pitch alone, no speaker playback),
+   * so there's no echo to cancel — same safe case as Grace Kelly Sing. */
+  rawAudio: true,
 })
 
 /* ?debug=1 swaps the mic for the on-screen cheat tone buttons (mic-free).
