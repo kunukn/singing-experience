@@ -4,24 +4,25 @@ import type { Ref } from 'vue'
  * celebration to fire. 0.8 = 80%. */
 const CONFETTI_THRESHOLD = 0.8
 
-/* A note counts as correct once the singer has been on its target pitch for this
- * long in total — regardless of how much wrong-pitch time surrounds it. Hitting
- * the note for a real moment is enough; you don't have to spend the *majority*
- * of the note on it. */
-const MIN_ON_PITCH_MS = 100
+/* A note never needs more than this much on-pitch time, no matter how long it
+ * sounds — holding a 1s tied note for 100ms is enough. */
+const MAX_ON_PITCH_MS = 100
 
-/* For short/fast notes a flat 100ms can exceed the note itself, so the dwell
- * needed is capped at this fraction of the note's duration (e.g. a 167ms eighth
- * needs ~83ms, not 100ms). */
-const DWELL_FRACTION = 0.5
+/* A note counts as correct once the singer has been on its target pitch for
+ * this fraction of the note's duration, in total — regardless of how much
+ * wrong-pitch time surrounds it. 0.25 keeps short notes hittable: fixed costs
+ * (mic latency, pitch-smoothing convergence, voice articulation) eat ~50–80ms
+ * of every note, which is a big slice of a ~167ms eighth. */
+const DWELL_FRACTION = 0.25
 
 /*
  * Scores a live sing run note by note. Each frame, the on-pitch time is added to
- * a bucket for the note the timeline is currently on. When the run ends, every
- * note is graded correct if the singer was on its target pitch for at least
- * `min(MIN_ON_PITCH_MS, DWELL_FRACTION × noteDuration)` — a minimum dwell, not a
- * majority. The overall score is correct notes ÷ total notes, and
- * `correctNoteIndices` drives the green notehead feedback on the sheet.
+ * a bucket for the note the timeline is currently on; the note is marked correct
+ * the moment its bucket reaches `min(MAX_ON_PITCH_MS, DWELL_FRACTION ×
+ * noteDuration)` — a minimum dwell, not a majority. Marking happens live
+ * (mid-run) so the sheet can paint
+ * noteheads green in real time. The overall score is correct notes ÷ total
+ * notes, and `correctNoteIndices` drives the green notehead feedback.
  *
  * The requestAnimationFrame loop runs only while `isPlaying`, so pauses are
  * excluded.
@@ -46,7 +47,7 @@ export function useGraceKellySingScore(params: {
    * `noteResults` when the run ends. */
   let noteOnPitchMs: number[] = []
 
-  /* One boolean per note: true = sung correctly. Populated when the run ends. */
+  /* One boolean per note: true = sung correctly. Marked live during the run. */
   const noteResults = ref<boolean[]>([])
 
   let rafId: number | null = null
@@ -55,25 +56,20 @@ export function useGraceKellySingScore(params: {
   function tick(timestamp: number) {
     const index = activeNoteIndex.value
     if (lastTimestamp !== null && isOnPitch.value && index !== null) {
-      noteOnPitchMs[index] =
+      const onPitchMs =
         (noteOnPitchMs[index] ?? 0) + (timestamp - lastTimestamp)
+      noteOnPitchMs[index] = onPitchMs
+
+      const dwellNeeded = Math.min(
+        MAX_ON_PITCH_MS,
+        DWELL_FRACTION * (noteDurationsMs.value[index] ?? 0),
+      )
+      if (!noteResults.value[index] && onPitchMs >= dwellNeeded) {
+        noteResults.value[index] = true
+      }
     }
     lastTimestamp = timestamp
     rafId = requestAnimationFrame(tick)
-  }
-
-  /* Grade every note from its on-pitch bucket. Called when the run ends. */
-  function recomputeResults() {
-    const durations = noteDurationsMs.value
-    const results: boolean[] = []
-    for (let index = 0; index < durations.length; index++) {
-      const dwellNeeded = Math.min(
-        MIN_ON_PITCH_MS,
-        DWELL_FRACTION * durations[index],
-      )
-      results[index] = (noteOnPitchMs[index] ?? 0) >= dwellNeeded
-    }
-    noteResults.value = results
   }
 
   function startTicking() {
@@ -99,8 +95,10 @@ export function useGraceKellySingScore(params: {
   const correctNoteIndices = computed(() =>
     noteResults.value.flatMap((isCorrect, index) => (isCorrect ? [index] : [])),
   )
+  /* noteResults is sparse (only hit notes are set), so the denominator is the
+   * melody's note count, not the results array length. */
   const onPitchRatio = computed(() => {
-    const total = noteResults.value.length
+    const total = noteDurationsMs.value.length
     if (total === 0) return 0
 
     return correctNoteIndices.value.length / total
@@ -114,7 +112,6 @@ export function useGraceKellySingScore(params: {
       startTicking()
     } else {
       stopTicking()
-      recomputeResults()
     }
   })
 

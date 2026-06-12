@@ -41,6 +41,14 @@ type UsePitchDetectionOptions = {
    * register, but the mic still rejects the device's own playback. Ignored when
    * `rawAudio` is set (rawAudio is the stronger, EC-off variant). */
   softRawAudio?: boolean
+  /* Expected pitch band in Hz (e.g. the melody's range ± a semitone). Clean
+   * frames OUTSIDE the band are still reported (frequency/noteInfo/isClean from
+   * the raw pitch — the caller keeps full visual feedback) but bypass the EMA
+   * smoothing, so a stray octave/harmonic misdetection can't drag the smoothed
+   * pitch out of tolerance mid-note. Pass refs/getters when the band changes
+   * between runs. Omit for no band (every clean frame is smoothed). */
+  bandMinFrequency?: MaybeRefOrGetter<number>
+  bandMaxFrequency?: MaybeRefOrGetter<number>
 }
 
 /* Practical singing range: ~B1 (60 Hz) to ~F#6 (1500 Hz), covering bass to soprano. */
@@ -116,11 +124,22 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
       pitch >= MIN_FREQUENCY &&
       pitch <= MAX_FREQUENCY
     ) {
-      smoothedFrequency =
-        smoothedFrequency === null
-          ? pitch
-          : SMOOTHING_FACTOR * pitch +
-            (1 - SMOOTHING_FACTOR) * smoothedFrequency
+      /* Out-of-band pitches (see bandMinFrequency docs) are reported raw and
+       * skip the EMA entirely, so one harmonic glitch frame can't pollute the
+       * smoothed in-band stream. */
+      const isInBand =
+        pitch >= toValue(options.bandMinFrequency ?? MIN_FREQUENCY) &&
+        pitch <= toValue(options.bandMaxFrequency ?? MAX_FREQUENCY)
+
+      let reportedFrequency = pitch
+      if (isInBand) {
+        smoothedFrequency =
+          smoothedFrequency === null
+            ? pitch
+            : SMOOTHING_FACTOR * pitch +
+              (1 - SMOOTHING_FACTOR) * smoothedFrequency
+        reportedFrequency = smoothedFrequency
+      }
 
       const now = performance.now()
       if (cleanSinceTimestamp === null) {
@@ -128,8 +147,8 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
       }
 
       if (now - cleanSinceTimestamp >= onsetDebounceMs) {
-        frequency.value = Math.round(smoothedFrequency * 10) / 10 // 0.1 Hz precision
-        const detected = frequencyToNote(smoothedFrequency, prevMidi)
+        frequency.value = Math.round(reportedFrequency * 10) / 10 // 0.1 Hz precision
+        const detected = frequencyToNote(reportedFrequency, prevMidi)
         noteInfo.value = detected
         prevMidi = detected?.midiNote
         isClean.value = true

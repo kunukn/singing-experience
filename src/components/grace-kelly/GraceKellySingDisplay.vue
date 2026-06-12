@@ -75,6 +75,21 @@ function togglePreview() {
   void startPreview(startToneMidi.value, vozIndex.value, bpm.value)
 }
 
+/* Expected sung range in Hz — the selected part's melody span ±1 semitone, so a
+ * stray octave/harmonic misdetection bypasses the detector's EMA smoothing (it
+ * still shows on the pitch line). 1 semitone of buffer keeps everything within
+ * the 40¢ scoring tolerance smoothed. */
+const melodyBandFrequencies = computed(() => {
+  const offsets = VOZ_MELODIES[vozIndex.value].notes.map(
+    (note) => note.midiOffset,
+  )
+
+  return {
+    min: midiToFrequency(startToneMidi.value + Math.min(...offsets) - 1),
+    max: midiToFrequency(startToneMidi.value + Math.max(...offsets) + 1),
+  }
+})
+
 /* Live microphone pitch — its own AudioContext, independent of the (muted)
  * Tone engine driving the timeline. */
 const {
@@ -85,15 +100,17 @@ const {
   start: startMic,
   stop: stopMic,
 } = usePitchDetection({
-  /* Snappier note re-onset than the 40ms default — fast melodies re-articulate
-   * many short notes, and the lag would otherwise eat the start of each one. */
-  onsetDebounceMs: 20,
+  /* No onset debounce — fast melodies re-articulate many short notes, and even
+   * a small re-onset lag eats a meaningful slice of an eighth's dwell window. */
+  onsetDebounceMs: 0,
   /* Between the 0.90 default and SingFly's 0.50 — admits softer / decaying notes
    * so they still register during the fast melody; tunable. */
   clarityThreshold: 0.6,
   /* Raw stream — the browser's default noise suppression / AGC gate sustained
    * sung tones; the "Sing live" timeline is silent so there's no echo to cancel. */
   rawAudio: true,
+  bandMinFrequency: () => melodyBandFrequencies.value.min,
+  bandMaxFrequency: () => melodyBandFrequencies.value.max,
 })
 
 /* True while a sequence is playing or paused — the part/tone/tempo selects stay
@@ -253,10 +270,11 @@ const scorePercent = computed(() => Math.round(onPitchRatio.value * 100))
  * at the result screen (so a stale green map never sits over a new melody). */
 const showResult = ref(false)
 
-/* Correct-note indices to paint green — only while the result panel is up, so
- * the sheet stays clean during play and idle. */
+/* Correct-note indices to paint green — live while singing (each notehead turns
+ * green the moment its dwell is reached, confirming the capture window is in
+ * sync with the highlight) and on the result panel. Empty when idle. */
 const resultNoteIndices = computed(() =>
-  showResult.value ? correctNoteIndices.value : [],
+  showResult.value || isRunning.value ? correctNoteIndices.value : [],
 )
 
 const { fireConfetti } = useConfettiStore()
