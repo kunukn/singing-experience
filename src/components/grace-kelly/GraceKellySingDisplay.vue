@@ -126,14 +126,16 @@ const { isPreviewEnabled } = useSettings()
 /* "See your voice" idle preview — listens only while NOT running, so it never
  * competes with the sing-flow mic above for the stream. Toggling the button on
  * requests mic permission; if denied, useIdlePreview flips isPreviewEnabled
- * back off and micPermission disables the toggle. */
+ * back off and micPermission disables the toggle. isPlayingSequence is
+ * deliberately NOT passed: the singer's line should stay visible while the ♪
+ * preview plays the melody, so they can hum along (the preview mic keeps echo
+ * cancellation on, which damps the speaker leaking back as a line). */
 const {
   previewMidi,
   rawFrequency: previewFrequency,
   micPermission,
 } = useIdlePreview({
   isGameActive: isRunning,
-  isPlayingSequence: isPreviewPlaying,
   isEnabled: isPreviewEnabled,
 })
 
@@ -201,11 +203,8 @@ const sungMidi = computed(() => {
     return frequencyToMidi(frequency.value)
   }
 
-  /* Never show the live pitch line while the melody plays audibly — even with
-   * "See your voice" on — or the mic would echo the speaker back as a line. */
-  if (isPreviewPlaying.value) return null
-
-  /* Idle "See your voice" preview — previewMidi is null while preview is off or
+  /* "See your voice" — covers both idle and the audible ♪ preview (hum along
+   * while the melody plays). previewMidi is null while the toggle is off or
    * during the deaf window, which hides the pitch line. */
   if (previewMidi.value === null || previewFrequency.value === null) return null
 
