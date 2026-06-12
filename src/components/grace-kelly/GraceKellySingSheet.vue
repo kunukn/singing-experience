@@ -30,7 +30,7 @@ type Props = {
    * omit/null to hide. */
   currentToneLabel?: string | null
   /* Singer's de-flickered live note label, stacked above the target label;
-   * green (--p-primary-color) when it matches currentToneLabel, yellow
+   * green (--p-primary-color) when it matches currentToneLabel, orange
    * otherwise. omit/null to hide. */
   sungToneLabel?: string | null
   /* Continuous MIDI value of the singer's live pitch (raw, not rounded); null
@@ -341,13 +341,13 @@ defineExpose({ scrollToSyllable })
 
         <!--
           Singer's live note, stacked above the target label (extra 18px lift).
-          Green when it matches the target label, yellow otherwise.
+          Green when it matches the target label, orange otherwise.
         -->
         <span
           v-if="sungToneLabel && toneLabelPosition"
           class="pointer-events-none absolute -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold tabular-nums transition-colors duration-100"
           :class="
-            isSungMatch ? 'text-(--p-primary-color)' : 'text-(--p-yellow-400)'
+            isSungMatch ? 'text-(--p-primary-color)' : 'text-(--p-orange-400)'
           "
           :style="{
             left: `${toneLabelPosition.left + 5}px`,
@@ -362,7 +362,7 @@ defineExpose({ scrollToSyllable })
     <!--
       Idle "See your voice": the detected sung note parked at a fixed spot in the
       sheet (no active note to anchor to). Pinned to the root like the pitch line
-      so it stays put within the visible sheet. Always yellow — there is no target
+      so it stays put within the visible sheet. Always orange — there is no target
       note to match in idle. Mutually exclusive with the anchored singer chip,
       which requires toneLabelPosition.
     -->
@@ -371,7 +371,7 @@ defineExpose({ scrollToSyllable })
       class="pointer-events-none absolute inset-x-0 top-8 flex justify-center"
     >
       <span
-        class="rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-yellow-400) tabular-nums"
+        class="rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-orange-400) tabular-nums"
       >
         {{ sungToneLabel }}
       </span>
@@ -380,13 +380,17 @@ defineExpose({ scrollToSyllable })
     <!--
       Live pitch line — pinned to the root (not the scroll box) so horizontal
       auto-scroll of the staff never shifts it sideways; only its vertical
-      position tracks the singer's pitch. Green when on the target note, yellow
-      otherwise.
+      position tracks the singer's pitch. Solid green when on the target note,
+      orange dashed otherwise (matching the DoReMi / PitchDetector preview line).
     -->
     <div
       v-if="pitchLineTop !== null"
-      class="pointer-events-none absolute inset-x-2 h-0.5 transition-colors duration-100"
-      :class="isOnPitch ? 'bg-(--p-green-400)' : 'bg-(--p-yellow-400)'"
+      class="pointer-events-none absolute inset-x-2 h-0 border-t-3 transition-colors duration-100"
+      :class="
+        isOnPitch
+          ? 'border-solid border-(--p-green-400)'
+          : 'border-dashed border-(--p-orange-400)/50'
+      "
       :style="{ top: `${pitchLineTop}px` }"
     />
   </div>
