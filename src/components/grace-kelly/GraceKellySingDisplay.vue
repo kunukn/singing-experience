@@ -293,8 +293,8 @@ watch([vozIndex, startToneMidi, bpm], () => {
 
 /* The singer's own de-flickered note label, stacked above the target tone
  * label on the sheet. Driven by the same `sungMidi` (so it inherits its
- * idle/preview/running null-gating); held 80ms before showing to avoid strobe. */
-const { stableSungLabel } = useStableSungLabel({ sungMidi })
+ * idle/preview/running null-gating); held 50ms before showing to avoid strobe. */
+const { stableSungLabel, stableSungCents } = useStableSungLabel({ sungMidi })
 
 /* Flat reading-order index of the syllable currently being sung — the last
  * syllable whose starting tone has been reached. Held/tied tones keep the
@@ -443,6 +443,7 @@ const vozLabel = computed(() =>
         :activeSyllableIndex="activeSyllableIndex"
         :currentToneLabel="currentToneLabel"
         :sungToneLabel="stableSungLabel"
+        :sungToneCents="stableSungCents"
         :sungMidi="sungMidi"
         :isOnPitch="isOnPitch"
       />

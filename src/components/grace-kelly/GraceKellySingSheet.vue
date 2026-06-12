@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { formatNoteLabelWithCents } from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
 import { estimateStaffWidth, vozMelodyToAbcString } from './graceKellyAbc'
@@ -33,6 +34,9 @@ type Props = {
    * green (--p-primary-color) when it matches currentToneLabel, orange
    * otherwise. omit/null to hide. */
   sungToneLabel?: string | null
+  /* Signed cents between the live pitch and sungToneLabel's semitone; appended
+   * to the chip (e.g. "C3 -35¢") once audibly off (±30¢). omit/null to hide. */
+  sungToneCents?: number | null
   /* Continuous MIDI value of the singer's live pitch (raw, not rounded); null
    * when silent. Drives the vertical position of the pitch line. */
   sungMidi?: number | null
@@ -50,6 +54,21 @@ const isSungMatch = computed(
     props.sungToneLabel != null &&
     props.sungToneLabel === props.currentToneLabel,
 )
+
+/* ±30¢ — audibly off; below this the cents suffix is noise. */
+const SUNG_CENTS_THRESHOLD = 30
+
+/* Chip text: the sung label, plus the exact cents deviation once out of tune
+ * (e.g. "C3 -35¢") so the singer sees how far off they are. */
+const sungToneText = computed(() => {
+  if (!props.sungToneLabel) return null
+
+  return formatNoteLabelWithCents(
+    props.sungToneLabel,
+    props.sungToneCents ?? 0,
+    SUNG_CENTS_THRESHOLD,
+  )
+})
 
 /* Sans-serif for the composer credit and the lyric line under the staff. */
 const SANS_FONTS = {
@@ -354,7 +373,7 @@ defineExpose({ scrollToSyllable })
             top: `${toneLabelPosition.top - 14 - 18}px`,
           }"
         >
-          {{ sungToneLabel }}
+          {{ sungToneText }}
         </span>
       </div>
     </div>
@@ -370,10 +389,12 @@ defineExpose({ scrollToSyllable })
       v-if="sungToneLabel && !toneLabelPosition"
       class="pointer-events-none absolute inset-x-0 top-8 flex justify-center"
     >
+      <!-- Fixed min-width + start alignment so the note label keeps the same
+        position whether or not the cents suffix is shown ("E3" vs "F#3 -45¢"). -->
       <span
-        class="rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-orange-400) tabular-nums"
+        class="min-w-20 rounded bg-(--p-content-background) px-0.5 text-start text-sm leading-none font-semibold text-(--p-orange-400) tabular-nums"
       >
-        {{ sungToneLabel }}
+        {{ sungToneText }}
       </span>
     </div>
 

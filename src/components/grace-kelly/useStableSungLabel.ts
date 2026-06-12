@@ -3,9 +3,9 @@ import { midiToNoteLabel } from '@/utils/noteUtils'
 
 /* How long the rounded sung note must hold steady before its label is shown,
  * so the chip never strobes on attack transients / brief detector wobble.
- * Trimmed-down cousin of SingFly's STABILIZE_START_HOLD_MS (100ms); 80ms reads
+ * Trimmed-down cousin of SingFly's STABILIZE_START_HOLD_MS (100ms); 50ms reads
  * as steady while staying responsive. */
-const DEFAULT_HOLD_MS = 80
+const DEFAULT_HOLD_MS = 50
 
 type UseStableSungLabelOptions = {
   /* Continuous MIDI of the singer's live pitch (raw, not rounded); null on
@@ -27,17 +27,27 @@ export function useStableSungLabel(options: UseStableSungLabelOptions) {
   const holdMs = options.holdMs ?? DEFAULT_HOLD_MS
   const stableSungLabel = ref<string | null>(null)
 
+  /* Live signed cents between the raw pitch and the promoted label's semitone.
+   * Not hold-gated: while the label holds through a note change, the cents
+   * keep tracking the true deviation. Null whenever the label is null. */
+  const stableSungCents = ref<number | null>(null)
+
   /* Rounded semitone currently being timed, and when its hold started; null
    * when no pitch is in flight. */
   let candidateMidi: number | null = null
   let candidateSince = 0
+
+  /* Semitone backing the currently displayed label — the cents reference. */
+  let stableMidi: number | null = null
 
   watch(
     () => options.sungMidi.value,
     (midi) => {
       if (midi === null) {
         candidateMidi = null
+        stableMidi = null
         stableSungLabel.value = null
+        stableSungCents.value = null
 
         return
       }
@@ -50,15 +60,15 @@ export function useStableSungLabel(options: UseStableSungLabelOptions) {
          * note change doesn't blank the chip mid-phrase. */
         candidateMidi = rounded
         candidateSince = now
-
-        return
-      }
-
-      if (now - candidateSince >= holdMs) {
+      } else if (now - candidateSince >= holdMs) {
+        stableMidi = rounded
         stableSungLabel.value = midiToNoteLabel(rounded).label
       }
+
+      stableSungCents.value =
+        stableMidi === null ? null : Math.round((midi - stableMidi) * 100) // 100 cents per semitone
     },
   )
 
-  return { stableSungLabel }
+  return { stableSungLabel, stableSungCents }
 }
