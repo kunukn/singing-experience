@@ -226,6 +226,26 @@ export default defineConfig(({ command, mode }) => {
        * (see GraceKellySheet.vue) so it never bloats the initial load. Raise
        * the warning ceiling above it while still catching new regressions. */
       chunkSizeWarningLimit: 600,
+      rollupOptions: {
+        /*
+         * @vueuse/core's published dist places a couple of #__PURE__
+         * annotations in positions Rolldown (Vite 8) won't honor, producing
+         * harmless INVALID_ANNOTATION build warnings. The code is third-party
+         * and the only effect is two functions aren't tree-shaken as pure.
+         * Drop those specific warnings so real annotation issues in our own
+         * code still surface.
+         */
+        onLog(level, log, handler) {
+          if (
+            log.code === 'INVALID_ANNOTATION' &&
+            log.message.includes('@vueuse/core')
+          ) {
+            return
+          }
+
+          handler(level, log)
+        },
+      },
     },
     test: {
       environment: 'happy-dom',
