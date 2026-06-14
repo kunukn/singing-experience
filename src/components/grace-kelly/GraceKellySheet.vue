@@ -25,6 +25,8 @@ type Props = {
   /* Sounding pitch of the active note, drawn as a label floating above it;
    * omit/null to hide. */
   currentToneLabel?: string | null
+  /* When false, hides the active-bar highlight box; defaults to shown. */
+  showBarHighlight?: boolean
 }
 
 const props = defineProps<Props>()
@@ -44,6 +46,11 @@ const lyricElements = ref<Element[]>([])
  * above the active note; null hides it. Lives in content coordinates so it scrolls
  * with the staff for free. */
 const toneLabelPosition = ref<{ left: number; top: number } | null>(null)
+
+/* Left/width (in scrolling-content coordinates) of the translucent box behind the
+ * active note's bar; null hides it. Container-relative like toneLabelPosition, so
+ * it scrolls horizontally with the staff for free. */
+const activeBarPosition = ref<{ left: number; width: number } | null>(null)
 
 function updateToneLabelPosition(index: number | null) {
   if (index === null || !containerRef.value) {
@@ -65,6 +72,71 @@ function updateToneLabelPosition(index: number | null) {
     left: noteRect.left - containerRect.left + noteRect.width / 2,
     top: noteRect.top - containerRect.top,
   }
+}
+
+/* Position the translucent box over the *measure* containing the active note —
+ * barline-to-barline, not hugging the noteheads — so wide lyrics sit inside it and
+ * the final measure's box covers its trailing rests too. The active note's x picks
+ * which barline interval to span; coordinates are container-relative so the box
+ * scrolls with the staff. */
+function updateActiveBar(index: number | null) {
+  if (index === null || !containerRef.value) {
+    activeBarPosition.value = null
+
+    return
+  }
+
+  const element = noteElements.value[index]
+  if (!element) {
+    activeBarPosition.value = null
+
+    return
+  }
+
+  const container = containerRef.value
+  const containerLeft = container.getBoundingClientRect().left
+  const centerX = (rect: DOMRect) => rect.left - containerLeft + rect.width / 2
+
+  /* Sample the notehead glyph (not the stem/beam group bbox) so the x falls
+   * cleanly inside the note's measure. */
+  const head = element.querySelector('.abcjs-notehead') ?? element
+  const noteX = centerX(head.getBoundingClientRect())
+
+  /* Barline centers in reading order — the measure boundaries. */
+  const barlineCenters = [...container.querySelectorAll('.abcjs-bar')]
+    .map((bar) => centerX(bar.getBoundingClientRect()))
+    .sort((a, b) => a - b)
+
+  /* Right edge = the barline closing the active measure. The final partial measure
+   * has no closing barline, so fall back to the rightmost drawn content (notes,
+   * rests, barlines) — this is what extends the box across the trailing rests. */
+  const rightBoundary =
+    barlineCenters.find((x) => x > noteX) ??
+    Math.max(
+      ...[
+        ...container.querySelectorAll('.abcjs-note, .abcjs-rest, .abcjs-bar'),
+      ].map((item) => item.getBoundingClientRect().right - containerLeft),
+    )
+
+  /* Left edge = the barline opening the active measure. The pickup / first measure
+   * has none, so fall back to the leftmost notehead minus a small pad (starts the
+   * box at the first note, not over the clef / key / time signature). */
+  const EDGE_PAD = 8 // px — gap before the first note when there's no opening barline
+  const leftBarlines = barlineCenters.filter((x) => x < noteX)
+  const leftBoundary =
+    leftBarlines.length > 0
+      ? leftBarlines[leftBarlines.length - 1]
+      : Math.min(
+          ...noteElements.value.map(
+            (note) => note.getBoundingClientRect().left - containerLeft,
+          ),
+        ) - EDGE_PAD
+
+  /* Inset slightly inside the barlines so their glyphs stay visible. */
+  const INNER_GAP = 3 // px
+  const left = Math.max(0, leftBoundary + INNER_GAP)
+  const width = rightBoundary - INNER_GAP - left
+  activeBarPosition.value = width > 0 ? { left, width } : null
 }
 
 async function renderSheet() {
@@ -126,6 +198,7 @@ async function renderSheet() {
     noteElements.value[noteIndex]?.classList.add('note-active')
 
   updateToneLabelPosition(noteIndex)
+  updateActiveBar(noteIndex)
 
   const syllableIndex = props.activeSyllableIndex
   if (
@@ -174,6 +247,7 @@ watch(
 
     if (index === null) {
       updateToneLabelPosition(null)
+      updateActiveBar(null)
 
       /* Song ended naturally → leave the scroll at the end. Stop/restart clears
        * the highlight with isDone false, so it still snaps back to the start. */
@@ -187,6 +261,7 @@ watch(
 
     element.classList.add('note-active')
     updateToneLabelPosition(index)
+    updateActiveBar(index)
     element.scrollIntoView({
       behavior: 'smooth',
       inline: 'center',
@@ -231,10 +306,25 @@ defineExpose({ scrollToSyllable })
     class="mx-auto w-fit max-w-full overflow-x-auto rounded border border-(--p-content-border-color)"
   >
     <div class="relative min-w-max">
-      <div ref="containerRef" class="py-0.5" />
+      <!--
+        Translucent box highlighting the active note's bar. Explicit stacking
+        (z-0 here, z-10 on the SVG, z-20 on the label) keeps it behind the
+        noteheads but above the card — a negative z-index would hide it behind
+        an opaque ancestor. Lives in content coordinates so it scrolls with the
+        staff.
+      -->
+      <div
+        v-if="activeBarPosition && showBarHighlight !== false"
+        class="pointer-events-none absolute top-14 bottom-9 z-0 rounded bg-(--p-primary-color)/10 transition-all duration-150"
+        :style="{
+          left: `${activeBarPosition.left}px`,
+          width: `${activeBarPosition.width}px`,
+        }"
+      />
+      <div ref="containerRef" class="relative z-10 py-0.5" />
       <span
         v-if="currentToneLabel && toneLabelPosition"
-        class="pointer-events-none absolute -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-primary-color) tabular-nums"
+        class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-primary-color) tabular-nums"
         :style="{
           left: `${toneLabelPosition.left + 5}px`,
           top: `${toneLabelPosition.top - 14}px`,

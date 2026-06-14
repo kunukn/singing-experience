@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ArrowUpIcon: typeof import('./components/icons/ArrowUpIcon.vue')['default']
     BackIcon: typeof import('./components/icons/BackIcon.vue')['default']
+    BarHighlightToggle: typeof import('./components/grace-kelly/BarHighlightToggle.vue')['default']
     CardLink: typeof import('./components/generic/CardLink.vue')['default']
     CentsDeviationBar: typeof import('./components/generic/CentsDeviationBar.vue')['default']
     DarkModeToggle: typeof import('./components/generic/DarkModeToggle.vue')['default']
@@ -43,6 +44,7 @@ declare module 'vue' {
     LandingFooter: typeof import('./components/LandingFooter.vue')['default']
     LandingPage: typeof import('./components/LandingPage.vue')['default']
     LanguageSwitcher: typeof import('./components/generic/LanguageSwitcher.vue')['default']
+    MetronomeToggle: typeof import('./components/grace-kelly/MetronomeToggle.vue')['default']
     MusicNoteIcon: typeof import('./components/icons/MusicNoteIcon.vue')['default']
     NoteDisplay: typeof import('./components/pitch-detector/NoteDisplay.vue')['default']
     PitchDetectorDisplay: typeof import('./components/pitch-detector/PitchDetectorDisplay.vue')['default']

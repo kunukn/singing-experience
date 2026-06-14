@@ -70,9 +70,9 @@ const activeTab = useLocalStorage('syng.graceKellyTab', 'sing')
  * on since it's a singing aid; toggled from the Sing live controls. */
 const isMetronomeEnabled = useLocalStorage('syng.graceKellyMetronome', true)
 
-/* "Sing live" active-bar highlight — the green box over the current measure.
- * Default on; toggled from the Sing live controls. Purely visual, so (unlike the
- * metronome) it is not handed to the game composables. */
+/* Active-bar highlight — the green box over the current measure. Shared by the
+ * "Sing along" and "Sing live" tabs (one toggle, one setting). Default on; purely
+ * visual, so (unlike the metronome) it is not handed to the game composables. */
 const isBarHighlightEnabled = useLocalStorage(
   'syng.graceKellyBarHighlight',
   true,
@@ -118,6 +118,7 @@ watch(activeTab, () => {
             v-model:vozIndex="vozIndex"
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
+            v-model:isBarHighlightEnabled="isBarHighlightEnabled"
           />
         </PrimeTabPanel>
         <PrimeTabPanel value="harmony">

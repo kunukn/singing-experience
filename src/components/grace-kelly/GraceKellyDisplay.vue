@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
+import BarHighlightToggle from './BarHighlightToggle.vue'
 import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
 import { VOZ_LABEL_KEYS } from './graceKellyConstants'
 import {
@@ -19,6 +20,9 @@ const props = defineProps<Props>()
 const vozIndex = defineModel<number>('vozIndex', { required: true })
 const startToneMidi = defineModel<number>('startToneMidi', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
+const isBarHighlightEnabled = defineModel<boolean>('isBarHighlightEnabled', {
+  required: true,
+})
 
 const { t } = useI18n()
 
@@ -149,6 +153,8 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       >
         {{ t('generic.start') }}
       </PrimeButton>
+
+      <BarHighlightToggle v-model="isBarHighlightEnabled" />
     </div>
 
     <div class="w-full max-w-full">
@@ -170,6 +176,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
         :lyrics="GRACE_KELLY_LYRIC_ABC"
         :activeSyllableIndex="activeSyllableIndex"
         :currentToneLabel="currentToneLabel"
+        :showBarHighlight="isBarHighlightEnabled"
       />
     </div>
 

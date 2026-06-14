@@ -4,8 +4,10 @@ import {
   midiToFrequency,
   midiToNoteLabel,
 } from '@/utils/noteUtils'
+import BarHighlightToggle from './BarHighlightToggle.vue'
 import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
 import GraceKellySingSheet from './GraceKellySingSheet.vue'
+import MetronomeToggle from './MetronomeToggle.vue'
 import { VOZ_LABEL_KEYS } from './graceKellyConstants'
 import {
   GRACE_KELLY_LYRIC_ABC,
@@ -414,20 +416,9 @@ const vozLabel = computed(() =>
         :disabled="micPermission === 'denied' || isBusy"
       />
 
-      <ToggleIconButton
-        v-model="isMetronomeEnabled"
-        iconOn="pi pi-stopwatch"
-        iconOff="pi pi-stopwatch"
-        :label="t('graceKelly.metronome')"
-        :disabled="isBusy"
-      />
+      <MetronomeToggle v-model="isMetronomeEnabled" :disabled="isBusy" />
 
-      <ToggleIconButton
-        v-model="isBarHighlightEnabled"
-        iconOn="pi pi-stop"
-        iconOff="pi pi-stop"
-        :label="t('graceKelly.barHighlight')"
-      />
+      <BarHighlightToggle v-model="isBarHighlightEnabled" />
     </div>
 
     <p v-if="error" class="text-sm text-(--p-red-400)">{{ error }}</p>
