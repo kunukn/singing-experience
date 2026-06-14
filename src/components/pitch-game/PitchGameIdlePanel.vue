@@ -49,7 +49,7 @@ const { t } = useI18n()
 
     <div class="flex w-full flex-wrap items-center justify-center gap-2">
       <PrimeButton
-        class="min-w-24"
+        class="min-w-20"
         severity="success"
         size="small"
         rounded
@@ -59,7 +59,7 @@ const { t } = useI18n()
       </PrimeButton>
 
       <PrimeButton
-        class="min-w-24"
+        class="min-w-20"
         :class="{ 'toggle-sequence-idle': !isPlayingSequence }"
         :severity="isPlayingSequence ? 'warn' : 'secondary'"
         size="small"

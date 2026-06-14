@@ -465,7 +465,7 @@ watch(
         severity="success"
         size="small"
         rounded
-        class="min-w-24"
+        class="min-w-20"
         @click="start"
       >
         {{ t('generic.start') }}
@@ -475,7 +475,7 @@ watch(
         severity="danger"
         size="small"
         rounded
-        class="min-w-24"
+        class="min-w-20"
         @click="stop"
       >
         {{ t('generic.stop') }}

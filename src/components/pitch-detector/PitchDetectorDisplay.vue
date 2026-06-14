@@ -222,7 +222,7 @@ onUnmounted(() => {
       />
 
       <PrimeButton
-        class="ms-auto min-w-24"
+        class="ms-auto min-w-20"
         :severity="isListening ? 'danger' : 'success'"
         size="small"
         rounded

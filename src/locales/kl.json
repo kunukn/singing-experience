@@ -279,6 +279,7 @@
       "low": "Appasitsoq"
     },
     "scoreCorrect": "{percent}% eqqortoq",
-    "metronome": "Takt"
+    "metronome": "Takt",
+    "barHighlight": "Boks"
   }
 }

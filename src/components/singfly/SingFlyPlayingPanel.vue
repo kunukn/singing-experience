@@ -17,7 +17,7 @@ const { t } = useI18n()
 <template>
   <div class="flex flex-col items-center gap-2">
     <PrimeButton
-      class="min-w-24"
+      class="min-w-20"
       severity="danger"
       size="small"
       rounded

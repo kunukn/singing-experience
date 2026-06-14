@@ -37,7 +37,7 @@ const { t } = useI18n()
         >
       </p>
       <PrimeButton
-        class="min-w-24"
+        class="min-w-20"
         severity="success"
         size="small"
         rounded

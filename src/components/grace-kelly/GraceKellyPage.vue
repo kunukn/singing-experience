@@ -70,6 +70,14 @@ const activeTab = useLocalStorage('syng.graceKellyTab', 'sing')
  * on since it's a singing aid; toggled from the Sing live controls. */
 const isMetronomeEnabled = useLocalStorage('syng.graceKellyMetronome', true)
 
+/* "Sing live" active-bar highlight — the green box over the current measure.
+ * Default on; toggled from the Sing live controls. Purely visual, so (unlike the
+ * metronome) it is not handed to the game composables. */
+const isBarHighlightEnabled = useLocalStorage(
+  'syng.graceKellyBarHighlight',
+  true,
+)
+
 const game = useGraceKelly()
 const harmonyGame = useGraceKellyHarmony()
 /* Silent timeline for the "Sing live" tab — advances the sheet on the BPM clock
@@ -128,6 +136,7 @@ watch(activeTab, () => {
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
             v-model:isMetronomeEnabled="isMetronomeEnabled"
+            v-model:isBarHighlightEnabled="isBarHighlightEnabled"
           />
         </PrimeTabPanel>
       </PrimeTabPanels>

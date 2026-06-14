@@ -283,6 +283,7 @@
       "low": "नीची"
     },
     "scoreCorrect": "{percent}% सही",
-    "metronome": "ताल"
+    "metronome": "ताल",
+    "barHighlight": "बॉक्स"
   }
 }

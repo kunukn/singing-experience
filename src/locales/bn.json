@@ -283,6 +283,7 @@
       "low": "নিচু"
     },
     "scoreCorrect": "{percent}% সঠিক",
-    "metronome": "তাল"
+    "metronome": "তাল",
+    "barHighlight": "বক্স"
   }
 }

@@ -283,6 +283,7 @@
       "low": "Rendah"
     },
     "scoreCorrect": "{percent}% benar",
-    "metronome": "Ketukan"
+    "metronome": "Ketukan",
+    "barHighlight": "Birama"
   }
 }

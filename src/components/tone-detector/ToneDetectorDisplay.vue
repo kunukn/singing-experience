@@ -36,7 +36,7 @@ onUnmounted(() => {
 
     <div class="flex w-full items-center justify-center">
       <PrimeButton
-        class="min-w-24"
+        class="min-w-20"
         :severity="isListening ? 'danger' : 'success'"
         size="small"
         rounded

@@ -283,6 +283,7 @@
       "low": "Dyb"
     },
     "scoreCorrect": "{percent}% rigtigt",
-    "metronome": "Takt"
+    "metronome": "Takt",
+    "barHighlight": "Boks"
   }
 }

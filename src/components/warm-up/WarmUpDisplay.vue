@@ -305,7 +305,7 @@ onUnmounted(() => {
 
       <div class="flex w-full flex-wrap items-center justify-center gap-2">
         <PrimeButton
-          class="min-w-24"
+          class="min-w-20"
           severity="success"
           size="small"
           rounded
@@ -315,7 +315,7 @@ onUnmounted(() => {
         </PrimeButton>
 
         <PrimeButton
-          class="min-w-24"
+          class="min-w-20"
           :class="{ 'toggle-sequence-idle': !isPlayingSequence }"
           :severity="isPlayingSequence ? 'warn' : 'secondary'"
           size="small"
@@ -344,7 +344,7 @@ onUnmounted(() => {
     >
       <div class="flex items-center gap-2">
         <PrimeButton
-          class="min-w-24"
+          class="min-w-20"
           severity="danger"
           size="small"
           rounded
@@ -354,7 +354,7 @@ onUnmounted(() => {
         </PrimeButton>
 
         <PrimeButton
-          class="min-w-24"
+          class="min-w-20"
           :class="{ 'toggle-sequence-idle': !isPlayingSequence }"
           :severity="isPlayingSequence ? 'warn' : 'secondary'"
           :disabled="gameIsPlayingSequence"
@@ -425,7 +425,7 @@ onUnmounted(() => {
         severity="success"
         size="small"
         rounded
-        class="min-w-24"
+        class="min-w-20"
         @click="handleReset"
       >
         {{ $t('generic.restart') }}

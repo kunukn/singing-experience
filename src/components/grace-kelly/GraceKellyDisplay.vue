@@ -113,7 +113,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
         severity="danger"
         size="small"
         rounded
-        class="min-w-24"
+        class="min-w-20"
         @click="stop"
       >
         {{ t('generic.stop') }}
@@ -121,7 +121,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
 
       <PrimeButton
         v-if="isPlaying"
-        class="min-w-24"
+        class="min-w-20"
         severity="warn"
         size="small"
         rounded
@@ -131,7 +131,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       </PrimeButton>
       <PrimeButton
         v-if="isPaused"
-        class="min-w-24"
+        class="min-w-20"
         severity="success"
         size="small"
         rounded
@@ -141,7 +141,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       </PrimeButton>
       <PrimeButton
         v-if="!isRunning"
-        class="min-w-24"
+        class="min-w-20"
         severity="success"
         size="small"
         rounded

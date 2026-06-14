@@ -34,6 +34,9 @@ const bpm = defineModel<number>('bpm', { required: true })
 const isMetronomeEnabled = defineModel<boolean>('isMetronomeEnabled', {
   required: true,
 })
+const isBarHighlightEnabled = defineModel<boolean>('isBarHighlightEnabled', {
+  required: true,
+})
 
 const { t } = useI18n()
 
@@ -349,7 +352,7 @@ const vozLabel = computed(() =>
         severity="danger"
         size="small"
         rounded
-        class="min-w-24"
+        class="min-w-20"
         @click="stopSinging"
       >
         {{ t('generic.stop') }}
@@ -357,7 +360,7 @@ const vozLabel = computed(() =>
 
       <PrimeButton
         v-if="isPlaying"
-        class="min-w-24"
+        class="min-w-20"
         severity="warn"
         size="small"
         rounded
@@ -367,7 +370,7 @@ const vozLabel = computed(() =>
       </PrimeButton>
       <PrimeButton
         v-if="isPaused"
-        class="min-w-24"
+        class="min-w-20"
         severity="success"
         size="small"
         rounded
@@ -377,7 +380,7 @@ const vozLabel = computed(() =>
       </PrimeButton>
       <PrimeButton
         v-if="!isRunning"
-        class="min-w-24"
+        class="min-w-20"
         severity="success"
         size="small"
         rounded
@@ -389,7 +392,7 @@ const vozLabel = computed(() =>
 
       <PrimeButton
         v-if="!isRunning"
-        class="min-w-24"
+        class="min-w-20"
         :class="{ 'toggle-sequence-idle': !isPreviewPlaying }"
         :severity="isPreviewPlaying ? 'warn' : 'secondary'"
         size="small"
@@ -417,6 +420,13 @@ const vozLabel = computed(() =>
         iconOff="pi pi-stopwatch"
         :label="t('graceKelly.metronome')"
         :disabled="isBusy"
+      />
+
+      <ToggleIconButton
+        v-model="isBarHighlightEnabled"
+        iconOn="pi pi-stop"
+        iconOff="pi pi-stop"
+        :label="t('graceKelly.barHighlight')"
       />
     </div>
 
@@ -446,6 +456,7 @@ const vozLabel = computed(() =>
         :sungToneCents="stableSungCents"
         :sungMidi="sungMidi"
         :isOnPitch="isOnPitch"
+        :showBarHighlight="isBarHighlightEnabled"
       />
     </div>
 

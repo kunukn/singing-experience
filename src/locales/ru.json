@@ -283,6 +283,7 @@
       "low": "Низкая"
     },
     "scoreCorrect": "{percent}% правильно",
-    "metronome": "Ритм"
+    "metronome": "Ритм",
+    "barHighlight": "Такт"
   }
 }

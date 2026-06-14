@@ -283,6 +283,7 @@
       "low": "Grave"
     },
     "scoreCorrect": "{percent}% correto",
-    "metronome": "Ritmo"
+    "metronome": "Ritmo",
+    "barHighlight": "Compasso"
   }
 }

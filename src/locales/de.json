@@ -283,6 +283,7 @@
       "low": "Tief"
     },
     "scoreCorrect": "{percent}% richtig",
-    "metronome": "Takt"
+    "metronome": "Takt",
+    "barHighlight": "Box"
   }
 }

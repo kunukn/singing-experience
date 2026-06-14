@@ -283,6 +283,7 @@
       "low": "Low"
     },
     "scoreCorrect": "{percent}% correct",
-    "metronome": "Beat"
+    "metronome": "Beat",
+    "barHighlight": "Bar"
   }
 }

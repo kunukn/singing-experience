@@ -114,7 +114,7 @@ function toggleVoz(index: number, enabled: boolean) {
         severity="danger"
         size="small"
         rounded
-        class="min-w-24"
+        class="min-w-20"
         @click="stop"
       >
         {{ t('generic.stop') }}
@@ -122,7 +122,7 @@ function toggleVoz(index: number, enabled: boolean) {
 
       <PrimeButton
         v-if="isPlaying"
-        class="min-w-24"
+        class="min-w-20"
         severity="warn"
         size="small"
         rounded
@@ -132,7 +132,7 @@ function toggleVoz(index: number, enabled: boolean) {
       </PrimeButton>
       <PrimeButton
         v-if="isPaused"
-        class="min-w-24"
+        class="min-w-20"
         severity="success"
         size="small"
         rounded
@@ -142,7 +142,7 @@ function toggleVoz(index: number, enabled: boolean) {
       </PrimeButton>
       <PrimeButton
         v-if="!isRunning"
-        class="min-w-24"
+        class="min-w-20"
         severity="success"
         size="small"
         rounded

@@ -285,7 +285,7 @@ onUnmounted(() => {
 
       <div class="flex w-full flex-wrap items-center justify-center gap-2">
         <PrimeButton
-          class="min-w-24"
+          class="min-w-20"
           severity="success"
           size="small"
           rounded
@@ -295,7 +295,7 @@ onUnmounted(() => {
         </PrimeButton>
 
         <PrimeButton
-          class="min-w-24"
+          class="min-w-20"
           :class="{ 'toggle-sequence-idle': !isPlayingSequence }"
           :severity="isPlayingSequence ? 'warn' : 'secondary'"
           size="small"
@@ -335,7 +335,7 @@ onUnmounted(() => {
     >
       <div class="pt-4"></div>
       <PrimeButton
-        class="min-w-24"
+        class="min-w-20"
         severity="danger"
         size="small"
         rounded
@@ -390,7 +390,7 @@ onUnmounted(() => {
         size="small"
         rounded
         @click="handleReset"
-        class="min-w-24"
+        class="min-w-20"
       >
         {{ t('generic.playAgain') }}
       </PrimeButton>

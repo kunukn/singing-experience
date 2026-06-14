@@ -283,6 +283,7 @@
       "low": "Grave"
     },
     "scoreCorrect": "{percent}% correct",
-    "metronome": "Rythme"
+    "metronome": "Rythme",
+    "barHighlight": "Mesure"
   }
 }

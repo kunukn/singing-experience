@@ -283,6 +283,7 @@
       "low": "Chini"
     },
     "scoreCorrect": "{percent}% sahihi",
-    "metronome": "Mdundo"
+    "metronome": "Mdundo",
+    "barHighlight": "Boksi"
   }
 }
