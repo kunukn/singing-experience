@@ -55,8 +55,8 @@ const isSungMatch = computed(
     props.sungToneLabel === props.currentToneLabel,
 )
 
-/* ±30¢ — audibly off; below this the cents suffix is noise. */
-const SUNG_CENTS_THRESHOLD = 30
+/* ±40¢ — audibly off; below this the cents suffix is noise. */
+const SUNG_CENTS_THRESHOLD = 40
 
 /* Chip text: the sung label, plus the exact cents deviation once out of tune
  * (e.g. "C3 -35¢") so the singer sees how far off they are. */
