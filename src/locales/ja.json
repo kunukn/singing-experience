@@ -96,7 +96,7 @@
       },
       "singingTools": {
         "name": "音楽ツール",
-        "description": "ピッチ検出、ウォームアップ、チューナー、トーン検出。"
+        "description": "自分の音程を見つけて、ぴったり合わせよう。"
       },
       "singingGames": {
         "name": "歌のゲーム",

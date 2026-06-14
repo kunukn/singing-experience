@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { programs } from '@/constants/programs'
+import { games, programs, tools } from '@/constants/programs'
 
 const { t } = useI18n()
 const { state: micPermission } = useMicrophonePermission()
@@ -47,6 +47,25 @@ const musicNoteColorClass = computed(() => {
                 <p class="mt-1 text-sm text-(--p-text-muted-color)">
                   {{ t(`home.programs.${program.key}.description`) }}
                 </p>
+
+                <ul
+                  v-if="
+                    program.key === 'singingTools' ||
+                    program.key === 'singingGames'
+                  "
+                  class="mt-3 grid grid-cols-1 gap-x-4 gap-y-1.5 sm:grid-cols-2"
+                >
+                  <li
+                    v-for="item in program.key === 'singingTools'
+                      ? tools
+                      : games"
+                    :key="item.key"
+                    class="flex items-center gap-2 text-sm text-(--p-text-muted-color)"
+                  >
+                    <span aria-hidden="true">{{ item.icon }}</span>
+                    <span>{{ t(`home.programs.${item.key}.name`) }}</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </template>
