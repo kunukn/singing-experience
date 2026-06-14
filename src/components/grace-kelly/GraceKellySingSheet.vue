@@ -215,10 +215,9 @@ function updateActiveBar(index: number | null) {
   activeBarPosition.value = width > 0 ? { left, width } : null
 }
 
-/* Anchor the grey start-tone label to the left of the first notehead, on the
- * staff's bottom edge. abcjs draws no time-signature element to target, but the
- * 6/8 glyph's baseline is the bottom staff line, so "below the staff, left of the
- * first note" lands directly under it. */
+/* Anchor the grey start-tone label tucked just under the first notehead, nudged
+ * a few px right (offsets applied in the template). Horizontal = notehead center,
+ * vertical = the notehead's bottom edge, so the cue sits right at the note. */
 function updateStartTonePosition() {
   const firstNote = noteElements.value[0]
   if (!containerRef.value || !firstNote) {
@@ -229,12 +228,11 @@ function updateStartTonePosition() {
 
   const containerRect = containerRef.value.getBoundingClientRect()
   const head = firstNote.querySelector('.abcjs-notehead') ?? firstNote
-  const staff = containerRef.value.querySelector('.abcjs-staff')
+  const headRect = head.getBoundingClientRect()
 
-  const left = head.getBoundingClientRect().left - containerRect.left
-  const top = staff
-    ? staff.getBoundingClientRect().bottom - containerRect.top
-    : firstNote.getBoundingClientRect().bottom - containerRect.top
+  const left = headRect.left - containerRect.left + headRect.width / 2
+  const top = headRect.bottom - containerRect.top
+
   startToneLabelPosition.value = { left, top }
 }
 
@@ -469,16 +467,16 @@ defineExpose({ scrollToSyllable })
         <div ref="containerRef" class="relative z-10 py-0.5" />
 
         <!--
-          Fixed start-tone cue: the song's first note, parked just left of it and
-          below the staff (under the 6/8 time signature). Always visible, grey, so
-          the singer knows what note to start on.
+          Fixed start-tone cue: the song's first note, tucked just below its
+          notehead and nudged a few px right. Always visible, grey, so the singer
+          knows what note to start on.
         -->
         <span
           v-if="startToneLabel && startToneLabelPosition"
-          class="pointer-events-none absolute z-20 -translate-x-full rounded px-0.5 text-[0.625rem] leading-none font-semibold tracking-[0px] text-(--p-text-muted-color) tabular-nums"
+          class="pointer-events-none absolute z-20 rounded px-0.5 text-[0.625rem] leading-none font-semibold tracking-[0px] text-(--p-text-muted-color) tabular-nums"
           :style="{
-            left: `${startToneLabelPosition.left - 20}px`,
-            top: `${startToneLabelPosition.top + 0}px`,
+            left: `${startToneLabelPosition.left + 4}px`,
+            top: `${startToneLabelPosition.top - 6}px`,
           }"
         >
           {{ startToneLabel }}
