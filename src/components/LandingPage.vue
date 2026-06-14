@@ -41,10 +41,10 @@ const musicNoteColorClass = computed(() => {
             <div class="flex items-start gap-3 sm:gap-4">
               <span class="text-4xl">{{ program.icon }}</span>
               <div>
-                <h2 class="text-xl font-semibold">
+                <h2 class="mb-1 text-xl font-semibold">
                   {{ t(`home.programs.${program.key}.name`) }}
                 </h2>
-                <p class="mt-1 text-sm text-(--p-text-muted-color)">
+                <p class="mb-4 text-sm text-(--p-text-muted-color)">
                   {{ t(`home.programs.${program.key}.description`) }}
                 </p>
 
@@ -53,7 +53,7 @@ const musicNoteColorClass = computed(() => {
                     program.key === 'singingTools' ||
                     program.key === 'singingGames'
                   "
-                  class="mt-3 grid grid-cols-1 gap-x-4 gap-y-1.5 sm:grid-cols-2"
+                  class="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2"
                 >
                   <li
                     v-for="item in program.key === 'singingTools'
