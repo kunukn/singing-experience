@@ -18,16 +18,23 @@ type Props = {
   /* Show the tone-sound (timbre) select. The "Sing live" tab hides it — there
    * is no playback there, so the timbre choice is meaningless. */
   showToneMode?: boolean
+  /* Show the note-names toggle. Only the tabs backed by GraceKellySingSheet
+   * (Sing along / Sing live) pass true — that sheet renders the labels. */
+  showToneLabelToggle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showVoz: true,
   showToneMode: true,
+  showToneLabelToggle: false,
 })
 
 const vozIndex = defineModel<number>('vozIndex')
 const startToneMidi = defineModel<number>('startToneMidi', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
+const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
+  default: false,
+})
 
 const { t } = useI18n()
 
@@ -81,6 +88,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       'mask-end': canScrollEnd,
       'no-voz': !props.showVoz,
       'no-tone': !props.showToneMode,
+      'has-toggle': props.showToneLabelToggle,
     }"
   >
     <div v-if="props.showVoz" class="settings-item">
@@ -156,6 +164,13 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       }}</label>
       <ToneModeSelect v-model="toneMode" />
     </div>
+
+    <div v-if="props.showToneLabelToggle" class="settings-item">
+      <label class="text-sm text-(--p-text-muted-color) md:block">{{
+        t('graceKelly.toneLabels')
+      }}</label>
+      <PrimeToggleSwitch v-model="areToneLabelsShown" />
+    </div>
   </div>
 </template>
 
@@ -179,6 +194,17 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 .settings-row.no-voz,
 .settings-row.no-tone {
   @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr];
+}
+
+/* The note-names toggle adds a fifth item → 10 columns ("Sing along"). */
+.settings-row.has-toggle {
+  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr_auto_1fr];
+}
+
+/* "Sing live" hides the tone-sound select but keeps the toggle → four items, so
+ * 8 columns. More specific than the .no-tone 6-col rule above, so it wins. */
+.settings-row.has-toggle.no-tone {
+  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr];
 }
 
 /* Edge fade — signals horizontal scrollability on iOS where scrollbars auto-hide.

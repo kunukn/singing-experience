@@ -284,6 +284,7 @@
     },
     "scoreCorrect": "{percent}% eqqortoq",
     "metronome": "Takt",
-    "barHighlight": "Boks"
+    "barHighlight": "Boks",
+    "toneLabels": "Nodit:"
   }
 }

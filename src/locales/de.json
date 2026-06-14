@@ -288,6 +288,7 @@
     },
     "scoreCorrect": "{percent}% richtig",
     "metronome": "Takt",
-    "barHighlight": "Box"
+    "barHighlight": "Box",
+    "toneLabels": "Töne:"
   }
 }

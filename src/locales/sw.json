@@ -288,6 +288,7 @@
     },
     "scoreCorrect": "{percent}% sahihi",
     "metronome": "Mdundo",
-    "barHighlight": "Boksi"
+    "barHighlight": "Boksi",
+    "toneLabels": "Noti:"
   }
 }

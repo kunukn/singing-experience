@@ -288,6 +288,7 @@
     },
     "scoreCorrect": "{percent}% صحيح",
     "metronome": "إيقاع",
-    "barHighlight": "مربع"
+    "barHighlight": "مربع",
+    "toneLabels": "النغمات:"
   }
 }

@@ -288,6 +288,7 @@
     },
     "scoreCorrect": "{percent}% правильно",
     "metronome": "Ритм",
-    "barHighlight": "Такт"
+    "barHighlight": "Такт",
+    "toneLabels": "Ноты:"
   }
 }

@@ -288,6 +288,7 @@
     },
     "scoreCorrect": "{percent}% benar",
     "metronome": "Ketukan",
-    "barHighlight": "Birama"
+    "barHighlight": "Birama",
+    "toneLabels": "Nada:"
   }
 }

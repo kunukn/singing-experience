@@ -78,6 +78,10 @@ const isBarHighlightEnabled = useLocalStorage(
   true,
 )
 
+/* Note-name labels above every note on the sheet. Shared by the "Sing along" and
+ * "Sing live" tabs (both render GraceKellySingSheet). Default off; purely visual. */
+const areToneLabelsShown = useLocalStorage('syng.graceKellyToneLabels', false)
+
 const game = useGraceKelly()
 const harmonyGame = useGraceKellyHarmony()
 /* Silent timeline for the "Sing live" tab — advances the sheet on the BPM clock
@@ -120,6 +124,7 @@ watch(activeTab, () => {
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
             v-model:isBarHighlightEnabled="isBarHighlightEnabled"
+            v-model:areToneLabelsShown="areToneLabelsShown"
           />
         </PrimeTabPanel>
         <PrimeTabPanel value="harmony">
@@ -139,6 +144,7 @@ watch(activeTab, () => {
             v-model:bpm="bpm"
             v-model:isMetronomeEnabled="isMetronomeEnabled"
             v-model:isBarHighlightEnabled="isBarHighlightEnabled"
+            v-model:areToneLabelsShown="areToneLabelsShown"
           />
         </PrimeTabPanel>
       </PrimeTabPanels>

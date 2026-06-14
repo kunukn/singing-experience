@@ -288,6 +288,7 @@
     },
     "scoreCorrect": "{percent}% 正确",
     "metronome": "节拍",
-    "barHighlight": "小节"
+    "barHighlight": "小节",
+    "toneLabels": "音名:"
   }
 }

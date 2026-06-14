@@ -44,6 +44,9 @@ type Props = {
   /* True when the sung pitch is within tolerance of the active note — turns the
    * pitch line green. */
   isOnPitch?: boolean
+  /* When true, draws a muted note-name label above every note (the green active
+   * chip overlays its note during playback). Defaults to off. */
+  showToneLabels?: boolean
   /* When false, hides the active-bar highlight box; defaults to shown. */
   showBarHighlight?: boolean
 }
@@ -127,6 +130,35 @@ const pitchLineTop = computed(() => {
   const EDGE_MARGIN = 2 // px — keep the 2px line fully visible at the edges
   return Math.max(EDGE_MARGIN, Math.min(staffHeight.value - EDGE_MARGIN, raw))
 })
+
+/* Muted note-name chips above every note, shown when `showToneLabels` is on. Each
+ * entry pairs a container-relative position with that note's sounding pitch (start
+ * tone transposes the melody). Measured on every render; the template gates display
+ * so toggling needs no re-render. */
+const allToneLabels = ref<{ left: number; top: number; text: string }[]>([])
+
+function updateAllToneLabels() {
+  if (!containerRef.value) {
+    allToneLabels.value = []
+
+    return
+  }
+
+  const containerRect = containerRef.value.getBoundingClientRect()
+  allToneLabels.value = noteElements.value.flatMap((element, index) => {
+    const note = props.melody.notes[index]
+    if (!note) return []
+
+    const noteRect = element.getBoundingClientRect()
+    return [
+      {
+        left: noteRect.left - containerRect.left + noteRect.width / 2,
+        top: noteRect.top - containerRect.top,
+        text: midiToNoteLabel(props.startToneMidi + note.midiOffset).label,
+      },
+    ]
+  })
+}
 
 function updateToneLabelPosition(index: number | null) {
   if (index === null || !containerRef.value) {
@@ -344,6 +376,7 @@ async function renderSheet() {
   updateToneLabelPosition(noteIndex)
   updateActiveBar(noteIndex)
   updateStartTonePosition()
+  updateAllToneLabels()
   calibratePitchToY()
 
   const syllableIndex = props.activeSyllableIndex
@@ -475,12 +508,31 @@ defineExpose({ scrollToSyllable })
           v-if="startToneLabel && startToneLabelPosition"
           class="pointer-events-none absolute z-20 rounded px-0.5 text-[0.625rem] leading-none font-semibold tracking-[0px] text-(--p-text-muted-color) tabular-nums"
           :style="{
-            left: `${startToneLabelPosition.left + 4}px`,
-            top: `${startToneLabelPosition.top - 6}px`,
+            left: `${startToneLabelPosition.left + 5}px`,
+            top: `${startToneLabelPosition.top - 7}px`,
           }"
         >
           {{ startToneLabel }}
         </span>
+
+        <!--
+          Muted note-name label above every note, shown when the toggle is on. The
+          green active chip below renders later in the DOM with an opaque bg, so it
+          cleanly overlays the matching muted label during playback.
+        -->
+        <template v-if="showToneLabels">
+          <span
+            v-for="(label, index) in allToneLabels"
+            :key="index"
+            class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
+            :style="{
+              left: `${label.left + 5}px`,
+              top: `${label.top - 14}px`,
+            }"
+          >
+            {{ label.text }}
+          </span>
+        </template>
 
         <span
           v-if="currentToneLabel && toneLabelPosition"

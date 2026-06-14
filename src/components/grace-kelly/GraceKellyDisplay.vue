@@ -28,6 +28,9 @@ const bpm = defineModel<number>('bpm', { required: true })
 const isBarHighlightEnabled = defineModel<boolean>('isBarHighlightEnabled', {
   required: true,
 })
+const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
+  required: true,
+})
 
 const { t } = useI18n()
 
@@ -136,7 +139,9 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       v-model:vozIndex="vozIndex"
       v-model:startToneMidi="startToneMidi"
       v-model:bpm="bpm"
+      v-model:areToneLabelsShown="areToneLabelsShown"
       :isRunning="isRunning"
+      :showToneLabelToggle="true"
     />
 
     <label class="flex items-center gap-2 text-sm sm:mb-4">
@@ -217,6 +222,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
         :sungMidi="sungMidi"
         :sungToneLabel="stableSungLabel"
         :sungToneCents="stableSungCents"
+        :showToneLabels="areToneLabelsShown"
         :showBarHighlight="isBarHighlightEnabled"
       />
     </div>

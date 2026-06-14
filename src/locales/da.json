@@ -288,6 +288,7 @@
     },
     "scoreCorrect": "{percent}% rigtigt",
     "metronome": "Takt",
-    "barHighlight": "Boks"
+    "barHighlight": "Boks",
+    "toneLabels": "Toner:"
   }
 }

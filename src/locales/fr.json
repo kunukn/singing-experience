@@ -288,6 +288,7 @@
     },
     "scoreCorrect": "{percent}% correct",
     "metronome": "Rythme",
-    "barHighlight": "Mesure"
+    "barHighlight": "Mesure",
+    "toneLabels": "Notes:"
   }
 }

@@ -39,6 +39,9 @@ const isMetronomeEnabled = defineModel<boolean>('isMetronomeEnabled', {
 const isBarHighlightEnabled = defineModel<boolean>('isBarHighlightEnabled', {
   required: true,
 })
+const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
+  required: true,
+})
 
 const { t } = useI18n()
 
@@ -334,7 +337,9 @@ const vozLabel = computed(() =>
       v-model:vozIndex="vozIndex"
       v-model:startToneMidi="startToneMidi"
       v-model:bpm="bpm"
+      v-model:areToneLabelsShown="areToneLabelsShown"
       :isRunning="isBusy"
+      :showToneLabelToggle="true"
     />
 
     <div v-if="showResult" class="flex flex-col items-center gap-1">
@@ -444,6 +449,7 @@ const vozLabel = computed(() =>
         :sungToneCents="stableSungCents"
         :sungMidi="sungMidi"
         :isOnPitch="isOnPitch"
+        :showToneLabels="areToneLabelsShown"
         :showBarHighlight="isBarHighlightEnabled"
       />
     </div>

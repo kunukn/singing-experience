@@ -288,6 +288,7 @@
     },
     "scoreCorrect": "{percent}% সঠিক",
     "metronome": "তাল",
-    "barHighlight": "বক্স"
+    "barHighlight": "বক্স",
+    "toneLabels": "স্বর:"
   }
 }

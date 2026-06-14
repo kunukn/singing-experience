@@ -288,6 +288,7 @@
     },
     "scoreCorrect": "{percent}% correto",
     "metronome": "Ritmo",
-    "barHighlight": "Compasso"
+    "barHighlight": "Compasso",
+    "toneLabels": "Tons:"
   }
 }
