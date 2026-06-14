@@ -44,11 +44,8 @@ const { t } = useI18n()
         {{ t('generic.start') }}
       </PrimeButton>
 
-      <ToggleIconButton
+      <PreviewToggle
         v-model="isPreviewEnabled"
-        iconOn="pi pi-microphone"
-        iconOff="pi pi-microphone"
-        :label="t('generic.previewSoundLabel')"
         :disabled="micPermission === 'denied'"
       />
     </div>

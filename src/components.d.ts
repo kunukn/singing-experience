@@ -65,6 +65,7 @@ declare module 'vue' {
     PitchHistoryChart: typeof import('./components/pitch-detector/PitchHistoryChart.vue')['default']
     PitchIdleControls: typeof import('./components/pitch-detector/PitchIdleControls.vue')['default']
     PitchStats: typeof import('./components/pitch-detector/PitchStats.vue')['default']
+    PreviewToggle: typeof import('./components/generic/PreviewToggle.vue')['default']
     PrimeButton: typeof import('primevue/button')['default']
     PrimeCard: typeof import('primevue/card')['default']
     PrimeSelect: typeof import('primevue/select')['default']
