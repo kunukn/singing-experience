@@ -98,22 +98,6 @@ const toneLabelPosition = ref<{ left: number; top: number } | null>(null)
  * it scrolls horizontally with the staff for free. */
 const activeBarPosition = ref<{ left: number; width: number } | null>(null)
 
-/* Fixed start-tone cue: the song's first sounding pitch (start tone transposes the
- * melody, so it's startTone + the first note's offset). Always shown to tell the
- * singer what note to hit before they begin — distinct from the floating active
- * currentToneLabel chip. */
-const startToneLabel = computed(() => {
-  const firstNote = props.melody.notes[0]
-  if (!firstNote) return null
-
-  return midiToNoteLabel(props.startToneMidi + firstNote.midiOffset).label
-})
-
-/* Position (container coords) of the grey start-tone label, anchored left of the
- * first note and below the staff; null hides it. Static per render, like the staff
- * geometry it's pinned to. */
-const startToneLabelPosition = ref<{ left: number; top: number } | null>(null)
-
 /* Linear MIDI→Y mapping calibrated from the rendered noteheads; rebuilt on every
  * render. Y is measured in rootRef coordinates so the pitch line, pinned to the
  * root, stays correct regardless of horizontal scroll. */
@@ -136,6 +120,13 @@ const pitchLineTop = computed(() => {
  * tone transposes the melody). Measured on every render; the template gates display
  * so toggling needs no re-render. */
 const allToneLabels = ref<{ left: number; top: number; text: string }[]>([])
+
+/* Tone-name chips to render: all of them when the toggle is on, otherwise just
+ * the first note's — the start-tone cue is always visible so the singer knows
+ * what note to begin on. */
+const visibleToneLabels = computed(() =>
+  props.showToneLabels ? allToneLabels.value : allToneLabels.value.slice(0, 1),
+)
 
 function updateAllToneLabels() {
   if (!containerRef.value) {
@@ -247,27 +238,6 @@ function updateActiveBar(index: number | null) {
   activeBarPosition.value = width > 0 ? { left, width } : null
 }
 
-/* Anchor the grey start-tone label tucked just under the first notehead, nudged
- * a few px right (offsets applied in the template). Horizontal = notehead center,
- * vertical = the notehead's bottom edge, so the cue sits right at the note. */
-function updateStartTonePosition() {
-  const firstNote = noteElements.value[0]
-  if (!containerRef.value || !firstNote) {
-    startToneLabelPosition.value = null
-
-    return
-  }
-
-  const containerRect = containerRef.value.getBoundingClientRect()
-  const head = firstNote.querySelector('.abcjs-notehead') ?? firstNote
-  const headRect = head.getBoundingClientRect()
-
-  const left = headRect.left - containerRect.left + headRect.width / 2
-  const top = headRect.bottom - containerRect.top
-
-  startToneLabelPosition.value = { left, top }
-}
-
 /* Paint the given notes green (result-state correctness feedback) and clear any
  * previous green. Reuses the per-index notehead access the active-highlight uses. */
 function applyCorrectNotes(indices: number[] | undefined) {
@@ -375,7 +345,6 @@ async function renderSheet() {
 
   updateToneLabelPosition(noteIndex)
   updateActiveBar(noteIndex)
-  updateStartTonePosition()
   updateAllToneLabels()
   calibratePitchToY()
 
@@ -500,39 +469,23 @@ defineExpose({ scrollToSyllable })
         <div ref="containerRef" class="relative z-10 py-0.5" />
 
         <!--
-          Fixed start-tone cue: the song's first note, tucked just below its
-          notehead and nudged a few px right. Always visible, grey, so the singer
-          knows what note to start on.
+          Muted note-name label above each note. With the toggle on, every note;
+          with it off, only the first (the start-tone cue, always visible so the
+          singer knows what note to begin on). The green active chip below renders
+          later in the DOM with an opaque bg, so it cleanly overlays the matching
+          muted label during playback.
         -->
         <span
-          v-if="startToneLabel && startToneLabelPosition"
-          class="pointer-events-none absolute z-20 rounded px-0.5 text-[0.625rem] leading-none font-semibold tracking-[0px] text-(--p-text-muted-color) tabular-nums"
+          v-for="(label, index) in visibleToneLabels"
+          :key="index"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
           :style="{
-            left: `${startToneLabelPosition.left + 5}px`,
-            top: `${startToneLabelPosition.top - 7}px`,
+            left: `${label.left + 5}px`,
+            top: `${label.top - 14}px`,
           }"
         >
-          {{ startToneLabel }}
+          {{ label.text }}
         </span>
-
-        <!--
-          Muted note-name label above every note, shown when the toggle is on. The
-          green active chip below renders later in the DOM with an opaque bg, so it
-          cleanly overlays the matching muted label during playback.
-        -->
-        <template v-if="showToneLabels">
-          <span
-            v-for="(label, index) in allToneLabels"
-            :key="index"
-            class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
-            :style="{
-              left: `${label.left + 5}px`,
-              top: `${label.top - 14}px`,
-            }"
-          >
-            {{ label.text }}
-          </span>
-        </template>
 
         <span
           v-if="currentToneLabel && toneLabelPosition"
