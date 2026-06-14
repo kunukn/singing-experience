@@ -478,7 +478,7 @@ defineExpose({ scrollToSyllable })
         <span
           v-for="(label, index) in visibleToneLabels"
           :key="index"
-          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
           :style="{
             left: `${label.left + 5}px`,
             top: `${label.top - 14}px`,
