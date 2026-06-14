@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { midiToNoteLabel } from '@/utils/noteUtils'
+import { frequencyToMidi, midiToNoteLabel } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import BarHighlightToggle from './BarHighlightToggle.vue'
 import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
@@ -10,9 +10,14 @@ import {
 } from './graceKellyLyrics'
 import { VOZ_MELODIES } from './graceKellyMelodies'
 import type { GraceKellyResult } from './useGraceKelly'
+import { useStableSungLabel } from './useStableSungLabel'
 
 type Props = {
   game: GraceKellyResult
+  /* True only while the "Sing along" tab is active. PrimeTabs keeps every panel
+   * mounted (not lazy), so the idle preview mic is gated on this to avoid
+   * competing with the "Sing live" tab's mic on a hidden tab. */
+  isActive: boolean
 }
 
 const props = defineProps<Props>()
@@ -40,6 +45,34 @@ const {
 /* True while a sequence is playing or paused — the part/tone/tempo selects stay
  * locked for both so the running timeline can't be changed underneath it. */
 const isRunning = computed(() => isPlaying.value || isPaused.value)
+
+const { isPreviewEnabled } = useSettings()
+
+/* "See your voice" idle preview — listens only while this tab is active AND the
+ * timeline is idle, so it never competes with playback here or with the "Sing
+ * live" tab's mic on the (still-mounted) hidden panel. Toggling on requests mic
+ * permission; if denied, useIdlePreview flips isPreviewEnabled back off and
+ * micPermission disables the toggle. */
+const {
+  previewMidi,
+  rawFrequency: previewFrequency,
+  micPermission,
+} = useIdlePreview({
+  isGameActive: computed(() => isRunning.value || !props.isActive),
+  isEnabled: isPreviewEnabled,
+})
+
+/* Continuous MIDI of the previewed pitch (raw, not rounded), for the pitch
+ * line's vertical position; null when no clean pitch is detected. */
+const sungMidi = computed(() => {
+  if (previewMidi.value === null || previewFrequency.value === null) return null
+
+  return frequencyToMidi(previewFrequency.value)
+})
+
+/* De-flickered note label riding the orange preview line; held 50ms before
+ * showing to avoid strobe. */
+const { stableSungLabel, stableSungCents } = useStableSungLabel({ sungMidi })
 
 const sheetRef = ref<{
   scrollToSyllable: (index: number) => void
@@ -154,6 +187,11 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
         {{ t('generic.start') }}
       </PrimeButton>
 
+      <PreviewToggle
+        v-model="isPreviewEnabled"
+        :disabled="micPermission === 'denied' || isRunning"
+      />
+
       <BarHighlightToggle v-model="isBarHighlightEnabled" />
     </div>
 
@@ -165,7 +203,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
         </h2>
       </div>
 
-      <GraceKellySheet
+      <GraceKellySingSheet
         ref="sheetRef"
         :melody="VOZ_MELODIES[vozIndex]"
         :vozLabel="vozLabel"
@@ -176,6 +214,9 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
         :lyrics="GRACE_KELLY_LYRIC_ABC"
         :activeSyllableIndex="activeSyllableIndex"
         :currentToneLabel="currentToneLabel"
+        :sungMidi="sungMidi"
+        :sungToneLabel="stableSungLabel"
+        :sungToneCents="stableSungCents"
         :showBarHighlight="isBarHighlightEnabled"
       />
     </div>

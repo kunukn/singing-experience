@@ -115,6 +115,7 @@ watch(activeTab, () => {
         <PrimeTabPanel value="sing">
           <GraceKellyDisplay
             :game="game"
+            :isActive="activeTab === 'sing'"
             v-model:vozIndex="vozIndex"
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
