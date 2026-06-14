@@ -84,6 +84,13 @@ Detects multiple simultaneous tones in real time (C2–C7) — sing or play a ha
 
 ### 🕹️ Singing Games
 
+#### 🎯 Sing Tone Game
+
+A random tone plays — sing it back to match. Match a row of tones to win.
+
+- Choose the number of rounds and the hold duration
+- Finishes with your total time
+
 #### 🎶 DO RE MI Game
 
 A step-by-step singing game that walks you through the classic musical scale — DO, RE, MI, FA, SO, LA, TI, DO.
@@ -95,19 +102,15 @@ A step-by-step singing game that walks you through the classic musical scale —
 - You can choose how long you need to hold each note (1–10 seconds)
 - Choose from **40+ scale modes** across 8 groups — see [Scale Modes](#-scale-modes) below
 
-#### 🎯 Sing Tone Game
+#### 👑 Grace Kelly Challenge
 
-A random tone plays — sing it back to match. Match a row of tones to win.
+Sing along to MIKA's "Grace Kelly" (the TikTok harmony challenge). The game shows real sheet music with lyrics and walks you through the song across three modes.
 
-- Choose the number of rounds and the hold duration
-- Finishes with your total time
-
-#### 🎼 Pitch Game
-
-Target notes scroll in — sing each one and hold it to score. Race the clock and hit as many as you can.
-
-- Game length: 5, 10, 20, or 30 seconds
-- Adjustable hold duration per note
+- **Sing along** — pick a part and the app plays the melody while the sheet scrolls
+- **Harmony** — toggle any of the 6 voices (Melody, Really high, High, One tone, Less low, Low) and hear them sing together
+- **Sing live** — sing into the mic and watch noteheads turn green as you nail them; finish 80%+ to set off the confetti
+- Choose your **start tone** (C2–C3) and **tempo** (50–150 BPM)
+- Optional metronome click with count-in, and an active-bar highlight to keep your place
 
 #### 🐦 Singfly
 
@@ -115,6 +118,13 @@ Sing to fly the bird through the gaps — your pitch controls how high it flies.
 
 - Game length from 5 to 60 seconds
 - Difficulty: Easy, Normal, or Hard
+
+#### 🎼 Pitch Game
+
+Target notes scroll in — sing each one and hold it to score. Race the clock and hit as many as you can.
+
+- Game length: 5, 10, 20, or 30 seconds
+- Adjustable hold duration per note
 
 ### 🎼 Scale Modes
 
