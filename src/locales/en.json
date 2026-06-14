@@ -51,7 +51,11 @@
       "strict": "Stricter"
     },
     "resetToDefaults": "Reset to defaults",
-    "reload": "Reload app"
+    "reload": "Reload app",
+    "version": "Version",
+    "feedback": "Give feedback or report issues",
+    "githubRepository": "GitHub repository",
+    "githubIssues": "GitHub issues"
   },
   "sounds": {
     "toneSound": "Tone sound:",

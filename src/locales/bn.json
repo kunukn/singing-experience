@@ -51,7 +51,11 @@
       "strict": "আরও কঠোর"
     },
     "resetToDefaults": "ডিফল্টে রিসেট করুন",
-    "reload": "অ্যাপ রিলোড করুন"
+    "reload": "অ্যাপ রিলোড করুন",
+    "version": "সংস্করণ",
+    "feedback": "মতামত দাও বা সমস্যা জানাও",
+    "githubRepository": "GitHub রিপোজিটরি",
+    "githubIssues": "GitHub সমস্যা"
   },
   "sounds": {
     "toneSound": "টোন শব্দ:",

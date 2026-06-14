@@ -47,7 +47,11 @@
       "strict": "Aalajangersimasoq"
     },
     "resetToDefaults": "Pillugu utertippallakkit",
-    "reload": "App nutaamik ammartik"
+    "reload": "App nutaamik ammartik",
+    "version": "Version",
+    "feedback": "Oqaaseqaatissatit tunniukkit imaluunniit ajortoq nalunaaruteqaruk",
+    "githubRepository": "GitHub-imi toqqortarfik",
+    "githubIssues": "GitHub-imi ajornartorsiutit"
   },
   "sounds": {
     "toneSound": "Nipi:",

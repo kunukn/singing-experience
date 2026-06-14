@@ -51,7 +51,11 @@
       "strict": "きびしめ"
     },
     "resetToDefaults": "初期設定に戻す",
-    "reload": "アプリを再読み込み"
+    "reload": "アプリを再読み込み",
+    "version": "バージョン",
+    "feedback": "感想を送るか不具合を報告",
+    "githubRepository": "GitHub リポジトリ",
+    "githubIssues": "GitHub の問題"
   },
   "sounds": {
     "toneSound": "音色:",

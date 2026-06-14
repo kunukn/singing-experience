@@ -51,7 +51,11 @@
       "strict": "Строже"
     },
     "resetToDefaults": "Сбросить настройки",
-    "reload": "Перезагрузить приложение"
+    "reload": "Перезагрузить приложение",
+    "version": "Версия",
+    "feedback": "Оставь отзыв или сообщи о проблеме",
+    "githubRepository": "Репозиторий GitHub",
+    "githubIssues": "Проблемы GitHub"
   },
   "sounds": {
     "toneSound": "Звук тона:",

@@ -51,7 +51,11 @@
       "strict": "更严格"
     },
     "resetToDefaults": "恢复默认",
-    "reload": "重新加载应用"
+    "reload": "重新加载应用",
+    "version": "版本",
+    "feedback": "提供反馈或报告问题",
+    "githubRepository": "GitHub 仓库",
+    "githubIssues": "GitHub 问题"
   },
   "sounds": {
     "toneSound": "音色：",

@@ -51,7 +51,11 @@
       "strict": "Lebih ketat"
     },
     "resetToDefaults": "Setel ulang ke bawaan",
-    "reload": "Muat ulang aplikasi"
+    "reload": "Muat ulang aplikasi",
+    "version": "Versi",
+    "feedback": "Beri masukan atau laporkan masalah",
+    "githubRepository": "Repositori GitHub",
+    "githubIssues": "Masalah GitHub"
   },
   "sounds": {
     "toneSound": "Suara nada:",

@@ -51,7 +51,11 @@
       "strict": "Strengere"
     },
     "resetToDefaults": "Nulstil til standard",
-    "reload": "Genindlæs app"
+    "reload": "Genindlæs app",
+    "version": "Version",
+    "feedback": "Giv feedback eller meld en fejl",
+    "githubRepository": "GitHub-arkiv",
+    "githubIssues": "GitHub-fejl"
   },
   "sounds": {
     "toneSound": "Tone lyd:",

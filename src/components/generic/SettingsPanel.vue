@@ -162,19 +162,30 @@ const appVersion = import.meta.env.VITE_APP_VERSION
         </div>
       </div>
 
-      <div class="mt-2 flex shrink-0 items-center justify-end gap-4">
-        <span class="text-xs leading-none text-(--p-text-muted-color)">
-          Version: {{ appVersion }}
-        </span>
-        <a
-          href="https://github.com/kunukn/singing-experience"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="GitHub repository"
-          class="text-(--p-surface-500) transition-colors hover:text-(--p-text-color)"
-        >
-          <GitHubIcon :size="20" />
-        </a>
+      <div class="mt-2 flex shrink-0 flex-col items-end justify-center gap-2">
+        <div class="flex items-center gap-4">
+          <a
+            href="https://github.com/kunukn/singing-experience"
+            target="_blank"
+            rel="noopener noreferrer"
+            :aria-label="t('settings.githubRepository')"
+            class="text-xs leading-none text-(--p-text-muted-color)"
+          >
+            {{ t('settings.version') }}: {{ appVersion }}
+          </a>
+        </div>
+        <div class="flex items-center gap-4">
+          <a
+            href="https://github.com/kunukn/singing-experience/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+            :aria-label="t('settings.githubIssues')"
+            class="flex items-center gap-2 text-xs leading-none text-(--p-text-muted-color)"
+          >
+            <span>{{ t('settings.feedback') }}</span>
+            <GitHubIcon :size="20" />
+          </a>
+        </div>
       </div>
     </div>
   </Drawer>

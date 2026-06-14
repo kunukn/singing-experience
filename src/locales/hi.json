@@ -51,7 +51,11 @@
       "strict": "ज़्यादा सख़्त"
     },
     "resetToDefaults": "डिफ़ॉल्ट पर रीसेट करें",
-    "reload": "ऐप फिर से लोड करें"
+    "reload": "ऐप फिर से लोड करें",
+    "version": "वर्शन",
+    "feedback": "अपनी राय दो या समस्या बताओ",
+    "githubRepository": "GitHub रिपॉज़िटरी",
+    "githubIssues": "GitHub समस्याएँ"
   },
   "sounds": {
     "toneSound": "स्वर ध्वनि:",

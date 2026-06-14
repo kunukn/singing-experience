@@ -51,7 +51,11 @@
       "strict": "Kali zaidi"
     },
     "resetToDefaults": "Rejesha chaguomsingi",
-    "reload": "Pakia upya programu"
+    "reload": "Pakia upya programu",
+    "version": "Toleo",
+    "feedback": "Toa maoni au ripoti tatizo",
+    "githubRepository": "Hifadhi ya GitHub",
+    "githubIssues": "Matatizo ya GitHub"
   },
   "sounds": {
     "toneSound": "Sauti ya toni:",
