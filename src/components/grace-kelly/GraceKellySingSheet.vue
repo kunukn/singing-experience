@@ -489,7 +489,7 @@ defineExpose({ scrollToSyllable })
 
         <span
           v-if="currentToneLabel && toneLabelPosition"
-          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-primary-color) tabular-nums"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-primary-color) tabular-nums"
           :style="{
             left: `${toneLabelPosition.left + 5}px`,
             top: `${toneLabelPosition.top - 14}px`,
@@ -504,7 +504,7 @@ defineExpose({ scrollToSyllable })
         -->
         <span
           v-if="sungToneLabel && toneLabelPosition"
-          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold tabular-nums transition-colors duration-100"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold tabular-nums transition-colors duration-100"
           :class="
             isSungMatch ? 'text-(--p-primary-color)' : 'text-(--p-orange-400)'
           "
@@ -546,7 +546,7 @@ defineExpose({ scrollToSyllable })
       :style="{ top: `${pitchLineTop}px` }"
     >
       <span
-        class="rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold tabular-nums transition-colors duration-100"
+        class="rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold tabular-nums transition-colors duration-100"
         :class="isOnPitch ? 'text-(--p-green-400)' : 'text-(--p-orange-400)'"
       >
         {{ sungToneText }}
