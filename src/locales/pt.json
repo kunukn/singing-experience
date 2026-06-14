@@ -267,7 +267,7 @@
     "subtitle": "Escolhe uma voz e canta",
     "sing": "Canta",
     "voz": "Voz:",
-    "startTone": "Nota inicial:",
+    "startTone": "Nota inicial da voz grave:",
     "tempo": "Tempo:",
     "showAllParts": "Todas as vozes",
     "tabs": {

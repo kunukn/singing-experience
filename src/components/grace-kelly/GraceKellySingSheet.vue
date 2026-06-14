@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { formatNoteLabelWithCents } from '@/utils/noteUtils'
+import { formatNoteLabelWithCents, midiToNoteLabel } from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
 import ActiveBarHighlight from './ActiveBarHighlight.vue'
@@ -94,6 +94,22 @@ const toneLabelPosition = ref<{ left: number; top: number } | null>(null)
  * active note's bar; null hides it. Container-relative like toneLabelPosition, so
  * it scrolls horizontally with the staff for free. */
 const activeBarPosition = ref<{ left: number; width: number } | null>(null)
+
+/* Fixed start-tone cue: the song's first sounding pitch (start tone transposes the
+ * melody, so it's startTone + the first note's offset). Always shown to tell the
+ * singer what note to hit before they begin — distinct from the floating active
+ * currentToneLabel chip. */
+const startToneLabel = computed(() => {
+  const firstNote = props.melody.notes[0]
+  if (!firstNote) return null
+
+  return midiToNoteLabel(props.startToneMidi + firstNote.midiOffset).label
+})
+
+/* Position (container coords) of the grey start-tone label, anchored left of the
+ * first note and below the staff; null hides it. Static per render, like the staff
+ * geometry it's pinned to. */
+const startToneLabelPosition = ref<{ left: number; top: number } | null>(null)
 
 /* Linear MIDI→Y mapping calibrated from the rendered noteheads; rebuilt on every
  * render. Y is measured in rootRef coordinates so the pitch line, pinned to the
@@ -197,6 +213,29 @@ function updateActiveBar(index: number | null) {
   const left = Math.max(0, leftBoundary + INNER_GAP)
   const width = rightBoundary - INNER_GAP - left
   activeBarPosition.value = width > 0 ? { left, width } : null
+}
+
+/* Anchor the grey start-tone label to the left of the first notehead, on the
+ * staff's bottom edge. abcjs draws no time-signature element to target, but the
+ * 6/8 glyph's baseline is the bottom staff line, so "below the staff, left of the
+ * first note" lands directly under it. */
+function updateStartTonePosition() {
+  const firstNote = noteElements.value[0]
+  if (!containerRef.value || !firstNote) {
+    startToneLabelPosition.value = null
+
+    return
+  }
+
+  const containerRect = containerRef.value.getBoundingClientRect()
+  const head = firstNote.querySelector('.abcjs-notehead') ?? firstNote
+  const staff = containerRef.value.querySelector('.abcjs-staff')
+
+  const left = head.getBoundingClientRect().left - containerRect.left
+  const top = staff
+    ? staff.getBoundingClientRect().bottom - containerRect.top
+    : firstNote.getBoundingClientRect().bottom - containerRect.top
+  startToneLabelPosition.value = { left, top }
 }
 
 /* Paint the given notes green (result-state correctness feedback) and clear any
@@ -306,6 +345,7 @@ async function renderSheet() {
 
   updateToneLabelPosition(noteIndex)
   updateActiveBar(noteIndex)
+  updateStartTonePosition()
   calibratePitchToY()
 
   const syllableIndex = props.activeSyllableIndex
@@ -427,6 +467,23 @@ defineExpose({ scrollToSyllable })
           :show="showBarHighlight !== false"
         />
         <div ref="containerRef" class="relative z-10 py-0.5" />
+
+        <!--
+          Fixed start-tone cue: the song's first note, parked just left of it and
+          below the staff (under the 6/8 time signature). Always visible, grey, so
+          the singer knows what note to start on.
+        -->
+        <span
+          v-if="startToneLabel && startToneLabelPosition"
+          class="pointer-events-none absolute z-20 -translate-x-full rounded px-0.5 text-[0.625rem] leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
+          :style="{
+            left: `${startToneLabelPosition.left - 9}px`,
+            top: `${startToneLabelPosition.top + 2}px`,
+          }"
+        >
+          {{ startToneLabel }}
+        </span>
+
         <span
           v-if="currentToneLabel && toneLabelPosition"
           class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-primary-color) tabular-nums"
