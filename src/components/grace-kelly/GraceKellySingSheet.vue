@@ -2,6 +2,7 @@
 import { formatNoteLabelWithCents } from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
+import ActiveBarHighlight from './ActiveBarHighlight.vue'
 import { estimateStaffWidth, vozMelodyToAbcString } from './graceKellyAbc'
 import type { VozMelody } from './graceKellyMelodies'
 import { buildPitchToY, type PitchSample } from './graceKellySingPitch'
@@ -421,20 +422,9 @@ defineExpose({ scrollToSyllable })
       class="w-full overflow-x-auto rounded border border-(--p-content-border-color)"
     >
       <div class="relative min-w-max">
-        <!--
-          Translucent box highlighting the active note's bar. Explicit stacking
-          (z-0 here, z-10 on the SVG, z-20 on the labels) keeps it behind the
-          noteheads but above the card — a negative z-index would hide it behind
-          an opaque ancestor. Lives in content coordinates so it scrolls with the
-          staff.
-        -->
-        <div
-          v-if="activeBarPosition && showBarHighlight !== false"
-          class="pointer-events-none absolute top-14 bottom-9 z-0 rounded bg-(--p-primary-color)/10 transition-all duration-150"
-          :style="{
-            left: `${activeBarPosition.left}px`,
-            width: `${activeBarPosition.width}px`,
-          }"
+        <ActiveBarHighlight
+          :position="activeBarPosition"
+          :show="showBarHighlight !== false"
         />
         <div ref="containerRef" class="relative z-10 py-0.5" />
         <span
