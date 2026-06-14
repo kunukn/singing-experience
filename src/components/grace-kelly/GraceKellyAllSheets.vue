@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { midiToNoteLabel } from '@/utils/noteUtils'
 import { renderAbc } from 'abcjs'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { GRACE_KELLY_LYRIC_ABC } from './graceKellyLyrics'
@@ -51,6 +52,57 @@ const noteElementsByStaff = ref<Element[][]>([])
 /* Lyric elements per staff, indexed [staffIndex][syllableIndex] — every staff
  * shares one lyric mapping, so a single activeSyllableIndex maps onto each. */
 const lyricElementsByStaff = ref<Element[][]>([])
+
+/* Pixel offset (in each staff container's coords) of the green tone chip floating
+ * above that staff's active note; one slot per rendered staff, null hides it.
+ * Container-relative so the chips scroll horizontally with the staves for free. */
+const toneLabelByStaff = ref<({ left: number; top: number } | null)[]>([])
+
+/* Measure each staff's active-note position, mirroring SingSheet's
+ * updateToneLabelPosition but looped over the stacked staves. */
+function updateToneLabelPositions(index: number | null) {
+  if (index === null) {
+    toneLabelByStaff.value = []
+
+    return
+  }
+
+  const containers = staffContainers.value.slice(
+    0,
+    renderedVozIndices.value.length,
+  )
+  toneLabelByStaff.value = containers.map((container, staffIndex) => {
+    const element = noteElementsByStaff.value[staffIndex]?.[index]
+    if (!container || !element) return null
+
+    const noteRect = element.getBoundingClientRect()
+    const containerRect = container.getBoundingClientRect()
+    return {
+      left: noteRect.left - containerRect.left + noteRect.width / 2,
+      top: noteRect.top - containerRect.top,
+    }
+  })
+}
+
+/* Green note-name chip per staff: the sounding pitch of that voice's active note
+ * (start tone transposes the melody) paired with its measured position. null per
+ * staff when idle or unmeasured. */
+const staffLabels = computed(() =>
+  renderedVozIndices.value.map((vozIndex, staffIndex) => {
+    const index = props.activeNoteIndex
+    if (index === null) return null
+
+    const note = VOZ_MELODIES[vozIndex].notes[index]
+    const position = toneLabelByStaff.value[staffIndex]
+    if (!note || !position) return null
+
+    return {
+      text: midiToNoteLabel(props.startToneMidi + note.midiOffset).label,
+      left: position.left,
+      top: position.top,
+    }
+  }),
+)
 
 async function renderSheets() {
   const vozIndices = renderedVozIndices.value
@@ -123,6 +175,8 @@ async function renderSheets() {
       staff[syllableIndex]?.classList.add('syllable-active')
     }
   }
+
+  updateToneLabelPositions(props.activeNoteIndex)
 }
 
 onMounted(() => {
@@ -164,6 +218,8 @@ watch(
     }
 
     if (index === null) {
+      updateToneLabelPositions(null)
+
       /* Song ended naturally → leave the scroll at the end. Stop/restart clears
        * the highlight with isDone false, so it still snaps back to the start. */
       if (!props.isDone && scrollRef.value) scrollRef.value.scrollLeft = 0
@@ -174,6 +230,8 @@ watch(
     for (const staff of noteElementsByStaff.value) {
       staff[index]?.classList.add('note-active')
     }
+
+    updateToneLabelPositions(index)
 
     /* Center the active column with a manual horizontal scroll (the top staff's
      * note is representative since all staves are aligned). scrollIntoView is
@@ -220,12 +278,26 @@ watch(
       <div
         v-for="(vozIndex, position) in renderedVozIndices"
         :key="vozIndex"
-        :ref="
-          (el) => {
-            if (el) staffContainers[position] = el as HTMLElement
-          }
-        "
-      />
+        class="relative"
+      >
+        <div
+          :ref="
+            (el) => {
+              if (el) staffContainers[position] = el as HTMLElement
+            }
+          "
+        />
+        <span
+          v-if="staffLabels[position]"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-primary-color) tabular-nums"
+          :style="{
+            left: `${(staffLabels[position]?.left ?? 0) + 5}px`,
+            top: `${(staffLabels[position]?.top ?? 0) - 14}px`,
+          }"
+        >
+          {{ staffLabels[position]?.text }}
+        </span>
+      </div>
     </div>
   </div>
 </template>
