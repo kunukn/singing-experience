@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import NotesSheet from './NotesSheet.vue'
+import NotesOverviewSheet from './NotesOverviewSheet.vue'
 import { DEFAULT_BPM } from './notesConstants'
 import { NOTE_SCALES } from './notesScales'
+
+/* NOTE_SCALES is ordered treble (V:1) then bass (V:2). */
+const trebleMidis = NOTE_SCALES[0]?.midis ?? []
+const bassMidis = NOTE_SCALES[1]?.midis ?? []
 
 const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
   required: true,
@@ -21,20 +25,16 @@ const { t } = useI18n()
     </label>
 
     <!--
-      Both reference sheets, always shown: NOTE_SCALES is ordered treble (G clef)
-      then bass, so the v-for stacks G clef on top and bass below. Static display —
-      no active highlight, bar box, or tempo marking.
+      Combined two-voice reference sheet: treble (G clef) over bass, rendered as a
+      single abcjs system so the barlines and beats align column-for-column across
+      both staves. Static display — no active highlight or tempo marking.
     -->
-    <div class="flex w-full max-w-full flex-col gap-4">
-      <NotesSheet
-        v-for="scale in NOTE_SCALES"
-        :key="scale.clef"
-        :midis="scale.midis"
-        :clef="scale.clef"
+    <div class="flex w-full max-w-full flex-col">
+      <NotesOverviewSheet
+        :trebleMidis="trebleMidis"
+        :bassMidis="bassMidis"
         :bpm="DEFAULT_BPM"
-        :activeNoteIndex="null"
         :showToneLabels="areToneLabelsShown"
-        :showTempo="false"
       />
     </div>
   </div>

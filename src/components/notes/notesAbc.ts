@@ -51,20 +51,16 @@ export function estimateNotesStaffWidth(noteCount: number): number {
 }
 
 /*
- * Converts an absolute-MIDI chromatic scale to an ABC notation string ready for
- * abcjs.renderAbc: 4/4, one eighth note per pitch (8 per bar), key of C major.
- * Sharps carry an explicit `^` accidental (C major has none in the key
- * signature). Because the scale ascends one semitone at a time, no
- * natural-after-sharp ever lands on the same letter within a bar, so no explicit
- * naturals (`=`) are needed. The final partial measure is padded with eighth
- * rests to complete the 4/4 bar.
+ * Builds the ABC note body for one absolute-MIDI chromatic scale: one eighth note
+ * per pitch (8 per 4/4 bar), sharps carrying an explicit `^`. Because the scale
+ * ascends one semitone at a time, no natural-after-sharp ever lands on the same
+ * letter within a bar, so no explicit naturals (`=`) are needed. The final
+ * partial measure is padded with eighth rests to complete the 4/4 bar. Eighths
+ * beam in groups of NOTES_PER_BEAM; ` | ` separates bars, ending on a final
+ * barline. Returned alone (no header) so it can serve a single- or multi-voice
+ * tune.
  */
-export function noteScaleToAbcString(
-  midis: number[],
-  clef: ClefKey,
-  bpm = 80,
-  showTempo = true,
-): string {
+function midisToAbcBody(midis: number[]): string {
   const tokens = midis.map(midiToAbcToken)
 
   /* Pad the last bar with eighth rests so the closing measure fills 4/4. */
@@ -75,10 +71,6 @@ export function noteScaleToAbcString(
     }
   }
 
-  /* One bar per NOTES_PER_MEASURE tokens. Within a bar, eighths beam in groups
-   * of NOTES_PER_BEAM: tokens in a group are joined with no space (abcjs beams
-   * adjacent eighths), a single space separates the two beam-groups, and ` | `
-   * separates the bars, ending on a final barline. */
   const bars: string[] = []
   for (let index = 0; index < tokens.length; index += NOTES_PER_MEASURE) {
     const barTokens = tokens.slice(index, index + NOTES_PER_MEASURE)
@@ -88,8 +80,20 @@ export function noteScaleToAbcString(
     }
     bars.push(beamGroups.join(' '))
   }
-  const body = bars.join(' | ') + ' |]'
 
+  return bars.join(' | ') + ' |]'
+}
+
+/*
+ * Converts an absolute-MIDI chromatic scale to an ABC notation string ready for
+ * abcjs.renderAbc: 4/4, one eighth note per pitch (8 per bar), key of C major.
+ */
+export function noteScaleToAbcString(
+  midis: number[],
+  clef: ClefKey,
+  bpm = 80,
+  showTempo = true,
+): string {
   return [
     'X:1',
     /* %%stretchlast 0 — never stretch the final staff line to fill the staff
@@ -101,6 +105,39 @@ export function noteScaleToAbcString(
     'L:1/8',
     ...(showTempo ? [`Q:1/4=${bpm}`] : []),
     `K:C clef=${clef}`,
-    body,
+    midisToAbcBody(midis),
+  ].join('\n')
+}
+
+/*
+ * Combined two-voice tune: treble scale as V:1, bass scale as V:2 in a single
+ * abcjs system. abcjs aligns barlines and beats vertically across the two voices,
+ * so every bar renders the same width on both staves (true symmetry) — unlike two
+ * independently-rendered sheets, whose bars drift apart by their differing
+ * accidental counts and trailing rests. The voices are left ungrouped (no
+ * `%%score`) so abcjs honours `%%staffsep` for a wide gap between the staves and
+ * draws no connecting brace — they read as two independent reference scales.
+ * Voices in a single tune align horizontally regardless of grouping.
+ */
+export function noteScalesToTwoVoiceAbcString(
+  trebleMidis: number[],
+  bassMidis: number[],
+  bpm = 80,
+  showTempo = true,
+): string {
+  return [
+    'X:1',
+    '%%stretchlast 0',
+    /* Wide gap between the two staves so the bass staff's note-name chips (drawn
+     * ~40px above its noteheads) clear the treble staff sitting above them. */
+    '%%staffsep 120',
+    'M:4/4',
+    'L:1/8',
+    ...(showTempo ? [`Q:1/4=${bpm}`] : []),
+    'K:C',
+    'V:1 clef=treble',
+    midisToAbcBody(trebleMidis),
+    'V:2 clef=bass',
+    midisToAbcBody(bassMidis),
   ].join('\n')
 }
