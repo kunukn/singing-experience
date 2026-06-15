@@ -16,6 +16,9 @@ const bpm = defineModel<number>('bpm', { required: true })
 const selectedVozIndices = defineModel<number[]>('selectedVozIndices', {
   required: true,
 })
+const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
+  required: true,
+})
 
 const { t } = useI18n()
 
@@ -87,8 +90,10 @@ function toggleVoz(index: number, enabled: boolean) {
     <GraceKellySettingsRow
       v-model:startToneMidi="startToneMidi"
       v-model:bpm="bpm"
+      v-model:areToneLabelsShown="areToneLabelsShown"
       :isRunning="isRunning"
       :showVoz="false"
+      :showToneLabelToggle="true"
     />
 
     <div
@@ -167,6 +172,7 @@ function toggleVoz(index: number, enabled: boolean) {
       :startToneMidi="startToneMidi"
       :vozLabels="allVozLabels"
       :vozIndices="selectedVozIndices"
+      :showToneLabels="areToneLabelsShown"
     />
   </div>
 </template>

@@ -24,6 +24,10 @@ type Props = {
   /* Which voices to render, by VOZ_MELODIES index, in display order. Defaults to
    * all six — the harmony tab passes a filtered subset to show/hide parts. */
   vozIndices?: number[]
+  /* When true, draws a muted note-name label above every note on every staff (the
+   * green active chip overlays its note during playback). When off, only the first
+   * note's label shows per staff — the start-tone cue, always visible. Defaults off. */
+  showToneLabels?: boolean
 }
 
 const props = defineProps<Props>()
@@ -72,6 +76,50 @@ function toneLabelStyle(
  * above that staff's active note; one slot per rendered staff, null hides it.
  * Container-relative so the chips scroll horizontally with the staves for free. */
 const toneLabelByStaff = ref<({ left: number; top: number } | null)[]>([])
+
+/* Muted note-name chips above every note, per rendered staff. Each entry pairs a
+ * container-relative position with that note's sounding pitch (start tone transposes
+ * the melody). Measured on every render; the template gates display so toggling
+ * needs no re-render. Mirrors SingSheet's allToneLabels, looped over the staves. */
+const allToneLabelsByStaff = ref<
+  { left: number; top: number; text: string }[][]
+>([])
+
+/* Tone-name chips to render per staff: all of them when the toggle is on, otherwise
+ * just the first note's — the start-tone cue is always visible so the singer knows
+ * what note each voice begins on. */
+const visibleToneLabelsByStaff = computed(() =>
+  allToneLabelsByStaff.value.map((labels) =>
+    props.showToneLabels ? labels : labels.slice(0, 1),
+  ),
+)
+
+/* Measure every note's position on every rendered staff, mirroring SingSheet's
+ * updateAllToneLabels but looped over the stacked staves. */
+function updateAllToneLabels() {
+  const vozIndices = renderedVozIndices.value
+  const containers = staffContainers.value.slice(0, vozIndices.length)
+  allToneLabelsByStaff.value = vozIndices.map((vozIndex, staffIndex) => {
+    const container = containers[staffIndex]
+    const elements = noteElementsByStaff.value[staffIndex]
+    if (!container || !elements) return []
+
+    const containerRect = container.getBoundingClientRect()
+    return elements.flatMap((element, noteIndex) => {
+      const note = VOZ_MELODIES[vozIndex].notes[noteIndex]
+      if (!note) return []
+
+      const noteRect = element.getBoundingClientRect()
+      return [
+        {
+          left: noteRect.left - containerRect.left + noteRect.width / 2,
+          top: noteRect.top - containerRect.top,
+          text: midiToNoteLabel(props.startToneMidi + note.midiOffset).label,
+        },
+      ]
+    })
+  })
+}
 
 /* Measure each staff's active-note position, mirroring SingSheet's
  * updateToneLabelPosition but looped over the stacked staves. */
@@ -199,6 +247,7 @@ async function renderSheets() {
   }
 
   updateToneLabelPositions(props.activeNoteIndex)
+  updateAllToneLabels()
 }
 
 onMounted(() => {
@@ -309,6 +358,21 @@ watch(
             }
           "
         />
+        <!--
+          Muted note-name label above each note on this staff. With the toggle on,
+          every note; with it off, only the first (the start-tone cue). The green
+          active chip below renders later in the DOM with an opaque bg and higher z,
+          so it cleanly overlays the matching muted label during playback.
+        -->
+        <span
+          v-for="(label, noteIndex) in visibleToneLabelsByStaff[position] ?? []"
+          :key="noteIndex"
+          class="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
+          :style="toneLabelStyle(label)"
+        >
+          {{ label.text }}
+        </span>
+
         <span
           v-if="staffLabels[position]"
           class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-primary-color) tabular-nums"

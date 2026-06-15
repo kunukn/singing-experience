@@ -98,8 +98,9 @@ const isBarHighlightEnabled = useLocalStorage(
   true,
 )
 
-/* Note-name labels above every note on the sheet. Shared by the "Sing along" and
- * "Sing live" tabs (both render GraceKellySingSheet). Default off; purely visual. */
+/* Note-name labels above every note on the sheet. Shared by all three tabs — the
+ * "Sing along" and "Sing live" tabs (GraceKellySingSheet) and the "Harmony" tab
+ * (GraceKellyAllSheets). Default off; purely visual. */
 const areToneLabelsShown = useLocalStorage('syng.graceKellyToneLabels', false)
 
 const game = useGraceKelly()
@@ -153,6 +154,7 @@ watch(activeTab, () => {
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
             v-model:selectedVozIndices="selectedVozIndices"
+            v-model:areToneLabelsShown="areToneLabelsShown"
           />
         </PrimeTabPanel>
         <PrimeTabPanel value="sing-live">

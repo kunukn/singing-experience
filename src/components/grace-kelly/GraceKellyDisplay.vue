@@ -240,6 +240,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
       :activeSyllableIndex="activeSyllableIndex"
       :startToneMidi="startToneMidi"
       :vozLabels="allVozLabels"
+      :showToneLabels="areToneLabelsShown"
     />
   </div>
 </template>

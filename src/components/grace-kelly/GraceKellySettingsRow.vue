@@ -18,8 +18,9 @@ type Props = {
   /* Show the tone-sound (timbre) select. The "Sing live" tab hides it — there
    * is no playback there, so the timbre choice is meaningless. */
   showToneMode?: boolean
-  /* Show the note-names toggle. Only the tabs backed by GraceKellySingSheet
-   * (Sing along / Sing live) pass true — that sheet renders the labels. */
+  /* Show the note-names toggle. The Sing-along / Sing-live tabs (GraceKellySingSheet)
+   * and the Harmony tab (GraceKellyAllSheets) pass true — those sheets render the
+   * labels. */
   showToneLabelToggle?: boolean
 }
 
