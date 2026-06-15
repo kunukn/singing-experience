@@ -111,6 +111,13 @@ async function renderSheets() {
   const containers = staffContainers.value.slice(0, vozIndices.length)
   if (containers.length < vozIndices.length) return
 
+  /* Skip while the panel is hidden (display:none → offsetParent null). abcjs would
+   * render at the oversized probe width, then — with every rect width measuring 0 —
+   * skip the fit-to-content pass below, leaving too-wide SVGs that visibly snap back
+   * when the tab is first revealed. The resize observer re-renders on reveal, once
+   * the staves have a real width to measure against. */
+  if (containers[0]?.offsetParent === null) return
+
   const abcStrings = vozIndices.map((vozIndex) =>
     /* Pass showTempo=false so the BPM header is hidden on the combined sheet;
      * the shared lyric line draws under every staff. */
