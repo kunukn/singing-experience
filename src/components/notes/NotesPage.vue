@@ -33,10 +33,6 @@ if (activeTab.value !== 'listen' && activeTab.value !== 'overview') {
   activeTab.value = 'listen'
 }
 
-/* Active-bar highlight — the green box over the current note's measure. Used by
- * the Listen tab. Default on; purely visual. */
-const isBarHighlightEnabled = useLocalStorage('syng.notesBarHighlight', true)
-
 /* Note-name labels above every note. Shared by both tabs. Default on — the page's
  * whole point is to show the notes and their tone labels. */
 const areToneLabelsShown = useLocalStorage('syng.notesToneLabels', true)
@@ -64,7 +60,6 @@ watch(activeTab, () => {
             :isActive="activeTab === 'listen'"
             v-model:clefIndex="clefIndex"
             v-model:bpm="bpm"
-            v-model:isBarHighlightEnabled="isBarHighlightEnabled"
             v-model:areToneLabelsShown="areToneLabelsShown"
           />
         </PrimeTabPanel>

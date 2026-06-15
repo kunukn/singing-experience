@@ -34,7 +34,6 @@ const { t } = useI18n()
         :bpm="DEFAULT_BPM"
         :activeNoteIndex="null"
         :showToneLabels="areToneLabelsShown"
-        :showBarHighlight="false"
         :showTempo="false"
       />
     </div>

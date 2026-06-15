@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { frequencyToMidi, midiToNoteLabel } from '@/utils/noteUtils'
-import BarHighlightToggle from '@/components/grace-kelly/BarHighlightToggle.vue'
 import { useStableSungLabel } from '@/components/grace-kelly/useStableSungLabel'
 import NotesSettingsRow from './NotesSettingsRow.vue'
 import NotesSheet from './NotesSheet.vue'
@@ -19,9 +18,6 @@ const props = defineProps<Props>()
 
 const clefIndex = defineModel<number>('clefIndex', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
-const isBarHighlightEnabled = defineModel<boolean>('isBarHighlightEnabled', {
-  required: true,
-})
 const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
   required: true,
 })
@@ -139,8 +135,6 @@ const currentToneLabel = computed(() => {
         v-model="isPreviewEnabled"
         :disabled="micPermission === 'denied' || isRunning"
       />
-
-      <BarHighlightToggle v-model="isBarHighlightEnabled" />
     </div>
 
     <div class="w-full max-w-full">
@@ -155,7 +149,6 @@ const currentToneLabel = computed(() => {
         :sungToneLabel="stableSungLabel"
         :sungToneCents="stableSungCents"
         :showToneLabels="areToneLabelsShown"
-        :showBarHighlight="isBarHighlightEnabled"
       />
     </div>
   </div>

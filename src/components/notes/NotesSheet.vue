@@ -2,7 +2,6 @@
 import { formatNoteLabelWithCents, midiToNoteLabel } from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
-import ActiveBarHighlight from '@/components/grace-kelly/ActiveBarHighlight.vue'
 import {
   buildPitchToY,
   type PitchSample,
@@ -41,8 +40,6 @@ type Props = {
   isOnPitch?: boolean
   /* When true, draws a muted note-name label above every note. */
   showToneLabels?: boolean
-  /* When false, hides the active-bar highlight box; defaults to shown. */
-  showBarHighlight?: boolean
   /* When false, omits the BPM tempo marking from the staff; defaults to shown. */
   showTempo?: boolean
 }
@@ -90,10 +87,6 @@ const noteElements = ref<Element[]>([])
 /* Pixel offset of the floating tone label within the scrolling content, centered
  * above the active note; null hides it. */
 const toneLabelPosition = ref<{ left: number; top: number } | null>(null)
-
-/* Left/width (in scrolling-content coordinates) of the translucent box behind the
- * active note's bar; null hides it. */
-const activeBarPosition = ref<{ left: number; width: number } | null>(null)
 
 /* Linear MIDI→Y mapping calibrated from the rendered noteheads; rebuilt on every
  * render. Y is measured in rootRef coordinates so the pitch line stays correct
@@ -162,60 +155,6 @@ function updateToneLabelPosition(index: number | null) {
     left: noteRect.left - containerRect.left + noteRect.width / 2,
     top: noteRect.top - containerRect.top,
   }
-}
-
-/* Position the translucent box over the *measure* containing the active note —
- * barline-to-barline, not hugging the noteheads — so the final measure's box
- * covers its trailing rests too. Coordinates are container-relative so the box
- * scrolls with the staff. */
-function updateActiveBar(index: number | null) {
-  if (index === null || !containerRef.value) {
-    activeBarPosition.value = null
-
-    return
-  }
-
-  const element = noteElements.value[index]
-  if (!element) {
-    activeBarPosition.value = null
-
-    return
-  }
-
-  const container = containerRef.value
-  const containerLeft = container.getBoundingClientRect().left
-  const centerX = (rect: DOMRect) => rect.left - containerLeft + rect.width / 2
-
-  const head = element.querySelector('.abcjs-notehead') ?? element
-  const noteX = centerX(head.getBoundingClientRect())
-
-  const barlineCenters = [...container.querySelectorAll('.abcjs-bar')]
-    .map((bar) => centerX(bar.getBoundingClientRect()))
-    .sort((a, b) => a - b)
-
-  const rightBoundary =
-    barlineCenters.find((x) => x > noteX) ??
-    Math.max(
-      ...[
-        ...container.querySelectorAll('.abcjs-note, .abcjs-rest, .abcjs-bar'),
-      ].map((item) => item.getBoundingClientRect().right - containerLeft),
-    )
-
-  const EDGE_PAD = 8 // px — gap before the first note when there's no opening barline
-  const leftBarlines = barlineCenters.filter((x) => x < noteX)
-  const leftBoundary =
-    leftBarlines.length > 0
-      ? leftBarlines[leftBarlines.length - 1]
-      : Math.min(
-          ...noteElements.value.map(
-            (note) => note.getBoundingClientRect().left - containerLeft,
-          ),
-        ) - EDGE_PAD
-
-  const INNER_GAP = 3 // px — inset inside the barlines so their glyphs stay visible
-  const left = Math.max(0, leftBoundary + INNER_GAP)
-  const width = rightBoundary - INNER_GAP - left
-  activeBarPosition.value = width > 0 ? { left, width } : null
 }
 
 /* Sample each notehead's pitch and its center-Y (in rootRef coords) and build
@@ -298,7 +237,6 @@ async function renderSheet() {
     noteElements.value[noteIndex]?.classList.add('note-active')
 
   updateToneLabelPosition(noteIndex)
-  updateActiveBar(noteIndex)
   updateAllToneLabels()
   calibratePitchToY()
 }
@@ -339,7 +277,6 @@ watch(
 
     if (index === null) {
       updateToneLabelPosition(null)
-      updateActiveBar(null)
 
       /* Sequence ended naturally → leave the scroll at the end. Stop/restart
        * clears the highlight with isDone false, so it snaps back to the start. */
@@ -353,7 +290,6 @@ watch(
 
     element.classList.add('note-active')
     updateToneLabelPosition(index)
-    updateActiveBar(index)
     element.scrollIntoView({
       behavior: 'smooth',
       inline: 'center',
@@ -370,10 +306,6 @@ watch(
       class="w-full overflow-x-auto rounded border border-(--p-content-border-color)"
     >
       <div class="relative min-w-max">
-        <ActiveBarHighlight
-          :position="activeBarPosition"
-          :show="showBarHighlight !== false"
-        />
         <div ref="containerRef" class="relative z-10 py-0.5" />
 
         <!--
