@@ -53,6 +53,21 @@ const noteElementsByStaff = ref<Element[][]>([])
  * shares one lyric mapping, so a single activeSyllableIndex maps onto each. */
 const lyricElementsByStaff = ref<Element[][]>([])
 
+/* Nudge applied to each staff's floating tone chip so it sits slightly inset from
+ * and above the note it annotates. */
+const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
+const TONE_LABEL_OFFSET_Y = -10 // px — lift above the note
+
+/* Absolute-positioning style for a tone chip at the given staff-space position. */
+function toneLabelStyle(
+  position: { left: number; top: number } | null | undefined,
+) {
+  return {
+    left: `${(position?.left ?? 0) + TONE_LABEL_OFFSET_X}px`,
+    top: `${(position?.top ?? 0) + TONE_LABEL_OFFSET_Y}px`,
+  }
+}
+
 /* Pixel offset (in each staff container's coords) of the green tone chip floating
  * above that staff's active note; one slot per rendered staff, null hides it.
  * Container-relative so the chips scroll horizontally with the staves for free. */
@@ -297,10 +312,7 @@ watch(
         <span
           v-if="staffLabels[position]"
           class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-primary-color) tabular-nums"
-          :style="{
-            left: `${(staffLabels[position]?.left ?? 0) + 5}px`,
-            top: `${(staffLabels[position]?.top ?? 0) - 14}px`,
-          }"
+          :style="toneLabelStyle(staffLabels[position])"
         >
           {{ staffLabels[position]?.text }}
         </span>

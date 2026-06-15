@@ -43,6 +43,21 @@ const scrollRef = ref<HTMLDivElement | null>(null)
 const noteElements = ref<Element[]>([])
 const lyricElements = ref<Element[]>([])
 
+/* Nudge applied to the floating tone label so it sits slightly inset from and
+ * above the note it annotates. */
+const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
+const TONE_LABEL_OFFSET_Y = -10 // px — lift above the note
+
+/* Absolute-positioning style for a tone label at the given content-space position. */
+function toneLabelStyle(
+  position: { left: number; top: number } | null | undefined,
+) {
+  return {
+    left: `${(position?.left ?? 0) + TONE_LABEL_OFFSET_X}px`,
+    top: `${(position?.top ?? 0) + TONE_LABEL_OFFSET_Y}px`,
+  }
+}
+
 /* Pixel offset of the floating tone label within the scrolling content, centered
  * above the active note; null hides it. Lives in content coordinates so it scrolls
  * with the staff for free. */
@@ -322,10 +337,7 @@ defineExpose({ scrollToSyllable })
       <span
         v-if="currentToneLabel && toneLabelPosition"
         class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-primary-color) tabular-nums"
-        :style="{
-          left: `${toneLabelPosition.left + 5}px`,
-          top: `${toneLabelPosition.top - 14}px`,
-        }"
+        :style="toneLabelStyle(toneLabelPosition)"
       >
         {{ currentToneLabel }}
       </span>

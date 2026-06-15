@@ -84,6 +84,25 @@ const containerRef = ref<HTMLDivElement | null>(null)
 const scrollRef = ref<HTMLDivElement | null>(null)
 const noteElements = ref<Element[]>([])
 
+/* Nudge applied to every floating tone label so it sits slightly inset from and
+ * above the note it annotates. TONE_LABEL_STACK_LIFT raises the singer's live
+ * note one row higher than the target label it stacks on top of. */
+const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
+const TONE_LABEL_OFFSET_Y = -10 // px — lift above the note
+const TONE_LABEL_STACK_LIFT = -18 // px — extra lift for the stacked live-note row
+
+/* Absolute-positioning style for a tone label at the given content-space position.
+ * Pass an extra vertical lift to stack one label above another. */
+function toneLabelStyle(
+  position: { left: number; top: number } | null | undefined,
+  stackLift = 0,
+) {
+  return {
+    left: `${(position?.left ?? 0) + TONE_LABEL_OFFSET_X}px`,
+    top: `${(position?.top ?? 0) + TONE_LABEL_OFFSET_Y + stackLift}px`,
+  }
+}
+
 /* Pixel offset of the floating tone label within the scrolling content, centered
  * above the active note; null hides it. */
 const toneLabelPosition = ref<{ left: number; top: number } | null>(null)
@@ -317,10 +336,7 @@ watch(
           v-for="(label, index) in visibleToneLabels"
           :key="index"
           class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
-          :style="{
-            left: `${label.left + 5}px`,
-            top: `${label.top - 14}px`,
-          }"
+          :style="toneLabelStyle(label)"
         >
           {{ label.text }}
         </span>
@@ -328,10 +344,7 @@ watch(
         <span
           v-if="currentToneLabel && toneLabelPosition"
           class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-primary-color) tabular-nums"
-          :style="{
-            left: `${toneLabelPosition.left + 5}px`,
-            top: `${toneLabelPosition.top - 14}px`,
-          }"
+          :style="toneLabelStyle(toneLabelPosition)"
         >
           {{ currentToneLabel }}
         </span>
@@ -346,10 +359,7 @@ watch(
           :class="
             isSungMatch ? 'text-(--p-primary-color)' : 'text-(--p-orange-400)'
           "
-          :style="{
-            left: `${toneLabelPosition.left + 5}px`,
-            top: `${toneLabelPosition.top - 14 - 18}px`,
-          }"
+          :style="toneLabelStyle(toneLabelPosition, TONE_LABEL_STACK_LIFT)"
         >
           {{ sungToneText }}
         </span>
