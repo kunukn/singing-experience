@@ -114,10 +114,9 @@ const pitchLineTop = computed(() => {
 /* Muted note-name chips above every note, shown when `showToneLabels` is on. */
 const allToneLabels = ref<{ left: number; top: number; text: string }[]>([])
 
-/* Tone-name chips to render: all when the toggle is on, otherwise just the first
- * note's — the start-tone cue is always visible. */
+/* Tone-name chips to render: all when the toggle is on, none when it's off. */
 const visibleToneLabels = computed(() =>
-  props.showToneLabels ? allToneLabels.value : allToneLabels.value.slice(0, 1),
+  props.showToneLabels ? allToneLabels.value : [],
 )
 
 function updateAllToneLabels() {
@@ -371,10 +370,9 @@ watch(
         <div ref="containerRef" class="relative z-10 py-0.5" />
 
         <!--
-          Muted note-name label above each note. With the toggle on, every note;
-          with it off, only the first. The green active chip below renders later
-          in the DOM with an opaque bg, so it cleanly overlays the matching muted
-          label during playback.
+          Muted note-name label above each note, shown only when the toggle is on.
+          The green active chip below renders later in the DOM with an opaque bg, so
+          it cleanly overlays the matching muted label during playback.
         -->
         <span
           v-for="(label, index) in visibleToneLabels"
