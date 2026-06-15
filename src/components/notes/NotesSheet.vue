@@ -1,7 +1,4 @@
 <script setup lang="ts">
-import { formatNoteLabelWithCents, midiToNoteLabel } from '@/utils/noteUtils'
-import { useDebounceFn, useResizeObserver } from '@vueuse/core'
-import { renderAbc } from 'abcjs'
 import {
   buildPitchToY,
   type PitchSample,
@@ -11,6 +8,9 @@ import {
   STAFF_LABEL_FONT,
   STAFF_LYRIC_FONT,
 } from '@/components/grace-kelly/graceKellyStaffRender'
+import { formatNoteLabelWithCents, midiToNoteLabel } from '@/utils/noteUtils'
+import { useDebounceFn, useResizeObserver } from '@vueuse/core'
+import { renderAbc } from 'abcjs'
 import { estimateNotesStaffWidth, noteScaleToAbcString } from './notesAbc'
 import type { ClefKey } from './notesConstants'
 
@@ -88,7 +88,7 @@ const noteElements = ref<Element[]>([])
  * above the note it annotates. TONE_LABEL_STACK_LIFT raises the singer's live
  * note one row higher than the target label it stacks on top of. */
 const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
-const TONE_LABEL_OFFSET_Y = -10 // px — lift above the note
+const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
 const TONE_LABEL_STACK_LIFT = -18 // px — extra lift for the stacked live-note row
 
 /* Absolute-positioning style for a tone label at the given content-space position.

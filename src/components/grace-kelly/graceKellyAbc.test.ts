@@ -116,8 +116,6 @@ describe('vozMelodyToAbcString — 6/8 beat-straddling split', () => {
 })
 
 describe('noteHeadCountsPerNote / groupNoteHeads — melody-index ↔ notehead map', () => {
-  const C5 = 72
-
   it('reports one notehead per note when nothing straddles a beat', () => {
     /* Three quarters starting on the beat — each sits inside one 6/8 beat. */
     const onBeat: VozMelody = {

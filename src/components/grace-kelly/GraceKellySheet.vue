@@ -70,7 +70,7 @@ function paintNoteActive(index: number) {
 /* Nudge applied to the floating tone label so it sits slightly inset from and
  * above the note it annotates. */
 const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
-const TONE_LABEL_OFFSET_Y = -10 // px — lift above the note
+const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
 
 /* Absolute-positioning style for a tone label at the given content-space position. */
 function toneLabelStyle(

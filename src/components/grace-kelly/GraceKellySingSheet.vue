@@ -116,7 +116,7 @@ function paintNoteActive(index: number) {
  * above the note it annotates. TONE_LABEL_STACK_LIFT raises the singer's live
  * note one row higher than the target label it stacks on top of. */
 const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
-const TONE_LABEL_OFFSET_Y = -10 // px — lift above the note
+const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
 const TONE_LABEL_STACK_LIFT = -18 // px — extra lift for the stacked live-note row
 
 /* Absolute-positioning style for a tone label at the given content-space position.

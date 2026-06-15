@@ -69,7 +69,7 @@ const lyricElementsByStaff = ref<Element[][]>([])
 /* Nudge applied to each staff's floating tone chip so it sits slightly inset from
  * and above the note it annotates. */
 const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
-const TONE_LABEL_OFFSET_Y = -10 // px — lift above the note
+const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
 
 /* Absolute-positioning style for a tone chip at the given staff-space position. */
 function toneLabelStyle(
@@ -229,18 +229,18 @@ async function renderSheets() {
   }
 
   await nextTick()
-  noteElementsByStaff.value = containers.map((container) => [
-    ...container.querySelectorAll('.abcjs-note'),
-  ])
+  noteElementsByStaff.value = containers.map((container) =>
+    Array.from(container.querySelectorAll('.abcjs-note')),
+  )
   noteGroupsByStaff.value = vozIndices.map((vozIndex, staffIndex) =>
     groupNoteHeads(
       noteElementsByStaff.value[staffIndex] ?? [],
       VOZ_MELODIES[vozIndex],
     ),
   )
-  lyricElementsByStaff.value = containers.map((container) => [
-    ...container.querySelectorAll('.abcjs-lyric'),
-  ])
+  lyricElementsByStaff.value = containers.map((container) =>
+    Array.from(container.querySelectorAll('.abcjs-lyric')),
+  )
 
   /* A re-render (resize / tab reveal) rebuilds the elements, so re-apply any
    * active highlight the watchers set before this render replaced the SVGs. */
