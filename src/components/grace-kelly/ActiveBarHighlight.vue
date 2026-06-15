@@ -17,7 +17,7 @@ const { position, show = true } = defineProps<{
 <template>
   <div
     v-if="position && show"
-    class="pointer-events-none absolute top-14 bottom-9 z-0 rounded bg-(--p-surface-500)/10 transition-all duration-150"
+    class="pointer-events-none absolute top-14 bottom-9 z-0 rounded bg-(--p-surface-500)/5 transition-all duration-150"
     :style="{
       left: `${position.left}px`,
       width: `${position.width}px`,
