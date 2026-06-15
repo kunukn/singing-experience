@@ -8,7 +8,11 @@ import {
   STAFF_LABEL_FONT,
   STAFF_LYRIC_FONT,
 } from '@/components/grace-kelly/graceKellyStaffRender'
-import { formatNoteLabelWithCents, midiToNoteLabel } from '@/utils/noteUtils'
+import {
+  formatNoteLabelWithCents,
+  midiToFlatLabel,
+  midiToNoteLabel,
+} from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
 import { estimateNotesStaffWidth, noteScaleToAbcString } from './notesAbc'
@@ -77,10 +81,11 @@ const SANS_FONTS = {
 } as const
 
 /* Top space (px) reserved inside the SVG above the highest notehead so the
- * note-name chips — drawn ~28px above each note as HTML overlays — aren't clipped
- * by the scroll box (overflow-x:auto also clips the y-axis). Needed because
- * ledger-line notes (e.g. C4 on the bass staff) sit right at the staff top. */
-const STAFF_PADDING_TOP = 30
+ * note-name chips — drawn ~28px above each note as HTML overlays, plus the
+ * stacked flat-enharmonic row another ~13px above that — aren't clipped by the
+ * scroll box (overflow-x:auto also clips the y-axis). Needed because ledger-line
+ * notes (e.g. C4 on the bass staff) sit right at the staff top. */
+const STAFF_PADDING_TOP = 44
 
 const rootRef = ref<HTMLDivElement | null>(null)
 const containerRef = ref<HTMLDivElement | null>(null)
@@ -93,6 +98,9 @@ const noteElements = ref<Element[]>([])
 const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
 const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
 const TONE_LABEL_STACK_LIFT = -18 // px — extra lift for the stacked live-note row
+
+/* Extra lift raising the flat enharmonic row above the sharp label it sits on. */
+const FLAT_LABEL_STACK_LIFT = -13 // px — one compact row above the sharp label
 
 /* Absolute-positioning style for a tone label at the given content-space position.
  * Pass an extra vertical lift to stack one label above another. */
@@ -127,7 +135,9 @@ const pitchLineTop = computed(() => {
 })
 
 /* Muted note-name chips above every note, shown when `showToneLabels` is on. */
-const allToneLabels = ref<{ left: number; top: number; text: string }[]>([])
+const allToneLabels = ref<
+  { left: number; top: number; text: string; flatText: string | null }[]
+>([])
 
 /* Tone-name chips to render: all when the toggle is on, none when it's off. */
 const visibleToneLabels = computed(() =>
@@ -152,6 +162,7 @@ function updateAllToneLabels() {
         left: noteRect.left - containerRect.left + noteRect.width / 2,
         top: noteRect.top - containerRect.top,
         text: midiToNoteLabel(midi).label,
+        flatText: midiToFlatLabel(midi),
       },
     ]
   })
@@ -342,6 +353,21 @@ watch(
           :style="toneLabelStyle(label)"
         >
           {{ label.text }}
+        </span>
+
+        <!--
+          Flat enharmonic (Db, Eb, …), stacked one compact row above the sharp
+          label for accidental notes only. Smaller and more muted so it reads as
+          a secondary spelling.
+        -->
+        <span
+          v-for="(label, index) in visibleToneLabels"
+          v-show="label.flatText"
+          :key="`flat-${index}`"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-[10px] leading-none font-semibold text-(--p-text-muted-color)/70 tabular-nums"
+          :style="toneLabelStyle(label, FLAT_LABEL_STACK_LIFT)"
+        >
+          {{ label.flatText }}
         </span>
 
         <span

@@ -19,6 +19,23 @@ const NOTE_NAMES = [
 const NOTE_NAMES_HIGH_TO_LOW =
   NOTE_NAMES.toReversed() as readonly (typeof NOTE_NAMES)[number][]
 
+/* Flat enharmonic spellings, parallel to NOTE_NAMES. Naturals are null —
+ * only the five accidental pitch classes have a flat name worth teaching. */
+const FLAT_NOTE_NAMES = [
+  null,
+  'Db',
+  null,
+  'Eb',
+  null,
+  null,
+  'Gb',
+  null,
+  'Ab',
+  null,
+  'Bb',
+  null,
+] as const
+
 export type NoteName = (typeof NOTE_NAMES)[number]
 
 export type NoteInfo = {
@@ -501,6 +518,17 @@ function midiToNoteLabel(midi: number): MidiNoteLabel {
 }
 
 /**
+ * Flat enharmonic name for an accidental MIDI note (e.g. C#4 → "Db");
+ * null for natural notes. Octave is intentionally omitted — callers pair it
+ * with the sharp label that already carries the octave.
+ */
+function midiToFlatLabel(midi: number): string | null {
+  const noteIndex = ((midi % 12) + 12) % 12
+
+  return FLAT_NOTE_NAMES[noteIndex]
+}
+
+/**
  * Generate evenly-spaced notes across a MIDI range.
  * Returns ScaleNote[] suitable for playSequence().
  */
@@ -580,6 +608,7 @@ export {
   G2_MIDI,
   MAJOR_SCALE_SEMITONES,
   midiRangeToScaleNotes,
+  midiToFlatLabel,
   midiToNoteLabel,
   NOTE_NAMES,
   NOTE_NAMES_HIGH_TO_LOW,
