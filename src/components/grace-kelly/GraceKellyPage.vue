@@ -16,6 +16,13 @@ import { useGraceKellyHarmony } from './useGraceKellyHarmony'
 
 const { t } = useI18n()
 
+const route = useRoute()
+const router = useRouter()
+
+const TAB_VALUES = ['sing', 'harmony', 'sing-live'] as const
+type GraceKellyTab = (typeof TAB_VALUES)[number]
+const DEFAULT_TAB: GraceKellyTab = 'sing'
+
 const DEFAULT_VOZ_INDEX = VOZ_MELODIES.length - 1
 const VOZ_COUNT = VOZ_MELODIES.length
 const DEFAULT_START_TONE_MIDI = G2_MIDI // 43
@@ -64,7 +71,20 @@ if (!isValidVozSelection) {
   selectedVozIndices.value = [...ALL_VOZ_INDICES]
 }
 
-const activeTab = useLocalStorage('syng.graceKellyTab', 'sing')
+/* Active tab lives only in the URL (?tab=sing|harmony|sing-live) — the single
+ * source of truth. Unknown/missing values fall back to the default so a panel
+ * always shows. replace() keeps tab switches out of the browser history. */
+const activeTab = computed<GraceKellyTab>({
+  get() {
+    const tab = route.query.tab
+    return TAB_VALUES.includes(tab as GraceKellyTab)
+      ? (tab as GraceKellyTab)
+      : DEFAULT_TAB
+  },
+  set(tab) {
+    router.replace({ query: { ...route.query, tab } })
+  },
+})
 
 /* "Sing live" metronome — a click track + count-in to guide the beat. Default
  * on since it's a singing aid; toggled from the Sing live controls. */
