@@ -9,7 +9,7 @@ import {
 
 export type NoteScale = {
   clef: ClefKey
-  /* Absolute MIDI notes, ascending chromatically (one quarter note each). The
+  /* Absolute MIDI notes, ascending chromatically (one eighth note each). The
    * start tone is fixed per clef, so these are sounding pitches with no
    * transposition applied. */
   midis: number[]

@@ -19,8 +19,12 @@ const PITCHCLASS_TO_ABC: { accidental: string; letter: string }[] = [
   { accidental: '', letter: 'B' }, // 11 B
 ]
 
-/* Quarter notes per 4/4 measure (the player notates every note as a quarter). */
-const BEATS_PER_MEASURE = 4
+/* Eighth notes per 4/4 measure (the player notates every note as an eighth, so
+ * a bar holds 8 of them). */
+const NOTES_PER_MEASURE = 8
+
+/* Eighths beam in groups of 4 — two beam-groups per 4/4 bar. */
+const NOTES_PER_BEAM = 4
 
 /* Converts a staff letter + scientific octave to an ABC octave token.
  * ABC octave convention: uppercase `C` = middle C (C4); `c` = C5; `C,` = C3;
@@ -48,11 +52,12 @@ export function estimateNotesStaffWidth(noteCount: number): number {
 
 /*
  * Converts an absolute-MIDI chromatic scale to an ABC notation string ready for
- * abcjs.renderAbc: 4/4, one quarter note per pitch, key of C major. Sharps carry
- * an explicit `^` accidental (C major has none in the key signature). Because the
- * scale ascends one semitone at a time, no natural-after-sharp ever lands on the
- * same letter within a bar, so no explicit naturals (`=`) are needed. The final
- * partial measure is padded with quarter rests to complete the 4/4 bar.
+ * abcjs.renderAbc: 4/4, one eighth note per pitch (8 per bar), key of C major.
+ * Sharps carry an explicit `^` accidental (C major has none in the key
+ * signature). Because the scale ascends one semitone at a time, no
+ * natural-after-sharp ever lands on the same letter within a bar, so no explicit
+ * naturals (`=`) are needed. The final partial measure is padded with eighth
+ * rests to complete the 4/4 bar.
  */
 export function noteScaleToAbcString(
   midis: number[],
@@ -62,19 +67,26 @@ export function noteScaleToAbcString(
 ): string {
   const tokens = midis.map(midiToAbcToken)
 
-  /* Pad the last bar with quarter rests so the closing measure fills 4/4. */
-  const remainder = tokens.length % BEATS_PER_MEASURE
+  /* Pad the last bar with eighth rests so the closing measure fills 4/4. */
+  const remainder = tokens.length % NOTES_PER_MEASURE
   if (remainder > 0) {
-    for (let index = remainder; index < BEATS_PER_MEASURE; index++) {
+    for (let index = remainder; index < NOTES_PER_MEASURE; index++) {
       tokens.push('z')
     }
   }
 
-  /* One bar per BEATS_PER_MEASURE tokens; quarters never beam, so a plain space
-   * separates them and ` | ` separates the bars, ending on a final barline. */
+  /* One bar per NOTES_PER_MEASURE tokens. Within a bar, eighths beam in groups
+   * of NOTES_PER_BEAM: tokens in a group are joined with no space (abcjs beams
+   * adjacent eighths), a single space separates the two beam-groups, and ` | `
+   * separates the bars, ending on a final barline. */
   const bars: string[] = []
-  for (let index = 0; index < tokens.length; index += BEATS_PER_MEASURE) {
-    bars.push(tokens.slice(index, index + BEATS_PER_MEASURE).join(' '))
+  for (let index = 0; index < tokens.length; index += NOTES_PER_MEASURE) {
+    const barTokens = tokens.slice(index, index + NOTES_PER_MEASURE)
+    const beamGroups: string[] = []
+    for (let start = 0; start < barTokens.length; start += NOTES_PER_BEAM) {
+      beamGroups.push(barTokens.slice(start, start + NOTES_PER_BEAM).join(''))
+    }
+    bars.push(beamGroups.join(' '))
   }
   const body = bars.join(' | ') + ' |]'
 
@@ -86,7 +98,7 @@ export function noteScaleToAbcString(
      * sheet's measure-and-shrink pass and leaves a wide trail of empty staff. */
     '%%stretchlast 0',
     'M:4/4',
-    'L:1/4',
+    'L:1/8',
     ...(showTempo ? [`Q:1/4=${bpm}`] : []),
     `K:C clef=${clef}`,
     body,

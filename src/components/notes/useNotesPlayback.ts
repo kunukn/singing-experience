@@ -21,10 +21,10 @@ type Options = {
 }
 
 /*
- * Plays a chromatic scale (absolute-MIDI array) as a sequence of quarter notes
- * in 4/4, highlighting each note in turn via activeNoteIndex. A simpler cousin
- * of useGraceKelly: every note is a plain quarter (no ties, rests, or
- * metronome), so the beat math is just BPM = quarter note.
+ * Plays a chromatic scale (absolute-MIDI array) as a sequence of eighth notes
+ * in 4/4 (8 per bar), highlighting each note in turn via activeNoteIndex. A
+ * simpler cousin of useGraceKelly: every note is a plain eighth (no ties, rests,
+ * or metronome). BPM is the quarter note, so each eighth lasts 30/bpm s.
  */
 export function useNotesPlayback(options: Options = {}) {
   const { snapshot, send } = useMachine(notesMachine)
@@ -49,8 +49,10 @@ export function useNotesPlayback(options: Options = {}) {
    * against a single fresh audio-clock baseline so the visual highlight and the
    * sound stay locked together. Used by both start() (0) and resume(). */
   function scheduleFrom(fromIndex: number) {
-    /* BPM = quarter note (the 4/4 beat unit), so a quarter lasts 60/bpm s. */
-    const quarterSeconds = 60 / currentBpm
+    /* BPM = quarter note (the 4/4 beat unit). Each note is an eighth, so it
+     * lasts half a quarter: 30/bpm s. This is what makes the sequence play
+     * twice as fast as one-note-per-beat. */
+    const eighthSeconds = 30 / currentBpm
 
     let cursor = getNow() + SCHEDULE_AHEAD_S
     for (let index = fromIndex; index < currentMidis.length; index++) {
@@ -62,12 +64,12 @@ export function useNotesPlayback(options: Options = {}) {
       if (!options.silent) {
         playToneAt(
           midiToFrequency(currentMidis[index]),
-          quarterSeconds * ARTICULATION,
+          eighthSeconds * ARTICULATION,
           cursor,
         )
       }
 
-      cursor += quarterSeconds
+      cursor += eighthSeconds
     }
 
     /* Transition to done and clear the highlight after the last note expires. */

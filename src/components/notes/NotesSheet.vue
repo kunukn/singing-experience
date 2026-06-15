@@ -15,7 +15,7 @@ import { estimateNotesStaffWidth, noteScaleToAbcString } from './notesAbc'
 import type { ClefKey } from './notesConstants'
 
 type Props = {
-  /* Absolute MIDI notes drawn left to right (one quarter note each). */
+  /* Absolute MIDI notes drawn left to right (one eighth note each). */
   midis: number[]
   clef: ClefKey
   bpm: number

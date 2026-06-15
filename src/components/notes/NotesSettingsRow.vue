@@ -33,10 +33,12 @@ const clefOptions = computed(() =>
   })),
 )
 
-const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
-  label: `${value} BPM`,
-  value,
-}))
+const bpmOptions = [...ALLOWED_BPMS]
+  .sort((a, b) => b - a)
+  .map((value) => ({
+    label: `${value} BPM`,
+    value,
+  }))
 
 const { setToneMode, warmUp } = useTonePlayer()
 const { toneMode: storedToneMode } = storeToRefs(useToneModeStore())
