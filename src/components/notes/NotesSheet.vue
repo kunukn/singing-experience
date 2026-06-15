@@ -76,6 +76,12 @@ const SANS_FONTS = {
   vocalfont: STAFF_LYRIC_FONT,
 } as const
 
+/* Top space (px) reserved inside the SVG above the highest notehead so the
+ * note-name chips — drawn ~28px above each note as HTML overlays — aren't clipped
+ * by the scroll box (overflow-x:auto also clips the y-axis). Needed because
+ * ledger-line notes (e.g. C4 on the bass staff) sit right at the staff top. */
+const STAFF_PADDING_TOP = 30
+
 const rootRef = ref<HTMLDivElement | null>(null)
 const containerRef = ref<HTMLDivElement | null>(null)
 const scrollRef = ref<HTMLDivElement | null>(null)
@@ -256,6 +262,7 @@ async function renderSheet() {
   renderAbc(containerRef.value, abcString, {
     add_classes: true,
     staffwidth: probeWidth,
+    paddingtop: STAFF_PADDING_TOP,
     format: SANS_FONTS,
   })
 
@@ -268,6 +275,7 @@ async function renderSheet() {
     renderAbc(containerRef.value, abcString, {
       add_classes: true,
       staffwidth: Math.ceil(musicWidth) + TRAILING_MARGIN,
+      paddingtop: STAFF_PADDING_TOP,
       format: SANS_FONTS,
     })
     await nextTick()
