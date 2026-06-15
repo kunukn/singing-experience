@@ -73,6 +73,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/notes': RouteRecordInfo<
+      '/notes',
+      '/notes',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/pitch-detector': RouteRecordInfo<
       '/pitch-detector',
       '/pitch-detector',
@@ -241,6 +248,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/grace-kelly-challenge.vue': {
       routes:
         | '/grace-kelly-challenge'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/notes.vue': {
+      routes:
+        | '/notes'
       views:
         | never
       pathParamNames:

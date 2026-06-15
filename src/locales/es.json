@@ -113,6 +113,10 @@
       "graceKelly": {
         "name": "Reto Grace Kelly",
         "description": "Canta con \"Grace Kelly\" de MIKA. Elige una voz y sigue los tonos."
+      },
+      "notes": {
+        "name": "Notas",
+        "description": "Ve cada nota en el pentagrama y aprende su nombre."
       }
     },
     "privacy": "Tu privacidad está segura — esta aplicación funciona 100% en tu navegador. No se graba ni envía ningún audio."
@@ -290,5 +294,21 @@
     "metronome": "Ritmo",
     "barHighlight": "Compás",
     "toneLabels": "Tonos"
+  },
+  "notes": {
+    "title": "Notas",
+    "subtitle": "Ve cada nota y su nombre",
+    "clef": "Clave",
+    "tempo": "Tempo",
+    "toneLabels": "Tonos",
+    "sing": "Canta",
+    "tabs": {
+      "listen": "Escucha",
+      "singLive": "Canta en vivo"
+    },
+    "clefLabels": {
+      "treble": "Clave de sol",
+      "bass": "Clave de fa"
+    }
   }
 }

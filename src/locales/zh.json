@@ -113,6 +113,10 @@
       "graceKelly": {
         "name": "Grace Kelly 挑战",
         "description": "跟着 MIKA 的《Grace Kelly》一起唱。选一个声部，跟着音调唱。"
+      },
+      "notes": {
+        "name": "Notes",
+        "description": "See every note on the staff and learn its name."
       }
     },
     "privacy": "你的隐私是安全的 — 此应用完全在浏览器中运行。不会录制或发送任何音频。"
@@ -290,5 +294,21 @@
     "metronome": "节拍",
     "barHighlight": "小节",
     "toneLabels": "音名"
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "See every note and its name",
+    "clef": "Clef",
+    "tempo": "速度",
+    "toneLabels": "音名",
+    "sing": "唱",
+    "tabs": {
+      "listen": "Listen",
+      "singLive": "现场唱"
+    },
+    "clefLabels": {
+      "treble": "G clef",
+      "bass": "Bass clef"
+    }
   }
 }

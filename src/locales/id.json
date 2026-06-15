@@ -113,6 +113,10 @@
       "graceKelly": {
         "name": "Tantangan Grace Kelly",
         "description": "Nyanyi bareng \"Grace Kelly\" dari MIKA. Pilih suara dan ikuti nadanya."
+      },
+      "notes": {
+        "name": "Notes",
+        "description": "See every note on the staff and learn its name."
       }
     },
     "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Tidak ada audio yang direkam atau dikirim ke mana pun."
@@ -290,5 +294,21 @@
     "metronome": "Ketukan",
     "barHighlight": "Birama",
     "toneLabels": "Nada"
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "See every note and its name",
+    "clef": "Clef",
+    "tempo": "Tempo",
+    "toneLabels": "Nada",
+    "sing": "Nyanyi",
+    "tabs": {
+      "listen": "Listen",
+      "singLive": "Nyanyi langsung"
+    },
+    "clefLabels": {
+      "treble": "G clef",
+      "bass": "Bass clef"
+    }
   }
 }

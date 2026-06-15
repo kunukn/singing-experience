@@ -113,6 +113,10 @@
       "graceKelly": {
         "name": "تحدّي Grace Kelly",
         "description": "غنّي مع \"Grace Kelly\" لـ MIKA. اختار صوت وتابع النغمات."
+      },
+      "notes": {
+        "name": "Notes",
+        "description": "See every note on the staff and learn its name."
       }
     },
     "privacy": "خصوصيتك آمنة — يعمل هذا التطبيق بالكامل في متصفحك. لا يتم تسجيل أي صوت أو إرساله."
@@ -290,5 +294,21 @@
     "metronome": "إيقاع",
     "barHighlight": "مربع",
     "toneLabels": "النغمات"
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "See every note and its name",
+    "clef": "Clef",
+    "tempo": "السرعة",
+    "toneLabels": "النغمات",
+    "sing": "غنِّ",
+    "tabs": {
+      "listen": "Listen",
+      "singLive": "غنِّ مباشرةً"
+    },
+    "clefLabels": {
+      "treble": "G clef",
+      "bass": "Bass clef"
+    }
   }
 }

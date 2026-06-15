@@ -113,6 +113,10 @@
       "graceKelly": {
         "name": "Changamoto ya Grace Kelly",
         "description": "Imba pamoja na \"Grace Kelly\" ya MIKA. Chagua sauti na ufuate toni."
+      },
+      "notes": {
+        "name": "Notes",
+        "description": "See every note on the staff and learn its name."
       }
     },
     "privacy": "Faragha yako ni salama — programu hii inafanya kazi 100% kwenye kivinjari chako. Hakuna sauti inayorekodiwa au kutumwa popote."
@@ -290,5 +294,21 @@
     "metronome": "Mdundo",
     "barHighlight": "Boksi",
     "toneLabels": "Noti"
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "See every note and its name",
+    "clef": "Clef",
+    "tempo": "Tempo",
+    "toneLabels": "Noti",
+    "sing": "Imba",
+    "tabs": {
+      "listen": "Listen",
+      "singLive": "Imba moja kwa moja"
+    },
+    "clefLabels": {
+      "treble": "G clef",
+      "bass": "Bass clef"
+    }
   }
 }

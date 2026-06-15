@@ -113,6 +113,10 @@
       "graceKelly": {
         "name": "Grace Kelly-udfordring",
         "description": "Syng med på MIKAs \"Grace Kelly\". Vælg en stemme og følg tonerne."
+      },
+      "notes": {
+        "name": "Noder",
+        "description": "Se hver node på nodelinjen og lær dens navn."
       }
     },
     "privacy": "Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
@@ -290,5 +294,21 @@
     "metronome": "Takt",
     "barHighlight": "Boks",
     "toneLabels": "Toner"
+  },
+  "notes": {
+    "title": "Noder",
+    "subtitle": "Se hver node og dens navn",
+    "clef": "Nøgle",
+    "tempo": "Tempo",
+    "toneLabels": "Toner",
+    "sing": "Syng",
+    "tabs": {
+      "listen": "Lyt",
+      "singLive": "Syng live"
+    },
+    "clefLabels": {
+      "treble": "G-nøgle",
+      "bass": "F-nøgle"
+    }
   }
 }

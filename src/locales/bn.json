@@ -113,6 +113,10 @@
       "graceKelly": {
         "name": "Grace Kelly চ্যালেঞ্জ",
         "description": "MIKA-র \"Grace Kelly\" গানের সাথে গাও। একটা সুর বেছে নাও আর তাল মিলিয়ে গাও।"
+      },
+      "notes": {
+        "name": "Notes",
+        "description": "See every note on the staff and learn its name."
       }
     },
     "privacy": "আপনার গোপনীয়তা সুরক্ষিত — এই অ্যাপ ১০০% আপনার ব্রাউজারে চলে। কোনো অডিও রেকর্ড বা কোথাও পাঠানো হয় না।"
@@ -290,5 +294,21 @@
     "metronome": "তাল",
     "barHighlight": "বক্স",
     "toneLabels": "স্বর"
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "See every note and its name",
+    "clef": "Clef",
+    "tempo": "গতি",
+    "toneLabels": "স্বর",
+    "sing": "গাও",
+    "tabs": {
+      "listen": "Listen",
+      "singLive": "লাইভ গাও"
+    },
+    "clefLabels": {
+      "treble": "G clef",
+      "bass": "Bass clef"
+    }
   }
 }

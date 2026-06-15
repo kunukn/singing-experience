@@ -113,6 +113,10 @@
       "graceKelly": {
         "name": "Челлендж Grace Kelly",
         "description": "Подпевай песне \"Grace Kelly\" от MIKA. Выбери партию и следи за нотами."
+      },
+      "notes": {
+        "name": "Notes",
+        "description": "See every note on the staff and learn its name."
       }
     },
     "privacy": "Ваша конфиденциальность защищена — это приложение работает на 100% в вашем браузере. Никакое аудио не записывается и никуда не отправляется."
@@ -290,5 +294,21 @@
     "metronome": "Ритм",
     "barHighlight": "Такт",
     "toneLabels": "Ноты"
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "See every note and its name",
+    "clef": "Clef",
+    "tempo": "Темп",
+    "toneLabels": "Ноты",
+    "sing": "Пой",
+    "tabs": {
+      "listen": "Listen",
+      "singLive": "Пой вживую"
+    },
+    "clefLabels": {
+      "treble": "G clef",
+      "bass": "Bass clef"
+    }
   }
 }

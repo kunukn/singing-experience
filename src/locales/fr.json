@@ -113,6 +113,10 @@
       "graceKelly": {
         "name": "Défi Grace Kelly",
         "description": "Chante sur \"Grace Kelly\" de MIKA. Choisis une voix et suis les notes."
+      },
+      "notes": {
+        "name": "Notes",
+        "description": "Vois chaque note sur la portée et apprends son nom."
       }
     },
     "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Aucun son n'est enregistré ni envoyé."
@@ -290,5 +294,21 @@
     "metronome": "Rythme",
     "barHighlight": "Mesure",
     "toneLabels": "Notes"
+  },
+  "notes": {
+    "title": "Notes",
+    "subtitle": "Vois chaque note et son nom",
+    "clef": "Clé",
+    "tempo": "Tempo ",
+    "toneLabels": "Notes",
+    "sing": "Chante",
+    "tabs": {
+      "listen": "Écoute",
+      "singLive": "Chante en direct"
+    },
+    "clefLabels": {
+      "treble": "Clé de sol",
+      "bass": "Clé de fa"
+    }
   }
 }

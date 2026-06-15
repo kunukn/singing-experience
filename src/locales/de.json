@@ -113,6 +113,10 @@
       "graceKelly": {
         "name": "Grace Kelly Challenge",
         "description": "Sing zu MIKAs \"Grace Kelly\" mit. Wähl eine Stimme und folge den Tönen."
+      },
+      "notes": {
+        "name": "Noten",
+        "description": "Sieh jede Note im Notensystem und lerne ihren Namen."
       }
     },
     "privacy": "Deine Privatsphäre ist geschützt – diese App läuft vollständig im Browser. Kein Audio wird aufgezeichnet oder übertragen."
@@ -290,5 +294,21 @@
     "metronome": "Takt",
     "barHighlight": "Box",
     "toneLabels": "Töne"
+  },
+  "notes": {
+    "title": "Noten",
+    "subtitle": "Sieh jede Note und ihren Namen",
+    "clef": "Schlüssel",
+    "tempo": "Tempo",
+    "toneLabels": "Töne",
+    "sing": "Sing",
+    "tabs": {
+      "listen": "Hören",
+      "singLive": "Live singen"
+    },
+    "clefLabels": {
+      "treble": "Violinschlüssel",
+      "bass": "Bassschlüssel"
+    }
   }
 }
