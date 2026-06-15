@@ -248,6 +248,13 @@ function calibratePitchToY() {
 async function renderSheet() {
   if (!containerRef.value) return
 
+  /* Skip while the panel is hidden (display:none → offsetParent null). abcjs would
+   * render at the oversized probe width, then — with every rect width measuring 0 —
+   * skip the fit-to-content pass below, leaving a too-wide SVG that visibly snaps
+   * back when the tab is first revealed. The resize observer re-renders on reveal,
+   * once the container has a real width to measure against. */
+  if (containerRef.value.offsetParent === null) return
+
   const abcString = noteScaleToAbcString(
     props.midis,
     props.clef,
