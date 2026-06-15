@@ -92,6 +92,64 @@ function abcDurationToken(eighthNotes: number): string {
   return `${halves}/2`
 }
 
+/* Splits a note that crosses one or more intra-bar beat boundaries into the
+ * sequence of piece lengths (in eighths) that each sit within a single beat —
+ * the standard 6/8 rule that keeps the dotted-quarter pulse visible. A quarter
+ * starting off the beat renders as two tied eighths rather than one beat-
+ * straddling quarter; a note already inside one beat returns a single piece.
+ * The bar end (barTarget) is never a split point — the barline handles that, so
+ * a note that fills or overflows the bar is emitted whole (existing behaviour). */
+function splitNoteAcrossBeats(
+  barPos: number,
+  eighthNotes: number,
+  beatEighths: number,
+  barTarget: number,
+): number[] {
+  const pieces: number[] = []
+  let position = barPos
+  let remaining = eighthNotes
+  while (remaining > 0) {
+    const nextBeatBoundary =
+      (Math.floor(position / beatEighths) + 1) * beatEighths
+    const limit = Math.min(nextBeatBoundary, barTarget)
+    if (limit <= position) {
+      pieces.push(remaining)
+      break
+    }
+    const pieceEighths = Math.min(remaining, limit - position)
+    pieces.push(pieceEighths)
+    position += pieceEighths
+    remaining -= pieceEighths
+  }
+
+  return pieces
+}
+
+/* Tokenizes an ABC `w:` lyric string into ordered syllables, each tagged with
+ * the separator that precedes it: a space between words, "-" between a word's
+ * own syllables. Used to rebuild the `w:` line note-by-note when beat-splitting
+ * adds noteheads that each need their own lyric token. */
+function parseAbcLyricSyllables(
+  lyrics: string,
+): { text: string; separator: string }[] {
+  const syllables: { text: string; separator: string }[] = []
+  lyrics.split(' ').forEach((word, wordIndex) => {
+    if (word.length === 0) return
+
+    word.split('-').forEach((text, partIndex) => {
+      const separator = partIndex > 0 ? '-' : wordIndex === 0 ? '' : ' '
+      syllables.push({ text, separator })
+    })
+  })
+
+  return syllables
+}
+
+/* One emitted `w:` token: a real syllable or a "_" melisma standing in for a
+ * synthetic tied continuation notehead. `separator` is the ABC character drawn
+ * before it; `isMelisma` lets a following real syllable know its word broke. */
+type LyricSlot = { text: string; separator: string; isMelisma: boolean }
+
 /* Converts a VozMelody to an ABC notation string ready for abcjs.renderAbc,
  * transposed so the tonic sounds at `startToneMidi`. The key signature is the
  * major key of the start tone; since the melody is diatonic, the note body
@@ -141,6 +199,15 @@ export function vozMelodyToAbcString(
   let previousBeamable = false
   let previousBeat = -1
 
+  /* Lyric realignment: abcjs assigns one `w:` token per notehead, so each note a
+   * beat-split turns into tied pieces gains an extra notehead needing its own
+   * token. Rebuild the `w:` line as we walk the body — real notes consume the
+   * next syllable; synthetic tied continuations get a `_` melisma so the held
+   * syllable visibly extends across the tie. */
+  const lyricSlots: LyricSlot[] = []
+  const syllables = lyrics ? parseAbcLyricSyllables(lyrics) : []
+  let syllableIndex = 0
+
   for (const note of melody.notes) {
     const within = ((note.midiOffset % 12) + 12) % 12
     const degree = MAJOR_DEGREE[within]
@@ -154,37 +221,82 @@ export function vozMelodyToAbcString(
     const staffOctave = Math.floor(ladder / 7)
     const letter = DIATONIC_TO_LETTER[((ladder % 7) + 7) % 7]
     const pitch = abcOctaveToken(letter, staffOctave)
-    const duration = abcDurationToken(note.eighthNotes)
-    /* ABC tie "-" must directly follow the note, before any barline (C- | C) */
-    const tie = note.tie ? '-' : ''
 
-    const beat = Math.floor(barPos / BEAT_EIGHTHS)
-    /* Only a plain eighth beams; longer or dotted notes (eighthNotes !== 1) carry
-     * their own flag and break the beam. */
-    const beamable = note.eighthNotes === 1
+    /* Split at every intra-bar beat boundary the note crosses, then emit each
+     * piece as its own (tied) notehead — proper 6/8 engraving. */
+    const pieces = splitNoteAcrossBeats(
+      barPos,
+      note.eighthNotes,
+      BEAT_EIGHTHS,
+      barTarget,
+    )
 
-    if (!atBarStart) {
-      /* Join to the previous note (no space = beam) only when both are eighth
-       * notes inside the same beat; otherwise separate them with a space. */
-      const beam = beamable && previousBeamable && beat === previousBeat
-      body += beam ? '' : ' '
+    let piecePos = barPos
+    for (let pieceIndex = 0; pieceIndex < pieces.length; pieceIndex++) {
+      const pieceEighths = pieces[pieceIndex]
+      const isLastPiece = pieceIndex === pieces.length - 1
+      const duration = abcDurationToken(pieceEighths)
+      /* Non-final pieces tie to the next piece; the final piece carries the
+       * note's own tie flag. ABC tie "-" must directly follow the note. */
+      const tie = isLastPiece ? (note.tie ? '-' : '') : '-'
+
+      const beat = Math.floor(piecePos / BEAT_EIGHTHS)
+      /* Only a plain eighth beams; longer notes carry their own flag. Split
+       * pieces sit in different beats, so the beat check below never beams
+       * them together. */
+      const beamable = pieceEighths === 1
+
+      if (!atBarStart) {
+        /* Join to the previous note (no space = beam) only when both are eighth
+         * notes inside the same beat; otherwise separate them with a space. */
+        const beam = beamable && previousBeamable && beat === previousBeat
+        body += beam ? '' : ' '
+      }
+
+      body += pitch + duration + tie
+
+      if (lyrics) {
+        if (pieceIndex === 0) {
+          /* First piece is the real note — consume its syllable (none once the
+           * lyrics run out, e.g. a trailing held note). */
+          const syllable = syllables[syllableIndex]
+          if (syllable) {
+            syllableIndex += 1
+            /* A word-internal "-" only holds between true siblings; if a melisma
+             * was just inserted, the word broke — space the next syllable. */
+            const previousSlot = lyricSlots[lyricSlots.length - 1]
+            const separator =
+              syllable.separator === '-' && previousSlot?.isMelisma
+                ? ' '
+                : syllable.separator
+            lyricSlots.push({
+              text: syllable.text,
+              separator,
+              isMelisma: false,
+            })
+          }
+        } else {
+          lyricSlots.push({ text: '_', separator: ' ', isMelisma: true })
+        }
+      }
+
+      previousBeamable = beamable
+      previousBeat = beat
+      atBarStart = false
+      piecePos += pieceEighths
     }
-
-    body += pitch + duration + tie
 
     /* A clipped note (restAfterEighths) is drawn as the note followed by a rest
      * that fills the remaining time — e.g. a dotted-eighth note + a sixteenth
      * rest. The rest is notation + scheduled silence only; it adds no entry to
-     * melody.notes, so note indexing and lyric alignment are unaffected. */
+     * melody.notes and takes no lyric token, so indexing and alignment hold. */
     if (note.restAfterEighths && note.restAfterEighths > 0) {
       body += ' z' + abcDurationToken(note.restAfterEighths)
+      /* A trailing rest breaks the beam — the next note can't beam across it. */
+      previousBeamable = false
     }
 
     barPos += note.eighthNotes + (note.restAfterEighths ?? 0)
-    /* A trailing rest breaks the beam — the next note can't beam back across it. */
-    previousBeamable = beamable && !note.restAfterEighths
-    previousBeat = beat
-    atBarStart = false
 
     if (barPos >= barTarget) {
       body += ' | '
@@ -193,6 +305,10 @@ export function vozMelodyToAbcString(
       atBarStart = true
     }
   }
+
+  const lyricLine = lyricSlots
+    .map((slot) => slot.separator + slot.text)
+    .join('')
 
   /* Append visual-only trailing rests to balance the closing bar against the
    * pickup. These live in the ABC only (never in melody.notes), so the players
@@ -217,7 +333,8 @@ export function vozMelodyToAbcString(
     `K:${key.abcKey} clef=${clefToken}`,
     body.trim(),
     /* A `w:` line after the music aligns each space-separated syllable to a
-     * note, drawing the lyrics under the staff. Omitted when no lyrics given. */
-    ...(lyrics ? [`w:${lyrics}`] : []),
+     * note, drawing the lyrics under the staff. Rebuilt above so beat-split
+     * notes stay aligned. Omitted when no lyrics given. */
+    ...(lyrics ? [`w:${lyricLine}`] : []),
   ].join('\n')
 }
