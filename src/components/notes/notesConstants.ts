@@ -2,8 +2,10 @@
  * note this differs from Grace Kelly, where BPM is a dotted quarter (6/8).
  * Shared by the page (persistence/validation) and the settings row (the tempo
  * dropdown) so the two can't drift out of sync. "BPM" kept untranslated. */
-export const ALLOWED_BPMS = [50, 60, 70, 80, 90, 100, 110, 120]
-export const DEFAULT_BPM = 80
+export const ALLOWED_BPMS = [
+  80, 90, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200,
+] as const
+export const DEFAULT_BPM = 100
 
 /* The two sheets, by index. The clef select (the old Grace Kelly "Part"
  * dropdown) picks one; the index maps into NOTE_SCALES and the i18n labels at
