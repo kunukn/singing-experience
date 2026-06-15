@@ -44,7 +44,10 @@ type Props = {
   showTempo?: boolean
 }
 
-const props = defineProps<Props>()
+/* showTempo defaults true ("defaults to shown" above). Without an explicit
+ * default, Vue's Boolean-prop casting resolves an absent prop to `false`, which
+ * would silently hide the tempo whenever a parent omits it. */
+const props = withDefaults(defineProps<Props>(), { showTempo: true })
 
 /* Green only when the singer's note label reads the same as the target's, so
  * the color always agrees with the two stacked labels on screen. */
@@ -411,5 +414,11 @@ watch(
 /* Dim the staff title to match the muted aesthetic; SVG text color is `fill`. */
 :deep(.abcjs-title) {
   fill: var(--p-text-muted-color);
+}
+
+/* Lift the tempo marking (`Q:` → "♩=120") above where abcjs places it.
+ * SVG `<g>`, so move it with transform, not top/margin. */
+:deep(.abcjs-tempo) {
+  transform: translateY(-20px);
 }
 </style>

@@ -384,4 +384,10 @@ defineExpose({ scrollToSyllable })
 :deep(.abcjs-title) {
   fill: var(--p-text-muted-color);
 }
+
+/* Lift the tempo marking (`Q:` → "♩=120") a few px above where abcjs places it.
+ * SVG element, so move it with transform, not top/margin. */
+:deep(.abcjs-tempo) {
+  transform: translateY(-20px);
+}
 </style>
