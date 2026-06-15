@@ -8,6 +8,13 @@ import { useNotesPlayback } from './useNotesPlayback'
 
 const { t } = useI18n()
 
+const route = useRoute()
+const router = useRouter()
+
+const TAB_VALUES = ['listen', 'overview'] as const
+type NotesTab = (typeof TAB_VALUES)[number]
+const DEFAULT_TAB: NotesTab = 'listen'
+
 const CLEF_COUNT = NOTE_SCALES.length
 const DEFAULT_CLEF_INDEX = 0 // G clef
 
@@ -26,12 +33,20 @@ if (!ALLOWED_BPMS.includes(bpm.value)) {
   bpm.value = DEFAULT_BPM
 }
 
-/* Default to the Listen tab; coerce any stale persisted value (e.g. the removed
- * 'sing-live') back to a known tab so a panel always shows. */
-const activeTab = useLocalStorage('syng.notesTab', 'listen')
-if (activeTab.value !== 'listen' && activeTab.value !== 'overview') {
-  activeTab.value = 'listen'
-}
+/* Active tab lives only in the URL (?tab=listen|overview) — the single source
+ * of truth. Unknown/missing values fall back to the default so a panel always
+ * shows. replace() keeps tab switches out of the browser history. */
+const activeTab = computed<NotesTab>({
+  get() {
+    const tab = route.query.tab
+    return TAB_VALUES.includes(tab as NotesTab)
+      ? (tab as NotesTab)
+      : DEFAULT_TAB
+  },
+  set(tab) {
+    router.replace({ query: { ...route.query, tab } })
+  },
+})
 
 /* Note-name labels above every note. Shared by both tabs. Default on — the page's
  * whole point is to show the notes and their tone labels. */
