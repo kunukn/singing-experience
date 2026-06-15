@@ -43,6 +43,8 @@ type Props = {
   showToneLabels?: boolean
   /* When false, hides the active-bar highlight box; defaults to shown. */
   showBarHighlight?: boolean
+  /* When false, omits the BPM tempo marking from the staff; defaults to shown. */
+  showTempo?: boolean
 }
 
 const props = defineProps<Props>()
@@ -245,7 +247,7 @@ async function renderSheet() {
     props.midis,
     props.clef,
     props.bpm,
-    true,
+    props.showTempo !== false,
   )
 
   /* Pass 1 — render at an oversized width so abcjs keeps everything on one line

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
+import NotesOverviewDisplay from './NotesOverviewDisplay.vue'
 import NotesListenDisplay from './NotesListenDisplay.vue'
-import NotesSingDisplay from './NotesSingDisplay.vue'
 import { ALLOWED_BPMS, DEFAULT_BPM } from './notesConstants'
 import { NOTE_SCALES } from './notesScales'
 import { useNotesPlayback } from './useNotesPlayback'
@@ -26,10 +26,15 @@ if (!ALLOWED_BPMS.includes(bpm.value)) {
   bpm.value = DEFAULT_BPM
 }
 
+/* Default to the Listen tab; coerce any stale persisted value (e.g. the removed
+ * 'sing-live') back to a known tab so a panel always shows. */
 const activeTab = useLocalStorage('syng.notesTab', 'listen')
+if (activeTab.value !== 'listen' && activeTab.value !== 'overview') {
+  activeTab.value = 'listen'
+}
 
-/* Active-bar highlight — the green box over the current note's measure. Shared by
- * both tabs. Default on; purely visual. */
+/* Active-bar highlight — the green box over the current note's measure. Used by
+ * the Listen tab. Default on; purely visual. */
 const isBarHighlightEnabled = useLocalStorage('syng.notesBarHighlight', true)
 
 /* Note-name labels above every note. Shared by both tabs. Default on — the page's
@@ -37,18 +42,11 @@ const isBarHighlightEnabled = useLocalStorage('syng.notesBarHighlight', true)
 const areToneLabelsShown = useLocalStorage('syng.notesToneLabels', true)
 
 const listenGame = useNotesPlayback()
-/* Silent timeline for the "Sing live" tab — advances the sheet on the BPM clock
- * with no playback; the singer's mic supplies the sound. */
-const singGame = useNotesPlayback({ silent: true })
-/* Audible instance for the "Sing live" tab's ♪/Mute preview. */
-const singPreviewGame = useNotesPlayback()
 
-/* One shared audio engine drives every tab — stop any in-flight playback when
- * switching so the inactive tab can't keep scheduling notes underneath. */
+/* Stop any in-flight Listen playback when switching to the (silent) Overview tab
+ * so it can't keep scheduling notes underneath. */
 watch(activeTab, () => {
   listenGame.stop()
-  singGame.stop()
-  singPreviewGame.stop()
 })
 </script>
 
@@ -57,7 +55,7 @@ watch(activeTab, () => {
     <PrimeTabs v-model:value="activeTab">
       <PrimeTabList>
         <PrimeTab value="listen">{{ t('notes.tabs.listen') }}</PrimeTab>
-        <PrimeTab value="sing-live">{{ t('notes.tabs.singLive') }}</PrimeTab>
+        <PrimeTab value="overview">{{ t('notes.tabs.overview') }}</PrimeTab>
       </PrimeTabList>
       <PrimeTabPanels class="px-0">
         <PrimeTabPanel value="listen">
@@ -70,13 +68,8 @@ watch(activeTab, () => {
             v-model:areToneLabelsShown="areToneLabelsShown"
           />
         </PrimeTabPanel>
-        <PrimeTabPanel value="sing-live">
-          <NotesSingDisplay
-            :game="singGame"
-            :previewGame="singPreviewGame"
-            v-model:clefIndex="clefIndex"
-            v-model:bpm="bpm"
-            v-model:isBarHighlightEnabled="isBarHighlightEnabled"
+        <PrimeTabPanel value="overview">
+          <NotesOverviewDisplay
             v-model:areToneLabelsShown="areToneLabelsShown"
           />
         </PrimeTabPanel>
