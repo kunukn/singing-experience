@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { vozMelodyToAbcString } from './graceKellyAbc'
+import {
+  groupNoteHeads,
+  noteHeadCountsPerNote,
+  vozMelodyToAbcString,
+} from './graceKellyAbc'
 import { VOZ_MELODIES, type VozMelody } from './graceKellyMelodies'
 import { GRACE_KELLY_LYRIC_ABC } from './graceKellyLyrics'
 
@@ -108,5 +112,56 @@ describe('vozMelodyToAbcString — 6/8 beat-straddling split', () => {
     expect(rebuiltSlots).toBe(originalSlots + 1)
     /* The held "o" of "vi-o-let" now extends across the tie via a `_` melisma. */
     expect(lyricLine(abc)).toContain('vi-o _ let')
+  })
+})
+
+describe('noteHeadCountsPerNote / groupNoteHeads — melody-index ↔ notehead map', () => {
+  const C5 = 72
+
+  it('reports one notehead per note when nothing straddles a beat', () => {
+    /* Three quarters starting on the beat — each sits inside one 6/8 beat. */
+    const onBeat: VozMelody = {
+      clef: 'treble',
+      notes: [
+        { midiOffset: 0, eighthNotes: 3 },
+        { midiOffset: 2, eighthNotes: 3 },
+        { midiOffset: 4, eighthNotes: 3 },
+      ],
+    }
+
+    expect(noteHeadCountsPerNote(onBeat)).toEqual([1, 1, 1])
+  })
+
+  it('counts the extra notehead a beat-straddling note splits into', () => {
+    /* Quarter, quarter, quarter in 6/8: the middle quarter straddles the beat
+     * boundary at eighth 3 → two tied noteheads, so counts are [1, 2, 1]. */
+    const threeQuarters: VozMelody = {
+      clef: 'treble',
+      notes: [
+        { midiOffset: 0, eighthNotes: 2 },
+        { midiOffset: 2, eighthNotes: 2 },
+        { midiOffset: 4, eighthNotes: 2 },
+      ],
+    }
+
+    expect(noteHeadCountsPerNote(threeQuarters)).toEqual([1, 2, 1])
+  })
+
+  it('keeps the flat notehead list aligned to melody.notes (real melody)', () => {
+    const melody = VOZ_MELODIES[0]
+    const counts = noteHeadCountsPerNote(melody)
+
+    /* One entry per melody note; total covers the synthetic split heads. */
+    expect(counts).toHaveLength(melody.notes.length)
+
+    const total = counts.reduce((sum, count) => sum + count, 0)
+    const flat = Array.from({ length: total }, (_, index) => index)
+    const groups = groupNoteHeads(flat, melody)
+
+    /* Buckets partition the flat list in order, one bucket per melody note, each
+     * holding that note's piece(s) — so group[i][0] is note i's leading head. */
+    expect(groups).toHaveLength(melody.notes.length)
+    expect(groups.flat()).toEqual(flat)
+    expect(groups.map((group) => group.length)).toEqual(counts)
   })
 })

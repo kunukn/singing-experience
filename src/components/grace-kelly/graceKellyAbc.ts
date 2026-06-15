@@ -125,6 +125,58 @@ function splitNoteAcrossBeats(
   return pieces
 }
 
+/* 6/8 = 6 eighth notes per measure; the beat is a dotted quarter = 3 eighths. */
+const EIGHTHS_PER_MEASURE = 6
+const BEAT_EIGHTHS = 3
+
+/* How many rendered noteheads each melody note becomes. A beat-straddling note
+ * splits into several tied pieces (see splitNoteAcrossBeats), so the flat
+ * `.abcjs-note` list abcjs draws is longer than melody.notes. The display
+ * components use this to map a melody-note index to its noteheads — without it,
+ * indexing the flat list by melody index drifts after the first split. Mirrors
+ * the bar bookkeeping of vozMelodyToAbcString (anacrusis pickup, bar resets);
+ * pitch and lyrics don't affect the count, so they're omitted here. */
+export function noteHeadCountsPerNote(melody: VozMelody): number[] {
+  let barPos = 0
+  let barTarget =
+    melody.anacrusisEighths && melody.anacrusisEighths > 0
+      ? melody.anacrusisEighths
+      : EIGHTHS_PER_MEASURE
+
+  return melody.notes.map((note) => {
+    const count = splitNoteAcrossBeats(
+      barPos,
+      note.eighthNotes,
+      BEAT_EIGHTHS,
+      barTarget,
+    ).length
+
+    barPos += note.eighthNotes + (note.restAfterEighths ?? 0)
+    if (barPos >= barTarget) {
+      barPos = 0
+      barTarget = EIGHTHS_PER_MEASURE
+    }
+
+    return count
+  })
+}
+
+/* Buckets a flat, reading-order list of `.abcjs-note` elements into one entry
+ * per melody note — each holding that note's rendered piece(s). A beat-straddling
+ * note splits into several tied noteheads, so the flat list is longer than
+ * melody.notes; this realigns it so a melody-note index maps to its noteheads. */
+export function groupNoteHeads<T>(noteHeads: T[], melody: VozMelody): T[][] {
+  const counts = noteHeadCountsPerNote(melody)
+  const groups: T[][] = []
+  let cursor = 0
+  for (const count of counts) {
+    groups.push(noteHeads.slice(cursor, cursor + count))
+    cursor += count
+  }
+
+  return groups
+}
+
 /* Tokenizes an ABC `w:` lyric string into ordered syllables, each tagged with
  * the separator that precedes it: a space between words, "-" between a word's
  * own syllables. Used to rebuild the `w:` line note-by-note when beat-splitting
@@ -162,15 +214,10 @@ export function vozMelodyToAbcString(
   showTempo = true,
   lyrics?: string,
 ): string {
-  /* 6/8 = 6 eighth notes per measure */
-  const EIGHTHS_PER_MEASURE = 6
-
-  /* 6/8 beats are dotted quarters = 3 eighth notes. ABC beams notes written
+  /* 6/8 beats are dotted quarters (BEAT_EIGHTHS = 3). ABC beams notes written
    * without a separating space; we beam consecutive eighth notes that fall in
    * the same beat and break the beam at beat boundaries, longer notes, and
    * barlines — the standard 6/8 engraving. */
-  const BEAT_EIGHTHS = 3
-
   const pitchClass = ((startToneMidi % 12) + 12) % 12
   const key = PITCHCLASS_TO_KEY[pitchClass]
 

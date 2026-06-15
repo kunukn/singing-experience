@@ -2,7 +2,11 @@
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
-import { estimateStaffWidth, vozMelodyToAbcString } from './graceKellyAbc'
+import {
+  estimateStaffWidth,
+  groupNoteHeads,
+  vozMelodyToAbcString,
+} from './graceKellyAbc'
 import { GRACE_KELLY_LYRIC_ABC } from './graceKellyLyrics'
 import { VOZ_MELODIES } from './graceKellyMelodies'
 import {
@@ -53,6 +57,11 @@ const staffContainers = ref<HTMLElement[]>([])
 /* Note elements per staff, indexed [staffIndex][noteIndex] — all melodies share
  * the same 34-note rhythm, so a single activeNoteIndex maps onto every staff. */
 const noteElementsByStaff = ref<Element[][]>([])
+/* Per-staff buckets grouping each staff's flat noteheads into one entry per melody
+ * note. A note straddling a 6/8 beat renders as several tied noteheads, so the flat
+ * list is longer than melody.notes; bucketing keeps every note-index lookup aligned.
+ * Indexed [staffIndex][noteIndex] → that note's piece(s) in reading order. */
+const noteGroupsByStaff = ref<Element[][][]>([])
 /* Lyric elements per staff, indexed [staffIndex][syllableIndex] — every staff
  * shares one lyric mapping, so a single activeSyllableIndex maps onto each. */
 const lyricElementsByStaff = ref<Element[][]>([])
@@ -101,13 +110,14 @@ function updateAllToneLabels() {
   const containers = staffContainers.value.slice(0, vozIndices.length)
   allToneLabelsByStaff.value = vozIndices.map((vozIndex, staffIndex) => {
     const container = containers[staffIndex]
-    const elements = noteElementsByStaff.value[staffIndex]
-    if (!container || !elements) return []
+    const groups = noteGroupsByStaff.value[staffIndex]
+    if (!container || !groups) return []
 
     const containerRect = container.getBoundingClientRect()
-    return elements.flatMap((element, noteIndex) => {
+    return groups.flatMap((group, noteIndex) => {
       const note = VOZ_MELODIES[vozIndex].notes[noteIndex]
-      if (!note) return []
+      const element = group[0]
+      if (!note || !element) return []
 
       const noteRect = element.getBoundingClientRect()
       return [
@@ -135,7 +145,7 @@ function updateToneLabelPositions(index: number | null) {
     renderedVozIndices.value.length,
   )
   toneLabelByStaff.value = containers.map((container, staffIndex) => {
-    const element = noteElementsByStaff.value[staffIndex]?.[index]
+    const element = noteGroupsByStaff.value[staffIndex]?.[index]?.[0]
     if (!container || !element) return null
 
     const noteRect = element.getBoundingClientRect()
@@ -222,6 +232,12 @@ async function renderSheets() {
   noteElementsByStaff.value = containers.map((container) => [
     ...container.querySelectorAll('.abcjs-note'),
   ])
+  noteGroupsByStaff.value = vozIndices.map((vozIndex, staffIndex) =>
+    groupNoteHeads(
+      noteElementsByStaff.value[staffIndex] ?? [],
+      VOZ_MELODIES[vozIndex],
+    ),
+  )
   lyricElementsByStaff.value = containers.map((container) => [
     ...container.querySelectorAll('.abcjs-lyric'),
   ])
@@ -230,8 +246,10 @@ async function renderSheets() {
    * active highlight the watchers set before this render replaced the SVGs. */
   const noteIndex = props.activeNoteIndex
   if (noteIndex !== null) {
-    for (const staff of noteElementsByStaff.value) {
-      staff[noteIndex]?.classList.add('note-active')
+    for (const groups of noteGroupsByStaff.value) {
+      for (const element of groups[noteIndex] ?? []) {
+        element.classList.add('note-active')
+      }
     }
   }
 
@@ -298,8 +316,10 @@ watch(
       return
     }
 
-    for (const staff of noteElementsByStaff.value) {
-      staff[index]?.classList.add('note-active')
+    for (const groups of noteGroupsByStaff.value) {
+      for (const element of groups[index] ?? []) {
+        element.classList.add('note-active')
+      }
     }
 
     updateToneLabelPositions(index)
@@ -307,7 +327,7 @@ watch(
     /* Center the active column with a manual horizontal scroll (the top staff's
      * note is representative since all staves are aligned). scrollIntoView is
      * avoided so the tall stack does not jump vertically. */
-    const note = noteElementsByStaff.value[0]?.[index]
+    const note = noteGroupsByStaff.value[0]?.[index]?.[0]
     if (note && scrollRef.value) {
       const containerRect = scrollRef.value.getBoundingClientRect()
       const noteRect = note.getBoundingClientRect()

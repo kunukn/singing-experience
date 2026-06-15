@@ -2,7 +2,11 @@
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
 import ActiveBarHighlight from './ActiveBarHighlight.vue'
-import { estimateStaffWidth, vozMelodyToAbcString } from './graceKellyAbc'
+import {
+  estimateStaffWidth,
+  groupNoteHeads,
+  vozMelodyToAbcString,
+} from './graceKellyAbc'
 import type { VozMelody } from './graceKellyMelodies'
 import {
   measureMusicWidth,
@@ -43,6 +47,26 @@ const scrollRef = ref<HTMLDivElement | null>(null)
 const noteElements = ref<Element[]>([])
 const lyricElements = ref<Element[]>([])
 
+/* A note that straddles a 6/8 beat is engraved as several tied noteheads, so the
+ * flat `.abcjs-note` list is longer than melody.notes. This buckets the flat list
+ * into one entry per melody note (each holding that note's piece(s) in reading
+ * order), keeping every melody-index lookup aligned. Rebuilt on each render. */
+const noteGroups = ref<Element[][]>([])
+
+/* The leading notehead for a melody note — its position anchor. */
+function noteHeadFor(index: number): Element | undefined {
+  return noteGroups.value[index]?.[0]
+}
+
+/* Paint every rendered piece of a melody note active (a tied, beat-split note has
+ * more than one notehead, so highlighting only the first would leave its tail
+ * uncolored). */
+function paintNoteActive(index: number) {
+  for (const element of noteGroups.value[index] ?? []) {
+    element.classList.add('note-active')
+  }
+}
+
 /* Nudge applied to the floating tone label so it sits slightly inset from and
  * above the note it annotates. */
 const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
@@ -75,7 +99,7 @@ function updateToneLabelPosition(index: number | null) {
     return
   }
 
-  const element = noteElements.value[index]
+  const element = noteHeadFor(index)
   if (!element) {
     toneLabelPosition.value = null
 
@@ -102,7 +126,7 @@ function updateActiveBar(index: number | null) {
     return
   }
 
-  const element = noteElements.value[index]
+  const element = noteHeadFor(index)
   if (!element) {
     activeBarPosition.value = null
 
@@ -208,6 +232,7 @@ async function renderSheet() {
   noteElements.value = [
     ...(containerRef.value?.querySelectorAll('.abcjs-note') ?? []),
   ]
+  noteGroups.value = groupNoteHeads(noteElements.value, props.melody)
   /* One `.abcjs-lyric` element per lyric'd note, in reading order, so the index
    * matches the flat syllable index used by activeSyllableIndex. */
   lyricElements.value = [
@@ -217,8 +242,7 @@ async function renderSheet() {
   /* A re-render (resize / tab reveal) rebuilds the elements, so re-apply any
    * active highlight the watchers set before this render replaced the SVG. */
   const noteIndex = props.activeNoteIndex
-  if (noteIndex !== null)
-    noteElements.value[noteIndex]?.classList.add('note-active')
+  if (noteIndex !== null) paintNoteActive(noteIndex)
 
   updateToneLabelPosition(noteIndex)
   updateActiveBar(noteIndex)
@@ -279,10 +303,10 @@ watch(
       return
     }
 
-    const element = noteElements.value[index]
+    const element = noteHeadFor(index)
     if (!element) return
 
-    element.classList.add('note-active')
+    paintNoteActive(index)
     updateToneLabelPosition(index)
     updateActiveBar(index)
     element.scrollIntoView({
