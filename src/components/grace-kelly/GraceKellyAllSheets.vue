@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import { renderAbc } from 'abcjs'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
+import { renderAbc } from 'abcjs'
+import { estimateStaffWidth, vozMelodyToAbcString } from './graceKellyAbc'
 import { GRACE_KELLY_LYRIC_ABC } from './graceKellyLyrics'
 import { VOZ_MELODIES } from './graceKellyMelodies'
-import { vozMelodyToAbcString, estimateStaffWidth } from './graceKellyAbc'
 import {
   measureMusicWidth,
   STAFF_LABEL_FONT,
@@ -375,7 +375,7 @@ watch(
 
         <span
           v-if="staffLabels[position]"
-          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-sm leading-none font-semibold text-(--p-primary-color) tabular-nums"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-primary-color) tabular-nums"
           :style="toneLabelStyle(staffLabels[position])"
         >
           {{ staffLabels[position]?.text }}
