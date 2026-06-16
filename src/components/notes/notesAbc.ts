@@ -60,14 +60,23 @@ export function estimateNotesStaffWidth(noteCount: number): number {
  * barline. Returned alone (no header) so it can serve a single- or multi-voice
  * tune.
  */
-function midisToAbcBody(midis: number[]): string {
+/* Rest token used to pad the final bar to a full 4/4. `z` is a visible rest;
+ * `x` is an invisible rest — same duration (so barlines stay aligned) but draws
+ * no glyph, used where trailing rests would be visual noise. */
+function buildBeamedBars(
+  midis: number[],
+  padLastBar = true,
+  restToken: 'z' | 'x' = 'z',
+): string[] {
   const tokens = midis.map(midiToAbcToken)
 
   /* Pad the last bar with eighth rests so the closing measure fills 4/4. */
-  const remainder = tokens.length % NOTES_PER_MEASURE
-  if (remainder > 0) {
-    for (let index = remainder; index < NOTES_PER_MEASURE; index++) {
-      tokens.push('z')
+  if (padLastBar) {
+    const remainder = tokens.length % NOTES_PER_MEASURE
+    if (remainder > 0) {
+      for (let index = remainder; index < NOTES_PER_MEASURE; index++) {
+        tokens.push(restToken)
+      }
     }
   }
 
@@ -81,7 +90,11 @@ function midisToAbcBody(midis: number[]): string {
     bars.push(beamGroups.join(' '))
   }
 
-  return bars.join(' | ') + ' |]'
+  return bars
+}
+
+function midisToAbcBody(midis: number[], restToken: 'z' | 'x' = 'z'): string {
+  return buildBeamedBars(midis, true, restToken).join(' | ') + ' |]'
 }
 
 /*
@@ -106,6 +119,37 @@ export function noteScaleToAbcString(
     ...(showTempo ? [`Q:1/4=${bpm}`] : []),
     `K:C clef=${clef}`,
     midisToAbcBody(midis),
+  ].join('\n')
+}
+
+/*
+ * Single-clef outlier reference tune: a low cluster and a high cluster of
+ * noteheads (placements outside the basic covered range) on one staff. The
+ * clusters sit adjacent, separated only by a barline. No rest-padding —
+ * `%%stretchlast 0` keeps the partial final bars from stretching, and skipping
+ * rests avoids stray rest glyphs. Barlines carry no `.abcjs-note` class, so the
+ * label index mapping over `.abcjs-note` stays aligned with [...low, ...high].
+ */
+export function outlierScaleToAbcString(
+  lowMidis: number[],
+  highMidis: number[],
+  clef: ClefKey,
+  bpm = 80,
+  showTempo = false,
+): string {
+  const body = [
+    buildBeamedBars(lowMidis, false).join(' | '),
+    buildBeamedBars(highMidis, false).join(' | '),
+  ].join(' | ')
+
+  return [
+    'X:1',
+    '%%stretchlast 0',
+    'M:4/4',
+    'L:1/8',
+    ...(showTempo ? [`Q:1/4=${bpm}`] : []),
+    `K:C clef=${clef}`,
+    body + ' |]',
   ].join('\n')
 }
 
@@ -135,9 +179,12 @@ export function noteScalesToTwoVoiceAbcString(
     'L:1/8',
     ...(showTempo ? [`Q:1/4=${bpm}`] : []),
     'K:C',
+    /* Pad with invisible rests (`x`): the two voices have different note counts,
+     * so a full final bar keeps their closing barline aligned, while `x` draws no
+     * trailing rest glyphs. */
     'V:1 clef=treble',
-    midisToAbcBody(trebleMidis),
+    midisToAbcBody(trebleMidis, 'x'),
     'V:2 clef=bass',
-    midisToAbcBody(bassMidis),
+    midisToAbcBody(bassMidis, 'x'),
   ].join('\n')
 }

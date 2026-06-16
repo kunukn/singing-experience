@@ -309,6 +309,9 @@
     "clefLabels": {
       "treble": "Clave de sol",
       "bass": "Clave de fa"
+    },
+    "outliers": {
+      "heading": "Notas fuera de las líneas"
     }
   }
 }

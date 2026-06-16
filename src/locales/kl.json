@@ -305,6 +305,9 @@
     "clefLabels": {
       "treble": "Treble clef",
       "bass": "Bass clef"
+    },
+    "outliers": {
+      "heading": "Notes beyond the lines"
     }
   }
 }

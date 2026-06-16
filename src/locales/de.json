@@ -309,6 +309,9 @@
     "clefLabels": {
       "treble": "Violinschlüssel",
       "bass": "Bassschlüssel"
+    },
+    "outliers": {
+      "heading": "Töne außerhalb der Linien"
     }
   }
 }

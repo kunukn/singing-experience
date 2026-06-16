@@ -309,6 +309,9 @@
     "clefLabels": {
       "treble": "G-nøgle",
       "bass": "F-nøgle"
+    },
+    "outliers": {
+      "heading": "Toner uden for linjerne"
     }
   }
 }

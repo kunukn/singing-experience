@@ -49,6 +49,7 @@ declare module 'vue' {
     MusicNoteIcon: typeof import('./components/icons/MusicNoteIcon.vue')['default']
     NoteDisplay: typeof import('./components/pitch-detector/NoteDisplay.vue')['default']
     NotesListenDisplay: typeof import('./components/notes/NotesListenDisplay.vue')['default']
+    NotesOutlierSheet: typeof import('./components/notes/NotesOutlierSheet.vue')['default']
     NotesOverviewDisplay: typeof import('./components/notes/NotesOverviewDisplay.vue')['default']
     NotesOverviewSheet: typeof import('./components/notes/NotesOverviewSheet.vue')['default']
     NotesPage: typeof import('./components/notes/NotesPage.vue')['default']

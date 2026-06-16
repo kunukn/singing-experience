@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import NotesOutlierSheet from './NotesOutlierSheet.vue'
 import NotesOverviewSheet from './NotesOverviewSheet.vue'
 import { DEFAULT_BPM } from './notesConstants'
-import { NOTE_SCALES } from './notesScales'
+import { NOTE_SCALES, OUTLIER_SCALES } from './notesScales'
 
 /* NOTE_SCALES is ordered treble (V:1) then bass (V:2). */
 const trebleMidis = NOTE_SCALES[0]?.midis ?? []
@@ -19,7 +20,7 @@ const { t } = useI18n()
     class="flex flex-1 flex-col items-center gap-4 pb-4"
     data-testid="notes-overview-display"
   >
-    <label class="flex items-center gap-2 text-sm sm:mb-2">
+    <label class="flex items-center gap-2 text-sm">
       <PrimeToggleSwitch v-model="areToneLabelsShown" />
       {{ t('notes.toneLabels') }}
     </label>
@@ -36,6 +37,41 @@ const { t } = useI18n()
         :bpm="DEFAULT_BPM"
         :showToneLabels="areToneLabelsShown"
       />
+    </div>
+
+    <!--
+      Beyond-the-staff reference: per-clef sheets showing the ledger-line notehead
+      placements outside the basic covered range (a low cluster and a high cluster,
+      separated by a gap). Boundary notes repeat as orientation anchors.
+    -->
+    <div class="flex w-full max-w-full flex-col gap-3">
+      <h3 class="text-center text-sm font-semibold text-(--p-text-muted-color)">
+        {{ t('notes.outliers.heading') }}
+      </h3>
+
+      <div class="flex flex-col gap-1">
+        <p class="text-center text-xs text-(--p-text-muted-color)">
+          {{ t('notes.clefLabels.treble') }}
+        </p>
+        <NotesOutlierSheet
+          clef="treble"
+          :lowMidis="OUTLIER_SCALES.treble.low"
+          :highMidis="OUTLIER_SCALES.treble.high"
+          :showToneLabels="areToneLabelsShown"
+        />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <p class="text-center text-xs text-(--p-text-muted-color)">
+          {{ t('notes.clefLabels.bass') }}
+        </p>
+        <NotesOutlierSheet
+          clef="bass"
+          :lowMidis="OUTLIER_SCALES.bass.low"
+          :highMidis="OUTLIER_SCALES.bass.high"
+          :showToneLabels="areToneLabelsShown"
+        />
+      </div>
     </div>
   </div>
 </template>

@@ -1,9 +1,17 @@
 import {
   BASS_MAX_MIDI,
   BASS_MIN_MIDI,
+  BASS_OUTLIER_HIGH_MAX_MIDI,
+  BASS_OUTLIER_HIGH_MIN_MIDI,
+  BASS_OUTLIER_LOW_MAX_MIDI,
+  BASS_OUTLIER_LOW_MIN_MIDI,
   CLEF_LABEL_KEYS,
   TREBLE_MAX_MIDI,
   TREBLE_MIN_MIDI,
+  TREBLE_OUTLIER_HIGH_MAX_MIDI,
+  TREBLE_OUTLIER_HIGH_MIN_MIDI,
+  TREBLE_OUTLIER_LOW_MAX_MIDI,
+  TREBLE_OUTLIER_LOW_MIN_MIDI,
   type ClefKey,
 } from './notesConstants'
 
@@ -16,7 +24,7 @@ export type NoteScale = {
 }
 
 /* Inclusive chromatic MIDI range → ascending list of every semitone. */
-function chromaticRange(minMidi: number, maxMidi: number): number[] {
+export function chromaticRange(minMidi: number, maxMidi: number): number[] {
   return Array.from(
     { length: maxMidi - minMidi + 1 },
     (_, index) => minMidi + index,
@@ -35,3 +43,32 @@ export const NOTE_SCALES: NoteScale[] = [
     midis: chromaticRange(BASS_MIN_MIDI, BASS_MAX_MIDI),
   },
 ]
+
+type OutlierScale = {
+  /* Outliers below the covered range (lower ledger lines). */
+  low: number[]
+  /* Outliers above the covered range (upper ledger lines). */
+  high: number[]
+}
+
+/* Per-clef outlier clusters for the beyond-the-staff reference sheets. Each
+ * cluster is chromatic and includes its boundary anchor (see notesConstants). */
+export const OUTLIER_SCALES: Record<ClefKey, OutlierScale> = {
+  treble: {
+    low: chromaticRange(
+      TREBLE_OUTLIER_LOW_MIN_MIDI,
+      TREBLE_OUTLIER_LOW_MAX_MIDI,
+    ),
+    high: chromaticRange(
+      TREBLE_OUTLIER_HIGH_MIN_MIDI,
+      TREBLE_OUTLIER_HIGH_MAX_MIDI,
+    ),
+  },
+  bass: {
+    low: chromaticRange(BASS_OUTLIER_LOW_MIN_MIDI, BASS_OUTLIER_LOW_MAX_MIDI),
+    high: chromaticRange(
+      BASS_OUTLIER_HIGH_MIN_MIDI,
+      BASS_OUTLIER_HIGH_MAX_MIDI,
+    ),
+  },
+}
