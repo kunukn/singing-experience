@@ -66,22 +66,15 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <label class="text-sm text-(--p-text-muted-color) md:block">{{
         t('notes.clef')
       }}</label>
-      <PrimeSelect
+      <PrimeSelectButton
         v-model="clefIndex"
         :options="clefOptions"
         optionLabel="label"
         optionValue="value"
-        size="small"
+        :allowEmpty="false"
         :disabled="props.isRunning"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('notes.clef') }}
-          </div>
-        </template>
-      </PrimeSelect>
+        size="small"
+      />
     </div>
 
     <div class="settings-item">
