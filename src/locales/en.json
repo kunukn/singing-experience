@@ -301,6 +301,7 @@
     "clef": "Clef",
     "tempo": "Tempo",
     "toneLabels": "Tones",
+    "accidentals": "Sharps & flats",
     "sing": "Sing",
     "tabs": {
       "listen": "Listen",

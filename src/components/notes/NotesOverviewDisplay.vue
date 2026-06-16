@@ -2,15 +2,37 @@
 import NotesOutlierSheet from './NotesOutlierSheet.vue'
 import NotesOverviewSheet from './NotesOverviewSheet.vue'
 import { DEFAULT_BPM } from './notesConstants'
-import { NOTE_SCALES, OUTLIER_SCALES } from './notesScales'
-
-/* NOTE_SCALES is ordered treble (V:1) then bass (V:2). */
-const trebleMidis = NOTE_SCALES[0]?.midis ?? []
-const bassMidis = NOTE_SCALES[1]?.midis ?? []
+import { filterAccidentals, NOTE_SCALES, OUTLIER_SCALES } from './notesScales'
 
 const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
   required: true,
 })
+
+const includeAccidentals = defineModel<boolean>('includeAccidentals', {
+  required: true,
+})
+
+/* NOTE_SCALES is ordered treble (V:1) then bass (V:2). Naturals only unless the
+ * "Sharps & flats" toggle includes the accidental notes. */
+const trebleMidis = computed(() =>
+  filterAccidentals(NOTE_SCALES[0]?.midis ?? [], includeAccidentals.value),
+)
+const bassMidis = computed(() =>
+  filterAccidentals(NOTE_SCALES[1]?.midis ?? [], includeAccidentals.value),
+)
+
+const trebleLowMidis = computed(() =>
+  filterAccidentals(OUTLIER_SCALES.treble.low, includeAccidentals.value),
+)
+const trebleHighMidis = computed(() =>
+  filterAccidentals(OUTLIER_SCALES.treble.high, includeAccidentals.value),
+)
+const bassLowMidis = computed(() =>
+  filterAccidentals(OUTLIER_SCALES.bass.low, includeAccidentals.value),
+)
+const bassHighMidis = computed(() =>
+  filterAccidentals(OUTLIER_SCALES.bass.high, includeAccidentals.value),
+)
 
 const { t } = useI18n()
 </script>
@@ -20,12 +42,20 @@ const { t } = useI18n()
     class="flex flex-1 flex-col items-center gap-4 pb-4"
     data-testid="notes-overview-display"
   >
-    <ToggleIconButton
-      v-model="areToneLabelsShown"
-      iconOn="pi pi-tag"
-      iconOff="pi pi-tag"
-      :label="t('notes.toneLabels')"
-    />
+    <div class="flex items-center gap-2">
+      <ToggleIconButton
+        v-model="areToneLabelsShown"
+        iconOn="pi pi-tag"
+        iconOff="pi pi-tag"
+        :label="t('notes.toneLabels')"
+      />
+      <ToggleIconButton
+        v-model="includeAccidentals"
+        iconOn="pi pi-hashtag"
+        iconOff="pi pi-hashtag"
+        :label="t('notes.accidentals')"
+      />
+    </div>
     <div class="flex flex-col items-center justify-around gap-1">
       <p class="text-center text-xs text-(--p-text-muted-color)">
         {{ t('notes.clefLabels.treble') }}
@@ -61,10 +91,10 @@ const { t } = useI18n()
       </h3>
 
       <NotesOutlierSheet
-        :trebleLowMidis="OUTLIER_SCALES.treble.low"
-        :trebleHighMidis="OUTLIER_SCALES.treble.high"
-        :bassLowMidis="OUTLIER_SCALES.bass.low"
-        :bassHighMidis="OUTLIER_SCALES.bass.high"
+        :trebleLowMidis="trebleLowMidis"
+        :trebleHighMidis="trebleHighMidis"
+        :bassLowMidis="bassLowMidis"
+        :bassHighMidis="bassHighMidis"
         :showToneLabels="areToneLabelsShown"
       />
     </div>

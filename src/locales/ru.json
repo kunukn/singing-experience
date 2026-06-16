@@ -301,6 +301,7 @@
     "clef": "Clef",
     "tempo": "Темп",
     "toneLabels": "Ноты",
+    "accidentals": "Диезы и бемоли",
     "sing": "Пой",
     "tabs": {
       "listen": "Listen",

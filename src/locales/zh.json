@@ -301,6 +301,7 @@
     "clef": "Clef",
     "tempo": "速度",
     "toneLabels": "音名",
+    "accidentals": "升号和降号",
     "sing": "唱",
     "tabs": {
       "listen": "Listen",

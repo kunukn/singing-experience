@@ -31,6 +31,22 @@ export function chromaticRange(minMidi: number, maxMidi: number): number[] {
   )
 }
 
+/* Natural (white-key) pitch classes: C D E F G A B. The five missing classes
+ * (1, 3, 6, 8, 10) are the accidental black keys. */
+const NATURAL_PITCH_CLASSES = new Set([0, 2, 4, 5, 7, 9, 11])
+
+export function isNaturalMidi(midi: number): boolean {
+  return NATURAL_PITCH_CLASSES.has(((midi % 12) + 12) % 12)
+}
+
+/* Full chromatic list when accidentals are included; naturals only when not. */
+export function filterAccidentals(
+  midis: number[],
+  includeAccidentals: boolean,
+): number[] {
+  return includeAccidentals ? midis : midis.filter(isNaturalMidi)
+}
+
 /* One entry per clef, indexed to match CLEF_LABEL_KEYS so a clef index selects
  * both the scale and its i18n label. */
 export const NOTE_SCALES: NoteScale[] = [

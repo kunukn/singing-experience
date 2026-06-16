@@ -301,6 +301,7 @@
     "clef": "Clave",
     "tempo": "Tempo",
     "toneLabels": "Tons",
+    "accidentals": "Sustenidos e bemóis",
     "sing": "Canta",
     "tabs": {
       "listen": "Ouve",

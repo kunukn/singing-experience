@@ -3,7 +3,7 @@ import { frequencyToMidi, midiToNoteLabel } from '@/utils/noteUtils'
 import { useStableSungLabel } from '@/components/grace-kelly/useStableSungLabel'
 import NotesSettingsRow from './NotesSettingsRow.vue'
 import NotesSheet from './NotesSheet.vue'
-import { NOTE_SCALES } from './notesScales'
+import { filterAccidentals, NOTE_SCALES } from './notesScales'
 import type { NotesPlaybackResult } from './useNotesPlayback'
 
 type Props = {
@@ -21,10 +21,21 @@ const bpm = defineModel<number>('bpm', { required: true })
 const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
   required: true,
 })
+const includeAccidentals = defineModel<boolean>('includeAccidentals', {
+  required: true,
+})
 
 const { t } = useI18n()
 
-const scale = computed(() => NOTE_SCALES[clefIndex.value])
+/* Naturals only unless the "Sharps & flats" toggle includes the accidental
+ * notes. Drives both the sheet and what `start()` plays. */
+const scale = computed(() => {
+  const base = NOTE_SCALES[clefIndex.value]
+  return {
+    ...base,
+    midis: filterAccidentals(base.midis, includeAccidentals.value),
+  }
+})
 
 const {
   isPlaying,
@@ -141,6 +152,14 @@ const currentToneLabel = computed(() => {
         iconOn="pi pi-tag"
         iconOff="pi pi-tag"
         :label="t('notes.toneLabels')"
+      />
+
+      <ToggleIconButton
+        v-model="includeAccidentals"
+        iconOn="pi pi-hashtag"
+        iconOff="pi pi-hashtag"
+        :label="t('notes.accidentals')"
+        :disabled="isRunning"
       />
     </div>
 

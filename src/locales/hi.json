@@ -301,6 +301,7 @@
     "clef": "Clef",
     "tempo": "गति",
     "toneLabels": "स्वर",
+    "accidentals": "शार्प और फ्लैट",
     "sing": "गाओ",
     "tabs": {
       "listen": "Listen",

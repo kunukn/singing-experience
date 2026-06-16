@@ -301,6 +301,7 @@
     "clef": "Clef",
     "tempo": "テンポ",
     "toneLabels": "音名",
+    "accidentals": "シャープとフラット",
     "sing": "歌おう",
     "tabs": {
       "listen": "Listen",

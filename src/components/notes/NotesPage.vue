@@ -52,6 +52,13 @@ const activeTab = computed<NotesTab>({
  * whole point is to show the notes and their tone labels. */
 const areToneLabelsShown = useLocalStorage('syng.notesToneLabels', true)
 
+/* Whether the sheets include accidental (black-key) notes. Default off — the
+ * basic view is the natural notes only; on reveals the full chromatic scale. */
+const includeAccidentals = useLocalStorage(
+  'syng.notesIncludeAccidentals',
+  false,
+)
+
 const listenGame = useNotesPlayback()
 
 /* Stop any in-flight Listen playback when switching to the (silent) Overview tab
@@ -76,11 +83,13 @@ watch(activeTab, () => {
             v-model:clefIndex="clefIndex"
             v-model:bpm="bpm"
             v-model:areToneLabelsShown="areToneLabelsShown"
+            v-model:includeAccidentals="includeAccidentals"
           />
         </PrimeTabPanel>
         <PrimeTabPanel value="overview">
           <NotesOverviewDisplay
             v-model:areToneLabelsShown="areToneLabelsShown"
+            v-model:includeAccidentals="includeAccidentals"
           />
         </PrimeTabPanel>
       </PrimeTabPanels>
