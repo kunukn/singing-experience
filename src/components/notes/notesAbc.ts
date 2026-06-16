@@ -156,30 +156,33 @@ export function noteScaleToAbcString(
 
 /*
  * One voice's outlier body: a low cluster and a high cluster of noteheads,
- * separated by a single barline (no visual gap). The trailing end of the high
- * cluster is padded with invisible `x` rests up to `targetNoteCount` total notes, so
- * sibling voices padded to the same target end at the same x — letting abcjs draw
- * one connecting final barline across both staves. `x` keeps the duration (barline
- * alignment) but draws no glyph. Barlines/rests carry no `.abcjs-note` class, so
- * the label index mapping over `.abcjs-note` stays aligned with [...low, ...high].
+ * separated by a single barline (no visual gap). Each cluster is padded at its
+ * trailing end with invisible `x` rests up to its target count (`lowTarget` /
+ * `highTarget` — the longer voice's count for that cluster). Padding the two
+ * clusters independently keeps the per-measure slot counts identical across the
+ * two staves, so treble and bass bars render the same width and their barlines —
+ * including the final one — align. `x` keeps the duration (alignment) but draws
+ * no glyph. Barlines/rests carry no `.abcjs-note` class, so the label index
+ * mapping over `.abcjs-note` stays aligned with [...low, ...high].
  */
 function outlierVoiceBody(
   lowMidis: number[],
   highMidis: number[],
-  targetNoteCount: number,
+  lowTarget: number,
+  highTarget: number,
 ): string {
-  const trailingRests = Math.max(
-    0,
-    targetNoteCount - lowMidis.length - highMidis.length,
-  )
+  const lowTokens = [
+    ...lowMidis.map(midiToAbcToken),
+    ...Array<string>(Math.max(0, lowTarget - lowMidis.length)).fill('x'),
+  ]
   const highTokens = [
     ...highMidis.map(midiToAbcToken),
-    ...Array<string>(trailingRests).fill('x'),
+    ...Array<string>(Math.max(0, highTarget - highMidis.length)).fill('x'),
   ]
 
   return (
     [
-      beamTokensIntoBars(lowMidis.map(midiToAbcToken)).join(' | '),
+      beamTokensIntoBars(lowTokens).join(' | '),
       beamTokensIntoBars(highTokens).join(' | '),
     ].join(' | ') + ' |]'
   )
@@ -188,10 +191,10 @@ function outlierVoiceBody(
 /*
  * Combined two-voice outlier tune: treble outliers as V:1 over bass outliers as
  * V:2 in a single abcjs system, mirroring noteScalesToTwoVoiceAbcString so the two
- * staves render in one grand-staff-style container. Both voices are padded to the
- * same total length (the longer voice's note count) with invisible rests so they
- * end at the same x and abcjs draws one connecting final barline across both
- * staves.
+ * staves render in one grand-staff-style container. The low and high clusters are
+ * each padded to the longer voice's count for that cluster (with invisible rests),
+ * so both staves share the same per-measure slot counts — equal bar widths and an
+ * aligned connecting final barline across both staves.
  */
 export function outlierScalesToTwoVoiceAbcString(
   trebleLowMidis: number[],
@@ -199,9 +202,8 @@ export function outlierScalesToTwoVoiceAbcString(
   bassLowMidis: number[],
   bassHighMidis: number[],
 ): string {
-  const trebleTotal = trebleLowMidis.length + trebleHighMidis.length
-  const bassTotal = bassLowMidis.length + bassHighMidis.length
-  const targetNoteCount = Math.max(trebleTotal, bassTotal)
+  const lowTarget = Math.max(trebleLowMidis.length, bassLowMidis.length)
+  const highTarget = Math.max(trebleHighMidis.length, bassHighMidis.length)
 
   return [
     'X:1',
@@ -213,9 +215,9 @@ export function outlierScalesToTwoVoiceAbcString(
     'L:1/4',
     'K:C',
     'V:1 clef=treble',
-    outlierVoiceBody(trebleLowMidis, trebleHighMidis, targetNoteCount),
+    outlierVoiceBody(trebleLowMidis, trebleHighMidis, lowTarget, highTarget),
     'V:2 clef=bass',
-    outlierVoiceBody(bassLowMidis, bassHighMidis, targetNoteCount),
+    outlierVoiceBody(bassLowMidis, bassHighMidis, lowTarget, highTarget),
   ].join('\n')
 }
 
