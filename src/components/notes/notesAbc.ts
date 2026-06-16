@@ -100,8 +100,27 @@ function buildBeamedBars(
   return beamTokensIntoBars(tokens)
 }
 
-function midisToAbcBody(midis: number[], restToken: 'z' | 'x' = 'z'): string {
-  return buildBeamedBars(midis, true, restToken).join(' | ') + ' |]'
+function midisToAbcBody(
+  midis: number[],
+  restToken: 'z' | 'x' = 'z',
+  padLastBar = true,
+): string {
+  return buildBeamedBars(midis, padLastBar, restToken).join(' | ') + ' |]'
+}
+
+/* One voice's body, beamed into bars and padded at the trailing end with invisible
+ * `x` rests up to `targetEighths` (no full-measure padding). Sibling voices padded
+ * to the same target end at the same x, so abcjs draws one aligned final barline
+ * across the staves — without the trailing dead space a full padded bar leaves.
+ * `x` keeps the eighth-note duration (alignment) but draws no glyph. */
+function voiceBodyToTarget(midis: number[], targetEighths: number): string {
+  const trailingRests = Math.max(0, targetEighths - midis.length)
+  const tokens = [
+    ...midis.map(midiToAbcToken),
+    ...Array<string>(trailingRests).fill('x'),
+  ]
+
+  return beamTokensIntoBars(tokens).join(' | ') + ' |]'
 }
 
 /*
@@ -117,15 +136,19 @@ export function noteScaleToAbcString(
   return [
     'X:1',
     /* %%stretchlast 0 — never stretch the final staff line to fill the staff
-     * width. Because the padded final bar makes the line "complete", abcjs would
-     * otherwise justify the notes across the full probed width, which defeats the
-     * sheet's measure-and-shrink pass and leaves a wide trail of empty staff. */
+     * width, so abcjs can't justify the notes across the full probed width and
+     * leave a wide trail of empty staff. The partial final bar already keeps the
+     * line "incomplete" (abcjs won't stretch it), but this guards every render. */
     '%%stretchlast 0',
     'M:4/4',
     'L:1/8',
     ...(showTempo ? [`Q:1/4=${bpm}`] : []),
     `K:C clef=${clef}`,
-    midisToAbcBody(midis),
+    /* Don't pad the final bar — this sheet shows only the notes (tempo/duration
+     * don't matter here), so a partial closing measure is fine and avoids the
+     * trailing dead space a full padded bar would leave. restToken is moot when
+     * padLastBar is false. */
+    midisToAbcBody(midis, 'z', false),
   ].join('\n')
 }
 
@@ -210,6 +233,8 @@ export function noteScalesToTwoVoiceAbcString(
   bpm = 80,
   showTempo = true,
 ): string {
+  const targetEighths = Math.max(trebleMidis.length, bassMidis.length)
+
   return [
     'X:1',
     '%%stretchlast 0',
@@ -220,12 +245,12 @@ export function noteScalesToTwoVoiceAbcString(
     'L:1/8',
     ...(showTempo ? [`Q:1/4=${bpm}`] : []),
     'K:C',
-    /* Pad with invisible rests (`x`): the two voices have different note counts,
-     * so a full final bar keeps their closing barline aligned, while `x` draws no
-     * trailing rest glyphs. */
+    /* Pad both voices to the longer one's length with invisible rests (not to a
+     * full bar) — their closing barline stays aligned while the shorter voice
+     * shows only the notes, with no trailing dead space. */
     'V:1 clef=treble',
-    midisToAbcBody(trebleMidis, 'x'),
+    voiceBodyToTarget(trebleMidis, targetEighths),
     'V:2 clef=bass',
-    midisToAbcBody(bassMidis, 'x'),
+    voiceBodyToTarget(bassMidis, targetEighths),
   ].join('\n')
 }
