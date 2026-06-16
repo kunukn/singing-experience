@@ -104,7 +104,7 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       // Combination keys for Mac are Option + Shift; for Windows, it's Alt + Shift
       ...(['1', 'true'].includes(env.VITE_CODE_INSPECTOR)
-        ? [CodeInspectorPlugin({ bundler: 'vite' })]
+        ? [CodeInspectorPlugin({ bundler: 'vite', escapeTags: [] })]
         : []),
 
       /* Dev-only: this plugin opens an inspector server and has been observed
