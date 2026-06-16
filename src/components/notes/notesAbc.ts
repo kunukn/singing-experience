@@ -60,6 +60,23 @@ export function estimateNotesStaffWidth(noteCount: number): number {
  * barline. Returned alone (no header) so it can serve a single- or multi-voice
  * tune.
  */
+/* Group ABC tokens into 4/4 bars (NOTES_PER_MEASURE per bar), beaming runs of
+ * NOTES_PER_BEAM (tokens joined with no space beam; bars/beam-groups separated by
+ * a space). Tokens may be notes or rests. */
+function beamTokensIntoBars(tokens: string[]): string[] {
+  const bars: string[] = []
+  for (let index = 0; index < tokens.length; index += NOTES_PER_MEASURE) {
+    const barTokens = tokens.slice(index, index + NOTES_PER_MEASURE)
+    const beamGroups: string[] = []
+    for (let start = 0; start < barTokens.length; start += NOTES_PER_BEAM) {
+      beamGroups.push(barTokens.slice(start, start + NOTES_PER_BEAM).join(''))
+    }
+    bars.push(beamGroups.join(' '))
+  }
+
+  return bars
+}
+
 /* Rest token used to pad the final bar to a full 4/4. `z` is a visible rest;
  * `x` is an invisible rest — same duration (so barlines stay aligned) but draws
  * no glyph, used where trailing rests would be visual noise. */
@@ -80,17 +97,7 @@ function buildBeamedBars(
     }
   }
 
-  const bars: string[] = []
-  for (let index = 0; index < tokens.length; index += NOTES_PER_MEASURE) {
-    const barTokens = tokens.slice(index, index + NOTES_PER_MEASURE)
-    const beamGroups: string[] = []
-    for (let start = 0; start < barTokens.length; start += NOTES_PER_BEAM) {
-      beamGroups.push(barTokens.slice(start, start + NOTES_PER_BEAM).join(''))
-    }
-    bars.push(beamGroups.join(' '))
-  }
-
-  return bars
+  return beamTokensIntoBars(tokens)
 }
 
 function midisToAbcBody(midis: number[], restToken: 'z' | 'x' = 'z'): string {
@@ -123,33 +130,67 @@ export function noteScaleToAbcString(
 }
 
 /*
- * Single-clef outlier reference tune: a low cluster and a high cluster of
- * noteheads (placements outside the basic covered range) on one staff. The
- * clusters sit adjacent, separated only by a barline. No rest-padding —
- * `%%stretchlast 0` keeps the partial final bars from stretching, and skipping
- * rests avoids stray rest glyphs. Barlines carry no `.abcjs-note` class, so the
- * label index mapping over `.abcjs-note` stays aligned with [...low, ...high].
+ * One voice's outlier body: a low cluster and a high cluster of noteheads,
+ * separated by a single barline (no visual gap). The trailing end of the high
+ * cluster is padded with invisible `x` rests up to `targetEighths` total notes, so
+ * sibling voices padded to the same target end at the same x — letting abcjs draw
+ * one connecting final barline across both staves. `x` keeps the duration (barline
+ * alignment) but draws no glyph. Barlines/rests carry no `.abcjs-note` class, so
+ * the label index mapping over `.abcjs-note` stays aligned with [...low, ...high].
  */
-export function outlierScaleToAbcString(
+function outlierVoiceBody(
   lowMidis: number[],
   highMidis: number[],
-  clef: ClefKey,
-  bpm = 80,
-  showTempo = false,
+  targetEighths: number,
 ): string {
-  const body = [
-    buildBeamedBars(lowMidis, false).join(' | '),
-    buildBeamedBars(highMidis, false).join(' | '),
-  ].join(' | ')
+  const trailingRests = Math.max(
+    0,
+    targetEighths - lowMidis.length - highMidis.length,
+  )
+  const highTokens = [
+    ...highMidis.map(midiToAbcToken),
+    ...Array<string>(trailingRests).fill('x'),
+  ]
+
+  return (
+    [
+      beamTokensIntoBars(lowMidis.map(midiToAbcToken)).join(' | '),
+      beamTokensIntoBars(highTokens).join(' | '),
+    ].join(' | ') + ' |]'
+  )
+}
+
+/*
+ * Combined two-voice outlier tune: treble outliers as V:1 over bass outliers as
+ * V:2 in a single abcjs system, mirroring noteScalesToTwoVoiceAbcString so the two
+ * staves render in one grand-staff-style container. Both voices are padded to the
+ * same total length (the longer voice's note count) with invisible rests so they
+ * end at the same x and abcjs draws one connecting final barline across both
+ * staves.
+ */
+export function outlierScalesToTwoVoiceAbcString(
+  trebleLowMidis: number[],
+  trebleHighMidis: number[],
+  bassLowMidis: number[],
+  bassHighMidis: number[],
+): string {
+  const trebleTotal = trebleLowMidis.length + trebleHighMidis.length
+  const bassTotal = bassLowMidis.length + bassHighMidis.length
+  const targetEighths = Math.max(trebleTotal, bassTotal)
 
   return [
     'X:1',
     '%%stretchlast 0',
+    /* Wide gap between the two staves so the bass staff's note-name chips (drawn
+     * ~40px above its noteheads) clear the treble staff sitting above them. */
+    '%%staffsep 120',
     'M:4/4',
     'L:1/8',
-    ...(showTempo ? [`Q:1/4=${bpm}`] : []),
-    `K:C clef=${clef}`,
-    body + ' |]',
+    'K:C',
+    'V:1 clef=treble',
+    outlierVoiceBody(trebleLowMidis, trebleHighMidis, targetEighths),
+    'V:2 clef=bass',
+    outlierVoiceBody(bassLowMidis, bassHighMidis, targetEighths),
   ].join('\n')
 }
 

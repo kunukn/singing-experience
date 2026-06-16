@@ -6,16 +6,19 @@ import {
 import { midiToFlatLabel, midiToNoteLabel } from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
-import { estimateNotesStaffWidth, outlierScaleToAbcString } from './notesAbc'
-import type { ClefKey } from './notesConstants'
+import {
+  estimateNotesStaffWidth,
+  outlierScalesToTwoVoiceAbcString,
+} from './notesAbc'
 
 type Props = {
-  clef: ClefKey
-  /* Absolute MIDI notes for the low (lower-ledger) cluster, left to right. */
-  lowMidis: number[]
-  /* Absolute MIDI notes for the high (upper-ledger) cluster, left to right. */
-  highMidis: number[]
-  /* When true, draws a muted note-name label above every note. */
+  /* Treble (V:1) outliers: low (lower-ledger) then high (upper-ledger) cluster. */
+  trebleLowMidis: number[]
+  trebleHighMidis: number[]
+  /* Bass (V:2) outliers: low then high cluster. */
+  bassLowMidis: number[]
+  bassHighMidis: number[]
+  /* When true, draws a muted note-name label above every note on both staves. */
   showToneLabels?: boolean
 }
 
@@ -27,10 +30,6 @@ type ToneLabel = {
   text: string
   flatText: string | null
 }
-
-/* The noteheads, low cluster then high cluster, matching the order abcjs renders
- * them; index i maps to this list's i-th `.abcjs-note` element. */
-const labelMidis = computed(() => [...props.lowMidis, ...props.highMidis])
 
 /* Top space (px) reserved inside the SVG above the highest notehead so the
  * note-name chips (sharp label ~28px up, plus the flat-enharmonic row another
@@ -55,9 +54,9 @@ function toneLabelStyle(label: ToneLabel, stackLift = 0) {
 const containerRef = ref<HTMLDivElement | null>(null)
 const scrollRef = ref<HTMLDivElement | null>(null)
 
-/* Muted note-name chips above every note. Built on every render; the template
- * gates display so toggling needs no re-render. */
-const allToneLabels = ref<ToneLabel[]>([])
+/* Muted note-name chips above every note, per staff (treble then bass). Built on
+ * every render; the template gates display so toggling needs no re-render. */
+const toneLabelsByStaff = ref<ToneLabel[][]>([[], []])
 
 const SANS_FONTS = { composerfont: STAFF_LABEL_FONT } as const
 
@@ -68,33 +67,48 @@ const RENDER_OPTIONS = {
 } as const
 
 /* Tone-name chips to render: all when the toggle is on, none when it's off. */
-const visibleToneLabels = computed(() =>
-  props.showToneLabels ? allToneLabels.value : [],
+const visibleToneLabelsByStaff = computed(() =>
+  props.showToneLabels ? toneLabelsByStaff.value : [[], []],
 )
 
+/* Each voice's noteheads in reading order, low cluster then high cluster, so
+ * index i maps to that staff's i-th `.abcjs-note` element. */
+const staffMidis = computed(() => [
+  [...props.trebleLowMidis, ...props.trebleHighMidis],
+  [...props.bassLowMidis, ...props.bassHighMidis],
+])
+
+/* Measure each note's position per staff. Voice 0 (treble) and voice 1 (bass)
+ * notes carry abcjs's `abcjs-v0`/`abcjs-v1` classes, so a single combined SVG
+ * splits cleanly into the two staves; index i maps to that staff's midis[i]. */
 function updateToneLabels() {
   if (!containerRef.value) {
-    allToneLabels.value = []
+    toneLabelsByStaff.value = [[], []]
 
     return
   }
 
   const containerRect = containerRef.value.getBoundingClientRect()
-  const midis = labelMidis.value
-  const notes = [...containerRef.value.querySelectorAll('.abcjs-note')]
-  allToneLabels.value = notes.flatMap((element, index) => {
-    const midi = midis[index]
-    if (midi === undefined) return []
-
-    const noteRect = element.getBoundingClientRect()
-    return [
-      {
-        left: noteRect.left - containerRect.left + noteRect.width / 2,
-        top: noteRect.top - containerRect.top,
-        text: midiToNoteLabel(midi).label,
-        flatText: midiToFlatLabel(midi),
-      },
+  toneLabelsByStaff.value = staffMidis.value.map((midis, voiceIndex) => {
+    const notes = [
+      ...(containerRef.value?.querySelectorAll(
+        `.abcjs-note.abcjs-v${voiceIndex}`,
+      ) ?? []),
     ]
+    return notes.flatMap((element, index) => {
+      const midi = midis[index]
+      if (midi === undefined) return []
+
+      const noteRect = element.getBoundingClientRect()
+      return [
+        {
+          left: noteRect.left - containerRect.left + noteRect.width / 2,
+          top: noteRect.top - containerRect.top,
+          text: midiToNoteLabel(midi).label,
+          flatText: midiToFlatLabel(midi),
+        },
+      ]
+    })
   })
 }
 
@@ -106,14 +120,18 @@ async function renderSheet() {
    * resize observer re-renders on reveal once a real width is measurable. */
   if (containerRef.value.offsetParent === null) return
 
-  const abcString = outlierScaleToAbcString(
-    props.lowMidis,
-    props.highMidis,
-    props.clef,
+  const abcString = outlierScalesToTwoVoiceAbcString(
+    props.trebleLowMidis,
+    props.trebleHighMidis,
+    props.bassLowMidis,
+    props.bassHighMidis,
   )
 
-  /* Pass 1 — oversized width so abcjs keeps the system on one line. */
-  const probeWidth = estimateNotesStaffWidth(labelMidis.value.length)
+  /* Pass 1 — oversized width so abcjs keeps the system on one line. Probe against
+   * the wider staff so neither voice wraps. */
+  const probeWidth = estimateNotesStaffWidth(
+    Math.max(staffMidis.value[0].length, staffMidis.value[1].length),
+  )
   renderAbc(containerRef.value, abcString, {
     ...RENDER_OPTIONS,
     staffwidth: probeWidth,
@@ -154,7 +172,12 @@ useResizeObserver(
 )
 
 watch(
-  () => [props.lowMidis, props.highMidis, props.clef],
+  () => [
+    props.trebleLowMidis,
+    props.trebleHighMidis,
+    props.bassLowMidis,
+    props.bassHighMidis,
+  ],
   () => {
     void renderSheet()
   },
@@ -171,27 +194,32 @@ watch(
       <div ref="containerRef" class="relative z-10 py-0.5" />
 
       <!--
-        Muted note-name label above each note, shown only when the toggle is on.
-        The flat enharmonic (Db, Eb, …) stacks one compact row above the sharp
-        label for accidental notes.
+        Muted note-name label above each note on both staves, shown only when the
+        toggle is on. The flat enharmonic (Db, Eb, …) stacks one compact row above
+        the sharp label for accidental notes.
       -->
-      <span
-        v-for="(label, index) in visibleToneLabels"
-        :key="index"
-        class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
-        :style="toneLabelStyle(label)"
+      <template
+        v-for="(labels, staffIndex) in visibleToneLabelsByStaff"
+        :key="staffIndex"
       >
-        {{ label.text }}
-      </span>
-      <span
-        v-for="(label, index) in visibleToneLabels"
-        v-show="label.flatText"
-        :key="`flat-${index}`"
-        class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-[10px] leading-none font-semibold text-(--p-text-muted-color)/70 tabular-nums"
-        :style="toneLabelStyle(label, FLAT_LABEL_STACK_LIFT)"
-      >
-        {{ label.flatText }}
-      </span>
+        <span
+          v-for="(label, index) in labels"
+          :key="`${staffIndex}-${index}`"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
+          :style="toneLabelStyle(label)"
+        >
+          {{ label.text }}
+        </span>
+        <span
+          v-for="(label, index) in labels"
+          v-show="label.flatText"
+          :key="`${staffIndex}-flat-${index}`"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-[10px] leading-none font-semibold text-(--p-text-muted-color)/70 tabular-nums"
+          :style="toneLabelStyle(label, FLAT_LABEL_STACK_LIFT)"
+        >
+          {{ label.flatText }}
+        </span>
+      </template>
     </div>
   </div>
 </template>

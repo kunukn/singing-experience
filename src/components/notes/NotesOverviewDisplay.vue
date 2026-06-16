@@ -24,6 +24,15 @@ const { t } = useI18n()
       <PrimeToggleSwitch v-model="areToneLabelsShown" />
       {{ t('notes.toneLabels') }}
     </label>
+    <div class="flex flex-col items-center justify-around gap-1">
+      <p class="text-center text-xs text-(--p-text-muted-color)">
+        {{ t('notes.clefLabels.treble') }}
+      </p>
+
+      <p class="text-center text-xs text-(--p-text-muted-color)">
+        {{ t('notes.clefLabels.bass') }}
+      </p>
+    </div>
 
     <!--
       Combined two-voice reference sheet: treble (G clef) over bass, rendered as a
@@ -49,29 +58,13 @@ const { t } = useI18n()
         {{ t('notes.outliers.heading') }}
       </h3>
 
-      <div class="flex flex-col gap-1">
-        <p class="text-center text-xs text-(--p-text-muted-color)">
-          {{ t('notes.clefLabels.treble') }}
-        </p>
-        <NotesOutlierSheet
-          clef="treble"
-          :lowMidis="OUTLIER_SCALES.treble.low"
-          :highMidis="OUTLIER_SCALES.treble.high"
-          :showToneLabels="areToneLabelsShown"
-        />
-      </div>
-
-      <div class="flex flex-col gap-1">
-        <p class="text-center text-xs text-(--p-text-muted-color)">
-          {{ t('notes.clefLabels.bass') }}
-        </p>
-        <NotesOutlierSheet
-          clef="bass"
-          :lowMidis="OUTLIER_SCALES.bass.low"
-          :highMidis="OUTLIER_SCALES.bass.high"
-          :showToneLabels="areToneLabelsShown"
-        />
-      </div>
+      <NotesOutlierSheet
+        :trebleLowMidis="OUTLIER_SCALES.treble.low"
+        :trebleHighMidis="OUTLIER_SCALES.treble.high"
+        :bassLowMidis="OUTLIER_SCALES.bass.low"
+        :bassHighMidis="OUTLIER_SCALES.bass.high"
+        :showToneLabels="areToneLabelsShown"
+      />
     </div>
   </div>
 </template>
