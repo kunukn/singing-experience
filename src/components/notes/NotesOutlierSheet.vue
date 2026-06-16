@@ -51,12 +51,22 @@ function toneLabelStyle(label: ToneLabel, stackLift = 0) {
   }
 }
 
+const { t } = useI18n()
+
 const containerRef = ref<HTMLDivElement | null>(null)
 const scrollRef = ref<HTMLDivElement | null>(null)
 
 /* Muted note-name chips above every note, per staff (treble then bass). Built on
  * every render; the template gates display so toggling needs no re-render. */
 const toneLabelsByStaff = ref<ToneLabel[][]>([[], []])
+
+/* Clef-label positions, voice-indexed (0 = treble clef, 1 = bass clef); null
+ * when that clef isn't in the rendered SVG. The label text is resolved in the
+ * template so a locale switch updates it without re-measuring. */
+const clefLabels = ref<({ left: number; top: number } | null)[]>([null, null])
+
+/* Small extra lift so the label clears the top of the clef glyph it sits above. */
+const CLEF_LABEL_LIFT = -4 // px
 
 const SANS_FONTS = { composerfont: STAFF_LABEL_FONT } as const
 
@@ -112,6 +122,33 @@ function updateToneLabels() {
   })
 }
 
+/* Locate each voice's clef group (abcjs tags it `abcjs-clef abcjs-v{voice}`) and
+ * record its center-x / top in container coords so a label can be overlaid above
+ * it, mirroring the tone-label measurement. */
+function updateClefLabels() {
+  if (!containerRef.value) {
+    clefLabels.value = [null, null]
+
+    return
+  }
+
+  const containerRect = containerRef.value.getBoundingClientRect()
+  clefLabels.value = [0, 1].map((voiceIndex) => {
+    const clef = containerRef.value?.querySelector(
+      `.abcjs-clef.abcjs-v${voiceIndex}`,
+    )
+    if (!clef) return null
+
+    const rect = clef.getBoundingClientRect()
+    /* Left edge (not center) — the treble clef sits near the staff start, so a
+     * centered label would overflow and clip at the scroll box's left edge. */
+    return {
+      left: rect.left - containerRect.left,
+      top: rect.top - containerRect.top,
+    }
+  })
+}
+
 async function renderSheet() {
   if (!containerRef.value) return
 
@@ -150,6 +187,7 @@ async function renderSheet() {
   }
 
   updateToneLabels()
+  updateClefLabels()
 }
 
 onMounted(() => {
@@ -220,6 +258,29 @@ watch(
           {{ label.flatText }}
         </span>
       </template>
+
+      <!--
+        Clef name above each clef glyph (treble on top staff, bass below),
+        replacing the standalone labels that used to sit above the whole sheet.
+      -->
+      <span
+        v-for="(position, voiceIndex) in clefLabels"
+        v-show="position"
+        :key="`clef-${voiceIndex}`"
+        class="pointer-events-none absolute z-20 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color)"
+        :style="{
+          left: `${position?.left ?? 0}px`,
+          top: `${(position?.top ?? 0) + CLEF_LABEL_LIFT}px`,
+        }"
+      >
+        {{
+          t(
+            voiceIndex === 0
+              ? 'notes.clefLabels.treble'
+              : 'notes.clefLabels.bass',
+          )
+        }}
+      </span>
     </div>
   </div>
 </template>

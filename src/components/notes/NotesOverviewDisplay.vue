@@ -56,16 +56,6 @@ const { t } = useI18n()
         :label="t('notes.accidentals')"
       />
     </div>
-    <div class="flex flex-col items-center justify-around gap-1">
-      <p class="text-center text-xs text-(--p-text-muted-color)">
-        {{ t('notes.clefLabels.treble') }}
-      </p>
-
-      <p class="text-center text-xs text-(--p-text-muted-color)">
-        {{ t('notes.clefLabels.bass') }}
-      </p>
-    </div>
-
     <!--
       Combined two-voice reference sheet: treble (G clef) over bass, rendered as a
       single abcjs system so the barlines and beats align column-for-column across
