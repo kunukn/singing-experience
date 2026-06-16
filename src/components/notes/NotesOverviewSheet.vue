@@ -213,6 +213,13 @@ watch(
 </template>
 
 <style scoped>
+/* Reference/overview look: show only the filled notehead at its pitch position —
+ * hide stems so the staff reads as clean position dots, not rhythmic notation.
+ * Quarter notes carry no beams, so there's nothing else to suppress. */
+:deep(.abcjs-stem) {
+  display: none;
+}
+
 /* Dim the staff title to match the muted aesthetic; SVG text color is `fill`. */
 :deep(.abcjs-title) {
   fill: var(--p-text-muted-color);

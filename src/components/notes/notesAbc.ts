@@ -19,12 +19,14 @@ const PITCHCLASS_TO_ABC: { accidental: string; letter: string }[] = [
   { accidental: '', letter: 'B' }, // 11 B
 ]
 
-/* Eighth notes per 4/4 measure (the player notates every note as an eighth, so
- * a bar holds 8 of them). */
-const NOTES_PER_MEASURE = 8
+/* Quarter notes per 4/4 measure — the sheets notate every note as a quarter, so
+ * a bar holds 4 of them. Quarters draw a clean filled head (no flags); the
+ * sheets hide the stems via CSS so the staff reads as plain position dots. */
+const NOTES_PER_MEASURE = 4
 
-/* Eighths beam in groups of 4 — two beam-groups per 4/4 bar. */
-const NOTES_PER_BEAM = 4
+/* One note per "beam group" — quarters never beam, so each token stands alone
+ * (space-separated) and no beam line is drawn between notes. */
+const NOTES_PER_BEAM = 1
 
 /* Converts a staff letter + scientific octave to an ABC octave token.
  * ABC octave convention: uppercase `C` = middle C (C4); `c` = C5; `C,` = C3;
@@ -51,18 +53,18 @@ export function estimateNotesStaffWidth(noteCount: number): number {
 }
 
 /*
- * Builds the ABC note body for one absolute-MIDI chromatic scale: one eighth note
- * per pitch (8 per 4/4 bar), sharps carrying an explicit `^`. Because the scale
+ * Builds the ABC note body for one absolute-MIDI chromatic scale: one quarter note
+ * per pitch (4 per 4/4 bar), sharps carrying an explicit `^`. Because the scale
  * ascends one semitone at a time, no natural-after-sharp ever lands on the same
  * letter within a bar, so no explicit naturals (`=`) are needed. The final
- * partial measure is padded with eighth rests to complete the 4/4 bar. Eighths
- * beam in groups of NOTES_PER_BEAM; ` | ` separates bars, ending on a final
+ * partial measure is padded with quarter rests to complete the 4/4 bar. Notes are
+ * unbeamed (quarters don't beam); ` | ` separates bars, ending on a final
  * barline. Returned alone (no header) so it can serve a single- or multi-voice
  * tune.
  */
-/* Group ABC tokens into 4/4 bars (NOTES_PER_MEASURE per bar), beaming runs of
- * NOTES_PER_BEAM (tokens joined with no space beam; bars/beam-groups separated by
- * a space). Tokens may be notes or rests. */
+/* Group ABC tokens into 4/4 bars (NOTES_PER_MEASURE per bar). With NOTES_PER_BEAM
+ * of 1 every token is space-separated, so abcjs beams nothing — a clean row of
+ * quarter-note heads. Tokens may be notes or rests. */
 function beamTokensIntoBars(tokens: string[]): string[] {
   const bars: string[] = []
   for (let index = 0; index < tokens.length; index += NOTES_PER_MEASURE) {
@@ -87,7 +89,7 @@ function buildBeamedBars(
 ): string[] {
   const tokens = midis.map(midiToAbcToken)
 
-  /* Pad the last bar with eighth rests so the closing measure fills 4/4. */
+  /* Pad the last bar with quarter rests so the closing measure fills 4/4. */
   if (padLastBar) {
     const remainder = tokens.length % NOTES_PER_MEASURE
     if (remainder > 0) {
@@ -108,13 +110,13 @@ function midisToAbcBody(
   return buildBeamedBars(midis, padLastBar, restToken).join(' | ') + ' |]'
 }
 
-/* One voice's body, beamed into bars and padded at the trailing end with invisible
- * `x` rests up to `targetEighths` (no full-measure padding). Sibling voices padded
+/* One voice's body, grouped into bars and padded at the trailing end with invisible
+ * `x` rests up to `targetNoteCount` (no full-measure padding). Sibling voices padded
  * to the same target end at the same x, so abcjs draws one aligned final barline
  * across the staves — without the trailing dead space a full padded bar leaves.
- * `x` keeps the eighth-note duration (alignment) but draws no glyph. */
-function voiceBodyToTarget(midis: number[], targetEighths: number): string {
-  const trailingRests = Math.max(0, targetEighths - midis.length)
+ * `x` keeps the quarter-note duration (alignment) but draws no glyph. */
+function voiceBodyToTarget(midis: number[], targetNoteCount: number): string {
+  const trailingRests = Math.max(0, targetNoteCount - midis.length)
   const tokens = [
     ...midis.map(midiToAbcToken),
     ...Array<string>(trailingRests).fill('x'),
@@ -125,7 +127,7 @@ function voiceBodyToTarget(midis: number[], targetEighths: number): string {
 
 /*
  * Converts an absolute-MIDI chromatic scale to an ABC notation string ready for
- * abcjs.renderAbc: 4/4, one eighth note per pitch (8 per bar), key of C major.
+ * abcjs.renderAbc: 4/4, one quarter note per pitch (4 per bar), key of C major.
  */
 export function noteScaleToAbcString(
   midis: number[],
@@ -141,7 +143,7 @@ export function noteScaleToAbcString(
      * line "incomplete" (abcjs won't stretch it), but this guards every render. */
     '%%stretchlast 0',
     'M:4/4',
-    'L:1/8',
+    'L:1/4',
     ...(showTempo ? [`Q:1/4=${bpm}`] : []),
     `K:C clef=${clef}`,
     /* Don't pad the final bar — this sheet shows only the notes (tempo/duration
@@ -155,7 +157,7 @@ export function noteScaleToAbcString(
 /*
  * One voice's outlier body: a low cluster and a high cluster of noteheads,
  * separated by a single barline (no visual gap). The trailing end of the high
- * cluster is padded with invisible `x` rests up to `targetEighths` total notes, so
+ * cluster is padded with invisible `x` rests up to `targetNoteCount` total notes, so
  * sibling voices padded to the same target end at the same x — letting abcjs draw
  * one connecting final barline across both staves. `x` keeps the duration (barline
  * alignment) but draws no glyph. Barlines/rests carry no `.abcjs-note` class, so
@@ -164,11 +166,11 @@ export function noteScaleToAbcString(
 function outlierVoiceBody(
   lowMidis: number[],
   highMidis: number[],
-  targetEighths: number,
+  targetNoteCount: number,
 ): string {
   const trailingRests = Math.max(
     0,
-    targetEighths - lowMidis.length - highMidis.length,
+    targetNoteCount - lowMidis.length - highMidis.length,
   )
   const highTokens = [
     ...highMidis.map(midiToAbcToken),
@@ -199,7 +201,7 @@ export function outlierScalesToTwoVoiceAbcString(
 ): string {
   const trebleTotal = trebleLowMidis.length + trebleHighMidis.length
   const bassTotal = bassLowMidis.length + bassHighMidis.length
-  const targetEighths = Math.max(trebleTotal, bassTotal)
+  const targetNoteCount = Math.max(trebleTotal, bassTotal)
 
   return [
     'X:1',
@@ -208,12 +210,12 @@ export function outlierScalesToTwoVoiceAbcString(
      * ~40px above its noteheads) clear the treble staff sitting above them. */
     '%%staffsep 120',
     'M:4/4',
-    'L:1/8',
+    'L:1/4',
     'K:C',
     'V:1 clef=treble',
-    outlierVoiceBody(trebleLowMidis, trebleHighMidis, targetEighths),
+    outlierVoiceBody(trebleLowMidis, trebleHighMidis, targetNoteCount),
     'V:2 clef=bass',
-    outlierVoiceBody(bassLowMidis, bassHighMidis, targetEighths),
+    outlierVoiceBody(bassLowMidis, bassHighMidis, targetNoteCount),
   ].join('\n')
 }
 
@@ -233,7 +235,7 @@ export function noteScalesToTwoVoiceAbcString(
   bpm = 80,
   showTempo = true,
 ): string {
-  const targetEighths = Math.max(trebleMidis.length, bassMidis.length)
+  const targetNoteCount = Math.max(trebleMidis.length, bassMidis.length)
 
   return [
     'X:1',
@@ -242,15 +244,15 @@ export function noteScalesToTwoVoiceAbcString(
      * ~40px above its noteheads) clear the treble staff sitting above them. */
     '%%staffsep 120',
     'M:4/4',
-    'L:1/8',
+    'L:1/4',
     ...(showTempo ? [`Q:1/4=${bpm}`] : []),
     'K:C',
     /* Pad both voices to the longer one's length with invisible rests (not to a
      * full bar) — their closing barline stays aligned while the shorter voice
      * shows only the notes, with no trailing dead space. */
     'V:1 clef=treble',
-    voiceBodyToTarget(trebleMidis, targetEighths),
+    voiceBodyToTarget(trebleMidis, targetNoteCount),
     'V:2 clef=bass',
-    voiceBodyToTarget(bassMidis, targetEighths),
+    voiceBodyToTarget(bassMidis, targetNoteCount),
   ].join('\n')
 }
