@@ -63,9 +63,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     }"
   >
     <div class="settings-item">
-      <label class="text-sm text-(--p-text-muted-color) md:block">{{
-        t('notes.clef')
-      }}</label>
+      <div />
       <PrimeSelectButton
         v-model="clefIndex"
         :options="clefOptions"
