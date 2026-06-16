@@ -64,8 +64,9 @@ const toneLabelsByStaff = ref<ToneLabel[][]>([[], []])
  * template so a locale switch updates it without re-measuring. */
 const clefLabels = ref<({ left: number; top: number } | null)[]>([null, null])
 
-/* Small extra lift so the label clears the top of the clef glyph it sits above. */
-const CLEF_LABEL_LIFT = -4 // px
+/* Small extra lift so the label clears the top of the clef glyph it sits above
+ * (acts like a 4px gap below the text). */
+const CLEF_LABEL_LIFT = -8 // px
 
 const SANS_FONTS = { composerfont: STAFF_LABEL_FONT } as const
 
@@ -255,7 +256,7 @@ watch(
         v-for="(position, voiceIndex) in clefLabels"
         v-show="position"
         :key="`clef-${voiceIndex}`"
-        class="pointer-events-none absolute z-20 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color)"
+        class="pointer-events-none absolute z-20 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-normal text-(--p-text-muted-color)"
         :style="{
           left: `${position?.left ?? 0}px`,
           top: `${(position?.top ?? 0) + CLEF_LABEL_LIFT}px`,
