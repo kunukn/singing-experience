@@ -84,7 +84,7 @@ const currentToneLabel = computed(() => {
     <NotesSettingsRow
       v-model:clefIndex="clefIndex"
       v-model:bpm="bpm"
-      v-model:areToneLabelsShown="areToneLabelsShown"
+      :showToneLabelToggle="false"
       :isRunning="isRunning"
     />
 
@@ -134,6 +134,13 @@ const currentToneLabel = computed(() => {
       <PreviewToggle
         v-model="isPreviewEnabled"
         :disabled="micPermission === 'denied' || isRunning"
+      />
+
+      <ToggleIconButton
+        v-model="areToneLabelsShown"
+        iconOn="pi pi-tag"
+        iconOff="pi pi-tag"
+        :label="t('notes.toneLabels')"
       />
     </div>
 

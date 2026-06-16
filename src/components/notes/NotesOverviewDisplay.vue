@@ -20,10 +20,12 @@ const { t } = useI18n()
     class="flex flex-1 flex-col items-center gap-4 pb-4"
     data-testid="notes-overview-display"
   >
-    <label class="flex items-center gap-2 text-sm">
-      <PrimeToggleSwitch v-model="areToneLabelsShown" />
-      {{ t('notes.toneLabels') }}
-    </label>
+    <ToggleIconButton
+      v-model="areToneLabelsShown"
+      iconOn="pi pi-tag"
+      iconOff="pi pi-tag"
+      :label="t('notes.toneLabels')"
+    />
     <div class="flex flex-col items-center justify-around gap-1">
       <p class="text-center text-xs text-(--p-text-muted-color)">
         {{ t('notes.clefLabels.treble') }}

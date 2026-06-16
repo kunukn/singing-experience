@@ -9,20 +9,14 @@ type Props = {
   /* Show the tone-sound (timbre) select. The "Sing live" tab hides it — there is
    * no playback there, so the timbre choice is meaningless. */
   showToneMode?: boolean
-  /* Show the note-names toggle. Both tabs render the labels, so it defaults on. */
-  showToneLabelToggle?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   showToneMode: true,
-  showToneLabelToggle: true,
 })
 
 const clefIndex = defineModel<number>('clefIndex', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
-const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
-  default: false,
-})
 
 const { t } = useI18n()
 
@@ -118,13 +112,6 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       }}</label>
       <ToneModeSelect v-model="toneMode" />
     </div>
-
-    <div v-if="props.showToneLabelToggle" class="settings-item">
-      <label class="text-sm text-(--p-text-muted-color) md:block">{{
-        t('notes.toneLabels')
-      }}</label>
-      <PrimeToggleSwitch v-model="areToneLabelsShown" />
-    </div>
   </div>
 </template>
 
@@ -134,18 +121,18 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 .settings-row {
   @apply flex w-full snap-x snap-mandatory items-center justify-center-safe gap-4 overflow-x-auto px-6 pb-2;
   @apply sm:mb-4;
-  /* One row from md up: 8 columns so all four items (each col-span-2) sit side by side. */
-  @apply md:grid md:w-auto md:snap-none md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr] md:overflow-visible md:px-0 md:pb-0;
+  /* One row from md up: 6 columns so all three items (each col-span-2) sit side by side. */
+  @apply md:grid md:w-auto md:snap-none md:grid-cols-[auto_1fr_auto_1fr_auto_1fr] md:overflow-visible md:px-0 md:pb-0;
 
   /* Match the container's px-6 so snap-start aligns the first/last item at scrollLeft 0/max,
      keeping the conditional edge mask in sync with the true scroll boundaries. */
   scroll-padding-inline: 1.5rem;
 }
 
-/* The "Sing live" tab hides the tone-sound select — three items remain, so drop
-   to 6 columns to center them without two phantom trailing columns. */
+/* The "Sing live" tab hides the tone-sound select — two items remain, so drop
+   to 4 columns to center them without two phantom trailing columns. */
 .settings-row.no-tone {
-  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr];
+  @apply md:grid-cols-[auto_1fr_auto_1fr];
 }
 
 /* Edge fade — signals horizontal scrollability on iOS where scrollbars auto-hide.
