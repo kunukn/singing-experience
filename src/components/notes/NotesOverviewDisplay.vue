@@ -35,6 +35,18 @@ const bassHighMidis = computed(() =>
 )
 
 const { t } = useI18n()
+
+/* Each sheet reports its natural SVG width; the wider one's width becomes the
+ * shared `min-width` for both cards so their borders align. Only applied once both
+ * have reported to avoid an initial layout jump from a stale zero. */
+const overviewNaturalWidth = ref(0)
+const outlierNaturalWidth = ref(0)
+
+const sharedCardWidth = computed(() =>
+  overviewNaturalWidth.value > 0 && outlierNaturalWidth.value > 0
+    ? Math.max(overviewNaturalWidth.value, outlierNaturalWidth.value)
+    : undefined,
+)
 </script>
 
 <template>
@@ -67,6 +79,8 @@ const { t } = useI18n()
         :bassMidis="bassMidis"
         :bpm="DEFAULT_BPM"
         :showToneLabels="areToneLabelsShown"
+        :minCardWidth="sharedCardWidth"
+        @naturalWidth="overviewNaturalWidth = $event"
       />
     </div>
 
@@ -86,6 +100,8 @@ const { t } = useI18n()
         :bassLowMidis="bassLowMidis"
         :bassHighMidis="bassHighMidis"
         :showToneLabels="areToneLabelsShown"
+        :minCardWidth="sharedCardWidth"
+        @naturalWidth="outlierNaturalWidth = $event"
       />
     </div>
   </div>

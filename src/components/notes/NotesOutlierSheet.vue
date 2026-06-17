@@ -20,9 +20,16 @@ type Props = {
   bassHighMidis: number[]
   /* When true, draws a muted note-name label above every note on both staves. */
   showToneLabels?: boolean
+  /* Shared floor (px) for the bordered card so sibling sheets align in width;
+   * the card never shrinks below this even when its own music is narrower. */
+  minCardWidth?: number
 }
 
 const props = defineProps<Props>()
+
+/* Natural width (px) of the rendered abcjs SVG, so the parent can take the max
+ * across sibling sheets and feed it back via `minCardWidth`. */
+const emit = defineEmits<{ naturalWidth: [width: number] }>()
 
 type ToneLabel = {
   left: number
@@ -189,6 +196,19 @@ async function renderSheet() {
 
   updateToneLabels()
   updateClefLabels()
+
+  /* Report the card's natural border-box width: the SVG's baked intrinsic width
+   * plus the wrapper's horizontal borders (border-box `min-width` includes the
+   * border). Both inputs are independent of any applied `minCardWidth`, so there's
+   * no feedback loop and the card can shrink back when content narrows. */
+  const svg = containerRef.value.querySelector('svg')
+  if (svg && scrollRef.value) {
+    const styles = getComputedStyle(scrollRef.value)
+    const borderX =
+      parseFloat(styles.borderInlineStartWidth) +
+      parseFloat(styles.borderInlineEndWidth)
+    emit('naturalWidth', Math.ceil(svg.getBoundingClientRect().width + borderX))
+  }
 }
 
 onMounted(() => {
@@ -225,9 +245,18 @@ watch(
 </script>
 
 <template>
+  <!--
+    `min(…px, 100%)` clamps the shared width floor to the container: on wide
+    viewports it equals the sibling-matched width so the cards align; on viewports
+    narrower than that it collapses to 100%, so the card stays within the viewport
+    and scrolls internally (overflow-x-auto) instead of overflowing the page.
+  -->
   <div
     ref="scrollRef"
     class="mx-auto w-fit max-w-full overflow-x-auto rounded border border-(--p-content-border-color)"
+    :style="
+      minCardWidth ? { minWidth: `min(${minCardWidth}px, 100%)` } : undefined
+    "
   >
     <div class="relative min-w-max">
       <div ref="containerRef" class="relative z-10 py-0.5" />
