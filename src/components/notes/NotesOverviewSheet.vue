@@ -241,7 +241,7 @@ watch(
           v-for="(label, index) in labels"
           v-show="label.flatText"
           :key="`${staffIndex}-flat-${index}`"
-          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-[10px] leading-none font-semibold text-(--p-text-muted-color)/70 tabular-nums"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-[12px] leading-none font-semibold text-(--p-text-muted-color)/70 tabular-nums"
           :style="toneLabelStyle(label, FLAT_LABEL_STACK_LIFT)"
         >
           {{ label.flatText }}
