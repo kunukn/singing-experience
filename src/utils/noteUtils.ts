@@ -20,23 +20,36 @@ const NOTE_NAMES_HIGH_TO_LOW =
   NOTE_NAMES.toReversed() as readonly (typeof NOTE_NAMES)[number][]
 
 /* Flat enharmonic spellings, parallel to NOTE_NAMES. Naturals are null —
- * only the five accidental pitch classes have a flat name worth teaching. */
+ * only the five accidental pitch classes have a flat name worth teaching.
+ * Display-only, so these carry the real ♭ glyph (the sharp side keeps ASCII in
+ * NOTE_NAMES, which doubles as a lookup key, and is prettified at render). */
 const FLAT_NOTE_NAMES = [
   null,
-  'Db',
+  'D♭',
   null,
-  'Eb',
+  'E♭',
   null,
   null,
-  'Gb',
+  'G♭',
   null,
-  'Ab',
+  'A♭',
   null,
-  'Bb',
+  'B♭',
   null,
 ] as const
 
 export type NoteName = (typeof NOTE_NAMES)[number]
+
+/**
+ * Swap ASCII accidentals for their real musical glyphs (`C#` → `C♯`, `Bb` →
+ * `B♭`) for on-screen display. Source note names stay ASCII because they double
+ * as lookup keys, Tone.js pitch strings, and equality-compared values; convert
+ * only at the render boundary. Safe for note labels: the only lowercase `b` is
+ * the flat marker (letters are uppercase, octave is a digit).
+ */
+function toAccidentalGlyph(label: string): string {
+  return label.replaceAll('#', '♯').replaceAll('b', '♭')
+}
 
 export type NoteInfo = {
   note: NoteName
@@ -480,7 +493,7 @@ const START_TONE_OPTIONS: StartToneOption[] = Array.from(
     const midi = C3_MIDI + offset
     const noteIndex = ((midi % 12) + 12) % 12
     const octave = Math.floor(midi / 12) - 1
-    const label = `${NOTE_NAMES[noteIndex]}${octave}`
+    const label = toAccidentalGlyph(`${NOTE_NAMES[noteIndex]}${octave}`)
 
     return { offset, label, midiNote: midi, voiceTier: getVoiceTier(midi) }
   },
@@ -514,7 +527,7 @@ function midiToNoteLabel(midi: number): MidiNoteLabel {
   const octave = Math.floor(midi / 12) - 1
   const note = NOTE_NAMES[noteIndex]
 
-  return { note, octave, label: `${note}${octave}` }
+  return { note, octave, label: toAccidentalGlyph(`${note}${octave}`) }
 }
 
 /**
@@ -617,6 +630,7 @@ export {
   SCALE_MODE_SEMITONES,
   START_TONE_GROUPS,
   START_TONE_OPTIONS,
+  toAccidentalGlyph,
 }
 export type {
   ChromaticDisplayNote,

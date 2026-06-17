@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {
   noteToFrequency,
+  toAccidentalGlyph,
   type NoteInfo,
   type NoteName,
 } from '@/utils/noteUtils'
@@ -502,7 +503,7 @@ watch(
               sequenceActiveString === `${s.note}${s.octave}`,
           }"
           @click="playGuitarString(s.note, s.octave)"
-          >{{ s.note }}{{ s.octave }}
+          >{{ toAccidentalGlyph(s.note) }}{{ s.octave }}
         </PrimeButton>
       </div>
       <img
@@ -533,7 +534,7 @@ watch(
               sequenceActiveString === `${s.note}${s.octave}`,
           }"
           @click="playGuitarString(s.note, s.octave)"
-          >{{ s.note }}{{ s.octave }}
+          >{{ toAccidentalGlyph(s.note) }}{{ s.octave }}
         </PrimeButton>
       </div>
     </div>
@@ -563,7 +564,7 @@ watch(
           :style="{ color: noteColor ?? undefined }"
         >
           <span class="text-7xl font-bold tracking-tight md:text-8xl">
-            {{ noteInfo.note }}
+            {{ toAccidentalGlyph(noteInfo.note) }}
           </span>
           <span class="mt-2 inline-block align-top text-4xl font-light">
             {{ noteInfo.octave }}

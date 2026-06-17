@@ -3,6 +3,7 @@ import TunerCentsDeviationBar from '@/components/tuner/TunerCentsDeviationBar.vu
 import { PREVIEW_INTERVAL_MS } from '@/components/tuner/tunerConstants'
 import {
   noteToFrequency,
+  toAccidentalGlyph,
   type NoteInfo,
   type NoteName,
 } from '@/utils/noteUtils'
@@ -354,7 +355,7 @@ watch(
               sequenceActiveString === `${s.note}${s.octave}`,
           }"
           @click="playUkuleleString(s.note, s.octave)"
-          >{{ s.note }}{{ s.octave }}
+          >{{ toAccidentalGlyph(s.note) }}{{ s.octave }}
         </PrimeButton>
       </div>
       <div class="h-64 w-auto">
@@ -387,7 +388,7 @@ watch(
               sequenceActiveString === `${s.note}${s.octave}`,
           }"
           @click="playUkuleleString(s.note, s.octave)"
-          >{{ s.note }}{{ s.octave }}
+          >{{ toAccidentalGlyph(s.note) }}{{ s.octave }}
         </PrimeButton>
       </div>
     </div>
@@ -417,7 +418,7 @@ watch(
           :style="{ color: noteColor ?? undefined }"
         >
           <span class="text-7xl font-bold tracking-tight md:text-8xl">
-            {{ noteInfo.note }}
+            {{ toAccidentalGlyph(noteInfo.note) }}
           </span>
           <span class="mt-2 inline-block align-top text-4xl font-light">
             {{ noteInfo.octave }}

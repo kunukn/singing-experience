@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { NoteInfo } from '@/utils/noteUtils'
+import { toAccidentalGlyph, type NoteInfo } from '@/utils/noteUtils'
 import { cleanTextColor } from '@/utils/pitchColors'
 
 type Props = {
@@ -27,7 +27,7 @@ const noteColor = computed(() =>
       :style="{ color: noteColor ?? undefined }"
     >
       <span class="text-7xl font-bold tracking-tight md:text-8xl">
-        {{ noteInfo.note }}
+        {{ toAccidentalGlyph(noteInfo.note) }}
       </span>
       <span class="mt-2 inline-block align-top text-4xl font-light">
         {{ noteInfo.octave }}

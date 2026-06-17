@@ -1,3 +1,5 @@
+import { toAccidentalGlyph } from '@/utils/noteUtils'
+
 /* Suppress preview indicator for this long after a tone is played */
 const IDLE_DEAF_PERIOD_MS = 1000
 
@@ -51,7 +53,7 @@ export function useIdlePreview(options: IdlePreviewOptions) {
     const info = detection.noteInfo.value
     if (!info) return null
 
-    return `${info.note}${info.octave}`
+    return toAccidentalGlyph(`${info.note}${info.octave}`)
   })
 
   const isPreviewListening = computed(() => detection.isListening.value)

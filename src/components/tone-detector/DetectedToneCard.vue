@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toAccidentalGlyph } from '@/utils/noteUtils'
 import { textColorAtMidi } from '@/utils/pitchColors'
 
 type Props = {
@@ -24,7 +25,7 @@ const { t } = useI18n()
   >
     <div v-if="props.isClean">
       <span class="text-5xl font-bold tracking-tight sm:text-7xl">
-        {{ props.note }}
+        {{ toAccidentalGlyph(props.note) }}
       </span>
       <span class="mt-1 inline-block align-top text-2xl font-light sm:text-4xl">
         {{ props.octave }}

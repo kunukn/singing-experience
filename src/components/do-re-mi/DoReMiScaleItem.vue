@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { toAccidentalGlyph } from '@/utils/noteUtils'
 import type { ScaleStep } from './useDoReMiGame'
 
 type StepStatus = 'completed' | 'current' | 'upcoming'
@@ -115,7 +116,7 @@ const isCompletedOrDone = computed(
             !excluded && status === 'current' && !isComplete && isStarted,
         }"
       >
-        {{ step.note }}{{ step.octave }}
+        {{ toAccidentalGlyph(step.note) }}{{ step.octave }}
       </span>
 
       <!-- Progress bar -->
