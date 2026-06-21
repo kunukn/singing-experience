@@ -3,24 +3,32 @@ const { t } = useI18n()
 const betaPages = new Set(['/singfly', '/pitch-game', '/grace-kelly-challenge'])
 const alphaPages = new Set(['/tone-detector'])
 const route = useRoute()
+const router = useRouter()
 const isHome = computed(() => route.path === '/')
 const isAlphaPage = computed(() => alphaPages.has(route.path))
 const isBetaPage = computed(() => betaPages.has(route.path))
 const isLandingPage = computed(() => route.meta.isLandingPage === true)
+
+function goBack() {
+  /* Follow real browser history when we have a previous in-app entry; otherwise fall back to home (covers deep links). */
+  if (window.history.state?.back) router.back()
+  else router.push('/')
+}
 </script>
 
 <template>
   <div class="flex items-center justify-between px-4 py-1.5 md:py-3 lg:py-4">
     <div v-if="isHome"></div>
 
-    <RouterLink
+    <button
       v-if="!isHome"
-      to="/"
+      type="button"
       class="flex items-center gap-1 text-(--p-text-muted-color) transition-colors hover:text-(--p-text-color)"
+      @click="goBack"
     >
       <BackIcon class="h-4 w-auto rtl:-scale-x-100" />
       <span class="text-sm">{{ t('generic.back') }}</span>
-    </RouterLink>
+    </button>
     <div v-else />
     <PrimeTag
       v-if="isAlphaPage"
