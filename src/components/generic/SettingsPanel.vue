@@ -64,7 +64,7 @@ const appVersion = import.meta.env.VITE_APP_VERSION
   >
     <div class="flex h-full flex-col">
       <div class="min-h-0 flex-1 overflow-y-auto">
-        <div class="relative flex flex-1 flex-col gap-6">
+        <div class="relative flex min-h-full flex-1 flex-col gap-6">
           <div class="flex flex-col gap-2">
             <label class="font-medium">{{ t('settings.language') }}</label>
             <LanguageSwitcher />
@@ -139,26 +139,31 @@ const appVersion = import.meta.env.VITE_APP_VERSION
 
           <FullscreenToggle />
 
-          <hr class="border-0 border-t border-(--p-content-border-color)" />
+          <div class="mt-auto flex flex-col gap-2 pb-4">
+            <hr
+              v-if="false"
+              class="mb-4 border-0 border-t border-(--p-content-border-color)"
+            />
 
-          <PrimeButton
-            severity="secondary"
-            outlined
-            size="small"
-            @click="onReset"
-          >
-            {{ t('settings.resetToDefaults') }}
-          </PrimeButton>
+            <PrimeButton
+              severity="secondary"
+              outlined
+              size="small"
+              @click="onReset"
+            >
+              {{ t('settings.resetToDefaults') }}
+            </PrimeButton>
 
-          <PrimeButton
-            severity="secondary"
-            text
-            size="small"
-            icon="pi pi-refresh"
-            :label="t('settings.reload')"
-            :aria-label="t('settings.reload')"
-            @click="reloadPage"
-          />
+            <PrimeButton
+              severity="secondary"
+              text
+              size="small"
+              icon="pi pi-refresh"
+              :label="t('settings.reload')"
+              :aria-label="t('settings.reload')"
+              @click="reloadPage"
+            />
+          </div>
         </div>
       </div>
 
