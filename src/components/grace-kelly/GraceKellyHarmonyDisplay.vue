@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import GraceKellyPartLadder from './GraceKellyPartLadder.vue'
 import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
 import { VOZ_LABEL_KEYS } from './graceKellyConstants'
 import { GRACE_KELLY_SYLLABLES } from './graceKellyLyrics'
@@ -59,27 +60,6 @@ const activeSyllableIndex = computed(() => {
 const allVozLabels = computed(() =>
   VOZ_LABEL_KEYS.map((key) => t(`graceKelly.vozLabels.${key}`)),
 )
-
-/* Toggles displayed low → high (reversed order) while keeping the real
- * VOZ_MELODIES index, so each toggle drives the voice its label names. */
-const partToggles = computed(() =>
-  VOZ_LABEL_KEYS.map((key, index) => ({
-    index,
-    label: t(`graceKelly.vozLabels.${key}`),
-  })).reverse(),
-)
-
-function isVozSelected(index: number) {
-  return selectedVozIndices.value.includes(index)
-}
-
-function toggleVoz(index: number, enabled: boolean) {
-  const next = enabled
-    ? [...selectedVozIndices.value, index]
-    : selectedVozIndices.value.filter((value) => value !== index)
-
-  selectedVozIndices.value = [...new Set(next)].sort((a, b) => a - b)
-}
 </script>
 
 <template>
@@ -96,22 +76,16 @@ function toggleVoz(index: number, enabled: boolean) {
       :showToneLabelToggle="true"
     />
 
-    <div
-      class="flex max-w-full flex-wrap items-center justify-center gap-x-4 gap-y-2"
-    >
-      <label
-        v-for="part in partToggles"
-        :key="part.index"
-        class="flex items-center gap-2 text-sm"
-      >
-        <PrimeToggleSwitch
-          :modelValue="isVozSelected(part.index)"
-          :disabled="isRunning"
-          @update:modelValue="(value: boolean) => toggleVoz(part.index, value)"
-        />
-        {{ part.label }}
-      </label>
+    <div class="flex flex-col justify-center">
+      <p class="text-sm leading-none text-(--p-text-muted-color)">
+        {{ t('graceKelly.harmony.subtitle') }}
+      </p>
     </div>
+
+    <GraceKellyPartLadder
+      v-model:selectedVozIndices="selectedVozIndices"
+      :isRunning="isRunning"
+    />
 
     <div class="flex min-w-50 items-baseline gap-2">
       <PrimeButton
@@ -156,12 +130,6 @@ function toggleVoz(index: number, enabled: boolean) {
       >
         {{ t('generic.start') }}
       </PrimeButton>
-    </div>
-
-    <div class="flex min-h-8 flex-col justify-center">
-      <p class="text-sm leading-none text-(--p-text-muted-color)">
-        {{ t('graceKelly.harmony.subtitle') }}
-      </p>
     </div>
 
     <GraceKellyAllSheets
