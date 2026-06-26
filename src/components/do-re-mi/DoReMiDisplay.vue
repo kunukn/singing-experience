@@ -276,7 +276,7 @@ onUnmounted(() => {
     <!-- Reserve the height of the tallest panel (idle / complete) so the
       DoReMiScale below keeps a fixed position when switching to the much
       shorter playing panel. Content stays top-aligned. -->
-    <div class="flex min-h-52 w-full flex-col items-center sm:min-h-44">
+    <div class="flex w-full flex-col items-center sm:min-h-44">
       <!-- State: 1 -->
       <DoReMiIdlePanel
         v-if="gameState === 'idle'"
