@@ -163,7 +163,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <label class="hidden text-sm text-(--p-text-muted-color) lg:block">{{
         t('sounds.toneSound')
       }}</label>
-      <ToneModeSelect v-model="toneMode" />
+      <ToneModeSelect v-model="toneMode" class="md:max-lg:col-span-2" />
     </div>
 
     <div v-if="props.showToneLabelToggle" class="settings-item">
