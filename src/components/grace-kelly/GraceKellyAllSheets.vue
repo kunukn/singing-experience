@@ -191,7 +191,7 @@ async function renderSheets() {
    * the staves have a real width to measure against. */
   if (containers[0]?.offsetParent === null) return
 
-  const abcStrings = vozIndices.map((vozIndex) =>
+  const baseAbcStrings = vozIndices.map((vozIndex) =>
     /* Pass showTempo=false so the BPM header is hidden on the combined sheet;
      * the shared lyric line draws under every staff. */
     vozMelodyToAbcString(
@@ -208,7 +208,7 @@ async function renderSheets() {
    * line, then measure each staff's natural music width. */
   const probeWidth = estimateStaffWidth(VOZ_MELODIES[0].notes.length)
   for (let index = 0; index < containers.length; index++) {
-    renderAbc(containers[index], abcStrings[index], {
+    renderAbc(containers[index], baseAbcStrings[index], {
       ...COMPACT_RENDER,
       staffwidth: probeWidth,
     })
@@ -221,6 +221,26 @@ async function renderSheets() {
   const TRAILING_MARGIN = 24
   const sharedWidth =
     Math.ceil(Math.max(...containers.map(measureMusicWidth))) + TRAILING_MARGIN
+
+  /* abcjs centers each title over the staff width, so it sits near the staff's
+   * midpoint (~sharedWidth/2). Left-align (`%%titleleft`) only when that midpoint
+   * scrolls past the visible box at scrollLeft 0 — i.e. a narrow/mobile view where
+   * the centered title would be off-screen. On desktop, where the midpoint stays
+   * in view, keep abcjs's centered default. Re-evaluated on every resize re-render.
+   * Injected here (not in the shared builder) to match the per-component title
+   * handling in GraceKellySheet / GraceKellySingSheet. */
+  const visibleWidth = scrollRef.value?.clientWidth ?? sharedWidth
+  /* Bias the flip earlier by ~10 characters: the title is anchored from its
+   * middle, so when its center lands just inside the right edge the right half
+   * still clips (the "Le…" of "Less low"). This buffer trips the switch to
+   * left-aligned before that happens, instead of half-showing the title. */
+  const TITLE_EDGE_BUFFER = 450 // heuristic value.
+  const titleOffscreenWhenCentered =
+    sharedWidth / 2 + TITLE_EDGE_BUFFER > visibleWidth
+  const abcStrings = titleOffscreenWhenCentered
+    ? baseAbcStrings.map((abc) => abc.replace(/^T:/m, '%%titleleft\nT:'))
+    : baseAbcStrings
+
   for (let index = 0; index < containers.length; index++) {
     renderAbc(containers[index], abcStrings[index], {
       ...COMPACT_RENDER,
