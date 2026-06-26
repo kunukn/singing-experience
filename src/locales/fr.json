@@ -293,7 +293,8 @@
     "scoreCorrect": "{percent}% correct",
     "metronome": "Rythme",
     "barHighlight": "Mesure",
-    "toneLabels": "Notes"
+    "toneLabels": "Notes",
+    "melodyGuide": "Guide"
   },
   "notes": {
     "title": "Notes",

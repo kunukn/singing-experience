@@ -293,7 +293,8 @@
     "scoreCorrect": "{percent}% sahihi",
     "metronome": "Mdundo",
     "barHighlight": "Boksi",
-    "toneLabels": "Noti"
+    "toneLabels": "Noti",
+    "melodyGuide": "Mwongozo"
   },
   "notes": {
     "title": "Notes",

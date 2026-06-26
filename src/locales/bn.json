@@ -293,7 +293,8 @@
     "scoreCorrect": "{percent}% সঠিক",
     "metronome": "তাল",
     "barHighlight": "বক্স",
-    "toneLabels": "স্বর"
+    "toneLabels": "স্বর",
+    "melodyGuide": "সাহায্য"
   },
   "notes": {
     "title": "Notes",

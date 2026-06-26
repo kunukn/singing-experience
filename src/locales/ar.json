@@ -293,7 +293,8 @@
     "scoreCorrect": "{percent}% صحيح",
     "metronome": "إيقاع",
     "barHighlight": "مربع",
-    "toneLabels": "النغمات"
+    "toneLabels": "النغمات",
+    "melodyGuide": "مساعدة"
   },
   "notes": {
     "title": "Notes",

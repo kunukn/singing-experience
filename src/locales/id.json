@@ -293,7 +293,8 @@
     "scoreCorrect": "{percent}% benar",
     "metronome": "Ketukan",
     "barHighlight": "Birama",
-    "toneLabels": "Nada"
+    "toneLabels": "Nada",
+    "melodyGuide": "Bantuan"
   },
   "notes": {
     "title": "Notes",

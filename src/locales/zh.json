@@ -293,7 +293,8 @@
     "scoreCorrect": "{percent}% 正确",
     "metronome": "节拍",
     "barHighlight": "小节",
-    "toneLabels": "音名"
+    "toneLabels": "音名",
+    "melodyGuide": "引导"
   },
   "notes": {
     "title": "Notes",

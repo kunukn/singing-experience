@@ -293,7 +293,8 @@
     "scoreCorrect": "{percent}% सही",
     "metronome": "ताल",
     "barHighlight": "बॉक्स",
-    "toneLabels": "स्वर"
+    "toneLabels": "स्वर",
+    "melodyGuide": "मदद"
   },
   "notes": {
     "title": "Notes",

@@ -293,7 +293,8 @@
     "scoreCorrect": "{percent}% 正解",
     "metronome": "ビート",
     "barHighlight": "小節",
-    "toneLabels": "音名"
+    "toneLabels": "音名",
+    "melodyGuide": "ガイド"
   },
   "notes": {
     "title": "Notes",

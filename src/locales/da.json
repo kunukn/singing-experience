@@ -293,7 +293,8 @@
     "scoreCorrect": "{percent}% rigtigt",
     "metronome": "Takt",
     "barHighlight": "Boks",
-    "toneLabels": "Toner"
+    "toneLabels": "Toner",
+    "melodyGuide": "Guide"
   },
   "notes": {
     "title": "Noder",

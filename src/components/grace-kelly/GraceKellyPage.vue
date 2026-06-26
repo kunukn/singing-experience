@@ -103,12 +103,19 @@ const isBarHighlightEnabled = useLocalStorage(
  * (GraceKellyAllSheets). Default off; purely visual. */
 const areToneLabelsShown = useLocalStorage('syng.graceKellyToneLabels', false)
 
+/* Melody "Guide" — plays the tune aloud during Sing-live as a singing aid.
+ * Default off; leaks into the mic and skews scoring, which is acceptable. */
+const isMelodyGuideEnabled = useLocalStorage(
+  'syng.graceKellyMelodyGuide',
+  false,
+)
+
 const game = useGraceKelly()
 const harmonyGame = useGraceKellyHarmony()
 /* Silent timeline for the "Sing live" tab — advances the sheet on the BPM clock
  * with no playback; the singer's mic supplies the sound (plus the metronome). */
 const singGame = useGraceKelly({
-  silent: true,
+  silent: () => !isMelodyGuideEnabled.value,
   metronomeEnabled: isMetronomeEnabled,
 })
 /* Audible instance for the "Sing live" tab's ♪/Mute preview — plays the melody
@@ -165,6 +172,7 @@ watch(activeTab, () => {
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
             v-model:isMetronomeEnabled="isMetronomeEnabled"
+            v-model:isMelodyGuideEnabled="isMelodyGuideEnabled"
             v-model:isBarHighlightEnabled="isBarHighlightEnabled"
             v-model:areToneLabelsShown="areToneLabelsShown"
           />

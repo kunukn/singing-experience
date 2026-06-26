@@ -7,6 +7,7 @@ import {
 import BarHighlightToggle from './BarHighlightToggle.vue'
 import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
 import GraceKellySingSheet from './GraceKellySingSheet.vue'
+import MelodyGuideToggle from './MelodyGuideToggle.vue'
 import MetronomeToggle from './MetronomeToggle.vue'
 import { VOZ_LABEL_KEYS } from './graceKellyConstants'
 import {
@@ -34,6 +35,9 @@ const vozIndex = defineModel<number>('vozIndex', { required: true })
 const startToneMidi = defineModel<number>('startToneMidi', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
 const isMetronomeEnabled = defineModel<boolean>('isMetronomeEnabled', {
+  required: true,
+})
+const isMelodyGuideEnabled = defineModel<boolean>('isMelodyGuideEnabled', {
   required: true,
 })
 const isBarHighlightEnabled = defineModel<boolean>('isBarHighlightEnabled', {
@@ -353,7 +357,9 @@ const vozLabel = computed(() =>
       </p>
     </div>
 
-    <div class="flex min-w-50 items-baseline gap-2">
+    <EdgeFadeScroller
+      class="flex min-w-50 items-baseline justify-center-safe gap-2 pb-2"
+    >
       <PrimeButton
         v-if="isRunning"
         severity="danger"
@@ -421,7 +427,9 @@ const vozLabel = computed(() =>
       <MetronomeToggle v-model="isMetronomeEnabled" :disabled="isBusy" />
 
       <BarHighlightToggle v-model="isBarHighlightEnabled" />
-    </div>
+
+      <MelodyGuideToggle v-model="isMelodyGuideEnabled" :disabled="isBusy" />
+    </EdgeFadeScroller>
 
     <p v-if="error" class="text-sm text-(--p-red-400)">{{ error }}</p>
 

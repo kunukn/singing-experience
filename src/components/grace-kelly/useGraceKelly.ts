@@ -18,8 +18,9 @@ export type GraceKellyResult = ReturnType<typeof useGraceKelly>
 type Options = {
   /* Drive the visual timeline only — skip all audio scheduling so the sheet
    * advances on the BPM clock with no playback. Used by the "Sing live" tab,
-   * where the singer supplies the sound. */
-  silent?: boolean
+   * where the singer supplies the sound. Read at schedule time (start/resume),
+   * so a reactive value lets a toggle flip playback on for the next run. */
+  silent?: boolean | Ref<boolean> | (() => boolean)
   /* When this ref is true, play one metronome click per bar (on the downbeat)
    * plus a single one-beat count-in before the pickup. Read at schedule time.
    * Only the "Sing live" instance passes it. */
@@ -66,6 +67,7 @@ export function useGraceKelly(options: Options = {}) {
   function scheduleFrom(fromIndex: number) {
     const melody = VOZ_MELODIES[currentVozIndex]
     const notes = melody.notes
+    const isSilent = toValue(options.silent) ?? false
 
     /* Eighth-note duration for the chosen tempo (bpm = dotted quarter, the 6/8
      * beat unit): dotted quarter = 60/bpm s, split across 3 eighth notes. */
@@ -113,7 +115,7 @@ export function useGraceKelly(options: Options = {}) {
         currentStartToneMidi + notes[index].midiOffset,
       )
       const durationS = runEighths * eighthSeconds * ARTICULATION
-      if (!options.silent) playToneAt(freq, durationS, noteStartTimes[index])
+      if (!isSilent) playToneAt(freq, durationS, noteStartTimes[index])
 
       index = last + 1
     }
