@@ -225,53 +225,10 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 <style scoped>
 @reference '@/style.css';
 
+/* 3 (label, select) column-pairs → 6 items wrap into a 3 × 2 layout that
+ * fits the parent's max-w-3xl shell and gives long translations room. */
 .settings-row {
-  @apply flex w-full snap-x snap-mandatory items-center justify-center-safe gap-4 overflow-x-auto px-6 pb-2;
-  @apply sm:mb-4;
-  /* 3 (label, select) column-pairs → 6 items wrap into a 3 × 2 layout that
-   * fits the parent's max-w-3xl shell and gives long translations room. */
-  @apply md:grid md:w-auto md:snap-none md:grid-cols-[auto_1fr_auto_1fr_auto_1fr] md:gap-x-4 md:gap-y-3 md:overflow-visible md:px-0 md:pb-0;
-
-  /* Match the container's px-6 so snap-start aligns the first/last item at scrollLeft 0/max,
-   * keeping the conditional edge mask in sync with the true scroll boundaries. */
-  scroll-padding-inline: 1.5rem;
-}
-
-/* Edge fade — signals horizontal scrollability on iOS where scrollbars auto-hide.
- * Applied only on the side(s) that can actually be scrolled toward. */
-.settings-row.mask-start.mask-end {
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    black 1.5rem,
-    black calc(100% - 1.5rem),
-    transparent 100%
-  );
-}
-
-.settings-row.mask-start:not(.mask-end) {
-  mask-image: linear-gradient(to right, transparent 0, black 1.5rem);
-}
-
-.settings-row.mask-end:not(.mask-start) {
-  mask-image: linear-gradient(
-    to right,
-    black calc(100% - 1.5rem),
-    transparent 100%
-  );
-}
-
-@media (min-width: 768px) {
-  .settings-row.mask-start,
-  .settings-row.mask-end,
-  .settings-row.mask-start.mask-end {
-    mask-image: none;
-  }
-}
-
-.settings-item {
-  @apply flex shrink-0 snap-start items-center gap-2;
-  @apply md:col-span-2 md:grid md:shrink md:snap-align-none md:grid-cols-subgrid md:items-center;
+  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr] md:gap-x-4 md:gap-y-3;
 }
 
 .select-warm-up-pattern-option-group {

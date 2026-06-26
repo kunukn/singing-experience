@@ -178,15 +178,9 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 <style scoped>
 @reference '@/style.css';
 
+/* One row from md up: 8 columns so all four items (each col-span-2) sit side by side. */
 .settings-row {
-  @apply flex w-full snap-x snap-mandatory items-center justify-center-safe gap-4 overflow-x-auto px-6 pb-2;
-  @apply sm:mb-4;
-  /* One row from md up: 8 columns so all four items (each col-span-2) sit side by side. */
-  @apply md:grid md:w-auto md:snap-none md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr] md:overflow-visible md:px-0 md:pb-0;
-
-  /* Match the container's px-6 so snap-start aligns the first/last item at scrollLeft 0/max,
-   * keeping the conditional edge mask in sync with the true scroll boundaries. */
-  scroll-padding-inline: 1.5rem;
+  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr];
 }
 
 /* Harmony tab hides the Voz select, the Sing-live tab hides the tone-sound
@@ -206,42 +200,5 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
  * 8 columns. More specific than the .no-tone 6-col rule above, so it wins. */
 .settings-row.has-toggle.no-tone {
   @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr];
-}
-
-/* Edge fade — signals horizontal scrollability on iOS where scrollbars auto-hide.
- * Applied only on the side(s) that can actually be scrolled toward. */
-.settings-row.mask-start.mask-end {
-  mask-image: linear-gradient(
-    to right,
-    transparent 0,
-    black 1.5rem,
-    black calc(100% - 1.5rem),
-    transparent 100%
-  );
-}
-
-.settings-row.mask-start:not(.mask-end) {
-  mask-image: linear-gradient(to right, transparent 0, black 1.5rem);
-}
-
-.settings-row.mask-end:not(.mask-start) {
-  mask-image: linear-gradient(
-    to right,
-    black calc(100% - 1.5rem),
-    transparent 100%
-  );
-}
-
-@media (min-width: 768px) {
-  .settings-row.mask-start,
-  .settings-row.mask-end,
-  .settings-row.mask-start.mask-end {
-    mask-image: none;
-  }
-}
-
-.settings-item {
-  @apply flex shrink-0 snap-start items-center gap-2;
-  @apply md:col-span-2 md:grid md:shrink md:snap-align-none md:grid-cols-subgrid md:items-center;
 }
 </style>
