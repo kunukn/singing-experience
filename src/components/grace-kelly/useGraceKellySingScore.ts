@@ -5,15 +5,17 @@ import type { Ref } from 'vue'
 const CONFETTI_THRESHOLD = 0.8
 
 /* A note never needs more than this much on-pitch time, no matter how long it
- * sounds — holding a 1s tied note for 100ms is enough. */
-const MAX_ON_PITCH_MS = 100
+ * sounds — holding a 1s tied note for 60ms is enough. */
+const MAX_ON_PITCH_MS = 60
 
 /* A note counts as correct once the singer has been on its target pitch for
  * this fraction of the note's duration, in total — regardless of how much
- * wrong-pitch time surrounds it. 0.25 keeps short notes hittable: fixed costs
- * (mic latency, pitch-smoothing convergence, voice articulation) eat ~50–80ms
- * of every note, which is a big slice of a ~167ms eighth. */
-const DWELL_FRACTION = 0.25
+ * wrong-pitch time surrounds it. 0.15 keeps short notes hittable: fixed costs
+ * (mic latency, pitch-smoothing convergence, voice articulation) eat ~50–90ms
+ * of every note, a large slice of a ~167ms eighth at tempo, so the dwell has to
+ * stay well under that to leave a reachable margin. Long notes still need a real
+ * hold (capped at MAX_ON_PITCH_MS), so it can't be cleared by passing through. */
+const DWELL_FRACTION = 0.15
 
 /*
  * Scores a live sing run note by note. Each frame, the on-pitch time is added to

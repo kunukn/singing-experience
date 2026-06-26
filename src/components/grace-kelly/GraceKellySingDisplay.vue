@@ -232,10 +232,12 @@ const isOnPitch = computed(() => {
 })
 
 /* On-pitch tolerance used for scoring only — distinct from the ±25¢ `isOnPitch`
- * that drives the visual pitch line. 40¢ is under half a semitone: forgiving of
- * normal vibrato/drift and child voices, but tight enough that a genuinely wrong
- * tone (≥ half a semitone off) costs points. */
-const SCORE_TOLERANCE_CENTS = 40
+ * that drives the visual pitch line. 50¢ is exactly half a semitone: the
+ * deliberate upper bound, as forgiving as scoring can safely go. Beyond it a
+ * note sung toward the next semitone would start to count; at 50¢ a genuinely
+ * wrong tone (≥ half a semitone off) still costs points. Forgiving of normal
+ * vibrato/drift and child voices. */
+const SCORE_TOLERANCE_CENTS = 50
 
 const isOnPitchForScore = computed(() => {
   if (frequency.value === null || targetFrequency.value === null) return false
