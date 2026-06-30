@@ -8,6 +8,10 @@
 
 A fun, browser-based singing practice app. Use your microphone to see what note you're singing in real time — or play a game where you sing through the musical scale.
 
+## What Is This?
+
+Singing Experience is a small web app that listens to your voice through your device's microphone and tells you what musical note you're singing. It's designed for anyone who wants to explore their voice, warm up before singing, or just have fun with music — no musical training required.
+
 ## 🌐 Live Demo
 
 <a href="https://www.syng.fun"><img src="docs/doremi-demo.png" alt="DO RE MI Game — sing through the scale and see how close you are to each note" width="600" /></a>
@@ -18,10 +22,6 @@ A fun, browser-based singing practice app. Use your microphone to see what note 
 <img src="docs/qr-live-demo.png" alt="QR code for live demo" width="200" />
 
 The app is deployed to Vercel under a dedicated domain and updates automatically on every push to `main`.
-
-## What Is This?
-
-Singing Experience is a small web app that listens to your voice through your device's microphone and tells you what musical note you're singing. It's designed for anyone who wants to explore their voice, warm up before singing, or just have fun with music — no musical training required.
 
 ## Features
 
