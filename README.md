@@ -218,8 +218,8 @@ That's it! The app runs entirely in your browser.
 The committed `.npmrc` hardens `npm install` against supply-chain attacks:
 
 - **Public registry only** — installs are pinned to `registry.npmjs.org`.
-- **7-day cooldown** — only package versions published at least 7 days ago can be
-  installed (`min-release-age=7`). This dodges most freshly-published malicious
+- **2-day cooldown** — only package versions published at least 2 days ago can be
+  installed (`min-release-age=2`). This dodges most freshly-published malicious
   releases before they reach your lockfile.
 - **Exact versions** — newly added dependencies are pinned (`save-exact=true`).
 - **Strict audits & engines** — `npm audit` fails on high/critical issues, and the
