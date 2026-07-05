@@ -35,29 +35,41 @@ const emit = defineEmits<{ naturalWidth: [width: number] }>()
 
 type ToneLabel = {
   left: number
+  /* Notehead top edge (container coords) — anchor for above-placed labels. */
   top: number
+  /* Notehead bottom edge (container coords) — anchor for below-placed labels. */
+  bottom: number
   text: string
   flatText: string | null
+  /* Low-cluster note (below the staff): label hangs BELOW the notehead instead of
+   * above, so it clears the ledger lines the note sits on. */
+  below: boolean
 }
 
-/* Top space (px) reserved inside the SVG above the highest notehead so the
- * note-name chips (sharp label ~28px up, plus the flat-enharmonic row another
- * ~13px above) aren't clipped by the scroll box (overflow-x:auto clips y too). */
+/* Space (px) reserved inside the SVG above the highest notehead (for high-cluster
+ * above-labels) and below the lowest notehead (for low-cluster below-labels) so the
+ * note-name chips aren't clipped by the scroll box (overflow-x:auto clips y too).
+ * Each chip is a sharp label plus, when accidentals show, a flat-enharmonic row. */
 const STAFF_PADDING_TOP = 44
+const STAFF_PADDING_BOTTOM = 44
 
-/* Vertical nudge lifting every floating tone label just above the note it
- * annotates; the flat enharmonic stacks one compact row higher. The label is
- * centered horizontally on the notehead by `-translate-x-1/2`, so no horizontal
- * offset is needed. */
-const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
-const FLAT_LABEL_STACK_LIFT = -13 // px — one compact row above the sharp label
+/* Gap between a tone label and the notehead it annotates, and the extra step that
+ * stacks the flat enharmonic one compact row further from the note. Applied above or
+ * below per label; the label is centered horizontally by `-translate-x-1/2`, so no
+ * horizontal offset is needed. */
+const TONE_LABEL_GAP = 6 // px — space between label and notehead
+const FLAT_LABEL_STACK_STEP = 13 // px — one compact row between sharp and flat labels
 
-/* Absolute-positioning style for a tone label, with an optional extra vertical
- * lift to stack the flat enharmonic above the sharp label. */
-function toneLabelStyle(label: ToneLabel, stackLift = 0) {
+/* Absolute-positioning style for a tone label. `stackLevel` 0 is the primary (sharp)
+ * label, 1 the flat enharmonic; higher levels sit one row further from the notehead.
+ * Below-cluster labels hang under the notehead's bottom edge (paired with dropping
+ * the `-translate-y-full` class); above labels sit over its top edge. */
+function toneLabelStyle(label: ToneLabel, stackLevel = 0) {
+  const gap = TONE_LABEL_GAP + stackLevel * FLAT_LABEL_STACK_STEP
+
   return {
     left: `${label.left}px`,
-    top: `${label.top + TONE_LABEL_OFFSET_Y + stackLift}px`,
+    top: `${label.below ? label.bottom + gap : label.top - gap}px`,
   }
 }
 
@@ -84,6 +96,7 @@ const SANS_FONTS = { composerfont: STAFF_LABEL_FONT } as const
 const RENDER_OPTIONS = {
   add_classes: true,
   paddingtop: STAFF_PADDING_TOP,
+  paddingbottom: STAFF_PADDING_BOTTOM,
   format: SANS_FONTS,
 } as const
 
@@ -110,7 +123,12 @@ function updateToneLabels() {
   }
 
   const containerRect = containerRef.value.getBoundingClientRect()
+  /* Low-cluster note count per voice; `.abcjs-note` order is [...low, ...high], so
+   * indices below this belong to the below-the-staff cluster and hang their labels
+   * beneath the notehead. */
+  const lowLengths = [props.trebleLowMidis.length, props.bassLowMidis.length]
   toneLabelsByStaff.value = staffMidis.value.map((midis, voiceIndex) => {
+    const lowLen = lowLengths[voiceIndex]
     const notes = [
       ...(containerRef.value?.querySelectorAll(
         `.abcjs-note.abcjs-v${voiceIndex}`,
@@ -129,10 +147,12 @@ function updateToneLabels() {
         {
           left: noteRect.left - containerRect.left + noteRect.width / 2,
           top: noteRect.top - containerRect.top,
+          bottom: noteRect.bottom - containerRect.top,
           text: midiToNoteLabel(midi, {
             showOctave: props.showNoteNumbers ?? false,
           }).label,
           flatText: midiToFlatLabel(midi),
+          below: index < lowLen,
         },
       ]
     })
@@ -286,7 +306,8 @@ watch(() => props.showNoteNumbers, updateToneLabels)
         <span
           v-for="(label, index) in labels"
           :key="`${staffIndex}-${index}`"
-          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
+          :class="label.below ? '' : '-translate-y-full'"
           :style="toneLabelStyle(label)"
         >
           {{ label.text }}
@@ -295,8 +316,9 @@ watch(() => props.showNoteNumbers, updateToneLabels)
           v-for="(label, index) in labels"
           v-show="label.flatText"
           :key="`${staffIndex}-flat-${index}`"
-          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-[12px] leading-none font-semibold text-(--p-text-muted-color)/70 tabular-nums"
-          :style="toneLabelStyle(label, FLAT_LABEL_STACK_LIFT)"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 rounded bg-(--p-content-background) px-0.5 text-[12px] leading-none font-semibold text-(--p-text-muted-color)/70 tabular-nums"
+          :class="label.below ? '' : '-translate-y-full'"
+          :style="toneLabelStyle(label, 1)"
         >
           {{ label.flatText }}
         </span>
