@@ -67,9 +67,9 @@ function paintNoteActive(index: number) {
   }
 }
 
-/* Nudge applied to the floating tone label so it sits slightly inset from and
- * above the note it annotates. */
-const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
+/* Vertical nudge lifting the floating tone label just above the note it
+ * annotates; the label is centered horizontally on the notehead by
+ * `-translate-x-1/2`, so no horizontal offset is needed. */
 const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
 
 /* Absolute-positioning style for a tone label at the given content-space position. */
@@ -77,7 +77,7 @@ function toneLabelStyle(
   position: { left: number; top: number } | null | undefined,
 ) {
   return {
-    left: `${(position?.left ?? 0) + TONE_LABEL_OFFSET_X}px`,
+    left: `${position?.left ?? 0}px`,
     top: `${(position?.top ?? 0) + TONE_LABEL_OFFSET_Y}px`,
   }
 }
@@ -106,7 +106,11 @@ function updateToneLabelPosition(index: number | null) {
     return
   }
 
-  const noteRect = element.getBoundingClientRect()
+  /* Anchor on the notehead glyph, not the `.abcjs-note` group — the group bbox
+   * spans the stem/beam and any accidental, which would pull the centered label
+   * off to one side. */
+  const head = element.querySelector('.abcjs-notehead') ?? element
+  const noteRect = head.getBoundingClientRect()
   const containerRect = containerRef.value.getBoundingClientRect()
   toneLabelPosition.value = {
     left: noteRect.left - containerRect.left + noteRect.width / 2,

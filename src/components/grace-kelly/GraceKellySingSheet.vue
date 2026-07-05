@@ -112,10 +112,11 @@ function paintNoteActive(index: number) {
   }
 }
 
-/* Nudge applied to every floating tone label so it sits slightly inset from and
- * above the note it annotates. TONE_LABEL_STACK_LIFT raises the singer's live
- * note one row higher than the target label it stacks on top of. */
-const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
+/* Vertical nudge lifting every floating tone label just above the note it
+ * annotates; the label is centered horizontally on the notehead by
+ * `-translate-x-1/2`, so no horizontal offset is needed. TONE_LABEL_STACK_LIFT
+ * raises the singer's live note one row higher than the target label it stacks
+ * on top of. */
 const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
 const TONE_LABEL_STACK_LIFT = -18 // px — extra lift for the stacked live-note row
 
@@ -126,7 +127,7 @@ function toneLabelStyle(
   stackLift = 0,
 ) {
   return {
-    left: `${position.left + TONE_LABEL_OFFSET_X}px`,
+    left: `${position.left}px`,
     top: `${position.top + TONE_LABEL_OFFSET_Y + stackLift}px`,
   }
 }
@@ -184,7 +185,11 @@ function updateAllToneLabels() {
     const element = group[0]
     if (!note || !element) return []
 
-    const noteRect = element.getBoundingClientRect()
+    /* Anchor on the notehead glyph, not the `.abcjs-note` group — the group bbox
+     * spans the stem/beam and any accidental, which would pull the centered label
+     * off to one side. */
+    const head = element.querySelector('.abcjs-notehead') ?? element
+    const noteRect = head.getBoundingClientRect()
     return [
       {
         left: noteRect.left - containerRect.left + noteRect.width / 2,
@@ -209,7 +214,10 @@ function updateToneLabelPosition(index: number | null) {
     return
   }
 
-  const noteRect = element.getBoundingClientRect()
+  /* Notehead glyph, not the group — matches updateAllToneLabels so the active /
+   * sung chips align with the muted chip they overlay. */
+  const head = element.querySelector('.abcjs-notehead') ?? element
+  const noteRect = head.getBoundingClientRect()
   const containerRect = containerRef.value.getBoundingClientRect()
   toneLabelPosition.value = {
     left: noteRect.left - containerRect.left + noteRect.width / 2,

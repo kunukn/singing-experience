@@ -59,6 +59,11 @@ const includeAccidentals = useLocalStorage(
   false,
 )
 
+/* Whether note-name labels include the octave digit (e.g. "C4" vs "C"). Default
+ * off — the plain note name is enough for most practice; the number is for
+ * players who want to cross-check absolute pitch. */
+const areNoteNumbersShown = useLocalStorage('syng.notesNoteNumbers', false)
+
 const listenGame = useNotesPlayback()
 
 /* Stop any in-flight Listen playback when switching to the (silent) Overview tab
@@ -84,12 +89,14 @@ watch(activeTab, () => {
             v-model:bpm="bpm"
             v-model:areToneLabelsShown="areToneLabelsShown"
             v-model:includeAccidentals="includeAccidentals"
+            v-model:areNoteNumbersShown="areNoteNumbersShown"
           />
         </PrimeTabPanel>
         <PrimeTabPanel value="overview">
           <NotesOverviewDisplay
             v-model:areToneLabelsShown="areToneLabelsShown"
             v-model:includeAccidentals="includeAccidentals"
+            v-model:areNoteNumbersShown="areNoteNumbersShown"
           />
         </PrimeTabPanel>
       </PrimeTabPanels>

@@ -44,6 +44,8 @@ type Props = {
   isOnPitch?: boolean
   /* When true, draws a muted note-name label above every note. */
   showToneLabels?: boolean
+  /* When true, note-name labels include the octave digit ("C4" vs "C"). */
+  showNoteNumbers?: boolean
   /* When false, omits the BPM tempo marking from the staff; defaults to shown. */
   showTempo?: boolean
 }
@@ -92,10 +94,11 @@ const containerRef = ref<HTMLDivElement | null>(null)
 const scrollRef = ref<HTMLDivElement | null>(null)
 const noteElements = ref<Element[]>([])
 
-/* Nudge applied to every floating tone label so it sits slightly inset from and
- * above the note it annotates. TONE_LABEL_STACK_LIFT raises the singer's live
- * note one row higher than the target label it stacks on top of. */
-const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
+/* Vertical nudge applied to every floating tone label so it sits just above the
+ * note it annotates; the label is centered horizontally on the notehead by the
+ * `-translate-x-1/2` class, so no horizontal offset is needed.
+ * TONE_LABEL_STACK_LIFT raises the singer's live note one row higher than the
+ * target label it stacks on top of. */
 const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
 const TONE_LABEL_STACK_LIFT = -18 // px — extra lift for the stacked live-note row
 
@@ -109,7 +112,7 @@ function toneLabelStyle(
   stackLift = 0,
 ) {
   return {
-    left: `${(position?.left ?? 0) + TONE_LABEL_OFFSET_X}px`,
+    left: `${position?.left ?? 0}px`,
     top: `${(position?.top ?? 0) + TONE_LABEL_OFFSET_Y + stackLift}px`,
   }
 }
@@ -156,12 +159,18 @@ function updateAllToneLabels() {
     const midi = props.midis[index]
     if (midi === undefined) return []
 
-    const noteRect = element.getBoundingClientRect()
+    /* Anchor on the notehead glyph, not the `.abcjs-note` group — the group bbox
+     * includes accidental glyphs left of the head, which would pull the centered
+     * label off to one side. */
+    const head = element.querySelector('.abcjs-notehead') ?? element
+    const noteRect = head.getBoundingClientRect()
     return [
       {
         left: noteRect.left - containerRect.left + noteRect.width / 2,
         top: noteRect.top - containerRect.top,
-        text: midiToNoteLabel(midi).label,
+        text: midiToNoteLabel(midi, {
+          showOctave: props.showNoteNumbers ?? false,
+        }).label,
         flatText: midiToFlatLabel(midi),
       },
     ]
@@ -182,7 +191,10 @@ function updateToneLabelPosition(index: number | null) {
     return
   }
 
-  const noteRect = element.getBoundingClientRect()
+  /* Notehead glyph, not the group — matches updateAllToneLabels so the active /
+   * sung chips align with the muted chip they overlay. */
+  const head = element.querySelector('.abcjs-notehead') ?? element
+  const noteRect = head.getBoundingClientRect()
   const containerRect = containerRef.value.getBoundingClientRect()
   toneLabelPosition.value = {
     left: noteRect.left - containerRect.left + noteRect.width / 2,
@@ -300,6 +312,10 @@ watch(
   },
   { deep: true },
 )
+
+/* Octave toggle only changes label text, not note geometry — refresh the chips
+ * in place instead of re-rendering the SVG (mirrors the activeNoteIndex watch). */
+watch(() => props.showNoteNumbers, updateAllToneLabels)
 
 watch(
   () => props.activeNoteIndex,

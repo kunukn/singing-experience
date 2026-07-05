@@ -12,6 +12,9 @@ type UseStableSungLabelOptions = {
    * silence. Reuse the display's existing `sungMidi` — it already null-gates
    * idle / audible-preview / running so the label inherits the same gating. */
   sungMidi: Ref<number | null>
+  /* When false, the label drops the octave digit ("C" instead of "C4"). Reactive
+   * so toggling it instantly reformats the currently-held label. Default true. */
+  showOctave?: Ref<boolean>
   holdMs?: number
 }
 
@@ -25,7 +28,6 @@ type UseStableSungLabelOptions = {
  */
 export function useStableSungLabel(options: UseStableSungLabelOptions) {
   const holdMs = options.holdMs ?? DEFAULT_HOLD_MS
-  const stableSungLabel = ref<string | null>(null)
 
   /* Live signed cents between the raw pitch and the promoted label's semitone.
    * Not hold-gated: while the label holds through a note change, the cents
@@ -37,16 +39,26 @@ export function useStableSungLabel(options: UseStableSungLabelOptions) {
   let candidateMidi: number | null = null
   let candidateSince = 0
 
-  /* Semitone backing the currently displayed label — the cents reference. */
-  let stableMidi: number | null = null
+  /* Semitone backing the currently displayed label — the cents reference and
+   * the label source. A ref (not a plain let) so the label is a computed that
+   * reformats instantly when `showOctave` flips, without waiting for the next
+   * pitch tick. */
+  const stableMidi = ref<number | null>(null)
+
+  const stableSungLabel = computed(() =>
+    stableMidi.value === null
+      ? null
+      : midiToNoteLabel(stableMidi.value, {
+          showOctave: options.showOctave?.value ?? true,
+        }).label,
+  )
 
   watch(
     () => options.sungMidi.value,
     (midi) => {
       if (midi === null) {
         candidateMidi = null
-        stableMidi = null
-        stableSungLabel.value = null
+        stableMidi.value = null
         stableSungCents.value = null
 
         return
@@ -61,12 +73,13 @@ export function useStableSungLabel(options: UseStableSungLabelOptions) {
         candidateMidi = rounded
         candidateSince = now
       } else if (now - candidateSince >= holdMs) {
-        stableMidi = rounded
-        stableSungLabel.value = midiToNoteLabel(rounded).label
+        stableMidi.value = rounded
       }
 
       stableSungCents.value =
-        stableMidi === null ? null : Math.round((midi - stableMidi) * 100) // 100 cents per semitone
+        stableMidi.value === null
+          ? null
+          : Math.round((midi - stableMidi.value) * 100) // 100 cents per semitone
     },
   )
 

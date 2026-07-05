@@ -66,9 +66,9 @@ const noteGroupsByStaff = ref<Element[][][]>([])
  * shares one lyric mapping, so a single activeSyllableIndex maps onto each. */
 const lyricElementsByStaff = ref<Element[][]>([])
 
-/* Nudge applied to each staff's floating tone chip so it sits slightly inset from
- * and above the note it annotates. */
-const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
+/* Vertical nudge lifting each staff's floating tone chip just above the note it
+ * annotates; the chip is centered horizontally on the notehead by
+ * `-translate-x-1/2`, so no horizontal offset is needed. */
 const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
 
 /* Absolute-positioning style for a tone chip at the given staff-space position. */
@@ -76,7 +76,7 @@ function toneLabelStyle(
   position: { left: number; top: number } | null | undefined,
 ) {
   return {
-    left: `${(position?.left ?? 0) + TONE_LABEL_OFFSET_X}px`,
+    left: `${position?.left ?? 0}px`,
     top: `${(position?.top ?? 0) + TONE_LABEL_OFFSET_Y}px`,
   }
 }
@@ -119,7 +119,11 @@ function updateAllToneLabels() {
       const element = group[0]
       if (!note || !element) return []
 
-      const noteRect = element.getBoundingClientRect()
+      /* Anchor on the notehead glyph, not the `.abcjs-note` group — the group
+       * bbox spans the stem/beam and any accidental, which would pull the
+       * centered chip off to one side. */
+      const head = element.querySelector('.abcjs-notehead') ?? element
+      const noteRect = head.getBoundingClientRect()
       return [
         {
           left: noteRect.left - containerRect.left + noteRect.width / 2,
@@ -148,7 +152,10 @@ function updateToneLabelPositions(index: number | null) {
     const element = noteGroupsByStaff.value[staffIndex]?.[index]?.[0]
     if (!container || !element) return null
 
-    const noteRect = element.getBoundingClientRect()
+    /* Notehead glyph, not the group — matches updateAllToneLabels so the active
+     * chip aligns with the muted chip it overlays. */
+    const head = element.querySelector('.abcjs-notehead') ?? element
+    const noteRect = head.getBoundingClientRect()
     const containerRect = container.getBoundingClientRect()
     return {
       left: noteRect.left - containerRect.left + noteRect.width / 2,

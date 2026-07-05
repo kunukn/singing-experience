@@ -24,6 +24,9 @@ const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
 const includeAccidentals = defineModel<boolean>('includeAccidentals', {
   required: true,
 })
+const areNoteNumbersShown = defineModel<boolean>('areNoteNumbersShown', {
+  required: true,
+})
 
 const { t } = useI18n()
 
@@ -74,7 +77,10 @@ const sungMidi = computed(() => {
   return frequencyToMidi(previewFrequency.value)
 })
 
-const { stableSungLabel, stableSungCents } = useStableSungLabel({ sungMidi })
+const { stableSungLabel, stableSungCents } = useStableSungLabel({
+  sungMidi,
+  showOctave: areNoteNumbersShown,
+})
 
 /* Sounding pitch of the note currently highlighted during playback. */
 const currentToneLabel = computed(() => {
@@ -83,7 +89,7 @@ const currentToneLabel = computed(() => {
   const midi = scale.value.midis[activeNoteIndex.value]
   if (midi === undefined) return null
 
-  return midiToNoteLabel(midi).label
+  return midiToNoteLabel(midi, { showOctave: areNoteNumbersShown.value }).label
 })
 </script>
 
@@ -161,6 +167,13 @@ const currentToneLabel = computed(() => {
         :label="t('notes.accidentals')"
         :disabled="isRunning"
       />
+
+      <ToggleIconButton
+        v-model="areNoteNumbersShown"
+        iconOn="pi pi-sort-numeric-up"
+        iconOff="pi pi-sort-numeric-up"
+        :label="t('notes.noteNumbers')"
+      />
     </div>
 
     <div class="w-full max-w-full">
@@ -175,6 +188,7 @@ const currentToneLabel = computed(() => {
         :sungToneLabel="stableSungLabel"
         :sungToneCents="stableSungCents"
         :showToneLabels="areToneLabelsShown"
+        :showNoteNumbers="areNoteNumbersShown"
       />
     </div>
   </div>

@@ -521,13 +521,20 @@ type MidiNoteLabel = {
 
 /**
  * Convert a MIDI note number to its note name, octave, and display label.
+ * `showOctave` (default true) controls whether the label carries the octave
+ * digit — "C4" when on, bare "C" when off. `note` and `octave` are unaffected.
  */
-function midiToNoteLabel(midi: number): MidiNoteLabel {
+function midiToNoteLabel(
+  midi: number,
+  options?: { showOctave?: boolean },
+): MidiNoteLabel {
+  const showOctave = options?.showOctave ?? true
   const noteIndex = ((midi % 12) + 12) % 12
   const octave = Math.floor(midi / 12) - 1
   const note = NOTE_NAMES[noteIndex]
+  const rawLabel = showOctave ? `${note}${octave}` : note
 
-  return { note, octave, label: toAccidentalGlyph(`${note}${octave}`) }
+  return { note, octave, label: toAccidentalGlyph(rawLabel) }
 }
 
 /**

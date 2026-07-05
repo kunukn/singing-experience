@@ -12,6 +12,10 @@ const includeAccidentals = defineModel<boolean>('includeAccidentals', {
   required: true,
 })
 
+const areNoteNumbersShown = defineModel<boolean>('areNoteNumbersShown', {
+  required: true,
+})
+
 /* NOTE_SCALES is ordered treble (V:1) then bass (V:2). Naturals only unless the
  * "Sharps & flats" toggle includes the accidental notes. */
 const trebleMidis = computed(() =>
@@ -67,6 +71,12 @@ const sharedCardWidth = computed(() =>
         iconOff="pi pi-hashtag"
         :label="t('notes.accidentals')"
       />
+      <ToggleIconButton
+        v-model="areNoteNumbersShown"
+        iconOn="pi pi-sort-numeric-up"
+        iconOff="pi pi-sort-numeric-up"
+        :label="t('notes.noteNumbers')"
+      />
     </div>
     <!--
       Combined two-voice reference sheet: treble (G clef) over bass, rendered as a
@@ -79,6 +89,7 @@ const sharedCardWidth = computed(() =>
         :bassMidis="bassMidis"
         :bpm="DEFAULT_BPM"
         :showToneLabels="areToneLabelsShown"
+        :showNoteNumbers="areNoteNumbersShown"
         :minCardWidth="sharedCardWidth"
         @naturalWidth="overviewNaturalWidth = $event"
       />
@@ -100,6 +111,7 @@ const sharedCardWidth = computed(() =>
         :bassLowMidis="bassLowMidis"
         :bassHighMidis="bassHighMidis"
         :showToneLabels="areToneLabelsShown"
+        :showNoteNumbers="areNoteNumbersShown"
         :minCardWidth="sharedCardWidth"
         @naturalWidth="outlierNaturalWidth = $event"
       />

@@ -19,6 +19,8 @@ type Props = {
   bpm: number
   /* When true, draws a muted note-name label above every note on both staves. */
   showToneLabels?: boolean
+  /* When true, note-name labels include the octave digit ("C4" vs "C"). */
+  showNoteNumbers?: boolean
   /* Shared floor (px) for the bordered card so sibling sheets align in width;
    * the card never shrinks below this even when its own music is narrower. */
   minCardWidth?: number
@@ -42,9 +44,10 @@ type ToneLabel = {
  * ~13px above) aren't clipped by the scroll box (overflow-x:auto clips y too). */
 const STAFF_PADDING_TOP = 44
 
-/* Nudge applied to every floating tone label so it sits slightly inset from and
- * above the note it annotates; the flat enharmonic stacks one compact row higher. */
-const TONE_LABEL_OFFSET_X = 5 // px — inset from the note's left edge
+/* Vertical nudge lifting every floating tone label just above the note it
+ * annotates; the flat enharmonic stacks one compact row higher. The label is
+ * centered horizontally on the notehead by `-translate-x-1/2`, so no horizontal
+ * offset is needed. */
 const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
 const FLAT_LABEL_STACK_LIFT = -13 // px — one compact row above the sharp label
 
@@ -52,7 +55,7 @@ const FLAT_LABEL_STACK_LIFT = -13 // px — one compact row above the sharp labe
  * lift to stack the flat enharmonic above the sharp label. */
 function toneLabelStyle(label: ToneLabel, stackLift = 0) {
   return {
-    left: `${label.left + TONE_LABEL_OFFSET_X}px`,
+    left: `${label.left}px`,
     top: `${label.top + TONE_LABEL_OFFSET_Y + stackLift}px`,
   }
 }
@@ -110,12 +113,18 @@ function updateToneLabels() {
       const midi = midis[index]
       if (midi === undefined) return []
 
-      const noteRect = element.getBoundingClientRect()
+      /* Anchor on the notehead glyph, not the `.abcjs-note` group — the group
+       * bbox includes accidental glyphs left of the head, which would pull the
+       * centered label off to one side. */
+      const head = element.querySelector('.abcjs-notehead') ?? element
+      const noteRect = head.getBoundingClientRect()
       return [
         {
           left: noteRect.left - containerRect.left + noteRect.width / 2,
           top: noteRect.top - containerRect.top,
-          text: midiToNoteLabel(midi).label,
+          text: midiToNoteLabel(midi, {
+            showOctave: props.showNoteNumbers ?? false,
+          }).label,
           flatText: midiToFlatLabel(midi),
         },
       ]
@@ -230,6 +239,10 @@ watch(
   },
   { deep: true },
 )
+
+/* Octave toggle only changes label text, not note geometry — refresh the chips
+ * in place instead of re-rendering the SVG. */
+watch(() => props.showNoteNumbers, updateToneLabels)
 </script>
 
 <template>
