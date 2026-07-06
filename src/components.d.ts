@@ -55,6 +55,7 @@ declare module 'vue' {
     NotesOutlierSheet: typeof import('./components/notes/NotesOutlierSheet.vue')['default']
     NotesOverviewDisplay: typeof import('./components/notes/NotesOverviewDisplay.vue')['default']
     NotesOverviewSheet: typeof import('./components/notes/NotesOverviewSheet.vue')['default']
+    NotesOverviewTestPage: typeof import('./components/notes/NotesOverviewTestPage.vue')['default']
     NotesPage: typeof import('./components/notes/NotesPage.vue')['default']
     NotesSettingsRow: typeof import('./components/notes/NotesSettingsRow.vue')['default']
     NotesSheet: typeof import('./components/notes/NotesSheet.vue')['default']

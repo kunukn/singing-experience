@@ -11,6 +11,13 @@ type Props = {
    * mounted, so the idle preview mic is gated on this to avoid competing with
    * the "Listen" tab's mic on a hidden tab. */
   isActive: boolean
+  /* Test-only: force-disable the idle-preview mic so simulated pages never open
+   * the microphone. */
+  disableIdlePreview?: boolean
+  /* Test-only overrides for the simulated singer voice; production leaves them
+   * undefined so the real idle-preview mic drives the line. */
+  overridePreviewMidi?: number | null
+  overridePreviewFrequency?: number | null
 }
 
 const props = defineProps<Props>()
@@ -53,6 +60,12 @@ const { t } = useI18n()
 
 const { isPreviewEnabled } = useSettings()
 
+/* Force-disable idle preview (and the mic it would open) in simulated test
+ * pages, regardless of the user's "See your voice" setting. */
+const effectivePreviewEnabled = computed(
+  () => !props.disableIdlePreview && isPreviewEnabled.value,
+)
+
 /* "See your voice" idle preview — listens only while this tab is active, so it
  * never competes with the "Listen" tab's mic on the (still-mounted) hidden
  * panel. */
@@ -62,15 +75,28 @@ const {
   micPermission,
 } = useIdlePreview({
   isGameActive: computed(() => !props.isActive),
-  isEnabled: isPreviewEnabled,
+  isEnabled: effectivePreviewEnabled,
 })
+
+/* Test overrides take precedence over the real mic values; production leaves the
+ * override props undefined so these fall through to the idle-preview output. */
+const effectivePreviewMidi = computed(
+  () => props.overridePreviewMidi ?? previewMidi.value,
+)
+const effectivePreviewFrequency = computed(
+  () => props.overridePreviewFrequency ?? previewFrequency.value,
+)
 
 /* Continuous MIDI of the previewed pitch (raw, not rounded), for the pitch line's
  * vertical position; null when no clean pitch is detected. */
 const sungMidi = computed(() => {
-  if (previewMidi.value === null || previewFrequency.value === null) return null
+  if (
+    effectivePreviewMidi.value === null ||
+    effectivePreviewFrequency.value === null
+  )
+    return null
 
-  return frequencyToMidi(previewFrequency.value)
+  return frequencyToMidi(effectivePreviewFrequency.value)
 })
 
 const { stableSungLabel, stableSungCents } = useStableSungLabel({
