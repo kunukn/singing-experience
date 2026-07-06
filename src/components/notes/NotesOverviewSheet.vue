@@ -110,12 +110,32 @@ const visibleToneLabelsByStaff = computed(() =>
 
 const rootRef = ref<HTMLDivElement | null>(null)
 
-/* Linear MIDI→Y mapping calibrated from the rendered noteheads of BOTH staves,
- * so the preview pitch line tracks correctly whether the singer is in treble or
- * bass range. Rebuilt on every render. Y is measured in rootRef coordinates so
+/* Per-staff linear MIDI→Y mappings, each calibrated from ONLY that staff's
+ * noteheads. A single regression across both staves can't align to either —
+ * the two staves are vertically separated, so one line lands in the gap. Within
+ * a single staff MIDI→Y is linear, so a per-staff fit sits on the real
+ * noteheads. Rebuilt on every render. Y is measured in rootRef coordinates so
  * the pitch line stays correct regardless of horizontal scroll. */
-const pitchToY = shallowRef<(midi: number) => number>(() => 0)
+const treblePitchToY = shallowRef<(midi: number) => number>(() => 0)
+const bassPitchToY = shallowRef<(midi: number) => number>(() => 0)
 const staffHeight = ref(0)
+
+/* Each staff's MIDI span, derived from props (not measured samples) so the
+ * gating decision updates the instant the accidentals toggle changes the arrays.
+ * null when a staff has no notes. */
+const trebleRange = computed(() =>
+  props.trebleMidis.length
+    ? {
+        min: Math.min(...props.trebleMidis),
+        max: Math.max(...props.trebleMidis),
+      }
+    : null,
+)
+const bassRange = computed(() =>
+  props.bassMidis.length
+    ? { min: Math.min(...props.bassMidis), max: Math.max(...props.bassMidis) }
+    : null,
+)
 
 /* ±40¢ — audibly off; below this the cents suffix is noise. */
 const SUNG_CENTS_THRESHOLD = 40
@@ -131,14 +151,37 @@ const sungToneText = computed(() => {
   )
 })
 
-/* Vertical position of the live pitch line in rootRef coords, clamped to the
- * staff; null hides the line (no clean pitch detected). */
-const pitchLineTop = computed(() => {
-  if (props.sungMidi === null || props.sungMidi === undefined) return null
+/* Vertical positions (rootRef coords) of the live pitch line, one entry per
+ * staff that contains the sung pitch — so C4 (on both staves) draws two lines,
+ * C#4 draws one on treble, B3 one on bass. Empty when no clean pitch. Treble is
+ * pushed first so a dual-line stacks treble above bass. */
+const pitchLines = computed<{ top: number }[]>(() => {
+  const sungMidi = props.sungMidi
+  if (sungMidi === null || sungMidi === undefined) return []
 
-  const raw = pitchToY.value(props.sungMidi)
-  const EDGE_MARGIN = 2 // px — keep the 2px line fully visible at the edges
-  return Math.max(EDGE_MARGIN, Math.min(staffHeight.value - EDGE_MARGIN, raw))
+  const EDGE_MARGIN = 2 // px — keep the 3px line fully visible at the edges
+  const rounded = Math.round(sungMidi)
+
+  /* Map the continuous pitch (clamped to the staff's range so extremes pin to
+   * the top/bottom notehead), then clamp the pixel Y as a defensive net. */
+  const positionOn = (
+    mapping: (midi: number) => number,
+    range: { min: number; max: number },
+  ) => {
+    const clampedMidi = Math.min(Math.max(sungMidi, range.min), range.max)
+    const raw = mapping(clampedMidi)
+    return Math.max(EDGE_MARGIN, Math.min(staffHeight.value - EDGE_MARGIN, raw))
+  }
+
+  const lines: { top: number }[] = []
+  if (trebleRange.value && rounded >= trebleRange.value.min) {
+    lines.push({ top: positionOn(treblePitchToY.value, trebleRange.value) })
+  }
+  if (bassRange.value && rounded <= bassRange.value.max) {
+    lines.push({ top: positionOn(bassPitchToY.value, bassRange.value) })
+  }
+
+  return lines
 })
 
 /* Measure each note's position per staff. Voice 0 (treble) and voice 1 (bass)
@@ -209,10 +252,11 @@ function updateClefLabels() {
   })
 }
 
-/* Collect notehead positions from both voices and build a single MIDI→Y mapping
- * spanning both staves. The two-voice abcjs system tags notes `abcjs-v0` (treble)
- * and `abcjs-v1` (bass); both staves' noteheads are sampled so the regression
- * covers the full pitch range. */
+/* Build a SEPARATE MIDI→Y mapping per staff, each from only that staff's
+ * noteheads. The two-voice abcjs system tags notes `abcjs-v0` (treble) and
+ * `abcjs-v1` (bass); sampling each voice on its own keeps the regression aligned
+ * to that staff's real notehead positions instead of averaging across the gap
+ * between the two staves. */
 function calibratePitchToY() {
   if (!rootRef.value || !containerRef.value) return
 
@@ -220,28 +264,25 @@ function calibratePitchToY() {
   staffHeight.value = rootRef.value.clientHeight
 
   const staffMidis = [props.trebleMidis, props.bassMidis]
-  const samples: PitchSample[] = []
-
-  staffMidis.forEach((midis, voiceIndex) => {
+  const mappings = staffMidis.map((midis, voiceIndex) => {
     const notes = [
       ...(containerRef.value?.querySelectorAll(
         `.abcjs-note.abcjs-v${voiceIndex}`,
       ) ?? []),
     ]
-    notes.forEach((element, index) => {
+    const samples: PitchSample[] = notes.flatMap((element, index) => {
       const midi = midis[index]
-      if (midi === undefined) return
+      if (midi === undefined) return []
 
       const head = element.querySelector('.abcjs-notehead') ?? element
       const rect = head.getBoundingClientRect()
-      samples.push({
-        midi,
-        y: rect.top - rootRect.top + rect.height / 2,
-      })
+      return [{ midi, y: rect.top - rootRect.top + rect.height / 2 }]
     })
+    return buildPitchToY(samples)
   })
 
-  pitchToY.value = buildPitchToY(samples)
+  treblePitchToY.value = mappings[0]
+  bassPitchToY.value = mappings[1]
 }
 
 async function renderSheet() {
@@ -403,32 +444,30 @@ watch(() => props.showNoteNumbers, updateToneLabels)
     </div>
 
     <!--
-    Live preview pitch line — pinned to the root (not the scroll box) so
-    horizontal auto-scroll of the staff never shifts it sideways; only its
-    vertical position tracks the singer's pitch. Orange dashed, matching the
-    NotesSheet preview line.
+    Live preview pitch line(s) — pinned to the root (not the scroll box) so
+    horizontal auto-scroll of the staff never shifts them sideways; only the
+    vertical position tracks the singer's pitch. One line per staff containing
+    the pitch (so C4 draws on both treble and bass). Orange dashed, matching the
+    NotesSheet preview line. Each line carries its own note-name chip, centered
+    horizontally, so the shared-boundary dual-line case labels both.
     -->
-    <div
-      v-if="pitchLineTop !== null"
-      class="pointer-events-none absolute inset-x-2 h-0 border-t-3 border-dashed border-(--p-orange-400)/50"
-      :style="{ top: `${pitchLineTop}px` }"
-    />
-
-    <!--
-    Note-name label riding the live pitch line: centered horizontally, tracking
-    the singer's pitch vertically. Color matches the line it rides.
-    -->
-    <div
-      v-if="pitchLineTop !== null && sungToneText"
-      class="pointer-events-none absolute inset-x-2 z-20 flex -translate-y-1/2 justify-center"
-      :style="{ top: `${pitchLineTop}px` }"
-    >
-      <span
-        class="rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-orange-400) tabular-nums"
+    <template v-for="(line, index) in pitchLines" :key="index">
+      <div
+        class="pointer-events-none absolute inset-x-2 h-0 border-t-3 border-dashed border-(--p-orange-400)/50"
+        :style="{ top: `${line.top}px` }"
+      />
+      <div
+        v-if="sungToneText"
+        class="pointer-events-none absolute inset-x-2 z-20 flex -translate-y-1/2 justify-center"
+        :style="{ top: `${line.top}px` }"
       >
-        {{ sungToneText }}
-      </span>
-    </div>
+        <span
+          class="rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-orange-400) tabular-nums"
+        >
+          {{ sungToneText }}
+        </span>
+      </div>
+    </template>
   </div>
 </template>
 
