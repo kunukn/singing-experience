@@ -454,12 +454,12 @@ watch(() => props.showNoteNumbers, updateToneLabels)
     <template v-for="(line, index) in pitchLines" :key="index">
       <div
         class="pointer-events-none absolute inset-x-2 h-0 border-t-3 border-dashed border-(--p-orange-400)/50"
-        :style="{ top: `${line.top}px` }"
+        :style="{ top: `${line.top - 2}px` }"
       />
       <div
         v-if="sungToneText"
         class="pointer-events-none absolute inset-x-2 z-20 flex -translate-y-1/2 justify-center"
-        :style="{ top: `${line.top}px` }"
+        :style="{ top: `${line.top - 2}px` }"
       >
         <span
           class="rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-orange-400) tabular-nums"
