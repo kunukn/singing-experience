@@ -1,8 +1,19 @@
 <script setup lang="ts">
+import { frequencyToMidi } from '@/utils/noteUtils'
+import { useStableSungLabel } from '@/components/grace-kelly/useStableSungLabel'
 import NotesOutlierSheet from './NotesOutlierSheet.vue'
 import NotesOverviewSheet from './NotesOverviewSheet.vue'
 import { DEFAULT_BPM } from './notesConstants'
 import { filterAccidentals, NOTE_SCALES, OUTLIER_SCALES } from './notesScales'
+
+type Props = {
+  /* True only while the "Overview" tab is active. PrimeTabs keeps every panel
+   * mounted, so the idle preview mic is gated on this to avoid competing with
+   * the "Listen" tab's mic on a hidden tab. */
+  isActive: boolean
+}
+
+const props = defineProps<Props>()
 
 const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
   required: true,
@@ -39,6 +50,33 @@ const bassHighMidis = computed(() =>
 )
 
 const { t } = useI18n()
+
+const { isPreviewEnabled } = useSettings()
+
+/* "See your voice" idle preview — listens only while this tab is active, so it
+ * never competes with the "Listen" tab's mic on the (still-mounted) hidden
+ * panel. */
+const {
+  previewMidi,
+  rawFrequency: previewFrequency,
+  micPermission,
+} = useIdlePreview({
+  isGameActive: computed(() => !props.isActive),
+  isEnabled: isPreviewEnabled,
+})
+
+/* Continuous MIDI of the previewed pitch (raw, not rounded), for the pitch line's
+ * vertical position; null when no clean pitch is detected. */
+const sungMidi = computed(() => {
+  if (previewMidi.value === null || previewFrequency.value === null) return null
+
+  return frequencyToMidi(previewFrequency.value)
+})
+
+const { stableSungLabel, stableSungCents } = useStableSungLabel({
+  sungMidi,
+  showOctave: areNoteNumbersShown,
+})
 
 /* Each sheet reports its natural SVG width; the wider one's width becomes the
  * shared `min-width` for both cards so their borders align. Only applied once both
@@ -77,6 +115,10 @@ const sharedCardWidth = computed(() =>
         iconOff="pi pi-sort-numeric-up"
         :label="t('notes.noteNumbers')"
       />
+      <PreviewToggle
+        v-model="isPreviewEnabled"
+        :disabled="micPermission === 'denied'"
+      />
     </div>
     <!--
       Combined two-voice reference sheet: treble (G clef) over bass, rendered as a
@@ -90,6 +132,9 @@ const sharedCardWidth = computed(() =>
         :bpm="DEFAULT_BPM"
         :showToneLabels="areToneLabelsShown"
         :showNoteNumbers="areNoteNumbersShown"
+        :sungMidi="sungMidi"
+        :sungToneLabel="stableSungLabel"
+        :sungToneCents="stableSungCents"
         :minCardWidth="sharedCardWidth"
         @naturalWidth="overviewNaturalWidth = $event"
       />

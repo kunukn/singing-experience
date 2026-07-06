@@ -94,6 +94,7 @@ watch(activeTab, () => {
         </PrimeTabPanel>
         <PrimeTabPanel value="overview">
           <NotesOverviewDisplay
+            :isActive="activeTab === 'overview'"
             v-model:areToneLabelsShown="areToneLabelsShown"
             v-model:includeAccidentals="includeAccidentals"
             v-model:areNoteNumbersShown="areNoteNumbersShown"

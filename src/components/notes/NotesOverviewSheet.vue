@@ -1,9 +1,17 @@
 <script setup lang="ts">
 import {
+  buildPitchToY,
+  type PitchSample,
+} from '@/components/grace-kelly/graceKellySingPitch'
+import {
   measureMusicWidth,
   STAFF_LABEL_FONT,
 } from '@/components/grace-kelly/graceKellyStaffRender'
-import { midiToFlatLabel, midiToNoteLabel } from '@/utils/noteUtils'
+import {
+  formatNoteLabelWithCents,
+  midiToFlatLabel,
+  midiToNoteLabel,
+} from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
 import {
@@ -21,6 +29,15 @@ type Props = {
   showToneLabels?: boolean
   /* When true, note-name labels include the octave digit ("C4" vs "C"). */
   showNoteNumbers?: boolean
+  /* Singer's de-flickered live note label, drawn as a chip riding the pitch
+   * line. */
+  sungToneLabel?: string | null
+  /* Signed cents between the live pitch and sungToneLabel's semitone; appended
+   * to the chip (e.g. "C3 -35¢") once audibly off. */
+  sungToneCents?: number | null
+  /* Continuous MIDI of the singer's live pitch (raw, not rounded); null when
+   * silent. Drives the vertical position of the pitch line. */
+  sungMidi?: number | null
   /* Shared floor (px) for the bordered card so sibling sheets align in width;
    * the card never shrinks below this even when its own music is narrower. */
   minCardWidth?: number
@@ -91,6 +108,39 @@ const visibleToneLabelsByStaff = computed(() =>
   props.showToneLabels ? toneLabelsByStaff.value : [[], []],
 )
 
+const rootRef = ref<HTMLDivElement | null>(null)
+
+/* Linear MIDI→Y mapping calibrated from the rendered noteheads of BOTH staves,
+ * so the preview pitch line tracks correctly whether the singer is in treble or
+ * bass range. Rebuilt on every render. Y is measured in rootRef coordinates so
+ * the pitch line stays correct regardless of horizontal scroll. */
+const pitchToY = shallowRef<(midi: number) => number>(() => 0)
+const staffHeight = ref(0)
+
+/* ±40¢ — audibly off; below this the cents suffix is noise. */
+const SUNG_CENTS_THRESHOLD = 40
+
+/* Chip text: the sung label, plus the exact cents deviation once out of tune. */
+const sungToneText = computed(() => {
+  if (!props.sungToneLabel) return null
+
+  return formatNoteLabelWithCents(
+    props.sungToneLabel,
+    props.sungToneCents ?? 0,
+    SUNG_CENTS_THRESHOLD,
+  )
+})
+
+/* Vertical position of the live pitch line in rootRef coords, clamped to the
+ * staff; null hides the line (no clean pitch detected). */
+const pitchLineTop = computed(() => {
+  if (props.sungMidi === null || props.sungMidi === undefined) return null
+
+  const raw = pitchToY.value(props.sungMidi)
+  const EDGE_MARGIN = 2 // px — keep the 2px line fully visible at the edges
+  return Math.max(EDGE_MARGIN, Math.min(staffHeight.value - EDGE_MARGIN, raw))
+})
+
 /* Measure each note's position per staff. Voice 0 (treble) and voice 1 (bass)
  * notes carry abcjs's `abcjs-v0`/`abcjs-v1` classes, so a single combined SVG
  * splits cleanly into the two staves; index i maps to that staff's midis[i]. */
@@ -159,6 +209,41 @@ function updateClefLabels() {
   })
 }
 
+/* Collect notehead positions from both voices and build a single MIDI→Y mapping
+ * spanning both staves. The two-voice abcjs system tags notes `abcjs-v0` (treble)
+ * and `abcjs-v1` (bass); both staves' noteheads are sampled so the regression
+ * covers the full pitch range. */
+function calibratePitchToY() {
+  if (!rootRef.value || !containerRef.value) return
+
+  const rootRect = rootRef.value.getBoundingClientRect()
+  staffHeight.value = rootRef.value.clientHeight
+
+  const staffMidis = [props.trebleMidis, props.bassMidis]
+  const samples: PitchSample[] = []
+
+  staffMidis.forEach((midis, voiceIndex) => {
+    const notes = [
+      ...(containerRef.value?.querySelectorAll(
+        `.abcjs-note.abcjs-v${voiceIndex}`,
+      ) ?? []),
+    ]
+    notes.forEach((element, index) => {
+      const midi = midis[index]
+      if (midi === undefined) return
+
+      const head = element.querySelector('.abcjs-notehead') ?? element
+      const rect = head.getBoundingClientRect()
+      samples.push({
+        midi,
+        y: rect.top - rootRect.top + rect.height / 2,
+      })
+    })
+  })
+
+  pitchToY.value = buildPitchToY(samples)
+}
+
 async function renderSheet() {
   if (!containerRef.value) return
 
@@ -198,6 +283,7 @@ async function renderSheet() {
 
   updateToneLabels()
   updateClefLabels()
+  calibratePitchToY()
 
   /* Report the card's natural border-box width: the SVG's baked intrinsic width
    * plus the wrapper's horizontal borders (border-box `min-width` includes the
@@ -252,65 +338,95 @@ watch(() => props.showNoteNumbers, updateToneLabels)
     narrower than that it collapses to 100%, so the card stays within the viewport
     and scrolls internally (overflow-x-auto) instead of overflowing the page.
   -->
-  <div
-    ref="scrollRef"
-    class="mx-auto w-fit max-w-full overflow-x-auto rounded border border-(--p-content-border-color)"
-    :style="
-      minCardWidth ? { minWidth: `min(${minCardWidth}px, 100%)` } : undefined
-    "
-  >
-    <div class="relative min-w-max">
-      <div ref="containerRef" class="relative z-10 py-0.5" />
+  <div ref="rootRef" class="relative mx-auto w-fit max-w-full">
+    <div
+      ref="scrollRef"
+      class="mx-auto w-fit max-w-full overflow-x-auto rounded border border-(--p-content-border-color)"
+      :style="
+        minCardWidth ? { minWidth: `min(${minCardWidth}px, 100%)` } : undefined
+      "
+    >
+      <div class="relative min-w-max">
+        <div ref="containerRef" class="relative z-10 py-0.5" />
 
-      <!--
+        <!--
         Muted note-name label above each note on both staves, shown only when the
         toggle is on. The flat enharmonic (Db, Eb, …) stacks one compact row above
         the sharp label for accidental notes.
       -->
-      <template
-        v-for="(labels, staffIndex) in visibleToneLabelsByStaff"
-        :key="staffIndex"
-      >
-        <span
-          v-for="(label, index) in labels"
-          :key="`${staffIndex}-${index}`"
-          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
-          :style="toneLabelStyle(label)"
+        <template
+          v-for="(labels, staffIndex) in visibleToneLabelsByStaff"
+          :key="staffIndex"
         >
-          {{ label.text }}
-        </span>
-        <span
-          v-for="(label, index) in labels"
-          v-show="label.flatText"
-          :key="`${staffIndex}-flat-${index}`"
-          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-[12px] leading-none font-semibold text-(--p-text-muted-color)/70 tabular-nums"
-          :style="toneLabelStyle(label, FLAT_LABEL_STACK_LIFT)"
-        >
-          {{ label.flatText }}
-        </span>
-      </template>
+          <span
+            v-for="(label, index) in labels"
+            :key="`${staffIndex}-${index}`"
+            class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
+            :style="toneLabelStyle(label)"
+          >
+            {{ label.text }}
+          </span>
+          <span
+            v-for="(label, index) in labels"
+            v-show="label.flatText"
+            :key="`${staffIndex}-flat-${index}`"
+            class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-[12px] leading-none font-semibold text-(--p-text-muted-color)/70 tabular-nums"
+            :style="toneLabelStyle(label, FLAT_LABEL_STACK_LIFT)"
+          >
+            {{ label.flatText }}
+          </span>
+        </template>
 
-      <!--
+        <!--
         Clef name above each clef glyph (treble on top staff, bass below),
         replacing the standalone labels that used to sit above the whole sheet.
       -->
+        <span
+          v-for="(position, voiceIndex) in clefLabels"
+          v-show="position"
+          :key="`clef-${voiceIndex}`"
+          class="pointer-events-none absolute z-20 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-normal text-(--p-text-muted-color)"
+          :style="{
+            left: `${position?.left ?? 0}px`,
+            top: `${(position?.top ?? 0) + CLEF_LABEL_LIFT}px`,
+          }"
+        >
+          {{
+            t(
+              voiceIndex === 0
+                ? 'notes.clefLabels.treble'
+                : 'notes.clefLabels.bass',
+            )
+          }}
+        </span>
+      </div>
+    </div>
+
+    <!--
+    Live preview pitch line — pinned to the root (not the scroll box) so
+    horizontal auto-scroll of the staff never shifts it sideways; only its
+    vertical position tracks the singer's pitch. Orange dashed, matching the
+    NotesSheet preview line.
+    -->
+    <div
+      v-if="pitchLineTop !== null"
+      class="pointer-events-none absolute inset-x-2 h-0 border-t-3 border-dashed border-(--p-orange-400)/50"
+      :style="{ top: `${pitchLineTop}px` }"
+    />
+
+    <!--
+    Note-name label riding the live pitch line: centered horizontally, tracking
+    the singer's pitch vertically. Color matches the line it rides.
+    -->
+    <div
+      v-if="pitchLineTop !== null && sungToneText"
+      class="pointer-events-none absolute inset-x-2 z-20 flex -translate-y-1/2 justify-center"
+      :style="{ top: `${pitchLineTop}px` }"
+    >
       <span
-        v-for="(position, voiceIndex) in clefLabels"
-        v-show="position"
-        :key="`clef-${voiceIndex}`"
-        class="pointer-events-none absolute z-20 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-normal text-(--p-text-muted-color)"
-        :style="{
-          left: `${position?.left ?? 0}px`,
-          top: `${(position?.top ?? 0) + CLEF_LABEL_LIFT}px`,
-        }"
+        class="rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-orange-400) tabular-nums"
       >
-        {{
-          t(
-            voiceIndex === 0
-              ? 'notes.clefLabels.treble'
-              : 'notes.clefLabels.bass',
-          )
-        }}
+        {{ sungToneText }}
       </span>
     </div>
   </div>
