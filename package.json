@@ -39,10 +39,10 @@
     "pitchy": "^4.1.0",
     "primeicons": "^7.0.0",
     "primevue": "^4.5.5",
-    "tailwindcss": "^4.3.0",
+    "tailwindcss": "^4.3.2",
     "tone": "^15.1.22",
     "vue": "^3.5.38",
-    "vue-i18n": "^11.4.5",
+    "vue-i18n": "^11.4.6",
     "vue-router": "^5.1.0",
     "xstate": "^5.32.1"
   },
