@@ -41,6 +41,7 @@ export const SEMITONE_UNIT = 24 // px per semitone — the linear pitch-axis sca
 export const WHITE_KEY_HEIGHT = 160 // px
 export const BLACK_KEY_HEIGHT_RATIO = 0.62 // of the white key height
 export const BLACK_KEY_WIDTH_RATIO = 0.62 // of a full (2-unit) white key
+export const PIANO_LABEL_BAND_HEIGHT = 28 // px — headroom above the keys for the live-pitch chip
 
 export type PianoKey = {
   midi: number
@@ -57,6 +58,10 @@ export type PianoLayout = {
   whites: PianoKey[]
   blacks: PianoKey[]
   totalWidth: number
+  /* Pitch value mapped to x=0, and px-per-semitone — together they let callers
+   * map a continuous float MIDI to x: `(floatMidi - originPitch) * unit`. */
+  originPitch: number
+  unit: number
 }
 
 export function buildPianoLayout(
@@ -108,5 +113,5 @@ export function buildPianoLayout(
     widthPx: blackWidth,
   }))
 
-  return { whites, blacks, totalWidth }
+  return { whites, blacks, totalWidth, originPitch, unit }
 }

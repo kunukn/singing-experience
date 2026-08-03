@@ -40,10 +40,21 @@ const rangeOptions = computed(() =>
 )
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
-/* Preview toggle — persist-only. Read mic permission cheaply (no stream opened)
- * just to disable the toggle when the mic is blocked. */
+/* "See your voice" — drives the live mic preview. useIdlePreview requests mic
+ * permission when the toggle flips on and resets it to false if denied, keeps
+ * echo cancellation on (so played tones aren't mis-detected), and exposes a deaf
+ * period we arm whenever a key plays. */
 const { isPreviewEnabled } = useSettings()
-const { state: micPermission } = useMicrophonePermission()
+/* The piano has no listening game, so it's always idle — the preview mic runs
+ * whenever the toggle is on and permission is granted. */
+const isGameActive = computed(() => false)
+const {
+  previewMidi,
+  previewFrequency,
+  previewNoteLabel,
+  micPermission,
+  triggerDeafPeriod,
+} = useIdlePreview({ isGameActive, isEnabled: isPreviewEnabled })
 </script>
 
 <template>
@@ -80,6 +91,10 @@ const { state: micPermission } = useMicrophonePermission()
       <PianoDisplay
         :midiMin="selectedRange.midiMin"
         :midiMax="selectedRange.midiMax"
+        :previewMidi="previewMidi"
+        :previewFrequency="previewFrequency"
+        :previewNoteLabel="previewNoteLabel"
+        @tonePlayed="triggerDeafPeriod"
       />
     </div>
   </div>
