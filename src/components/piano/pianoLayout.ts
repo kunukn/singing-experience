@@ -37,11 +37,28 @@ function nextNatural(midi: number): number {
   return candidate
 }
 
+/* Fractional pitch positions of a white key's rectangle edges — the midpoints
+ * to its neighboring naturals (inside or just outside the range). */
+const leftBoundary = (midi: number) => (midi + previousNatural(midi)) / 2
+const rightBoundary = (midi: number) => (midi + nextNatural(midi)) / 2
+
 export const SEMITONE_UNIT = 24 // px per semitone — the linear pitch-axis scale
 export const WHITE_KEY_HEIGHT = 160 // px
 export const BLACK_KEY_HEIGHT_RATIO = 0.62 // of the white key height
 export const BLACK_KEY_WIDTH_RATIO = 0.62 // of a full (2-unit) white key
 export const PIANO_LABEL_BAND_HEIGHT = 28 // px — headroom above the keys for the live-pitch chip
+
+/*
+ * Bounds for the fit-to-container unit (see PianoDisplay). On touch, 36 makes a
+ * black key 2 × 36 × 0.62 = 44.6px wide — Apple HIG's 44pt minimum tap target,
+ * which the default 24 (29.8px) misses. Mouse/trackpad keeps 24 so the widest
+ * range still fits a desktop container without scrolling.
+ */
+export const MIN_SEMITONE_UNIT_TOUCH = 36
+export const MIN_SEMITONE_UNIT_POINTER = SEMITONE_UNIT
+/* A 2-unit white key at 48 is 96px — about life-size (a real white key is
+ * 23.5mm). Beyond that a narrow range looks like a toy on a wide screen. */
+export const MAX_SEMITONE_UNIT = 48
 
 export type PianoKey = {
   midi: number
@@ -85,6 +102,19 @@ export function pianoCenterXForMidi(layout: PianoLayout, midi: number): number {
   return a.centerX + (b.centerX - a.centerX) * (clamped - a.midi)
 }
 
+/*
+ * Keyboard width in semitone units — the leftmost white key's outer edge to the
+ * rightmost's. `totalWidth === pianoSpanUnits(midiMin, midiMax) * unit`, so a
+ * caller can solve for the unit that fits a given pixel width before building
+ * the layout.
+ */
+export function pianoSpanUnits(midiMin: number, midiMax: number): number {
+  const firstWhite = isNaturalMidi(midiMin) ? midiMin : nextNatural(midiMin)
+  const lastWhite = isNaturalMidi(midiMax) ? midiMax : previousNatural(midiMax)
+
+  return rightBoundary(lastWhite) - leftBoundary(firstWhite)
+}
+
 export function buildPianoLayout(
   midiMin: number,
   midiMax: number,
@@ -96,11 +126,6 @@ export function buildPianoLayout(
     if (isNaturalMidi(midi)) whiteMidis.push(midi)
     else blackMidis.push(midi)
   }
-
-  /* Fractional pitch positions of a white key's rectangle edges — the midpoints
-   * to its neighboring naturals (inside or just outside the range). */
-  const leftBoundary = (midi: number) => (midi + previousNatural(midi)) / 2
-  const rightBoundary = (midi: number) => (midi + nextNatural(midi)) / 2
 
   /* Anchor the track's x-origin at the leftmost key's outer edge so leftPx
    * starts at 0. pitchX stays linear in semitones (equal px per semitone) — the

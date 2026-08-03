@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildPianoLayout, SEMITONE_UNIT } from './pianoLayout'
+import { buildPianoLayout, pianoSpanUnits, SEMITONE_UNIT } from './pianoLayout'
 
 /* Voice-range endpoints under test */
 const EVERYONE = { midiMin: 55, midiMax: 67 } // G3–G4
@@ -88,6 +88,21 @@ describe('buildPianoLayout', () => {
     }
   })
 
+  it('scales every dimension linearly with a custom unit', () => {
+    const base = buildPianoLayout(EVERYONE.midiMin, EVERYONE.midiMax)
+    const doubled = buildPianoLayout(
+      EVERYONE.midiMin,
+      EVERYONE.midiMax,
+      SEMITONE_UNIT * 2,
+    )
+
+    expect(doubled.totalWidth).toBeCloseTo(base.totalWidth * 2)
+    for (const [index, key] of doubled.whites.entries()) {
+      expect(key.leftPx).toBeCloseTo(base.whites[index].leftPx * 2)
+      expect(key.widthPx).toBeCloseTo(base.whites[index].widthPx * 2)
+    }
+  })
+
   it('labels only C keys', () => {
     const { whites, blacks } = buildPianoLayout(FULL.midiMin, FULL.midiMax)
     const labelled = [...whites, ...blacks].filter((key) => key.label !== null)
@@ -100,5 +115,36 @@ describe('buildPianoLayout', () => {
       'C6',
       'C7',
     ])
+  })
+})
+
+describe('pianoSpanUnits', () => {
+  it('measures the keyboard in semitone units, outer edge to outer edge', () => {
+    // G3–G4: G's neighbouring naturals are F and A, 2 semitones out on each
+    // side, so the 12-semitone range spans 14 units.
+    expect(pianoSpanUnits(EVERYONE.midiMin, EVERYONE.midiMax)).toBe(14)
+    // C2–C7: C's neighbours are B (1 semitone below) and D (2 above), so the
+    // 60-semitone range gains a 0.5-unit left edge and a 1-unit right edge.
+    expect(pianoSpanUnits(FULL.midiMin, FULL.midiMax)).toBe(61.5)
+  })
+
+  it('matches totalWidth for any unit — the invariant fit-to-container solves', () => {
+    for (const range of [EVERYONE, FULL]) {
+      const span = pianoSpanUnits(range.midiMin, range.midiMax)
+      for (const unit of [17, SEMITONE_UNIT, 36, 48]) {
+        const { totalWidth } = buildPianoLayout(
+          range.midiMin,
+          range.midiMax,
+          unit,
+        )
+        expect(totalWidth).toBeCloseTo(span * unit)
+      }
+    }
+  })
+
+  it('ignores accidental endpoints, since only white keys bound the track', () => {
+    // A3–A5 (Mezzo-Soprano) vs the same range widened to the enclosing
+    // accidentals — the white-key extremes, and so the span, are unchanged.
+    expect(pianoSpanUnits(57, 81)).toBe(pianoSpanUnits(56, 82))
   })
 })

@@ -5,11 +5,16 @@ import {
   TONE_CLICK_HIGHLIGHT_DURATION_MS,
   TONE_PLAY_DURATION_S,
 } from '@/constants/toneConstants'
+import { useMediaQuery, useResizeObserver } from '@vueuse/core'
 import {
   BLACK_KEY_HEIGHT_RATIO,
+  MAX_SEMITONE_UNIT,
+  MIN_SEMITONE_UNIT_POINTER,
+  MIN_SEMITONE_UNIT_TOUCH,
   PIANO_LABEL_BAND_HEIGHT,
   WHITE_KEY_HEIGHT,
   buildPianoLayout,
+  pianoSpanUnits,
   type PianoKey,
 } from './pianoLayout'
 import { buildPianoPreviewLine } from './pianoPreview'
@@ -75,7 +80,39 @@ const emit = defineEmits<{ tonePlayed: [] }>()
  * MonoSynth, so it stays monophonic there. */
 const { playToneAt, warmUp, getNow } = useTonePlayer()
 
-const layout = computed(() => buildPianoLayout(props.midiMin, props.midiMax))
+/*
+ * Fit-to-container key sizing. The scroll box is w-full, so its width comes
+ * from the parent and can't feed back from its own content — safe to observe
+ * directly (unlike the w-fit abcjs sheets, which observe their parent).
+ */
+const scrollBox = useTemplateRef<HTMLElement>('scrollBox')
+const containerWidth = ref(0)
+useResizeObserver(scrollBox, ([entry]) => {
+  containerWidth.value = entry.contentRect.width
+})
+
+const isCoarsePointer = useMediaQuery('(pointer: coarse)')
+
+/* Grow the keys to fill the container, bounded by a tap-target floor (larger on
+ * touch) and a life-size ceiling. Wide ranges hit the floor and scroll. */
+const semitoneUnit = computed(() => {
+  const minUnit = isCoarsePointer.value
+    ? MIN_SEMITONE_UNIT_TOUCH
+    : MIN_SEMITONE_UNIT_POINTER
+  /* Before the first ResizeObserver callback there is nothing to fit to. */
+  if (!containerWidth.value) return minUnit
+
+  const fitted =
+    containerWidth.value / pianoSpanUnits(props.midiMin, props.midiMax)
+
+  /* Floor to whole px so a fractional remainder can't overflow by a hair and
+   * trigger a scrollbar on a keyboard that was meant to fit. */
+  return Math.floor(Math.min(Math.max(fitted, minUnit), MAX_SEMITONE_UNIT))
+})
+
+const layout = computed(() =>
+  buildPianoLayout(props.midiMin, props.midiMax, semitoneUnit.value),
+)
 
 const blackKeyHeight = WHITE_KEY_HEIGHT * BLACK_KEY_HEIGHT_RATIO
 const trackHeight = WHITE_KEY_HEIGHT + PIANO_LABEL_BAND_HEIGHT
@@ -133,7 +170,12 @@ onUnmounted(() => {
 <template>
   <!-- A piano is a fixed physical instrument (low pitch always on the left), so
        force LTR even in RTL locales; inline-start then coincides with left. -->
-  <div class="w-full overflow-x-auto" dir="ltr" data-testid="piano-display">
+  <div
+    ref="scrollBox"
+    class="w-full overflow-x-auto"
+    dir="ltr"
+    data-testid="piano-display"
+  >
     <div
       class="relative mx-auto"
       :style="{
