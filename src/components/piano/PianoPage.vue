@@ -38,6 +38,7 @@ const rangeOptions = computed(() =>
     value: index,
   })),
 )
+const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
 /* Preview toggle — persist-only. Read mic permission cheaply (no stream opened)
  * just to disable the toggle when the mic is blocked. */
@@ -72,5 +73,10 @@ const { state: micPermission } = useMicrophonePermission()
         :disabled="micPermission === 'denied'"
       />
     </div>
+
+    <PianoDisplay
+      :midiMin="selectedRange.midiMin"
+      :midiMax="selectedRange.midiMax"
+    />
   </div>
 </template>
