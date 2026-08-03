@@ -41,10 +41,21 @@ export function buildPianoPreviewLine(
 
   const floatMidi =
     previewFrequency !== null ? frequencyToMidi(previewFrequency) : previewMidi
-  const x = Math.max(
-    0,
-    Math.min(layout.totalWidth, pianoCenterXForMidi(layout, floatMidi)),
-  )
+
+  /* Out-of-range pitches pin to the keyboard edge (parity with DoReMiScale's edge
+   * clamp): a too-low note sits at the far left, a too-high note at the far right —
+   * never dead-center on the first/last key, which would read as in-tune. */
+  let x: number
+  if (previewMidi < midiMin) {
+    x = 0
+  } else if (previewMidi > midiMax) {
+    x = layout.totalWidth
+  } else {
+    x = Math.max(
+      0,
+      Math.min(layout.totalWidth, pianoCenterXForMidi(layout, floatMidi)),
+    )
+  }
 
   /* Cents relative to the snapped note, matching the pitch-detector indicator
    * (round(100 × (continuous − nearest))). */

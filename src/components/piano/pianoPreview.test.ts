@@ -86,21 +86,21 @@ describe('buildPianoPreviewLine', () => {
     ).toBe('C4')
   })
 
-  it('clamps x to the keyboard edges for in-tolerance out-of-range pitches', () => {
-    // Just below C2 (within the 12-semitone tolerance) → clamp to the low edge
+  it('pins x to the keyboard edges for in-tolerance out-of-range pitches', () => {
+    // Just below C2 (within the 12-semitone tolerance) → pin to the far-left edge
     const below = lineFor({
       previewMidi: 35,
       previewFrequency: midiToFrequency(35),
       previewNoteLabel: 'B1',
     })
-    expect(below!.x).toBeCloseTo(centerOf(36)) // clamped to C2's center (lowest key)
+    expect(below!.x).toBe(0)
 
-    // Above C7 → clamp to the high edge
+    // Above C7 → pin to the far-right edge
     const above = lineFor({
       previewMidi: 98,
       previewFrequency: midiToFrequency(98),
       previewNoteLabel: 'D7',
     })
-    expect(above!.x).toBeCloseTo(centerOf(96)) // clamped to C7's center (highest key)
+    expect(above!.x).toBeCloseTo(layout.totalWidth)
   })
 })
