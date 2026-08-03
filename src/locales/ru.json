@@ -30,6 +30,8 @@
     "difficulty_normal": "Обычный",
     "difficulty_hard": "Сложный",
     "voiceRange": "Диапазон голоса",
+    "octaveDown": "Октава вниз",
+    "octaveUp": "Октава вверх",
     "congratulations": "Поздравляем!",
     "gameOver": "Игра окончена",
     "playAgain": "Играть снова",

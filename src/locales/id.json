@@ -30,6 +30,8 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Sulit",
     "voiceRange": "Jangkauan suara",
+    "octaveDown": "Turun satu oktaf",
+    "octaveUp": "Naik satu oktaf",
     "congratulations": "Selamat!",
     "gameOver": "Permainan selesai",
     "playAgain": "Main Lagi",

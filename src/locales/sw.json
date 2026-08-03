@@ -30,6 +30,8 @@
     "difficulty_normal": "Kawaida",
     "difficulty_hard": "Ngumu",
     "voiceRange": "Kiwango cha sauti",
+    "octaveDown": "Oktavu chini",
+    "octaveUp": "Oktavu juu",
     "congratulations": "Hongera!",
     "gameOver": "Mchezo umeisha",
     "playAgain": "Cheza Tena",

@@ -30,6 +30,8 @@
     "difficulty_normal": "सामान्य",
     "difficulty_hard": "कठिन",
     "voiceRange": "आवाज़ की सीमा",
+    "octaveDown": "ऑक्टेव नीचे",
+    "octaveUp": "ऑक्टेव ऊपर",
     "congratulations": "बधाई हो!",
     "gameOver": "खेल खत्म",
     "playAgain": "फिर से खेलें",

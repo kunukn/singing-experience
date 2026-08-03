@@ -30,6 +30,8 @@
     "difficulty_normal": "ふつう",
     "difficulty_hard": "むずかしい",
     "voiceRange": "声域",
+    "octaveDown": "1オクターブ下げる",
+    "octaveUp": "1オクターブ上げる",
     "congratulations": "おめでとう!",
     "gameOver": "ゲーム終了",
     "playAgain": "もう一度",

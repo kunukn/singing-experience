@@ -30,6 +30,8 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Hard",
     "voiceRange": "Voice range",
+    "octaveDown": "Octave down",
+    "octaveUp": "Octave up",
     "congratulations": "Congratulations!",
     "gameOver": "Game over",
     "playAgain": "Play Again",

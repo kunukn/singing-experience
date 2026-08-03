@@ -30,6 +30,8 @@
     "difficulty_normal": "عادي",
     "difficulty_hard": "صعب",
     "voiceRange": "نطاق الصوت",
+    "octaveDown": "أوكتاف لأسفل",
+    "octaveUp": "أوكتاف لأعلى",
     "congratulations": "تهانينا!",
     "gameOver": "انتهت اللعبة",
     "playAgain": "العب مرة أخرى",

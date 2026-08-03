@@ -1,9 +1,11 @@
 import { useEventListener } from '@vueuse/core'
+import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
   availableOctaveShifts,
   keyboardCodeForMidi,
   midiForKeyboardCode,
   qwertyCharForCode,
+  PIANO_KEYBOARD_BASE_MIDI,
   SEMITONES_PER_OCTAVE,
 } from './pianoKeyboardMap'
 
@@ -114,6 +116,28 @@ export function usePianoKeyboardInput(options: PianoKeyboardInputOptions) {
     return char.toUpperCase()
   }
 
+  /* Readout for the on-screen control: the leftmost mapped key and the note it
+   * currently plays. Spelled in the user's own layout, so an AZERTY keyboard
+   * reads "W = C3" — and it carries no translatable words. */
+  const anchor = computed(() => {
+    const midi = PIANO_KEYBOARD_BASE_MIDI + shiftSemitones.value
+
+    return {
+      char: keyboardCharForMidi(midi) ?? '',
+      noteLabel: midiToNoteLabel(midi, { showOctave: true }).label,
+    }
+  })
+
+  const octaveShiftIndex = computed(() =>
+    octaveShiftOptions.value.indexOf(octaveShift.value),
+  )
+  const canShiftDown = computed(() => octaveShiftIndex.value > 0)
+  const canShiftUp = computed(
+    () =>
+      octaveShiftIndex.value >= 0 &&
+      octaveShiftIndex.value < octaveShiftOptions.value.length - 1,
+  )
+
   useEventListener(window, 'keydown', (event: KeyboardEvent) => {
     /* A held key must not machine-gun the synth. */
     if (event.repeat) return
@@ -142,5 +166,13 @@ export function usePianoKeyboardInput(options: PianoKeyboardInputOptions) {
     options.onPlay(midi)
   })
 
-  return { keyboardCharForMidi, octaveShift: readonly(octaveShift) }
+  return {
+    keyboardCharForMidi,
+    octaveShift: readonly(octaveShift),
+    octaveShiftOptions,
+    stepOctaveShift,
+    canShiftDown,
+    canShiftUp,
+    anchor,
+  }
 }

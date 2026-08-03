@@ -30,6 +30,8 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Schwer",
     "voiceRange": "Stimmumfang",
+    "octaveDown": "Oktave tiefer",
+    "octaveUp": "Oktave höher",
     "congratulations": "Herzlichen Glückwunsch!",
     "gameOver": "Spiel vorbei",
     "playAgain": "Nochmal spielen",

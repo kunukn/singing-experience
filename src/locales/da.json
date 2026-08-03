@@ -30,6 +30,8 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Svær",
     "voiceRange": "Stemmeleje",
+    "octaveDown": "Oktav ned",
+    "octaveUp": "Oktav op",
     "congratulations": "Tillykke!",
     "gameOver": "Spillet er slut",
     "playAgain": "Spil igen",

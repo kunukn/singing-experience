@@ -60,6 +60,7 @@ declare module 'vue' {
     NotesSettingsRow: typeof import('./components/notes/NotesSettingsRow.vue')['default']
     NotesSheet: typeof import('./components/notes/NotesSheet.vue')['default']
     PianoDisplay: typeof import('./components/piano/PianoDisplay.vue')['default']
+    PianoOctaveShift: typeof import('./components/piano/PianoOctaveShift.vue')['default']
     PianoPage: typeof import('./components/piano/PianoPage.vue')['default']
     PitchDetectorDisplay: typeof import('./components/pitch-detector/PitchDetectorDisplay.vue')['default']
     PitchDetectorPage: typeof import('./components/pitch-detector/PitchDetectorPage.vue')['default']

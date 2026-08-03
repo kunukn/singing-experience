@@ -126,6 +126,16 @@ describe('availableOctaveShifts', () => {
     expect(availableOctaveShifts(40, 64)).toEqual([-1, 0]) // Bass E2–E4
   })
 
+  it('anchors the readout on a C at every position', () => {
+    /* The on-screen control reads "Z = <note>", where the note is the base
+     * moved by whole octaves — so Full C2–C7 steps C2, C3, C4, C5. */
+    const anchors = availableOctaveShifts(36, 96).map(
+      (shift) => PIANO_KEYBOARD_BASE_MIDI + shift * 12,
+    )
+
+    expect(anchors).toEqual([36, 48, 60, 72])
+  })
+
   it('makes every note of every preset playable across its shifts', () => {
     for (const { noteRange, midiMin, midiMax } of VOICE_RANGES) {
       const reachable = new Set<number>()

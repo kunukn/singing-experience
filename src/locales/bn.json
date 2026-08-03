@@ -30,6 +30,8 @@
     "difficulty_normal": "সাধারণ",
     "difficulty_hard": "কঠিন",
     "voiceRange": "কণ্ঠস্বরের পরিসর",
+    "octaveDown": "অকটেভ নিচে",
+    "octaveUp": "অকটেভ উপরে",
     "congratulations": "অভিনন্দন!",
     "gameOver": "খেলা শেষ",
     "playAgain": "আবার খেলুন",

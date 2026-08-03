@@ -30,6 +30,8 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Difícil",
     "voiceRange": "Rango vocal",
+    "octaveDown": "Octava abajo",
+    "octaveUp": "Octava arriba",
     "congratulations": "¡Felicidades!",
     "gameOver": "Fin del juego",
     "playAgain": "Jugar de nuevo",

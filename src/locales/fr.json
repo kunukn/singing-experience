@@ -30,6 +30,8 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Difficile",
     "voiceRange": "Tessiture ",
+    "octaveDown": "Octave en bas",
+    "octaveUp": "Octave en haut",
     "congratulations": "Félicitations !",
     "gameOver": "Partie terminée",
     "playAgain": "Rejouer",
