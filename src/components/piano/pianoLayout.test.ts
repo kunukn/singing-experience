@@ -19,17 +19,30 @@ describe('buildPianoLayout', () => {
     }
   })
 
-  it('makes E/F/B/C 1.5 units wide and D/G/A 2 units (interior keys)', () => {
+  it('makes E/F/B/C 1.5 units wide and D/G/A 2 units, including the end keys', () => {
     const { whites } = buildPianoLayout(FULL.midiMin, FULL.midiMax)
     const widthOf = (midi: number) =>
       whites.find((key) => key.midi === midi)!.widthPx
 
-    // C4=60 D4=62 E4=64 F4=65 G4=67 A4=69 B4=71 — all interior in C2–C7
-    for (const midi of [64, 65, 71, 60]) {
+    // C2=36 (first) C4=60 E4=64 F4=65 B4=71 C7=96 (last) — all 1.5 units, no
+    // truncated end keys.
+    for (const midi of [36, 60, 64, 65, 71, 96]) {
       expect(widthOf(midi)).toBeCloseTo(1.5 * SEMITONE_UNIT)
     }
     for (const midi of [62, 67, 69]) {
       expect(widthOf(midi)).toBeCloseTo(2 * SEMITONE_UNIT)
+    }
+  })
+
+  it('gives every C key the same width (first, interior, and last)', () => {
+    const { whites } = buildPianoLayout(FULL.midiMin, FULL.midiMax)
+    const cWidths = whites
+      .filter((key) => key.midi % 12 === 0)
+      .map((key) => key.widthPx)
+
+    expect(cWidths).toHaveLength(6) // C2..C7
+    for (const width of cWidths) {
+      expect(width).toBeCloseTo(cWidths[0])
     }
   })
 

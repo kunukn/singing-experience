@@ -48,7 +48,7 @@ const { state: micPermission } = useMicrophonePermission()
 
 <template>
   <div class="flex flex-1 flex-col items-center gap-4" data-testid="piano-page">
-    <div class="flex w-full flex-wrap items-center gap-2 sm:gap-4">
+    <div class="flex w-full max-w-3xl flex-wrap items-center gap-2 sm:gap-4">
       <PrimeSelect
         v-model="rangeIndex"
         :options="rangeOptions"
@@ -74,9 +74,13 @@ const { state: micPermission } = useMicrophonePermission()
       />
     </div>
 
-    <PianoDisplay
-      :midiMin="selectedRange.midiMin"
-      :midiMax="selectedRange.midiMax"
-    />
+    <!-- Only the keyboard widens (up to 1600px, matching the grace-kelly sheet);
+         the controls row above stays clamped to max-w-3xl. -->
+    <div class="mx-auto w-full max-w-400">
+      <PianoDisplay
+        :midiMin="selectedRange.midiMin"
+        :midiMax="selectedRange.midiMax"
+      />
+    </div>
   </div>
 </template>

@@ -15,7 +15,27 @@ import { midiToNoteLabel } from '@/utils/noteUtils'
  * every other white-key pair is 2 semitones apart, the contiguous tiling makes
  * E/F/B/C 1.5 units wide and the rest 2 units — the only widths that keep the
  * semitone spacing even.
+ *
+ * A white key's rectangle spans from the midpoint to the natural note below it
+ * to the midpoint to the natural note above it. The first and last keys use the
+ * natural just OUTSIDE the range as that neighbor, so they get their full width
+ * too — every C is the same width, with no truncated end keys.
  */
+
+/* Nearest natural (white-key) note strictly below / above a given midi. */
+function previousNatural(midi: number): number {
+  let candidate = midi - 1
+  while (!isNaturalMidi(candidate)) candidate--
+
+  return candidate
+}
+
+function nextNatural(midi: number): number {
+  let candidate = midi + 1
+  while (!isNaturalMidi(candidate)) candidate++
+
+  return candidate
+}
 
 export const SEMITONE_UNIT = 24 // px per semitone — the linear pitch-axis scale
 export const WHITE_KEY_HEIGHT = 160 // px
@@ -44,9 +64,6 @@ export function buildPianoLayout(
   midiMax: number,
   unit = SEMITONE_UNIT,
 ): PianoLayout {
-  const totalWidth = (midiMax - midiMin) * unit
-  const pitchX = (midi: number) => (midi - midiMin) * unit
-
   const whiteMidis: number[] = []
   const blackMidis: number[] = []
   for (let midi = midiMin; midi <= midiMax; midi++) {
@@ -54,17 +71,22 @@ export function buildPianoLayout(
     else blackMidis.push(midi)
   }
 
-  const whites: PianoKey[] = whiteMidis.map((midi, index) => {
-    const previous = whiteMidis[index - 1]
-    const next = whiteMidis[index + 1]
-    /* Boundary with each neighbor is the midpoint of their pitch positions.
-     * The first key clamps its left edge to 0 and the last key clamps its
-     * right edge to totalWidth, so the keyboard starts exactly at midiMin and
-     * ends exactly at midiMax. */
-    const leftPx =
-      previous === undefined ? 0 : (pitchX(midi) + pitchX(previous)) / 2
-    const rightPx =
-      next === undefined ? totalWidth : (pitchX(midi) + pitchX(next)) / 2
+  /* Fractional pitch positions of a white key's rectangle edges — the midpoints
+   * to its neighboring naturals (inside or just outside the range). */
+  const leftBoundary = (midi: number) => (midi + previousNatural(midi)) / 2
+  const rightBoundary = (midi: number) => (midi + nextNatural(midi)) / 2
+
+  /* Anchor the track's x-origin at the leftmost key's outer edge so leftPx
+   * starts at 0. pitchX stays linear in semitones (equal px per semitone) — the
+   * origin is just a constant offset, so B3→C4 still equals C4→C#4. */
+  const originPitch = leftBoundary(whiteMidis[0])
+  const pitchX = (midi: number) => (midi - originPitch) * unit
+  const totalWidth =
+    (rightBoundary(whiteMidis[whiteMidis.length - 1]) - originPitch) * unit
+
+  const whites: PianoKey[] = whiteMidis.map((midi) => {
+    const leftPx = (leftBoundary(midi) - originPitch) * unit
+    const rightPx = (rightBoundary(midi) - originPitch) * unit
 
     return {
       midi,
