@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
-import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
+import {
+  TONE_CLICK_HIGHLIGHT_DURATION_MS,
+  TONE_PLAY_DURATION_S,
+} from '@/constants/toneConstants'
 import {
   BLACK_KEY_HEIGHT_RATIO,
   PIANO_LABEL_BAND_HEIGHT,
@@ -26,7 +29,10 @@ const props = defineProps<Props>()
  * (stops the piano's own tone registering as sung pitch). */
 const emit = defineEmits<{ tonePlayed: [] }>()
 
-const { playTone } = useTonePlayer()
+/* playToneAt is polyphonic — it reuses the current mode's PolySynth and does not
+ * cut the previous note, so several keys ring together (a chord). Bass mode is a
+ * MonoSynth, so it stays monophonic there. */
+const { playToneAt, warmUp, getNow } = useTonePlayer()
 
 const layout = computed(() => buildPianoLayout(props.midiMin, props.midiMax))
 
@@ -43,19 +49,44 @@ const previewLine = computed(() =>
   }),
 )
 
-const activeMidi = ref<number | null>(null)
+/* Multiple keys can be lit at once (multi-touch chords). */
+const activeMidis = reactive(new Set<number>())
+const highlightTimers = new Map<number, ReturnType<typeof setTimeout>>()
 
-function playKey(midi: number) {
-  activeMidi.value = midi
-  /* playTone honors the globally-selected tone mode (set by PianoPage via
-   * setToneMode) and takes a frequency, so convert from MIDI. A key click is a
-   * user gesture, so the AudioContext self-starts inside playTone. */
-  playTone(midiToFrequency(midi))
+async function playKey(midi: number) {
+  activeMidis.add(midi)
+  const existing = highlightTimers.get(midi)
+  if (existing) clearTimeout(existing)
+
+  highlightTimers.set(
+    midi,
+    window.setTimeout(() => {
+      activeMidis.delete(midi)
+      highlightTimers.delete(midi)
+    }, TONE_CLICK_HIGHLIGHT_DURATION_MS),
+  )
+
+  /* warmUp resolves the AudioContext within the press gesture (cached after the
+   * first press); playToneAt needs it running and doesn't self-start. */
+  await warmUp()
+  playToneAt(midiToFrequency(midi), TONE_PLAY_DURATION_S, getNow())
   emit('tonePlayed')
-  window.setTimeout(() => {
-    if (activeMidi.value === midi) activeMidi.value = null
-  }, TONE_CLICK_HIGHLIGHT_DURATION_MS)
 }
+
+/* Keyboard access: a <button> fires no pointerdown for Enter/Space, so play on
+ * those keys too (ignoring auto-repeat while held). */
+function handleKeyDown(event: KeyboardEvent, midi: number) {
+  if (event.repeat) return
+  if (event.key !== 'Enter' && event.key !== ' ') return
+
+  event.preventDefault()
+  void playKey(midi)
+}
+
+onUnmounted(() => {
+  for (const timer of highlightTimers.values()) clearTimeout(timer)
+  highlightTimers.clear()
+})
 </script>
 
 <template>
@@ -73,9 +104,9 @@ function playKey(midi: number) {
         v-for="key in layout.whites"
         :key="key.midi"
         type="button"
-        class="absolute bottom-0 flex items-end justify-center rounded-b-md border border-(--p-content-border-color) pb-1 text-xs transition-colors"
+        class="absolute bottom-0 flex touch-manipulation items-end justify-center rounded-b-md border border-(--p-content-border-color) pb-1 text-xs transition-colors select-none"
         :class="
-          activeMidi === key.midi
+          activeMidis.has(key.midi)
             ? 'bg-(--p-primary-color) text-(--p-primary-contrast-color)'
             : 'bg-(--p-surface-0) text-(--p-text-muted-color)'
         "
@@ -86,7 +117,8 @@ function playKey(midi: number) {
         }"
         :data-testid="`piano-key-${key.midi}`"
         :aria-label="midiToNoteLabel(key.midi).label"
-        @click="playKey(key.midi)"
+        @pointerdown="playKey(key.midi)"
+        @keydown="handleKeyDown($event, key.midi)"
       >
         <span v-if="key.label">{{ key.label }}</span>
       </button>
@@ -95,9 +127,9 @@ function playKey(midi: number) {
         v-for="key in layout.blacks"
         :key="key.midi"
         type="button"
-        class="absolute z-10 rounded-b-md border border-(--p-surface-950)"
+        class="absolute z-10 touch-manipulation rounded-b-md border border-(--p-surface-950) select-none"
         :class="
-          activeMidi === key.midi
+          activeMidis.has(key.midi)
             ? 'bg-(--p-primary-color)'
             : 'bg-(--p-surface-900)'
         "
@@ -109,7 +141,8 @@ function playKey(midi: number) {
         }"
         :data-testid="`piano-key-${key.midi}`"
         :aria-label="midiToNoteLabel(key.midi).label"
-        @click="playKey(key.midi)"
+        @pointerdown="playKey(key.midi)"
+        @keydown="handleKeyDown($event, key.midi)"
       />
 
       <!-- Dead-center hint lines: a thin grey line down each key's true center,
