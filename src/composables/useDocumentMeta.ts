@@ -30,7 +30,7 @@ const ROUTE_META: Record<string, DocumentMeta> = {
   '/tools': {
     title: 'Singing Tools',
     description:
-      'Singing tools — real-time pitch detector, vocal warm-up, instrument tuner, and polyphonic tone detector. Free, runs in your browser.',
+      'Singing tools — real-time pitch detector, vocal warm-up, instrument tuner, polyphonic tone detector, and a playable piano. Free, runs in your browser.',
   },
   '/games': {
     title: 'Singing Games',
@@ -56,6 +56,11 @@ const ROUTE_META: Record<string, DocumentMeta> = {
     title: 'Polyphonic Tone Detector',
     description:
       'Detect multiple simultaneous tones in real time across C2–C7. Sing a harmony or play a chord and see each note displayed live.',
+  },
+  '/piano': {
+    title: 'Playable Piano Keyboard',
+    description:
+      'Play a piano keyboard in your browser and see your singing voice mapped onto the keys in real time.',
   },
 }
 

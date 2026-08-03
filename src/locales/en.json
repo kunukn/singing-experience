@@ -86,6 +86,10 @@
         "name": "Tone Detector",
         "description": "Detect multiple simultaneous tones in real time. Sing a harmony and see which notes are sounding."
       },
+      "piano": {
+        "name": "Piano",
+        "description": "Play the piano keys and watch your voice land on the keyboard."
+      },
       "singTone": {
         "name": "Sing Tone Game",
         "description": "A random tone is played — sing it back! Match different tones in a row to win."

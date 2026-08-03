@@ -86,6 +86,10 @@
         "name": "Tondetektor",
         "description": "Erkenne mehrere gleichzeitige Töne in Echtzeit. Singe eine Harmonie und sieh, welche Noten klingen."
       },
+      "piano": {
+        "name": "Klavier",
+        "description": "Spiel auf den Klaviertasten und sieh, wie deine Stimme auf den Tasten landet."
+      },
       "singTone": {
         "name": "Ton-Sing-Spiel",
         "description": "Ein zufälliger Ton wird gespielt – singe ihn nach! Treffe verschiedene Töne in Folge, um zu gewinnen."

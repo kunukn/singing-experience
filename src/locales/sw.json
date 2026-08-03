@@ -86,6 +86,10 @@
         "name": "Kipimo cha Toni Nyingi",
         "description": "Gundua toni nyingi kwa wakati mmoja moja kwa moja. Imba harmoni na uone kila toni inayosikika."
       },
+      "piano": {
+        "name": "Piano",
+        "description": "Gonga vitufe vya piano kucheza noti, na uone sauti yako ikitokea kwenye kinanda."
+      },
       "singTone": {
         "name": "Mchezo wa Kuimba Toni",
         "description": "Toni ya nasibu inachezwa — iimbe tena! Linganisha toni tofauti mfululizo ili kushinda."

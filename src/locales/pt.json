@@ -86,6 +86,10 @@
         "name": "Detector de tons",
         "description": "Detecte vários tons simultaneamente em tempo real. Cante uma harmonia e veja quais notas estão soando."
       },
+      "piano": {
+        "name": "Piano",
+        "description": "Toque as teclas do piano e veja sua voz aparecer no teclado."
+      },
       "singTone": {
         "name": "Jogo Cante o Tom",
         "description": "Um tom aleatório é tocado — cante de volta! Acerte tons diferentes seguidos para vencer."

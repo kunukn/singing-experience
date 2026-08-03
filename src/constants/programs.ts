@@ -44,6 +44,11 @@ export const tools: Program[] = [
     route: '/warm-up',
   },
   {
+    key: 'piano',
+    icon: '🎹',
+    route: '/piano',
+  },
+  {
     key: 'tuner',
     icon: '🪕',
     route: '/tuner',
@@ -55,7 +60,7 @@ export const tools: Program[] = [
   },
   {
     key: 'toneDetector',
-    icon: '🎹',
+    icon: '🎚️',
     route: '/tone-detector',
   },
 ]

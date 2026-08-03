@@ -86,6 +86,10 @@
         "name": "Détecteur de tons",
         "description": "Détecte plusieurs tons en même temps. Chante une harmonie et vois quelles notes résonnent."
       },
+      "piano": {
+        "name": "Piano",
+        "description": "Joue sur les touches du piano et regarde ta voix se poser sur le clavier."
+      },
       "singTone": {
         "name": "Jeu Chante le Ton",
         "description": "Un ton aléatoire est joué — chante-le ! Reproduis différents tons d'affilée pour gagner."

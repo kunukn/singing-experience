@@ -86,6 +86,10 @@
         "name": "Tonedetektor",
         "description": "Registrer flere samtidige toner i realtid. Syng en harmoni og se hvilke toner der lyder."
       },
+      "piano": {
+        "name": "Klaver",
+        "description": "Spil på klavertangenterne, og se din stemme lande på tangenterne."
+      },
       "singTone": {
         "name": "Syng Tone Spil",
         "description": "En tilfældig tone afspilles — syng den efter! Match forskellige toner i træk for at vinde."

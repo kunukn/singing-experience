@@ -86,6 +86,10 @@
         "name": "Detektor Nada Ganda",
         "description": "Deteksi beberapa nada sekaligus secara langsung. Nyanyikan harmoni dan lihat setiap nada yang terdengar."
       },
+      "piano": {
+        "name": "Piano",
+        "description": "Ketuk tuts piano untuk memainkan nada, dan lihat suaramu muncul di keyboard."
+      },
       "singTone": {
         "name": "Permainan Tebak Nada",
         "description": "Sebuah nada acak dimainkan — nyanyikan kembali! Cocokkan nada berbeda berturut-turut untuk menang."
