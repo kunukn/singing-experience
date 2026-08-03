@@ -30,20 +30,38 @@ type Props = {
 }
 const props = defineProps<Props>()
 
-/* White-key label for the current mode: in 'off' only the C-key octave markers
- * (key.label) show; otherwise every key shows its name, with the octave digit in
- * 'advanced'. */
+/* The two range boundaries always get a label, so the singer sees where the
+ * selected voice range starts and ends (e.g. A3 / A5 for Mezzo-Soprano). */
+function isRangeEdge(key: PianoKey): boolean {
+  return key.midi === props.midiMin || key.midi === props.midiMax
+}
+
+/* White-key label for the current mode: in 'off' the C-key octave markers
+ * (key.label) and the range edges show; otherwise every key shows its name, with
+ * the octave digit in 'advanced'. */
 function whiteKeyLabel(key: PianoKey): string | null {
   const mode = props.toneLabelMode ?? 'off'
-  if (mode === 'off') return key.label
+  if (mode === 'off') {
+    if (key.label) return key.label
+    if (isRangeEdge(key))
+      return midiToNoteLabel(key.midi, { showOctave: true }).label
+
+    return null
+  }
 
   return midiToNoteLabel(key.midi, { showOctave: mode === 'advanced' }).label
 }
 
-/* Black keys carry no octave marker, so they show a label only outside 'off'. */
+/* Black keys carry no octave marker, so in 'off' they show a label only when
+ * they are a range edge. */
 function blackKeyLabel(key: PianoKey): string | null {
   const mode = props.toneLabelMode ?? 'off'
-  if (mode === 'off') return null
+  if (mode === 'off') {
+    if (isRangeEdge(key))
+      return midiToNoteLabel(key.midi, { showOctave: true }).label
+
+    return null
+  }
 
   return midiToNoteLabel(key.midi, { showOctave: mode === 'advanced' }).label
 }
