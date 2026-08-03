@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
+import { midiToNoteLabel } from '@/utils/noteUtils'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
-import {
-  TONE_CLICK_HIGHLIGHT_DURATION_MS,
-  TONE_PLAY_DURATION_S,
-} from '@/constants/toneConstants'
 import { useMediaQuery, useResizeObserver } from '@vueuse/core'
 import {
   BLACK_KEY_HEIGHT_RATIO,
@@ -17,7 +13,9 @@ import {
   pianoSpanUnits,
   type PianoKey,
 } from './pianoLayout'
+import { pianoKeyLabel } from './pianoLabels'
 import { buildPianoPreviewLine } from './pianoPreview'
+import { usePianoKeyPlayback } from './usePianoKeyPlayback'
 
 type Props = {
   midiMin: number
@@ -35,50 +33,20 @@ type Props = {
 }
 const props = defineProps<Props>()
 
-/* The two range boundaries always get a label, so the singer sees where the
- * selected voice range starts and ends (e.g. A3 / A5 for Mezzo-Soprano). */
-function isRangeEdge(key: PianoKey): boolean {
-  return key.midi === props.midiMin || key.midi === props.midiMax
-}
-
-/* White-key label for the current mode: in 'off' the C-key octave markers
- * (key.label) and the range edges show; otherwise every key shows its name, with
- * the octave digit in 'advanced'. */
-function whiteKeyLabel(key: PianoKey): string | null {
-  const mode = props.toneLabelMode ?? 'off'
-  if (mode === 'off') {
-    if (key.label) return key.label
-    if (isRangeEdge(key))
-      return midiToNoteLabel(key.midi, { showOctave: true }).label
-
-    return null
-  }
-
-  return midiToNoteLabel(key.midi, { showOctave: mode === 'advanced' }).label
-}
-
-/* Black keys carry no octave marker, so in 'off' they show a label only when
- * they are a range edge. */
-function blackKeyLabel(key: PianoKey): string | null {
-  const mode = props.toneLabelMode ?? 'off'
-  if (mode === 'off') {
-    if (isRangeEdge(key))
-      return midiToNoteLabel(key.midi, { showOctave: true }).label
-
-    return null
-  }
-
-  return midiToNoteLabel(key.midi, { showOctave: mode === 'advanced' }).label
+function keyLabel(key: PianoKey): string | null {
+  return pianoKeyLabel(key, props.toneLabelMode ?? 'off', {
+    midiMin: props.midiMin,
+    midiMax: props.midiMax,
+  })
 }
 
 /* Emitted whenever a key plays, so the parent can arm the preview deaf period
  * (stops the piano's own tone registering as sung pitch). */
 const emit = defineEmits<{ tonePlayed: [] }>()
 
-/* playToneAt is polyphonic — it reuses the current mode's PolySynth and does not
- * cut the previous note, so several keys ring together (a chord). Bass mode is a
- * MonoSynth, so it stays monophonic there. */
-const { playToneAt, warmUp, getNow } = useTonePlayer()
+const { activeMidis, playKey, handleKeyDown } = usePianoKeyPlayback({
+  onTonePlayed: () => emit('tonePlayed'),
+})
 
 /*
  * Fit-to-container key sizing. The scroll box is w-full, so its width comes
@@ -126,45 +94,6 @@ const previewLine = computed(() =>
     layout: layout.value,
   }),
 )
-
-/* Multiple keys can be lit at once (multi-touch chords). */
-const activeMidis = reactive(new Set<number>())
-const highlightTimers = new Map<number, ReturnType<typeof setTimeout>>()
-
-async function playKey(midi: number) {
-  activeMidis.add(midi)
-  const existing = highlightTimers.get(midi)
-  if (existing) clearTimeout(existing)
-
-  highlightTimers.set(
-    midi,
-    window.setTimeout(() => {
-      activeMidis.delete(midi)
-      highlightTimers.delete(midi)
-    }, TONE_CLICK_HIGHLIGHT_DURATION_MS),
-  )
-
-  /* warmUp resolves the AudioContext within the press gesture (cached after the
-   * first press); playToneAt needs it running and doesn't self-start. */
-  await warmUp()
-  playToneAt(midiToFrequency(midi), TONE_PLAY_DURATION_S, getNow())
-  emit('tonePlayed')
-}
-
-/* Keyboard access: a <button> fires no pointerdown for Enter/Space, so play on
- * those keys too (ignoring auto-repeat while held). */
-function handleKeyDown(event: KeyboardEvent, midi: number) {
-  if (event.repeat) return
-  if (event.key !== 'Enter' && event.key !== ' ') return
-
-  event.preventDefault()
-  void playKey(midi)
-}
-
-onUnmounted(() => {
-  for (const timer of highlightTimers.values()) clearTimeout(timer)
-  highlightTimers.clear()
-})
 </script>
 
 <template>
@@ -206,11 +135,11 @@ onUnmounted(() => {
         <!-- Sits on the key's pitch position, not its rectangle center, so the
              label lines up with the hint line (they differ on C/E/F/B). -->
         <span
-          v-if="whiteKeyLabel(key)"
+          v-if="keyLabel(key)"
           class="absolute bottom-1 -translate-x-1/2"
           :style="{ insetInlineStart: `${key.pitchX - key.leftPx}px` }"
         >
-          {{ whiteKeyLabel(key) }}
+          {{ keyLabel(key) }}
         </span>
       </button>
 
@@ -236,10 +165,10 @@ onUnmounted(() => {
         @keydown="handleKeyDown($event, key.midi)"
       >
         <span
-          v-if="blackKeyLabel(key)"
+          v-if="keyLabel(key)"
           class="text-[10px] leading-none text-(--p-surface-0)"
         >
-          {{ blackKeyLabel(key) }}
+          {{ keyLabel(key) }}
         </span>
       </button>
 
