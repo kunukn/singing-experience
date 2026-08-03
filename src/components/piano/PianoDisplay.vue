@@ -22,6 +22,8 @@ type Props = {
   previewNoteLabel?: string | null
   /* When true, draws the grey dead-center hint line on every key. */
   isPreviewEnabled?: boolean
+  /* When true, prints each key's note name (e.g. C♯2) on the key face. */
+  areToneLabelsShown?: boolean
 }
 const props = defineProps<Props>()
 
@@ -120,14 +122,20 @@ onUnmounted(() => {
         @pointerdown="playKey(key.midi)"
         @keydown="handleKeyDown($event, key.midi)"
       >
-        <span v-if="key.label">{{ key.label }}</span>
+        <span v-if="props.areToneLabelsShown || key.label">
+          {{
+            props.areToneLabelsShown
+              ? midiToNoteLabel(key.midi).label
+              : key.label
+          }}
+        </span>
       </button>
 
       <button
         v-for="key in layout.blacks"
         :key="key.midi"
         type="button"
-        class="absolute z-10 touch-manipulation rounded-b-md border border-(--p-surface-950) transition-colors select-none"
+        class="absolute z-10 flex touch-manipulation items-end justify-center rounded-b-md border border-(--p-surface-950) pb-1 transition-colors select-none"
         :class="
           activeMidis.has(key.midi)
             ? 'bg-(--p-primary-color)'
@@ -143,7 +151,14 @@ onUnmounted(() => {
         :aria-label="midiToNoteLabel(key.midi).label"
         @pointerdown="playKey(key.midi)"
         @keydown="handleKeyDown($event, key.midi)"
-      />
+      >
+        <span
+          v-if="props.areToneLabelsShown"
+          class="text-[10px] leading-none text-(--p-surface-0)"
+        >
+          {{ midiToNoteLabel(key.midi).label }}
+        </span>
+      </button>
 
       <!-- Dead-center hint lines: a thin grey line down each key's true center,
            shown only while "See your voice" is on. The live-pitch line lands on

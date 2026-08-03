@@ -24,6 +24,9 @@ setToneMode(storedToneMode.value)
 
 /* Voice-range selector */
 const rangeIndex = useLocalStorage('syng.rangeIndex', DEFAULT_RANGE_INDEX)
+
+/* Prints each key's note name (C♯2, D2, …) on the keyboard when on. */
+const areToneLabelsShown = useLocalStorage('syng.pianoToneLabels', false)
 if (
   typeof rangeIndex.value !== 'number' ||
   !Number.isInteger(rangeIndex.value) ||
@@ -83,6 +86,13 @@ const {
         v-model="isPreviewEnabled"
         :disabled="micPermission === 'denied'"
       />
+
+      <ToggleIconButton
+        v-model="areToneLabelsShown"
+        iconOn="pi pi-tag"
+        iconOff="pi pi-tag"
+        :label="t('notes.toneLabels')"
+      />
     </div>
 
     <!-- Only the keyboard widens (up to 1600px, matching the grace-kelly sheet);
@@ -95,6 +105,7 @@ const {
         :previewFrequency="previewFrequency"
         :previewNoteLabel="previewNoteLabel"
         :isPreviewEnabled="isPreviewEnabled"
+        :areToneLabelsShown="areToneLabelsShown"
         @tonePlayed="triggerDeafPeriod"
       />
     </div>
