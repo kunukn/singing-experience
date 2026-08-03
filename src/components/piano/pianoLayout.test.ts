@@ -66,6 +66,28 @@ describe('buildPianoLayout', () => {
     }
   })
 
+  it('sets centerX to each key’s rectangle center; black keys on their pitch', () => {
+    const { whites, blacks } = buildPianoLayout(FULL.midiMin, FULL.midiMax)
+    for (const key of [...whites, ...blacks]) {
+      expect(key.centerX).toBeCloseTo(key.leftPx + key.widthPx / 2)
+    }
+    for (const key of blacks) {
+      expect(key.centerX).toBeCloseTo(key.pitchX)
+    }
+  })
+
+  it('exposes centers as one sorted, consecutive, strictly increasing list', () => {
+    const { whites, blacks, centers } = buildPianoLayout(
+      FULL.midiMin,
+      FULL.midiMax,
+    )
+    expect(centers).toHaveLength(whites.length + blacks.length)
+    for (let index = 1; index < centers.length; index++) {
+      expect(centers[index].midi).toBe(centers[index - 1].midi + 1)
+      expect(centers[index].centerX).toBeGreaterThan(centers[index - 1].centerX)
+    }
+  })
+
   it('labels only C keys', () => {
     const { whites, blacks } = buildPianoLayout(FULL.midiMin, FULL.midiMax)
     const labelled = [...whites, ...blacks].filter((key) => key.label !== null)

@@ -45,8 +45,12 @@ export const PIANO_LABEL_BAND_HEIGHT = 28 // px — headroom above the keys for 
 
 export type PianoKey = {
   midi: number
-  /* Linear pitch position of the note's center on the x-axis (px). */
+  /* Linear pitch position of the note on the x-axis (px). Used to place keys;
+   * for asymmetric white keys this differs from the rectangle center. */
   pitchX: number
+  /* Dead-center of the key's rectangle (px) — where the live-pitch line and the
+   * grey hint line sit. For black keys this equals pitchX. */
+  centerX: number
   /* Non-null only for C keys (octave markers), e.g. "C4". */
   label: string | null
   isBlack: boolean
@@ -58,10 +62,27 @@ export type PianoLayout = {
   whites: PianoKey[]
   blacks: PianoKey[]
   totalWidth: number
-  /* Pitch value mapped to x=0, and px-per-semitone — together they let callers
-   * map a continuous float MIDI to x: `(floatMidi - originPitch) * unit`. */
-  originPitch: number
-  unit: number
+  /* All keys' centers, sorted ascending by midi (consecutive semitones). Drives
+   * the piecewise-linear voice→x mapping so an in-tune note lands dead-center. */
+  centers: { midi: number; centerX: number }[]
+}
+
+/*
+ * Piecewise-linear voice→x map: interpolates between key centers so an exact
+ * note lands dead-center on its key. Clamped to the keyboard's midi range.
+ */
+export function pianoCenterXForMidi(layout: PianoLayout, midi: number): number {
+  const { centers } = layout
+  if (centers.length < 2) return centers[0]?.centerX ?? 0
+
+  const lo = centers[0].midi
+  const hi = centers[centers.length - 1].midi
+  const clamped = Math.max(lo, Math.min(hi, midi))
+  const index = Math.min(Math.floor(clamped) - lo, centers.length - 2)
+  const a = centers[index]
+  const b = centers[index + 1] // b.midi === a.midi + 1 (consecutive)
+
+  return a.centerX + (b.centerX - a.centerX) * (clamped - a.midi)
 }
 
 export function buildPianoLayout(
@@ -96,6 +117,7 @@ export function buildPianoLayout(
     return {
       midi,
       pitchX: pitchX(midi),
+      centerX: (leftPx + rightPx) / 2,
       label: midi % 12 === 0 ? midiToNoteLabel(midi).label : null,
       isBlack: false,
       leftPx,
@@ -107,11 +129,17 @@ export function buildPianoLayout(
   const blacks: PianoKey[] = blackMidis.map((midi) => ({
     midi,
     pitchX: pitchX(midi),
+    /* Black keys are already centered on their pitch position. */
+    centerX: pitchX(midi),
     label: null,
     isBlack: true,
     leftPx: pitchX(midi) - blackWidth / 2,
     widthPx: blackWidth,
   }))
 
-  return { whites, blacks, totalWidth, originPitch, unit }
+  const centers = [...whites, ...blacks]
+    .map((key) => ({ midi: key.midi, centerX: key.centerX }))
+    .sort((a, b) => a.midi - b.midi)
+
+  return { whites, blacks, totalWidth, centers }
 }

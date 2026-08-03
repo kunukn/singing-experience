@@ -1,6 +1,11 @@
 <script setup lang="ts">
 const { t } = useI18n()
-const betaPages = new Set(['/singfly', '/pitch-game', '/grace-kelly-challenge'])
+const betaPages = new Set([
+  '/singfly',
+  '/pitch-game',
+  '/grace-kelly-challenge',
+  '/piano',
+])
 const alphaPages = new Set(['/tone-detector'])
 const route = useRoute()
 const router = useRouter()

@@ -17,6 +17,8 @@ type Props = {
   previewMidi?: number | null
   previewFrequency?: number | null
   previewNoteLabel?: string | null
+  /* When true, draws the grey dead-center hint line on every key. */
+  isPreviewEnabled?: boolean
 }
 const props = defineProps<Props>()
 
@@ -37,11 +39,7 @@ const previewLine = computed(() =>
     previewMidi: props.previewMidi ?? null,
     previewFrequency: props.previewFrequency ?? null,
     previewNoteLabel: props.previewNoteLabel ?? null,
-    midiMin: props.midiMin,
-    midiMax: props.midiMax,
-    originPitch: layout.value.originPitch,
-    unit: layout.value.unit,
-    totalWidth: layout.value.totalWidth,
+    layout: layout.value,
   }),
 )
 
@@ -113,6 +111,31 @@ function playKey(midi: number) {
         :aria-label="midiToNoteLabel(key.midi).label"
         @click="playKey(key.midi)"
       />
+
+      <!-- Dead-center hint lines: a thin grey line down each key's true center,
+           shown only while "See your voice" is on. The live-pitch line lands on
+           these when the singer is in tune. -->
+      <template v-if="isPreviewEnabled">
+        <div
+          v-for="key in layout.whites"
+          :key="`hint-${key.midi}`"
+          class="pointer-events-none absolute bottom-0 z-[5] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-surface-300)"
+          :style="{
+            insetInlineStart: `${key.centerX}px`,
+            height: `${WHITE_KEY_HEIGHT}px`,
+          }"
+        />
+        <div
+          v-for="key in layout.blacks"
+          :key="`hint-${key.midi}`"
+          class="pointer-events-none absolute z-[15] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-surface-500)"
+          :style="{
+            insetInlineStart: `${key.centerX}px`,
+            top: `${PIANO_LABEL_BAND_HEIGHT}px`,
+            height: `${blackKeyHeight}px`,
+          }"
+        />
+      </template>
 
       <!-- Live-pitch overlay: vertical dashed orange line spanning the track,
            with a note/cents chip in the top band. pointer-events-none keeps the

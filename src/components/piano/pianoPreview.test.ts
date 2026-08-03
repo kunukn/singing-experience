@@ -6,21 +6,16 @@ import { buildPianoPreviewLine } from './pianoPreview'
 const FULL = { midiMin: 36, midiMax: 96 } // C2–C7
 const layout = buildPianoLayout(FULL.midiMin, FULL.midiMax)
 
-/* Shared axis params + range for every case; each test overrides the pitch. */
 function lineFor(overrides: {
   previewMidi: number | null
   previewFrequency: number | null
   previewNoteLabel: string | null
 }) {
-  return buildPianoPreviewLine({
-    ...overrides,
-    midiMin: FULL.midiMin,
-    midiMax: FULL.midiMax,
-    originPitch: layout.originPitch,
-    unit: layout.unit,
-    totalWidth: layout.totalWidth,
-  })
+  return buildPianoPreviewLine({ ...overrides, layout })
 }
+
+const centerOf = (midi: number) =>
+  [...layout.whites, ...layout.blacks].find((key) => key.midi === midi)!.centerX
 
 describe('buildPianoPreviewLine', () => {
   it('returns null without a clean pitch', () => {
@@ -41,7 +36,6 @@ describe('buildPianoPreviewLine', () => {
   })
 
   it('returns null when more than 12 semitones outside the range', () => {
-    // C7 is 96; 96 + 13 = 109 is beyond midiMax + 12
     expect(
       lineFor({
         previewMidi: 109,
@@ -51,30 +45,38 @@ describe('buildPianoPreviewLine', () => {
     ).toBeNull()
   })
 
-  it('places an exact note at that key’s pitchX, with no cents suffix', () => {
+  it('places an exact white note dead-center on its key', () => {
     const line = lineFor({
       previewMidi: 60,
       previewFrequency: midiToFrequency(60), // exactly C4
       previewNoteLabel: 'C4',
     })
-    const c4 = layout.whites.find((key) => key.midi === 60)!
     expect(line).not.toBeNull()
-    expect(line!.x).toBeCloseTo(c4.pitchX)
+    expect(line!.x).toBeCloseTo(centerOf(60))
     expect(line!.text).toBe('C4')
   })
 
-  it('appends a signed cents suffix once past the 20¢ threshold', () => {
-    // +35¢ above C4
-    const sharp = midiToFrequency(60) * Math.pow(2, 35 / 1200)
+  it('places an exact black note dead-center on its key', () => {
     const line = lineFor({
-      previewMidi: 60,
-      previewFrequency: sharp,
-      previewNoteLabel: 'C4',
+      previewMidi: 61,
+      previewFrequency: midiToFrequency(61), // exactly C#4
+      previewNoteLabel: 'C♯4',
     })
-    expect(line!.text).toMatch(/C4 \+\d+¢/)
+    expect(line!.x).toBeCloseTo(centerOf(61))
+    expect(line!.text).toBe('C♯4')
+  })
 
-    // +10¢ is within threshold → bare label
-    const nearlyClean = midiToFrequency(60) * Math.pow(2, 10 / 1200)
+  it('appends a signed cents suffix once past the 20¢ threshold', () => {
+    const sharp = midiToFrequency(60) * Math.pow(2, 35 / 1200) // +35¢ above C4
+    expect(
+      lineFor({
+        previewMidi: 60,
+        previewFrequency: sharp,
+        previewNoteLabel: 'C4',
+      })!.text,
+    ).toMatch(/C4 \+\d+¢/)
+
+    const nearlyClean = midiToFrequency(60) * Math.pow(2, 10 / 1200) // +10¢ < threshold
     expect(
       lineFor({
         previewMidi: 60,
@@ -85,20 +87,20 @@ describe('buildPianoPreviewLine', () => {
   })
 
   it('clamps x to the keyboard edges for in-tolerance out-of-range pitches', () => {
-    // A semitone below C2 (still within the 12-semitone tolerance) → clamp to 0
+    // Just below C2 (within the 12-semitone tolerance) → clamp to the low edge
     const below = lineFor({
       previewMidi: 35,
       previewFrequency: midiToFrequency(35),
       previewNoteLabel: 'B1',
     })
-    expect(below!.x).toBe(0)
+    expect(below!.x).toBeCloseTo(centerOf(36)) // clamped to C2's center (lowest key)
 
-    // Above C7 → clamp to totalWidth
+    // Above C7 → clamp to the high edge
     const above = lineFor({
       previewMidi: 98,
       previewFrequency: midiToFrequency(98),
       previewNoteLabel: 'D7',
     })
-    expect(above!.x).toBe(layout.totalWidth)
+    expect(above!.x).toBeCloseTo(centerOf(96)) // clamped to C7's center (highest key)
   })
 })

@@ -94,6 +94,7 @@ const {
         :previewMidi="previewMidi"
         :previewFrequency="previewFrequency"
         :previewNoteLabel="previewNoteLabel"
+        :isPreviewEnabled="isPreviewEnabled"
         @tonePlayed="triggerDeafPeriod"
       />
     </div>
