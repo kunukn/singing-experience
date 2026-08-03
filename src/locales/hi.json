@@ -214,6 +214,7 @@
   },
   "voiceRanges": {
     "full": "पूर्ण",
+    "tenorToSoprano": "टेनर–सोप्रानो",
     "everyone": "सभी",
     "kids": "बच्चे (6–11)",
     "comfyWomen": "आरामदायक – महिला",

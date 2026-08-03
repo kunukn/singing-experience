@@ -214,6 +214,7 @@
   },
   "voiceRanges": {
     "full": "كامل",
+    "tenorToSoprano": "تينور–سوبرانو",
     "everyone": "الجميع",
     "kids": "أطفال (6–11)",
     "comfyWomen": "مريح – نساء",

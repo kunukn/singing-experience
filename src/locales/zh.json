@@ -214,6 +214,7 @@
   },
   "voiceRanges": {
     "full": "完整",
+    "tenorToSoprano": "男高音–女高音",
     "everyone": "所有人",
     "kids": "孩子 (6–11)",
     "comfyWomen": "舒适 – 女声",

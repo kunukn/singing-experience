@@ -214,6 +214,7 @@
   },
   "voiceRanges": {
     "full": "フル",
+    "tenorToSoprano": "テノール–ソプラノ",
     "everyone": "みんな",
     "kids": "子ども (6–11)",
     "comfyWomen": "ラクに – 女性",

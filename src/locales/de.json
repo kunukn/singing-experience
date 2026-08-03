@@ -214,6 +214,7 @@
   },
   "voiceRanges": {
     "full": "Vollständig",
+    "tenorToSoprano": "Tenor–Sopran",
     "everyone": "Alle",
     "kids": "Kinder (6–11)",
     "comfyWomen": "Bequem – Frauen",

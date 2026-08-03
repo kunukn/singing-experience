@@ -13,6 +13,12 @@ export const VOICE_RANGES: VoiceRange[] = [
     midiMax: 96,
   },
   {
+    labelKey: 'voiceRanges.tenorToSoprano',
+    noteRange: 'C3–C6',
+    midiMin: 48,
+    midiMax: 84,
+  },
+  {
     labelKey: 'voiceRanges.soprano',
     noteRange: 'C4–C6',
     midiMin: 60,
