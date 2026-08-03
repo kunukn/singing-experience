@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { NoteName } from '@/utils/noteUtils'
 import { NOTE_NAMES } from '@/utils/noteUtils'
+import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import NotesOverviewDisplay from './NotesOverviewDisplay.vue'
 
 const selectedNote = ref<NoteName>('C')
@@ -35,9 +36,8 @@ const overridePreviewFrequency = computed(() =>
 
 /* Sheet display toggles — local state standing in for the models NotesPage
  * would normally persist to localStorage. */
-const areToneLabelsShown = ref(true)
+const toneLabelMode = ref<ToneLabelMode>('advanced')
 const includeAccidentals = ref(false)
-const areNoteNumbersShown = ref(true)
 </script>
 
 <template>
@@ -111,9 +111,8 @@ const areNoteNumbersShown = ref(true)
       :disableIdlePreview="true"
       :overridePreviewMidi="overridePreviewMidi"
       :overridePreviewFrequency="overridePreviewFrequency"
-      v-model:areToneLabelsShown="areToneLabelsShown"
+      v-model:toneLabelMode="toneLabelMode"
       v-model:includeAccidentals="includeAccidentals"
-      v-model:areNoteNumbersShown="areNoteNumbersShown"
     />
   </div>
 </template>

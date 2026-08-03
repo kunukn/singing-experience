@@ -77,6 +77,7 @@ declare global {
   const toRef: typeof import('vue').toRef
   const toRefs: typeof import('vue').toRefs
   const toValue: typeof import('vue').toValue
+  const toneLabelModeToFlags: typeof import('./composables/toneLabelMode').toneLabelModeToFlags
   const triggerRef: typeof import('vue').triggerRef
   const unref: typeof import('vue').unref
   const useAttrs: typeof import('vue').useAttrs
@@ -110,6 +111,7 @@ declare global {
   const useSimulatedPitchDetection: typeof import('./composables/useSimulatedPitchDetection').useSimulatedPitchDetection
   const useSlots: typeof import('vue').useSlots
   const useTemplateRef: typeof import('vue').useTemplateRef
+  const useToneLabelModeOptions: typeof import('./composables/toneLabelMode').useToneLabelModeOptions
   const useToneModeStore: typeof import('./stores/useToneModeStore').useToneModeStore
   const useTonePlayer: typeof import('./composables/useTonePlayer').useTonePlayer
   const watch: typeof import('vue').watch
@@ -125,6 +127,9 @@ declare global {
   // @ts-ignore
   export type { ToneMode, ToneEngine } from './composables/toneEngine'
   import('./composables/toneEngine')
+  // @ts-ignore
+  export type { ToneLabelMode } from './composables/toneLabelMode'
+  import('./composables/toneLabelMode')
 }
 
 // for vue template auto import
@@ -190,6 +195,7 @@ declare module 'vue' {
     readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
+    readonly toneLabelModeToFlags: UnwrapRef<typeof import('./composables/toneLabelMode')['toneLabelModeToFlags']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
@@ -218,6 +224,7 @@ declare module 'vue' {
     readonly useSimulatedPitchDetection: UnwrapRef<typeof import('./composables/useSimulatedPitchDetection')['useSimulatedPitchDetection']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
+    readonly useToneLabelModeOptions: UnwrapRef<typeof import('./composables/toneLabelMode')['useToneLabelModeOptions']>
     readonly useToneModeStore: UnwrapRef<typeof import('./stores/useToneModeStore')['useToneModeStore']>
     readonly useTonePlayer: UnwrapRef<typeof import('./composables/useTonePlayer')['useTonePlayer']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>

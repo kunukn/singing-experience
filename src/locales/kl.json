@@ -31,7 +31,8 @@
     "playAgain": "Pinnguarit aqqissaaq",
     "score": "Naatsorsuut",
     "time": "Piffissaq",
-    "reset": "Reset"
+    "reset": "Reset",
+    "off": "Off"
   },
   "errors": {
     "microphoneAccess": "Mikrofoni atorsinnaanngilaq",

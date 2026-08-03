@@ -35,7 +35,8 @@
     "playAgain": "العب مرة أخرى",
     "score": "النتيجة",
     "time": "الوقت",
-    "reset": "إعادة"
+    "reset": "إعادة",
+    "off": "بدون"
   },
   "errors": {
     "microphoneAccess": "فشل الوصول إلى الميكروفون",

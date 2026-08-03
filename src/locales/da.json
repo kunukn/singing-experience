@@ -35,7 +35,8 @@
     "playAgain": "Spil igen",
     "score": "Score",
     "time": "Tid",
-    "reset": "Nulstil"
+    "reset": "Nulstil",
+    "off": "Fra"
   },
   "errors": {
     "microphoneAccess": "Kunne ikke få adgang til mikrofonen",

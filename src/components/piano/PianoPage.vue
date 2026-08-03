@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
 import type { ToneMode } from '@/composables/toneEngine'
+import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { VOICE_RANGES, DEFAULT_RANGE_INDEX } from '@/constants/voiceRanges'
 
 const { t } = useI18n()
+
+const toneLabelModeOptions = useToneLabelModeOptions()
 
 /* Tone-mode selector — mirrors PitchDetectorDisplay. Re-warm the AudioContext
  * inside the user-gesture frame so iOS Safari doesn't silently refuse a later
@@ -25,8 +28,11 @@ setToneMode(storedToneMode.value)
 /* Voice-range selector */
 const rangeIndex = useLocalStorage('syng.rangeIndex', DEFAULT_RANGE_INDEX)
 
-/* Prints each key's note name (C♯2, D2, …) on the keyboard when on. */
-const areToneLabelsShown = useLocalStorage('syng.pianoToneLabels', false)
+/* Note-name labels on the keyboard: off, simple (C), or advanced (C4). */
+const toneLabelMode = useLocalStorage<ToneLabelMode>(
+  'syng.pianoToneLabelMode',
+  'off',
+)
 if (
   typeof rangeIndex.value !== 'number' ||
   !Number.isInteger(rangeIndex.value) ||
@@ -87,12 +93,20 @@ const {
         :disabled="micPermission === 'denied'"
       />
 
-      <ToggleIconButton
-        v-model="areToneLabelsShown"
-        iconOn="pi pi-tag"
-        iconOff="pi pi-tag"
-        :label="t('notes.toneLabels')"
-      />
+      <div class="flex items-center gap-2">
+        <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+          t('notes.toneLabels')
+        }}</label>
+        <PrimeSelectButton
+          v-model="toneLabelMode"
+          :options="toneLabelModeOptions"
+          optionLabel="label"
+          optionValue="value"
+          :allowEmpty="false"
+          size="small"
+          :aria-label="t('notes.toneLabels')"
+        />
+      </div>
     </div>
 
     <!-- Only the keyboard widens (up to 1600px, matching the grace-kelly sheet);
@@ -105,7 +119,7 @@ const {
         :previewFrequency="previewFrequency"
         :previewNoteLabel="previewNoteLabel"
         :isPreviewEnabled="isPreviewEnabled"
-        :areToneLabelsShown="areToneLabelsShown"
+        :toneLabelMode="toneLabelMode"
         @tonePlayed="triggerDeafPeriod"
       />
     </div>

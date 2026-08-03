@@ -35,7 +35,8 @@
     "playAgain": "Main Lagi",
     "score": "Skor",
     "time": "Waktu",
-    "reset": "Reset"
+    "reset": "Reset",
+    "off": "Mati"
   },
   "errors": {
     "microphoneAccess": "Gagal mengakses mikrofon",

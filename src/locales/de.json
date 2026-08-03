@@ -35,7 +35,8 @@
     "playAgain": "Nochmal spielen",
     "score": "Punkte",
     "time": "Zeit",
-    "reset": "Zurücksetzen"
+    "reset": "Zurücksetzen",
+    "off": "Aus"
   },
   "errors": {
     "microphoneAccess": "Zugriff auf das Mikrofon fehlgeschlagen",

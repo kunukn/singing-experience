@@ -35,7 +35,8 @@
     "playAgain": "Rejouer",
     "score": "Score",
     "time": "Temps",
-    "reset": "Réinitialiser"
+    "reset": "Réinitialiser",
+    "off": "Aucun"
   },
   "errors": {
     "microphoneAccess": "Impossible d'accéder au microphone",

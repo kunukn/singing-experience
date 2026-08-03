@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
+import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import NotesOverviewDisplay from './NotesOverviewDisplay.vue'
 import NotesListenDisplay from './NotesListenDisplay.vue'
 import { ALLOWED_BPMS, DEFAULT_BPM } from './notesConstants'
@@ -48,9 +49,14 @@ const activeTab = computed<NotesTab>({
   },
 })
 
-/* Note-name labels above every note. Shared by both tabs. Default on — the page's
- * whole point is to show the notes and their tone labels. */
-const areToneLabelsShown = useLocalStorage('syng.notesToneLabels', true)
+/* Note-name labels above every note. Shared by both tabs. Default 'simple' — the
+ * page's whole point is to show the notes and their names; the plain name is
+ * enough for most practice, 'advanced' adds the octave digit (C4 vs C), 'off'
+ * hides labels entirely. */
+const toneLabelMode = useLocalStorage<ToneLabelMode>(
+  'syng.notesToneLabelMode',
+  'simple',
+)
 
 /* Whether the sheets include accidental (black-key) notes. Default off — the
  * basic view is the natural notes only; on reveals the full chromatic scale. */
@@ -58,11 +64,6 @@ const includeAccidentals = useLocalStorage(
   'syng.notesIncludeAccidentals',
   false,
 )
-
-/* Whether note-name labels include the octave digit (e.g. "C4" vs "C"). Default
- * off — the plain note name is enough for most practice; the number is for
- * players who want to cross-check absolute pitch. */
-const areNoteNumbersShown = useLocalStorage('syng.notesNoteNumbers', false)
 
 const listenGame = useNotesPlayback()
 
@@ -87,17 +88,15 @@ watch(activeTab, () => {
             :isActive="activeTab === 'listen'"
             v-model:clefIndex="clefIndex"
             v-model:bpm="bpm"
-            v-model:areToneLabelsShown="areToneLabelsShown"
+            v-model:toneLabelMode="toneLabelMode"
             v-model:includeAccidentals="includeAccidentals"
-            v-model:areNoteNumbersShown="areNoteNumbersShown"
           />
         </PrimeTabPanel>
         <PrimeTabPanel value="overview">
           <NotesOverviewDisplay
             :isActive="activeTab === 'overview'"
-            v-model:areToneLabelsShown="areToneLabelsShown"
+            v-model:toneLabelMode="toneLabelMode"
             v-model:includeAccidentals="includeAccidentals"
-            v-model:areNoteNumbersShown="areNoteNumbersShown"
           />
         </PrimeTabPanel>
       </PrimeTabPanels>

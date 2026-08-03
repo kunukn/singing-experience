@@ -35,7 +35,8 @@
     "playAgain": "फिर से खेलें",
     "score": "स्कोर",
     "time": "समय",
-    "reset": "रीसेट"
+    "reset": "रीसेट",
+    "off": "बंद"
   },
   "errors": {
     "microphoneAccess": "माइक्रोफ़ोन तक पहुँच नहीं हो सकी",

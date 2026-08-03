@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { frequencyToMidi } from '@/utils/noteUtils'
+import {
+  toneLabelModeToFlags,
+  type ToneLabelMode,
+} from '@/composables/toneLabelMode'
 import { useStableSungLabel } from '@/components/grace-kelly/useStableSungLabel'
 import NotesOutlierSheet from './NotesOutlierSheet.vue'
 import NotesOverviewSheet from './NotesOverviewSheet.vue'
@@ -22,7 +26,7 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
+const toneLabelMode = defineModel<ToneLabelMode>('toneLabelMode', {
   required: true,
 })
 
@@ -30,9 +34,11 @@ const includeAccidentals = defineModel<boolean>('includeAccidentals', {
   required: true,
 })
 
-const areNoteNumbersShown = defineModel<boolean>('areNoteNumbersShown', {
-  required: true,
-})
+const toneLabelModeOptions = useToneLabelModeOptions()
+
+/* Decompose the 3-way mode into the sheets' two boolean display flags. */
+const labelFlags = computed(() => toneLabelModeToFlags(toneLabelMode.value))
+const showOctave = computed(() => labelFlags.value.showOctave)
 
 /* NOTE_SCALES is ordered treble (V:1) then bass (V:2). Naturals only unless the
  * "Sharps & flats" toggle includes the accidental notes. */
@@ -101,7 +107,7 @@ const sungMidi = computed(() => {
 
 const { stableSungLabel, stableSungCents } = useStableSungLabel({
   sungMidi,
-  showOctave: areNoteNumbersShown,
+  showOctave,
 })
 
 /* Each sheet reports its natural SVG width; the wider one's width becomes the
@@ -123,23 +129,25 @@ const sharedCardWidth = computed(() =>
     data-testid="notes-overview-display"
   >
     <div class="flex items-center gap-2">
-      <ToggleIconButton
-        v-model="areToneLabelsShown"
-        iconOn="pi pi-tag"
-        iconOff="pi pi-tag"
-        :label="t('notes.toneLabels')"
-      />
+      <div class="flex items-center gap-2">
+        <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+          t('notes.toneLabels')
+        }}</label>
+        <PrimeSelectButton
+          v-model="toneLabelMode"
+          :options="toneLabelModeOptions"
+          optionLabel="label"
+          optionValue="value"
+          :allowEmpty="false"
+          size="small"
+          :aria-label="t('notes.toneLabels')"
+        />
+      </div>
       <ToggleIconButton
         v-model="includeAccidentals"
         iconOn="pi pi-hashtag"
         iconOff="pi pi-hashtag"
         :label="t('notes.accidentals')"
-      />
-      <ToggleIconButton
-        v-model="areNoteNumbersShown"
-        iconOn="pi pi-sort-numeric-up"
-        iconOff="pi pi-sort-numeric-up"
-        :label="t('notes.noteNumbers')"
       />
       <PreviewToggle
         v-model="isPreviewEnabled"
@@ -156,8 +164,8 @@ const sharedCardWidth = computed(() =>
         :trebleMidis="trebleMidis"
         :bassMidis="bassMidis"
         :bpm="DEFAULT_BPM"
-        :showToneLabels="areToneLabelsShown"
-        :showNoteNumbers="areNoteNumbersShown"
+        :showToneLabels="labelFlags.showLabels"
+        :showNoteNumbers="labelFlags.showOctave"
         :sungMidi="sungMidi"
         :sungToneLabel="stableSungLabel"
         :sungToneCents="stableSungCents"
@@ -181,8 +189,8 @@ const sharedCardWidth = computed(() =>
         :trebleHighMidis="trebleHighMidis"
         :bassLowMidis="bassLowMidis"
         :bassHighMidis="bassHighMidis"
-        :showToneLabels="areToneLabelsShown"
-        :showNoteNumbers="areNoteNumbersShown"
+        :showToneLabels="labelFlags.showLabels"
+        :showNoteNumbers="labelFlags.showOctave"
         :minCardWidth="sharedCardWidth"
         @naturalWidth="outlierNaturalWidth = $event"
       />

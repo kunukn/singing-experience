@@ -35,7 +35,8 @@
     "playAgain": "もう一度",
     "score": "スコア",
     "time": "タイム",
-    "reset": "リセット"
+    "reset": "リセット",
+    "off": "オフ"
   },
   "errors": {
     "microphoneAccess": "マイクにアクセスできませんでした",

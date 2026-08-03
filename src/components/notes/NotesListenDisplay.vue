@@ -1,5 +1,9 @@
 <script setup lang="ts">
 import { frequencyToMidi, midiToNoteLabel } from '@/utils/noteUtils'
+import {
+  toneLabelModeToFlags,
+  type ToneLabelMode,
+} from '@/composables/toneLabelMode'
 import { useStableSungLabel } from '@/components/grace-kelly/useStableSungLabel'
 import NotesSettingsRow from './NotesSettingsRow.vue'
 import NotesSheet from './NotesSheet.vue'
@@ -18,17 +22,20 @@ const props = defineProps<Props>()
 
 const clefIndex = defineModel<number>('clefIndex', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
-const areToneLabelsShown = defineModel<boolean>('areToneLabelsShown', {
+const toneLabelMode = defineModel<ToneLabelMode>('toneLabelMode', {
   required: true,
 })
 const includeAccidentals = defineModel<boolean>('includeAccidentals', {
   required: true,
 })
-const areNoteNumbersShown = defineModel<boolean>('areNoteNumbersShown', {
-  required: true,
-})
 
 const { t } = useI18n()
+
+const toneLabelModeOptions = useToneLabelModeOptions()
+
+/* Decompose the 3-way mode into the sheet's two boolean display flags. */
+const labelFlags = computed(() => toneLabelModeToFlags(toneLabelMode.value))
+const showOctave = computed(() => labelFlags.value.showOctave)
 
 /* Naturals only unless the "Sharps & flats" toggle includes the accidental
  * notes. Drives both the sheet and what `start()` plays. */
@@ -79,7 +86,7 @@ const sungMidi = computed(() => {
 
 const { stableSungLabel, stableSungCents } = useStableSungLabel({
   sungMidi,
-  showOctave: areNoteNumbersShown,
+  showOctave,
 })
 
 /* Sounding pitch of the note currently highlighted during playback. */
@@ -89,7 +96,7 @@ const currentToneLabel = computed(() => {
   const midi = scale.value.midis[activeNoteIndex.value]
   if (midi === undefined) return null
 
-  return midiToNoteLabel(midi, { showOctave: areNoteNumbersShown.value }).label
+  return midiToNoteLabel(midi, { showOctave: showOctave.value }).label
 })
 </script>
 
@@ -153,12 +160,20 @@ const currentToneLabel = computed(() => {
         :disabled="micPermission === 'denied' || isRunning"
       />
 
-      <ToggleIconButton
-        v-model="areToneLabelsShown"
-        iconOn="pi pi-tag"
-        iconOff="pi pi-tag"
-        :label="t('notes.toneLabels')"
-      />
+      <div class="flex items-center gap-2">
+        <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+          t('notes.toneLabels')
+        }}</label>
+        <PrimeSelectButton
+          v-model="toneLabelMode"
+          :options="toneLabelModeOptions"
+          optionLabel="label"
+          optionValue="value"
+          :allowEmpty="false"
+          size="small"
+          :aria-label="t('notes.toneLabels')"
+        />
+      </div>
 
       <ToggleIconButton
         v-model="includeAccidentals"
@@ -166,13 +181,6 @@ const currentToneLabel = computed(() => {
         iconOff="pi pi-hashtag"
         :label="t('notes.accidentals')"
         :disabled="isRunning"
-      />
-
-      <ToggleIconButton
-        v-model="areNoteNumbersShown"
-        iconOn="pi pi-sort-numeric-up"
-        iconOff="pi pi-sort-numeric-up"
-        :label="t('notes.noteNumbers')"
       />
     </div>
 
@@ -187,8 +195,8 @@ const currentToneLabel = computed(() => {
         :sungMidi="sungMidi"
         :sungToneLabel="stableSungLabel"
         :sungToneCents="stableSungCents"
-        :showToneLabels="areToneLabelsShown"
-        :showNoteNumbers="areNoteNumbersShown"
+        :showToneLabels="labelFlags.showLabels"
+        :showNoteNumbers="labelFlags.showOctave"
       />
     </div>
   </div>

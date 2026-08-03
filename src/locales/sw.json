@@ -35,7 +35,8 @@
     "playAgain": "Cheza Tena",
     "score": "Alama",
     "time": "Muda",
-    "reset": "Weka upya"
+    "reset": "Weka upya",
+    "off": "Hakuna"
   },
   "errors": {
     "microphoneAccess": "Imeshindwa kufikia maikrofoni",

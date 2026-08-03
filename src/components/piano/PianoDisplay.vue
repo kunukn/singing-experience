@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
+import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import {
   TONE_CLICK_HIGHLIGHT_DURATION_MS,
   TONE_PLAY_DURATION_S,
@@ -9,6 +10,7 @@ import {
   PIANO_LABEL_BAND_HEIGHT,
   WHITE_KEY_HEIGHT,
   buildPianoLayout,
+  type PianoKey,
 } from './pianoLayout'
 import { buildPianoPreviewLine } from './pianoPreview'
 
@@ -22,10 +24,29 @@ type Props = {
   previewNoteLabel?: string | null
   /* When true, draws the grey dead-center hint line on every key. */
   isPreviewEnabled?: boolean
-  /* When true, prints each key's note name (e.g. C♯2) on the key face. */
-  areToneLabelsShown?: boolean
+  /* Note-name labels on the key face: 'off' (C-key octave markers only), 'simple'
+   * (bare names, e.g. C♯), or 'advanced' (names with octave, e.g. C♯2). */
+  toneLabelMode?: ToneLabelMode
 }
 const props = defineProps<Props>()
+
+/* White-key label for the current mode: in 'off' only the C-key octave markers
+ * (key.label) show; otherwise every key shows its name, with the octave digit in
+ * 'advanced'. */
+function whiteKeyLabel(key: PianoKey): string | null {
+  const mode = props.toneLabelMode ?? 'off'
+  if (mode === 'off') return key.label
+
+  return midiToNoteLabel(key.midi, { showOctave: mode === 'advanced' }).label
+}
+
+/* Black keys carry no octave marker, so they show a label only outside 'off'. */
+function blackKeyLabel(key: PianoKey): string | null {
+  const mode = props.toneLabelMode ?? 'off'
+  if (mode === 'off') return null
+
+  return midiToNoteLabel(key.midi, { showOctave: mode === 'advanced' }).label
+}
 
 /* Emitted whenever a key plays, so the parent can arm the preview deaf period
  * (stops the piano's own tone registering as sung pitch). */
@@ -122,12 +143,8 @@ onUnmounted(() => {
         @pointerdown="playKey(key.midi)"
         @keydown="handleKeyDown($event, key.midi)"
       >
-        <span v-if="props.areToneLabelsShown || key.label">
-          {{
-            props.areToneLabelsShown
-              ? midiToNoteLabel(key.midi).label
-              : key.label
-          }}
+        <span v-if="whiteKeyLabel(key)">
+          {{ whiteKeyLabel(key) }}
         </span>
       </button>
 
@@ -153,10 +170,10 @@ onUnmounted(() => {
         @keydown="handleKeyDown($event, key.midi)"
       >
         <span
-          v-if="props.areToneLabelsShown"
+          v-if="blackKeyLabel(key)"
           class="text-[10px] leading-none text-(--p-surface-0)"
         >
-          {{ midiToNoteLabel(key.midi).label }}
+          {{ blackKeyLabel(key) }}
         </span>
       </button>
 

@@ -35,7 +35,8 @@
     "playAgain": "再玩一次",
     "score": "得分",
     "time": "时间",
-    "reset": "重置"
+    "reset": "重置",
+    "off": "关"
   },
   "errors": {
     "microphoneAccess": "无法访问麦克风",
