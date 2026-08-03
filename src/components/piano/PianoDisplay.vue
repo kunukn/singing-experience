@@ -16,6 +16,7 @@ import {
 import { pianoKeyLabel } from './pianoLabels'
 import { buildPianoPreviewLine } from './pianoPreview'
 import { usePianoKeyPlayback } from './usePianoKeyPlayback'
+import { usePianoKeyboardInput } from './usePianoKeyboardInput'
 
 type Props = {
   midiMin: number
@@ -48,6 +49,14 @@ const { activeMidis, playKey, handleKeyDown } = usePianoKeyPlayback({
   onTonePlayed: () => emit('tonePlayed'),
 })
 
+/* Computer-keyboard playing: Z…M is the C3 octave, Q…U the C4 one, regardless
+ * of the selected range (see pianoKeyboardMap). */
+const { keyboardCharForMidi } = usePianoKeyboardInput({
+  midiMin: () => props.midiMin,
+  midiMax: () => props.midiMax,
+  onPlay: (midi) => void playKey(midi),
+})
+
 /*
  * Fit-to-container key sizing. The scroll box is w-full, so its width comes
  * from the parent and can't feed back from its own content — safe to observe
@@ -77,6 +86,13 @@ const semitoneUnit = computed(() => {
    * trigger a scrollbar on a keyboard that was meant to fit. */
   return Math.floor(Math.min(Math.max(fitted, minUnit), MAX_SEMITONE_UNIT))
 })
+
+/* Printed only where a physical keyboard exists — on touch the chars are noise. */
+function keyChar(key: PianoKey): string | null {
+  if (isCoarsePointer.value) return null
+
+  return keyboardCharForMidi(key.midi)
+}
 
 const layout = computed(() =>
   buildPianoLayout(props.midiMin, props.midiMax, semitoneUnit.value),
@@ -129,6 +145,7 @@ const previewLine = computed(() =>
         }"
         :data-testid="`piano-key-${key.midi}`"
         :aria-label="midiToNoteLabel(key.midi).label"
+        :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
         @pointerdown="playKey(key.midi)"
         @keydown="handleKeyDown($event, key.midi)"
       >
@@ -141,13 +158,26 @@ const previewLine = computed(() =>
         >
           {{ keyLabel(key) }}
         </span>
+
+        <!-- The computer key that plays this note. Fixed height above the note
+             label so the chars read as one row across the keyboard whether or
+             not a given key carries a label. aria-keyshortcuts on the button
+             already announces it, hence aria-hidden here. -->
+        <span
+          v-if="keyChar(key)"
+          class="absolute bottom-6 -translate-x-1/2 rounded border border-(--p-content-border-color) px-1 text-[10px] leading-4 text-(--p-text-muted-color)"
+          :style="{ insetInlineStart: `${key.pitchX - key.leftPx}px` }"
+          aria-hidden="true"
+        >
+          {{ keyChar(key) }}
+        </span>
       </button>
 
       <button
         v-for="key in layout.blacks"
         :key="key.midi"
         type="button"
-        class="absolute z-10 flex touch-manipulation items-end justify-center rounded-b-md border border-(--p-surface-950) pb-1 transition-colors select-none"
+        class="absolute z-10 flex touch-manipulation flex-col items-center justify-end gap-1 rounded-b-md border border-(--p-surface-950) pb-1 transition-colors select-none"
         :class="
           activeMidis.has(key.midi)
             ? 'bg-(--p-primary-color)'
@@ -161,9 +191,19 @@ const previewLine = computed(() =>
         }"
         :data-testid="`piano-key-${key.midi}`"
         :aria-label="midiToNoteLabel(key.midi).label"
+        :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
         @pointerdown="playKey(key.midi)"
         @keydown="handleKeyDown($event, key.midi)"
       >
+        <!-- Stacked bottom-up: the computer key sits above the note label. -->
+        <span
+          v-if="keyChar(key)"
+          class="rounded border border-(--p-surface-600) px-1 text-[10px] leading-4 text-(--p-surface-300)"
+          aria-hidden="true"
+        >
+          {{ keyChar(key) }}
+        </span>
+
         <span
           v-if="keyLabel(key)"
           class="text-[10px] leading-none text-(--p-surface-0)"
