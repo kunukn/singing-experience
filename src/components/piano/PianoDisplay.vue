@@ -108,7 +108,7 @@ onUnmounted(() => {
         :class="
           activeMidis.has(key.midi)
             ? 'bg-(--p-primary-color) text-(--p-primary-contrast-color)'
-            : 'bg-(--p-surface-0) text-(--p-text-muted-color)'
+            : 'bg-(--p-surface-0) text-(--p-text-muted-color) hover:bg-(--p-surface-100)'
         "
         :style="{
           insetInlineStart: `${key.leftPx}px`,
@@ -127,11 +127,11 @@ onUnmounted(() => {
         v-for="key in layout.blacks"
         :key="key.midi"
         type="button"
-        class="absolute z-10 touch-manipulation rounded-b-md border border-(--p-surface-950) select-none"
+        class="absolute z-10 touch-manipulation rounded-b-md border border-(--p-surface-950) transition-colors select-none"
         :class="
           activeMidis.has(key.midi)
             ? 'bg-(--p-primary-color)'
-            : 'bg-(--p-surface-900)'
+            : 'bg-(--p-surface-900) hover:bg-(--p-surface-700)'
         "
         :style="{
           insetInlineStart: `${key.leftPx}px`,
