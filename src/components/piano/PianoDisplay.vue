@@ -187,7 +187,7 @@ onUnmounted(() => {
         v-for="key in layout.whites"
         :key="key.midi"
         type="button"
-        class="absolute bottom-0 flex touch-manipulation items-end justify-center rounded-b-md border border-(--p-content-border-color) pb-1 text-xs transition-colors select-none"
+        class="absolute bottom-0 touch-manipulation rounded-b-md border border-(--p-content-border-color) text-xs transition-colors select-none"
         :class="
           activeMidis.has(key.midi)
             ? 'bg-(--p-primary-color) text-(--p-primary-contrast-color)'
@@ -203,7 +203,13 @@ onUnmounted(() => {
         @pointerdown="playKey(key.midi)"
         @keydown="handleKeyDown($event, key.midi)"
       >
-        <span v-if="whiteKeyLabel(key)">
+        <!-- Sits on the key's pitch position, not its rectangle center, so the
+             label lines up with the hint line (they differ on C/E/F/B). -->
+        <span
+          v-if="whiteKeyLabel(key)"
+          class="absolute bottom-1 -translate-x-1/2"
+          :style="{ insetInlineStart: `${key.pitchX - key.leftPx}px` }"
+        >
           {{ whiteKeyLabel(key) }}
         </span>
       </button>
@@ -237,25 +243,32 @@ onUnmounted(() => {
         </span>
       </button>
 
-      <!-- Dead-center hint lines: a thin grey line down each key's true center,
-           shown only while "See your voice" is on. The live-pitch line lands on
-           these when the singer is in tune. -->
+      <!-- Pitch hint lines: a thin green line down each key's pitch position,
+           shown only while "See your voice" is on. Green is the app's on-pitch
+           colour (NotesSheet, DoReMiScaleItem), so landing the orange live-pitch
+           line on a green one reads as in-tune. The shade differs per key so the
+           line stays legible on both backgrounds: 500 on the white keys, 400 on
+           the dark black keys.
+           Consecutive lines are exactly one semitone unit apart, so the
+           live-pitch line travels at a constant px-per-cent. On C/E/F/B the line
+           sits a quarter unit off the rectangle center — those keys are
+           asymmetric around their pitch (see pianoLayout). -->
       <template v-if="isPreviewEnabled">
         <div
           v-for="key in layout.whites"
           :key="`hint-${key.midi}`"
-          class="pointer-events-none absolute bottom-0 z-[5] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-surface-300)"
+          class="pointer-events-none absolute bottom-0 z-[5] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-green-500)"
           :style="{
-            insetInlineStart: `${key.centerX}px`,
+            insetInlineStart: `${key.pitchX}px`,
             height: `${WHITE_KEY_HEIGHT}px`,
           }"
         />
         <div
           v-for="key in layout.blacks"
           :key="`hint-${key.midi}`"
-          class="pointer-events-none absolute z-[15] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-surface-500)"
+          class="pointer-events-none absolute z-[15] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-green-400)"
           :style="{
-            insetInlineStart: `${key.centerX}px`,
+            insetInlineStart: `${key.pitchX}px`,
             top: `${PIANO_LABEL_BAND_HEIGHT}px`,
             height: `${blackKeyHeight}px`,
           }"

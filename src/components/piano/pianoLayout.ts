@@ -20,6 +20,14 @@ import { midiToNoteLabel } from '@/utils/noteUtils'
  * to the midpoint to the natural note above it. The first and last keys use the
  * natural just OUTSIDE the range as that neighbor, so they get their full width
  * too — every C is the same width, with no truncated end keys.
+ *
+ * Those rectangles are ASYMMETRIC around the pitch for C/E/F/B — 1 semitone to
+ * one neighbouring natural, 2 to the other — so everything pitch-related (the
+ * hint line, the label, the live-pitch overlay) sits on `pitchX`, never on the
+ * rectangle center. That is what keeps consecutive hint lines exactly one unit
+ * apart; rectangle centers would alternate between 0.75 and 1.5 units (e.g.
+ * D♯→E 18px but E→F 36px at a 24px unit). The price is a line drawn a quarter
+ * unit off-center on C/E/F/B.
  */
 
 /* Nearest natural (white-key) note strictly below / above a given midi. */
@@ -62,12 +70,10 @@ export const MAX_SEMITONE_UNIT = 48
 
 export type PianoKey = {
   midi: number
-  /* Linear pitch position of the note on the x-axis (px). Used to place keys;
-   * for asymmetric white keys this differs from the rectangle center. */
+  /* Linear pitch position of the note on the x-axis (px) — where the hint line,
+   * the label and the live-pitch line sit. For C/E/F/B this is a quarter unit
+   * off the rectangle center; every other key it coincides. */
   pitchX: number
-  /* Dead-center of the key's rectangle (px) — where the live-pitch line and the
-   * grey hint line sit. For black keys this equals pitchX. */
-  centerX: number
   /* Non-null only for C keys (octave markers), e.g. "C4". */
   label: string | null
   isBlack: boolean
@@ -79,27 +85,24 @@ export type PianoLayout = {
   whites: PianoKey[]
   blacks: PianoKey[]
   totalWidth: number
-  /* All keys' centers, sorted ascending by midi (consecutive semitones). Drives
-   * the piecewise-linear voice→x mapping so an in-tune note lands dead-center. */
-  centers: { midi: number; centerX: number }[]
+  /* Lowest and highest semitone drawn — the clamp bounds for the pitch axis. */
+  midiMin: number
+  midiMax: number
+  /* The pitch axis itself: x = (midi - originPitch) * unit. originPitch is the
+   * fractional midi at x = 0 (the leftmost key's outer edge). */
+  originPitch: number
+  unit: number
 }
 
 /*
- * Piecewise-linear voice→x map: interpolates between key centers so an exact
- * note lands dead-center on its key. Clamped to the keyboard's midi range.
+ * Voice→x map. Exactly linear because the axis is linear in semitones, so a
+ * cent is worth the same px anywhere on the keyboard and an exact note lands on
+ * its key's hint line. Clamped to the keyboard's midi range.
  */
-export function pianoCenterXForMidi(layout: PianoLayout, midi: number): number {
-  const { centers } = layout
-  if (centers.length < 2) return centers[0]?.centerX ?? 0
+export function pianoPitchXForMidi(layout: PianoLayout, midi: number): number {
+  const clamped = Math.max(layout.midiMin, Math.min(layout.midiMax, midi))
 
-  const lo = centers[0].midi
-  const hi = centers[centers.length - 1].midi
-  const clamped = Math.max(lo, Math.min(hi, midi))
-  const index = Math.min(Math.floor(clamped) - lo, centers.length - 2)
-  const a = centers[index]
-  const b = centers[index + 1] // b.midi === a.midi + 1 (consecutive)
-
-  return a.centerX + (b.centerX - a.centerX) * (clamped - a.midi)
+  return (clamped - layout.originPitch) * layout.unit
 }
 
 /*
@@ -142,7 +145,6 @@ export function buildPianoLayout(
     return {
       midi,
       pitchX: pitchX(midi),
-      centerX: (leftPx + rightPx) / 2,
       label: midi % 12 === 0 ? midiToNoteLabel(midi).label : null,
       isBlack: false,
       leftPx,
@@ -154,17 +156,11 @@ export function buildPianoLayout(
   const blacks: PianoKey[] = blackMidis.map((midi) => ({
     midi,
     pitchX: pitchX(midi),
-    /* Black keys are already centered on their pitch position. */
-    centerX: pitchX(midi),
     label: null,
     isBlack: true,
     leftPx: pitchX(midi) - blackWidth / 2,
     widthPx: blackWidth,
   }))
 
-  const centers = [...whites, ...blacks]
-    .map((key) => ({ midi: key.midi, centerX: key.centerX }))
-    .sort((a, b) => a.midi - b.midi)
-
-  return { whites, blacks, totalWidth, centers }
+  return { whites, blacks, totalWidth, midiMin, midiMax, originPitch, unit }
 }

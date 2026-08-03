@@ -14,8 +14,8 @@ function lineFor(overrides: {
   return buildPianoPreviewLine({ ...overrides, layout })
 }
 
-const centerOf = (midi: number) =>
-  [...layout.whites, ...layout.blacks].find((key) => key.midi === midi)!.centerX
+const pitchXOf = (midi: number) =>
+  [...layout.whites, ...layout.blacks].find((key) => key.midi === midi)!.pitchX
 
 describe('buildPianoPreviewLine', () => {
   it('returns null without a clean pitch', () => {
@@ -45,24 +45,24 @@ describe('buildPianoPreviewLine', () => {
     ).toBeNull()
   })
 
-  it('places an exact white note dead-center on its key', () => {
+  it('places an exact white note on its key’s hint line', () => {
     const line = lineFor({
       previewMidi: 60,
       previewFrequency: midiToFrequency(60), // exactly C4
       previewNoteLabel: 'C4',
     })
     expect(line).not.toBeNull()
-    expect(line!.x).toBeCloseTo(centerOf(60))
+    expect(line!.x).toBeCloseTo(pitchXOf(60))
     expect(line!.text).toBe('C4')
   })
 
-  it('places an exact black note dead-center on its key', () => {
+  it('places an exact black note on its key’s hint line', () => {
     const line = lineFor({
       previewMidi: 61,
       previewFrequency: midiToFrequency(61), // exactly C#4
       previewNoteLabel: 'C♯4',
     })
-    expect(line!.x).toBeCloseTo(centerOf(61))
+    expect(line!.x).toBeCloseTo(pitchXOf(61))
     expect(line!.text).toBe('C♯4')
   })
 

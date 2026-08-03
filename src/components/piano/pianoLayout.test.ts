@@ -1,11 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { buildPianoLayout, pianoSpanUnits, SEMITONE_UNIT } from './pianoLayout'
+import {
+  buildPianoLayout,
+  pianoPitchXForMidi,
+  pianoSpanUnits,
+  SEMITONE_UNIT,
+} from './pianoLayout'
 
 /* Voice-range endpoints under test */
 const EVERYONE = { midiMin: 55, midiMax: 67 } // G3–G4
 const FULL = { midiMin: 36, midiMax: 96 } // C2–C7
 
 describe('buildPianoLayout', () => {
+  /* The core invariant: hint lines are drawn at pitchX, so equal spacing here
+   * means D3→D♯3 measures the same px as D♯3→E3 and E3→F3. */
   it('places every semitone an equal px distance apart (linear pitch axis)', () => {
     for (const range of [EVERYONE, FULL]) {
       const { whites, blacks } = buildPianoLayout(range.midiMin, range.midiMax)
@@ -66,26 +73,37 @@ describe('buildPianoLayout', () => {
     }
   })
 
-  it('sets centerX to each key’s rectangle center; black keys on their pitch', () => {
-    const { whites, blacks } = buildPianoLayout(FULL.midiMin, FULL.midiMax)
-    for (const key of [...whites, ...blacks]) {
-      expect(key.centerX).toBeCloseTo(key.leftPx + key.widthPx / 2)
+  it('offsets pitchX from the rectangle center on C/E/F/B only', () => {
+    const { whites } = buildPianoLayout(FULL.midiMin, FULL.midiMax)
+    const offsetOf = (midi: number) => {
+      const key = whites.find((entry) => entry.midi === midi)!
+
+      return key.pitchX - (key.leftPx + key.widthPx / 2)
     }
-    for (const key of blacks) {
-      expect(key.centerX).toBeCloseTo(key.pitchX)
+
+    /* C4 and F4 have their 1-semitone neighbour below, so the rectangle extends
+     * further above the pitch and its center lands right of pitchX. */
+    expect(offsetOf(60)).toBeCloseTo(-0.25 * SEMITONE_UNIT)
+    expect(offsetOf(65)).toBeCloseTo(-0.25 * SEMITONE_UNIT)
+    // E4 and B4 are the mirror case — pitch sits right of center
+    expect(offsetOf(64)).toBeCloseTo(0.25 * SEMITONE_UNIT)
+    expect(offsetOf(71)).toBeCloseTo(0.25 * SEMITONE_UNIT)
+    // D4 / G4 / A4 are symmetric — pitch is the rectangle center
+    for (const midi of [62, 67, 69]) {
+      expect(offsetOf(midi)).toBeCloseTo(0)
     }
   })
 
-  it('exposes centers as one sorted, consecutive, strictly increasing list', () => {
-    const { whites, blacks, centers } = buildPianoLayout(
+  it('exposes the pitch axis so callers can map a midi to x', () => {
+    const { midiMin, midiMax, originPitch, unit } = buildPianoLayout(
       FULL.midiMin,
       FULL.midiMax,
     )
-    expect(centers).toHaveLength(whites.length + blacks.length)
-    for (let index = 1; index < centers.length; index++) {
-      expect(centers[index].midi).toBe(centers[index - 1].midi + 1)
-      expect(centers[index].centerX).toBeGreaterThan(centers[index - 1].centerX)
-    }
+    expect(midiMin).toBe(FULL.midiMin)
+    expect(midiMax).toBe(FULL.midiMax)
+    expect(unit).toBe(SEMITONE_UNIT)
+    // C2's rectangle starts half a unit below its pitch (B1 is 1 semitone down)
+    expect(originPitch).toBeCloseTo(FULL.midiMin - 0.5)
   })
 
   it('scales every dimension linearly with a custom unit', () => {
@@ -115,6 +133,34 @@ describe('buildPianoLayout', () => {
       'C6',
       'C7',
     ])
+  })
+})
+
+describe('pianoPitchXForMidi', () => {
+  const layout = buildPianoLayout(FULL.midiMin, FULL.midiMax)
+
+  it('lands an exact note on that key’s pitch position', () => {
+    for (const key of [...layout.whites, ...layout.blacks]) {
+      expect(pianoPitchXForMidi(layout, key.midi)).toBeCloseTo(key.pitchX)
+    }
+  })
+
+  it('is linear in cents everywhere, including across E→F', () => {
+    const cent = SEMITONE_UNIT / 100
+    // 64 = E4, the boundary where rectangle-center spacing used to double
+    for (const midi of [60, 62, 64, 65, 71]) {
+      const step = pianoPitchXForMidi(layout, midi + 0.5)
+      expect(step - pianoPitchXForMidi(layout, midi)).toBeCloseTo(50 * cent)
+    }
+  })
+
+  it('clamps outside the keyboard range', () => {
+    expect(pianoPitchXForMidi(layout, 12)).toBeCloseTo(
+      pianoPitchXForMidi(layout, FULL.midiMin),
+    )
+    expect(pianoPitchXForMidi(layout, 120)).toBeCloseTo(
+      pianoPitchXForMidi(layout, FULL.midiMax),
+    )
   })
 })
 
