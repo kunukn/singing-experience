@@ -55,6 +55,10 @@ export const WHITE_KEY_HEIGHT = 160 // px
 export const BLACK_KEY_HEIGHT_RATIO = 0.62 // of the white key height
 export const BLACK_KEY_WIDTH_RATIO = 0.62 // of a full (2-unit) white key
 export const PIANO_LABEL_BAND_HEIGHT = 28 // px — headroom above the keys for the live-pitch chip
+/* px — key-free strip under the keys, grabbed to pan a keyboard wider than the
+ * screen without sounding a note. 44 = Apple HIG minimum tap target (same
+ * reasoning as MIN_SEMITONE_UNIT_TOUCH below). */
+export const PIANO_DRAG_GUTTER_HEIGHT = 44
 
 /*
  * Bounds for the fit-to-container unit (see PianoDisplay). On touch, 36 makes a

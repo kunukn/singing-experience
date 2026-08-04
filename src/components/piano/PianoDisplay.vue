@@ -7,6 +7,7 @@ import {
   MAX_SEMITONE_UNIT,
   MIN_SEMITONE_UNIT_POINTER,
   MIN_SEMITONE_UNIT_TOUCH,
+  PIANO_DRAG_GUTTER_HEIGHT,
   PIANO_LABEL_BAND_HEIGHT,
   WHITE_KEY_HEIGHT,
   buildPianoLayout,
@@ -121,6 +122,21 @@ const layout = computed(() =>
 const blackKeyHeight = WHITE_KEY_HEIGHT * BLACK_KEY_HEIGHT_RATIO
 const trackHeight = WHITE_KEY_HEIGHT + PIANO_LABEL_BAND_HEIGHT
 
+/* The fitted unit is floored to whole px, so a keyboard that was meant to fit
+ * never exceeds the container — a positive difference means it really scrolls. */
+const isScrollable = computed(
+  () =>
+    containerWidth.value > 0 && layout.value.totalWidth > containerWidth.value,
+)
+
+/* Somewhere to start a pan that is not a key: @pointerdown sounds a note on the
+ * first touch of a drag, so panning by the keys plays them by accident. Pointless
+ * without a touch gesture (mouse users get the scrollbar) or where the whole
+ * keyboard already fits. */
+const isDragGutterVisible = computed(
+  () => isCoarsePointer.value && isScrollable.value,
+)
+
 /* Vertical orange line + note/cents chip mapped from the live pitch; null hides. */
 const previewLine = computed(() =>
   buildPianoPreviewLine({
@@ -145,114 +161,124 @@ const previewLine = computed(() =>
       @shift="stepOctaveShift"
     />
 
-    <!-- A piano is a fixed physical instrument (low pitch always on the left), so
-         force LTR even in RTL locales; inline-start then coincides with left. -->
-    <div
-      ref="scrollBox"
-      class="w-full overflow-x-auto"
-      dir="ltr"
-      data-testid="piano-display"
-    >
+    <div class="relative w-full">
+      <!-- A piano is a fixed physical instrument (low pitch always on the left), so
+         force LTR even in RTL locales; inline-start then coincides with left.
+         The gutter is padding on the scroll box rather than a strip inside it:
+         padding belongs to the container, not the scrolled content, so it stays
+         put however far the keys are scrolled. contentRect.width excludes it,
+         so containerWidth (and with it the fitted key size) is unaffected. -->
       <div
-        class="relative mx-auto"
+        ref="scrollBox"
+        class="w-full overflow-x-auto"
         :style="{
-          width: `${layout.totalWidth}px`,
-          height: `${trackHeight}px`,
+          paddingBlockEnd: isDragGutterVisible
+            ? `${PIANO_DRAG_GUTTER_HEIGHT}px`
+            : undefined,
         }"
+        dir="ltr"
+        data-testid="piano-display"
       >
-        <button
-          v-for="key in layout.whites"
-          :key="key.midi"
-          type="button"
-          class="absolute bottom-0 touch-manipulation rounded-b-md border border-(--p-content-border-color) bg-(--p-surface-0) text-xs text-(--p-text-muted-color) transition-colors select-none hover:bg-(--p-surface-100)"
+        <div
+          class="relative mx-auto"
           :style="{
-            insetInlineStart: `${key.leftPx}px`,
-            width: `${key.widthPx}px`,
-            height: `${WHITE_KEY_HEIGHT}px`,
+            width: `${layout.totalWidth}px`,
+            height: `${trackHeight}px`,
           }"
-          :data-testid="`piano-key-${key.midi}`"
-          :aria-label="midiToNoteLabel(key.midi).label"
-          :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
-          @pointerdown="playKey(key.midi)"
-          @keydown="handleKeyDown($event, key.midi)"
         >
-          <!-- Press highlight. Keyed on the press count so a fresh press
+          <button
+            v-for="key in layout.whites"
+            :key="key.midi"
+            type="button"
+            class="absolute bottom-0 touch-manipulation rounded-b-md border border-(--p-content-border-color) bg-(--p-surface-0) text-xs text-(--p-text-muted-color) transition-colors select-none hover:bg-(--p-surface-100)"
+            :style="{
+              insetInlineStart: `${key.leftPx}px`,
+              width: `${key.widthPx}px`,
+              height: `${WHITE_KEY_HEIGHT}px`,
+            }"
+            :data-testid="`piano-key-${key.midi}`"
+            :aria-label="midiToNoteLabel(key.midi).label"
+            :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
+            @pointerdown="playKey(key.midi)"
+            @keydown="handleKeyDown($event, key.midi)"
+          >
+            <!-- Press highlight. Keyed on the press count so a fresh press
              remounts the element and replays the fade from full colour; an
              opacity transition would instead be a no-op while already lit. -->
-          <span
-            v-if="pressCountFor(key.midi)"
-            :key="`glow-${pressCountFor(key.midi)}`"
-            class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
-            aria-hidden="true"
-          />
+            <span
+              v-if="pressCountFor(key.midi)"
+              :key="`glow-${pressCountFor(key.midi)}`"
+              class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
+              aria-hidden="true"
+            />
 
-          <!-- Sits on the key's pitch position, not its rectangle center, so the
+            <!-- Sits on the key's pitch position, not its rectangle center, so the
              label lines up with the hint line (they differ on C/E/F/B). -->
-          <span
-            v-if="keyLabel(key)"
-            class="absolute bottom-1 -translate-x-1/2"
-            :style="{ insetInlineStart: `${key.pitchX - key.leftPx}px` }"
-          >
-            {{ keyLabel(key) }}
-          </span>
+            <span
+              v-if="keyLabel(key)"
+              class="absolute bottom-1 -translate-x-1/2"
+              :style="{ insetInlineStart: `${key.pitchX - key.leftPx}px` }"
+            >
+              {{ keyLabel(key) }}
+            </span>
 
-          <!-- The computer key that plays this note. Fixed height above the note
+            <!-- The computer key that plays this note. Fixed height above the note
              label so the chars read as one row across the keyboard whether or
              not a given key carries a label. aria-keyshortcuts on the button
              already announces it, hence aria-hidden here. -->
-          <span
-            v-if="keyChar(key)"
-            class="absolute bottom-6 -translate-x-1/2 rounded border border-(--p-content-border-color) px-1 text-[10px] leading-4 text-(--p-text-muted-color)"
-            :style="{ insetInlineStart: `${key.pitchX - key.leftPx}px` }"
-            aria-hidden="true"
+            <span
+              v-if="keyChar(key)"
+              class="absolute bottom-6 -translate-x-1/2 rounded border border-(--p-content-border-color) px-1 text-[10px] leading-4 text-(--p-text-muted-color)"
+              :style="{ insetInlineStart: `${key.pitchX - key.leftPx}px` }"
+              aria-hidden="true"
+            >
+              {{ keyChar(key) }}
+            </span>
+          </button>
+
+          <button
+            v-for="key in layout.blacks"
+            :key="key.midi"
+            type="button"
+            class="absolute z-10 flex touch-manipulation flex-col items-center justify-end gap-1 rounded-b-md border border-(--p-surface-950) bg-(--p-surface-900) pb-1 transition-colors select-none hover:bg-(--p-surface-700)"
+            :style="{
+              insetInlineStart: `${key.leftPx}px`,
+              top: `${PIANO_LABEL_BAND_HEIGHT}px`,
+              width: `${key.widthPx}px`,
+              height: `${blackKeyHeight}px`,
+            }"
+            :data-testid="`piano-key-${key.midi}`"
+            :aria-label="midiToNoteLabel(key.midi).label"
+            :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
+            @pointerdown="playKey(key.midi)"
+            @keydown="handleKeyDown($event, key.midi)"
           >
-            {{ keyChar(key) }}
-          </span>
-        </button>
+            <span
+              v-if="pressCountFor(key.midi)"
+              :key="`glow-${pressCountFor(key.midi)}`"
+              class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
+              aria-hidden="true"
+            />
 
-        <button
-          v-for="key in layout.blacks"
-          :key="key.midi"
-          type="button"
-          class="absolute z-10 flex touch-manipulation flex-col items-center justify-end gap-1 rounded-b-md border border-(--p-surface-950) bg-(--p-surface-900) pb-1 transition-colors select-none hover:bg-(--p-surface-700)"
-          :style="{
-            insetInlineStart: `${key.leftPx}px`,
-            top: `${PIANO_LABEL_BAND_HEIGHT}px`,
-            width: `${key.widthPx}px`,
-            height: `${blackKeyHeight}px`,
-          }"
-          :data-testid="`piano-key-${key.midi}`"
-          :aria-label="midiToNoteLabel(key.midi).label"
-          :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
-          @pointerdown="playKey(key.midi)"
-          @keydown="handleKeyDown($event, key.midi)"
-        >
-          <span
-            v-if="pressCountFor(key.midi)"
-            :key="`glow-${pressCountFor(key.midi)}`"
-            class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
-            aria-hidden="true"
-          />
-
-          <!-- Stacked bottom-up: the computer key sits above the note label.
+            <!-- Stacked bottom-up: the computer key sits above the note label.
              relative keeps both labels painted above the glow overlay. -->
-          <span
-            v-if="keyChar(key)"
-            class="relative rounded border border-(--p-surface-600) px-1 text-[10px] leading-4 text-(--p-surface-300)"
-            aria-hidden="true"
-          >
-            {{ keyChar(key) }}
-          </span>
+            <span
+              v-if="keyChar(key)"
+              class="relative rounded border border-(--p-surface-600) px-1 text-[10px] leading-4 text-(--p-surface-300)"
+              aria-hidden="true"
+            >
+              {{ keyChar(key) }}
+            </span>
 
-          <span
-            v-if="keyLabel(key)"
-            class="relative text-[10px] leading-none text-(--p-surface-0)"
-          >
-            {{ keyLabel(key) }}
-          </span>
-        </button>
+            <span
+              v-if="keyLabel(key)"
+              class="relative text-[10px] leading-none text-(--p-surface-0)"
+            >
+              {{ keyLabel(key) }}
+            </span>
+          </button>
 
-        <!-- Pitch hint lines: a thin green line down each key's pitch position,
+          <!-- Pitch hint lines: a thin green line down each key's pitch position,
            shown only while "See your voice" is on. Green is the app's on-pitch
            colour (NotesSheet, DoReMiScaleItem), so landing the orange live-pitch
            line on a green one reads as in-tune. The shade differs per key so the
@@ -262,45 +288,61 @@ const previewLine = computed(() =>
            live-pitch line travels at a constant px-per-cent. On C/E/F/B the line
            sits a quarter unit off the rectangle center — those keys are
            asymmetric around their pitch (see pianoLayout). -->
-        <template v-if="isPreviewEnabled">
-          <div
-            v-for="key in layout.whites"
-            :key="`hint-${key.midi}`"
-            class="pointer-events-none absolute bottom-0 z-[5] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-green-500)"
-            :style="{
-              insetInlineStart: `${key.pitchX}px`,
-              height: `${WHITE_KEY_HEIGHT}px`,
-            }"
-          />
-          <div
-            v-for="key in layout.blacks"
-            :key="`hint-${key.midi}`"
-            class="pointer-events-none absolute z-[15] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-green-400)"
-            :style="{
-              insetInlineStart: `${key.pitchX}px`,
-              top: `${PIANO_LABEL_BAND_HEIGHT}px`,
-              height: `${blackKeyHeight}px`,
-            }"
-          />
-        </template>
+          <template v-if="isPreviewEnabled">
+            <div
+              v-for="key in layout.whites"
+              :key="`hint-${key.midi}`"
+              class="pointer-events-none absolute bottom-0 z-[5] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-green-500)"
+              :style="{
+                insetInlineStart: `${key.pitchX}px`,
+                height: `${WHITE_KEY_HEIGHT}px`,
+              }"
+            />
+            <div
+              v-for="key in layout.blacks"
+              :key="`hint-${key.midi}`"
+              class="pointer-events-none absolute z-[15] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-green-400)"
+              :style="{
+                insetInlineStart: `${key.pitchX}px`,
+                top: `${PIANO_LABEL_BAND_HEIGHT}px`,
+                height: `${blackKeyHeight}px`,
+              }"
+            />
+          </template>
 
-        <!-- Live-pitch overlay: vertical dashed orange line spanning the track,
+          <!-- Live-pitch overlay: vertical dashed orange line spanning the track,
            with a note/cents chip in the top band. pointer-events-none keeps the
            keys underneath clickable. -->
-        <template v-if="previewLine">
-          <div
-            class="pointer-events-none absolute inset-y-0 z-20 w-0 -translate-x-[1.5px] border-l-3 border-dashed border-(--p-orange-400)/50"
-            :style="{ insetInlineStart: `${previewLine.x}px` }"
-            data-testid="piano-preview-line"
-          />
-          <span
-            class="pointer-events-none absolute z-30 -translate-x-1/2 rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-orange-400) tabular-nums"
-            :style="{ insetInlineStart: `${previewLine.x}px`, top: '4px' }"
-            data-testid="piano-preview-label"
-          >
-            {{ previewLine.text }}
-          </span>
-        </template>
+          <template v-if="previewLine">
+            <div
+              class="pointer-events-none absolute inset-y-0 z-20 w-0 -translate-x-[1.5px] border-l-3 border-dashed border-(--p-orange-400)/50"
+              :style="{ insetInlineStart: `${previewLine.x}px` }"
+              data-testid="piano-preview-line"
+            />
+            <span
+              class="pointer-events-none absolute z-30 -translate-x-1/2 rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-orange-400) tabular-nums"
+              :style="{ insetInlineStart: `${previewLine.x}px`, top: '4px' }"
+              data-testid="piano-preview-label"
+            >
+              {{ previewLine.text }}
+            </span>
+          </template>
+        </div>
+      </div>
+
+      <!-- The gutter, painted so the safe area is visible: a grey strip with a
+           drag handle. pointer-events-none so the touch lands on the scroll box
+           underneath and the browser pans it natively. -->
+      <div
+        v-if="isDragGutterVisible"
+        class="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center rounded-b-md bg-(--p-surface-100) dark:bg-(--p-surface-800)"
+        :style="{ height: `${PIANO_DRAG_GUTTER_HEIGHT}px` }"
+        aria-hidden="true"
+        data-testid="piano-drag-gutter"
+      >
+        <span
+          class="h-1.5 w-16 rounded-full bg-(--p-surface-400) dark:bg-(--p-surface-600)"
+        />
       </div>
     </div>
   </div>
