@@ -66,15 +66,6 @@ export const VOICE_RANGES: VoiceRange[] = [
     midiMin: 36,
     midiMax: 60,
   },
-  /* Union of comfyMen (C3–C4) and comfyWomen (C4–C5) — the two octaves a man
-   * and a woman land on when they sing the same melody together. Shares its
-   * MIDI span with `tenor`, but nobody looking for a duet would pick that. */
-  {
-    labelKey: 'voiceRanges.duet',
-    noteRange: 'C3–C5',
-    midiMin: 48,
-    midiMax: 72,
-  },
   {
     labelKey: 'voiceRanges.kids',
     noteRange: 'D4–D5',
@@ -92,6 +83,15 @@ export const VOICE_RANGES: VoiceRange[] = [
     noteRange: 'G3–G4',
     midiMin: 55,
     midiMax: 67,
+  },
+  /* Union of comfyMen (C3–C4) and comfyWomen (C4–C5) — the two octaves a man
+   * and a woman land on when they sing the same melody together. Shares its
+   * MIDI span with `tenor`, but nobody looking for a duet would pick that. */
+  {
+    labelKey: 'voiceRanges.duet',
+    noteRange: 'C3–C5',
+    midiMin: 48,
+    midiMax: 72,
   },
   {
     labelKey: 'voiceRanges.comfyMen',
