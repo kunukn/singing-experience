@@ -237,7 +237,7 @@
     "tonesDetected": "{count} tons trouvés",
     "pressStart": "Appuie sur Démarrer pour trouver les tons",
     "pageDescription": "Détecte plusieurs tons à la fois (C2–C7). Chante une harmonie, fredonne plusieurs notes et vois chaque ton en temps réel.",
-    "sensitivityDescription": "Contrôle combien de tons sont captés. Baisse-le pour filtrer les harmoniques quand tu chantes une seule note. Monte-le pour détecter plus de tons à la fois dans une harmonie.",
+    "sensitivityDescription": "À quel point une note peut être douce à côté de la plus forte et s'afficher quand même. Monte-le pour capter les voix douces d'un accord.",
     "noiseGateDescription": "À quel volume tu dois chanter pour que l'appli t'entende. Monte-le si tu vois de faux tons dans le silence. Baisse-le pour capter les sons plus faibles.",
     "sensitivity": "Sensibilité",
     "noiseGate": "Seuil de bruit",

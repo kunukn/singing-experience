@@ -237,7 +237,7 @@
     "tonesDetected": "{count} Töne gefunden",
     "pressStart": "Drück Start, um Töne zu finden",
     "pageDescription": "Erkennt mehrere Töne gleichzeitig (C2–C7). Singe eine Harmonie, summe mehrere Noten und sieh jeden Ton in Echtzeit.",
-    "sensitivityDescription": "Steuert, wie viele Töne erkannt werden. Senke den Wert, um Obertöne herauszufiltern, wenn du einen einzelnen Ton singst oder spielst. Erhöhe ihn, um mehr gleichzeitige Töne in einer Harmonie oder einem Akkord zu erkennen.",
+    "sensitivityDescription": "Wie leise ein Ton neben dem lautesten sein darf und trotzdem angezeigt wird. Dreh ihn hoch, um leise Stimmen in einem Akkord zu finden.",
     "noiseGateDescription": "Legt die Mindestlautstärke fest, die zum Erkennen eines Tons erforderlich ist. Erhöhe den Wert, wenn bei Stille falsche Töne erscheinen. Senke ihn, um leisere Töne aufzunehmen.",
     "sensitivity": "Empfindlichkeit",
     "noiseGate": "Noise-Gate",

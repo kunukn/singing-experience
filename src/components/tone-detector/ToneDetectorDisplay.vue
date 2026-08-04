@@ -81,7 +81,7 @@ onUnmounted(() => {
       v-else
       class="flex flex-col items-center gap-2 text-(--p-text-muted-color)"
     >
-      <span class="text-6xl">🎹</span>
+      <span class="text-6xl">🎚️</span>
       <p class="text-sm">{{ t('toneDetector.pressStart') }}</p>
     </div>
   </div>

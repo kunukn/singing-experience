@@ -237,7 +237,7 @@
     "tonesDetected": "{count} nada terdeteksi",
     "pressStart": "Tekan Mulai untuk mendeteksi nada",
     "pageDescription": "Mendeteksi beberapa nada sekaligus (C2–C7). Nyanyikan harmoni, senandungkan beberapa not dan lihat setiap nada ditampilkan secara langsung.",
-    "sensitivityDescription": "Mengontrol berapa banyak nada yang ditangkap. Kurangi untuk menyaring overtone saat kamu menyanyikan satu not. Tingkatkan untuk mendeteksi lebih banyak nada sekaligus dalam harmoni atau akor.",
+    "sensitivityDescription": "Seberapa pelan sebuah nada boleh terdengar di samping nada paling keras dan tetap muncul. Naikkan untuk menangkap suara pelan dalam akor.",
     "noiseGateDescription": "Mengatur volume minimum untuk mendeteksi nada. Tingkatkan jika kamu melihat nada palsu saat hening. Kurangi untuk menangkap suara yang lebih pelan.",
     "sensitivity": "Sensitivitas",
     "noiseGate": "Gerbang kebisingan",

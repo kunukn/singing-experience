@@ -237,7 +237,7 @@
     "tonesDetected": "{count} tonos encontrados",
     "pressStart": "Pulsa Iniciar para encontrar tonos",
     "pageDescription": "Detecta múltiples tonos a la vez (C2–C7). Canta una armonía, tararea varias notas y observa cada tono en tiempo real.",
-    "sensitivityDescription": "Controla cuántos tonos se detectan. Redúcelo para filtrar armónicos al cantar o tocar una sola nota. Auméntalo para detectar más tonos simultáneos en una armonía o acorde.",
+    "sensitivityDescription": "Cómo de bajito puede sonar una nota al lado de la más fuerte y aun así aparecer. Súbelo para captar voces suaves en un acorde.",
     "noiseGateDescription": "Establece el volumen mínimo necesario para detectar un tono. Auméntalo si ves tonos falsos durante el silencio. Redúcelo para captar sonidos más suaves.",
     "sensitivity": "Sensibilidad",
     "noiseGate": "Puerta de ruido",

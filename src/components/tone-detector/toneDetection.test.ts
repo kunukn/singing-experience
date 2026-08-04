@@ -285,6 +285,46 @@ describe('chords', () => {
 })
 
 describe('slider settings', () => {
+  it('never collapses a chord, even at the strictest setting', () => {
+    /* The trap the 2 dB floor removes. A 0 dB window admits only the single
+     * loudest FFT bin, so this triad used to report E4 alone — chosen by
+     * bin-level interference, not by anything musical. */
+    const spectrum = buildSpectrum([
+      ...sawtoothPartials(hzOf('C', 4)),
+      ...sawtoothPartials(hzOf('E', 4)),
+      ...sawtoothPartials(hzOf('G', 4)),
+    ])
+
+    expect(detectNotes(spectrum, 0)).toEqual(['C4', 'E4', 'G4'])
+  })
+
+  it('widens monotonically, with every notch doing something', () => {
+    /* Guards the remap: the old ×4 mapping ran to 40 dB when nothing changed
+     * past ~26, leaving the top third of the slider inert. */
+    expect(sensitivityToAdaptiveRange(0)).toBeCloseTo(2, 6)
+    expect(sensitivityToAdaptiveRange(5)).toBeCloseTo(14, 6)
+    expect(sensitivityToAdaptiveRange(10)).toBeCloseTo(26, 6)
+
+    for (let slider = 1; slider <= 10; slider++) {
+      expect(sensitivityToAdaptiveRange(slider)).toBeGreaterThan(
+        sensitivityToAdaptiveRange(slider - 1),
+      )
+    }
+  })
+
+  it('reveals a buried voice as the slider rises', () => {
+    /* E4 sits 10 dB under the outer voices — invisible when strict, present
+     * once the window opens. This is the control's remaining honest job. */
+    const spectrum = buildSpectrum([
+      ...sawtoothPartials(hzOf('C', 4), -20),
+      ...sawtoothPartials(hzOf('E', 4), -30),
+      ...sawtoothPartials(hzOf('G', 4), -20),
+    ])
+
+    expect(detectNotes(spectrum, 0)).toEqual(['C4', 'G4'])
+    expect(detectNotes(spectrum, 10)).toEqual(['C4', 'E4', 'G4'])
+  })
+
   it('reports one note for a rich tone at every sensitivity', () => {
     /* The setting that made the old bug worse: a wider adaptive window let more
      * overtones through as separate notes. */

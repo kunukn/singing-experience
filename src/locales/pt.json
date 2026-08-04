@@ -237,7 +237,7 @@
     "tonesDetected": "{count} tons encontrados",
     "pressStart": "Toque Iniciar para encontrar tons",
     "pageDescription": "Detecta vários tons ao mesmo tempo (C2–C7). Cante uma harmonia, murmure várias notas e veja cada tom exibido em tempo real.",
-    "sensitivityDescription": "Controla quantos tons são captados. Diminua para filtrar harmônicos ao cantar ou tocar uma única nota. Aumente para detectar mais tons simultâneos em uma harmonia ou acorde.",
+    "sensitivityDescription": "Quão baixinha uma nota pode ser ao lado da mais forte e ainda aparecer. Aumente para captar vozes suaves num acorde.",
     "noiseGateDescription": "Define o volume mínimo necessário para detectar um tom. Aumente se você vir tons falsos durante o silêncio. Diminua para captar sons mais baixos.",
     "sensitivity": "Sensibilidade",
     "noiseGate": "Porta de ruído",

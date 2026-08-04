@@ -237,7 +237,7 @@
     "tonesDetected": "{count} toner fundet",
     "pressStart": "Tryk Start for at finde toner",
     "pageDescription": "Finder flere toner på én gang (C2–C7). Syng en harmoni, nyn flere toner og se hver tone vist i realtid.",
-    "sensitivityDescription": "Bestemmer hvor mange toner der fanges. Sænk den for at fjerne overtoner, når du synger eller spiller én tone. Hæv den for at finde flere toner på én gang i en harmoni eller akkord.",
+    "sensitivityDescription": "Hvor svag en tone må være ved siden af den kraftigste og stadig blive vist. Skru op for at fange svage stemmer i en akkord.",
     "noiseGateDescription": "Hvor højt du skal synge, før appen hører dig. Hæv den, hvis du ser falske toner i stilheden. Sænk den for at fange svagere lyde.",
     "sensitivity": "Følsomhed",
     "noiseGate": "Støjgrænse",

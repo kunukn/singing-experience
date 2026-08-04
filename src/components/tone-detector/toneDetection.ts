@@ -96,10 +96,31 @@ const LONE_PEAK_MIN_ABOVE_FLOOR_DB = 15
 
 export type SpectralPeak = { frequency: number; magnitude: number }
 
-/* Maps a 0–10 user slider to the adaptive range in dB (lower = stricter).
- * ×4 gives 0–40 dB range — at 0 only the loudest peak passes, at 10 even quiet tones show. */
+/*
+ * Maps the 0–10 user slider to the dB window below the loudest peak that a tone
+ * may sit in and still be reported.
+ *
+ * The 2 dB floor is not cosmetic: at 0 the window admits only the single
+ * loudest FFT bin, so every chord collapses to one note — a balanced C4+E4+G4
+ * reported E4 alone, picked by bin-level interference rather than by anything
+ * musical. Two dB is the measured point where balanced chords survive intact.
+ *
+ * The 26 dB ceiling is where the useful range actually ends. Measured against
+ * a triad with one voice buried: a voice 10 dB down appears around 11 dB, one
+ * 18 dB down around 26 dB, and past that nothing new appears — the older ×4
+ * mapping ran to 40 dB, leaving the top third of the slider inert.
+ *
+ * Overtone filtering is NOT this control's job any more; the harmonic sieve
+ * handles that at every setting. This only decides how quiet a SEPARATE note
+ * may be next to the loudest one.
+ */
+const MIN_ADAPTIVE_RANGE_DB = 2
+const MAX_ADAPTIVE_RANGE_DB = 26
+
 export function sensitivityToAdaptiveRange(sensitivity: number): number {
-  return sensitivity * 4
+  const span = MAX_ADAPTIVE_RANGE_DB - MIN_ADAPTIVE_RANGE_DB
+
+  return MIN_ADAPTIVE_RANGE_DB + (sensitivity / 10) * span
 }
 
 /* Maps a 0–10 user slider to absolute floor in dB (higher slider = louder floor).

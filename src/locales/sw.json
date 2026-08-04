@@ -237,7 +237,7 @@
     "tonesDetected": "Toni {count} zimegunduliwa",
     "pressStart": "Bonyeza Anza kugundua toni",
     "pageDescription": "Hugundua toni nyingi kwa wakati mmoja (C2–C7). Imba harmoni, piga noti kadhaa na uone kila toni ikionyeshwa moja kwa moja.",
-    "sensitivityDescription": "Inadhibiti ni toni ngapi zinakamatwa. Punguza kuchuja overtoni unapoimba au kupiga noti moja. Ongeza kugundua toni nyingi zaidi zinazosikika kwa wakati mmoja katika harmoni au kodi.",
+    "sensitivityDescription": "Noti inaweza kuwa hafifu kiasi gani kando ya ile kubwa zaidi na bado ionekane. Ipandishe ili kupata sauti hafifu kwenye kodi.",
     "noiseGateDescription": "Huweka kiwango cha chini cha sauti kinachohitajika kugundua toni. Ongeza ukiona toni za uongo wakati wa ukimya. Punguza kukamata sauti ndogo zaidi.",
     "sensitivity": "Unyeti",
     "noiseGate": "Lango la kelele",

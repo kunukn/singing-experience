@@ -237,7 +237,7 @@
     "tonesDetected": "检测到 {count} 个音调",
     "pressStart": "按开始检测音调",
     "pageDescription": "同时检测多个音调（C2–C7）。唱和声、哼几个音符，实时查看每个音调。",
-    "sensitivityDescription": "控制检测到多少个音调。降低它以在唱或弹奏单个音符时过滤泛音。提高它以检测和声或和弦中更多的同时音调。",
+    "sensitivityDescription": "在最响的音旁边，多轻的音还能显示出来。调高就能听到和弦里轻轻的声音。",
     "noiseGateDescription": "设置检测音调所需的最低音量。如果在安静时看到虚假音调，请提高它。降低它以捕获更安静的声音。",
     "sensitivity": "灵敏度",
     "noiseGate": "噪声门",
