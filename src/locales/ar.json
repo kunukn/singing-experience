@@ -216,6 +216,7 @@
   },
   "voiceRanges": {
     "full": "كامل",
+    "choir": "جوقة",
     "tenorToSoprano": "تينور–سوبرانو",
     "everyone": "الجميع",
     "kids": "أطفال (6–11)",
@@ -226,7 +227,9 @@
     "alto": "آلتو",
     "tenor": "تينور",
     "baritone": "باريتون",
-    "bass": "باص"
+    "bass": "باص",
+    "bassToBaritone": "باص–باريتون",
+    "duet": "رجال ونساء"
   },
   "toneDetector": {
     "listening": "يستمع…",

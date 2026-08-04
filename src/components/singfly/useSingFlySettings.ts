@@ -1,5 +1,4 @@
 import { useLocalStorage } from '@vueuse/core'
-import { DEFAULT_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import {
   DEFAULT_DIFFICULTY,
   DEFAULT_GAME_DURATION_SEC,
@@ -15,15 +14,7 @@ import {
  * cross-feature key (also used by pitch-game / pitch-detector) — keep the
  * string identical. */
 export function useSingFlySettings() {
-  const rangeIndex = useLocalStorage('syng.rangeIndex', DEFAULT_RANGE_INDEX)
-  if (
-    typeof rangeIndex.value !== 'number' ||
-    !Number.isInteger(rangeIndex.value) ||
-    rangeIndex.value < 0 ||
-    rangeIndex.value >= VOICE_RANGES.length
-  ) {
-    rangeIndex.value = DEFAULT_RANGE_INDEX
-  }
+  const rangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
   const gameDurationSec = useLocalStorage<number>(
     'singFly.gameDurationSec',

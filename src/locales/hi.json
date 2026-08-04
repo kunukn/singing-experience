@@ -216,6 +216,7 @@
   },
   "voiceRanges": {
     "full": "पूर्ण",
+    "choir": "कोरस",
     "tenorToSoprano": "टेनर–सोप्रानो",
     "everyone": "सभी",
     "kids": "बच्चे (6–11)",
@@ -226,7 +227,9 @@
     "alto": "ऑल्टो",
     "tenor": "टेनर",
     "baritone": "बैरिटोन",
-    "bass": "बेस"
+    "bass": "बेस",
+    "bassToBaritone": "बेस–बैरिटोन",
+    "duet": "पुरुष और महिला"
   },
   "toneDetector": {
     "listening": "सुन रहे हैं…",

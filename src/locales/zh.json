@@ -216,6 +216,7 @@
   },
   "voiceRanges": {
     "full": "完整",
+    "choir": "合唱",
     "tenorToSoprano": "男高音–女高音",
     "everyone": "所有人",
     "kids": "孩子 (6–11)",
@@ -226,7 +227,9 @@
     "alto": "女低音",
     "tenor": "男高音",
     "baritone": "男中音",
-    "bass": "男低音"
+    "bass": "男低音",
+    "bassToBaritone": "男低音–男中音",
+    "duet": "男声与女声"
   },
   "toneDetector": {
     "listening": "正在聆听…",

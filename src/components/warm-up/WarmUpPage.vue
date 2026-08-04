@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
-import { DEFAULT_RANGE_INDEX } from '@/constants/voiceRanges'
 import WarmUpDisplay from './WarmUpDisplay.vue'
 import {
   DEFAULT_HOLD_DURATION_MS,
@@ -28,16 +27,9 @@ if (!HOLD_DURATION_OPTIONS.includes(selectedDurationSec.value as never)) {
   selectedDurationSec.value = defaultDurationSec
 }
 
-const selectedRangeIndex = useLocalStorage<number>(
-  'syng.warmup.rangeIndex',
-  DEFAULT_RANGE_INDEX,
-)
-if (
-  !Number.isInteger(selectedRangeIndex.value) ||
-  !WARM_UP_VOICE_RANGE_INDICES.includes(selectedRangeIndex.value)
-) {
-  selectedRangeIndex.value = DEFAULT_RANGE_INDEX
-}
+const selectedRangeIndex = useVoiceRangeIndex('syng.warmup.rangeIndex', {
+  allowedIndices: WARM_UP_VOICE_RANGE_INDICES,
+})
 
 const selectedSequenceCount = useLocalStorage<number>(
   'syng.warmup.sequenceCount',

@@ -216,6 +216,7 @@
   },
   "voiceRanges": {
     "full": "Penuh",
+    "choir": "Paduan suara",
     "tenorToSoprano": "Tenor–Sopran",
     "everyone": "Semua",
     "kids": "Anak-anak (6–11)",
@@ -226,7 +227,9 @@
     "alto": "Alto",
     "tenor": "Tenor",
     "baritone": "Bariton",
-    "bass": "Bass"
+    "bass": "Bass",
+    "bassToBaritone": "Bass–Bariton",
+    "duet": "Pria & wanita"
   },
   "toneDetector": {
     "listening": "Mendengarkan...",

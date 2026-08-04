@@ -114,6 +114,7 @@ declare global {
   const useToneLabelModeOptions: typeof import('./composables/toneLabelMode').useToneLabelModeOptions
   const useToneModeStore: typeof import('./stores/useToneModeStore').useToneModeStore
   const useTonePlayer: typeof import('./composables/useTonePlayer').useTonePlayer
+  const useVoiceRangeIndex: typeof import('./composables/useVoiceRangeIndex').useVoiceRangeIndex
   const watch: typeof import('vue').watch
   const watchEffect: typeof import('vue').watchEffect
   const watchPostEffect: typeof import('vue').watchPostEffect
@@ -227,6 +228,7 @@ declare module 'vue' {
     readonly useToneLabelModeOptions: UnwrapRef<typeof import('./composables/toneLabelMode')['useToneLabelModeOptions']>
     readonly useToneModeStore: UnwrapRef<typeof import('./stores/useToneModeStore')['useToneModeStore']>
     readonly useTonePlayer: UnwrapRef<typeof import('./composables/useTonePlayer')['useTonePlayer']>
+    readonly useVoiceRangeIndex: UnwrapRef<typeof import('./composables/useVoiceRangeIndex')['useVoiceRangeIndex']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>

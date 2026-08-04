@@ -216,6 +216,7 @@
   },
   "voiceRanges": {
     "full": "Fuld",
+    "choir": "Kor",
     "tenorToSoprano": "Tenor–Sopran",
     "everyone": "Alle",
     "kids": "Børn (6–11)",
@@ -226,7 +227,9 @@
     "alto": "Alt",
     "tenor": "Tenor",
     "baritone": "Baryton",
-    "bass": "Bas"
+    "bass": "Bas",
+    "bassToBaritone": "Bas–Baryton",
+    "duet": "Mænd & kvinder"
   },
   "toneDetector": {
     "listening": "Lytter...",

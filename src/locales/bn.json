@@ -216,6 +216,7 @@
   },
   "voiceRanges": {
     "full": "সম্পূর্ণ",
+    "choir": "কোরাস",
     "tenorToSoprano": "টেনর–সোপ্রানো",
     "everyone": "সবাই",
     "kids": "বাচ্চারা (6–11)",
@@ -226,7 +227,9 @@
     "alto": "অল্টো",
     "tenor": "টেনর",
     "baritone": "ব্যারিটোন",
-    "bass": "বেস"
+    "bass": "বেস",
+    "bassToBaritone": "বেস–ব্যারিটোন",
+    "duet": "পুরুষ ও মহিলা"
   },
   "toneDetector": {
     "listening": "শুনছে...",

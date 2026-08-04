@@ -216,6 +216,7 @@
   },
   "voiceRanges": {
     "full": "Kamili",
+    "choir": "Kwaya",
     "tenorToSoprano": "Tenori–Soprano",
     "everyone": "Kila mtu",
     "kids": "Watoto (6–11)",
@@ -226,7 +227,9 @@
     "alto": "Alto",
     "tenor": "Tenori",
     "baritone": "Baritoni",
-    "bass": "Besi"
+    "bass": "Besi",
+    "bassToBaritone": "Besi–Baritoni",
+    "duet": "Wanaume na wanawake"
   },
   "toneDetector": {
     "listening": "Inasikiliza...",

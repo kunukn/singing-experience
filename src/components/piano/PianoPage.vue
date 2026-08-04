@@ -2,7 +2,7 @@
 import { useLocalStorage } from '@vueuse/core'
 import type { ToneMode } from '@/composables/toneEngine'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
-import { VOICE_RANGES, DEFAULT_RANGE_INDEX } from '@/constants/voiceRanges'
+import { VOICE_RANGES } from '@/constants/voiceRanges'
 
 const { t } = useI18n()
 
@@ -26,21 +26,13 @@ const toneMode = computed<ToneMode>({
 setToneMode(storedToneMode.value)
 
 /* Voice-range selector */
-const rangeIndex = useLocalStorage('syng.rangeIndex', DEFAULT_RANGE_INDEX)
+const rangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
 /* Note-name labels on the keyboard: off, simple (C), or advanced (C4). */
 const toneLabelMode = useLocalStorage<ToneLabelMode>(
   'syng.pianoToneLabelMode',
   'off',
 )
-if (
-  typeof rangeIndex.value !== 'number' ||
-  !Number.isInteger(rangeIndex.value) ||
-  rangeIndex.value < 0 ||
-  rangeIndex.value >= VOICE_RANGES.length
-) {
-  rangeIndex.value = DEFAULT_RANGE_INDEX
-}
 const rangeOptions = computed(() =>
   VOICE_RANGES.map((range, index) => ({
     label: `${t(range.labelKey)} (${range.noteRange})`,

@@ -216,6 +216,7 @@
   },
   "voiceRanges": {
     "full": "Full",
+    "choir": "Choir",
     "tenorToSoprano": "Tenor–Soprano",
     "everyone": "Everyone",
     "kids": "Kids (6–11)",
@@ -226,7 +227,9 @@
     "alto": "Alto",
     "tenor": "Tenor",
     "baritone": "Baritone",
-    "bass": "Bass"
+    "bass": "Bass",
+    "bassToBaritone": "Bass–Baritone",
+    "duet": "Men & Women"
   },
   "toneDetector": {
     "listening": "Listening...",

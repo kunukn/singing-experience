@@ -208,6 +208,7 @@
   },
   "voiceRanges": {
     "full": "Tamaq",
+    "choir": "Erinarsoqatigiit",
     "tenorToSoprano": "Tenor–Soprano",
     "everyone": "Tamarmik",
     "kids": "Meeqqat (6–11)",
@@ -218,7 +219,9 @@
     "alto": "Alto",
     "tenor": "Tenor",
     "baritone": "Bariton",
-    "bass": "Bass"
+    "bass": "Bass",
+    "bassToBaritone": "Bass–Bariton",
+    "duet": "Angutit aamma arnat"
   },
   "toneDetector": {
     "listening": "Tusarnarpoq...",

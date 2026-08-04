@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { DEFAULT_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import { useLocalStorage } from '@vueuse/core'
 import {
   DEFAULT_HOLD_DURATION_MS,
@@ -27,18 +26,7 @@ if (!ROUNDS_OPTIONS.includes(selectedRounds.value)) {
   selectedRounds.value = DEFAULT_TOTAL_ROUNDS
 }
 
-const selectedRangeIndex = useLocalStorage(
-  'syng.singToneRangeIndex',
-  DEFAULT_RANGE_INDEX,
-)
-if (
-  typeof selectedRangeIndex.value !== 'number' ||
-  !Number.isInteger(selectedRangeIndex.value) ||
-  selectedRangeIndex.value < 0 ||
-  selectedRangeIndex.value >= VOICE_RANGES.length
-) {
-  selectedRangeIndex.value = DEFAULT_RANGE_INDEX
-}
+const selectedRangeIndex = useVoiceRangeIndex('syng.singToneRangeIndex')
 
 const game = useSingTone()
 </script>

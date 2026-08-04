@@ -216,6 +216,7 @@
   },
   "voiceRanges": {
     "full": "フル",
+    "choir": "合唱",
     "tenorToSoprano": "テノール–ソプラノ",
     "everyone": "みんな",
     "kids": "子ども (6–11)",
@@ -226,7 +227,9 @@
     "alto": "アルト",
     "tenor": "テノール",
     "baritone": "バリトン",
-    "bass": "バス"
+    "bass": "バス",
+    "bassToBaritone": "バス–バリトン",
+    "duet": "男性と女性"
   },
   "toneDetector": {
     "listening": "聴いています...",
