@@ -3,6 +3,8 @@ import { useLocalStorage } from '@vueuse/core'
 import type { ToneMode } from '@/composables/toneEngine'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
+import type { PianoPreviewLaneId } from './pianoPreview'
+import { useDuetPitchDetection, type DuetLane } from './useDuetPitchDetection'
 
 const { t } = useI18n()
 
@@ -46,6 +48,25 @@ const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
  * echo cancellation on (so played tones aren't mis-detected), and exposes a deaf
  * period we arm whenever a key plays. */
 const { isPreviewEnabled } = useSettings()
+
+/* "Two singers" — splits the mic into a low and a high band so a man and a
+ * woman singing together each get their own line. Piano-only, so it persists
+ * here rather than in the shared settings. */
+const isDuetEnabled = useLocalStorage('syng.pianoDuetEnabled', false)
+
+/* Exactly one detector ever opens the microphone: both composables watch their
+ * own isEnabled, and these two are mutually exclusive. */
+const isSinglePreviewEnabled = computed(
+  () => isPreviewEnabled.value && !isDuetEnabled.value,
+)
+const isDuetPreviewEnabled = computed({
+  get: () => isPreviewEnabled.value && isDuetEnabled.value,
+  /* useDuetPitchDetection writes false back here when permission is denied. */
+  set: (enabled) => {
+    isDuetEnabled.value = enabled
+  },
+})
+
 /* The piano has no listening game, so it's always idle — the preview mic runs
  * whenever the toggle is on and permission is granted. */
 const isGameActive = computed(() => false)
@@ -55,7 +76,42 @@ const {
   previewNoteLabel,
   micPermission,
   triggerDeafPeriod,
-} = useIdlePreview({ isGameActive, isEnabled: isPreviewEnabled })
+} = useIdlePreview({ isGameActive, isEnabled: isSinglePreviewEnabled })
+
+const {
+  lowLane,
+  highLane,
+  triggerDeafPeriod: triggerDuetDeafPeriod,
+} = useDuetPitchDetection({
+  isEnabled: isDuetPreviewEnabled,
+  midiMin: () => selectedRange.value.midiMin,
+  midiMax: () => selectedRange.value.midiMax,
+})
+
+/* Single-voice mode renders through the same lane pipeline as duet mode, just
+ * with one entry — no second code path in PianoDisplay. */
+const previewLanes = computed<Array<DuetLane & { laneId: PianoPreviewLaneId }>>(
+  () =>
+    isDuetEnabled.value
+      ? [
+          { ...lowLane.value, laneId: 'low' },
+          { ...highLane.value, laneId: 'high' },
+        ]
+      : [
+          {
+            previewMidi: previewMidi.value,
+            previewFrequency: previewFrequency.value,
+            previewNoteLabel: previewNoteLabel.value,
+            laneId: 'low',
+          },
+        ],
+)
+
+/* Fired on every key press. The inactive detector's deaf timer is harmless. */
+function handleTonePlayed() {
+  triggerDeafPeriod()
+  triggerDuetDeafPeriod()
+}
 </script>
 
 <template>
@@ -85,6 +141,11 @@ const {
         :disabled="micPermission === 'denied'"
       />
 
+      <DuetToggle
+        v-model="isDuetEnabled"
+        :disabled="!isPreviewEnabled || micPermission === 'denied'"
+      />
+
       <div class="flex items-center gap-2">
         <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
           t('notes.toneLabels')
@@ -107,12 +168,10 @@ const {
       <PianoDisplay
         :midiMin="selectedRange.midiMin"
         :midiMax="selectedRange.midiMax"
-        :previewMidi="previewMidi"
-        :previewFrequency="previewFrequency"
-        :previewNoteLabel="previewNoteLabel"
+        :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
         :toneLabelMode="toneLabelMode"
-        @tonePlayed="triggerDeafPeriod"
+        @tonePlayed="handleTonePlayed"
       />
     </div>
   </div>

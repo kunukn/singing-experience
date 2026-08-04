@@ -9,7 +9,20 @@ export const PREVIEW_RANGE_TOLERANCE = 12
 
 export type PianoPreviewLine = { x: number; text: string }
 
-type PianoPreviewInput = {
+/* Which band a line came from in duet mode. Single-voice preview uses 'low'. */
+export type PianoPreviewLaneId = 'low' | 'high'
+
+export type PianoPreviewLineView = PianoPreviewLine & {
+  laneId: PianoPreviewLaneId
+  /* 0 or 1 — which of the two stacked chip rows this label occupies. */
+  labelRow: number
+}
+
+/* px — chips closer together than this would overlap, so the later one drops to
+ * the row below. Roughly the width of a "C♯4 +12¢" chip. */
+export const PREVIEW_LABEL_COLLISION_PX = 56
+
+export type PianoPreviewInput = {
   previewMidi: number | null
   previewFrequency: number | null
   previewNoteLabel: string | null
@@ -66,4 +79,36 @@ export function buildPianoPreviewLine(
   )
 
   return { x, text }
+}
+
+/*
+ * Map one or two live lanes onto the keyboard at once.
+ *
+ * Lanes that have no clean pitch drop out, the rest are ordered left to right,
+ * and any chip that would collide with the one before it is pushed to a second
+ * label row — two singers close in pitch put their lines nearly on top of each
+ * other, and overlapping chips are unreadable.
+ */
+export function buildPianoPreviewLines(
+  inputs: Array<PianoPreviewInput & { laneId: PianoPreviewLaneId }>,
+): PianoPreviewLineView[] {
+  const lines = inputs
+    .map((input) => {
+      const line = buildPianoPreviewLine(input)
+
+      return line ? { ...line, laneId: input.laneId, labelRow: 0 } : null
+    })
+    .filter((line): line is PianoPreviewLineView => line !== null)
+    .sort((a, b) => a.x - b.x)
+
+  for (let index = 1; index < lines.length; index++) {
+    const previous = lines[index - 1]
+    if (lines[index].x - previous.x < PREVIEW_LABEL_COLLISION_PX) {
+      /* Alternate rather than always using row 1, so three-plus lines keep
+       * stepping instead of piling onto the same second row. */
+      lines[index].labelRow = previous.labelRow === 0 ? 1 : 0
+    }
+  }
+
+  return lines
 }

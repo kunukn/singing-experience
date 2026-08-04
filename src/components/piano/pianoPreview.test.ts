@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest'
 import { midiToFrequency } from '@/utils/noteUtils'
 import { buildPianoLayout } from './pianoLayout'
-import { buildPianoPreviewLine } from './pianoPreview'
+import {
+  PREVIEW_LABEL_COLLISION_PX,
+  buildPianoPreviewLine,
+  buildPianoPreviewLines,
+  type PianoPreviewLaneId,
+} from './pianoPreview'
 
 const FULL = { midiMin: 36, midiMax: 96 } // C2–C7
 const layout = buildPianoLayout(FULL.midiMin, FULL.midiMax)
@@ -102,5 +107,70 @@ describe('buildPianoPreviewLine', () => {
       previewNoteLabel: 'D7',
     })
     expect(above!.x).toBeCloseTo(layout.totalWidth)
+  })
+})
+
+describe('buildPianoPreviewLines', () => {
+  const laneFor = (
+    laneId: PianoPreviewLaneId,
+    midi: number | null,
+    label: string | null,
+  ) => ({
+    laneId,
+    layout,
+    previewMidi: midi,
+    previewFrequency: midi === null ? null : midiToFrequency(midi),
+    previewNoteLabel: label,
+  })
+
+  it('returns nothing when no lane has a clean pitch', () => {
+    expect(
+      buildPianoPreviewLines([
+        laneFor('low', null, null),
+        laneFor('high', null, null),
+      ]),
+    ).toEqual([])
+  })
+
+  it('drops the silent lane and keeps the singing one', () => {
+    const lines = buildPianoPreviewLines([
+      laneFor('low', 48, 'C3'),
+      laneFor('high', null, null),
+    ])
+
+    expect(lines).toHaveLength(1)
+    expect(lines[0].laneId).toBe('low')
+  })
+
+  it('orders both lanes left to right by pitch', () => {
+    /* Passed high-first to prove the sort, not the input order. */
+    const lines = buildPianoPreviewLines([
+      laneFor('high', 72, 'C5'),
+      laneFor('low', 48, 'C3'),
+    ])
+
+    expect(lines.map((line) => line.laneId)).toEqual(['low', 'high'])
+    expect(lines[0].x).toBeLessThan(lines[1].x)
+  })
+
+  it('keeps both chips on the first row when they are far apart', () => {
+    const lines = buildPianoPreviewLines([
+      laneFor('low', 48, 'C3'),
+      laneFor('high', 72, 'C5'),
+    ])
+
+    expect(lines.every((line) => line.labelRow === 0)).toBe(true)
+  })
+
+  it('stacks the second chip when the two lines nearly coincide', () => {
+    /* A semitone apart at the default unit is well under the collision width,
+     * so the labels would otherwise overlap. */
+    const lines = buildPianoPreviewLines([
+      laneFor('low', 60, 'C4'),
+      laneFor('high', 61, 'C♯4'),
+    ])
+
+    expect(lines[1].x - lines[0].x).toBeLessThan(PREVIEW_LABEL_COLLISION_PX)
+    expect(lines.map((line) => line.labelRow)).toEqual([0, 1])
   })
 })

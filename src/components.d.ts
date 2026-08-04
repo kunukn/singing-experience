@@ -29,6 +29,7 @@ declare module 'vue' {
     DoReMiScaleItem: typeof import('./components/do-re-mi/DoReMiScaleItem.vue')['default']
     DoReMiSettingsRow: typeof import('./components/do-re-mi/DoReMiSettingsRow.vue')['default']
     DoReMiTestPage: typeof import('./components/do-re-mi/DoReMiTestPage.vue')['default']
+    DuetToggle: typeof import('./components/generic/DuetToggle.vue')['default']
     EdgeFadeScroller: typeof import('./components/generic/EdgeFadeScroller.vue')['default']
     ErrorToast: typeof import('./components/generic/ErrorToast.vue')['default']
     FullscreenToggle: typeof import('./components/generic/FullscreenToggle.vue')['default']

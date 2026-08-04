@@ -16,18 +16,18 @@ import {
   pianoSpanUnits,
   type PianoKey,
 } from './pianoLayout'
-import { buildPianoPreviewLine } from './pianoPreview'
+import { buildPianoPreviewLines, type PianoPreviewLaneId } from './pianoPreview'
+import type { DuetLane } from './useDuetPitchDetection'
 import { usePianoKeyPlayback } from './usePianoKeyPlayback'
 import { usePianoKeyboardInput } from './usePianoKeyboardInput'
 
 type Props = {
   midiMin: number
   midiMax: number
-  /* Live mic preview (from useIdlePreview via PianoPage). null when disabled or
-   * no clean pitch. */
-  previewMidi?: number | null
-  previewFrequency?: number | null
-  previewNoteLabel?: string | null
+  /* Live mic preview lanes (from PianoPage). One entry in single-voice mode,
+   * two in duet mode. A lane with a null previewMidi draws nothing, so the
+   * array length is stable while a singer is silent. */
+  previewLanes?: Array<DuetLane & { laneId: PianoPreviewLaneId }>
   /* When true, draws the grey dead-center hint line on every key. */
   isPreviewEnabled?: boolean
   /* Note-name labels on the key face: 'off' (C-key octave markers only), 'simple'
@@ -148,15 +148,31 @@ const isDragGutterVisible = computed(
   () => isCoarsePointer.value && isScrollable.value,
 )
 
-/* Vertical orange line + note/cents chip mapped from the live pitch; null hides. */
-const previewLine = computed(() =>
-  buildPianoPreviewLine({
-    previewMidi: props.previewMidi ?? null,
-    previewFrequency: props.previewFrequency ?? null,
-    previewNoteLabel: props.previewNoteLabel ?? null,
-    layout: layout.value,
-  }),
+/* Vertical line + note/cents chip per lane, mapped from the live pitch. Lanes
+ * with no clean pitch drop out, so this is empty while nobody is singing. */
+const previewLines = computed(() =>
+  buildPianoPreviewLines(
+    (props.previewLanes ?? []).map((lane) => ({
+      ...lane,
+      layout: layout.value,
+    })),
+  ),
 )
+
+/* Two lines in the same colour are impossible to tell apart, so the high band
+ * gets its own hue. Orange stays with the low/only lane, matching the
+ * single-voice preview this grew out of. */
+const LANE_COLOUR_CLASS: Record<
+  PianoPreviewLaneId,
+  { line: string; chip: string }
+> = {
+  low: { line: 'border-(--p-orange-400)/50', chip: 'text-(--p-orange-400)' },
+  high: { line: 'border-(--p-blue-400)/50', chip: 'text-(--p-blue-400)' },
+}
+
+/* px — vertical step between the two chip rows. The label band is 28px and a
+ * chip is ~12px tall, so row 1 sits just clear of the key tops. */
+const PREVIEW_LABEL_ROW_HEIGHT = 12
 </script>
 
 <template>
@@ -334,21 +350,30 @@ const previewLine = computed(() =>
             />
           </template>
 
-          <!-- Live-pitch overlay: vertical dashed orange line spanning the track,
-           with a note/cents chip in the top band. pointer-events-none keeps the
-           keys underneath clickable. -->
-          <template v-if="previewLine">
+          <!-- Live-pitch overlay: a vertical dashed line spanning the track per
+           singing voice, with a note/cents chip in the top band. Orange is the
+           low/only voice, blue the high one in duet mode. Chips that would
+           collide stack onto a second row (see buildPianoPreviewLines).
+           pointer-events-none keeps the keys underneath clickable. -->
+          <template v-for="line in previewLines" :key="line.laneId">
             <div
-              class="pointer-events-none absolute inset-y-0 z-20 w-0 -translate-x-[1.5px] border-l-3 border-dashed border-(--p-orange-400)/50"
-              :style="{ insetInlineStart: `${previewLine.x}px` }"
+              class="pointer-events-none absolute inset-y-0 z-20 w-0 -translate-x-[1.5px] border-l-3 border-dashed"
+              :class="LANE_COLOUR_CLASS[line.laneId].line"
+              :style="{ insetInlineStart: `${line.x}px` }"
               data-testid="piano-preview-line"
+              :data-lane="line.laneId"
             />
             <span
-              class="pointer-events-none absolute z-30 -translate-x-1/2 rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-orange-400) tabular-nums"
-              :style="{ insetInlineStart: `${previewLine.x}px`, top: '4px' }"
+              class="pointer-events-none absolute z-30 -translate-x-1/2 rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold tabular-nums"
+              :class="LANE_COLOUR_CLASS[line.laneId].chip"
+              :style="{
+                insetInlineStart: `${line.x}px`,
+                top: `${4 + line.labelRow * PREVIEW_LABEL_ROW_HEIGHT}px`,
+              }"
               data-testid="piano-preview-label"
+              :data-lane="line.laneId"
             >
-              {{ previewLine.text }}
+              {{ line.text }}
             </span>
           </template>
         </div>
