@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { midiToNoteLabel } from '@/utils/noteUtils'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
+import { midiToNoteLabel } from '@/utils/noteUtils'
 import { useMediaQuery, useResizeObserver } from '@vueuse/core'
+import PianoOctaveShift from './PianoOctaveShift.vue'
+import { pianoKeyLabel } from './pianoLabels'
 import {
   BLACK_KEY_HEIGHT_RATIO,
   MAX_SEMITONE_UNIT,
@@ -14,11 +16,9 @@ import {
   pianoSpanUnits,
   type PianoKey,
 } from './pianoLayout'
-import { pianoKeyLabel } from './pianoLabels'
 import { buildPianoPreviewLine } from './pianoPreview'
 import { usePianoKeyPlayback } from './usePianoKeyPlayback'
 import { usePianoKeyboardInput } from './usePianoKeyboardInput'
-import PianoOctaveShift from './PianoOctaveShift.vue'
 
 type Props = {
   midiMin: number
@@ -128,6 +128,10 @@ const layout = computed(() =>
 
 const blackKeyHeight = WHITE_KEY_HEIGHT * BLACK_KEY_HEIGHT_RATIO
 const trackHeight = WHITE_KEY_HEIGHT + PIANO_LABEL_BAND_HEIGHT
+
+/* Pitch hint lines poke this far above the key tops into the label band, so
+ * their top ends form one row — the equal semitone spacing reads at a glance. */
+const PITCH_HINT_TICK_HEIGHT = 8 // px
 
 /* The fitted unit is floored to whole px, so a keyboard that was meant to fit
  * never exceeds the container — a positive difference means it really scrolls. */
@@ -294,7 +298,10 @@ const previewLine = computed(() =>
            Consecutive lines are exactly one semitone unit apart, so the
            live-pitch line travels at a constant px-per-cent. On C/E/F/B the line
            sits a quarter unit off the rectangle center — those keys are
-           asymmetric around their pitch (see pianoLayout). -->
+           asymmetric around their pitch (see pianoLayout).
+           Every line also gets a short solid tick above the keys: white and
+           black key tops share one y, so the ticks land on a single row against
+           the flat label band, where the even semitone spacing is obvious. -->
           <template v-if="isPreviewEnabled">
             <div
               v-for="key in layout.whites"
@@ -313,6 +320,16 @@ const previewLine = computed(() =>
                 insetInlineStart: `${key.pitchX}px`,
                 top: `${PIANO_LABEL_BAND_HEIGHT}px`,
                 height: `${blackKeyHeight}px`,
+              }"
+            />
+            <div
+              v-for="key in [...layout.whites, ...layout.blacks]"
+              :key="`tick-${key.midi}`"
+              class="pointer-events-none absolute z-[15] w-0 -translate-x-[0.5px] border-l border-solid border-(--p-green-500)"
+              :style="{
+                insetInlineStart: `${key.pitchX}px`,
+                top: `${PIANO_LABEL_BAND_HEIGHT - PITCH_HINT_TICK_HEIGHT}px`,
+                height: `${PITCH_HINT_TICK_HEIGHT}px`,
               }"
             />
           </template>
