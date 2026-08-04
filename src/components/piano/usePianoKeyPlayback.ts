@@ -1,7 +1,4 @@
-import {
-  TONE_CLICK_HIGHLIGHT_DURATION_MS,
-  TONE_PLAY_DURATION_S,
-} from '@/constants/toneConstants'
+import { TONE_PLAY_DURATION_S } from '@/constants/toneConstants'
 import { midiToFrequency } from '@/utils/noteUtils'
 
 type PianoKeyPlaybackOptions = {
@@ -11,9 +8,9 @@ type PianoKeyPlaybackOptions = {
 }
 
 /*
- * Press-to-sound behaviour for a piano keyboard: plays the tone and tracks
- * which keys are currently lit. Rendering-only concerns (geometry, labels) stay
- * in the component.
+ * Press-to-sound behaviour for a piano keyboard: plays the tone and counts key
+ * presses so the view can (re)start the highlight fade. Rendering-only concerns
+ * (geometry, labels, the fade itself) stay in the component.
  */
 export function usePianoKeyPlayback(options: PianoKeyPlaybackOptions = {}) {
   /* playToneAt is polyphonic — it reuses the current mode's PolySynth and does
@@ -21,22 +18,17 @@ export function usePianoKeyPlayback(options: PianoKeyPlaybackOptions = {}) {
    * mode is a MonoSynth, so it stays monophonic there. */
   const { playToneAt, warmUp, getNow } = useTonePlayer()
 
-  /* Multiple keys can be lit at once (multi-touch chords). */
-  const activeMidis = reactive(new Set<number>())
-  const highlightTimers = new Map<number, ReturnType<typeof setTimeout>>()
+  /* Press count per key — one entry per key ever pressed, so multiple keys can
+   * be lit at once (multi-touch chords). The view keys its fade element on this
+   * number, so a re-press remounts it and the fade restarts at full colour. */
+  const pressCounts = reactive(new Map<number, number>())
+
+  function pressCountFor(midi: number): number {
+    return pressCounts.get(midi) ?? 0
+  }
 
   async function playKey(midi: number) {
-    activeMidis.add(midi)
-    const existing = highlightTimers.get(midi)
-    if (existing) clearTimeout(existing)
-
-    highlightTimers.set(
-      midi,
-      window.setTimeout(() => {
-        activeMidis.delete(midi)
-        highlightTimers.delete(midi)
-      }, TONE_CLICK_HIGHLIGHT_DURATION_MS),
-    )
+    pressCounts.set(midi, pressCountFor(midi) + 1)
 
     /* warmUp resolves the AudioContext within the press gesture (cached after
      * the first press); playToneAt needs it running and doesn't self-start. */
@@ -55,10 +47,5 @@ export function usePianoKeyPlayback(options: PianoKeyPlaybackOptions = {}) {
     void playKey(midi)
   }
 
-  onUnmounted(() => {
-    for (const timer of highlightTimers.values()) clearTimeout(timer)
-    highlightTimers.clear()
-  })
-
-  return { activeMidis, playKey, handleKeyDown }
+  return { pressCountFor, playKey, handleKeyDown }
 }

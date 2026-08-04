@@ -46,9 +46,15 @@ function keyLabel(key: PianoKey): string | null {
  * (stops the piano's own tone registering as sung pitch). */
 const emit = defineEmits<{ tonePlayed: [] }>()
 
-const { activeMidis, playKey, handleKeyDown } = usePianoKeyPlayback({
+const { pressCountFor, playKey, handleKeyDown } = usePianoKeyPlayback({
   onTonePlayed: () => emit('tonePlayed'),
 })
+
+/* A pressed key washes green, then fades back out. Slower than the flash used
+ * elsewhere (TONE_CLICK_HIGHLIGHT_DURATION_MS) so the tail reads as a fade
+ * rather than a flicker. */
+const KEY_GLOW_DURATION_MS = 1200
+const keyGlowDuration = `${KEY_GLOW_DURATION_MS}ms`
 
 /* Computer-keyboard playing: Z…M is the C3 octave, Q…U the C4 one, regardless
  * of the selected range (see pianoKeyboardMap). */
@@ -158,12 +164,7 @@ const previewLine = computed(() =>
           v-for="key in layout.whites"
           :key="key.midi"
           type="button"
-          class="absolute bottom-0 touch-manipulation rounded-b-md border border-(--p-content-border-color) text-xs transition-colors select-none"
-          :class="
-            activeMidis.has(key.midi)
-              ? 'bg-(--p-primary-color) text-(--p-primary-contrast-color)'
-              : 'bg-(--p-surface-0) text-(--p-text-muted-color) hover:bg-(--p-surface-100)'
-          "
+          class="absolute bottom-0 touch-manipulation rounded-b-md border border-(--p-content-border-color) bg-(--p-surface-0) text-xs text-(--p-text-muted-color) transition-colors select-none hover:bg-(--p-surface-100)"
           :style="{
             insetInlineStart: `${key.leftPx}px`,
             width: `${key.widthPx}px`,
@@ -175,6 +176,16 @@ const previewLine = computed(() =>
           @pointerdown="playKey(key.midi)"
           @keydown="handleKeyDown($event, key.midi)"
         >
+          <!-- Press highlight. Keyed on the press count so a fresh press
+             remounts the element and replays the fade from full colour; an
+             opacity transition would instead be a no-op while already lit. -->
+          <span
+            v-if="pressCountFor(key.midi)"
+            :key="`glow-${pressCountFor(key.midi)}`"
+            class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
+            aria-hidden="true"
+          />
+
           <!-- Sits on the key's pitch position, not its rectangle center, so the
              label lines up with the hint line (they differ on C/E/F/B). -->
           <span
@@ -203,12 +214,7 @@ const previewLine = computed(() =>
           v-for="key in layout.blacks"
           :key="key.midi"
           type="button"
-          class="absolute z-10 flex touch-manipulation flex-col items-center justify-end gap-1 rounded-b-md border border-(--p-surface-950) pb-1 transition-colors select-none"
-          :class="
-            activeMidis.has(key.midi)
-              ? 'bg-(--p-primary-color)'
-              : 'bg-(--p-surface-900) hover:bg-(--p-surface-700)'
-          "
+          class="absolute z-10 flex touch-manipulation flex-col items-center justify-end gap-1 rounded-b-md border border-(--p-surface-950) bg-(--p-surface-900) pb-1 transition-colors select-none hover:bg-(--p-surface-700)"
           :style="{
             insetInlineStart: `${key.leftPx}px`,
             top: `${PIANO_LABEL_BAND_HEIGHT}px`,
@@ -221,10 +227,18 @@ const previewLine = computed(() =>
           @pointerdown="playKey(key.midi)"
           @keydown="handleKeyDown($event, key.midi)"
         >
-          <!-- Stacked bottom-up: the computer key sits above the note label. -->
+          <span
+            v-if="pressCountFor(key.midi)"
+            :key="`glow-${pressCountFor(key.midi)}`"
+            class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
+            aria-hidden="true"
+          />
+
+          <!-- Stacked bottom-up: the computer key sits above the note label.
+             relative keeps both labels painted above the glow overlay. -->
           <span
             v-if="keyChar(key)"
-            class="rounded border border-(--p-surface-600) px-1 text-[10px] leading-4 text-(--p-surface-300)"
+            class="relative rounded border border-(--p-surface-600) px-1 text-[10px] leading-4 text-(--p-surface-300)"
             aria-hidden="true"
           >
             {{ keyChar(key) }}
@@ -232,7 +246,7 @@ const previewLine = computed(() =>
 
           <span
             v-if="keyLabel(key)"
-            class="text-[10px] leading-none text-(--p-surface-0)"
+            class="relative text-[10px] leading-none text-(--p-surface-0)"
           >
             {{ keyLabel(key) }}
           </span>
@@ -291,3 +305,20 @@ const previewLine = computed(() =>
     </div>
   </div>
 </template>
+
+<style scoped>
+/* Solid for the first beat (so the press reads as a hit), then a slow fade. */
+@keyframes piano-key-glow {
+  0%,
+  15% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.piano-key-glow {
+  animation: piano-key-glow v-bind(keyGlowDuration) ease-out forwards;
+}
+</style>
