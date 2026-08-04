@@ -1,18 +1,25 @@
 <script setup lang="ts">
 import type { NoteName } from '@/utils/noteUtils'
 import { NOTE_NAMES } from '@/utils/noteUtils'
+import SettingsSlider from './SettingsSlider.vue'
 import ToneDetectorDisplay from './ToneDetectorDisplay.vue'
-import type { SimulatedToneConfig } from './useSimulatedMultiToneDetection'
-import { useSimulatedMultiToneDetection } from './useSimulatedMultiToneDetection'
+import type { SimulatedToneConfig } from './useSynthesizedToneDetection'
+import { useSynthesizedToneDetection } from './useSynthesizedToneDetection'
+
+const { t } = useI18n()
 
 const MAX_SIMULATED_TONES = 4
+
+/* Timbre is the variable the harmonic sieve exists for: a sine has no overtones
+ * to confuse the detector, a sawtooth has a full series. */
+const TIMBRE_OPTIONS: OscillatorType[] = ['sine', 'sawtooth', 'square']
 
 function createToneSlot(
   note: NoteName = 'C',
   octave: number = 4,
   enabled: boolean = true,
 ): SimulatedToneConfig {
-  return { note, octave, cents: 0, jitter: 2, enabled }
+  return { note, octave, cents: 0, jitter: 2, enabled, timbre: 'sawtooth' }
 }
 
 const toneSlots = ref<SimulatedToneConfig[]>([
@@ -21,7 +28,15 @@ const toneSlots = ref<SimulatedToneConfig[]>([
   createToneSlot('G', 4, false),
 ])
 
-const detection = useSimulatedMultiToneDetection(toneSlots)
+/* Mirrors the real page's controls — the sliders change how many overtones
+ * clear the peak threshold, so they belong in the harness. */
+const sensitivity = ref(5)
+const noiseGate = ref(5)
+
+const detection = useSynthesizedToneDetection(toneSlots, {
+  sensitivity,
+  noiseGate,
+})
 
 function addToneSlot() {
   if (toneSlots.value.length >= MAX_SIMULATED_TONES) return
@@ -39,6 +54,11 @@ function removeToneSlot(index: number) {
 <template>
   <ToneDetectorDisplay :detection="detection">
     <div class="flex w-full flex-col gap-4">
+      <p class="text-xs text-(--p-text-muted-color)">
+        Oscillators feed the real detector — no microphone. A single sawtooth
+        should report exactly one note.
+      </p>
+
       <div
         v-for="(slot, index) in toneSlots"
         :key="index"
@@ -78,6 +98,16 @@ function removeToneSlot(index: number) {
             v-model="slot.octave"
             :options="[2, 3, 4, 5, 6]"
             class="min-w-16"
+            size="small"
+          />
+        </div>
+
+        <div class="flex flex-col gap-1">
+          <label class="text-xs text-(--p-text-muted-color)">Timbre</label>
+          <PrimeSelect
+            v-model="slot.timbre"
+            :options="TIMBRE_OPTIONS"
+            class="min-w-24"
             size="small"
           />
         </div>
@@ -132,6 +162,26 @@ function removeToneSlot(index: number) {
         >
           + Add tone
         </PrimeButton>
+      </div>
+
+      <div
+        class="flex w-full flex-col gap-8 rounded-lg bg-(--p-content-background) p-4"
+      >
+        <SettingsSlider
+          v-model="sensitivity"
+          :description="t('toneDetector.sensitivityDescription')"
+          :label="t('toneDetector.sensitivity')"
+          :minLabel="t('toneDetector.strict')"
+          :maxLabel="t('toneDetector.loose')"
+        />
+
+        <SettingsSlider
+          v-model="noiseGate"
+          :description="t('toneDetector.noiseGateDescription')"
+          :label="t('toneDetector.noiseGate')"
+          :minLabel="t('toneDetector.quiet')"
+          :maxLabel="t('toneDetector.loud')"
+        />
       </div>
     </div>
   </ToneDetectorDisplay>
