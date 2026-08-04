@@ -57,6 +57,13 @@ const { pressCountFor, playKey, handleKeyDown } = usePianoKeyPlayback({
 const KEY_GLOW_DURATION_MS = 1200
 const keyGlowDuration = `${KEY_GLOW_DURATION_MS}ms`
 
+/* Fade curve, written out rather than as `ease-in` so it can be tweaked by
+ * number: x1 is how long the green holds before opacity starts moving (0.42 =
+ * plain ease-in, 0.7 holds most of the duration then drops hard), y1 pulls the
+ * early fade down if 0 holds too flat. The end pair stays (1, 1) so the drop
+ * runs out at full speed instead of easing to a stop. */
+const keyGlowEasing = 'cubic-bezier(0.42, 0, 1, 1)'
+
 /* Computer-keyboard playing: Z…M is the C3 octave, Q…U the C4 one, regardless
  * of the selected range (see pianoKeyboardMap). */
 const {
@@ -349,7 +356,7 @@ const previewLine = computed(() =>
 </template>
 
 <style scoped>
-/* Solid for the first beat (so the press reads as a hit), then a slow fade. */
+/* Solid for the first beat (so the press reads as a hit), then out. */
 @keyframes piano-key-glow {
   0%,
   15% {
@@ -361,6 +368,9 @@ const previewLine = computed(() =>
 }
 
 .piano-key-glow {
-  animation: piano-key-glow v-bind(keyGlowDuration) ease-out forwards;
+  /* The curve is ease-in shaped: opacity barely moves early on, so the green
+   * holds, then drops away quickly. See keyGlowEasing for the control points. */
+  animation: piano-key-glow v-bind(keyGlowDuration) v-bind(keyGlowEasing)
+    forwards;
 }
 </style>
