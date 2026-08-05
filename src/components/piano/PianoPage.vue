@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
-import type { ToneMode } from '@/composables/toneEngine'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import type { PianoPreviewLaneId } from './pianoPreview'
@@ -11,28 +10,8 @@ import {
 } from './pianoScale'
 import { useDuetPitchDetection, type DuetLane } from './useDuetPitchDetection'
 
-const { t } = useI18n()
-
-const toneLabelModeOptions = useToneLabelModeOptions()
-
-/* Tone-mode selector — mirrors PitchDetectorDisplay. Re-warm the AudioContext
- * inside the user-gesture frame so iOS Safari doesn't silently refuse a later
- * resume. */
-const { setToneMode, warmUp } = useTonePlayer()
-const { toneMode: storedToneMode } = storeToRefs(useToneModeStore())
-const toneMode = computed<ToneMode>({
-  get: () => storedToneMode.value,
-  set: (mode) => {
-    storedToneMode.value = mode
-    setToneMode(mode)
-    void warmUp().catch((error) =>
-      debugLog('[TonePlayer] warmUp on tone-mode change failed', error),
-    )
-  },
-})
-setToneMode(storedToneMode.value)
-
-/* Voice-range selector */
+/* Voice-range selector. The index lives here, not in the settings row, because
+ * selectedRange also feeds the keyboard span and the duet band split. */
 const rangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
 /* Note-name labels on the keyboard: off, simple (C), or advanced (C4). */
@@ -63,12 +42,6 @@ if (!isPianoScaleMode(scaleMode.value)) {
   scaleMode.value = DEFAULT_PIANO_SCALE_MODE
 }
 
-const rangeOptions = computed(() =>
-  VOICE_RANGES.map((range, index) => ({
-    label: `${t(range.labelKey)} (${range.noteRange})`,
-    value: index,
-  })),
-)
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
 /* "See your voice" — drives the live mic preview. useIdlePreview requests mic
@@ -144,61 +117,24 @@ function handleTonePlayed() {
 
 <template>
   <div class="flex flex-1 flex-col items-center gap-4" data-testid="piano-page">
-    <div class="flex w-full max-w-3xl flex-wrap items-center gap-2 sm:gap-4">
-      <PrimeSelect
-        v-model="rangeIndex"
-        :options="rangeOptions"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-        class="flex-1"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('generic.voiceRange') }}
-          </div>
-        </template>
-      </PrimeSelect>
+    <PianoSettingsRow
+      v-model:rangeIndex="rangeIndex"
+      v-model:toneLabelMode="toneLabelMode"
+      v-model:isPreviewEnabled="isPreviewEnabled"
+      v-model:isDuetEnabled="isDuetEnabled"
+      :micPermission="micPermission"
+    />
 
-      <ToneModeSelect v-model="toneMode" class="min-w-30 flex-1" />
-
-      <PreviewToggle
-        v-model="isPreviewEnabled"
-        :disabled="micPermission === 'denied'"
-      />
-
-      <DuetToggle
-        v-model="isDuetEnabled"
-        :disabled="!isPreviewEnabled || micPermission === 'denied'"
-      />
-
-      <div class="flex items-center gap-2">
-        <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
-          t('notes.toneLabels')
-        }}</label>
-        <PrimeSelectButton
-          v-model="toneLabelMode"
-          :options="toneLabelModeOptions"
-          optionLabel="label"
-          optionValue="value"
-          :allowEmpty="false"
-          size="small"
-          :aria-label="t('notes.toneLabels')"
-        />
-      </div>
-    </div>
-
-    <div class="flex w-full max-w-3xl flex-wrap items-center gap-2 sm:gap-4">
-      <PianoScaleSelect
-        v-model:scaleRoot="scaleRoot"
-        v-model:scaleMode="scaleMode"
-      />
-    </div>
+    <!-- Deliberately outside the settings row: that row is a scroller on mobile,
+         and the scale pair is the one control reached for mid-practice, so it
+         must never scroll out of sight. Two selects fit a phone unaided. -->
+    <PianoScaleSelect
+      v-model:scaleRoot="scaleRoot"
+      v-model:scaleMode="scaleMode"
+    />
 
     <!-- Only the keyboard widens (up to 1600px, matching the grace-kelly sheet);
-         the controls rows above stay clamped to max-w-3xl. -->
+         the controls above size themselves. -->
     <div class="mx-auto w-full max-w-400">
       <PianoDisplay
         :midiMin="selectedRange.midiMin"

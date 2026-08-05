@@ -64,6 +64,7 @@ declare module 'vue' {
     PianoOctaveShift: typeof import('./components/piano/PianoOctaveShift.vue')['default']
     PianoPage: typeof import('./components/piano/PianoPage.vue')['default']
     PianoScaleSelect: typeof import('./components/piano/PianoScaleSelect.vue')['default']
+    PianoSettingsRow: typeof import('./components/piano/PianoSettingsRow.vue')['default']
     PitchDetectorDisplay: typeof import('./components/pitch-detector/PitchDetectorDisplay.vue')['default']
     PitchDetectorPage: typeof import('./components/pitch-detector/PitchDetectorPage.vue')['default']
     PitchDetectorTestPage: typeof import('./components/pitch-detector/PitchDetectorTestPage.vue')['default']
