@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
-import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import NotesOverviewDisplay from './NotesOverviewDisplay.vue'
 import NotesListenDisplay from './NotesListenDisplay.vue'
 import { ALLOWED_BPMS, DEFAULT_BPM } from './notesConstants'
@@ -53,10 +52,7 @@ const activeTab = computed<NotesTab>({
  * page's whole point is to show the notes and their names; the plain name is
  * enough for most practice, 'advanced' adds the octave digit (C4 vs C), 'off'
  * hides labels entirely. */
-const toneLabelMode = useLocalStorage<ToneLabelMode>(
-  'syng.notesToneLabelMode',
-  'simple',
-)
+const toneLabelMode = useToneLabelMode('syng.notesToneLabelMode', 'simple')
 
 /* Whether the sheets include accidental (black-key) notes. Default off — the
  * basic view is the natural notes only; on reveals the full chromatic scale. */

@@ -1,5 +1,5 @@
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
-import { midiToNoteLabel } from '@/utils/noteUtils'
+import { midiToFlatLabel, midiToNoteLabel } from '@/utils/noteUtils'
 import type { PianoKey } from './pianoLayout'
 
 export type PianoRange = { midiMin: number; midiMax: number }
@@ -35,4 +35,28 @@ export function pianoKeyLabel(
   }
 
   return midiToNoteLabel(key.midi, { showOctave: mode === 'advanced' }).label
+}
+
+/*
+ * Flat spelling of a key, drawn as a second row under the sharp one (G♭ below
+ * F♯) so a singer reading either convention finds their name on the key. Same
+ * idea as the note sheets, which stack the two spellings over an accidental
+ * notehead — but sharp-first here, matching PianoScaleSelect's "C♯ / D♭".
+ *
+ * White keys need no special case: midiToFlatLabel returns null for every
+ * natural (and never spells C♭/F♭, so E and B stay bare).
+ *
+ * Silent in 'off' mode — the only labels there are octave markers, and a second
+ * spelling row is exactly the clutter that mode exists to remove.
+ *
+ * Never carries the octave digit, even in 'advanced': the sharp label sitting
+ * below it already does.
+ */
+export function pianoKeyFlatLabel(
+  key: PianoKey,
+  mode: ToneLabelMode,
+): string | null {
+  if (mode === 'off') return null
+
+  return midiToFlatLabel(key.midi)
 }

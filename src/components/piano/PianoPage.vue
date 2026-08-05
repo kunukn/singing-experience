@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
-import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import type { PianoPreviewLaneId } from './pianoPreview'
 import {
@@ -15,10 +14,7 @@ import { useDuetPitchDetection, type DuetLane } from './useDuetPitchDetection'
 const rangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
 /* Note-name labels on the keyboard: off, simple (C), or advanced (C4). */
-const toneLabelMode = useLocalStorage<ToneLabelMode>(
-  'syng.pianoToneLabelMode',
-  'off',
-)
+const toneLabelMode = useToneLabelMode('syng.pianoToneLabelMode', 'off')
 /* Scale highlight — tints the keys of one musical key/mode so the singer sees
  * the shape on the board. Off by default: no root picked, nothing tinted.
  * PrimeSelect's clear button writes null, but -1 is what gets persisted so

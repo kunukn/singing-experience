@@ -45,6 +45,7 @@ declare global {
   const isReadonly: typeof import('vue').isReadonly
   const isRef: typeof import('vue').isRef
   const isShallow: typeof import('vue').isShallow
+  const isToneLabelMode: typeof import('./composables/toneLabelMode').isToneLabelMode
   const markRaw: typeof import('vue').markRaw
   const nextTick: typeof import('vue').nextTick
   const onActivated: typeof import('vue').onActivated
@@ -111,6 +112,7 @@ declare global {
   const useSimulatedPitchDetection: typeof import('./composables/useSimulatedPitchDetection').useSimulatedPitchDetection
   const useSlots: typeof import('vue').useSlots
   const useTemplateRef: typeof import('vue').useTemplateRef
+  const useToneLabelMode: typeof import('./composables/toneLabelMode').useToneLabelMode
   const useToneLabelModeOptions: typeof import('./composables/toneLabelMode').useToneLabelModeOptions
   const useToneModeStore: typeof import('./stores/useToneModeStore').useToneModeStore
   const useTonePlayer: typeof import('./composables/useTonePlayer').useTonePlayer
@@ -165,6 +167,7 @@ declare module 'vue' {
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
     readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
     readonly isShallow: UnwrapRef<typeof import('vue')['isShallow']>
+    readonly isToneLabelMode: UnwrapRef<typeof import('./composables/toneLabelMode')['isToneLabelMode']>
     readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
     readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
     readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
@@ -225,6 +228,7 @@ declare module 'vue' {
     readonly useSimulatedPitchDetection: UnwrapRef<typeof import('./composables/useSimulatedPitchDetection')['useSimulatedPitchDetection']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
+    readonly useToneLabelMode: UnwrapRef<typeof import('./composables/toneLabelMode')['useToneLabelMode']>
     readonly useToneLabelModeOptions: UnwrapRef<typeof import('./composables/toneLabelMode')['useToneLabelModeOptions']>
     readonly useToneModeStore: UnwrapRef<typeof import('./stores/useToneModeStore')['useToneModeStore']>
     readonly useTonePlayer: UnwrapRef<typeof import('./composables/useTonePlayer')['useTonePlayer']>

@@ -3,7 +3,7 @@ import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { useMediaQuery, useResizeObserver } from '@vueuse/core'
 import PianoOctaveShift from './PianoOctaveShift.vue'
-import { pianoKeyLabel } from './pianoLabels'
+import { pianoKeyFlatLabel, pianoKeyLabel } from './pianoLabels'
 import {
   BLACK_KEY_HEIGHT_RATIO,
   MAX_SEMITONE_UNIT,
@@ -51,6 +51,11 @@ function keyLabel(key: PianoKey): string | null {
     midiMin: props.midiMin,
     midiMax: props.midiMax,
   })
+}
+
+/* Null on every white key, so only the black keys get the second row. */
+function keyFlatLabel(key: PianoKey): string | null {
+  return pianoKeyFlatLabel(key, props.toneLabelMode ?? 'off')
 }
 
 /* Built once per scale change, not once per key — the keyboard can be 40+ keys. */
@@ -395,11 +400,32 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               {{ keyChar(key) }}
             </span>
 
+            <!-- Both spellings of the note, sharp over flat (F♯ over G♭). Sharp
+             leads because it is the app's primary spelling — midiToNoteLabel,
+             the aria-label above, and the preview chips all use it — and
+             because PianoScaleSelect names the same key "C♯ / D♭", sharp first.
+             (The note sheets stack the pair the other way round: there the
+             labels climb away from the notehead, so the sharp has to stay the
+             one nearest the note. A key has no note to sit beside.)
+             Wrapped so the parent's gap-1 falls between the computer-key chip
+             and the pair rather than between the two spellings, which belong
+             together as one label. The flat is the secondary reading: smaller,
+             and --p-surface-400 rather than the muted text colour, which is
+             near-black in light mode and would vanish into the key face. -->
             <span
               v-if="keyLabel(key)"
-              class="relative text-[10px] leading-none text-(--p-surface-0)"
+              class="relative flex flex-col items-center leading-none"
             >
-              {{ keyLabel(key) }}
+              <span class="text-[10px] text-(--p-surface-0)">
+                {{ keyLabel(key) }}
+              </span>
+
+              <span
+                v-if="keyFlatLabel(key)"
+                class="text-[9px] text-(--p-surface-400)"
+              >
+                {{ keyFlatLabel(key) }}
+              </span>
             </span>
           </button>
 
