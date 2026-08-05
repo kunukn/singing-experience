@@ -4,6 +4,11 @@ import type { ToneMode } from '@/composables/toneEngine'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import type { PianoPreviewLaneId } from './pianoPreview'
+import {
+  DEFAULT_PIANO_SCALE_MODE,
+  isPianoScaleMode,
+  type PianoScaleMode,
+} from './pianoScale'
 import { useDuetPitchDetection, type DuetLane } from './useDuetPitchDetection'
 
 const { t } = useI18n()
@@ -35,6 +40,29 @@ const toneLabelMode = useLocalStorage<ToneLabelMode>(
   'syng.pianoToneLabelMode',
   'off',
 )
+/* Scale highlight — tints the keys of one musical key/mode so the singer sees
+ * the shape on the board. Off by default: no root picked, nothing tinted.
+ * PrimeSelect's clear button writes null, but -1 is what gets persisted so
+ * useLocalStorage keeps a plain number serializer. */
+const SCALE_ROOT_OFF = -1
+const storedScaleRoot = useLocalStorage('syng.pianoScaleRoot', SCALE_ROOT_OFF)
+const scaleRoot = computed<number | null>({
+  get: () =>
+    storedScaleRoot.value === SCALE_ROOT_OFF ? null : storedScaleRoot.value,
+  set: (pitchClass) => {
+    storedScaleRoot.value = pitchClass ?? SCALE_ROOT_OFF
+  },
+})
+
+const scaleMode = useLocalStorage<PianoScaleMode>(
+  'syng.pianoScaleMode',
+  DEFAULT_PIANO_SCALE_MODE,
+)
+/* A mode persisted from an older option list would highlight nothing. */
+if (!isPianoScaleMode(scaleMode.value)) {
+  scaleMode.value = DEFAULT_PIANO_SCALE_MODE
+}
+
 const rangeOptions = computed(() =>
   VOICE_RANGES.map((range, index) => ({
     label: `${t(range.labelKey)} (${range.noteRange})`,
@@ -162,8 +190,15 @@ function handleTonePlayed() {
       </div>
     </div>
 
+    <div class="flex w-full max-w-3xl flex-wrap items-center gap-2 sm:gap-4">
+      <PianoScaleSelect
+        v-model:scaleRoot="scaleRoot"
+        v-model:scaleMode="scaleMode"
+      />
+    </div>
+
     <!-- Only the keyboard widens (up to 1600px, matching the grace-kelly sheet);
-         the controls row above stays clamped to max-w-3xl. -->
+         the controls rows above stay clamped to max-w-3xl. -->
     <div class="mx-auto w-full max-w-400">
       <PianoDisplay
         :midiMin="selectedRange.midiMin"
@@ -171,6 +206,8 @@ function handleTonePlayed() {
         :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
         :toneLabelMode="toneLabelMode"
+        :scaleRoot="scaleRoot"
+        :scaleMode="scaleMode"
         @tonePlayed="handleTonePlayed"
       />
     </div>

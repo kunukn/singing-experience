@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "piano": {
+    "highlightScale": "हाइलाइट",
+    "pickKey": "स्वर चुनो",
+    "pickKeyHeader": "स्केल के स्वर हाइलाइट करो",
+    "scaleMode": "स्केल",
+    "scaleModes": {
+      "ionian": "मेजर",
+      "aeolian": "माइनर",
+      "majorPentatonic": "मेजर पेंटाटोनिक",
+      "minorPentatonic": "माइनर पेंटाटोनिक",
+      "majorBlues": "मेजर ब्लूज़",
+      "minorBlues": "माइनर ब्लूज़"
+    }
   }
 }

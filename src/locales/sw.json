@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "piano": {
+    "highlightScale": "Angazia",
+    "pickKey": "Chagua toni ya msingi",
+    "pickKeyHeader": "Angazia noti za mizani",
+    "scaleMode": "Mizani",
+    "scaleModes": {
+      "ionian": "Meja",
+      "aeolian": "Maina",
+      "majorPentatonic": "Pentatoniki meja",
+      "minorPentatonic": "Pentatoniki maina",
+      "majorBlues": "Blues meja",
+      "minorBlues": "Blues maina"
+    }
   }
 }

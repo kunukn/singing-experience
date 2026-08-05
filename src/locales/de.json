@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Töne außerhalb der Linien"
     }
+  },
+  "piano": {
+    "highlightScale": "Hervorheben",
+    "pickKey": "Tonart wählen",
+    "pickKeyHeader": "Die Töne einer Tonleiter hervorheben",
+    "scaleMode": "Tonleiter",
+    "scaleModes": {
+      "ionian": "Dur",
+      "aeolian": "Moll",
+      "majorPentatonic": "Dur-Pentatonik",
+      "minorPentatonic": "Moll-Pentatonik",
+      "majorBlues": "Dur-Blues",
+      "minorBlues": "Moll-Blues"
+    }
   }
 }

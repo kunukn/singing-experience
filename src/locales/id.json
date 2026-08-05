@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "piano": {
+    "highlightScale": "Sorot",
+    "pickKey": "Pilih nada dasar",
+    "pickKeyHeader": "Sorot nada-nada dalam tangga nada",
+    "scaleMode": "Tangga nada",
+    "scaleModes": {
+      "ionian": "Mayor",
+      "aeolian": "Minor",
+      "majorPentatonic": "Pentatonik mayor",
+      "minorPentatonic": "Pentatonik minor",
+      "majorBlues": "Blues mayor",
+      "minorBlues": "Blues minor"
+    }
   }
 }

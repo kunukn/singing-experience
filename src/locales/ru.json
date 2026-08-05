@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "piano": {
+    "highlightScale": "Подсветка",
+    "pickKey": "Выбери тонику",
+    "pickKeyHeader": "Подсветить ноты гаммы",
+    "scaleMode": "Гамма",
+    "scaleModes": {
+      "ionian": "Мажор",
+      "aeolian": "Минор",
+      "majorPentatonic": "Мажорная пентатоника",
+      "minorPentatonic": "Минорная пентатоника",
+      "majorBlues": "Мажорный блюз",
+      "minorBlues": "Минорный блюз"
+    }
   }
 }

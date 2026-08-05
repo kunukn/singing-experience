@@ -320,5 +320,19 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "piano": {
+    "highlightScale": "Erseqqissaaneq",
+    "pickKey": "Toneart toqqaruk",
+    "pickKeyHeader": "Skalaap nipii erseqqissarlugit",
+    "scaleMode": "Skala",
+    "scaleModes": {
+      "ionian": "Dur",
+      "aeolian": "Mol",
+      "majorPentatonic": "Pentaton dur",
+      "minorPentatonic": "Pentaton mol",
+      "majorBlues": "Blues dur",
+      "minorBlues": "Blues mol"
+    }
   }
 }

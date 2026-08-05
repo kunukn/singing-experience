@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Toner uden for linjerne"
     }
+  },
+  "piano": {
+    "highlightScale": "Fremhæv",
+    "pickKey": "Vælg toneart",
+    "pickKeyHeader": "Fremhæv tonerne i en skala",
+    "scaleMode": "Skala",
+    "scaleModes": {
+      "ionian": "Dur",
+      "aeolian": "Mol",
+      "majorPentatonic": "Pentaton dur",
+      "minorPentatonic": "Pentaton mol",
+      "majorBlues": "Blues i dur",
+      "minorBlues": "Blues i mol"
+    }
   }
 }

@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "piano": {
+    "highlightScale": "高亮",
+    "pickKey": "选择一个调",
+    "pickKeyHeader": "高亮音阶里的音",
+    "scaleMode": "音阶",
+    "scaleModes": {
+      "ionian": "大调",
+      "aeolian": "小调",
+      "majorPentatonic": "大调五声音阶",
+      "minorPentatonic": "小调五声音阶",
+      "majorBlues": "大调布鲁斯",
+      "minorBlues": "小调布鲁斯"
+    }
   }
 }

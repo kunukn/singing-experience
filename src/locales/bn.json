@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "piano": {
+    "highlightScale": "হাইলাইট",
+    "pickKey": "স্বর বেছে নাও",
+    "pickKeyHeader": "স্কেলের স্বরগুলো হাইলাইট করো",
+    "scaleMode": "স্কেল",
+    "scaleModes": {
+      "ionian": "মেজর",
+      "aeolian": "মাইনর",
+      "majorPentatonic": "মেজর পেন্টাটনিক",
+      "minorPentatonic": "মাইনর পেন্টাটনিক",
+      "majorBlues": "মেজর ব্লুজ",
+      "minorBlues": "মাইনর ব্লুজ"
+    }
   }
 }

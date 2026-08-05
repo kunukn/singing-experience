@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "piano": {
+    "highlightScale": "ハイライト",
+    "pickKey": "キーを選ぼう",
+    "pickKeyHeader": "スケールの音をハイライト",
+    "scaleMode": "スケール",
+    "scaleModes": {
+      "ionian": "メジャー",
+      "aeolian": "マイナー",
+      "majorPentatonic": "メジャーペンタトニック",
+      "minorPentatonic": "マイナーペンタトニック",
+      "majorBlues": "メジャーブルース",
+      "minorBlues": "マイナーブルース"
+    }
   }
 }

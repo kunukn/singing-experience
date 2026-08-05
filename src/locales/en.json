@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "piano": {
+    "highlightScale": "Highlight",
+    "pickKey": "Pick a key",
+    "pickKeyHeader": "Highlight the notes of a scale",
+    "scaleMode": "Scale",
+    "scaleModes": {
+      "ionian": "Major",
+      "aeolian": "Minor",
+      "majorPentatonic": "Major Pentatonic",
+      "minorPentatonic": "Minor Pentatonic",
+      "majorBlues": "Major Blues",
+      "minorBlues": "Minor Blues"
+    }
   }
 }

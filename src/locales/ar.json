@@ -328,5 +328,19 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "piano": {
+    "highlightScale": "تمييز",
+    "pickKey": "اختر مقامًا",
+    "pickKeyHeader": "ميّز نغمات السلم",
+    "scaleMode": "السلم",
+    "scaleModes": {
+      "ionian": "ماجور",
+      "aeolian": "مينور",
+      "majorPentatonic": "بنتاتونيك ماجور",
+      "minorPentatonic": "بنتاتونيك مينور",
+      "majorBlues": "بلوز ماجور",
+      "minorBlues": "بلوز مينور"
+    }
   }
 }

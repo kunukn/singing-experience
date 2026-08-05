@@ -17,6 +17,13 @@ import {
   type PianoKey,
 } from './pianoLayout'
 import { buildPianoPreviewLines, type PianoPreviewLaneId } from './pianoPreview'
+import {
+  DEFAULT_PIANO_SCALE_MODE,
+  buildScalePitchClasses,
+  pianoKeyScaleRole,
+  type PianoKeyScaleRole,
+  type PianoScaleMode,
+} from './pianoScale'
 import type { DuetLane } from './useDuetPitchDetection'
 import { usePianoKeyPlayback } from './usePianoKeyPlayback'
 import { usePianoKeyboardInput } from './usePianoKeyboardInput'
@@ -33,6 +40,9 @@ type Props = {
   /* Note-name labels on the key face: 'off' (C-key octave markers only), 'simple'
    * (bare names, e.g. C♯), or 'advanced' (names with octave, e.g. C♯2). */
   toneLabelMode?: ToneLabelMode
+  /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
+  scaleRoot?: number | null
+  scaleMode?: PianoScaleMode
 }
 const props = defineProps<Props>()
 
@@ -41,6 +51,47 @@ function keyLabel(key: PianoKey): string | null {
     midiMin: props.midiMin,
     midiMax: props.midiMax,
   })
+}
+
+/* Built once per scale change, not once per key — the keyboard can be 40+ keys. */
+const scalePitchClasses = computed(() =>
+  buildScalePitchClasses(
+    props.scaleRoot ?? null,
+    props.scaleMode ?? DEFAULT_PIANO_SCALE_MODE,
+  ),
+)
+
+function scaleRole(key: PianoKey): PianoKeyScaleRole {
+  return pianoKeyScaleRole(
+    key.midi,
+    props.scaleRoot ?? null,
+    scalePitchClasses.value,
+  )
+}
+
+/*
+ * Scale highlight, painted as a translucent overlay inside the key (the same
+ * trick as the press glow) so it layers over the key's base and hover colours
+ * instead of competing with them. Blue on the white keys; the near-black keys
+ * need a hue that stays visible without lightening them, hence purple. The root
+ * takes the deeper shade of its pair so the key centre reads as the anchor —
+ * on the black keys that means the darker 500 at the lower alpha, since more of
+ * the near-black key face shows through. White keys stay --p-surface-0 in dark
+ * mode, so one alpha pair works in both themes.
+ */
+const SCALE_TINT_CLASS: Record<
+  'white' | 'black',
+  Record<'root' | 'scale', string>
+> = {
+  white: { root: 'bg-(--p-blue-500)/40', scale: 'bg-(--p-blue-400)/20' },
+  black: { root: 'bg-(--p-purple-500)/45', scale: 'bg-(--p-purple-400)/70' },
+}
+
+function scaleTintClass(key: PianoKey): string | null {
+  const role = scaleRole(key)
+  if (!role) return null
+
+  return SCALE_TINT_CLASS[key.isBlack ? 'black' : 'white'][role]
 }
 
 /* Emitted whenever a key plays, so the parent can arm the preview deaf period
@@ -224,11 +275,23 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               height: `${WHITE_KEY_HEIGHT}px`,
             }"
             :data-testid="`piano-key-${key.midi}`"
+            :data-scale-role="scaleRole(key) ?? undefined"
             :aria-label="midiToNoteLabel(key.midi).label"
             :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
             @pointerdown="playKey(key.midi)"
             @keydown="handleKeyDown($event, key.midi)"
           >
+            <!-- Scale highlight. Decorative reinforcement of a filter the user
+             set themselves, so it stays out of the key's aria-label — narrating
+             it on all 40-odd keys would drown out the note names. Painted
+             before the press glow so a press still reads on a tinted key. -->
+            <span
+              v-if="scaleTintClass(key)"
+              class="pointer-events-none absolute inset-0 rounded-b-md"
+              :class="scaleTintClass(key)"
+              aria-hidden="true"
+            />
+
             <!-- Press highlight. Keyed on the press count so a fresh press
              remounts the element and replays the fade from full colour; an
              opacity transition would instead be a no-op while already lit. -->
@@ -275,11 +338,19 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               height: `${blackKeyHeight}px`,
             }"
             :data-testid="`piano-key-${key.midi}`"
+            :data-scale-role="scaleRole(key) ?? undefined"
             :aria-label="midiToNoteLabel(key.midi).label"
             :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
             @pointerdown="playKey(key.midi)"
             @keydown="handleKeyDown($event, key.midi)"
           >
+            <span
+              v-if="scaleTintClass(key)"
+              class="pointer-events-none absolute inset-0 rounded-b-md"
+              :class="scaleTintClass(key)"
+              aria-hidden="true"
+            />
+
             <span
               v-if="pressCountFor(key.midi)"
               :key="`glow-${pressCountFor(key.midi)}`"
