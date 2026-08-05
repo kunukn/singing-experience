@@ -70,28 +70,44 @@ function scaleRole(key: PianoKey): PianoKeyScaleRole {
 }
 
 /*
- * Scale highlight, painted as a translucent overlay inside the key (the same
- * trick as the press glow) so it layers over the key's base and hover colours
- * instead of competing with them. Blue on the white keys; the near-black keys
- * need a hue that stays visible without lightening them, hence purple. The root
- * takes the deeper shade of its pair so the key centre reads as the anchor —
- * on the black keys that means the darker 500 at the lower alpha, since more of
- * the near-black key face shows through. White keys stay --p-surface-0 in dark
- * mode, so one alpha pair works in both themes.
+ * Scale highlight, drawn as a coloured pill along the bottom of the key — the
+ * felt strip on a real keyboard — rather than a wash over the whole key face.
+ * A wash made runs of in-scale keys merge into one block: the key border is a
+ * hairline in --p-content-border-color, which cannot survive between two flat
+ * colour fields. The pill is inset from the key edges, so neighbouring pills
+ * never touch and each one reads as belonging to its own key, and it leaves
+ * the face free for the press glow.
  */
-const SCALE_TINT_CLASS: Record<
-  'white' | 'black',
-  Record<'root' | 'scale', string>
-> = {
-  white: { root: 'bg-(--p-blue-500)/40', scale: 'bg-(--p-blue-400)/20' },
-  black: { root: 'bg-(--p-purple-500)/45', scale: 'bg-(--p-purple-400)/70' },
+const SCALE_BAR_HEIGHT = 8 // px
+const SCALE_BAR_INSET = 3 // px — gap to the key edges, keeping the pills apart
+/* px — the strip is reserved on every key, highlighted or not, so the note
+ * labels stay put when the scale selection changes. */
+const KEY_LABEL_BOTTOM = SCALE_BAR_INSET * 2 + SCALE_BAR_HEIGHT
+/* px — the computer-key chip sits one row above the note label. */
+const KEY_CHAR_BOTTOM = KEY_LABEL_BOTTOM + 20
+
+/* One blue family across white and black keys: the pill is opaque, so unlike
+ * the old translucent wash it needs no separate hue to stay visible on the
+ * near-black keys. The root takes the deeper shade so the scale's anchor reads
+ * at a glance. Both shades are legible on --p-surface-0 and --p-surface-900,
+ * and neither palette entry changes between light and dark mode. */
+const SCALE_BAR_CLASS: Record<'root' | 'scale', string> = {
+  root: 'bg-(--p-blue-500)',
+  scale: 'bg-(--p-blue-300)',
 }
 
-function scaleTintClass(key: PianoKey): string | null {
+function scaleBarClass(key: PianoKey): string | null {
   const role = scaleRole(key)
   if (!role) return null
 
-  return SCALE_TINT_CLASS[key.isBlack ? 'black' : 'white'][role]
+  return SCALE_BAR_CLASS[role]
+}
+
+const scaleBarStyle = {
+  insetInlineStart: `${SCALE_BAR_INSET}px`,
+  insetInlineEnd: `${SCALE_BAR_INSET}px`,
+  bottom: `${SCALE_BAR_INSET}px`,
+  height: `${SCALE_BAR_HEIGHT}px`,
 }
 
 /* Emitted whenever a key plays, so the parent can arm the preview deaf period
@@ -284,11 +300,12 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             <!-- Scale highlight. Decorative reinforcement of a filter the user
              set themselves, so it stays out of the key's aria-label — narrating
              it on all 40-odd keys would drown out the note names. Painted
-             before the press glow so a press still reads on a tinted key. -->
+             before the press glow so a press still washes over it. -->
             <span
-              v-if="scaleTintClass(key)"
-              class="pointer-events-none absolute inset-0 rounded-b-md"
-              :class="scaleTintClass(key)"
+              v-if="scaleBarClass(key)"
+              class="pointer-events-none absolute rounded-full"
+              :class="scaleBarClass(key)"
+              :style="scaleBarStyle"
               aria-hidden="true"
             />
 
@@ -306,8 +323,11 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
              label lines up with the hint line (they differ on C/E/F/B). -->
             <span
               v-if="keyLabel(key)"
-              class="absolute bottom-1 -translate-x-1/2"
-              :style="{ insetInlineStart: `${key.pitchX - key.leftPx}px` }"
+              class="absolute -translate-x-1/2"
+              :style="{
+                insetInlineStart: `${key.pitchX - key.leftPx}px`,
+                bottom: `${KEY_LABEL_BOTTOM}px`,
+              }"
             >
               {{ keyLabel(key) }}
             </span>
@@ -318,8 +338,11 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
              already announces it, hence aria-hidden here. -->
             <span
               v-if="keyChar(key)"
-              class="absolute bottom-6 -translate-x-1/2 rounded border border-(--p-content-border-color) px-1 text-[10px] leading-4 text-(--p-text-muted-color)"
-              :style="{ insetInlineStart: `${key.pitchX - key.leftPx}px` }"
+              class="absolute -translate-x-1/2 rounded border border-(--p-content-border-color) px-1 text-[10px] leading-4 text-(--p-text-muted-color)"
+              :style="{
+                insetInlineStart: `${key.pitchX - key.leftPx}px`,
+                bottom: `${KEY_CHAR_BOTTOM}px`,
+              }"
               aria-hidden="true"
             >
               {{ keyChar(key) }}
@@ -330,12 +353,15 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             v-for="key in layout.blacks"
             :key="key.midi"
             type="button"
-            class="absolute z-10 flex touch-manipulation flex-col items-center justify-end gap-1 rounded-b-md border border-(--p-surface-950) bg-(--p-surface-900) pb-1 transition-colors select-none hover:bg-(--p-surface-700)"
+            class="absolute z-10 flex touch-manipulation flex-col items-center justify-end gap-1 rounded-b-md border border-(--p-surface-950) bg-(--p-surface-900) transition-colors select-none hover:bg-(--p-surface-700)"
             :style="{
               insetInlineStart: `${key.leftPx}px`,
               top: `${PIANO_LABEL_BAND_HEIGHT}px`,
               width: `${key.widthPx}px`,
               height: `${blackKeyHeight}px`,
+              /* Clears the reserved scale strip, landing the black-key note
+                 label on the same baseline as the white-key one. */
+              paddingBlockEnd: `${KEY_LABEL_BOTTOM}px`,
             }"
             :data-testid="`piano-key-${key.midi}`"
             :data-scale-role="scaleRole(key) ?? undefined"
@@ -345,9 +371,10 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             @keydown="handleKeyDown($event, key.midi)"
           >
             <span
-              v-if="scaleTintClass(key)"
-              class="pointer-events-none absolute inset-0 rounded-b-md"
-              :class="scaleTintClass(key)"
+              v-if="scaleBarClass(key)"
+              class="pointer-events-none absolute rounded-full"
+              :class="scaleBarClass(key)"
+              :style="scaleBarStyle"
               aria-hidden="true"
             />
 
