@@ -160,9 +160,16 @@ export function guitarScaleLabelClass(role: ScaleRole): string | null {
  * the string line running down the middle of its column. Removed: the pill is
  * invisible against the board it matches, so its only other effect was to punch
  * a pale disc through the green press glow, which a highlighted name (with a
- * scale dot instead) never showed. The names have been semibold in the full text
- * colour since the board's type was promoted, so a hairline string behind one
- * no longer reads as a strike-through.
+ * scale dot instead) never showed.
+ *
+ * The masking job itself came back when the strings gained contrast (see
+ * GUITAR_STRING_LINE_CLASS above). A hairline in the board's own grey did vanish
+ * behind a semibold name; a nickel one shows through the gaps around the strokes,
+ * and the eye joins those segments into a strike through the letter. It is done in
+ * GuitarDisplay's scoped CSS now, as a stroked halo on the name itself
+ * (.guitar-fret-label) — that clears only the couple of px hugging each stroke, so
+ * it keeps what the pill was for without drawing anything the glow can show a hole
+ * in.
  */
 
 /* The emphasized style is the fret button's own, so only the stepped-back state

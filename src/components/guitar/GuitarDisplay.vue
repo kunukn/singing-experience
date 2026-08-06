@@ -447,8 +447,10 @@ function handleClick(cell: GuitarCell) {
                 aria-hidden="true"
               />
 
-              <!-- The strings, thickest at string 6 as on a real instrument. They
-                 run under the note names, so a name always stays readable. -->
+              <!-- The strings, thickest at string 6 as on a real instrument.
+                 Painted before the fret buttons, so every note name draws over
+                 them; the halo on .guitar-fret-label is what stops a string
+                 showing through the gaps in a glyph and reading as a strike. -->
               <span
                 v-for="line in stringLines"
                 :key="line.key"
@@ -535,7 +537,7 @@ function handleClick(cell: GuitarCell) {
 
                 <span
                   v-if="cellLabel(cell)"
-                  class="relative leading-none"
+                  class="guitar-fret-label relative leading-none"
                   :class="[scaleLabelClass(cell), labelEmphasisClass(cell)]"
                 >
                   {{ cellLabel(cell) }}
@@ -620,6 +622,43 @@ function handleClick(cell: GuitarCell) {
 
 .guitar-fret:focus-visible::after {
   opacity: 1;
+}
+
+/*
+ * A string line runs down the centre of every column, which is also where the note
+ * name sits — so without a mask the string shows through the gaps in and around a
+ * glyph, and the eye joins those segments into a strike through the letter. The
+ * name is already painted over the string (the fret buttons come after the string
+ * spans in the template, and both are z-index:auto in the board's one stacking
+ * context); what is missing is clearance around the strokes.
+ *
+ * A halo around the glyph rather than the pill this replaces: it clears only the
+ * couple of px hugging each stroke, so nothing is drawn across the rest of the cell
+ * and the green press glow underneath stays whole. The pill was a solid disc in the
+ * board's own colour — invisible on the bare board, but a pale hole punched through
+ * the glow.
+ *
+ * A stroke, NOT a text-shadow. A blurred shadow is semi-transparent by construction:
+ * spread over a 3px radius it only tints the string it is meant to hide, which is
+ * exactly what the first attempt here did. A stroke is opaque, so it actually cuts.
+ * paint-order puts it under the fill, leaving the glyph itself its normal weight
+ * instead of eating 1.5px into it from every side.
+ */
+.guitar-fret-label {
+  -webkit-text-stroke: 3px var(--p-surface-50);
+  paint-order: stroke fill;
+}
+
+/* .p-dark sits on <html> (see useDarkMode), so this is an ancestor selector. */
+.p-dark .guitar-fret-label {
+  -webkit-text-stroke-color: var(--p-surface-800);
+}
+
+/* A highlighted cell needs none of this: the scale dot behind the name already
+ * hides the string, and a halo in the board's colour would ring the name with a
+ * colour the dot is not. */
+.guitar-fret[data-scale-role] .guitar-fret-label {
+  -webkit-text-stroke-width: 0;
 }
 
 /* Solid for the first beat (so the press reads as a hit), then out. */
