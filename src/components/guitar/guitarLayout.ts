@@ -1,10 +1,99 @@
 /*
- * The fretboard span, fixed rather than picked from a voice range: a guitar is
- * a physical instrument with the same notes for every singer, and offering a
- * range selector here would suggest the fretboard changes with it.
- *
- * Standard tuning, six strings, 22 frets — from the open low E string up to the
- * 22nd fret of the high E string.
+ * String 6 (low E) first, so index 0 is the leftmost column — the board is drawn
+ * looking at the front of the neck, low pitch on the left like the piano.
+ * Standard tuning EADGBE.
  */
-export const GUITAR_MIDI_MIN = 40 // E2, open 6th string
-export const GUITAR_MIDI_MAX = 86 // D6, 22nd fret of the 1st string
+export const GUITAR_STANDARD_TUNING = [40, 45, 50, 55, 59, 64] // E2 A2 D3 G3 B3 E4
+
+export const GUITAR_STRING_COUNT = GUITAR_STANDARD_TUNING.length
+
+/* Rows 0…15 inclusive — fret 0 is the open string. */
+export const GUITAR_MAX_FRET = 15
+export const GUITAR_FRET_ROW_COUNT = GUITAR_MAX_FRET + 1
+
+/*
+ * px — one semitone per row, the same height everywhere. A real neck spaces
+ * frets logarithmically; this board does not, so the live-pitch highlight
+ * travels at a constant px-per-cent exactly as it does across the piano keys.
+ */
+export const FRET_ROW_HEIGHT = 30
+
+/* px — the 0…15 number column at the inline-start edge of the board. */
+export const FRET_NUMBER_GUTTER = 28
+
+/* px — on touch the fret-number column doubles as the strip you grab to pan the
+ * board, since it is the only full-height area with no fret cells in it. 44 is
+ * the Apple HIG minimum tap target, the same value and reasoning as the piano's
+ * PIANO_DRAG_GUTTER_HEIGHT; narrower and it is too easy to miss and hit a fret. */
+export const FRET_NUMBER_GUTTER_TOUCH = 44
+
+export const MAX_STRING_WIDTH = 60 // px
+export const MIN_STRING_WIDTH_TOUCH = 44 // px — tap-target floor
+export const MIN_STRING_WIDTH_POINTER = 36 // px
+
+/* Inlays as on a real neck; 12 takes the double dot marking the octave. */
+export const SINGLE_INLAY_FRETS = [3, 5, 7, 9, 15]
+export const DOUBLE_INLAY_FRET = 12
+
+/* Derived rather than written by hand, so changing the fret count or the tuning
+ * cannot leave the range the duet band split uses out of step with the board. */
+export const GUITAR_MIDI_MIN = Math.min(...GUITAR_STANDARD_TUNING) // 40, E2
+export const GUITAR_MIDI_MAX =
+  Math.max(...GUITAR_STANDARD_TUNING) + GUITAR_MAX_FRET // 79, G5
+
+export type GuitarCell = {
+  stringIndex: number
+  fret: number
+  midi: number
+  leftPx: number
+  topPx: number
+}
+
+export type GuitarLayout = {
+  stringWidth: number
+  boardWidth: number
+  boardHeight: number
+  cells: GuitarCell[]
+}
+
+/** Sounding pitch of a fret. Fret 0 is the open string. */
+export function guitarFretMidi(stringIndex: number, fret: number): number {
+  return GUITAR_STANDARD_TUNING[stringIndex] + fret
+}
+
+/**
+ * Vertical centre of a fret position, in px from the top of the board.
+ *
+ * Takes a FRACTIONAL position so the live-pitch segment can sit between two
+ * rows: 3.0 is dead centre of fret 3, 3.5 sits on the wire below it.
+ */
+export function guitarFretY(fretPosition: number): number {
+  return (fretPosition + 0.5) * FRET_ROW_HEIGHT
+}
+
+/*
+ * Every cell of the board, built once per width change rather than once per
+ * render — 6 strings × 16 frets is 96 of them.
+ */
+export function buildGuitarLayout(stringWidth: number): GuitarLayout {
+  const cells: GuitarCell[] = []
+
+  for (let stringIndex = 0; stringIndex < GUITAR_STRING_COUNT; stringIndex++) {
+    for (let fret = 0; fret <= GUITAR_MAX_FRET; fret++) {
+      cells.push({
+        stringIndex,
+        fret,
+        midi: guitarFretMidi(stringIndex, fret),
+        leftPx: stringIndex * stringWidth,
+        topPx: fret * FRET_ROW_HEIGHT,
+      })
+    }
+  }
+
+  return {
+    stringWidth,
+    boardWidth: GUITAR_STRING_COUNT * stringWidth,
+    boardHeight: GUITAR_FRET_ROW_COUNT * FRET_ROW_HEIGHT,
+    cells,
+  }
+}

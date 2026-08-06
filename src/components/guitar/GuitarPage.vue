@@ -114,8 +114,12 @@ function handleTonePlayed() {
 </script>
 
 <template>
+  <!-- pb-6: the fretboard is the last thing on the page and is tall enough to
+       run past the fold, so without it the board's bottom edge ends flush
+       against the viewport with nothing to scroll into. [data-page] only sets
+       horizontal padding. -->
   <div
-    class="flex flex-1 flex-col items-center gap-4"
+    class="flex flex-1 flex-col items-center gap-4 pb-6"
     data-testid="guitar-page"
   >
     <GuitarSettingsRow
