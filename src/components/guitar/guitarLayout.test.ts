@@ -184,8 +184,50 @@ describe('buildGuitarBoardScale', () => {
     expect(buildGuitarBoardScale(0, false).rowHeight).toBe(FRET_ROW_HEIGHT)
   })
 
-  it('keeps touch at the base size, where the board scrolls in a bounded box', () => {
-    expect(buildGuitarBoardScale(DESKTOP, true).rowHeight).toBe(FRET_ROW_HEIGHT)
+  /*
+   * On touch the board lives in its own 70svh scroll box, so the rows may grow
+   * only as far as that box can still show all sixteen at once — a tablet has
+   * room for the full desktop board, a phone does not.
+   */
+  describe('on touch', () => {
+    const TABLET = 1180 // iPad Air
+    const PHONE = 844 // iPhone 14
+    const SHORT_PHONE = 667 // iPhone SE
+
+    it('gives a tablet the same rows a desktop gets', () => {
+      expect(buildGuitarBoardScale(TABLET, true).rowHeight).toBe(
+        MAX_FRET_ROW_HEIGHT,
+      )
+    })
+
+    it('keeps a short phone on the base row, where the board scrolls anyway', () => {
+      expect(buildGuitarBoardScale(SHORT_PHONE, true).rowHeight).toBe(
+        FRET_ROW_HEIGHT,
+      )
+    })
+
+    it('never grows the board past the box it scrolls in', () => {
+      for (const viewportHeight of [SHORT_PHONE, PHONE, TABLET, 4000]) {
+        const { rowHeight } = buildGuitarBoardScale(viewportHeight, true)
+        /* The base row is the floor, so a board that overflows at 30px still
+         * overflows — that case scrolls by design and is not what this guards. */
+        if (rowHeight === FRET_ROW_HEIGHT) continue
+
+        expect(GUITAR_FRET_ROW_COUNT * rowHeight).toBeLessThanOrEqual(
+          viewportHeight * 0.7,
+        )
+      }
+    })
+
+    it('never grows a row past what the pointer branch would give', () => {
+      for (const viewportHeight of [SHORT_PHONE, PHONE, TABLET]) {
+        expect(
+          buildGuitarBoardScale(viewportHeight, true).rowHeight,
+        ).toBeLessThanOrEqual(
+          buildGuitarBoardScale(viewportHeight, false).rowHeight,
+        )
+      }
+    })
   })
 
   it('keeps the board fitting the window it was sized for', () => {

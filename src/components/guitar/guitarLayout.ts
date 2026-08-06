@@ -125,6 +125,17 @@ export const NUT_OVERHANG = Math.ceil(NUT_HEIGHT / 2)
  * read as separate marks instead of one thick smudge. */
 const FRET_RING_CLEARANCE = 2
 
+/*
+ * The share of the window the board's own scroll box takes on touch. Mirrors
+ * BOARD_MAX_VIEWPORT_HEIGHT ('70svh') in GuitarDisplay — keep the two in step.
+ *
+ * Read off window.innerHeight rather than svh, which CSS alone knows: innerHeight
+ * follows the LARGE viewport once the address bar collapses, so 0.7 × it can
+ * overshoot the box the board actually sits in. Sizing off the smaller of this
+ * and the page-chrome fit is what keeps that overshoot from mattering.
+ */
+const BOARD_TOUCH_VIEWPORT_RATIO = 0.7
+
 /**
  * Size the board to the window.
  *
@@ -133,20 +144,28 @@ const FRET_RING_CLEARANCE = 2
  * spare — it is vertical space that decides whether the whole neck is visible
  * without scrolling the page.
  *
- * Touch keeps the base size: there the board already scrolls inside a 70svh
- * viewport, so taller rows would not make anything more readable, only show
- * fewer frets at once.
+ * Touch grows the same way, with one extra bound: the board sits in its own
+ * 70svh scroll box there, so the rows may only grow as far as that box can still
+ * show all sixteen at once. A tablet clears both tests easily and lands on the
+ * same rows a desktop draws — 16 × 30px inside an 826px box left a third of it
+ * empty. A phone is held back by whichever bound bites first, and a short one
+ * stays on the base row and scrolls, exactly as before.
  */
 export function buildGuitarBoardScale(
   viewportHeight: number,
   isCoarsePointer: boolean,
 ): GuitarBoardScale {
-  const fitted = Math.floor(
-    (viewportHeight - BOARD_VERTICAL_CHROME) / GUITAR_FRET_ROW_COUNT,
+  const available = isCoarsePointer
+    ? Math.min(
+        viewportHeight - BOARD_VERTICAL_CHROME,
+        viewportHeight * BOARD_TOUCH_VIEWPORT_RATIO,
+      )
+    : viewportHeight - BOARD_VERTICAL_CHROME
+  const fitted = Math.floor(available / GUITAR_FRET_ROW_COUNT)
+  const rowHeight = Math.min(
+    Math.max(fitted, FRET_ROW_HEIGHT),
+    MAX_FRET_ROW_HEIGHT,
   )
-  const rowHeight = isCoarsePointer
-    ? FRET_ROW_HEIGHT
-    : Math.min(Math.max(fitted, FRET_ROW_HEIGHT), MAX_FRET_ROW_HEIGHT)
 
   /*
    * Reserve the same band at the top and bottom of the row — the ring is
