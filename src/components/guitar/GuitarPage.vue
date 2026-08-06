@@ -119,7 +119,7 @@ function handleTonePlayed() {
        against the viewport with nothing to scroll into. [data-page] only sets
        horizontal padding. -->
   <div
-    class="flex flex-1 flex-col items-center gap-4 pb-6"
+    class="flex flex-1 flex-col items-center gap-4 pb-4"
     data-testid="guitar-page"
   >
     <GuitarSettingsRow

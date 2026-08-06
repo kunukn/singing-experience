@@ -230,36 +230,38 @@ const stringLines = computed(() =>
 )
 
 /*
- * Inlay dots, positioned on column boundaries rather than column centres so
- * they never sit under a note name. The single dot takes the middle of the
- * board; the 12th-fret pair straddles it symmetrically, as on a real neck.
+ * Inlay dots, all centred on the board's middle line — the boundary between
+ * strings 4 and 3 — so they never sit under a note name.
+ *
+ * A real neck spreads the 12th fret's pair out to the string-5/4 and 3/2
+ * boundaries, but that does not survive the translation to a diagram: with
+ * evenly spaced string lines, a dot beside a string reads as belonging to that
+ * string rather than to the fret. Keeping the pair tight around the centre
+ * reads as one marker.
  */
 const INLAY_CENTER_STRING_OFFSET = GUITAR_STRING_COUNT / 2 // 3 — board centre
-const DOUBLE_INLAY_STRING_OFFSETS = [2, 4]
 const INLAY_DOT_SIZE = 8 // px
+/* px — each of the 12th fret's pair sits this far to either side of centre,
+ * leaving a gap of about half a dot between them. */
+const DOUBLE_INLAY_SPREAD = 7
 
 const inlays = computed(() => {
-  const dots: Array<{ key: string; left: number; top: number }> = []
+  const centerLeft = INLAY_CENTER_STRING_OFFSET * layout.value.stringWidth
   const top = (fret: number) =>
     fret * FRET_ROW_HEIGHT + FRET_ROW_HEIGHT / 2 - INLAY_DOT_SIZE / 2
 
-  for (const fret of SINGLE_INLAY_FRETS) {
-    dots.push({
+  return [
+    ...SINGLE_INLAY_FRETS.map((fret) => ({
       key: `inlay-${fret}`,
-      left: INLAY_CENTER_STRING_OFFSET * layout.value.stringWidth,
+      left: centerLeft,
       top: top(fret),
-    })
-  }
-
-  for (const offset of DOUBLE_INLAY_STRING_OFFSETS) {
-    dots.push({
-      key: `inlay-${DOUBLE_INLAY_FRET}-${offset}`,
-      left: offset * layout.value.stringWidth,
+    })),
+    ...[-1, 1].map((side) => ({
+      key: `inlay-${DOUBLE_INLAY_FRET}-${side}`,
+      left: centerLeft + side * DOUBLE_INLAY_SPREAD,
       top: top(DOUBLE_INLAY_FRET),
-    })
-  }
-
-  return dots
+    })),
+  ]
 })
 
 /* Horizontal segment per string that can reach the sung pitch, plus one chip
