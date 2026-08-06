@@ -11,9 +11,17 @@ import {
 } from '@/utils/scaleHighlight'
 import { useMediaQuery, useResizeObserver } from '@vueuse/core'
 import type { AccidentalStyle } from './guitarAccidentals'
+import {
+  INLAY_DOT_SIZE,
+  buildGuitarInlays,
+  buildGuitarStringLines,
+  guitarFretWireTop,
+  guitarLabelBackingClass,
+  guitarScaleDotClass,
+  guitarScaleLabelClass,
+} from './guitarBoardDecorations'
 import { guitarFretLabel } from './guitarLabels'
 import {
-  DOUBLE_INLAY_FRET,
   FRET_NUMBER_GUTTER,
   FRET_NUMBER_GUTTER_TOUCH,
   FRET_ROW_HEIGHT,
@@ -22,7 +30,6 @@ import {
   MAX_STRING_WIDTH,
   MIN_STRING_WIDTH_POINTER,
   MIN_STRING_WIDTH_TOUCH,
-  SINGLE_INLAY_FRETS,
   buildGuitarLayout,
   type GuitarCell,
 } from './guitarLayout'
@@ -109,44 +116,16 @@ function scaleRole(cell: GuitarCell): ScaleRole {
   )
 }
 
-/* Scale highlight as a filled dot behind the note name — the chord-diagram
- * form, and unlike the piano's felt-strip pill it needs no reserved band inside
- * a 30px row. The root takes the deeper shade so the anchor reads at a glance;
- * both are legible on the board in either theme. */
-const SCALE_DOT_CLASS: Record<'root' | 'scale', string> = {
-  root: 'bg-(--p-blue-500)',
-  scale: 'bg-(--p-blue-300)',
-}
-
-/* The name sits on top of the dot, so it needs a colour that survives the fill
- * rather than the muted grey it uses on the bare board. */
-const SCALE_LABEL_CLASS: Record<'root' | 'scale', string> = {
-  root: 'text-(--p-surface-0)',
-  scale: 'text-(--p-surface-900)',
-}
-
 function scaleDotClass(cell: GuitarCell): string | null {
-  const role = scaleRole(cell)
-  if (!role) return null
-
-  return SCALE_DOT_CLASS[role]
+  return guitarScaleDotClass(scaleRole(cell))
 }
 
 function scaleLabelClass(cell: GuitarCell): string | null {
-  const role = scaleRole(cell)
-  if (!role) return null
-
-  return SCALE_LABEL_CLASS[role]
+  return guitarScaleLabelClass(scaleRole(cell))
 }
 
-/* The strings are drawn down the middle of each column, straight through where
- * the names sit, so an unhighlighted name needs to mask the line behind it —
- * otherwise it reads as struck through. A scale dot already does that job, so
- * the backing only appears where there is no dot. */
 function labelBackingClass(cell: GuitarCell): string | null {
-  if (scaleRole(cell)) return null
-
-  return 'rounded-full bg-(--p-surface-50) px-1 dark:bg-(--p-surface-800)'
+  return guitarLabelBackingClass(scaleRole(cell))
 }
 
 /* A pressed fret washes green, then fades back out. Same timing as the piano so
@@ -235,20 +214,8 @@ const fretNumbers = Array.from(
   (_, fret) => fret,
 )
 
-/* px — the hairline wire's own height, matching its h-px class. */
-const FRET_WIRE_HEIGHT = 1
-
-/*
- * A wire sits at the bottom of its fret's row. The last one would land at exactly
- * boardHeight and, being 1px tall, put the board's content 1px past its own box —
- * enough to give the scroller a permanent vertical scrollbar. Tuck that one
- * inside instead; at the board's bottom edge the difference is invisible.
- */
 function fretWireTop(fret: number): number {
-  return Math.min(
-    (fret + 1) * FRET_ROW_HEIGHT,
-    layout.value.boardHeight - FRET_WIRE_HEIGHT,
-  )
+  return guitarFretWireTop(fret, layout.value.boardHeight)
 }
 
 /* px — the string-number row above the board. */
@@ -261,57 +228,11 @@ const stringNumbers = Array.from(
   (_, stringIndex) => GUITAR_STRING_COUNT - stringIndex,
 )
 
-/* px — the low E is a wound string roughly twice the gauge of the high E, and
- * tapering the drawn width the same way makes the board readable at a glance. */
-const MIN_STRING_LINE_WIDTH = 1
-const MAX_STRING_LINE_WIDTH = 2.5
-
 const stringLines = computed(() =>
-  Array.from({ length: GUITAR_STRING_COUNT }, (_, stringIndex) => ({
-    key: `string-${stringIndex}`,
-    /* Centre of the column, which is also where the note names sit. */
-    left: (stringIndex + 0.5) * layout.value.stringWidth,
-    width:
-      MAX_STRING_LINE_WIDTH -
-      (stringIndex / (GUITAR_STRING_COUNT - 1)) *
-        (MAX_STRING_LINE_WIDTH - MIN_STRING_LINE_WIDTH),
-  })),
+  buildGuitarStringLines(layout.value.stringWidth),
 )
 
-/*
- * Inlay dots, all centred on the board's middle line — the boundary between
- * strings 4 and 3 — so they never sit under a note name.
- *
- * A real neck spreads the 12th fret's pair out to the string-5/4 and 3/2
- * boundaries, but that does not survive the translation to a diagram: with
- * evenly spaced string lines, a dot beside a string reads as belonging to that
- * string rather than to the fret. Keeping the pair tight around the centre
- * reads as one marker.
- */
-const INLAY_CENTER_STRING_OFFSET = GUITAR_STRING_COUNT / 2 // 3 — board centre
-const INLAY_DOT_SIZE = 8 // px
-/* px — each of the 12th fret's pair sits this far to either side of centre,
- * leaving a gap of about half a dot between them. */
-const DOUBLE_INLAY_SPREAD = 7
-
-const inlays = computed(() => {
-  const centerLeft = INLAY_CENTER_STRING_OFFSET * layout.value.stringWidth
-  const top = (fret: number) =>
-    fret * FRET_ROW_HEIGHT + FRET_ROW_HEIGHT / 2 - INLAY_DOT_SIZE / 2
-
-  return [
-    ...SINGLE_INLAY_FRETS.map((fret) => ({
-      key: `inlay-${fret}`,
-      left: centerLeft,
-      top: top(fret),
-    })),
-    ...[-1, 1].map((side) => ({
-      key: `inlay-${DOUBLE_INLAY_FRET}-${side}`,
-      left: centerLeft + side * DOUBLE_INLAY_SPREAD,
-      top: top(DOUBLE_INLAY_FRET),
-    })),
-  ]
-})
+const inlays = computed(() => buildGuitarInlays(layout.value.stringWidth))
 
 /* Horizontal segment per string that can reach the sung pitch, plus one chip
  * per voice. Empty while nobody is singing. */
