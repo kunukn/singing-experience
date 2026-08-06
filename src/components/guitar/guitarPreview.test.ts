@@ -138,3 +138,39 @@ describe('buildGuitarPreviewLanes', () => {
     expect(lanes[0].laneId).toBe('low')
   })
 })
+
+describe('accidental spelling', () => {
+  const A_SHARP_2_MIDI = 46
+
+  it('leaves the chip label exactly as the detector spelled it', () => {
+    /* Sharp mode passes previewNoteLabel straight through — no re-derivation, so
+     * nothing about the existing behaviour can drift. */
+    const lane = buildGuitarPreviewLane(
+      laneAt(A_SHARP_2_MIDI, 'A♯2'),
+      STANDARD,
+      'sharp',
+    )
+
+    expect(lane?.text).toBe('A♯2')
+  })
+
+  it('respells the chip to match a flat board', () => {
+    const lane = buildGuitarPreviewLane(
+      laneAt(A_SHARP_2_MIDI, 'A♯2'),
+      STANDARD,
+      'flat',
+    )
+
+    expect(lane?.text).toBe('B♭2')
+  })
+
+  it('keeps the cents suffix when respelling', () => {
+    const lane = buildGuitarPreviewLane(
+      laneAt(A_SHARP_2_MIDI, 'A♯2', 40),
+      STANDARD,
+      'flat',
+    )
+
+    expect(lane?.text).toBe('B♭2 +40¢')
+  })
+})

@@ -10,6 +10,7 @@ import {
   type ScaleRole,
 } from '@/utils/scaleHighlight'
 import { useMediaQuery, useResizeObserver } from '@vueuse/core'
+import type { AccidentalStyle } from './guitarAccidentals'
 import { guitarFretLabel } from './guitarLabels'
 import {
   DOUBLE_INLAY_FRET,
@@ -47,6 +48,9 @@ type Props = {
   /* Note names in the cells: 'off' (open strings only), 'simple' (bare names,
    * e.g. C♯), or 'advanced' (names with octave, e.g. C♯3). */
   toneLabelMode?: ToneLabelMode
+  /* Whether accidentals read as C♯ or D♭. One or the other, not both: the fret
+   * row is too short to stack the pair the way a piano key can. */
+  accidentalStyle?: AccidentalStyle
   /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
   scaleRoot?: number | null
   scaleMode?: ScaleHighlightMode
@@ -67,8 +71,26 @@ onMounted(() => {
   void prewarmGuitarFretboard()
 })
 
+const accidentalStyle = computed<AccidentalStyle>(
+  () => props.accidentalStyle ?? 'sharp',
+)
+
 function cellLabel(cell: GuitarCell): string | null {
-  return guitarFretLabel(cell.midi, cell.fret, props.toneLabelMode ?? 'off')
+  return guitarFretLabel(
+    cell.midi,
+    cell.fret,
+    props.toneLabelMode ?? 'off',
+    accidentalStyle.value,
+  )
+}
+
+/* The screen-reader name has to match the label drawn in the cell, or the two
+ * disagree about what the note is called. */
+function cellAriaLabel(cell: GuitarCell): string {
+  return midiToNoteLabel(cell.midi, {
+    showOctave: true,
+    preferFlats: accidentalStyle.value === 'flat',
+  }).label
 }
 
 /* Built once per scale change, not once per cell — the board has 96 of them. */
@@ -213,6 +235,22 @@ const fretNumbers = Array.from(
   (_, fret) => fret,
 )
 
+/* px — the hairline wire's own height, matching its h-px class. */
+const FRET_WIRE_HEIGHT = 1
+
+/*
+ * A wire sits at the bottom of its fret's row. The last one would land at exactly
+ * boardHeight and, being 1px tall, put the board's content 1px past its own box —
+ * enough to give the scroller a permanent vertical scrollbar. Tuck that one
+ * inside instead; at the board's bottom edge the difference is invisible.
+ */
+function fretWireTop(fret: number): number {
+  return Math.min(
+    (fret + 1) * FRET_ROW_HEIGHT,
+    layout.value.boardHeight - FRET_WIRE_HEIGHT,
+  )
+}
+
 /* px — the string-number row above the board. */
 const STRING_HEADER_HEIGHT = 16
 
@@ -278,7 +316,11 @@ const inlays = computed(() => {
 /* Horizontal segment per string that can reach the sung pitch, plus one chip
  * per voice. Empty while nobody is singing. */
 const previewLanes = computed(() =>
-  buildGuitarPreviewLanes(props.previewLanes ?? [], props.tuningMidi),
+  buildGuitarPreviewLanes(
+    props.previewLanes ?? [],
+    props.tuningMidi,
+    accidentalStyle.value,
+  ),
 )
 
 /* Two lanes in the same colour are impossible to tell apart, so the high band
@@ -336,9 +378,15 @@ function handleClick(cell: GuitarCell) {
     <!-- A guitar is a fixed physical instrument (string 6 always on the left),
          so force LTR even in RTL locales; inline-start then coincides with
          left. -->
+    <!-- overflow-y-hidden is not redundant: CSS promotes a `visible` axis to
+         `auto` when the other axis is not visible, so overflow-x-auto alone makes
+         this a vertical scroller too — and then a single stray pixel of content
+         (a fret wire, a preview line clipped at the last fret) is enough to park
+         a scrollbar here permanently. Vertical panning on touch belongs to the
+         board viewport below, never to this box. -->
     <div
       ref="scrollBox"
-      class="w-full overflow-x-auto"
+      class="w-full overflow-x-auto overflow-y-hidden"
       dir="ltr"
       data-testid="guitar-display"
     >
@@ -456,7 +504,7 @@ function handleClick(cell: GuitarCell) {
                     ? 'h-[3px] bg-(--p-text-color)'
                     : 'h-px bg-(--p-content-border-color)'
                 "
-                :style="{ top: `${(fret + 1) * FRET_ROW_HEIGHT}px` }"
+                :style="{ top: `${fretWireTop(fret)}px` }"
                 aria-hidden="true"
               />
 
@@ -473,9 +521,7 @@ function handleClick(cell: GuitarCell) {
                 }"
                 :data-testid="`guitar-fret-${cell.stringIndex}-${cell.fret}`"
                 :data-scale-role="scaleRole(cell) ?? undefined"
-                :aria-label="
-                  midiToNoteLabel(cell.midi, { showOctave: true }).label
-                "
+                :aria-label="cellAriaLabel(cell)"
                 @pointerdown="handlePointerDown(cell)"
                 @click="handleClick(cell)"
                 @keydown="

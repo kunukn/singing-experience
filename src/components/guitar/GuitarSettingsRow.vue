@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import type { GuitarTuningId } from '@/utils/guitarTunings'
+import {
+  ACCIDENTAL_STYLE_OPTIONS,
+  type AccidentalStyle,
+} from './guitarAccidentals'
 
 type Props = {
   /* Both mic toggles lock out once permission was refused. Matches the shape of
@@ -15,6 +19,9 @@ defineProps<Props>()
 const tuningId = defineModel<GuitarTuningId>('tuningId', { required: true })
 
 const toneLabelMode = defineModel<ToneLabelMode>('toneLabelMode', {
+  required: true,
+})
+const accidentalStyle = defineModel<AccidentalStyle>('accidentalStyle', {
   required: true,
 })
 const isPreviewEnabled = defineModel<boolean>('isPreviewEnabled', {
@@ -81,15 +88,37 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         :aria-label="t('notes.toneLabels')"
       />
     </div>
+
+    <div class="settings-item">
+      <label
+        class="hidden text-end text-sm text-(--p-text-muted-color) md:block"
+        >{{ t('notes.accidentals') }}</label
+      >
+      <PrimeSelectButton
+        v-model="accidentalStyle"
+        :options="ACCIDENTAL_STYLE_OPTIONS"
+        optionLabel="label"
+        optionValue="value"
+        :allowEmpty="false"
+        size="small"
+        :aria-label="t('notes.accidentals')"
+        data-testid="guitar-accidentals"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
 @reference '@/style.css';
 
-/* One row from md up: 6 columns so all three items (each col-span-2) sit side
- * by side. */
+/*
+ * Four items (each col-span-2). All four side by side need ~810px, which does
+ * not fit the content area until about lg — at md the row would push the whole
+ * document into a horizontal scrollbar. So: 2×2 at md, like the piano row's four
+ * items, then one row from lg up.
+ */
 .settings-row {
-  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr];
+  @apply md:grid-cols-[auto_1fr_auto_1fr];
+  @apply lg:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr];
 }
 </style>

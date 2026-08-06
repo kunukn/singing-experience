@@ -2,7 +2,12 @@ import {
   PREVIEW_CENTS_THRESHOLD,
   PREVIEW_RANGE_TOLERANCE,
 } from '@/components/piano/pianoPreview'
-import { formatNoteLabelWithCents, frequencyToMidi } from '@/utils/noteUtils'
+import {
+  formatNoteLabelWithCents,
+  frequencyToMidi,
+  midiToNoteLabel,
+} from '@/utils/noteUtils'
+import type { AccidentalStyle } from './guitarAccidentals'
 import {
   GUITAR_MAX_FRET,
   guitarFretY,
@@ -54,6 +59,7 @@ const FRET_POSITION_OVERHANG = 0.5
 export function buildGuitarPreviewLane(
   input: GuitarPreviewInput & { laneId: GuitarPreviewLaneId },
   tuning: readonly number[],
+  accidentalStyle: AccidentalStyle = 'sharp',
 ): GuitarPreviewLaneView | null {
   const { previewMidi, previewFrequency, previewNoteLabel, laneId } = input
   if (previewMidi === null || previewNoteLabel === null) return null
@@ -84,13 +90,20 @@ export function buildGuitarPreviewLane(
    * (round(100 × (continuous − nearest))). */
   const cents = Math.round(100 * (floatMidi - previewMidi))
 
+  /* The chip has to agree with the cells underneath it, so it follows the board's
+   * spelling. Only the flat side re-derives: sharp mode passes the detector's own
+   * label straight through, leaving the common path exactly as it was. Safe to
+   * re-derive at all because previewMidi and previewNoteLabel come from the same
+   * NoteInfo (see useIdlePreview), so the two can never disagree. */
+  const noteLabel =
+    accidentalStyle === 'flat'
+      ? midiToNoteLabel(previewMidi, { showOctave: true, preferFlats: true })
+          .label
+      : previewNoteLabel
+
   return {
     laneId,
-    text: formatNoteLabelWithCents(
-      previewNoteLabel,
-      cents,
-      PREVIEW_CENTS_THRESHOLD,
-    ),
+    text: formatNoteLabelWithCents(noteLabel, cents, PREVIEW_CENTS_THRESHOLD),
     segments,
   }
 }
@@ -105,10 +118,11 @@ export function buildGuitarPreviewLane(
 export function buildGuitarPreviewLanes(
   inputs: Array<GuitarPreviewInput & { laneId: GuitarPreviewLaneId }>,
   tuning: readonly number[],
+  accidentalStyle: AccidentalStyle = 'sharp',
 ): GuitarPreviewLaneView[] {
   /* Explicit arrow, not a bare reference: map would pass the index as the
    * tuning. */
   return inputs
-    .map((input) => buildGuitarPreviewLane(input, tuning))
+    .map((input) => buildGuitarPreviewLane(input, tuning, accidentalStyle))
     .filter((lane): lane is GuitarPreviewLaneView => lane !== null)
 }

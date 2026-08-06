@@ -15,6 +15,7 @@ import {
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
 import { useLocalStorage } from '@vueuse/core'
+import { isAccidentalStyle, type AccidentalStyle } from './guitarAccidentals'
 import { guitarMidiMax, guitarMidiMin } from './guitarLayout'
 import type { GuitarPreviewLaneId } from './guitarPreview'
 
@@ -37,6 +38,17 @@ const midiMax = computed(() => guitarMidiMax(tuningMidi.value))
 
 /* Note-name labels on the fretboard: off, simple (C), or advanced (C4). */
 const toneLabelMode = useToneLabelMode('syng.guitarToneLabelMode', 'off')
+
+/* Which way the five accidentals are spelled — C♯ or D♭. A choice rather than
+ * both spellings at once: the fret row is too short to stack them. */
+const accidentalStyle = useLocalStorage<AccidentalStyle>(
+  'syng.guitarAccidentals',
+  'sharp',
+)
+/* A value written from outside the app would spell nothing. */
+if (!isAccidentalStyle(accidentalStyle.value)) {
+  accidentalStyle.value = 'sharp'
+}
 
 /* Scale highlight — tints the notes of one musical key/mode so the singer sees
  * the shape on the fretboard. Off by default: no root picked, nothing tinted.
@@ -148,6 +160,7 @@ function handleTonePlayed() {
     <GuitarSettingsRow
       v-model:tuningId="tuningId"
       v-model:toneLabelMode="toneLabelMode"
+      v-model:accidentalStyle="accidentalStyle"
       v-model:isPreviewEnabled="isPreviewEnabled"
       v-model:isDuetEnabled="isDuetEnabled"
       :micPermission="micPermission"
@@ -170,6 +183,7 @@ function handleTonePlayed() {
         :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
         :toneLabelMode="toneLabelMode"
+        :accidentalStyle="accidentalStyle"
         :scaleRoot="scaleRoot"
         :scaleMode="scaleMode"
         @tonePlayed="handleTonePlayed"

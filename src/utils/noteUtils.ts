@@ -523,16 +523,25 @@ type MidiNoteLabel = {
  * Convert a MIDI note number to its note name, octave, and display label.
  * `showOctave` (default true) controls whether the label carries the octave
  * digit — "C4" when on, bare "C" when off. `note` and `octave` are unaffected.
+ *
+ * `preferFlats` spells the five accidental pitch classes the flat way in the
+ * LABEL only — "D♭4" rather than "C♯4". `note` deliberately keeps the sharp
+ * spelling whatever the option says, because it doubles as a sample key and a
+ * Tone.js pitch string; only the rendered label is a matter of preference.
+ * Naturals are unchanged, so E and B never become F♭/C♭ (see FLAT_NOTE_NAMES).
  */
 function midiToNoteLabel(
   midi: number,
-  options?: { showOctave?: boolean },
+  options?: { showOctave?: boolean; preferFlats?: boolean },
 ): MidiNoteLabel {
   const showOctave = options?.showOctave ?? true
   const noteIndex = ((midi % 12) + 12) % 12
   const octave = Math.floor(midi / 12) - 1
   const note = NOTE_NAMES[noteIndex]
-  const rawLabel = showOctave ? `${note}${octave}` : note
+  const spelling = options?.preferFlats
+    ? (FLAT_NOTE_NAMES[noteIndex] ?? note)
+    : note
+  const rawLabel = showOctave ? `${spelling}${octave}` : spelling
 
   return { note, octave, label: toAccidentalGlyph(rawLabel) }
 }

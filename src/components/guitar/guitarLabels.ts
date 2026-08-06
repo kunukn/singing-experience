@@ -1,5 +1,6 @@
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { midiToNoteLabel } from '@/utils/noteUtils'
+import type { AccidentalStyle } from './guitarAccidentals'
 
 /*
  * Label drawn in a fret cell, or null for none.
@@ -10,20 +11,27 @@ import { midiToNoteLabel } from '@/utils/noteUtils'
  * 'simple' and 'advanced' label every cell, with the octave digit only in
  * 'advanced'.
  *
- * Single spelling only. The piano stacks the flat under the sharp (G♭ below F♯),
- * but a 30px row leaves no height for a second line — flats are a later
- * iteration.
+ * One spelling at a time, chosen by the singer. The piano can stack the flat
+ * under the sharp (G♭ below F♯) because a key is tall; a 30px fret row already
+ * carries a scale dot and a hover ring, so a second line would have to shrink
+ * past legibility.
  */
 export function guitarFretLabel(
   midi: number,
   fret: number,
   mode: ToneLabelMode,
+  accidentalStyle: AccidentalStyle,
 ): string | null {
+  const preferFlats = accidentalStyle === 'flat'
+
   if (mode === 'off') {
     if (fret !== 0) return null
 
-    return midiToNoteLabel(midi, { showOctave: true }).label
+    return midiToNoteLabel(midi, { showOctave: true, preferFlats }).label
   }
 
-  return midiToNoteLabel(midi, { showOctave: mode === 'advanced' }).label
+  return midiToNoteLabel(midi, {
+    showOctave: mode === 'advanced',
+    preferFlats,
+  }).label
 }

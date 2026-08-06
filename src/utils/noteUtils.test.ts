@@ -5,7 +5,9 @@ import {
   C3_MIDI,
   frequencyToNote,
   frequencyToNoteName,
+  midiToFlatLabel,
   midiToFrequency,
+  midiToNoteLabel,
   noteToFrequency,
   SCALE_MODE_SEMITONES,
 } from './noteUtils'
@@ -385,5 +387,59 @@ describe('buildScale - symmetric scales', () => {
     expect(scale[0].solfege).toBe('DO')
     expect(scale[4].solfege).toBe('♯SO')
     expect(scale[6].solfege).toBe('DO')
+  })
+})
+
+const C_SHARP_4_MIDI = 61
+const F_SHARP_4_MIDI = 66
+const C4_MIDI = 60
+const E4_MIDI = 64
+const B3_MIDI = 59
+
+describe('midiToNoteLabel', () => {
+  test('spells accidentals as sharps by default', () => {
+    expect(midiToNoteLabel(C_SHARP_4_MIDI).label).toBe('C♯4')
+    expect(midiToNoteLabel(C_SHARP_4_MIDI, { showOctave: false }).label).toBe(
+      'C♯',
+    )
+  })
+
+  test('spells accidentals as flats on request', () => {
+    expect(midiToNoteLabel(C_SHARP_4_MIDI, { preferFlats: true }).label).toBe(
+      'D♭4',
+    )
+    expect(midiToNoteLabel(F_SHARP_4_MIDI, { preferFlats: true }).label).toBe(
+      'G♭4',
+    )
+    expect(
+      midiToNoteLabel(C_SHARP_4_MIDI, { showOctave: false, preferFlats: true })
+        .label,
+    ).toBe('D♭')
+  })
+
+  test('leaves naturals alone in flat spelling', () => {
+    /* E and B in particular are never respelled F♭/C♭ — FLAT_NOTE_NAMES only
+     * covers the five pitch classes with a flat name worth teaching. */
+    expect(midiToNoteLabel(C4_MIDI, { preferFlats: true }).label).toBe('C4')
+    expect(midiToNoteLabel(E4_MIDI, { preferFlats: true }).label).toBe('E4')
+    expect(midiToNoteLabel(B3_MIDI, { preferFlats: true }).label).toBe('B3')
+  })
+
+  test('keeps the sharp note name whatever the spelling', () => {
+    /* `note` doubles as a sample key and a Tone.js pitch string, so a flat
+     * spelling must never reach it — 'D♭4' matches no sample. */
+    const flat = midiToNoteLabel(C_SHARP_4_MIDI, { preferFlats: true })
+
+    expect(flat.note).toBe('C#')
+    expect(flat.octave).toBe(4)
+  })
+})
+
+describe('midiToFlatLabel', () => {
+  test('names the five accidentals and nothing else', () => {
+    expect(midiToFlatLabel(C_SHARP_4_MIDI)).toBe('D♭')
+    expect(midiToFlatLabel(F_SHARP_4_MIDI)).toBe('G♭')
+    expect(midiToFlatLabel(C4_MIDI)).toBeNull()
+    expect(midiToFlatLabel(E4_MIDI)).toBeNull()
   })
 })
