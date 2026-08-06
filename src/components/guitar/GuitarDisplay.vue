@@ -464,7 +464,7 @@ function handleClick(cell: GuitarCell) {
                 v-for="cell in layout.cells"
                 :key="`${cell.stringIndex}-${cell.fret}`"
                 type="button"
-                class="absolute flex touch-manipulation items-center justify-center text-[11px] text-(--p-text-muted-color) transition-colors select-none hover:bg-(--p-surface-200) dark:hover:bg-(--p-surface-700)"
+                class="guitar-fret absolute flex touch-manipulation items-center justify-center text-[11px] text-(--p-text-muted-color) select-none"
                 :style="{
                   insetInlineStart: `${cell.leftPx}px`,
                   top: `${cell.topPx}px`,
@@ -482,16 +482,6 @@ function handleClick(cell: GuitarCell) {
                   handleKeyDown($event, cell.stringIndex, cell.fret, cell.midi)
                 "
               >
-                <!-- Press highlight. Keyed on the press count so a fresh press
-                 remounts the element and replays the fade from full colour; an
-                 opacity transition would instead be a no-op while already lit. -->
-                <span
-                  v-if="pressCountFor(cell.stringIndex, cell.fret)"
-                  :key="`glow-${pressCountFor(cell.stringIndex, cell.fret)}`"
-                  class="guitar-fret-glow pointer-events-none absolute inset-0 bg-(--p-primary-color)"
-                  aria-hidden="true"
-                />
-
                 <!-- Scale highlight. Decorative reinforcement of a filter the user
                  set themselves, so it stays out of the cell's aria-label —
                  narrating it on 96 cells would drown out the note names. The
@@ -501,6 +491,21 @@ function handleClick(cell: GuitarCell) {
                   v-if="scaleDotClass(cell)"
                   class="pointer-events-none absolute inset-0 m-auto h-5 w-5 rounded-full"
                   :class="scaleDotClass(cell)"
+                  aria-hidden="true"
+                />
+
+                <!-- Press highlight, the filled counterpart of the hover ring, so
+                 hovering previews the shape a press lights up. Painted over the
+                 scale dot rather than under it: a green ring peeking out around a
+                 blue dot would be too faint to register as a hit.
+
+                 Keyed on the press count so a fresh press remounts the element
+                 and replays the fade from full colour; an opacity transition
+                 would instead be a no-op while already lit. -->
+                <span
+                  v-if="pressCountFor(cell.stringIndex, cell.fret)"
+                  :key="`glow-${pressCountFor(cell.stringIndex, cell.fret)}`"
+                  class="guitar-fret-glow pointer-events-none absolute inset-0 m-auto rounded-full bg-(--p-primary-color)"
                   aria-hidden="true"
                 />
 
@@ -544,6 +549,53 @@ function handleClick(cell: GuitarCell) {
 </template>
 
 <style scoped>
+/*
+ * Hover affordance: a ring on the fret position, not a wash across the cell. The
+ * board is drawn in circles — note badges, scale dots, inlays — so a 60×30 filled
+ * rectangle reads as a spreadsheet cell, and being full-bleed it also paints over
+ * the string line running through the middle.
+ *
+ * A pseudo-element rather than a span: there are 96 cells, and none of them need
+ * another node just to hold a hover state.
+ */
+.guitar-fret::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  /* 4px wider than the 20px scale dot, so the ring still shows on a tinted cell
+   * instead of hiding underneath it. 3px of clearance in a 30px row. */
+  width: 24px;
+  height: 24px;
+  border-radius: 9999px;
+  box-shadow: 0 0 0 2px var(--guitar-fret-ring-color);
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  pointer-events: none;
+}
+
+.guitar-fret {
+  --guitar-fret-ring-color: var(--p-surface-400);
+}
+
+/* .p-dark sits on <html> (see useDarkMode), so this is an ancestor selector and
+ * needs no :global wrapper. */
+.p-dark .guitar-fret {
+  --guitar-fret-ring-color: var(--p-surface-500);
+}
+
+/* Guarded, or a tap on a touch screen leaves the ring stuck on the last cell
+ * pressed. Keyboard focus gets the same ring, so tabbing the board is legible. */
+@media (hover: hover) {
+  .guitar-fret:hover::after {
+    opacity: 1;
+  }
+}
+
+.guitar-fret:focus-visible::after {
+  opacity: 1;
+}
+
 /* Solid for the first beat (so the press reads as a hit), then out. */
 @keyframes guitar-fret-glow {
   0%,
@@ -556,6 +608,9 @@ function handleClick(cell: GuitarCell) {
 }
 
 .guitar-fret-glow {
+  /* The hover ring's footprint, filled rather than outlined. */
+  width: 24px;
+  height: 24px;
   /* The curve is ease-in shaped: opacity barely moves early on, so the green
    * holds, then drops away quickly. See fretGlowEasing for the control points. */
   animation: guitar-fret-glow v-bind(fretGlowDuration) v-bind(fretGlowEasing)
