@@ -17,10 +17,3 @@ Expected: Panning the keyboard horizontally on a touch device should not sound a
 Actual: @pointerdown plays a tone on the first touch of a scroll drag, so scrolling the keyboard sideways triggers unwanted notes.
 Repro: On a phone, pick the Full voice range and drag the keyboard sideways to scroll.
 Workaround: partial — a drag gutter under the keys (PianoDisplay, shown on touch when the keyboard overflows) gives a key-free place to start a pan. A drag started on a key still sounds a note; fixing that means delaying playback until the gesture is known not to be a pan, which costs attack latency on every tap. Fit-to-container key sizing reduces how often scrolling is needed but does not remove the trigger.
-
-2026-08-06
-Component: src/locales/*.json
-Expected: Every translated string is referenced from code.
-Actual: `guitar.fretboardComingSoon` ("The fretboard is on its way") is referenced by nothing — dead copy left over from before the fretboard shipped. Present in en/da/es/fr/pt (kl has only the `guitar` namespace stub).
-Repro: `grep -rn "fretboardComingSoon" src/` returns hits only in src/locales/*.json, no .vue or .ts.
-Workaround: none (harmless dead weight; deleting it touches 15 locale files, so it was left out of the tuning change).
