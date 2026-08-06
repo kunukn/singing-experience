@@ -5,6 +5,7 @@ import {
   pitchClassOf,
   SCALE_HIGHLIGHT_MODES,
   SCALE_ROOT_OPTIONS,
+  scaleEmphasisFor,
   scaleRoleForMidi,
 } from './scaleHighlight'
 
@@ -85,6 +86,23 @@ describe('scaleRoleForMidi', () => {
     expect(
       scaleRoleForMidi(62, null, buildScalePitchClasses(null, 'ionian')),
     ).toBeNull()
+  })
+})
+
+describe('scaleEmphasisFor', () => {
+  it('emphasizes every scale member', () => {
+    expect(scaleEmphasisFor('root', true)).toBe('emphasized')
+    expect(scaleEmphasisFor('scale', true)).toBe('emphasized')
+  })
+
+  it('steps back the notes a chosen scale leaves out', () => {
+    expect(scaleEmphasisFor(null, true)).toBe('diminished')
+  })
+
+  /* The case ScaleRole alone cannot tell apart from the one above: the same null
+   * role, but nothing was chosen to rank it against. */
+  it('emphasizes everything while highlighting is off', () => {
+    expect(scaleEmphasisFor(null, false)).toBe('emphasized')
   })
 })
 

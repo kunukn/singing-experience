@@ -5,7 +5,9 @@ import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
   DEFAULT_SCALE_HIGHLIGHT_MODE,
   buildScalePitchClasses,
+  scaleEmphasisFor,
   scaleRoleForMidi,
+  type ScaleEmphasis,
   type ScaleHighlightMode,
   type ScaleRole,
 } from '@/utils/scaleHighlight'
@@ -17,6 +19,7 @@ import {
   buildGuitarStringLines,
   guitarFretWireTop,
   guitarLabelBackingClass,
+  guitarLabelEmphasisClass,
   guitarScaleDotClass,
   guitarScaleLabelClass,
 } from './guitarBoardDecorations'
@@ -128,6 +131,19 @@ function scaleLabelClass(cell: GuitarCell): string | null {
 
 function labelBackingClass(cell: GuitarCell): string | null {
   return guitarLabelBackingClass(scaleRole(cell))
+}
+
+/* Whether a scale is picked at all, which decides how a cell with no scale role
+ * reads: one of the notes a chosen scale leaves out, or just a note on a board
+ * with no scale on it. */
+const isScaleActive = computed(() => (props.scaleRoot ?? null) !== null)
+
+function labelEmphasis(cell: GuitarCell): ScaleEmphasis {
+  return scaleEmphasisFor(scaleRole(cell), isScaleActive.value)
+}
+
+function labelEmphasisClass(cell: GuitarCell): string | null {
+  return guitarLabelEmphasisClass(labelEmphasis(cell))
 }
 
 /* A pressed fret washes green, then fades back out. Same timing as the piano so
@@ -486,6 +502,7 @@ function handleClick(cell: GuitarCell) {
                 }"
                 :data-testid="`guitar-fret-${cell.stringIndex}-${cell.fret}`"
                 :data-scale-role="scaleRole(cell) ?? undefined"
+                :data-scale-emphasis="labelEmphasis(cell)"
                 :aria-label="cellAriaLabel(cell)"
                 @pointerdown="handlePointerDown(cell)"
                 @click="handleClick(cell)"
@@ -527,7 +544,11 @@ function handleClick(cell: GuitarCell) {
                 <span
                   v-if="cellLabel(cell)"
                   class="relative leading-none"
-                  :class="[scaleLabelClass(cell), labelBackingClass(cell)]"
+                  :class="[
+                    scaleLabelClass(cell),
+                    labelBackingClass(cell),
+                    labelEmphasisClass(cell),
+                  ]"
                 >
                   {{ cellLabel(cell) }}
                 </span>

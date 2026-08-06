@@ -29,6 +29,23 @@ export const DEFAULT_SCALE_HIGHLIGHT_MODE: ScaleHighlightMode = 'ionian'
  */
 export type ScaleRole = 'root' | 'scale' | null
 
+/*
+ * How prominently a note's name should be drawn. 'diminished' is the one state
+ * ScaleRole cannot express on its own: a null role covers both "highlighting is
+ * off" and "this note is outside the chosen scale", and only the second should
+ * step back. Picking a scale is the user saying which tones matter, so the rest
+ * recede; with no scale picked there is nothing to rank against and every name
+ * stays emphasized.
+ */
+export type ScaleEmphasis = 'emphasized' | 'diminished'
+
+export function scaleEmphasisFor(
+  role: ScaleRole,
+  isScaleActive: boolean,
+): ScaleEmphasis {
+  return role || !isScaleActive ? 'emphasized' : 'diminished'
+}
+
 export type ScaleRootOption = { pitchClass: number; label: string }
 
 const SEMITONES_PER_OCTAVE = 12

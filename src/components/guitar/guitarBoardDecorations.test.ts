@@ -5,6 +5,7 @@ import {
   buildGuitarStringLines,
   guitarFretWireTop,
   guitarLabelBackingClass,
+  guitarLabelEmphasisClass,
   guitarScaleDotClass,
   guitarScaleLabelClass,
 } from './guitarBoardDecorations'
@@ -190,5 +191,15 @@ describe('scale highlight classes', () => {
     expect(guitarLabelBackingClass(null)).toContain('rounded-full')
     expect(guitarLabelBackingClass('root')).toBeNull()
     expect(guitarLabelBackingClass('scale')).toBeNull()
+  })
+
+  it('leaves an emphasized name to the fret button own style', () => {
+    expect(guitarLabelEmphasisClass('emphasized')).toBeNull()
+  })
+
+  it('returns a name outside the scale to the muted, unbolded reading', () => {
+    expect(guitarLabelEmphasisClass('diminished')).toBe(
+      'font-normal text-(--p-text-muted-color)',
+    )
   })
 })

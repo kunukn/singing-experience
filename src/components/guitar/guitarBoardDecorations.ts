@@ -7,7 +7,7 @@
  * the same split guitarLayout/guitarPreview/guitarLabels already follow.
  */
 
-import type { ScaleRole } from '@/utils/scaleHighlight'
+import type { ScaleEmphasis, ScaleRole } from '@/utils/scaleHighlight'
 import {
   DOUBLE_INLAY_FRET,
   FRET_ROW_HEIGHT,
@@ -145,4 +145,15 @@ export function guitarLabelBackingClass(role: ScaleRole): string | null {
   if (role) return null
 
   return 'rounded-full bg-(--p-surface-50) px-1 dark:bg-(--p-surface-800)'
+}
+
+/* The emphasized style is the fret button's own, so only the stepped-back state
+ * needs an override — the muted grey these names carried before note names were
+ * promoted above the string and fret numbers. */
+export function guitarLabelEmphasisClass(
+  emphasis: ScaleEmphasis,
+): string | null {
+  if (emphasis === 'emphasized') return null
+
+  return 'font-normal text-(--p-text-muted-color)'
 }

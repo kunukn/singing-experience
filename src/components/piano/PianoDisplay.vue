@@ -115,6 +115,29 @@ const scaleBarStyle = {
   height: `${SCALE_BAR_HEIGHT}px`,
 }
 
+/*
+ * Note names read as the key's own content once the user asks for them, so they
+ * carry weight. Deliberately uniform across the keyboard: which keys belong to a
+ * scale is the felt strip's job, and ranking the names by it as well left the
+ * board looking like two different keyboards spliced together.
+ *
+ * Off mode is the exception — it leaves only the sparse C-octave markers, which
+ * are orientation rather than content and stay as light as the rest of the board.
+ */
+const isToneLabelEnabled = computed(
+  () => (props.toneLabelMode ?? 'off') !== 'off',
+)
+
+const whiteLabelClass = computed(() =>
+  isToneLabelEnabled.value ? 'font-semibold text-(--p-text-color)' : null,
+)
+
+/* Colour is already at full contrast against the near-black key face in both
+ * states, so only the weight moves here. */
+const blackLabelClass = computed(() =>
+  isToneLabelEnabled.value ? 'font-semibold' : null,
+)
+
 /* Emitted whenever a key plays, so the parent can arm the preview deaf period
  * (stops the piano's own tone registering as sung pitch). */
 const emit = defineEmits<{ tonePlayed: [] }>()
@@ -329,6 +352,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             <span
               v-if="keyLabel(key)"
               class="absolute -translate-x-1/2"
+              :class="whiteLabelClass"
               :style="{
                 insetInlineStart: `${key.pitchX - key.leftPx}px`,
                 bottom: `${KEY_LABEL_BOTTOM}px`,
@@ -416,7 +440,10 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               v-if="keyLabel(key)"
               class="relative flex flex-col items-center leading-none"
             >
-              <span class="text-[10px] text-(--p-surface-0)">
+              <span
+                class="text-[10px] text-(--p-surface-0)"
+                :class="blackLabelClass"
+              >
                 {{ keyLabel(key) }}
               </span>
 
