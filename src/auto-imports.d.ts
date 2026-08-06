@@ -66,6 +66,8 @@ declare global {
   const onUnmounted: typeof import('vue').onUnmounted
   const onUpdated: typeof import('vue').onUpdated
   const onWatcherCleanup: typeof import('vue').onWatcherCleanup
+  const prewarmGuitarFretboard: typeof import('./composables/useGuitarSampler').prewarmGuitarFretboard
+  const prewarmStandardTuning: typeof import('./composables/useGuitarSampler').prewarmStandardTuning
   const provide: typeof import('vue').provide
   const reactive: typeof import('vue').reactive
   const readonly: typeof import('vue').readonly
@@ -96,6 +98,7 @@ declare global {
   const useErrorToastStore: typeof import('./stores/useErrorToastStore').useErrorToastStore
   const useFaviconPermissionColor: typeof import('./composables/useFaviconPermissionColor').useFaviconPermissionColor
   const useFireConfetti: typeof import('./composables/useConfetti').useFireConfetti
+  const useGuitarSampler: typeof import('./composables/useGuitarSampler').useGuitarSampler
   const useI18n: typeof import('vue-i18n').useI18n
   const useId: typeof import('vue').useId
   const useIdlePreview: typeof import('./composables/useIdlePreview').useIdlePreview
@@ -188,6 +191,8 @@ declare module 'vue' {
     readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
+    readonly prewarmGuitarFretboard: UnwrapRef<typeof import('./composables/useGuitarSampler')['prewarmGuitarFretboard']>
+    readonly prewarmStandardTuning: UnwrapRef<typeof import('./composables/useGuitarSampler')['prewarmStandardTuning']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
@@ -214,6 +219,7 @@ declare module 'vue' {
     readonly useDocumentMeta: UnwrapRef<typeof import('./composables/useDocumentMeta')['useDocumentMeta']>
     readonly useErrorToastStore: UnwrapRef<typeof import('./stores/useErrorToastStore')['useErrorToastStore']>
     readonly useFaviconPermissionColor: UnwrapRef<typeof import('./composables/useFaviconPermissionColor')['useFaviconPermissionColor']>
+    readonly useGuitarSampler: UnwrapRef<typeof import('./composables/useGuitarSampler')['useGuitarSampler']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useIdlePreview: UnwrapRef<typeof import('./composables/useIdlePreview')['useIdlePreview']>

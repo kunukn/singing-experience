@@ -5,9 +5,10 @@ import type * as ToneType from 'tone'
  * Module-level singletons — survive component re-mounts so samples are never
  * fetched twice. Two samplers split by usage:
  *  - standardSampler: the 6 standard EADGBE notes; eagerly prewarmed on mount.
- *  - extraSampler: the other 10 notes used by Drop D / Open G / Eb / Open D /
- *    DADGAD / Drop C / Open C; lazy — only loads when a non-standard tuning
- *    is actually played.
+ *  - extraSampler: every other sample — the open strings of Drop D / Open G / Eb /
+ *    Open D / DADGAD / Drop C / Open C, plus the upper register the fretboard
+ *    reaches. Lazy for the tuner (loads only when a non-standard tuning plays);
+ *    the fretboard prewarms it, since any fret can be pressed first.
  */
 let _tone: typeof ToneType | null = null
 let standardSampler: ToneType.Sampler | null = null
@@ -56,6 +57,11 @@ const EXTRA_SAMPLE_URLS: Record<string, string> = {
   'A#3': 'As3.mp3', // Eb standard string 2
   D4: 'D4.mp3', // DADGAD / Open G / Open D string 1
   'D#4': 'Ds4.mp3', // Eb standard string 1
+  /* Not open-string notes for any tuning — these cover the fretboard's upper
+   * register, where a fretted note would otherwise be stretched up from D#4. */
+  C4: 'C4.mp3',
+  G4: 'G4.mp3',
+  'G#4': 'Gs4.mp3',
 }
 
 const STANDARD_NOTE_KEYS = new Set(Object.keys(STANDARD_SAMPLE_URLS))
@@ -159,6 +165,17 @@ function loadExtra(): Promise<void> {
 export async function prewarmStandardTuning(): Promise<void> {
   await requireTone()
   await loadStandard()
+}
+
+/*
+ * Both banks up front, for the fretboard: it can sound any of its 96 cells, not
+ * just six open strings, so there is no useful subset to load lazily and a
+ * first press would otherwise wait on the fetch. Same gesture safety as above —
+ * the AudioContext is created suspended.
+ */
+export async function prewarmGuitarFretboard(): Promise<void> {
+  await requireTone()
+  await Promise.all([loadStandard(), loadExtra()])
 }
 
 export function useGuitarSampler() {

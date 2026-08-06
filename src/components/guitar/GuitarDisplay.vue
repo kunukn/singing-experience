@@ -34,6 +34,9 @@ import { useGuitarFretPlayback } from './useGuitarFretPlayback'
 type Props = {
   midiMin: number
   midiMax: number
+  /* Open strings as MIDI, string 6 first — every fret's pitch derives from this,
+   * so switching tuning relabels and re-tunes the whole board. */
+  tuningMidi: readonly number[]
   /* Live mic preview lanes (from GuitarPage). One entry in single-voice mode,
    * two in duet mode. A lane with a null previewMidi draws nothing, so the
    * array length is stable while a singer is silent. */
@@ -56,6 +59,12 @@ const emit = defineEmits<{ tonePlayed: [] }>()
 
 const { pressCountFor, playFret, handleKeyDown } = useGuitarFretPlayback({
   onTonePlayed: () => emit('tonePlayed'),
+})
+
+/* Fetch and decode the guitar samples up front so the first fret press sounds
+ * immediately rather than waiting on the network. */
+onMounted(() => {
+  void prewarmGuitarFretboard()
 })
 
 function cellLabel(cell: GuitarCell): string | null {
@@ -185,7 +194,9 @@ useResizeObserver(boardViewport, ([entry]) => {
   boardViewportHeight.value = entry.contentRect.height
 })
 
-const layout = computed(() => buildGuitarLayout(stringWidth.value))
+const layout = computed(() =>
+  buildGuitarLayout(stringWidth.value, props.tuningMidi),
+)
 
 /* Tint the fret-number column while it is acting as the strip you pan by. Same
  * shape as the piano's isDragGutterVisible: pointless without a touch gesture,
@@ -267,7 +278,7 @@ const inlays = computed(() => {
 /* Horizontal segment per string that can reach the sung pitch, plus one chip
  * per voice. Empty while nobody is singing. */
 const previewLanes = computed(() =>
-  buildGuitarPreviewLanes(props.previewLanes ?? []),
+  buildGuitarPreviewLanes(props.previewLanes ?? [], props.tuningMidi),
 )
 
 /* Two lanes in the same colour are impossible to tell apart, so the high band

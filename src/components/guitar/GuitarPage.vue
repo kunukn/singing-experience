@@ -4,13 +4,36 @@ import {
   type DuetLane,
 } from '@/components/piano/useDuetPitchDetection'
 import {
+  DEFAULT_GUITAR_TUNING_ID,
+  GUITAR_TUNINGS,
+  isGuitarTuningId,
+  type GuitarTuningId,
+} from '@/utils/guitarTunings'
+import {
   DEFAULT_SCALE_HIGHLIGHT_MODE,
   isScaleHighlightMode,
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
 import { useLocalStorage } from '@vueuse/core'
-import { GUITAR_MIDI_MAX, GUITAR_MIDI_MIN } from './guitarLayout'
+import { guitarMidiMax, guitarMidiMin } from './guitarLayout'
 import type { GuitarPreviewLaneId } from './guitarPreview'
+
+/* Which tuning the board is strung to. Owned here rather than in the settings
+ * row because the layout, the live-pitch preview and the duet band split all
+ * derive from it. */
+const tuningId = useLocalStorage<GuitarTuningId>(
+  'syng.guitarTuning',
+  DEFAULT_GUITAR_TUNING_ID,
+)
+/* A tuning id persisted from an older option list would leave the board with no
+ * strings to draw. */
+if (!isGuitarTuningId(tuningId.value)) {
+  tuningId.value = DEFAULT_GUITAR_TUNING_ID
+}
+
+const tuningMidi = computed(() => GUITAR_TUNINGS[tuningId.value].midi)
+const midiMin = computed(() => guitarMidiMin(tuningMidi.value))
+const midiMax = computed(() => guitarMidiMax(tuningMidi.value))
 
 /* Note-name labels on the fretboard: off, simple (C), or advanced (C4). */
 const toneLabelMode = useToneLabelMode('syng.guitarToneLabelMode', 'off')
@@ -73,16 +96,16 @@ const {
   triggerDeafPeriod,
 } = useIdlePreview({ isGameActive, isEnabled: isSinglePreviewEnabled })
 
-/* The fixed fretboard span stands in for the piano's selected voice range as
- * the duet split input — worth revisiting once the fretboard is real. */
+/* The board's span stands in for the piano's selected voice range as the duet
+ * split input, so the split follows a tuning change. */
 const {
   lowLane,
   highLane,
   triggerDeafPeriod: triggerDuetDeafPeriod,
 } = useDuetPitchDetection({
   isEnabled: isDuetPreviewEnabled,
-  midiMin: () => GUITAR_MIDI_MIN,
-  midiMax: () => GUITAR_MIDI_MAX,
+  midiMin: () => midiMin.value,
+  midiMax: () => midiMax.value,
 })
 
 /* Single-voice mode renders through the same lane pipeline as duet mode, just
@@ -123,6 +146,7 @@ function handleTonePlayed() {
     data-testid="guitar-page"
   >
     <GuitarSettingsRow
+      v-model:tuningId="tuningId"
       v-model:toneLabelMode="toneLabelMode"
       v-model:isPreviewEnabled="isPreviewEnabled"
       v-model:isDuetEnabled="isDuetEnabled"
@@ -140,8 +164,9 @@ function handleTonePlayed() {
     <!-- Only the fretboard widens; the controls above size themselves. -->
     <div class="mx-auto w-full max-w-400">
       <GuitarDisplay
-        :midiMin="GUITAR_MIDI_MIN"
-        :midiMax="GUITAR_MIDI_MAX"
+        :midiMin="midiMin"
+        :midiMax="midiMax"
+        :tuningMidi="tuningMidi"
         :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
         :toneLabelMode="toneLabelMode"

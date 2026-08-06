@@ -1,5 +1,4 @@
-import { TONE_PLAY_DURATION_S } from '@/constants/toneConstants'
-import { midiToFrequency } from '@/utils/noteUtils'
+import { midiToNoteLabel } from '@/utils/noteUtils'
 
 type GuitarFretPlaybackOptions = {
   /* Called right after a tone starts, so the caller can arm the preview deaf
@@ -19,10 +18,10 @@ function cellKey(stringIndex: number, fret: number): string {
  * actually pressed.
  */
 export function useGuitarFretPlayback(options: GuitarFretPlaybackOptions = {}) {
-  /* playToneAt is polyphonic — it reuses the current mode's PolySynth and does
-   * not cut the previous note, so several frets ring together (a chord). Bass
-   * mode is a MonoSynth, so it stays monophonic there. */
-  const { playToneAt, warmUp, getNow } = useTonePlayer()
+  /* The sampled acoustic guitar the tuner uses, not the synth engine — this is a
+   * guitar, so it should sound like one. Tone.Sampler is polyphonic and does not
+   * cut the previous note, so several frets ring together as a chord. */
+  const { play: playGuitarSample } = useGuitarSampler()
 
   /* One entry per cell ever pressed, so several can be lit at once (multi-touch
    * chords). The view keys its fade element on this number, so a re-press
@@ -39,10 +38,19 @@ export function useGuitarFretPlayback(options: GuitarFretPlaybackOptions = {}) {
       pressCountFor(stringIndex, fret) + 1,
     )
 
-    /* warmUp resolves the AudioContext within the press gesture (cached after
-     * the first press); playToneAt needs it running and doesn't self-start. */
-    await warmUp()
-    playToneAt(midiToFrequency(midi), TONE_PLAY_DURATION_S, getNow())
+    /*
+     * The sampler is keyed by note name, so `.note` — the raw name, 'C#'. Not
+     * `.label`, which is glyph-ified ('C♯') and would match no sample key.
+     *
+     * play() starts the AudioContext itself within the press gesture and
+     * restores sampler volume after any prior stop() from the tuner, so no
+     * separate warm-up is needed. Its default ring is used rather than the
+     * synth's shorter duration: a plucked string should ring out. The one
+     * exception is C2 (Drop C / Open C open low string), which has no sample and
+     * plays through a pitch-shifted Player that cuts its own previous note.
+     */
+    const { note, octave } = midiToNoteLabel(midi)
+    await playGuitarSample(note, octave)
     options.onTonePlayed?.()
   }
 

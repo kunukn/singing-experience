@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { ToneMode } from '@/composables/toneEngine'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
+import type { GuitarTuningId } from '@/utils/guitarTunings'
 
 type Props = {
   /* Both mic toggles lock out once permission was refused. Matches the shape of
@@ -10,8 +10,10 @@ type Props = {
 }
 defineProps<Props>()
 
-/* No voice-range selector, unlike the piano row: the fretboard span is fixed
- * (see guitarLayout), so a range control would only imply otherwise. */
+/* No voice-range selector, unlike the piano row: the board's span follows the
+ * tuning, so a separate range control would only fight it. */
+const tuningId = defineModel<GuitarTuningId>('tuningId', { required: true })
+
 const toneLabelMode = defineModel<ToneLabelMode>('toneLabelMode', {
   required: true,
 })
@@ -24,22 +26,9 @@ const { t } = useI18n()
 
 const toneLabelModeOptions = useToneLabelModeOptions()
 
-/* Tone-mode selector — mirrors PitchDetectorDisplay. Re-warm the AudioContext
- * inside the user-gesture frame so iOS Safari doesn't silently refuse a later
- * resume. */
-const { setToneMode, warmUp } = useTonePlayer()
-const { toneMode: storedToneMode } = storeToRefs(useToneModeStore())
-const toneMode = computed<ToneMode>({
-  get: () => storedToneMode.value,
-  set: (mode) => {
-    storedToneMode.value = mode
-    setToneMode(mode)
-    void warmUp().catch((error) =>
-      debugLog('[TonePlayer] warmUp on tone-mode change failed', error),
-    )
-  },
-})
-setToneMode(storedToneMode.value)
+/* No tone-sound selector, unlike the piano row: the fretboard always plays the
+ * sampled acoustic guitar (see useGuitarFretPlayback), so letting the user turn
+ * it into a bell or a bass would be a different instrument. */
 
 const rowRef = ref<HTMLElement | null>(null)
 const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
@@ -54,9 +43,9 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     <div class="settings-item">
       <label
         class="hidden text-end text-sm text-(--p-text-muted-color) md:block md:min-w-22.5"
-        >{{ t('sounds.toneSound') }}</label
+        >{{ t('tuner.tuning') }}</label
       >
-      <ToneModeSelect v-model="toneMode" />
+      <GuitarTuningSelect v-model:tuningId="tuningId" />
     </div>
 
     <!-- Both toggles share one item: ToggleIconButton prints its own label from

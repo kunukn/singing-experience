@@ -1,11 +1,12 @@
 /*
- * String 6 (low E) first, so index 0 is the leftmost column — the board is drawn
- * looking at the front of the neck, low pitch on the left like the piano.
- * Standard tuning EADGBE.
+ * The open strings a board is built from come in as a MIDI array from
+ * @/utils/guitarTunings — string 6 (the lowest) first, so index 0 is the leftmost
+ * column. The board is drawn looking at the front of the neck, low pitch on the
+ * left like the piano.
  */
-export const GUITAR_STANDARD_TUNING = [40, 45, 50, 55, 59, 64] // E2 A2 D3 G3 B3 E4
 
-export const GUITAR_STRING_COUNT = GUITAR_STANDARD_TUNING.length
+/* Every supported tuning has six strings, so this stays a constant. */
+export const GUITAR_STRING_COUNT = 6
 
 /* Rows 0…15 inclusive — fret 0 is the open string. */
 export const GUITAR_MAX_FRET = 15
@@ -35,12 +36,6 @@ export const MIN_STRING_WIDTH_POINTER = 36 // px
 export const SINGLE_INLAY_FRETS = [3, 5, 7, 9, 15]
 export const DOUBLE_INLAY_FRET = 12
 
-/* Derived rather than written by hand, so changing the fret count or the tuning
- * cannot leave the range the duet band split uses out of step with the board. */
-export const GUITAR_MIDI_MIN = Math.min(...GUITAR_STANDARD_TUNING) // 40, E2
-export const GUITAR_MIDI_MAX =
-  Math.max(...GUITAR_STANDARD_TUNING) + GUITAR_MAX_FRET // 79, G5
-
 export type GuitarCell = {
   stringIndex: number
   fret: number
@@ -57,8 +52,25 @@ export type GuitarLayout = {
 }
 
 /** Sounding pitch of a fret. Fret 0 is the open string. */
-export function guitarFretMidi(stringIndex: number, fret: number): number {
-  return GUITAR_STANDARD_TUNING[stringIndex] + fret
+export function guitarFretMidi(
+  tuning: readonly number[],
+  stringIndex: number,
+  fret: number,
+): number {
+  return tuning[stringIndex] + fret
+}
+
+/*
+ * The board's pitch span, derived rather than written by hand so the range the
+ * duet band split and the live-pitch preview use cannot fall out of step with the
+ * board — including when the tuning changes under them.
+ */
+export function guitarMidiMin(tuning: readonly number[]): number {
+  return Math.min(...tuning)
+}
+
+export function guitarMidiMax(tuning: readonly number[]): number {
+  return Math.max(...tuning) + GUITAR_MAX_FRET
 }
 
 /**
@@ -75,7 +87,10 @@ export function guitarFretY(fretPosition: number): number {
  * Every cell of the board, built once per width change rather than once per
  * render — 6 strings × 16 frets is 96 of them.
  */
-export function buildGuitarLayout(stringWidth: number): GuitarLayout {
+export function buildGuitarLayout(
+  stringWidth: number,
+  tuning: readonly number[],
+): GuitarLayout {
   const cells: GuitarCell[] = []
 
   for (let stringIndex = 0; stringIndex < GUITAR_STRING_COUNT; stringIndex++) {
@@ -83,7 +98,7 @@ export function buildGuitarLayout(stringWidth: number): GuitarLayout {
       cells.push({
         stringIndex,
         fret,
-        midi: guitarFretMidi(stringIndex, fret),
+        midi: guitarFretMidi(tuning, stringIndex, fret),
         leftPx: stringIndex * stringWidth,
         topPx: fret * FRET_ROW_HEIGHT,
       })

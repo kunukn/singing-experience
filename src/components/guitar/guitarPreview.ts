@@ -5,10 +5,9 @@ import {
 import { formatNoteLabelWithCents, frequencyToMidi } from '@/utils/noteUtils'
 import {
   GUITAR_MAX_FRET,
-  GUITAR_MIDI_MAX,
-  GUITAR_MIDI_MIN,
-  GUITAR_STANDARD_TUNING,
   guitarFretY,
+  guitarMidiMax,
+  guitarMidiMin,
 } from './guitarLayout'
 
 /*
@@ -54,14 +53,15 @@ const FRET_POSITION_OVERHANG = 0.5
  */
 export function buildGuitarPreviewLane(
   input: GuitarPreviewInput & { laneId: GuitarPreviewLaneId },
+  tuning: readonly number[],
 ): GuitarPreviewLaneView | null {
   const { previewMidi, previewFrequency, previewNoteLabel, laneId } = input
   if (previewMidi === null || previewNoteLabel === null) return null
 
   /* Beyond an octave outside the board, stop drawing entirely (piano parity). */
   if (
-    previewMidi < GUITAR_MIDI_MIN - PREVIEW_RANGE_TOLERANCE ||
-    previewMidi > GUITAR_MIDI_MAX + PREVIEW_RANGE_TOLERANCE
+    previewMidi < guitarMidiMin(tuning) - PREVIEW_RANGE_TOLERANCE ||
+    previewMidi > guitarMidiMax(tuning) + PREVIEW_RANGE_TOLERANCE
   )
     return null
 
@@ -69,7 +69,7 @@ export function buildGuitarPreviewLane(
     previewFrequency !== null ? frequencyToMidi(previewFrequency) : previewMidi
 
   const segments: GuitarPreviewSegment[] = []
-  GUITAR_STANDARD_TUNING.forEach((openMidi, stringIndex) => {
+  tuning.forEach((openMidi, stringIndex) => {
     const fretPosition = floatMidi - openMidi
     if (
       fretPosition < -FRET_POSITION_OVERHANG ||
@@ -104,8 +104,11 @@ export function buildGuitarPreviewLane(
  */
 export function buildGuitarPreviewLanes(
   inputs: Array<GuitarPreviewInput & { laneId: GuitarPreviewLaneId }>,
+  tuning: readonly number[],
 ): GuitarPreviewLaneView[] {
+  /* Explicit arrow, not a bare reference: map would pass the index as the
+   * tuning. */
   return inputs
-    .map(buildGuitarPreviewLane)
+    .map((input) => buildGuitarPreviewLane(input, tuning))
     .filter((lane): lane is GuitarPreviewLaneView => lane !== null)
 }

@@ -1,5 +1,13 @@
 <script setup lang="ts">
 import {
+  buildGuitarTuningGroups,
+  DEFAULT_GUITAR_TUNING_ID,
+  guitarTuningStringPairs,
+  guitarTuningStrings,
+  type GuitarTuningId,
+  type GuitarTuningString,
+} from '@/utils/guitarTunings'
+import {
   noteToFrequency,
   toAccidentalGlyph,
   type NoteInfo,
@@ -8,7 +16,6 @@ import {
 import { cleanTextColor } from '@/utils/pitchColors'
 import TunerCentsDeviationBar from './TunerCentsDeviationBar.vue'
 import { PREVIEW_INTERVAL_MS } from './tunerConstants'
-import { prewarmStandardTuning, useGuitarSampler } from './useGuitarSampler'
 
 type Props = {
   noteInfo: NoteInfo | null
@@ -38,159 +45,20 @@ const centsColor = computed(() =>
     : null,
 )
 
-type GuitarString = { note: NoteName; octave: number }
-type GuitarTuning =
-  | 'standard'
-  | 'dropD'
-  | 'dadgad'
-  | 'openG'
-  | 'openD'
-  | 'ebStandard'
-  | 'dropC'
-  | 'openC'
+/* Tunings come from the shared catalogue, which the guitar fretboard reads too —
+ * the two pages must never disagree about what DADGAD is. Not persisted: a tuner
+ * is picked up for the guitar in front of you, not for a saved preference. */
+const selectedTuning = ref<GuitarTuningId>(DEFAULT_GUITAR_TUNING_ID)
 
-/*
- * String definitions per tuning. Only string 6 differs:
- * standard = E2 (82.41 Hz), dropD = D2 (73.42 Hz).
- */
-const TUNING_STRINGS: Record<
-  GuitarTuning,
-  { left: GuitarString[]; right: GuitarString[] }
-> = {
-  standard: {
-    left: [
-      { note: 'D', octave: 3 },
-      { note: 'A', octave: 2 },
-      { note: 'E', octave: 2 }, // string 6 — E2 = 82.41 Hz
-    ],
-    right: [
-      { note: 'G', octave: 3 },
-      { note: 'B', octave: 3 },
-      { note: 'E', octave: 4 },
-    ],
-  },
-  dropD: {
-    left: [
-      { note: 'D', octave: 3 },
-      { note: 'A', octave: 2 },
-      { note: 'D', octave: 2 }, // string 6 — D2 = 73.42 Hz (Drop D)
-    ],
-    right: [
-      { note: 'G', octave: 3 },
-      { note: 'B', octave: 3 },
-      { note: 'E', octave: 4 },
-    ],
-  },
-  dadgad: {
-    left: [
-      { note: 'D', octave: 3 },
-      { note: 'A', octave: 2 },
-      { note: 'D', octave: 2 },
-    ],
-    right: [
-      { note: 'G', octave: 3 },
-      { note: 'A', octave: 3 },
-      { note: 'D', octave: 4 },
-    ],
-  },
-  openG: {
-    left: [
-      { note: 'D', octave: 3 },
-      { note: 'G', octave: 2 },
-      { note: 'D', octave: 2 },
-    ],
-    right: [
-      { note: 'G', octave: 3 },
-      { note: 'B', octave: 3 },
-      { note: 'D', octave: 4 },
-    ],
-  },
-  openD: {
-    left: [
-      { note: 'D', octave: 3 },
-      { note: 'A', octave: 2 },
-      { note: 'D', octave: 2 },
-    ],
-    right: [
-      { note: 'F#', octave: 3 },
-      { note: 'A', octave: 3 },
-      { note: 'D', octave: 4 },
-    ],
-  },
-  ebStandard: {
-    left: [
-      { note: 'C#', octave: 3 }, // Db3
-      { note: 'G#', octave: 2 }, // Ab2
-      { note: 'D#', octave: 2 }, // Eb2
-    ],
-    right: [
-      { note: 'F#', octave: 3 }, // Gb3
-      { note: 'A#', octave: 3 }, // Bb3
-      { note: 'D#', octave: 4 }, // Eb4
-    ],
-  },
-  dropC: {
-    left: [
-      { note: 'C', octave: 3 },
-      { note: 'G', octave: 2 },
-      { note: 'C', octave: 2 }, // string 6 — C2 = 65.41 Hz (Drop C)
-    ],
-    right: [
-      { note: 'F', octave: 3 },
-      { note: 'A', octave: 3 },
-      { note: 'D', octave: 4 },
-    ],
-  },
-  openC: {
-    left: [
-      { note: 'C', octave: 3 },
-      { note: 'G', octave: 2 },
-      { note: 'C', octave: 2 }, // string 6 — C2 = 65.41 Hz
-    ],
-    right: [
-      { note: 'G', octave: 3 },
-      { note: 'C', octave: 4 },
-      { note: 'E', octave: 4 },
-    ],
-  },
-}
+/* Split either side of the headstock photo: strings 4, 5, 6 down the
+ * inline-start edge and 3, 2, 1 down the inline-end one. */
+const stringPairs = computed(() =>
+  guitarTuningStringPairs(selectedTuning.value),
+)
+const leftStrings = computed(() => stringPairs.value.left)
+const rightStrings = computed(() => stringPairs.value.right)
 
-const selectedTuning = ref<GuitarTuning>('standard')
-
-const leftStrings = computed(() => TUNING_STRINGS[selectedTuning.value].left)
-const rightStrings = computed(() => TUNING_STRINGS[selectedTuning.value].right)
-
-const TUNING_GROUPS = computed(() => [
-  {
-    label: t('tuner.tuningGroups.standard'),
-    items: [
-      { label: 'EADGBE', value: 'standard' as GuitarTuning, isDefault: true },
-      {
-        label: t('tuner.tuningItems.ebStandard'),
-        value: 'ebStandard' as GuitarTuning,
-      },
-    ],
-  },
-  {
-    label: t('tuner.tuningGroups.drop'),
-    items: [
-      { label: 'DADGBE', value: 'dropD' as GuitarTuning },
-      { label: 'CGCFAD', value: 'dropC' as GuitarTuning },
-    ],
-  },
-  {
-    label: t('tuner.tuningGroups.open'),
-    items: [
-      { label: t('tuner.tuningItems.openG'), value: 'openG' as GuitarTuning },
-      { label: t('tuner.tuningItems.openD'), value: 'openD' as GuitarTuning },
-      { label: t('tuner.tuningItems.openC'), value: 'openC' as GuitarTuning },
-    ],
-  },
-  {
-    label: t('tuner.tuningGroups.alternate'),
-    items: [{ label: 'DADGAD', value: 'dadgad' as GuitarTuning }],
-  },
-])
+const TUNING_GROUPS = computed(() => buildGuitarTuningGroups(t))
 
 const { playBellFeedback } = useTonePlayer()
 const {
@@ -201,13 +69,11 @@ const {
   isPlaying,
 } = useGuitarSampler()
 
-const sortedTuningStrings = computed(() => {
-  const all = [...leftStrings.value, ...rightStrings.value]
-  return all.sort(
-    (a, b) =>
-      noteToFrequency(a.note, a.octave) - noteToFrequency(b.note, b.octave),
-  )
-})
+/* The preview plays low to high; the catalogue already stores strings 6→1
+ * ascending, so no sort is needed. */
+const sortedTuningStrings = computed(() =>
+  guitarTuningStrings(selectedTuning.value),
+)
 
 /* Lead-in before the first scheduled note. Gives Tone.js time to settle the
  * audio-clock schedule so the first note's audio + draw fire together rather
@@ -265,7 +131,7 @@ function toggleTuningPreview() {
 }
 
 const activeString = ref<string | null>(null)
-const confirmedInTuneString = ref<GuitarString | null>(null)
+const confirmedInTuneString = ref<GuitarTuningString | null>(null)
 
 async function playGuitarString(note: NoteName, octave: number) {
   lastGuitarClickTime = Date.now()
@@ -288,7 +154,7 @@ function isStringInTune(note: NoteName, octave: number): boolean {
   )
 }
 
-const inTuneString = computed<GuitarString | null>(
+const inTuneString = computed<GuitarTuningString | null>(
   () =>
     [...leftStrings.value, ...rightStrings.value].find((s) =>
       isStringInTune(s.note, s.octave),
