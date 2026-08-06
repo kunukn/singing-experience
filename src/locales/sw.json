@@ -344,7 +344,12 @@
       "majorPentatonic": "Pentatoniki meja",
       "minorPentatonic": "Pentatoniki maina",
       "majorBlues": "Blues meja",
-      "minorBlues": "Blues maina"
+      "minorBlues": "Blues maina",
+      "dorian": "Doria",
+      "phrygian": "Frigia",
+      "lydian": "Lidia",
+      "mixolydian": "Miksolidia",
+      "locrian": "Lokria"
     }
   }
 }

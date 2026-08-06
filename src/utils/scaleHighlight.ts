@@ -6,9 +6,16 @@ import {
 } from '@/utils/noteUtils'
 
 /*
- * Curated subset of the 46 modes in noteUtils — the shapes that read clearly as
- * a pattern on an instrument. The bebop and diminished modes light up 8–9 of
- * the 12 pitch classes, which reads as noise rather than as a scale.
+ * Curated subset of the 47 modes in noteUtils. Two filters, and only the first is
+ * about legibility: the bebop and diminished modes reach 8 of the 12 pitch classes,
+ * which reads as noise rather than as a shape. That alone rules out five modes.
+ *
+ * The rest of the cut is audience, not density — 36 modes sit at 7 pitch classes,
+ * exactly as many as the Major already here, so Super Locrian ♭♭7 is left out for
+ * being useless to a child learning to sing, not for being illegible. Anything at
+ * 7 or fewer is fair game to add if it earns its place with singers.
+ *
+ * Shared with the piano (PianoScaleSelect), so adding here adds there.
  */
 export const SCALE_HIGHLIGHT_MODES = [
   'ionian',
@@ -17,6 +24,14 @@ export const SCALE_HIGHLIGHT_MODES = [
   'minorPentatonic',
   'majorBlues',
   'minorBlues',
+  /* Church modes, in degree order (2nd, 3rd, 4th, 5th, 7th of the major scale).
+   * Appended rather than slotted in beside the Major so a stored scaleMode keeps
+   * its meaning and the two names everyone knows stay at the top of the list. */
+  'dorian',
+  'phrygian',
+  'lydian',
+  'mixolydian',
+  'locrian',
 ] as const satisfies readonly ScaleMode[]
 
 export type ScaleHighlightMode = (typeof SCALE_HIGHLIGHT_MODES)[number]

@@ -344,7 +344,12 @@
       "majorPentatonic": "মেজর পেন্টাটনিক",
       "minorPentatonic": "মাইনর পেন্টাটনিক",
       "majorBlues": "মেজর ব্লুজ",
-      "minorBlues": "মাইনর ব্লুজ"
+      "minorBlues": "মাইনর ব্লুজ",
+      "dorian": "ডোরিয়ান",
+      "phrygian": "ফ্রিজিয়ান",
+      "lydian": "লিডিয়ান",
+      "mixolydian": "মিক্সোলিডিয়ান",
+      "locrian": "লোক্রিয়ান"
     }
   }
 }

@@ -344,7 +344,12 @@
       "majorPentatonic": "大调五声音阶",
       "minorPentatonic": "小调五声音阶",
       "majorBlues": "大调布鲁斯",
-      "minorBlues": "小调布鲁斯"
+      "minorBlues": "小调布鲁斯",
+      "dorian": "多利亚调式",
+      "phrygian": "弗里几亚调式",
+      "lydian": "利底亚调式",
+      "mixolydian": "混合利底亚调式",
+      "locrian": "洛克里亚调式"
     }
   }
 }

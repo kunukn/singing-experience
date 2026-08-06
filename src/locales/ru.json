@@ -344,7 +344,12 @@
       "majorPentatonic": "Мажорная пентатоника",
       "minorPentatonic": "Минорная пентатоника",
       "majorBlues": "Мажорный блюз",
-      "minorBlues": "Минорный блюз"
+      "minorBlues": "Минорный блюз",
+      "dorian": "Дорийский",
+      "phrygian": "Фригийский",
+      "lydian": "Лидийский",
+      "mixolydian": "Миксолидийский",
+      "locrian": "Локрийский"
     }
   }
 }

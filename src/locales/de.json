@@ -344,7 +344,12 @@
       "majorPentatonic": "Dur-Pentatonik",
       "minorPentatonic": "Moll-Pentatonik",
       "majorBlues": "Dur-Blues",
-      "minorBlues": "Moll-Blues"
+      "minorBlues": "Moll-Blues",
+      "dorian": "Dorisch",
+      "phrygian": "Phrygisch",
+      "lydian": "Lydisch",
+      "mixolydian": "Mixolydisch",
+      "locrian": "Lokrisch"
     }
   }
 }

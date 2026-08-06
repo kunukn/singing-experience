@@ -344,7 +344,12 @@
       "majorPentatonic": "メジャーペンタトニック",
       "minorPentatonic": "マイナーペンタトニック",
       "majorBlues": "メジャーブルース",
-      "minorBlues": "マイナーブルース"
+      "minorBlues": "マイナーブルース",
+      "dorian": "ドリアン",
+      "phrygian": "フリジアン",
+      "lydian": "リディアン",
+      "mixolydian": "ミクソリディアン",
+      "locrian": "ロクリアン"
     }
   }
 }

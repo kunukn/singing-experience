@@ -332,7 +332,12 @@
       "majorPentatonic": "Pentaton dur",
       "minorPentatonic": "Pentaton mol",
       "majorBlues": "Blues dur",
-      "minorBlues": "Blues mol"
+      "minorBlues": "Blues mol",
+      "dorian": "Dorisk",
+      "phrygian": "Frygisk",
+      "lydian": "Lydisk",
+      "mixolydian": "Mixolydisk",
+      "locrian": "Lokrisk"
     }
   }
 }

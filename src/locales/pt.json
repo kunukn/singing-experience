@@ -344,7 +344,12 @@
       "majorPentatonic": "Pentatónica maior",
       "minorPentatonic": "Pentatónica menor",
       "majorBlues": "Blues maior",
-      "minorBlues": "Blues menor"
+      "minorBlues": "Blues menor",
+      "dorian": "Dórico",
+      "phrygian": "Frígio",
+      "lydian": "Lídio",
+      "mixolydian": "Mixolídio",
+      "locrian": "Lócrio"
     }
   }
 }

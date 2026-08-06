@@ -118,4 +118,16 @@ describe('option lists', () => {
       expect(SCALE_MODE_SEMITONES[mode]).toBeDefined()
     }
   })
+
+  /* The selects render t(`scale.scaleModes.${id}`), and a missing key falls back
+   * to English rather than failing — so without this an unlabelled mode ships
+   * looking fine in the one locale anybody develops in. */
+  it('gives every highlight mode an English label', async () => {
+    const en = await import('@/locales/en.json')
+    const labels: Record<string, string> = en.default.scale.scaleModes
+
+    for (const mode of SCALE_HIGHLIGHT_MODES) {
+      expect(labels[mode]).toBeTruthy()
+    }
+  })
 })

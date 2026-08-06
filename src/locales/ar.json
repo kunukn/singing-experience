@@ -344,7 +344,12 @@
       "majorPentatonic": "بنتاتونيك ماجور",
       "minorPentatonic": "بنتاتونيك مينور",
       "majorBlues": "بلوز ماجور",
-      "minorBlues": "بلوز مينور"
+      "minorBlues": "بلوز مينور",
+      "dorian": "دوريان",
+      "phrygian": "فريجيان",
+      "lydian": "ليديان",
+      "mixolydian": "ميكسوليديان",
+      "locrian": "لوكريان"
     }
   }
 }
