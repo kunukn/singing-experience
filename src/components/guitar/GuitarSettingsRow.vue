@@ -116,9 +116,16 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
  * not fit the content area until about lg — at md the row would push the whole
  * document into a horizontal scrollbar. So: 2×2 at md, like the piano row's four
  * items, then one row from lg up.
+ *
+ * Every track is `auto`, never `1fr`: the row is content-sized (md:w-auto), so a
+ * grid of `1fr` tracks resolves one shared flex fraction from the widest control
+ * and stretches all the others to match it — the narrow tone/accidental button
+ * pairs would sit in columns as wide as the tuning select and the toggle pair,
+ * leaving a gap between each control and the next item's label. `auto` still
+ * aligns a column across both md rows; it just stops columns matching each other.
  */
 .settings-row {
-  @apply md:grid-cols-[auto_1fr_auto_1fr];
-  @apply lg:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr];
+  @apply md:grid-cols-[repeat(4,auto)];
+  @apply lg:grid-cols-[repeat(8,auto)];
 }
 </style>
