@@ -86,17 +86,27 @@ export function buildGuitarStringLines(
 }
 
 /*
- * A wire sits at the bottom of its fret's row. The last one would land at exactly
- * boardHeight and, being 1px tall, put the board's content 1px past its own box —
- * enough to give the scroller a permanent vertical scrollbar. Tuck that one
- * inside instead; at the board's bottom edge the difference is invisible.
+ * A wire marks the boundary at the bottom of its fret's row, and is centred on
+ * it rather than hanging below it — that is where a real fret sits, and it halves
+ * how far the thick nut reaches into the row beneath (see NUT_HEIGHT, which the
+ * hover ring has to clear). A 1px hairline is unaffected: half of it rounds to
+ * nothing.
+ *
+ * The last wire would land at exactly boardHeight and put the board's content
+ * past its own box — enough to give the scroller a permanent vertical scrollbar.
+ * Tuck that one inside instead; at the board's bottom edge the difference is
+ * invisible.
  */
 export function guitarFretWireTop(
   fret: number,
   boardHeight: number,
   rowHeight: number = FRET_ROW_HEIGHT,
+  wireHeight: number = FRET_WIRE_HEIGHT,
 ): number {
-  return Math.min((fret + 1) * rowHeight, boardHeight - FRET_WIRE_HEIGHT)
+  return Math.min(
+    (fret + 1) * rowHeight - Math.floor(wireHeight / 2),
+    boardHeight - wireHeight,
+  )
 }
 
 /* Scale highlight as a filled dot behind the note name — the chord-diagram

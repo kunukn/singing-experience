@@ -235,11 +235,17 @@ const fretNumbers = Array.from(
   (_, fret) => fret,
 )
 
+/* Fret 0's wire is the nut, drawn thicker and darker as on a real neck. */
+function wireHeight(fret: number): number {
+  return fret === 0 ? NUT_HEIGHT : FRET_WIRE_HEIGHT
+}
+
 function fretWireTop(fret: number): number {
   return guitarFretWireTop(
     fret,
     layout.value.boardHeight,
     layout.value.rowHeight,
+    wireHeight(fret),
   )
 }
 
@@ -357,7 +363,7 @@ function handleClick(cell: GuitarCell) {
           <div
             v-for="stringNumber in stringNumbers"
             :key="`string-number-${stringNumber}`"
-            class="flex shrink-0 items-center justify-center text-(--p-text-muted-color) tabular-nums"
+            class="flex shrink-0 items-center justify-center tracking-wider text-(--p-surface-400) tabular-nums dark:text-(--p-surface-500)"
             :style="{
               width: `${layout.stringWidth}px`,
               fontSize: `${boardScale.gutterFontSize}px`,
@@ -400,7 +406,7 @@ function handleClick(cell: GuitarCell) {
               <div
                 v-for="fret in fretNumbers"
                 :key="`fret-number-${fret}`"
-                class="flex items-center justify-center text-(--p-text-muted-color) tabular-nums"
+                class="flex items-center justify-center text-(--p-surface-400) tabular-nums dark:text-(--p-surface-500)"
                 :style="{
                   height: `${layout.rowHeight}px`,
                   fontSize: `${boardScale.gutterFontSize}px`,
@@ -461,7 +467,7 @@ function handleClick(cell: GuitarCell) {
                 "
                 :style="{
                   top: `${fretWireTop(fret)}px`,
-                  height: `${fret === 0 ? NUT_HEIGHT : FRET_WIRE_HEIGHT}px`,
+                  height: `${wireHeight(fret)}px`,
                 }"
                 aria-hidden="true"
               />
@@ -470,7 +476,7 @@ function handleClick(cell: GuitarCell) {
                 v-for="cell in layout.cells"
                 :key="`${cell.stringIndex}-${cell.fret}`"
                 type="button"
-                class="guitar-fret absolute flex touch-manipulation items-center justify-center text-(--p-text-muted-color) select-none"
+                class="guitar-fret absolute flex touch-manipulation items-center justify-center font-semibold text-(--p-text-color) select-none"
                 :style="{
                   insetInlineStart: `${cell.leftPx}px`,
                   top: `${cell.topPx}px`,

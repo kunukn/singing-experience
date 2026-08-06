@@ -7,7 +7,7 @@ import {
   GUITAR_FRET_ROW_COUNT,
   GUITAR_MAX_FRET,
   MAX_FRET_ROW_HEIGHT,
-  NUT_HEIGHT,
+  NUT_OVERHANG,
   buildGuitarBoardScale,
   buildGuitarLayout,
   guitarFretMidi,
@@ -210,8 +210,8 @@ describe('buildGuitarBoardScale', () => {
       /* The ring is centred, so each side gets half of what is left over. */
       const gapAboveRing = (scale.rowHeight - visibleRing) / 2
 
-      expect(gapAboveRing).toBeGreaterThan(NUT_HEIGHT)
-      expect(NUT_HEIGHT).toBeGreaterThan(FRET_WIRE_HEIGHT)
+      expect(gapAboveRing).toBeGreaterThan(NUT_OVERHANG)
+      expect(NUT_OVERHANG).toBeGreaterThanOrEqual(FRET_WIRE_HEIGHT)
     }
   })
 

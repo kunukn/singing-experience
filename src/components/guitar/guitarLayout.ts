@@ -114,6 +114,13 @@ export const FRET_WIRE_HEIGHT = 1
  */
 export const NUT_HEIGHT = 3
 
+/*
+ * px — how far the nut actually reaches into the row below it. Wires are centred
+ * on their fret boundary (see guitarFretWireTop), so only the lower half lands in
+ * the next row, rounded up because the top is floored to a whole pixel.
+ */
+export const NUT_OVERHANG = Math.ceil(NUT_HEIGHT / 2)
+
 /* px — visible gap left between the wire and the ring's outer edge, so the two
  * read as separate marks instead of one thick smudge. */
 const FRET_RING_CLEARANCE = 2
@@ -148,7 +155,8 @@ export function buildGuitarBoardScale(
    * shadow the ring paints outside its own box.
    */
   const fretRingSize =
-    rowHeight - 2 * (NUT_HEIGHT + FRET_RING_CLEARANCE + FRET_RING_SHADOW_WIDTH)
+    rowHeight -
+    2 * (NUT_OVERHANG + FRET_RING_CLEARANCE + FRET_RING_SHADOW_WIDTH)
 
   return {
     rowHeight,
@@ -160,7 +168,10 @@ export function buildGuitarBoardScale(
     /* Capped at 14: past that a three-character name outgrows its dot, and the
      * board reads as text with circles behind it rather than as a fretboard. */
     labelFontSize: Math.min(Math.max(Math.round(rowHeight * 0.38), 11), 14),
-    gutterFontSize: Math.min(Math.max(Math.round(rowHeight * 0.33), 10), 12),
+    /* Deliberately well under labelFontSize rather than a step below it: the
+     * gutter numbers are orientation only, and at 12 vs 14 they competed with
+     * the note names for the eye. */
+    gutterFontSize: Math.min(Math.max(Math.round(rowHeight * 0.3), 9), 11),
   }
 }
 
