@@ -1,19 +1,21 @@
 import '@/_init.ts'
-import { i18n } from '@/i18n'
-import { createHead } from '@unhead/vue/client'
-import { createPinia } from 'pinia'
-import PrimeVue from 'primevue/config'
 import 'primeicons/primeicons.css'
-import { registerSW } from 'virtual:pwa-register'
-import { createApp } from 'vue'
+import './style.css'
+
 import {
   createRouter,
   createWebHashHistory,
   createWebHistory,
 } from 'vue-router'
 import { handleHotUpdate, routes } from 'vue-router/auto-routes'
+
+import { i18n } from '@/i18n'
+import { createHead } from '@unhead/vue/client'
+import { createPinia } from 'pinia'
+import PrimeVue from 'primevue/config'
+import { registerSW } from 'virtual:pwa-register'
+import { createApp } from 'vue'
 import App from './App.vue'
-import './style.css'
 import Theme from './theme'
 
 registerSW({
@@ -56,6 +58,7 @@ app
   .use(router)
   .use(i18n)
   .use(PrimeVue, {
+    license: import.meta.env.VITE_PRIMEUI_LICENSE_KEY,
     theme: {
       preset: Theme,
       options: {

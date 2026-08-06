@@ -3,6 +3,7 @@
 
 interface ImportMetaEnv {
   readonly VITE_APP_BUILD_NUMBER: string
+  readonly VITE_PRIMEUI_LICENSE_KEY: string
 }
 
 interface ImportMeta {
