@@ -71,6 +71,24 @@ export function buildGuitarInlays(
 const MIN_STRING_LINE_WIDTH = 1
 const MAX_STRING_LINE_WIDTH = 2.5
 
+/*
+ * Warm nickel — a wound string's colour, and deliberately NOT a hue. The board is
+ * the slate ramp, so a neutral from the warm `stone` ramp differs from it in both
+ * value and temperature while staying desaturated.
+ *
+ * Desaturated is the requirement, not a compromise: an earlier bronze pass
+ * (amber-600/400) collided with the low preview lane's orange-400, and a dashed
+ * segment that reads as the same colour as the strings it crosses stops being a
+ * preview. The strings are structure; the lane is information, and it has to win.
+ *
+ * These are 1–2.5px hairlines, which need more contrast against their background
+ * than a filled shape of the same colour would — hence a mid shade in light theme
+ * and a lighter one in dark, rather than the near-background slate-300/600 the
+ * lines used to share with the inlays.
+ */
+export const GUITAR_STRING_LINE_CLASS =
+  'bg-(--p-stone-500) dark:bg-(--p-stone-400)'
+
 export function buildGuitarStringLines(
   stringWidth: number,
 ): GuitarStringLine[] {

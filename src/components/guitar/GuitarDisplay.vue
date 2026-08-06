@@ -14,6 +14,7 @@ import {
 import { useMediaQuery, useResizeObserver, useWindowSize } from '@vueuse/core'
 import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import {
+  GUITAR_STRING_LINE_CLASS,
   INLAY_DOT_SIZE,
   buildGuitarInlays,
   buildGuitarStringLines,
@@ -451,7 +452,8 @@ function handleClick(cell: GuitarCell) {
               <span
                 v-for="line in stringLines"
                 :key="line.key"
-                class="pointer-events-none absolute inset-y-0 bg-(--p-surface-300) dark:bg-(--p-surface-600)"
+                class="pointer-events-none absolute inset-y-0"
+                :class="GUITAR_STRING_LINE_CLASS"
                 :style="{
                   insetInlineStart: `${line.left}px`,
                   width: `${line.width}px`,
