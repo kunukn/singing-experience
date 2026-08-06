@@ -14,7 +14,7 @@ import { defineConfig, loadEnv } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import VueRouter from 'vue-router/vite'
-import { allSampleUrls } from './src/constants/sampleManifest'
+import { allSampleUrls } from './src/constants/sampleManifest.ts'
 
 dayjs.extend(utc)
 
@@ -76,7 +76,7 @@ function emitSitemap(env: Record<string, string>) {
           `  <url>\n    <loc>${ORIGIN}${path}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>${path === '/' ? '1.0' : '0.8'}</priority>\n  </url>`,
       ).join('\n')
       const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`
-      writeFileSync(resolve(__dirname, 'dist/sitemap.xml'), xml)
+      writeFileSync(resolve(import.meta.dirname, 'dist/sitemap.xml'), xml)
     },
   }
 }

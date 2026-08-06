@@ -4,6 +4,10 @@
     "lib": ["ES2024"],
     "module": "ESNext",
     "moduleResolution": "bundler",
+    /* vite.config.ts imports ./src/constants/sampleManifest.ts with its
+     * extension so Vite's native config loader can resolve it without a
+     * bundler resolution step. */
+    "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "noEmit": true,

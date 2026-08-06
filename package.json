@@ -25,7 +25,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@primeuix/themes": "^2.0.3",
+    "@primeuix/themes": "^3.0.0",
     "@tailwindcss/vite": "^4.3.3",
     "@unhead/vue": "^3.3.1",
     "@vercel/analytics": "^2.0.1",
@@ -37,8 +37,8 @@
     "dayjs": "^1.11.21",
     "pinia": "^4.0.2",
     "pitchy": "^4.1.0",
-    "primeicons": "^7.0.0",
-    "primevue": "^4.5.5",
+    "primeicons": "^8.0.0",
+    "primevue": "^5.0.0",
     "tailwindcss": "^4.3.3",
     "tone": "^15.1.22",
     "vue": "^3.5.40",
