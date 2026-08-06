@@ -12,7 +12,7 @@ import {
   type ScaleRole,
 } from '@/utils/scaleHighlight'
 import { useMediaQuery, useResizeObserver, useWindowSize } from '@vueuse/core'
-import type { AccidentalStyle } from './guitarAccidentals'
+import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import {
   INLAY_DOT_SIZE,
   buildGuitarInlays,

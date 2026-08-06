@@ -7,7 +7,7 @@ import {
   frequencyToMidi,
   midiToNoteLabel,
 } from '@/utils/noteUtils'
-import type { AccidentalStyle } from './guitarAccidentals'
+import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import {
   FRET_ROW_HEIGHT,
   GUITAR_MAX_FRET,

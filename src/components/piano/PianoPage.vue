@@ -15,6 +15,12 @@ const rangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
 /* Note-name labels on the keyboard: off, simple (C), or advanced (C4). */
 const toneLabelMode = useToneLabelMode('syng.pianoToneLabelMode', 'off')
+
+/* Which spelling leads on the black keys — C♯ or D♭. Both stay on the key
+ * (there is room to stack them, unlike a guitar fret row); this picks which one
+ * goes on top. Persisted apart from the guitar's own style, like every other
+ * per-page board setting. */
+const accidentalStyle = useAccidentalStyle('syng.pianoAccidentals', 'sharp')
 /* Scale highlight — tints the keys of one musical key/mode so the singer sees
  * the shape on the board. Off by default: no root picked, nothing tinted.
  * PrimeSelect's clear button writes null, but -1 is what gets persisted so
@@ -116,6 +122,7 @@ function handleTonePlayed() {
     <PianoSettingsRow
       v-model:rangeIndex="rangeIndex"
       v-model:toneLabelMode="toneLabelMode"
+      v-model:accidentalStyle="accidentalStyle"
       v-model:isPreviewEnabled="isPreviewEnabled"
       v-model:isDuetEnabled="isDuetEnabled"
       :micPermission="micPermission"
@@ -138,6 +145,7 @@ function handleTonePlayed() {
         :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
         :toneLabelMode="toneLabelMode"
+        :accidentalStyle="accidentalStyle"
         :scaleRoot="scaleRoot"
         :scaleMode="scaleMode"
         @tonePlayed="handleTonePlayed"

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
@@ -10,7 +11,7 @@ import {
 } from '@/utils/scaleHighlight'
 import { useMediaQuery, useResizeObserver } from '@vueuse/core'
 import PianoOctaveShift from './PianoOctaveShift.vue'
-import { pianoKeyFlatLabel, pianoKeyLabel } from './pianoLabels'
+import { pianoKeyAltLabel, pianoKeyLabel } from './pianoLabels'
 import {
   BLACK_KEY_HEIGHT_RATIO,
   MAX_SEMITONE_UNIT,
@@ -40,22 +41,46 @@ type Props = {
   /* Note-name labels on the key face: 'off' (C-key octave markers only), 'simple'
    * (bare names, e.g. C♯), or 'advanced' (names with octave, e.g. C♯2). */
   toneLabelMode?: ToneLabelMode
+  /* Which of the two spellings leads on a black key. Both stay on the key —
+   * unlike the guitar, where a fret row only has height for one — so this picks
+   * which one goes on top and carries the octave digit. */
+  accidentalStyle?: AccidentalStyle
   /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
   scaleRoot?: number | null
   scaleMode?: ScaleHighlightMode
 }
 const props = defineProps<Props>()
 
+const accidentalStyle = computed<AccidentalStyle>(
+  () => props.accidentalStyle ?? 'sharp',
+)
+
 function keyLabel(key: PianoKey): string | null {
-  return pianoKeyLabel(key, props.toneLabelMode ?? 'off', {
-    midiMin: props.midiMin,
-    midiMax: props.midiMax,
-  })
+  return pianoKeyLabel(
+    key,
+    props.toneLabelMode ?? 'off',
+    { midiMin: props.midiMin, midiMax: props.midiMax },
+    accidentalStyle.value,
+  )
 }
 
 /* Null on every white key, so only the black keys get the second row. */
-function keyFlatLabel(key: PianoKey): string | null {
-  return pianoKeyFlatLabel(key, props.toneLabelMode ?? 'off')
+function keyAltLabel(key: PianoKey): string | null {
+  return pianoKeyAltLabel(
+    key,
+    props.toneLabelMode ?? 'off',
+    accidentalStyle.value,
+  )
+}
+
+/* The screen-reader name has to match the label drawn on the key, or the two
+ * disagree about what the note is called. White keys are naturals, so only the
+ * black ones actually move. */
+function keyAriaLabel(key: PianoKey): string {
+  return midiToNoteLabel(key.midi, {
+    showOctave: true,
+    preferFlats: accidentalStyle.value === 'flat',
+  }).label
 }
 
 /* Built once per scale change, not once per key — the keyboard can be 40+ keys. */
@@ -250,6 +275,7 @@ const previewLines = computed(() =>
     (props.previewLanes ?? []).map((lane) => ({
       ...lane,
       layout: layout.value,
+      accidentalStyle: accidentalStyle.value,
     })),
   ),
 )
@@ -320,7 +346,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             }"
             :data-testid="`piano-key-${key.midi}`"
             :data-scale-role="scaleRole(key) ?? undefined"
-            :aria-label="midiToNoteLabel(key.midi).label"
+            :aria-label="keyAriaLabel(key)"
             :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
             @pointerdown="playKey(key.midi)"
             @keydown="handleKeyDown($event, key.midi)"
@@ -394,7 +420,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             }"
             :data-testid="`piano-key-${key.midi}`"
             :data-scale-role="scaleRole(key) ?? undefined"
-            :aria-label="midiToNoteLabel(key.midi).label"
+            :aria-label="keyAriaLabel(key)"
             :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
             @pointerdown="playKey(key.midi)"
             @keydown="handleKeyDown($event, key.midi)"
@@ -424,18 +450,21 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               {{ keyChar(key) }}
             </span>
 
-            <!-- Both spellings of the note, sharp over flat (F♯ over G♭). Sharp
-             leads because it is the app's primary spelling — midiToNoteLabel,
-             the aria-label above, and the preview chips all use it — and
-             because PianoScaleSelect names the same key "C♯ / D♭", sharp first.
-             (The note sheets stack the pair the other way round: there the
+            <!-- Both spellings of the note, the singer's own convention on top
+             (F♯ over G♭, or G♭ over F♯ — see the accidentals toggle). Unlike
+             the guitar, where a fret row only has height for one name, a key
+             keeps both: the second row is what a singer reading the other
+             convention looks for. Which one leads is decided in pianoLabels;
+             the styling here belongs to the position, not to sharp or flat.
+             (The note sheets stack the pair by a different rule: there the
              labels climb away from the notehead, so the sharp has to stay the
              one nearest the note. A key has no note to sit beside.)
              Wrapped so the parent's gap-1 falls between the computer-key chip
              and the pair rather than between the two spellings, which belong
-             together as one label. The flat is the secondary reading: smaller,
-             and --p-surface-400 rather than the muted text colour, which is
-             near-black in light mode and would vanish into the key face. -->
+             together as one label. The lower row is the secondary reading:
+             smaller, and --p-surface-400 rather than the muted text colour,
+             which is near-black in light mode and would vanish into the key
+             face. -->
             <span
               v-if="keyLabel(key)"
               class="relative flex flex-col items-center leading-none"
@@ -448,10 +477,10 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               </span>
 
               <span
-                v-if="keyFlatLabel(key)"
-                class="text-[9px] text-(--p-surface-400)"
+                v-if="keyAltLabel(key)"
+                class="text-[10px] text-(--p-surface-300)"
               >
-                {{ keyFlatLabel(key) }}
+                {{ keyAltLabel(key) }}
               </span>
             </span>
           </button>

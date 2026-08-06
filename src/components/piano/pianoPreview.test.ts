@@ -110,6 +110,44 @@ describe('buildPianoPreviewLine', () => {
   })
 })
 
+describe('accidental spelling', () => {
+  const A_SHARP_4_MIDI = 70
+
+  const chipFor = (accidentalStyle: 'sharp' | 'flat', centsOff = 0) =>
+    buildPianoPreviewLine({
+      layout,
+      accidentalStyle,
+      previewMidi: A_SHARP_4_MIDI,
+      previewFrequency:
+        midiToFrequency(A_SHARP_4_MIDI) * Math.pow(2, centsOff / 1200),
+      previewNoteLabel: 'A♯4',
+    })?.text
+
+  it('leaves the chip label exactly as the detector spelled it', () => {
+    /* Sharp mode passes previewNoteLabel straight through — no re-derivation, so
+     * nothing about the existing behaviour can drift. */
+    expect(chipFor('sharp')).toBe('A♯4')
+  })
+
+  it('respells the chip to match a flat keyboard', () => {
+    expect(chipFor('flat')).toBe('B♭4')
+  })
+
+  it('keeps the cents suffix when respelling', () => {
+    expect(chipFor('flat', 40)).toBe('B♭4 +40¢')
+  })
+
+  it('defaults to the sharp spelling when no style is given', () => {
+    expect(
+      lineFor({
+        previewMidi: A_SHARP_4_MIDI,
+        previewFrequency: midiToFrequency(A_SHARP_4_MIDI),
+        previewNoteLabel: 'A♯4',
+      })!.text,
+    ).toBe('A♯4')
+  })
+})
+
 describe('buildPianoPreviewLines', () => {
   const laneFor = (
     laneId: PianoPreviewLaneId,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { pianoKeyFlatLabel, pianoKeyLabel } from './pianoLabels'
+import { pianoKeyAltLabel, pianoKeyLabel } from './pianoLabels'
 import { buildPianoLayout, type PianoKey } from './pianoLayout'
 
 const RANGE = { midiMin: 57, midiMax: 81 } // A3–A5, the Mezzo-Soprano range
@@ -9,7 +9,7 @@ const keyFor = (midi: number): PianoKey =>
   [...layout.whites, ...layout.blacks].find((key) => key.midi === midi)!
 
 const labelFor = (midi: number, mode: 'off' | 'simple' | 'advanced') =>
-  pianoKeyLabel(keyFor(midi), mode, RANGE)
+  pianoKeyLabel(keyFor(midi), mode, RANGE, 'sharp')
 
 describe('pianoKeyLabel', () => {
   describe("mode 'off'", () => {
@@ -26,7 +26,7 @@ describe('pianoKeyLabel', () => {
     it('labels a black key only when it is a range edge', () => {
       expect(labelFor(61, 'off')).toBeNull() // C♯4, mid-range
       expect(
-        pianoKeyLabel(keyFor(70), 'off', { midiMin: 70, midiMax: 81 }),
+        pianoKeyLabel(keyFor(70), 'off', { midiMin: 70, midiMax: 81 }, 'sharp'),
       ).toBe('A♯4')
     })
 
@@ -49,31 +49,63 @@ describe('pianoKeyLabel', () => {
   })
 })
 
-describe('pianoKeyFlatLabel', () => {
-  const flatFor = (midi: number, mode: 'off' | 'simple' | 'advanced') =>
-    pianoKeyFlatLabel(keyFor(midi), mode)
+describe('pianoKeyAltLabel', () => {
+  const altFor = (midi: number, mode: 'off' | 'simple' | 'advanced') =>
+    pianoKeyAltLabel(keyFor(midi), mode, 'sharp')
 
-  it('spells the black keys as flats', () => {
-    expect(flatFor(61, 'simple')).toBe('D♭')
-    expect(flatFor(63, 'simple')).toBe('E♭')
-    expect(flatFor(66, 'simple')).toBe('G♭')
+  it('spells the black keys as flats under a sharp label', () => {
+    expect(altFor(61, 'simple')).toBe('D♭')
+    expect(altFor(63, 'simple')).toBe('E♭')
+    expect(altFor(66, 'simple')).toBe('G♭')
   })
 
   it("omits the octave even in 'advanced'", () => {
-    expect(flatFor(66, 'advanced')).toBe('G♭') // paired with F♯4 below it
+    expect(altFor(66, 'advanced')).toBe('G♭') // paired with F♯4 above it
   })
 
   it("stays silent in 'off'", () => {
-    expect(flatFor(61, 'off')).toBeNull()
+    expect(altFor(61, 'off')).toBeNull()
     expect(
       /* Even the range edge, where pianoKeyLabel does still draw a sharp. */
-      pianoKeyFlatLabel(keyFor(70), 'off'),
+      pianoKeyAltLabel(keyFor(70), 'off', 'sharp'),
     ).toBeNull()
   })
 
   it('leaves the white keys bare in every mode', () => {
-    expect(flatFor(60, 'simple')).toBeNull() // C
-    expect(flatFor(64, 'simple')).toBeNull() // E — never spelled F♭
-    expect(flatFor(71, 'advanced')).toBeNull() // B — never spelled C♭
+    expect(altFor(60, 'simple')).toBeNull() // C
+    expect(altFor(64, 'simple')).toBeNull() // E — never spelled F♭
+    expect(altFor(71, 'advanced')).toBeNull() // B — never spelled C♭
+  })
+})
+
+/* The stacked pair swaps places: the picked style leads and carries the octave,
+ * the other spelling drops to the second row. Neither is ever dropped. */
+describe('flat spelling', () => {
+  const labelForFlat = (midi: number, mode: 'off' | 'simple' | 'advanced') =>
+    pianoKeyLabel(keyFor(midi), mode, RANGE, 'flat')
+  const altForFlat = (midi: number, mode: 'off' | 'simple' | 'advanced') =>
+    pianoKeyAltLabel(keyFor(midi), mode, 'flat')
+
+  it('leads with the flat and follows with the sharp', () => {
+    expect(labelForFlat(61, 'advanced')).toBe('D♭4')
+    expect(altForFlat(61, 'advanced')).toBe('C♯')
+  })
+
+  it("drops the octave from both rows in 'simple'", () => {
+    expect(labelForFlat(66, 'simple')).toBe('G♭')
+    expect(altForFlat(66, 'simple')).toBe('F♯')
+  })
+
+  it('leaves the naturals untouched in both rows', () => {
+    expect(labelForFlat(64, 'advanced')).toBe('E4') // never spelled F♭
+    expect(altForFlat(64, 'advanced')).toBeNull()
+    expect(labelForFlat(60, 'off')).toBe('C4') // the octave marker
+  })
+
+  it("respells a black-key range edge in 'off'", () => {
+    expect(
+      pianoKeyLabel(keyFor(70), 'off', { midiMin: 70, midiMax: 81 }, 'flat'),
+    ).toBe('B♭4')
+    expect(pianoKeyAltLabel(keyFor(70), 'off', 'flat')).toBeNull()
   })
 })

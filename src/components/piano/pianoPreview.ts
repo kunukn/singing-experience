@@ -1,4 +1,9 @@
-import { formatNoteLabelWithCents, frequencyToMidi } from '@/utils/noteUtils'
+import type { AccidentalStyle } from '@/composables/accidentalStyle'
+import {
+  formatNoteLabelWithCents,
+  frequencyToMidi,
+  midiToNoteLabel,
+} from '@/utils/noteUtils'
 import { type PianoLayout, pianoPitchXForMidi } from './pianoLayout'
 
 /* ¢ — matches the pitch-detector preview indicator's cents threshold. */
@@ -27,6 +32,9 @@ export type PianoPreviewInput = {
   previewFrequency: number | null
   previewNoteLabel: string | null
   layout: PianoLayout
+  /* Which spelling leads on the keys, so the chip can agree with them. Optional
+   * so a caller that has no style to hand keeps the app's default spelling. */
+  accidentalStyle?: AccidentalStyle
 }
 
 /*
@@ -41,7 +49,13 @@ export type PianoPreviewInput = {
 export function buildPianoPreviewLine(
   input: PianoPreviewInput,
 ): PianoPreviewLine | null {
-  const { previewMidi, previewFrequency, previewNoteLabel, layout } = input
+  const {
+    previewMidi,
+    previewFrequency,
+    previewNoteLabel,
+    layout,
+    accidentalStyle = 'sharp',
+  } = input
   if (previewMidi === null || previewNoteLabel === null) return null
 
   const { midiMin, midiMax } = layout
@@ -72,8 +86,21 @@ export function buildPianoPreviewLine(
   /* Cents relative to the snapped note, matching the pitch-detector indicator
    * (round(100 × (continuous − nearest))). */
   const cents = Math.round(100 * (floatMidi - previewMidi))
+
+  /* The chip has to agree with the keys underneath it, so it follows the
+   * keyboard's leading spelling. Only the flat side re-derives: sharp mode
+   * passes the detector's own label straight through, leaving the common path
+   * exactly as it was. Safe to re-derive at all because previewMidi and
+   * previewNoteLabel come from the same NoteInfo (see useIdlePreview), so the
+   * two can never disagree. */
+  const noteLabel =
+    accidentalStyle === 'flat'
+      ? midiToNoteLabel(previewMidi, { showOctave: true, preferFlats: true })
+          .label
+      : previewNoteLabel
+
   const text = formatNoteLabelWithCents(
-    previewNoteLabel,
+    noteLabel,
     cents,
     PREVIEW_CENTS_THRESHOLD,
   )

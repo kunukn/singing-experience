@@ -1,6 +1,6 @@
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import type { AccidentalStyle } from './guitarAccidentals'
+import type { AccidentalStyle } from '@/composables/accidentalStyle'
 
 /*
  * Label drawn in a fret cell, or null for none.

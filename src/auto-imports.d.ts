@@ -8,6 +8,7 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const ACCIDENTAL_STYLE_OPTIONS: typeof import('./composables/accidentalStyle').ACCIDENTAL_STYLE_OPTIONS
   const CLARITY_STEP: typeof import('./composables/useSettings').CLARITY_STEP
   const DEFAULT_CLARITY_THRESHOLD: typeof import('./composables/useSettings').DEFAULT_CLARITY_THRESHOLD
   const DEFAULT_HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').DEFAULT_HOLD_DURATION_MS
@@ -42,6 +43,7 @@ declare global {
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
   const h: typeof import('vue').h
   const inject: typeof import('vue').inject
+  const isAccidentalStyle: typeof import('./composables/accidentalStyle').isAccidentalStyle
   const isProxy: typeof import('vue').isProxy
   const isReactive: typeof import('vue').isReactive
   const isReadonly: typeof import('vue').isReadonly
@@ -85,6 +87,7 @@ declare global {
   const toneLabelModeToFlags: typeof import('./composables/toneLabelMode').toneLabelModeToFlags
   const triggerRef: typeof import('vue').triggerRef
   const unref: typeof import('vue').unref
+  const useAccidentalStyle: typeof import('./composables/accidentalStyle').useAccidentalStyle
   const useAttrs: typeof import('vue').useAttrs
   const useConfetti: typeof import('./composables/useConfetti').useConfetti
   const useConfettiStore: typeof import('./stores/useConfettiStore').useConfettiStore
@@ -133,6 +136,9 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { AccidentalStyle } from './composables/accidentalStyle'
+  import('./composables/accidentalStyle')
+  // @ts-ignore
   export type { ToneMode, ToneEngine } from './composables/toneEngine'
   import('./composables/toneEngine')
   // @ts-ignore
@@ -145,6 +151,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
+    readonly ACCIDENTAL_STYLE_OPTIONS: UnwrapRef<typeof import('./composables/accidentalStyle')['ACCIDENTAL_STYLE_OPTIONS']>
     readonly CLARITY_STEP: UnwrapRef<typeof import('./composables/useSettings')['CLARITY_STEP']>
     readonly DEFAULT_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['DEFAULT_CLARITY_THRESHOLD']>
     readonly DEFAULT_PREVIEW_ENABLED: UnwrapRef<typeof import('./composables/useSettings')['DEFAULT_PREVIEW_ENABLED']>
@@ -167,6 +174,7 @@ declare module 'vue' {
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
+    readonly isAccidentalStyle: UnwrapRef<typeof import('./composables/accidentalStyle')['isAccidentalStyle']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
@@ -209,6 +217,7 @@ declare module 'vue' {
     readonly toneLabelModeToFlags: UnwrapRef<typeof import('./composables/toneLabelMode')['toneLabelModeToFlags']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
+    readonly useAccidentalStyle: UnwrapRef<typeof import('./composables/accidentalStyle')['useAccidentalStyle']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useConfetti: UnwrapRef<typeof import('./composables/useConfetti')['useConfetti']>
     readonly useConfettiStore: UnwrapRef<typeof import('./stores/useConfettiStore')['useConfettiStore']>

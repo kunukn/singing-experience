@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import type { ToneMode } from '@/composables/toneEngine'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
@@ -13,6 +14,9 @@ defineProps<Props>()
 
 const rangeIndex = defineModel<number>('rangeIndex', { required: true })
 const toneLabelMode = defineModel<ToneLabelMode>('toneLabelMode', {
+  required: true,
+})
+const accidentalStyle = defineModel<AccidentalStyle>('accidentalStyle', {
   required: true,
 })
 const isPreviewEnabled = defineModel<boolean>('isPreviewEnabled', {
@@ -120,14 +124,45 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         :aria-label="t('notes.toneLabels')"
       />
     </div>
+
+    <div class="settings-item">
+      <label
+        class="hidden text-end text-sm text-(--p-text-muted-color) md:block"
+        >{{ t('notes.accidentals') }}</label
+      >
+      <PrimeSelectButton
+        v-model="accidentalStyle"
+        :options="ACCIDENTAL_STYLE_OPTIONS"
+        optionLabel="label"
+        optionValue="value"
+        :allowEmpty="false"
+        size="small"
+        :aria-label="t('notes.accidentals')"
+        data-testid="piano-accidentals"
+      />
+    </div>
   </div>
 </template>
 
 <style scoped>
 @reference '@/style.css';
 
-/* Four items × 2 tracks each; the 4-column template wraps them into 2 × 2. */
+/*
+ * Five items (each col-span-2), and five never divides evenly, so the row steps
+ * up a breakpoint at a time: 2 per row at md, 3 at lg, all five from xl. Fitting
+ * more sooner would push the whole document into a horizontal scrollbar — the
+ * piano's items are wider than the guitar row's, which manages 4 per row at lg.
+ *
+ * Every track is `auto`, never `1fr`: the row is content-sized (md:w-auto), so a
+ * grid of `1fr` tracks resolves one shared flex fraction from the widest control
+ * and stretches all the others to match it — the narrow tone/accidental button
+ * pairs would sit in columns as wide as the voice-range select, leaving a gap
+ * between each control and the next item's label. `auto` still aligns a column
+ * down the rows; it just stops columns matching each other.
+ */
 .settings-row {
-  @apply md:grid-cols-[auto_1fr_auto_1fr];
+  @apply md:grid-cols-[repeat(4,auto)];
+  @apply lg:grid-cols-[repeat(6,auto)];
+  @apply xl:grid-cols-[repeat(10,auto)];
 }
 </style>

@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import type { GuitarTuningId } from '@/utils/guitarTunings'
-import {
-  ACCIDENTAL_STYLE_OPTIONS,
-  type AccidentalStyle,
-} from './guitarAccidentals'
+import type { AccidentalStyle } from '@/composables/accidentalStyle'
 
 type Props = {
   /* Both mic toggles lock out once permission was refused. Matches the shape of
