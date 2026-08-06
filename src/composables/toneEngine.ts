@@ -3,12 +3,7 @@ import { frequencyToNoteName } from '@/utils/noteUtils'
 import type * as ToneType from 'tone'
 
 export type ToneMode =
-  | 'keyboard'
-  | 'bell'
-  | 'tuning'
-  | 'tuning2'
-  | 'bass'
-  | 'square'
+  'keyboard' | 'bell' | 'tuning' | 'tuning2' | 'bass' | 'square'
 
 export type ToneEngine = {
   readonly toneMode: Readonly<Ref<ToneMode>>

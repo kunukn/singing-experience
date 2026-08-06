@@ -3,9 +3,7 @@ import { setup } from 'xstate'
 export type PitchGamePhase = 'idle' | 'playing' | 'complete'
 
 type PitchGameEvent =
-  | { type: 'START' }
-  | { type: 'COMPLETE' }
-  | { type: 'RESET' }
+  { type: 'START' } | { type: 'COMPLETE' } | { type: 'RESET' }
 
 /* The single source of truth for the PitchGame round lifecycle.
  *
