@@ -5,7 +5,7 @@ import {
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
 
-/* null = highlighting off, which is the default state of the keyboard. */
+/* null = highlighting off, which is the default state of the fretboard. */
 const scaleRoot = defineModel<number | null>('scaleRoot', { required: true })
 const scaleMode = defineModel<ScaleHighlightMode>('scaleMode', {
   required: true,
@@ -36,7 +36,7 @@ const modeOptions = computed(() =>
       size="small"
       class="min-w-32"
       :ariaLabel="t('scale.highlightScale')"
-      data-testid="piano-scale-root"
+      data-testid="guitar-scale-root"
     >
       <template #header>
         <div class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)">
@@ -54,7 +54,7 @@ const modeOptions = computed(() =>
       size="small"
       class="min-w-40"
       :ariaLabel="t('scale.scaleMode')"
-      data-testid="piano-scale-mode"
+      data-testid="guitar-scale-mode"
     />
   </div>
 </template>

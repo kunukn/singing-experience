@@ -94,6 +94,10 @@
         "name": "Piano",
         "description": "Toque as teclas do piano e veja sua voz aparecer no teclado."
       },
+      "guitar": {
+        "name": "Guitarra",
+        "description": "Toque as cordas da guitarra e veja sua voz aparecer no braço."
+      },
       "singTone": {
         "name": "Jogo Cante o Tom",
         "description": "Um tom aleatório é tocado — cante de volta! Acerte tons diferentes seguidos para vencer."
@@ -329,7 +333,7 @@
       "heading": "Notas fora das linhas"
     }
   },
-  "piano": {
+  "scale": {
     "highlightScale": "Destacar",
     "pickKey": "Escolhe um tom",
     "pickKeyHeader": "Destaca as notas de uma escala",
@@ -342,5 +346,8 @@
       "majorBlues": "Blues maior",
       "minorBlues": "Blues menor"
     }
+  },
+  "guitar": {
+    "fretboardComingSoon": "O braço está a caminho"
   }
 }

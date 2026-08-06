@@ -94,6 +94,10 @@
         "name": "钢琴",
         "description": "弹奏钢琴键，看看你的声音落在键盘的哪个位置。"
       },
+      "guitar": {
+        "name": "吉他",
+        "description": "拨动吉他琴弦，看看你的声音落在指板的哪个位置。"
+      },
       "singTone": {
         "name": "唱音游戏",
         "description": "播放一个随机音调 — 唱出来匹配！连续匹配不同的音调即可获胜。"
@@ -329,7 +333,7 @@
       "heading": "Notes beyond the lines"
     }
   },
-  "piano": {
+  "scale": {
     "highlightScale": "高亮",
     "pickKey": "选择一个调",
     "pickKeyHeader": "高亮音阶里的音",
@@ -342,5 +346,8 @@
       "majorBlues": "大调布鲁斯",
       "minorBlues": "小调布鲁斯"
     }
+  },
+  "guitar": {
+    "fretboardComingSoon": "指板即将上线"
   }
 }

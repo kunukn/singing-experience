@@ -94,6 +94,10 @@
         "name": "Piano",
         "description": "Ketuk tuts piano untuk memainkan nada, dan lihat suaramu muncul di keyboard."
       },
+      "guitar": {
+        "name": "Gitar",
+        "description": "Petik senar gitar untuk memainkan nada, dan lihat suaramu muncul di fretboard."
+      },
       "singTone": {
         "name": "Permainan Tebak Nada",
         "description": "Sebuah nada acak dimainkan — nyanyikan kembali! Cocokkan nada berbeda berturut-turut untuk menang."
@@ -329,7 +333,7 @@
       "heading": "Notes beyond the lines"
     }
   },
-  "piano": {
+  "scale": {
     "highlightScale": "Sorot",
     "pickKey": "Pilih nada dasar",
     "pickKeyHeader": "Sorot nada-nada dalam tangga nada",
@@ -342,5 +346,8 @@
       "majorBlues": "Blues mayor",
       "minorBlues": "Blues minor"
     }
+  },
+  "guitar": {
+    "fretboardComingSoon": "Fretboard-nya segera hadir"
   }
 }

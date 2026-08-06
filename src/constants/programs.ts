@@ -49,6 +49,11 @@ export const tools: Program[] = [
     route: '/piano',
   },
   {
+    key: 'guitar',
+    icon: '🎸',
+    route: '/guitar',
+  },
+  {
     key: 'tuner',
     icon: '🪕',
     route: '/tuner',

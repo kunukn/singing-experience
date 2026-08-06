@@ -94,6 +94,10 @@
         "name": "Piano",
         "description": "Gonga vitufe vya piano kucheza noti, na uone sauti yako ikitokea kwenye kinanda."
       },
+      "guitar": {
+        "name": "Gitaa",
+        "description": "Piga nyuzi za gitaa kucheza noti, na uone sauti yako ikitokea kwenye ubao wa nyuzi."
+      },
       "singTone": {
         "name": "Mchezo wa Kuimba Toni",
         "description": "Toni ya nasibu inachezwa — iimbe tena! Linganisha toni tofauti mfululizo ili kushinda."
@@ -329,7 +333,7 @@
       "heading": "Notes beyond the lines"
     }
   },
-  "piano": {
+  "scale": {
     "highlightScale": "Angazia",
     "pickKey": "Chagua toni ya msingi",
     "pickKeyHeader": "Angazia noti za mizani",
@@ -342,5 +346,8 @@
       "majorBlues": "Blues meja",
       "minorBlues": "Blues maina"
     }
+  },
+  "guitar": {
+    "fretboardComingSoon": "Ubao wa nyuzi unakuja hivi karibuni"
   }
 }

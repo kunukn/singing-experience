@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { midiToNoteLabel } from '@/utils/noteUtils'
+import {
+  DEFAULT_SCALE_HIGHLIGHT_MODE,
+  buildScalePitchClasses,
+  scaleRoleForMidi,
+  type ScaleHighlightMode,
+  type ScaleRole,
+} from '@/utils/scaleHighlight'
 import { useMediaQuery, useResizeObserver } from '@vueuse/core'
 import PianoOctaveShift from './PianoOctaveShift.vue'
 import { pianoKeyFlatLabel, pianoKeyLabel } from './pianoLabels'
@@ -17,13 +24,6 @@ import {
   type PianoKey,
 } from './pianoLayout'
 import { buildPianoPreviewLines, type PianoPreviewLaneId } from './pianoPreview'
-import {
-  DEFAULT_PIANO_SCALE_MODE,
-  buildScalePitchClasses,
-  pianoKeyScaleRole,
-  type PianoKeyScaleRole,
-  type PianoScaleMode,
-} from './pianoScale'
 import type { DuetLane } from './useDuetPitchDetection'
 import { usePianoKeyPlayback } from './usePianoKeyPlayback'
 import { usePianoKeyboardInput } from './usePianoKeyboardInput'
@@ -42,7 +42,7 @@ type Props = {
   toneLabelMode?: ToneLabelMode
   /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
   scaleRoot?: number | null
-  scaleMode?: PianoScaleMode
+  scaleMode?: ScaleHighlightMode
 }
 const props = defineProps<Props>()
 
@@ -62,12 +62,12 @@ function keyFlatLabel(key: PianoKey): string | null {
 const scalePitchClasses = computed(() =>
   buildScalePitchClasses(
     props.scaleRoot ?? null,
-    props.scaleMode ?? DEFAULT_PIANO_SCALE_MODE,
+    props.scaleMode ?? DEFAULT_SCALE_HIGHLIGHT_MODE,
   ),
 )
 
-function scaleRole(key: PianoKey): PianoKeyScaleRole {
-  return pianoKeyScaleRole(
+function scaleRole(key: PianoKey): ScaleRole {
+  return scaleRoleForMidi(
     key.midi,
     props.scaleRoot ?? null,
     scalePitchClasses.value,

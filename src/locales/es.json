@@ -94,6 +94,10 @@
         "name": "Piano",
         "description": "Toca las teclas del piano y mira cómo tu voz aparece en el teclado."
       },
+      "guitar": {
+        "name": "Guitarra",
+        "description": "Toca las cuerdas de la guitarra y mira cómo tu voz aparece en el mástil."
+      },
       "singTone": {
         "name": "Juego Canta el Tono",
         "description": "Se reproduce un tono aleatorio — ¡cántalo de vuelta! Acierta tonos diferentes seguidos para ganar."
@@ -329,7 +333,7 @@
       "heading": "Notas fuera de las líneas"
     }
   },
-  "piano": {
+  "scale": {
     "highlightScale": "Resaltar",
     "pickKey": "Elige una tonalidad",
     "pickKeyHeader": "Resalta las notas de una escala",
@@ -342,5 +346,8 @@
       "majorBlues": "Blues mayor",
       "minorBlues": "Blues menor"
     }
+  },
+  "guitar": {
+    "fretboardComingSoon": "El mástil está en camino"
   }
 }

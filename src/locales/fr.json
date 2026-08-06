@@ -94,6 +94,10 @@
         "name": "Piano",
         "description": "Joue sur les touches du piano et regarde ta voix se poser sur le clavier."
       },
+      "guitar": {
+        "name": "Guitare",
+        "description": "Joue sur les cordes de la guitare et regarde ta voix se poser sur le manche."
+      },
       "singTone": {
         "name": "Jeu Chante le Ton",
         "description": "Un ton aléatoire est joué — chante-le ! Reproduis différents tons d'affilée pour gagner."
@@ -329,7 +333,7 @@
       "heading": "Notes au-delà des lignes"
     }
   },
-  "piano": {
+  "scale": {
     "highlightScale": "Surligner",
     "pickKey": "Choisis une tonalité",
     "pickKeyHeader": "Surligne les notes d'une gamme",
@@ -342,5 +346,8 @@
       "majorBlues": "Blues majeur",
       "minorBlues": "Blues mineur"
     }
+  },
+  "guitar": {
+    "fretboardComingSoon": "Le manche arrive bientôt"
   }
 }

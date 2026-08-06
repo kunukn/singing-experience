@@ -94,6 +94,10 @@
         "name": "Klavier",
         "description": "Spiel auf den Klaviertasten und sieh, wie deine Stimme auf den Tasten landet."
       },
+      "guitar": {
+        "name": "Gitarre",
+        "description": "Spiel auf den Gitarrensaiten und sieh, wie deine Stimme auf dem Griffbrett landet."
+      },
       "singTone": {
         "name": "Ton-Sing-Spiel",
         "description": "Ein zufälliger Ton wird gespielt – singe ihn nach! Treffe verschiedene Töne in Folge, um zu gewinnen."
@@ -329,7 +333,7 @@
       "heading": "Töne außerhalb der Linien"
     }
   },
-  "piano": {
+  "scale": {
     "highlightScale": "Hervorheben",
     "pickKey": "Tonart wählen",
     "pickKeyHeader": "Die Töne einer Tonleiter hervorheben",
@@ -342,5 +346,8 @@
       "majorBlues": "Dur-Blues",
       "minorBlues": "Moll-Blues"
     }
+  },
+  "guitar": {
+    "fretboardComingSoon": "Das Griffbrett ist unterwegs"
   }
 }

@@ -2,11 +2,11 @@ import { SCALE_MODE_SEMITONES } from '@/utils/noteUtils'
 import { describe, expect, it } from 'vitest'
 import {
   buildScalePitchClasses,
-  PIANO_SCALE_MODES,
-  PIANO_SCALE_ROOT_OPTIONS,
-  pianoKeyScaleRole,
   pitchClassOf,
-} from './pianoScale'
+  SCALE_HIGHLIGHT_MODES,
+  SCALE_ROOT_OPTIONS,
+  scaleRoleForMidi,
+} from './scaleHighlight'
 
 const C = 0
 const D = 2
@@ -63,43 +63,43 @@ describe('buildScalePitchClasses', () => {
   })
 })
 
-describe('pianoKeyScaleRole', () => {
+describe('scaleRoleForMidi', () => {
   const dMajor = buildScalePitchClasses(D, 'ionian')
 
   it('marks the tonic in every octave as the root', () => {
-    expect(pianoKeyScaleRole(50, D, dMajor)).toBe('root') // D3
-    expect(pianoKeyScaleRole(74, D, dMajor)).toBe('root') // D5
+    expect(scaleRoleForMidi(50, D, dMajor)).toBe('root') // D3
+    expect(scaleRoleForMidi(74, D, dMajor)).toBe('root') // D5
   })
 
   it('marks the other scale tones as scale members', () => {
-    expect(pianoKeyScaleRole(66, D, dMajor)).toBe('scale') // F♯4
-    expect(pianoKeyScaleRole(61, D, dMajor)).toBe('scale') // C♯4
+    expect(scaleRoleForMidi(66, D, dMajor)).toBe('scale') // F♯4
+    expect(scaleRoleForMidi(61, D, dMajor)).toBe('scale') // C♯4
   })
 
   it('leaves non-members unmarked', () => {
-    expect(pianoKeyScaleRole(65, D, dMajor)).toBeNull() // F4
-    expect(pianoKeyScaleRole(60, D, dMajor)).toBeNull() // C4
+    expect(scaleRoleForMidi(65, D, dMajor)).toBeNull() // F4
+    expect(scaleRoleForMidi(60, D, dMajor)).toBeNull() // C4
   })
 
   it('marks nothing when highlighting is off', () => {
     expect(
-      pianoKeyScaleRole(62, null, buildScalePitchClasses(null, 'ionian')),
+      scaleRoleForMidi(62, null, buildScalePitchClasses(null, 'ionian')),
     ).toBeNull()
   })
 })
 
 describe('option lists', () => {
   it('offers one root per pitch class, spelled both ways where accidental', () => {
-    expect(PIANO_SCALE_ROOT_OPTIONS).toHaveLength(12)
-    expect(PIANO_SCALE_ROOT_OPTIONS[0]).toEqual({ pitchClass: 0, label: 'C' })
-    expect(PIANO_SCALE_ROOT_OPTIONS[1]).toEqual({
+    expect(SCALE_ROOT_OPTIONS).toHaveLength(12)
+    expect(SCALE_ROOT_OPTIONS[0]).toEqual({ pitchClass: 0, label: 'C' })
+    expect(SCALE_ROOT_OPTIONS[1]).toEqual({
       pitchClass: 1,
       label: 'C♯ / D♭',
     })
   })
 
   it('only names modes that noteUtils can build', () => {
-    for (const mode of PIANO_SCALE_MODES) {
+    for (const mode of SCALE_HIGHLIGHT_MODES) {
       expect(SCALE_MODE_SEMITONES[mode]).toBeDefined()
     }
   })

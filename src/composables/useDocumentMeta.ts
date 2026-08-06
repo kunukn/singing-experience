@@ -62,6 +62,11 @@ const ROUTE_META: Record<string, DocumentMeta> = {
     description:
       'Play a piano keyboard in your browser and see your singing voice mapped onto the keys in real time.',
   },
+  '/guitar': {
+    title: 'Playable Guitar Fretboard',
+    description:
+      'Play a guitar fretboard in your browser and see your singing voice mapped onto the strings in real time.',
+  },
 }
 
 /*

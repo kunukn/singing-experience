@@ -94,6 +94,10 @@
         "name": "ピアノ",
         "description": "ピアノの鍵盤をタップして音を鳴らし、自分の声が鍵盤のどこにあるか見てみよう。"
       },
+      "guitar": {
+        "name": "ギター",
+        "description": "ギターの弦をはじいて音を鳴らし、自分の声が指板のどこにあるか見てみよう。"
+      },
       "singTone": {
         "name": "音まねゲーム",
         "description": "ランダムな音が再生されます。まねして歌いましょう。異なる音を連続で一致するとクリアです。"
@@ -329,7 +333,7 @@
       "heading": "Notes beyond the lines"
     }
   },
-  "piano": {
+  "scale": {
     "highlightScale": "ハイライト",
     "pickKey": "キーを選ぼう",
     "pickKeyHeader": "スケールの音をハイライト",
@@ -342,5 +346,8 @@
       "majorBlues": "メジャーブルース",
       "minorBlues": "マイナーブルース"
     }
+  },
+  "guitar": {
+    "fretboardComingSoon": "指板はもうすぐ登場"
   }
 }

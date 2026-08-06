@@ -94,6 +94,10 @@
         "name": "Klaver",
         "description": "Spil på klavertangenterne, og se din stemme lande på tangenterne."
       },
+      "guitar": {
+        "name": "Guitar",
+        "description": "Spil på guitarens strenge, og se din stemme lande på gribebrættet."
+      },
       "singTone": {
         "name": "Syng Tone Spil",
         "description": "En tilfældig tone afspilles — syng den efter! Match forskellige toner i træk for at vinde."
@@ -329,7 +333,7 @@
       "heading": "Toner uden for linjerne"
     }
   },
-  "piano": {
+  "scale": {
     "highlightScale": "Fremhæv",
     "pickKey": "Vælg toneart",
     "pickKeyHeader": "Fremhæv tonerne i en skala",
@@ -342,5 +346,8 @@
       "majorBlues": "Blues i dur",
       "minorBlues": "Blues i mol"
     }
+  },
+  "guitar": {
+    "fretboardComingSoon": "Gribebrættet er på vej"
   }
 }

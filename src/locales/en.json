@@ -94,6 +94,10 @@
         "name": "Piano",
         "description": "Play the piano keys and watch your voice land on the keyboard."
       },
+      "guitar": {
+        "name": "Guitar",
+        "description": "Play the guitar strings and watch your voice land on the fretboard."
+      },
       "singTone": {
         "name": "Sing Tone Game",
         "description": "A random tone is played — sing it back! Match different tones in a row to win."
@@ -329,7 +333,7 @@
       "heading": "Notes beyond the lines"
     }
   },
-  "piano": {
+  "scale": {
     "highlightScale": "Highlight",
     "pickKey": "Pick a key",
     "pickKeyHeader": "Highlight the notes of a scale",
@@ -342,5 +346,8 @@
       "majorBlues": "Major Blues",
       "minorBlues": "Minor Blues"
     }
+  },
+  "guitar": {
+    "fretboardComingSoon": "The fretboard is on its way"
   }
 }
