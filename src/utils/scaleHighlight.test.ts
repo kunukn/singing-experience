@@ -6,6 +6,7 @@ import {
   SCALE_HIGHLIGHT_MODES,
   SCALE_ROOT_OPTIONS,
   scaleEmphasisFor,
+  scaleModeEnglishLabel,
   scaleRoleForMidi,
 } from './scaleHighlight'
 
@@ -119,15 +120,16 @@ describe('option lists', () => {
     }
   })
 
-  /* The selects render t(`scale.scaleModes.${id}`), and a missing key falls back
-   * to English rather than failing — so without this an unlabelled mode ships
-   * looking fine in the one locale anybody develops in. */
-  it('gives every highlight mode an English label', async () => {
-    const en = await import('@/locales/en.json')
-    const labels: Record<string, string> = en.default.scale.scaleModes
-
+  /*
+   * Deliberately NOT "every mode has a locale key" — modes without one are the
+   * point of the English fallback (see useScaleModeOptions). What still has to
+   * hold is that every mode resolves to SOMETHING, so an id that noteUtils does
+   * not know about (a typo in the list) cannot reach a select as a blank row.
+   */
+  it('gives every highlight mode a display label', () => {
     for (const mode of SCALE_HIGHLIGHT_MODES) {
-      expect(labels[mode]).toBeTruthy()
+      /* Returning the id is the lookup's "nothing found" branch. */
+      expect(scaleModeEnglishLabel(mode)).not.toBe(mode)
     }
   })
 })

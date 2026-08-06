@@ -14,6 +14,7 @@ import {
 import { useMediaQuery, useResizeObserver, useWindowSize } from '@vueuse/core'
 import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import {
+  GUITAR_INLAY_DOT_CLASS,
   GUITAR_STRING_LINE_CLASS,
   INLAY_DOT_SIZE,
   buildGuitarInlays,
@@ -432,11 +433,13 @@ function handleClick(cell: GuitarCell) {
             >
               <!-- Inlays, painted under everything: decoration that orients the
                  eye, not information, so they stay out of the accessibility
-                 tree. -->
+                 tree. Drawn in the strings' nickel (see GUITAR_INLAY_DOT_CLASS)
+                 so the board's hardware reads as one material. -->
               <span
                 v-for="dot in inlays"
                 :key="dot.key"
-                class="pointer-events-none absolute rounded-full bg-(--p-surface-300) dark:bg-(--p-surface-600)"
+                class="pointer-events-none absolute rounded-full"
+                :class="GUITAR_INLAY_DOT_CLASS"
                 :style="{
                   insetInlineStart: `${dot.left}px`,
                   top: `${dot.top}px`,

@@ -83,11 +83,22 @@ const MAX_STRING_LINE_WIDTH = 2.5
  *
  * These are 1–2.5px hairlines, which need more contrast against their background
  * than a filled shape of the same colour would — hence a mid shade in light theme
- * and a lighter one in dark, rather than the near-background slate-300/600 the
- * lines used to share with the inlays.
+ * and a lighter one in dark, rather than the near-background slate-300/600 these
+ * lines used to be drawn in.
  */
 export const GUITAR_STRING_LINE_CLASS =
   'bg-(--p-stone-500) dark:bg-(--p-stone-400)'
+
+/*
+ * The inlays take the strings' colour rather than a grey of their own, so the
+ * board reads as one instrument — nickel hardware on wood — instead of strings in
+ * one material and markers in another.
+ *
+ * An alias rather than a copy of the value: the two are meant to move together, so
+ * retuning the strings retunes the dots, and the day they should differ is a
+ * one-line change here rather than a hunt for a duplicated colour.
+ */
+export const GUITAR_INLAY_DOT_CLASS = GUITAR_STRING_LINE_CLASS
 
 export function buildGuitarStringLines(
   stringWidth: number,

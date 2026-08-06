@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {
-  SCALE_HIGHLIGHT_MODES,
   SCALE_ROOT_OPTIONS,
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
@@ -13,12 +12,7 @@ const scaleMode = defineModel<ScaleHighlightMode>('scaleMode', {
 
 const { t } = useI18n()
 
-const modeOptions = computed(() =>
-  SCALE_HIGHLIGHT_MODES.map((id) => ({
-    id,
-    label: t(`scale.scaleModes.${id}`),
-  })),
-)
+const modeOptions = useScaleModeOptions()
 </script>
 
 <template>

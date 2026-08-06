@@ -114,6 +114,7 @@ declare global {
   const usePitchDetection: typeof import('./composables/usePitchDetection').usePitchDetection
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter
+  const useScaleModeOptions: typeof import('./composables/useScaleModeOptions').useScaleModeOptions
   const useScrollEdgeMask: typeof import('./composables/useScrollEdgeMask').useScrollEdgeMask
   const useSettings: typeof import('./composables/useSettings').useSettings
   const useSimulatedMultiToneDetection: typeof import('./composables/useSimulatedMultiToneDetection').useSimulatedMultiToneDetection
@@ -144,6 +145,9 @@ declare global {
   // @ts-ignore
   export type { ToneLabelMode } from './composables/toneLabelMode'
   import('./composables/toneLabelMode')
+  // @ts-ignore
+  export type { ScaleModeOptionItem } from './composables/useScaleModeOptions'
+  import('./composables/useScaleModeOptions')
 }
 
 // for vue template auto import
@@ -240,6 +244,7 @@ declare module 'vue' {
     readonly usePitchDetection: UnwrapRef<typeof import('./composables/usePitchDetection')['usePitchDetection']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
+    readonly useScaleModeOptions: UnwrapRef<typeof import('./composables/useScaleModeOptions')['useScaleModeOptions']>
     readonly useScrollEdgeMask: UnwrapRef<typeof import('./composables/useScrollEdgeMask')['useScrollEdgeMask']>
     readonly useSettings: UnwrapRef<typeof import('./composables/useSettings')['useSettings']>
     readonly useSimulatedPitchDetection: UnwrapRef<typeof import('./composables/useSimulatedPitchDetection')['useSimulatedPitchDetection']>

@@ -1,6 +1,7 @@
 import {
   midiToFlatLabel,
   midiToNoteLabel,
+  SCALE_MODE_OPTIONS,
   SCALE_MODE_SEMITONES,
   type ScaleMode,
 } from '@/utils/noteUtils'
@@ -32,6 +33,18 @@ export const SCALE_HIGHLIGHT_MODES = [
   'lydian',
   'mixolydian',
   'locrian',
+  /* No locale keys of their own — these fall back to noteUtils' English names
+   * (see useScaleModeOptions). Proper nouns every language transliterates, so a
+   * translation would add work without adding meaning, and requiring one is what
+   * used to make each new mode cost 15 files instead of one line. */
+  'harmonicMinor',
+  'melodicMinor',
+  'phrygianDominant',
+  'lydianDominant',
+  /* Both sit at 6 pitch classes — sparser than the Major above — and draw
+   * symmetric shapes that repeat every whole tone / major third up the neck. */
+  'wholeTone',
+  'augmented',
 ] as const satisfies readonly ScaleMode[]
 
 export type ScaleHighlightMode = (typeof SCALE_HIGHLIGHT_MODES)[number]
@@ -68,6 +81,19 @@ export function isScaleHighlightMode(
   value: unknown,
 ): value is ScaleHighlightMode {
   return SCALE_HIGHLIGHT_MODES.includes(value as ScaleHighlightMode)
+}
+
+/**
+ * The English name from noteUtils' full mode table, for modes with no locale key
+ * of their own.
+ *
+ * Falls back to the id rather than throwing — a blank option in a select is worse
+ * than a rough one — but no mode should ever need that branch, which is what the
+ * test asserts. Kept a plain function rather than folded into the composable so
+ * it can be tested without mounting vue-i18n.
+ */
+export function scaleModeEnglishLabel(mode: ScaleHighlightMode): string {
+  return SCALE_MODE_OPTIONS.find((option) => option.id === mode)?.label ?? mode
 }
 
 /** Chroma 0–11 (C = 0) of a MIDI note, safe for negative input. */
