@@ -137,15 +137,15 @@ export function guitarScaleLabelClass(role: ScaleRole): string | null {
   return SCALE_LABEL_CLASS[role]
 }
 
-/* The strings are drawn down the middle of each column, straight through where
- * the names sit, so an unhighlighted name needs to mask the line behind it —
- * otherwise it reads as struck through. A scale dot already does that job, so
- * the backing only appears where there is no dot. */
-export function guitarLabelBackingClass(role: ScaleRole): string | null {
-  if (role) return null
-
-  return 'rounded-full bg-(--p-surface-50) px-1 dark:bg-(--p-surface-800)'
-}
+/*
+ * An unhighlighted name used to carry a pill in the board's own colour, to mask
+ * the string line running down the middle of its column. Removed: the pill is
+ * invisible against the board it matches, so its only other effect was to punch
+ * a pale disc through the green press glow, which a highlighted name (with a
+ * scale dot instead) never showed. The names have been semibold in the full text
+ * colour since the board's type was promoted, so a hairline string behind one
+ * no longer reads as a strike-through.
+ */
 
 /* The emphasized style is the fret button's own, so only the stepped-back state
  * needs an override — the muted grey these names carried before note names were

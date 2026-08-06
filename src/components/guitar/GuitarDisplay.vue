@@ -18,7 +18,6 @@ import {
   buildGuitarInlays,
   buildGuitarStringLines,
   guitarFretWireTop,
-  guitarLabelBackingClass,
   guitarLabelEmphasisClass,
   guitarScaleDotClass,
   guitarScaleLabelClass,
@@ -129,17 +128,8 @@ function scaleLabelClass(cell: GuitarCell): string | null {
   return guitarScaleLabelClass(scaleRole(cell))
 }
 
-function labelBackingClass(cell: GuitarCell): string | null {
-  return guitarLabelBackingClass(scaleRole(cell))
-}
-
-/* Whether a scale is picked at all, which decides how a cell with no scale role
- * reads: one of the notes a chosen scale leaves out, or just a note on a board
- * with no scale on it. */
-const isScaleActive = computed(() => (props.scaleRoot ?? null) !== null)
-
 function labelEmphasis(cell: GuitarCell): ScaleEmphasis {
-  return scaleEmphasisFor(scaleRole(cell), isScaleActive.value)
+  return scaleEmphasisFor(scaleRole(cell))
 }
 
 function labelEmphasisClass(cell: GuitarCell): string | null {
@@ -544,11 +534,7 @@ function handleClick(cell: GuitarCell) {
                 <span
                   v-if="cellLabel(cell)"
                   class="relative leading-none"
-                  :class="[
-                    scaleLabelClass(cell),
-                    labelBackingClass(cell),
-                    labelEmphasisClass(cell),
-                  ]"
+                  :class="[scaleLabelClass(cell), labelEmphasisClass(cell)]"
                 >
                   {{ cellLabel(cell) }}
                 </span>

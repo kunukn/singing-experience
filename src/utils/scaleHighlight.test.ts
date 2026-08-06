@@ -91,18 +91,15 @@ describe('scaleRoleForMidi', () => {
 
 describe('scaleEmphasisFor', () => {
   it('emphasizes every scale member', () => {
-    expect(scaleEmphasisFor('root', true)).toBe('emphasized')
-    expect(scaleEmphasisFor('scale', true)).toBe('emphasized')
+    expect(scaleEmphasisFor('root')).toBe('emphasized')
+    expect(scaleEmphasisFor('scale')).toBe('emphasized')
   })
 
-  it('steps back the notes a chosen scale leaves out', () => {
-    expect(scaleEmphasisFor(null, true)).toBe('diminished')
-  })
-
-  /* The case ScaleRole alone cannot tell apart from the one above: the same null
-   * role, but nothing was chosen to rank it against. */
-  it('emphasizes everything while highlighting is off', () => {
-    expect(scaleEmphasisFor(null, false)).toBe('emphasized')
+  /* Covers both null-role cases at once, which is the point of the rule: a note
+   * a chosen scale leaves out and every note on a board with no scale on it read
+   * the same way. Emphasis is earned by membership, and neither has any. */
+  it('steps back every note that belongs to no scale', () => {
+    expect(scaleEmphasisFor(null)).toBe('diminished')
   })
 })
 

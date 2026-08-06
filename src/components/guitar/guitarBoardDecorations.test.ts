@@ -4,7 +4,6 @@ import {
   buildGuitarInlays,
   buildGuitarStringLines,
   guitarFretWireTop,
-  guitarLabelBackingClass,
   guitarLabelEmphasisClass,
   guitarScaleDotClass,
   guitarScaleLabelClass,
@@ -185,12 +184,6 @@ describe('scale highlight classes', () => {
   it('recolours the name so it survives the dot fill', () => {
     expect(guitarScaleLabelClass('root')).toBe('text-(--p-surface-0)')
     expect(guitarScaleLabelClass('scale')).toBe('text-(--p-surface-900)')
-  })
-
-  it('backs only the unhighlighted names, where no dot masks the string line', () => {
-    expect(guitarLabelBackingClass(null)).toContain('rounded-full')
-    expect(guitarLabelBackingClass('root')).toBeNull()
-    expect(guitarLabelBackingClass('scale')).toBeNull()
   })
 
   it('leaves an emphasized name to the fret button own style', () => {

@@ -30,20 +30,16 @@ export const DEFAULT_SCALE_HIGHLIGHT_MODE: ScaleHighlightMode = 'ionian'
 export type ScaleRole = 'root' | 'scale' | null
 
 /*
- * How prominently a note's name should be drawn. 'diminished' is the one state
- * ScaleRole cannot express on its own: a null role covers both "highlighting is
- * off" and "this note is outside the chosen scale", and only the second should
- * step back. Picking a scale is the user saying which tones matter, so the rest
- * recede; with no scale picked there is nothing to rank against and every name
- * stays emphasized.
+ * How prominently a note's name should be drawn. Emphasis is earned, not the
+ * default: only a note a chosen scale belongs to is promoted, so a board with no
+ * scale on it draws every name in the stepped-back reading. Nothing there ranks
+ * the notes, and promoting all of them equally would just be a louder board that
+ * says the same thing.
  */
 export type ScaleEmphasis = 'emphasized' | 'diminished'
 
-export function scaleEmphasisFor(
-  role: ScaleRole,
-  isScaleActive: boolean,
-): ScaleEmphasis {
-  return role || !isScaleActive ? 'emphasized' : 'diminished'
+export function scaleEmphasisFor(role: ScaleRole): ScaleEmphasis {
+  return role ? 'emphasized' : 'diminished'
 }
 
 export type ScaleRootOption = { pitchClass: number; label: string }
