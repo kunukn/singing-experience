@@ -142,6 +142,34 @@ describe('guitarFretWireTop', () => {
   })
 })
 
+describe('at a resized row height', () => {
+  const TALL_ROW = 38
+  const TALL_BOARD = GUITAR_FRET_ROW_COUNT * TALL_ROW
+
+  it('keeps the inlays centred in their taller rows', () => {
+    const [firstSingle] = buildGuitarInlays(STRING_WIDTH, TALL_ROW)
+    const [firstInlayFret] = SINGLE_INLAY_FRETS
+
+    expect(firstSingle.top + INLAY_DOT_SIZE / 2).toBe(
+      firstInlayFret * TALL_ROW + TALL_ROW / 2,
+    )
+  })
+
+  it('keeps the wires on the taller row boundaries, last one still tucked in', () => {
+    expect(guitarFretWireTop(0, TALL_BOARD, TALL_ROW)).toBe(TALL_ROW)
+    expect(guitarFretWireTop(3, TALL_BOARD, TALL_ROW)).toBe(4 * TALL_ROW)
+    expect(
+      guitarFretWireTop(GUITAR_FRET_ROW_COUNT - 1, TALL_BOARD, TALL_ROW),
+    ).toBe(TALL_BOARD - 1)
+  })
+
+  it('falls back to the base row when none is given', () => {
+    expect(buildGuitarInlays(STRING_WIDTH)).toEqual(
+      buildGuitarInlays(STRING_WIDTH, FRET_ROW_HEIGHT),
+    )
+  })
+})
+
 describe('scale highlight classes', () => {
   it('gives the root a deeper dot than the other scale tones', () => {
     expect(guitarScaleDotClass('root')).toBe('bg-(--p-blue-500)')

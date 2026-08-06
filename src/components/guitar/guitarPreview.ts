@@ -9,6 +9,7 @@ import {
 } from '@/utils/noteUtils'
 import type { AccidentalStyle } from './guitarAccidentals'
 import {
+  FRET_ROW_HEIGHT,
   GUITAR_MAX_FRET,
   guitarFretY,
   guitarMidiMax,
@@ -60,6 +61,7 @@ export function buildGuitarPreviewLane(
   input: GuitarPreviewInput & { laneId: GuitarPreviewLaneId },
   tuning: readonly number[],
   accidentalStyle: AccidentalStyle = 'sharp',
+  rowHeight: number = FRET_ROW_HEIGHT,
 ): GuitarPreviewLaneView | null {
   const { previewMidi, previewFrequency, previewNoteLabel, laneId } = input
   if (previewMidi === null || previewNoteLabel === null) return null
@@ -83,7 +85,7 @@ export function buildGuitarPreviewLane(
     )
       return
 
-    segments.push({ stringIndex, y: guitarFretY(fretPosition) })
+    segments.push({ stringIndex, y: guitarFretY(fretPosition, rowHeight) })
   })
 
   /* Cents relative to the snapped note, matching the pitch-detector indicator
@@ -119,10 +121,13 @@ export function buildGuitarPreviewLanes(
   inputs: Array<GuitarPreviewInput & { laneId: GuitarPreviewLaneId }>,
   tuning: readonly number[],
   accidentalStyle: AccidentalStyle = 'sharp',
+  rowHeight: number = FRET_ROW_HEIGHT,
 ): GuitarPreviewLaneView[] {
   /* Explicit arrow, not a bare reference: map would pass the index as the
    * tuning. */
   return inputs
-    .map((input) => buildGuitarPreviewLane(input, tuning, accidentalStyle))
+    .map((input) =>
+      buildGuitarPreviewLane(input, tuning, accidentalStyle, rowHeight),
+    )
     .filter((lane): lane is GuitarPreviewLaneView => lane !== null)
 }

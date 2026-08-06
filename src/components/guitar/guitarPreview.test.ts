@@ -1,7 +1,7 @@
 import { GUITAR_TUNINGS } from '@/utils/guitarTunings'
 import { midiToFrequency } from '@/utils/noteUtils'
 import { describe, expect, it } from 'vitest'
-import { FRET_ROW_HEIGHT, guitarFretY } from './guitarLayout'
+import { FRET_ROW_HEIGHT, buildGuitarLayout, guitarFretY } from './guitarLayout'
 import {
   buildGuitarPreviewLane,
   buildGuitarPreviewLanes,
@@ -172,5 +172,63 @@ describe('accidental spelling', () => {
     )
 
     expect(lane?.text).toBe('B♭2 +40¢')
+  })
+})
+
+describe('at a resized row height', () => {
+  const TALL_ROW = 38
+
+  /*
+   * The overlay is drawn over the same board as the cells, so if the two ever
+   * disagree about how tall a row is, the dashed line points at the wrong fret.
+   */
+  it('lands each segment on the centre of the cell it names', () => {
+    const layout = buildGuitarLayout(72, STANDARD, TALL_ROW)
+    const lane = buildGuitarPreviewLane(
+      laneAt(C3_MIDI, 'C3'),
+      STANDARD,
+      'sharp',
+      TALL_ROW,
+    )
+
+    lane?.segments.forEach((segment) => {
+      const cell = layout.cells.find(
+        (candidate) =>
+          candidate.stringIndex === segment.stringIndex &&
+          candidate.midi === C3_MIDI,
+      )
+
+      expect(segment.y).toBe((cell?.topPx ?? 0) + TALL_ROW / 2)
+    })
+  })
+
+  it('still moves one row per semitone', () => {
+    const lower = buildGuitarPreviewLane(
+      laneAt(C3_MIDI, 'C3'),
+      STANDARD,
+      'sharp',
+      TALL_ROW,
+    )
+    const higher = buildGuitarPreviewLane(
+      laneAt(C3_MIDI + 1, 'C♯3'),
+      STANDARD,
+      'sharp',
+      TALL_ROW,
+    )
+
+    higher?.segments.forEach((segment, index) => {
+      expect(segment.y - (lower?.segments[index].y ?? 0)).toBeCloseTo(TALL_ROW)
+    })
+  })
+
+  it('leaves the base size unchanged when no row height is given', () => {
+    expect(buildGuitarPreviewLane(laneAt(C3_MIDI, 'C3'), STANDARD)).toEqual(
+      buildGuitarPreviewLane(
+        laneAt(C3_MIDI, 'C3'),
+        STANDARD,
+        'sharp',
+        FRET_ROW_HEIGHT,
+      ),
+    )
   })
 })

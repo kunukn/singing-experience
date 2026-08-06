@@ -11,6 +11,7 @@ import type { ScaleRole } from '@/utils/scaleHighlight'
 import {
   DOUBLE_INLAY_FRET,
   FRET_ROW_HEIGHT,
+  FRET_WIRE_HEIGHT,
   GUITAR_STRING_COUNT,
   SINGLE_INLAY_FRETS,
 } from './guitarLayout'
@@ -43,10 +44,13 @@ export const INLAY_DOT_SIZE = 8 // px
  * leaving a gap of about half a dot between them. */
 const DOUBLE_INLAY_SPREAD = 7
 
-export function buildGuitarInlays(stringWidth: number): GuitarInlayDot[] {
+export function buildGuitarInlays(
+  stringWidth: number,
+  rowHeight: number = FRET_ROW_HEIGHT,
+): GuitarInlayDot[] {
   const centerLeft = INLAY_CENTER_STRING_OFFSET * stringWidth
   const top = (fret: number) =>
-    fret * FRET_ROW_HEIGHT + FRET_ROW_HEIGHT / 2 - INLAY_DOT_SIZE / 2
+    fret * rowHeight + rowHeight / 2 - INLAY_DOT_SIZE / 2
 
   return [
     ...SINGLE_INLAY_FRETS.map((fret) => ({
@@ -81,17 +85,18 @@ export function buildGuitarStringLines(
   }))
 }
 
-/* px — the hairline wire's own height, matching its h-px class. */
-const FRET_WIRE_HEIGHT = 1
-
 /*
  * A wire sits at the bottom of its fret's row. The last one would land at exactly
  * boardHeight and, being 1px tall, put the board's content 1px past its own box —
  * enough to give the scroller a permanent vertical scrollbar. Tuck that one
  * inside instead; at the board's bottom edge the difference is invisible.
  */
-export function guitarFretWireTop(fret: number, boardHeight: number): number {
-  return Math.min((fret + 1) * FRET_ROW_HEIGHT, boardHeight - FRET_WIRE_HEIGHT)
+export function guitarFretWireTop(
+  fret: number,
+  boardHeight: number,
+  rowHeight: number = FRET_ROW_HEIGHT,
+): number {
+  return Math.min((fret + 1) * rowHeight, boardHeight - FRET_WIRE_HEIGHT)
 }
 
 /* Scale highlight as a filled dot behind the note name — the chord-diagram

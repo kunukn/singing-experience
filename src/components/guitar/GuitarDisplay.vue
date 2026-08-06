@@ -9,7 +9,7 @@ import {
   type ScaleHighlightMode,
   type ScaleRole,
 } from '@/utils/scaleHighlight'
-import { useMediaQuery, useResizeObserver } from '@vueuse/core'
+import { useMediaQuery, useResizeObserver, useWindowSize } from '@vueuse/core'
 import type { AccidentalStyle } from './guitarAccidentals'
 import {
   INLAY_DOT_SIZE,
@@ -24,12 +24,14 @@ import { guitarFretLabel } from './guitarLabels'
 import {
   FRET_NUMBER_GUTTER,
   FRET_NUMBER_GUTTER_TOUCH,
-  FRET_ROW_HEIGHT,
+  FRET_WIRE_HEIGHT,
   GUITAR_FRET_ROW_COUNT,
   GUITAR_STRING_COUNT,
   MAX_STRING_WIDTH,
   MIN_STRING_WIDTH_POINTER,
   MIN_STRING_WIDTH_TOUCH,
+  NUT_HEIGHT,
+  buildGuitarBoardScale,
   buildGuitarLayout,
   type GuitarCell,
 } from './guitarLayout'
@@ -195,8 +197,27 @@ useResizeObserver(boardViewport, ([entry]) => {
   boardViewportHeight.value = entry.contentRect.height
 })
 
+/*
+ * Row height and everything that scales with it. Driven by the window rather
+ * than by a measured container: the board's own height is what we are solving
+ * for, so observing it would feed back on itself. Window height is an outside
+ * input and cannot.
+ */
+const { height: windowHeight } = useWindowSize()
+const boardScale = computed(() =>
+  buildGuitarBoardScale(windowHeight.value, isCoarsePointer.value),
+)
+
+/* The hover ring and press glow live in scoped CSS, which cannot read a ref —
+ * same v-bind bridge the glow's timing already uses. */
+const fretRingSize = computed(() => `${boardScale.value.fretRingSize}px`)
+
 const layout = computed(() =>
-  buildGuitarLayout(stringWidth.value, props.tuningMidi),
+  buildGuitarLayout(
+    stringWidth.value,
+    props.tuningMidi,
+    boardScale.value.rowHeight,
+  ),
 )
 
 /* Tint the fret-number column while it is acting as the strip you pan by. Same
@@ -215,7 +236,11 @@ const fretNumbers = Array.from(
 )
 
 function fretWireTop(fret: number): number {
-  return guitarFretWireTop(fret, layout.value.boardHeight)
+  return guitarFretWireTop(
+    fret,
+    layout.value.boardHeight,
+    layout.value.rowHeight,
+  )
 }
 
 /* px — the string-number row above the board. */
@@ -232,7 +257,9 @@ const stringLines = computed(() =>
   buildGuitarStringLines(layout.value.stringWidth),
 )
 
-const inlays = computed(() => buildGuitarInlays(layout.value.stringWidth))
+const inlays = computed(() =>
+  buildGuitarInlays(layout.value.stringWidth, layout.value.rowHeight),
+)
 
 /* Horizontal segment per string that can reach the sung pitch, plus one chip
  * per voice. Empty while nobody is singing. */
@@ -241,6 +268,7 @@ const previewLanes = computed(() =>
     props.previewLanes ?? [],
     props.tuningMidi,
     accidentalStyle.value,
+    layout.value.rowHeight,
   ),
 )
 
@@ -329,8 +357,11 @@ function handleClick(cell: GuitarCell) {
           <div
             v-for="stringNumber in stringNumbers"
             :key="`string-number-${stringNumber}`"
-            class="flex shrink-0 items-center justify-center text-[10px] text-(--p-text-muted-color) tabular-nums"
-            :style="{ width: `${layout.stringWidth}px` }"
+            class="flex shrink-0 items-center justify-center text-(--p-text-muted-color) tabular-nums"
+            :style="{
+              width: `${layout.stringWidth}px`,
+              fontSize: `${boardScale.gutterFontSize}px`,
+            }"
           >
             {{ stringNumber }}
           </div>
@@ -369,8 +400,11 @@ function handleClick(cell: GuitarCell) {
               <div
                 v-for="fret in fretNumbers"
                 :key="`fret-number-${fret}`"
-                class="flex items-center justify-center text-[10px] text-(--p-text-muted-color) tabular-nums"
-                :style="{ height: `${FRET_ROW_HEIGHT}px` }"
+                class="flex items-center justify-center text-(--p-text-muted-color) tabular-nums"
+                :style="{
+                  height: `${layout.rowHeight}px`,
+                  fontSize: `${boardScale.gutterFontSize}px`,
+                }"
               >
                 {{ fret }}
               </div>
@@ -422,10 +456,13 @@ function handleClick(cell: GuitarCell) {
                 class="pointer-events-none absolute inset-x-0"
                 :class="
                   fret === 0
-                    ? 'h-[3px] bg-(--p-text-color)'
-                    : 'h-px bg-(--p-content-border-color)'
+                    ? 'bg-(--p-text-color)'
+                    : 'bg-(--p-content-border-color)'
                 "
-                :style="{ top: `${fretWireTop(fret)}px` }"
+                :style="{
+                  top: `${fretWireTop(fret)}px`,
+                  height: `${fret === 0 ? NUT_HEIGHT : FRET_WIRE_HEIGHT}px`,
+                }"
                 aria-hidden="true"
               />
 
@@ -433,12 +470,13 @@ function handleClick(cell: GuitarCell) {
                 v-for="cell in layout.cells"
                 :key="`${cell.stringIndex}-${cell.fret}`"
                 type="button"
-                class="guitar-fret absolute flex touch-manipulation items-center justify-center text-[11px] text-(--p-text-muted-color) select-none"
+                class="guitar-fret absolute flex touch-manipulation items-center justify-center text-(--p-text-muted-color) select-none"
                 :style="{
                   insetInlineStart: `${cell.leftPx}px`,
                   top: `${cell.topPx}px`,
                   width: `${layout.stringWidth}px`,
-                  height: `${FRET_ROW_HEIGHT}px`,
+                  height: `${layout.rowHeight}px`,
+                  fontSize: `${boardScale.labelFontSize}px`,
                 }"
                 :data-testid="`guitar-fret-${cell.stringIndex}-${cell.fret}`"
                 :data-scale-role="scaleRole(cell) ?? undefined"
@@ -456,8 +494,12 @@ function handleClick(cell: GuitarCell) {
                  shows its scale membership. -->
                 <span
                   v-if="scaleDotClass(cell)"
-                  class="pointer-events-none absolute inset-0 m-auto h-5 w-5 rounded-full"
+                  class="pointer-events-none absolute inset-0 m-auto rounded-full"
                   :class="scaleDotClass(cell)"
+                  :style="{
+                    width: `${boardScale.scaleDotSize}px`,
+                    height: `${boardScale.scaleDotSize}px`,
+                  }"
                   aria-hidden="true"
                 />
 
@@ -530,10 +572,12 @@ function handleClick(cell: GuitarCell) {
   position: absolute;
   inset: 0;
   margin: auto;
-  /* 4px wider than the 20px scale dot, so the ring still shows on a tinted cell
-   * instead of hiding underneath it. 3px of clearance in a 30px row. */
-  width: 24px;
-  height: 24px;
+  /* 4px wider than the scale dot, so the ring still shows on a tinted cell
+   * instead of hiding underneath it, and 6px short of the row so it clears the
+   * fret wires. Both offsets come from buildGuitarBoardScale, which sizes the
+   * pair together as the rows grow. */
+  width: v-bind(fretRingSize);
+  height: v-bind(fretRingSize);
   border-radius: 9999px;
   box-shadow: 0 0 0 2px var(--guitar-fret-ring-color);
   opacity: 0;
@@ -576,8 +620,8 @@ function handleClick(cell: GuitarCell) {
 
 .guitar-fret-glow {
   /* The hover ring's footprint, filled rather than outlined. */
-  width: 24px;
-  height: 24px;
+  width: v-bind(fretRingSize);
+  height: v-bind(fretRingSize);
   /* The curve is ease-in shaped: opacity barely moves early on, so the green
    * holds, then drops away quickly. See fretGlowEasing for the control points. */
   animation: guitar-fret-glow v-bind(fretGlowDuration) v-bind(fretGlowEasing)
