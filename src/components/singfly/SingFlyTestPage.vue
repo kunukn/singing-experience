@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import {
-  NOTE_NAMES_HIGH_TO_LOW,
+  NOTE_OPTIONS_HIGH_TO_LOW,
   midiToNoteLabel,
   type NoteName,
 } from '@/utils/noteUtils'
@@ -92,7 +92,9 @@ watch(scrubSeconds, (seconds) => {
             <label class="text-xs text-(--p-text-muted-color)">Note</label>
             <PrimeSelect
               v-model="selectedNote"
-              :options="[...NOTE_NAMES_HIGH_TO_LOW]"
+              :options="[...NOTE_OPTIONS_HIGH_TO_LOW]"
+              optionLabel="label"
+              optionValue="value"
               :disabled="cheatButtons"
               class="min-w-20"
             />

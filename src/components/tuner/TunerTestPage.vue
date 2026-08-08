@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { NoteName } from '@/utils/noteUtils'
-import { NOTE_NAMES_HIGH_TO_LOW } from '@/utils/noteUtils'
+import { NOTE_OPTIONS_HIGH_TO_LOW } from '@/utils/noteUtils'
 import TunerDisplay from './TunerDisplay.vue'
 
 const { t } = useI18n()
@@ -43,7 +43,9 @@ const {
         <label class="text-xs text-(--p-text-muted-color)">Note</label>
         <PrimeSelect
           v-model="selectedNote"
-          :options="[...NOTE_NAMES_HIGH_TO_LOW]"
+          :options="[...NOTE_OPTIONS_HIGH_TO_LOW]"
+          optionLabel="label"
+          optionValue="value"
           class="min-w-20"
         />
       </div>

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { resolveCssColor, withAlpha } from '@/utils/cssColor'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { cleanColor, cleanColorRgb } from '@/utils/pitchColors'
@@ -64,27 +65,6 @@ const TIME_MARKER_INTERVAL_MS = 250
 const SUSTAINED_THRESHOLD_MS = 200
 /* Shorter threshold after a quick note transition — feels more responsive during runs */
 const SUSTAINED_PASSING_THRESHOLD_MS = 150
-
-/**
- * Read a PrimeVue CSS variable from :root at render time.
- * Returns the resolved color string (e.g. "#334155").
- */
-function getCssVar(name: string): string {
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue(name)
-    .trim()
-}
-
-/**
- * Convert a hex color like "#334155" to an `rgba(r, g, b, alpha)` string.
- */
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`
-}
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
@@ -195,15 +175,15 @@ function drawChart() {
   ctx.clearRect(0, 0, width, height)
 
   /* Resolve PrimeVue theme colors once per frame */
-  const borderColor = getCssVar('--p-content-border-color')
-  const textColor = getCssVar('--p-text-color')
-  const contentBg = getCssVar('--p-content-background')
-  const gridLineColor = hexToRgba(borderColor, 0.5)
+  const borderColor = resolveCssColor('--p-content-border-color')
+  const textColor = resolveCssColor('--p-text-color')
+  const contentBg = resolveCssColor('--p-content-background')
+  const gridLineColor = withAlpha(borderColor, 0.5)
   const gridLineActiveColor = 'rgba(74, 222, 128, 0.5)'
   const markerDotColor = textColor
   const markerLabelColor = textColor
-  const labelBgColor = hexToRgba(contentBg, 0.9)
-  const headGlowColor = hexToRgba(textColor, 0.25)
+  const labelBgColor = withAlpha(contentBg, 0.9)
+  const headGlowColor = withAlpha(textColor, 0.25)
 
   const geom = computeGeometry(width, props.isRtl ?? false)
 

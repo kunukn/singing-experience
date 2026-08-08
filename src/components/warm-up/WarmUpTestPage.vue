@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { DEFAULT_RANGE_INDEX } from '@/constants/voiceRanges'
 import type { NoteName } from '@/utils/noteUtils'
-import { midiToFrequency, NOTE_NAMES } from '@/utils/noteUtils'
+import {
+  midiToFrequency,
+  NOTE_NAMES,
+  NOTE_OPTIONS_HIGH_TO_LOW,
+} from '@/utils/noteUtils'
 import WarmUpDisplay from './WarmUpDisplay.vue'
 import {
   DEFAULT_HOLD_DURATION_MS,
@@ -81,7 +85,9 @@ function snapToTarget() {
         <label class="text-xs text-(--p-text-muted-color)">Note</label>
         <PrimeSelect
           v-model="selectedNote"
-          :options="[...NOTE_NAMES].reverse()"
+          :options="[...NOTE_OPTIONS_HIGH_TO_LOW]"
+          optionLabel="label"
+          optionValue="value"
           class="min-w-20"
         />
       </div>

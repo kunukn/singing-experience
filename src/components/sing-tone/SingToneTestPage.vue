@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { NoteName } from '@/utils/noteUtils'
-import { midiToFrequency, NOTE_NAMES } from '@/utils/noteUtils'
+import {
+  midiToFrequency,
+  NOTE_NAMES,
+  NOTE_OPTIONS_HIGH_TO_LOW,
+} from '@/utils/noteUtils'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import SingToneDisplay from './SingToneDisplay.vue'
 import {
@@ -84,7 +88,9 @@ const overridePreviewFrequency = computed(() => {
         <label class="text-xs text-(--p-text-muted-color)">Note</label>
         <PrimeSelect
           v-model="selectedNote"
-          :options="[...NOTE_NAMES].reverse()"
+          :options="[...NOTE_OPTIONS_HIGH_TO_LOW]"
+          optionLabel="label"
+          optionValue="value"
           class="min-w-20"
         />
       </div>

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import type { ScaleMode } from '@/utils/noteUtils'
-import { NOTE_NAMES } from '@/utils/noteUtils'
+import {
+  NOTE_NAMES,
+  midiToNoteLabel,
+  toAccidentalGlyph,
+} from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import type { DoReMiGameResult } from './useDoReMiGame'
 import { SCALE_MODE_OPTIONS } from './useDoReMiGame'
@@ -126,7 +130,10 @@ const previewNoteLabel = computed(() => {
     const info = gameNoteInfo.value
     if (!info) return null
 
-    return `${info.note}${info.octave}`
+    /* The canonical label path, so this matches the glyph-converted labels the
+     * scale steps use — building the string by hand here left the preview
+     * spelling it "C#4" while the step beside it read "C♯4". */
+    return midiToNoteLabel(info.midiNote).label
   }
 
   return props.overridePreviewNoteLabel ?? rawPreviewNoteLabel.value
@@ -164,7 +171,10 @@ const startToneLabel = computed(() => {
   const first = scaleSteps.value[0]
   if (!first) return ''
 
-  return `${first.note}${first.octave}`
+  /* A ScaleStep carries note + octave but no MIDI, so the glyph conversion is
+   * applied directly rather than via midiToNoteLabel. NOTE_NAMES spells
+   * accidentals in ASCII ("C#"), which would otherwise leak into the copy. */
+  return toAccidentalGlyph(`${first.note}${first.octave}`)
 })
 
 watch(

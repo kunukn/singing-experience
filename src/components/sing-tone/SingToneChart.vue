@@ -6,6 +6,7 @@ import {
 } from '@/constants/chartStyles'
 import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
 import { getAdaptiveGridDivisions } from '@/utils/chartGrid'
+import { resolveCssColor, withAlpha } from '@/utils/cssColor'
 import type { MidiNoteLabel, NoteName } from '@/utils/noteUtils'
 import { midiToNoteLabel, noteToFrequency } from '@/utils/noteUtils'
 import { drawPitchLine } from '@/utils/pitchLineRenderer'
@@ -96,27 +97,6 @@ const ANIMATION_SPEED = 0.12
 /* Tracks whether the singer/preview line was drawn last frame, so we log
  * only on the first frame it becomes visible (not every animation tick). */
 let wasSingerLineDrawn = false
-
-/**
- * Read a PrimeVue CSS variable from :root at render time.
- * Returns the resolved color string (e.g. "#334155").
- */
-function getCssVar(name: string): string {
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue(name)
-    .trim()
-}
-
-/**
- * Convert a hex color like "#334155" to an `rgba(r, g, b, alpha)` string.
- */
-function hexToRgba(hex: string, alpha: number): string {
-  const r = parseInt(hex.slice(1, 3), 16)
-  const g = parseInt(hex.slice(3, 5), 16)
-  const b = parseInt(hex.slice(5, 7), 16)
-
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`
-}
 
 function midiToY(midi: number, height: number): number {
   const usableHeight = height - PADDING_TOP - PADDING_BOTTOM
@@ -246,13 +226,13 @@ function drawChart() {
   chartCenterXRef.value = chartCenterX
 
   /* Resolve PrimeVue theme colors for canvas drawing */
-  const textColor = getCssVar('--p-text-color') || '#334155'
-  const borderColor = getCssVar('--p-content-border-color') || '#e2e8f0'
+  const textColor = resolveCssColor('--p-text-color', '#334155')
+  const borderColor = resolveCssColor('--p-content-border-color', '#e2e8f0')
 
   /* Draw horizontal grid lines */
   ctx.lineWidth = 1
   const activeMidiValue = activeMidi.value
-  const gridLineGrey = hexToRgba(borderColor, 0.5)
+  const gridLineGrey = withAlpha(borderColor, 0.5)
   const gridLineGreen = 'rgba(74, 222, 128, 0.5)'
   for (const note of gridNotes.value) {
     const y = midiToY(note.midi, height)
@@ -290,7 +270,7 @@ function drawChart() {
       )
       ctx.strokeStyle = props.isSingingCorrectNote
         ? 'rgba(74, 222, 128, 0.6)'
-        : hexToRgba(textColor, 0.2)
+        : withAlpha(textColor, 0.2)
       ctx.lineWidth = 3
       ctx.stroke()
     }
@@ -300,7 +280,7 @@ function drawChart() {
     ctx.arc(chartCenterX, dotY, TARGET_GLOW_RADIUS, 0, Math.PI * 2)
     ctx.fillStyle = props.isSingingCorrectNote
       ? 'rgba(74, 222, 128, 0.15)'
-      : hexToRgba(textColor, 0.06)
+      : withAlpha(textColor, 0.06)
     ctx.fill()
 
     /* Solid dot */
@@ -314,7 +294,7 @@ function drawChart() {
     ctx.font = 'bold 14px monospace'
     ctx.fillStyle = props.isSingingCorrectNote
       ? 'rgba(74, 222, 128, 0.9)'
-      : hexToRgba(textColor, 0.7)
+      : withAlpha(textColor, 0.7)
     ctx.textAlign = 'end'
     ctx.textBaseline = 'middle'
     ctx.fillText(info.label, chartCenterX - TARGET_GLOW_RADIUS - 6, dotY)

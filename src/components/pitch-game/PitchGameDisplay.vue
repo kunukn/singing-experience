@@ -137,7 +137,7 @@ watch(
     if (!info || !clean) return
 
     lastCleanMidi.value = info.midiNote
-    lastCleanNoteLabel.value = `${info.note}${info.octave}`
+    lastCleanNoteLabel.value = midiToNoteLabel(info.midiNote).label
     lastCleanFrequency.value = info.frequency
   },
 )
@@ -255,7 +255,10 @@ const effectivePreviewNoteLabel = computed(() => {
     const info = noteInfo.value
     if (!info) return null
 
-    return `${info.note}${info.octave}`
+    /* The canonical label path, so this matches the sustained-note badges the
+     * chart draws from midiToNoteLabel — building the string by hand here left
+     * the live badge spelling it "C#4" while the badge beside it read "C♯4". */
+    return midiToNoteLabel(info.midiNote).label
   }
 
   return props.overridePreviewNoteLabel ?? previewNoteLabel.value

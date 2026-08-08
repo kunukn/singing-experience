@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { resolveCssColor } from '@/utils/cssColor'
 import { frequencyToMidi, midiToNoteLabel } from '@/utils/noteUtils'
 import { resolveEffectiveMidi } from '@/utils/pitchLineRenderer'
 import {
@@ -215,14 +216,6 @@ const prefersReducedMotion = window.matchMedia(
   '(prefers-reduced-motion: reduce)',
 ).matches
 
-/* Reads a PrimeVue theme variable so canvas text stays readable in light and
- * dark mode — same helper the sibling chart canvases use. */
-function getCssVar(name: string): string {
-  return getComputedStyle(document.documentElement)
-    .getPropertyValue(name)
-    .trim()
-}
-
 /* Live bird MIDI: prefer fractional MIDI derived from Hz for sub-semitone
  * precision; fall back to the integer currentMidi when only that's available.
  * Same source the collision logic reads, so the drawn bird and its hitbox
@@ -272,7 +265,7 @@ function drawPlayfield(ctx: CanvasRenderingContext2D, field: Playfield) {
    * appearance unchanged while a touch more prominent than the quieter
    * RANGE_LABEL_ALPHA markers since this is the scoring target. */
   ctx.globalAlpha = 0.85
-  ctx.fillStyle = getCssVar('--p-text-color')
+  ctx.fillStyle = resolveCssColor('--p-text-color')
   for (const pipe of field.pipes) {
     ctx.fillText(midiToNoteLabel(pipe.midi).label, pipe.centerX, pipe.gapY)
   }
@@ -313,7 +306,7 @@ function drawRangeLabels(
 
   ctx.save()
   ctx.globalAlpha = RANGE_LABEL_ALPHA
-  ctx.fillStyle = getCssVar('--p-text-color')
+  ctx.fillStyle = resolveCssColor('--p-text-color')
   ctx.font = 'bold 13px monospace'
   ctx.textAlign = props.isRtl ? 'start' : 'end'
   ctx.textBaseline = 'middle'
@@ -384,7 +377,7 @@ function drawPerchBoard(
   const boardX = centerX - PERCH_BOARD_HALF_WIDTH
 
   ctx.save()
-  ctx.fillStyle = getCssVar('--p-surface-400') || 'rgb(148, 163, 184)'
+  ctx.fillStyle = resolveCssColor('--p-surface-400', 'rgb(148, 163, 184)')
   ctx.beginPath()
   ctx.roundRect(
     boardX,
@@ -451,7 +444,7 @@ function drawTrace(
    * reads on --p-content-background in light/dark; higher opacity floor than
    * the dots since text needs to stay legible. */
   if (traceLabels.length > 0) {
-    const textColor = getCssVar('--p-text-color')
+    const textColor = resolveCssColor('--p-text-color')
     ctx.save()
     ctx.font = 'bold 12px monospace'
     ctx.textAlign = 'center'
@@ -552,7 +545,7 @@ function drawBird(
    * beside the bird on the background, not on the amber body). */
   const labelColor = isOutOfRange
     ? `rgba(234, 88, 12, ${alpha})`
-    : getCssVar('--p-text-color')
+    : resolveCssColor('--p-text-color')
   const LABEL_GAP = 6 // px between bird edge and label
   /* When out of range, nudge the label further past the chart edge it's
    * exceeding — reinforces "out of range" by pulling the label outside the
@@ -603,9 +596,9 @@ function drawHitboxes(
     gapHalfSemitones: props.gapHalfSemitones,
   })
 
-  const dangerColor = getCssVar('--p-red-500') || 'rgb(239, 68, 68)'
-  const mutedColor = getCssVar('--p-surface-400') || 'rgb(148, 163, 184)'
-  const birdBoxColor = getCssVar('--p-primary-color') || 'rgb(59, 130, 246)'
+  const dangerColor = resolveCssColor('--p-red-500', 'rgb(239, 68, 68)')
+  const mutedColor = resolveCssColor('--p-surface-400', 'rgb(148, 163, 184)')
+  const birdBoxColor = resolveCssColor('--p-primary-color', 'rgb(59, 130, 246)')
 
   ctx.save()
   ctx.lineWidth = 1.5

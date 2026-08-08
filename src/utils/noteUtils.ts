@@ -51,6 +51,16 @@ function toAccidentalGlyph(label: string): string {
   return label.replaceAll('#', '♯').replaceAll('b', '♭')
 }
 
+/* Ready-made PrimeSelect options for the note pickers, high to low. The value
+ * stays the ASCII NoteName the rest of the code compares and looks up against;
+ * only the visible label carries the glyph, so a picker never reads "C#" next
+ * to a chart that says "C♯". */
+const NOTE_OPTIONS_HIGH_TO_LOW: readonly { label: string; value: NoteName }[] =
+  NOTE_NAMES_HIGH_TO_LOW.map((note) => ({
+    label: toAccidentalGlyph(note),
+    value: note,
+  }))
+
 export type NoteInfo = {
   note: NoteName
   octave: number
@@ -641,6 +651,7 @@ export {
   midiToNoteLabel,
   NOTE_NAMES,
   NOTE_NAMES_HIGH_TO_LOW,
+  NOTE_OPTIONS_HIGH_TO_LOW,
   SCALE_MODE_GROUPS,
   SCALE_MODE_OPTIONS,
   SCALE_MODE_SEMITONES,

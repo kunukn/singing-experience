@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { ToneMode } from '@/composables/toneEngine'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
-import type { NoteInfo } from '@/utils/noteUtils'
+import { midiToNoteLabel, type NoteInfo } from '@/utils/noteUtils'
 import PitchDisplay from './PitchDisplay.vue'
 
 type PitchDetectionInput = {
@@ -137,7 +137,10 @@ const effectivePreviewNoteLabel = computed(() => {
     const info = noteInfo.value
     if (!info) return null
 
-    return `${info.note}${info.octave}`
+    /* The canonical label path, so this matches the sustained-note badges the
+     * chart draws from midiToNoteLabel — building the string by hand here left
+     * the live badge spelling it "C#4" while the badge beside it read "C♯4". */
+    return midiToNoteLabel(info.midiNote).label
   }
 
   return props.overridePreviewNoteLabel ?? previewNoteLabel.value

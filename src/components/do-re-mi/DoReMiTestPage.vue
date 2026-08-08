@@ -3,7 +3,7 @@ import type { NoteName, ScaleMode } from '@/utils/noteUtils'
 import {
   midiToFrequency,
   NOTE_NAMES,
-  NOTE_NAMES_HIGH_TO_LOW,
+  NOTE_OPTIONS_HIGH_TO_LOW,
 } from '@/utils/noteUtils'
 import DoReMiDisplay from './DoReMiDisplay.vue'
 import type { ScaleStep } from './useDoReMiGame'
@@ -92,7 +92,9 @@ function matchTarget(targetStep: ScaleStep | undefined) {
           <label class="text-xs text-(--p-text-muted-color)">Note</label>
           <PrimeSelect
             v-model="selectedNote"
-            :options="[...NOTE_NAMES_HIGH_TO_LOW]"
+            :options="[...NOTE_OPTIONS_HIGH_TO_LOW]"
+            optionLabel="label"
+            optionValue="value"
             class="min-w-20"
           />
         </div>
