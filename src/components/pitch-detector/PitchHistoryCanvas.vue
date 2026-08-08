@@ -1,43 +1,36 @@
 <script setup lang="ts">
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
-import type { NoteInfo } from '@/utils/noteUtils'
-import { midiToNoteLabel } from '@/utils/noteUtils'
 import { cleanColor, cleanColorRgb } from '@/utils/pitchColors'
 import { drawPitchLine } from '@/utils/pitchLineRenderer'
 
 import {
-  HISTORY_RETENTION_MS,
-  HISTORY_WINDOW_MS,
-  PAUSE_GAP_MS,
-} from './pitchConstants'
+  createPitchLaneRecorder,
+  pitchLaneExtent,
+  type PitchLaneRecorder,
+  type PitchSample,
+} from './pitchLaneRecorder'
+import {
+  PITCH_LANE_IDS,
+  type PitchLaneDetection,
+  type PitchLaneId,
+  type PitchPreviewLane,
+} from './pitchLanes'
+import { HISTORY_WINDOW_MS, PAUSE_GAP_MS } from './pitchConstants'
 
 type Props = {
-  noteInfo: NoteInfo | null
+  /* One entry per singing voice — one 'low' lane in single-voice mode, both
+   * lanes once "Two singers" is on. Only sampled while listening. */
+  laneDetections: PitchLaneDetection[]
+  /* The dashed live-pitch lines. Separate from laneDetections because these are
+   * deaf-gated, range-culled and already label-formatted by the parent. */
+  previewLanes: PitchPreviewLane[]
   isListening: boolean
-  isClean: boolean
   midiMin: number
   midiMax: number
   gridMidis: number[]
   activeMidi?: number | null
   replayProgress?: number | null
-  previewMidi?: number | null
-  previewNoteLabel?: string | null
-  previewFrequency?: number | null
   isRtl?: boolean
-}
-
-export type PitchSample = {
-  midiNote: number
-  timestamp: number
-  isClean: boolean
-  cents: number
-}
-
-type NoteMarker = {
-  midiNote: number
-  timestamp: number
-  label: string
-  showLabel: boolean
 }
 
 type MarkerHitArea = {
@@ -61,26 +54,55 @@ const PADDING_RIGHT = 16
 const CHART_INSET_RIGHT = 16
 /* Vertical grid line spacing — one marker every 250 ms for subtle time reference */
 const TIME_MARKER_INTERVAL_MS = 250
-/* How long a note must be held before a label marker appears on the chart */
-const SUSTAINED_THRESHOLD_MS = 200
-/* Shorter threshold after a quick note transition — feels more responsive during runs */
-const SUSTAINED_PASSING_THRESHOLD_MS = 150
+/* px above a dot that its name pill sits — shared by sustained markers and the
+ * live head dot, so the two read as one row of labels. */
+const LABEL_OFFSET_Y = 13
+/* px — a name pill is 14 px tall, so two heads closer than this would overlap
+ * their labels; the high lane's is lifted by one more row when they do. */
+const LABEL_COLLISION_Y = 26
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
-let samples: PitchSample[] = []
-let noteMarkers: NoteMarker[] = []
+/*
+ * One recorder per voice. Both are created up front and simply stay empty in
+ * single-voice mode — cheaper than allocating on the first duet frame, and it
+ * keeps every draw and reset path a plain loop over PITCH_LANE_IDS.
+ */
+const recorders: Record<PitchLaneId, PitchLaneRecorder> = {
+  low: createPitchLaneRecorder(),
+  high: createPitchLaneRecorder(),
+}
+
+/*
+ * Both voices keep the cents colouring (green → yellow → red), because each
+ * singer still needs to see whether they are in tune. The second voice is told
+ * apart by shape instead — a thinner spline and hollow dots — and only its head
+ * dot and name pill carry the blue that matches its dashed preview line.
+ */
+const LANE_TRAIL_STYLE: Record<
+  PitchLaneId,
+  {
+    lineWidth: number
+    dotRadius: number
+    isDotHollow: boolean
+    headTint: string | null
+  }
+> = {
+  low: { lineWidth: 4, dotRadius: 2, isDotHollow: false, headTint: null },
+  /* Hollow dots read lighter than filled ones at the same size, so the high
+   * lane's are a touch larger to keep both trails equally visible. */
+  high: {
+    lineWidth: 2,
+    dotRadius: 2.5,
+    isDotHollow: true,
+    headTint: 'rgba(96, 165, 250, 1)', // --p-blue-400
+  },
+}
+
 const markerHitAreas: MarkerHitArea[] = []
 let animationFrameId: number | null = null
 
 let pausedAt: number | null = null
-
-let sustainedMidi: number | null = null
-let sustainedStartTime = 0
-let lastMarkerTime = 0
-let lastSampleTime = 0
-let isFirstMarkerPending = true
-let wasTransition = false
 
 function midiToY(midi: number, height: number): number {
   const usableHeight = height - PADDING_TOP - PADDING_BOTTOM
@@ -126,154 +148,95 @@ function timeToX(timestamp: number, now: number, geom: ChartGeometry): number {
   return geom.nowEdgeX + (geom.labelAxisX - geom.nowEdgeX) * ratio
 }
 
-function drawPreviewIndicator(
+/* Every voice's dashed line, drawn at its own pitch in its own hue. */
+function drawPreviewIndicators(
   ctx: CanvasRenderingContext2D,
   geom: ChartGeometry,
   height: number,
 ) {
-  if (props.previewMidi == null || props.replayProgress != null) return
+  if (props.replayProgress != null) return
 
-  /* pitch-detector uses a forgiving 20¢ threshold so small wobbles don't
-   * surface a distracting cents number. */
-  drawPitchLine(ctx, {
-    midi: props.previewMidi,
-    frequency: props.previewFrequency ?? null,
-    height,
-    midiToY: (midi) => midiToY(midi, height),
-    lineX0: geom.chartLeftX,
-    lineX1: geom.chartRightX,
-    dotX: (geom.chartLeftX + geom.chartRightX) / 2,
-    centsThreshold: 20,
-    isRtl: props.isRtl ?? false,
-    noteLabel: props.previewNoteLabel,
-    /* While listening, keep only the dashed reference line: the center dot and
-     * label are redundant with the live head dot, which carries the label instead. */
-    showDot: !props.isListening,
-    showLabel: !props.isListening && !!props.previewNoteLabel,
-  })
+  for (const lane of props.previewLanes) {
+    if (lane.previewMidi == null) continue
+
+    /* pitch-detector uses a forgiving 20¢ threshold so small wobbles don't
+     * surface a distracting cents number. */
+    drawPitchLine(ctx, {
+      midi: lane.previewMidi,
+      frequency: lane.previewFrequency ?? null,
+      height,
+      midiToY: (midi) => midiToY(midi, height),
+      lineX0: geom.chartLeftX,
+      lineX1: geom.chartRightX,
+      dotX: (geom.chartLeftX + geom.chartRightX) / 2,
+      centsThreshold: 20,
+      isRtl: props.isRtl ?? false,
+      noteLabel: lane.previewNoteLabel,
+      isHighLane: lane.laneId === 'high',
+      /* While listening, keep only the dashed reference line: the center dot and
+       * label are redundant with the live head dot, which carries the label instead. */
+      showDot: !props.isListening,
+      showLabel: !props.isListening && !!lane.previewNoteLabel,
+    })
+  }
 }
 
-function drawChart() {
-  const canvas = canvasRef.value
-  if (!canvas) return
-
-  const ctx = canvas.getContext('2d')
-  if (!ctx) return
-
-  const dpr = window.devicePixelRatio || 1
-  const parent = canvas.parentElement
-  if (!parent) return
-
-  const rect = parent.getBoundingClientRect()
-  const width = rect.width
-  const height = rect.height
-
-  canvas.width = width * dpr
-  canvas.height = height * dpr
-  ctx.scale(dpr, dpr)
-
-  ctx.clearRect(0, 0, width, height)
-
-  /* Resolve PrimeVue theme colors once per frame */
-  const borderColor = resolveCssColor('--p-content-border-color')
-  const textColor = resolveCssColor('--p-text-color')
-  const contentBg = resolveCssColor('--p-content-background')
-  const gridLineColor = withAlpha(borderColor, 0.5)
-  const gridLineActiveColor = 'rgba(74, 222, 128, 0.5)'
-  const markerDotColor = textColor
-  const markerLabelColor = textColor
-  const labelBgColor = withAlpha(contentBg, 0.9)
-  const headGlowColor = withAlpha(textColor, 0.25)
-
-  const geom = computeGeometry(width, props.isRtl ?? false)
-
-  // Draw horizontal grid lines at octave boundaries
-  ctx.lineWidth = 1
-  const activeMidiValue = props.activeMidi
-
-  for (let i = 0; i < props.gridMidis.length; i++) {
-    const midi = props.gridMidis[i]
-    const y = midiToY(midi, height)
-    ctx.strokeStyle =
-      midi === activeMidiValue ? gridLineActiveColor : gridLineColor
-    ctx.beginPath()
-    ctx.moveTo(geom.chartLeftX, y)
-    ctx.lineTo(geom.chartRightX, y)
-    ctx.stroke()
-  }
-
-  // Draw vertical axis lines (label-side and far-side)
-  ctx.strokeStyle = gridLineColor
-  ctx.beginPath()
-  ctx.moveTo(geom.labelAxisX, PADDING_TOP)
-  ctx.lineTo(geom.labelAxisX, height - PADDING_BOTTOM)
-  ctx.stroke()
-
-  ctx.beginPath()
-  ctx.moveTo(geom.farAxisX, PADDING_TOP)
-  ctx.lineTo(geom.farAxisX, height - PADDING_BOTTOM)
-  ctx.stroke()
-
-  /* During replay, drive the entire rendering pipeline off a virtual `now`
-   * that advances from the oldest retained sample to the newest based on
-   * replayProgress. The visible 5 s window then scrolls naturally over the
-   * full retained history without any per-element replay logic. */
-  const isReplaying = props.replayProgress != null && samples.length > 0
-  const now = isReplaying
-    ? samples[0].timestamp +
-      (props.replayProgress as number) *
-        (samples[samples.length - 1].timestamp - samples[0].timestamp)
-    : (pausedAt ?? performance.now())
-
-  // Scrolling vertical time markers — march away from the live edge toward the label edge
-  {
-    const usableWidth = geom.chartRightX - geom.chartLeftX
-    const offsetMs =
-      props.isListening || pausedAt !== null || isReplaying
-        ? now % TIME_MARKER_INTERVAL_MS
-        : 0
-    const offsetPx = (offsetMs / HISTORY_WINDOW_MS) * usableWidth
-    const stepPx = (TIME_MARKER_INTERVAL_MS / HISTORY_WINDOW_MS) * usableWidth
-    /* sign === 1: stepping leftward (LTR — live edge on right);
-     * sign === -1: stepping rightward (RTL — live edge on left) */
-    const sign = geom.farAxisX > geom.labelAxisX ? 1 : -1
-
-    ctx.lineWidth = 1
-    for (
-      let x = geom.farAxisX - sign * offsetPx;
-      sign * (x - geom.labelAxisX) > 0;
-      x -= sign * stepPx
-    ) {
-      // Skip lines that overlap the live-edge axis border
-      if (Math.abs(x - geom.farAxisX) < 0.5) continue
-
-      ctx.strokeStyle = gridLineColor
-      ctx.beginPath()
-      ctx.moveTo(x, PADDING_TOP)
-      ctx.lineTo(x, height - PADDING_BOTTOM)
-      ctx.stroke()
-    }
-  }
-
-  if (samples.length === 0) {
-    drawPreviewIndicator(ctx, geom, height)
-
-    return
-  }
-
-  // Clip all pitch drawing to the chart area so lines never overlap the labels.
-  ctx.save()
-  ctx.beginPath()
-  ctx.rect(
-    geom.chartLeftX,
-    PADDING_TOP,
-    geom.chartRightX - geom.chartLeftX,
-    height - PADDING_TOP - PADDING_BOTTOM,
+/* The label the head dot carries — its own lane's live preview name. */
+function previewLabelFor(laneId: PitchLaneId): string | null {
+  return (
+    props.previewLanes.find((lane) => lane.laneId === laneId)
+      ?.previewNoteLabel ?? null
   )
-  ctx.clip()
+}
 
-  // Draw smooth Catmull-Rom spline with per-segment cents-based coloring
-  ctx.lineWidth = 4
+/* The rounded name pill shared by sustained markers and live head dots.
+ * Returns its box so a marker can register it as a click target. */
+function drawLabelPill(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  centerX: number,
+  centerY: number,
+  backgroundColor: string,
+  textColor: string,
+): { x: number; y: number; w: number; h: number } {
+  ctx.font = '12px monospace'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+
+  const textMetrics = ctx.measureText(text)
+  const padH = 3
+  const padV = 1
+  const bgW = textMetrics.width + padH * 2
+  const bgH = 12 + padV * 2
+  const bgX = centerX - bgW / 2
+  const bgY = centerY - bgH / 2
+  const bgR = 3 // corner radius for the label background pill
+
+  ctx.fillStyle = backgroundColor
+  ctx.beginPath()
+  ctx.roundRect(bgX, bgY, bgW, bgH, bgR)
+  ctx.fill()
+
+  ctx.fillStyle = textColor
+  ctx.fillText(text, centerX, centerY)
+
+  return { x: bgX, y: bgY, w: bgW, h: bgH }
+}
+
+/* The spline and dots for one voice. */
+function drawLaneTrail(
+  ctx: CanvasRenderingContext2D,
+  laneId: PitchLaneId,
+  samples: PitchSample[],
+  now: number,
+  geom: ChartGeometry,
+  height: number,
+) {
+  if (samples.length === 0) return
+
+  const style = LANE_TRAIL_STYLE[laneId]
+
+  ctx.lineWidth = style.lineWidth
   ctx.lineJoin = 'round'
   ctx.lineCap = 'round'
 
@@ -344,90 +307,223 @@ function drawChart() {
     const age = now - sample.timestamp
     // Fade old samples — 0.15 minimum so the oldest dots are still faintly visible
     const opacity = Math.max(0.15, 1 - age / HISTORY_WINDOW_MS)
+    const color = cleanColor(sample.cents, opacity)
 
     ctx.beginPath()
-    // Clean samples: 2 px dot; unclean: 1.5 px — visual hint of signal quality
-    ctx.arc(x, y, sample.isClean ? 2 : 1.5, 0, Math.PI * 2)
-    // Unclean samples rendered at 60% opacity to dim them relative to clean ones
-    ctx.fillStyle = sample.isClean
-      ? cleanColor(sample.cents, opacity)
-      : `rgba(250, 204, 21, ${opacity * 0.6})`
-    ctx.fill()
+    ctx.arc(x, y, style.dotRadius, 0, Math.PI * 2)
+    if (style.isDotHollow) {
+      /* 1 px ring — any heavier and a hollow dot reads as a filled one. */
+      ctx.lineWidth = 1
+      ctx.strokeStyle = color
+      ctx.stroke()
+    } else {
+      ctx.fillStyle = color
+      ctx.fill()
+    }
+  }
+}
+
+function drawChart() {
+  const canvas = canvasRef.value
+  if (!canvas) return
+
+  const ctx = canvas.getContext('2d')
+  if (!ctx) return
+
+  const dpr = window.devicePixelRatio || 1
+  const parent = canvas.parentElement
+  if (!parent) return
+
+  const rect = parent.getBoundingClientRect()
+  const width = rect.width
+  const height = rect.height
+
+  canvas.width = width * dpr
+  canvas.height = height * dpr
+  ctx.scale(dpr, dpr)
+
+  ctx.clearRect(0, 0, width, height)
+
+  /* Resolve PrimeVue theme colors once per frame */
+  const borderColor = resolveCssColor('--p-content-border-color')
+  const textColor = resolveCssColor('--p-text-color')
+  const contentBg = resolveCssColor('--p-content-background')
+  const gridLineColor = withAlpha(borderColor, 0.5)
+  const gridLineActiveColor = 'rgba(74, 222, 128, 0.5)'
+  const markerDotColor = textColor
+  const markerLabelColor = textColor
+  const labelBgColor = withAlpha(contentBg, 0.9)
+  const headGlowColor = withAlpha(textColor, 0.25)
+
+  const geom = computeGeometry(width, props.isRtl ?? false)
+
+  // Draw horizontal grid lines at octave boundaries
+  ctx.lineWidth = 1
+  const activeMidiValue = props.activeMidi
+
+  for (let i = 0; i < props.gridMidis.length; i++) {
+    const midi = props.gridMidis[i]
+    const y = midiToY(midi, height)
+    ctx.strokeStyle =
+      midi === activeMidiValue ? gridLineActiveColor : gridLineColor
+    ctx.beginPath()
+    ctx.moveTo(geom.chartLeftX, y)
+    ctx.lineTo(geom.chartRightX, y)
+    ctx.stroke()
+  }
+
+  // Draw vertical axis lines (label-side and far-side)
+  ctx.strokeStyle = gridLineColor
+  ctx.beginPath()
+  ctx.moveTo(geom.labelAxisX, PADDING_TOP)
+  ctx.lineTo(geom.labelAxisX, height - PADDING_BOTTOM)
+  ctx.stroke()
+
+  ctx.beginPath()
+  ctx.moveTo(geom.farAxisX, PADDING_TOP)
+  ctx.lineTo(geom.farAxisX, height - PADDING_BOTTOM)
+  ctx.stroke()
+
+  /* During replay, drive the entire rendering pipeline off a virtual `now`
+   * that advances from the oldest retained sample to the newest based on
+   * replayProgress. The visible 5 s window then scrolls naturally over the
+   * full retained history without any per-element replay logic.
+   *
+   * The extent spans BOTH voices, so a duet's two trails scrub together
+   * instead of each running on its own clock. */
+  const extent = pitchLaneExtent(PITCH_LANE_IDS.map((id) => recorders[id]))
+  const isReplaying = props.replayProgress != null && extent != null
+  const now =
+    isReplaying && extent
+      ? extent.firstTimestamp +
+        (props.replayProgress as number) *
+          (extent.lastTimestamp - extent.firstTimestamp)
+      : (pausedAt ?? performance.now())
+
+  // Scrolling vertical time markers — march away from the live edge toward the label edge
+  {
+    const usableWidth = geom.chartRightX - geom.chartLeftX
+    const offsetMs =
+      props.isListening || pausedAt !== null || isReplaying
+        ? now % TIME_MARKER_INTERVAL_MS
+        : 0
+    const offsetPx = (offsetMs / HISTORY_WINDOW_MS) * usableWidth
+    const stepPx = (TIME_MARKER_INTERVAL_MS / HISTORY_WINDOW_MS) * usableWidth
+    /* sign === 1: stepping leftward (LTR — live edge on right);
+     * sign === -1: stepping rightward (RTL — live edge on left) */
+    const sign = geom.farAxisX > geom.labelAxisX ? 1 : -1
+
+    ctx.lineWidth = 1
+    for (
+      let x = geom.farAxisX - sign * offsetPx;
+      sign * (x - geom.labelAxisX) > 0;
+      x -= sign * stepPx
+    ) {
+      // Skip lines that overlap the live-edge axis border
+      if (Math.abs(x - geom.farAxisX) < 0.5) continue
+
+      ctx.strokeStyle = gridLineColor
+      ctx.beginPath()
+      ctx.moveTo(x, PADDING_TOP)
+      ctx.lineTo(x, height - PADDING_BOTTOM)
+      ctx.stroke()
+    }
+  }
+
+  if (!extent) {
+    drawPreviewIndicators(ctx, geom, height)
+
+    return
+  }
+
+  // Clip all pitch drawing to the chart area so lines never overlap the labels.
+  ctx.save()
+  ctx.beginPath()
+  ctx.rect(
+    geom.chartLeftX,
+    PADDING_TOP,
+    geom.chartRightX - geom.chartLeftX,
+    height - PADDING_TOP - PADDING_BOTTOM,
+  )
+  ctx.clip()
+
+  /* Low voice first so the high one's thinner trail stays legible on top. */
+  for (const laneId of PITCH_LANE_IDS) {
+    drawLaneTrail(ctx, laneId, recorders[laneId].samples, now, geom, height)
   }
 
   // Draw sustained-note markers (dot + label)
   markerHitAreas.length = 0
-  for (const marker of noteMarkers) {
-    const x = timeToX(marker.timestamp, now, geom)
-    const y = midiToY(marker.midiNote, height)
+  for (const laneId of PITCH_LANE_IDS) {
+    for (const marker of recorders[laneId].noteMarkers) {
+      const x = timeToX(marker.timestamp, now, geom)
+      const y = midiToY(marker.midiNote, height)
 
-    // Sustained marker dot: 4 px radius for visibility at chart scale
-    ctx.beginPath()
-    ctx.arc(x, y, 4, 0, Math.PI * 2)
-    ctx.fillStyle = markerDotColor
-    ctx.fill()
-
-    if (marker.showLabel) {
-      ctx.font = '12px monospace'
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
-
-      const labelX = x
-      const labelY = y - 13
-      const textMetrics = ctx.measureText(marker.label)
-      const padH = 3
-      const padV = 1
-      const bgW = textMetrics.width + padH * 2
-      const bgH = 12 + padV * 2
-      const bgX = labelX - bgW / 2
-      const bgY = labelY - bgH / 2
-      const bgR = 3 // corner radius for the label background pill
-
-      ctx.fillStyle = labelBgColor
+      // Sustained marker dot: 4 px radius for visibility at chart scale
       ctx.beginPath()
-      ctx.roundRect(bgX, bgY, bgW, bgH, bgR)
+      ctx.arc(x, y, 4, 0, Math.PI * 2)
+      ctx.fillStyle = markerDotColor
       ctx.fill()
 
-      ctx.fillStyle = markerLabelColor
-      ctx.fillText(marker.label, labelX, labelY)
-
-      markerHitAreas.push({
-        x: bgX,
-        y: bgY,
-        w: bgW,
-        h: bgH,
-        midiNote: marker.midiNote,
-      })
+      if (marker.showLabel) {
+        const hitArea = drawLabelPill(
+          ctx,
+          marker.label,
+          x,
+          y - LABEL_OFFSET_Y,
+          labelBgColor,
+          markerLabelColor,
+        )
+        markerHitAreas.push({ ...hitArea, midiNote: marker.midiNote })
+      }
     }
   }
 
-  /* Capture the "live-edge" sample before restoring the clip so the head dot
-   * can be drawn unclipped. During replay, the live edge is the most recent
-   * sample with timestamp <= virtual now. */
-  let latestSample: PitchSample | null = null
-  if (isReplaying) {
-    for (let i = samples.length - 1; i >= 0; i--) {
-      if (samples[i].timestamp <= now) {
-        latestSample = samples[i]
-        break
+  /* Capture each voice's "live-edge" sample before restoring the clip so the
+   * head dots can be drawn unclipped. During replay, the live edge is the most
+   * recent sample with timestamp <= virtual now. */
+  const heads: Array<{ laneId: PitchLaneId; sample: PitchSample }> = []
+  for (const laneId of PITCH_LANE_IDS) {
+    const samples = recorders[laneId].samples
+    let latest: PitchSample | null = null
+
+    if (isReplaying) {
+      for (let i = samples.length - 1; i >= 0; i--) {
+        if (samples[i].timestamp <= now) {
+          latest = samples[i]
+          break
+        }
       }
+    } else {
+      latest = samples[samples.length - 1] ?? null
     }
-  } else {
-    latestSample = samples[samples.length - 1] ?? null
+
+    if (latest) heads.push({ laneId, sample: latest })
   }
 
   ctx.restore()
 
-  // Draw prominent head dot outside the clip so it is never cut off by the right boundary.
-  if (latestSample && latestSample.isClean) {
-    const headX = timeToX(latestSample.timestamp, now, geom)
-    const headY = midiToY(latestSample.midiNote, height)
-    const headColor = cleanColor(latestSample.cents, 1)
+  /* Two heads at nearly the same pitch would stack their name pills on top of
+   * each other, so the high voice's is lifted by one more row when they meet. */
+  const isHeadLabelColliding =
+    heads.length === 2 &&
+    Math.abs(
+      midiToY(heads[0].sample.midiNote, height) -
+        midiToY(heads[1].sample.midiNote, height),
+    ) < LABEL_COLLISION_Y
+
+  // Draw prominent head dots outside the clip so they are never cut off by the right boundary.
+  for (const head of heads) {
+    const sample = head.sample
+    const style = LANE_TRAIL_STYLE[head.laneId]
+    const headX = timeToX(sample.timestamp, now, geom)
+    const headY = midiToY(sample.midiNote, height)
+    const headColor = cleanColor(sample.cents, 1)
 
     // Head dot: outer glow ring (7 px) + solid color center (5 px)
     ctx.beginPath()
     ctx.arc(headX, headY, 7, 0, Math.PI * 2)
-    ctx.fillStyle = headGlowColor
+    ctx.fillStyle = style.headTint ?? headGlowColor
     ctx.fill()
 
     ctx.beginPath()
@@ -437,32 +533,26 @@ function drawChart() {
 
     /* While listening, the note label lives on the live head dot (not the
      * center preview dot). Drawn above the dot in the sustained-marker style. */
-    if (props.isListening && props.previewNoteLabel) {
-      ctx.font = '12px monospace'
-      ctx.textAlign = 'center'
-      ctx.textBaseline = 'middle'
+    const label = previewLabelFor(head.laneId)
+    if (props.isListening && label) {
+      const labelLift =
+        isHeadLabelColliding && head.laneId === 'high'
+          ? LABEL_OFFSET_Y + LABEL_COLLISION_Y
+          : LABEL_OFFSET_Y
 
-      const labelX = headX
-      const labelY = headY - 13 // px above the dot — matches sustained markers
-      const textMetrics = ctx.measureText(props.previewNoteLabel)
-      const padH = 3
-      const padV = 1
-      const bgW = textMetrics.width + padH * 2
-      const bgH = 12 + padV * 2
-      const bgR = 3 // corner radius for the label background pill
-
-      ctx.fillStyle = labelBgColor
-      ctx.beginPath()
-      ctx.roundRect(labelX - bgW / 2, labelY - bgH / 2, bgW, bgH, bgR)
-      ctx.fill()
-
-      ctx.fillStyle = markerLabelColor
-      ctx.fillText(props.previewNoteLabel, labelX, labelY)
+      drawLabelPill(
+        ctx,
+        label,
+        headX,
+        headY - labelLift,
+        labelBgColor,
+        style.headTint ?? markerLabelColor,
+      )
     }
   }
 
-  /* Idle preview indicator — orange circle + dashed line + optional note label */
-  drawPreviewIndicator(ctx, geom, height)
+  /* Idle preview indicator — dashed line + circle + optional note label */
+  drawPreviewIndicators(ctx, geom, height)
 }
 
 function renderLoop() {
@@ -487,93 +577,36 @@ function handleCanvasClick(event: MouseEvent) {
   if (props.isListening) return
 
   const { offsetX, offsetY } = event
-  const hit = markerHitAreas.find(
-    (area) =>
-      offsetX >= area.x &&
-      offsetX <= area.x + area.w &&
-      offsetY >= area.y &&
-      offsetY <= area.y + area.h,
-  )
+  /* Reverse order so the topmost pill wins where two voices overlap — the high
+   * lane's markers are painted last. */
+  const hit = markerHitAreas
+    .slice()
+    .reverse()
+    .find(
+      (area) =>
+        offsetX >= area.x &&
+        offsetX <= area.x + area.w &&
+        offsetY >= area.y &&
+        offsetY <= area.y + area.h,
+    )
   if (!hit) return
 
   emit('markerClick', hit.midiNote)
 }
 
+/* Record every clean frame, one buffer per voice. Gated on isListening because
+ * laneDetections also carries the idle preview, which must not end up in a
+ * recording. */
 watch(
-  () => props.noteInfo,
-  (info) => {
-    if (!info || !props.isClean) return
+  () => props.laneDetections,
+  (lanes) => {
+    if (!props.isListening) return
 
     const now = performance.now()
+    for (const lane of lanes) {
+      if (!lane.isClean || !lane.noteInfo) continue
 
-    /*
-     * Use fractional MIDI from the already-smoothed frequency to avoid
-     * integer semitone staircase jumps caused by Math.round in frequencyToNote.
-     * MIDI formula on the already-smoothed frequency for sub-semitone precision
-     */
-    const fractionalMidi = 12 * Math.log2(info.frequency / 440) + 69
-
-    samples.push({
-      midiNote: fractionalMidi,
-      timestamp: now,
-      isClean: props.isClean,
-      cents: info.cents,
-    })
-
-    const isPause = lastSampleTime > 0 && now - lastSampleTime > PAUSE_GAP_MS
-    lastSampleTime = now
-
-    // Detect sustained note — only place markers after holding for threshold
-    const roundedMidi = Math.round(fractionalMidi)
-    if (roundedMidi !== sustainedMidi || isPause) {
-      wasTransition =
-        sustainedMidi !== null &&
-        now - sustainedStartTime < SUSTAINED_THRESHOLD_MS
-      sustainedMidi = roundedMidi
-      sustainedStartTime = now
-      lastMarkerTime = 0
-      isFirstMarkerPending = true
-    } else {
-      const firstMarkerThreshold = wasTransition
-        ? SUSTAINED_PASSING_THRESHOLD_MS
-        : SUSTAINED_THRESHOLD_MS
-
-      if (
-        isFirstMarkerPending &&
-        now - sustainedStartTime >= firstMarkerThreshold
-      ) {
-        const noteLabel = midiToNoteLabel(roundedMidi)
-        noteMarkers.push({
-          midiNote: roundedMidi,
-          timestamp: now,
-          label: noteLabel.label,
-          showLabel: true,
-        })
-        lastMarkerTime = now
-        isFirstMarkerPending = false
-      } else if (
-        !isFirstMarkerPending &&
-        now - lastMarkerTime >= SUSTAINED_THRESHOLD_MS
-      ) {
-        const noteLabel = midiToNoteLabel(roundedMidi)
-        noteMarkers.push({
-          midiNote: roundedMidi,
-          timestamp: now,
-          label: noteLabel.label,
-          showLabel: false,
-        })
-        lastMarkerTime = now
-      }
-    }
-
-    // Prune old samples
-    const cutoff = now - HISTORY_RETENTION_MS
-    while (samples.length > 0 && samples[0].timestamp < cutoff) {
-      samples.shift()
-    }
-
-    while (noteMarkers.length > 0 && noteMarkers[0].timestamp < cutoff) {
-      noteMarkers.shift()
+      recorders[lane.laneId].push(lane.noteInfo, now)
     }
   },
 )
@@ -593,25 +626,36 @@ watch(
   () => drawChart(),
 )
 
+/* Any voice showing a live pitch is enough to keep the render loop running. */
+const hasPreviewPitch = computed(() =>
+  props.previewLanes.some((lane) => lane.previewMidi != null),
+)
+
+/* Everything the preview draws, flattened — so a moving frequency or label
+ * repaints even while the note itself holds. */
+const previewDigest = computed(() =>
+  props.previewLanes
+    .map(
+      (lane) =>
+        `${lane.laneId}:${lane.previewMidi}:${lane.previewFrequency}:${lane.previewNoteLabel}`,
+    )
+    .join('|'),
+)
+
 watch(
   () => props.isListening,
   (listening) => {
     if (listening) {
       pausedAt = null
-      samples = []
-      noteMarkers = []
-      sustainedMidi = null
-      sustainedStartTime = 0
-      lastMarkerTime = 0
-      lastSampleTime = 0
-      isFirstMarkerPending = true
-      wasTransition = false
+      for (const laneId of PITCH_LANE_IDS) {
+        recorders[laneId].reset()
+      }
       startRendering()
     } else {
       pausedAt = performance.now()
       drawChart()
       /* Keep rendering if the idle preview is active */
-      if (props.previewMidi == null) {
+      if (!hasPreviewPitch.value) {
         stopRendering()
       }
     }
@@ -630,32 +674,26 @@ watch(
   },
 )
 
-watch(
-  () => props.previewMidi,
-  (midi) => {
-    if (props.isListening) return
+watch(hasPreviewPitch, (hasPitch) => {
+  if (props.isListening) return
 
-    if (midi != null) {
-      startRendering()
-    } else if (props.replayProgress == null) {
-      drawChart()
-      stopRendering()
-    }
-  },
-)
-
-/* When previewMidi stays constant but the frequency or label moves (e.g. the
- * simulated cents slider on a test page), the existing previewMidi watcher
- * won't fire and the render loop may not be running — repaint explicitly. */
-watch(
-  () => [props.previewFrequency, props.previewNoteLabel],
-  () => {
-    if (props.isListening) return
-    if (props.previewMidi == null) return
-
+  if (hasPitch) {
+    startRendering()
+  } else if (props.replayProgress == null) {
     drawChart()
-  },
-)
+    stopRendering()
+  }
+})
+
+/* When the pitch holds but the frequency or label moves (e.g. the simulated
+ * cents slider on a test page), hasPreviewPitch won't fire and the render loop
+ * may not be running — repaint explicitly. */
+watch(previewDigest, () => {
+  if (props.isListening) return
+  if (!hasPreviewPitch.value) return
+
+  drawChart()
+})
 
 let resizeObserver: ResizeObserver | null = null
 
@@ -674,20 +712,20 @@ onMounted(() => {
   }
 })
 
-function getSamples(): PitchSample[] {
-  return [...samples]
+/* A copy per voice, so callers can hold on to a recording while the live
+ * buffers keep moving. */
+function getSamples(): Record<PitchLaneId, PitchSample[]> {
+  return {
+    low: [...recorders.low.samples],
+    high: [...recorders.high.samples],
+  }
 }
 
 function clearSamples() {
   pausedAt = null
-  samples = []
-  noteMarkers = []
-  sustainedMidi = null
-  sustainedStartTime = 0
-  lastMarkerTime = 0
-  lastSampleTime = 0
-  isFirstMarkerPending = true
-  wasTransition = false
+  for (const laneId of PITCH_LANE_IDS) {
+    recorders[laneId].reset()
+  }
   drawChart()
 }
 

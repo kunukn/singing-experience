@@ -76,4 +76,27 @@ describe('pitchLineColors', () => {
       label: 'rgba(251, 146, 60, 0.8)',
     })
   })
+
+  test('duet high lane in range → blue', () => {
+    const colors = pitchLineColors({ isOutOfRange: false, isHighLane: true })
+    expect(colors).toEqual({
+      line: 'rgba(96, 165, 250, 0.25)',
+      dot: 'rgba(96, 165, 250, 0.7)',
+      label: 'rgba(96, 165, 250, 0.8)',
+    })
+  })
+
+  test('out-of-range beats the high lane hue → red', () => {
+    const colors = pitchLineColors({ isOutOfRange: true, isHighLane: true })
+    expect(colors.dot).toBe('rgba(239, 68, 68, 0.7)')
+  })
+
+  test('on target beats the high lane hue → green', () => {
+    const colors = pitchLineColors({
+      isOutOfRange: false,
+      isCorrect: true,
+      isHighLane: true,
+    })
+    expect(colors.dot).toBe('rgba(74, 222, 128, 0.8)')
+  })
 })

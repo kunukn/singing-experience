@@ -1,51 +1,42 @@
 <script setup lang="ts">
 import { useDoReMiPlaySequence } from '@/components/do-re-mi/useDoReMiPlaySequence'
-import type { NoteInfo } from '@/utils/noteUtils'
 import { midiRangeToScaleNotes, NOTE_NAMES } from '@/utils/noteUtils'
-import NoteDisplay from './NoteDisplay.vue'
 import PitchHistoryChart from './PitchHistoryChart.vue'
 import PitchIdleControls from './PitchIdleControls.vue'
-import PitchStats from './PitchStats.vue'
+import PitchReadout from './PitchReadout.vue'
+import type { PitchSample } from './pitchLaneRecorder'
+import type {
+  PitchLaneDetection,
+  PitchLaneId,
+  PitchPreviewLane,
+} from './pitchLanes'
 import { usePitchReplay } from './usePitchReplay'
 
 type Props = {
-  noteInfo: NoteInfo | null
-  frequency: number | null
-  clarity: number
-  isClean: boolean
+  /* One entry per singing voice, already resolved by the parent to whichever
+   * detector is live (the recorder while listening, the idle preview when
+   * not). One 'low' lane in single-voice mode, both lanes in duet. */
+  laneDetections?: PitchLaneDetection[]
+  previewLanes?: PitchPreviewLane[]
   isListening: boolean
   midiMin?: number
   midiMax?: number
-  previewMidi?: number | null
-  previewNoteLabel?: string | null
-  previewFrequency?: number | null
   isPreviewEnabled?: boolean
-  previewNoteInfoFull?: NoteInfo | null
-  previewClarity?: number
-  previewIsClean?: boolean
-  previewRawFrequency?: number | null
   isMicPermissionGranted?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  laneDetections: () => [],
+  previewLanes: () => [],
   midiMin: 36,
   midiMax: 96,
-  previewMidi: null,
-  previewNoteLabel: null,
-  previewFrequency: null,
   isPreviewEnabled: false,
-  previewNoteInfoFull: null,
-  previewClarity: 0,
-  previewIsClean: false,
-  previewRawFrequency: null,
   isMicPermissionGranted: true,
 })
 
 const emit = defineEmits<{
   tonePlayed: []
 }>()
-
-const { t } = useI18n()
 
 const {
   isPlayingSequence,
@@ -83,6 +74,22 @@ function tickListenTimer() {
   listenRafId = requestAnimationFrame(tickListenTimer)
 }
 
+/* The wall-clock span of a finished recording, across every voice in it — a
+ * duet lasts from whoever came in first to whoever finished last. */
+function recordedSpanMs(
+  lanes: Record<PitchLaneId, PitchSample[]>,
+): number | null {
+  const recorded = Object.values(lanes).filter((samples) => samples.length > 0)
+  if (recorded.length === 0) return null
+
+  const first = Math.min(...recorded.map((samples) => samples[0].timestamp))
+  const last = Math.max(
+    ...recorded.map((samples) => samples[samples.length - 1].timestamp),
+  )
+
+  return last - first
+}
+
 watch(
   () => props.isListening,
   (listening) => {
@@ -98,15 +105,11 @@ watch(
       stopListenTimer()
       listenElapsedSeconds.value = null
       nextTick(() => {
-        const samples = pitchChartRef.value?.getSamples() ?? []
-        hasSamples.value = samples.length > 0
-        if (samples.length > 0) {
-          const durationMs =
-            samples[samples.length - 1].timestamp - samples[0].timestamp
-          recordedDurationSeconds.value = (durationMs / 1000).toFixed(1)
-        } else {
-          recordedDurationSeconds.value = null
-        }
+        const lanes = pitchChartRef.value?.getSamples() ?? { low: [], high: [] }
+        const spanMs = recordedSpanMs(lanes)
+        hasSamples.value = spanMs !== null
+        recordedDurationSeconds.value =
+          spanMs === null ? null : (spanMs / 1000).toFixed(1)
       })
     }
   },
@@ -149,12 +152,14 @@ function clearRecording() {
 function toggleReplay() {
   if (isReplaying.value) {
     stopReplay()
-  } else {
-    const samples = pitchChartRef.value?.getSamples() ?? []
-    if (samples.length > 0) {
-      replayPitchHistory(samples, { speed: replaySpeed.value })
-    }
+
+    return
   }
+
+  const lanes = pitchChartRef.value?.getSamples()
+  if (!lanes) return
+
+  replayPitchHistory(lanes, { speed: replaySpeed.value })
 }
 
 const pitchChartRef = ref<InstanceType<typeof PitchHistoryChart> | null>(null)
@@ -166,13 +171,13 @@ const rangeNotes = computed(() => {
 })
 
 const highlightedMidi = computed(() => {
-  const idx = currentPlayingIndex.value
-  if (idx < 0 || idx >= rangeNotes.value.length) return null
+  const index = currentPlayingIndex.value
+  if (index < 0 || index >= rangeNotes.value.length) return null
 
-  const n = rangeNotes.value[idx]
-  const noteIndex = NOTE_NAMES.indexOf(n.note)
+  const note = rangeNotes.value[index]
+  const noteIndex = NOTE_NAMES.indexOf(note.note)
 
-  return (n.octave + 1) * 12 + noteIndex
+  return (note.octave + 1) * 12 + noteIndex
 })
 
 function playSequence() {
@@ -185,45 +190,27 @@ function playSequence() {
   startSequence(rangeNotes.value)
 }
 
-type ReadoutSource = 'live' | 'preview' | 'none'
+/*
+ * Whether the readout row owns the cell. A finished recording takes it instead,
+ * so the Replay controls stay reachable even if the preview is on or a clean
+ * note is still lingering.
+ */
+const showReadout = computed(() => {
+  if (props.isListening) return true
+  if (hasSamples.value) return false
+  if (props.laneDetections.some((lane) => lane.noteInfo && lane.isClean))
+    return true
 
-const readoutSource = computed<ReadoutSource>(() => {
-  if (props.isListening) return 'live'
-  /* A finished recording owns the cell so the Replay controls stay reachable,
-   * even if preview is on or a clean note is still lingering. */
-  if (hasSamples.value) return 'none'
-  if (props.noteInfo && props.isClean) return 'live'
-  if (
+  return (
     props.isPreviewEnabled &&
     props.isMicPermissionGranted &&
     !isPlayingSequence.value
   )
-    return 'preview'
-
-  return 'none'
 })
 
-const showReadout = computed(() => readoutSource.value !== 'none')
-
-const readoutNoteInfo = computed(() =>
-  readoutSource.value === 'preview'
-    ? props.previewNoteInfoFull
-    : props.noteInfo,
-)
-
-const readoutIsClean = computed(() =>
-  readoutSource.value === 'preview' ? props.previewIsClean : props.isClean,
-)
-
-const readoutFrequency = computed(() =>
-  readoutSource.value === 'preview'
-    ? props.previewRawFrequency
-    : props.frequency,
-)
-
-const readoutClarity = computed(() =>
-  readoutSource.value === 'preview' ? props.previewClarity : props.clarity,
-)
+/* Duet shows two columns, so both shrink a step and each says whose voice it
+ * is; a single voice keeps the full-size, unlabelled readout. */
+const isDuet = computed(() => props.laneDetections.length > 1)
 
 defineExpose({ stopSequence, stopReplay, isPlayingSequence })
 </script>
@@ -235,24 +222,16 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
         class="flex w-full items-center justify-around gap-2 [grid-area:1/1] sm:gap-4"
         :class="showReadout ? 'visible' : 'pointer-events-none invisible'"
       >
-        <CentsDeviationBar
-          :cents="
-            readoutNoteInfo && readoutIsClean ? readoutNoteInfo.cents : null
-          "
-          :threshold="10"
-          :maxRange="100"
+        <PitchReadout
+          v-for="lane in props.laneDetections"
+          :key="lane.laneId"
+          :noteInfo="lane.noteInfo"
+          :isClean="lane.isClean"
+          :frequency="lane.frequency"
+          :clarity="lane.clarity"
           :isVisible="showReadout"
-          :highLabel="t('pitchDetector.sharp')"
-          :lowLabel="t('pitchDetector.flat')"
-          height="h-30 sm:h-40"
-        />
-
-        <NoteDisplay :noteInfo="readoutNoteInfo" :isClean="readoutIsClean" />
-
-        <PitchStats
-          :frequency="readoutFrequency"
-          :clarity="readoutClarity"
-          :isListening="showReadout"
+          :laneId="isDuet ? lane.laneId : undefined"
+          :isCompact="isDuet"
         />
       </div>
 
@@ -280,16 +259,13 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
     <!-- Pitch history chart -->
     <PitchHistoryChart
       ref="pitchChartRef"
-      :noteInfo="noteInfo"
+      :laneDetections="props.laneDetections"
+      :previewLanes="props.previewLanes"
       :isListening="isListening"
-      :isClean="isClean"
       :midiMin="props.midiMin"
       :midiMax="props.midiMax"
       :highlightedMidi="highlightedMidi"
       :replayProgress="replayProgress"
-      :previewMidi="props.previewMidi"
-      :previewNoteLabel="props.previewNoteLabel"
-      :previewFrequency="props.previewFrequency"
       @tonePlayed="emit('tonePlayed')"
     />
   </div>

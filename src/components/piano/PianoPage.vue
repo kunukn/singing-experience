@@ -7,7 +7,7 @@ import {
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
 import type { PianoPreviewLaneId } from './pianoPreview'
-import { useDuetPitchDetection, type DuetLane } from './useDuetPitchDetection'
+import type { DuetLane } from '@/composables/useDuetPitchDetection'
 
 /* Voice-range selector. The index lives here, not in the settings row, because
  * selectedRange also feeds the keyboard span and the duet band split. */

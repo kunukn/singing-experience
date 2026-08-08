@@ -217,6 +217,8 @@
     "sharp": "Sostenido ♯",
     "clarity": "Claridad",
     "cents": "cents",
+    "lowVoice": "Voz grave",
+    "highVoice": "Voz aguda",
     "replaySound": "Reproducir sonido\n(últimos 30 s)"
   },
   "voiceRanges": {

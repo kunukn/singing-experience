@@ -217,6 +217,8 @@
     "sharp": "偏高 ♯",
     "clarity": "清晰度",
     "cents": "音分",
+    "lowVoice": "低音",
+    "highVoice": "高音",
     "replaySound": "回放声音\n（最近30秒）"
   },
   "voiceRanges": {

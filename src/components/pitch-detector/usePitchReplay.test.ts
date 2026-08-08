@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest'
 import { usePitchReplay } from './usePitchReplay'
-import type { PitchSample } from './PitchHistoryCanvas.vue'
+import type { PitchSample } from './pitchLaneRecorder'
 
 function createMockSamples(count: number, startMidi = 60): PitchSample[] {
   const baseTimestamp = 1000
@@ -83,7 +83,7 @@ describe('usePitchReplay', () => {
     const { isReplaying, replayPitchHistory } = usePitchReplay()
     const samples = createMockSamples(10)
 
-    replayPitchHistory(samples)
+    replayPitchHistory({ low: samples })
 
     expect(isReplaying.value).toBe(true)
     expect(mockOscillator.start).toHaveBeenCalledTimes(1)
@@ -96,7 +96,7 @@ describe('usePitchReplay', () => {
     const { replayPitchHistory } = usePitchReplay()
     const samples = createMockSamples(5)
 
-    replayPitchHistory(samples)
+    replayPitchHistory({ low: samples })
 
     /* 1 initial setValueAtTime + 5 linearRampToValueAtTime calls */
     expect(mockFrequencyParam.setValueAtTime).toHaveBeenCalledTimes(1)
@@ -112,7 +112,7 @@ describe('usePitchReplay', () => {
       { midiNote: 62, timestamp: 1050, isClean: false, cents: 0 },
     ]
 
-    replayPitchHistory(samples)
+    replayPitchHistory({ low: samples })
 
     /* All samples are unclean — nothing should play */
     expect(isReplaying.value).toBe(false)
@@ -125,7 +125,7 @@ describe('usePitchReplay', () => {
     const { isReplaying, replayPitchHistory, stopReplay } = usePitchReplay()
     const samples = createMockSamples(10)
 
-    replayPitchHistory(samples)
+    replayPitchHistory({ low: samples })
     expect(isReplaying.value).toBe(true)
 
     stopReplay()
@@ -142,7 +142,7 @@ describe('usePitchReplay', () => {
     const { isReplaying, replayPitchHistory } = usePitchReplay()
     const samples = createMockSamples(5)
 
-    replayPitchHistory(samples)
+    replayPitchHistory({ low: samples })
     expect(isReplaying.value).toBe(true)
 
     /* Total duration: (4 * 50ms) samples + 100ms buffer = 300ms */
@@ -154,9 +154,82 @@ describe('usePitchReplay', () => {
   test('should handle empty samples array without error', () => {
     const { isReplaying, replayPitchHistory } = usePitchReplay()
 
-    replayPitchHistory([])
+    replayPitchHistory({})
 
     expect(isReplaying.value).toBe(false)
+  })
+
+  test('should give each duet lane its own voice', () => {
+    const { mockCtx, mockOscillator } = mockAudioContextGlobal()
+
+    const { replayPitchHistory } = usePitchReplay()
+
+    replayPitchHistory({
+      low: createMockSamples(5, 48),
+      high: createMockSamples(5, 72),
+    })
+
+    expect(mockCtx.createOscillator).toHaveBeenCalledTimes(2)
+    expect(mockCtx.createGain).toHaveBeenCalledTimes(2)
+    expect(mockOscillator.start).toHaveBeenCalledTimes(2)
+  })
+
+  test('should schedule both duet lanes against one shared time origin', () => {
+    const { mockFrequencyParam } = mockAudioContextGlobal()
+
+    const { replayPitchHistory } = usePitchReplay()
+
+    /* The low voice opens at t=1000; the high one comes in 200 ms later. That
+     * 200 ms gap has to survive playback, or the lanes collapse onto the same
+     * downbeat. */
+    replayPitchHistory({
+      low: [
+        { midiNote: 48, timestamp: 1000, isClean: true, cents: 0 },
+        { midiNote: 48, timestamp: 1400, isClean: true, cents: 0 },
+      ],
+      high: [
+        { midiNote: 72, timestamp: 1200, isClean: true, cents: 0 },
+        { midiNote: 72, timestamp: 1400, isClean: true, cents: 0 },
+      ],
+    })
+
+    const rampTimes = mockFrequencyParam.linearRampToValueAtTime.mock.calls.map(
+      (call) => call[1],
+    )
+
+    /* ctx.currentTime is 0 in the mock, so offsets are the absolute times. */
+    expect(rampTimes).toContain(0) // low lane's first sample, at the origin
+    expect(rampTimes).toContain(0.2) // high lane's entry, 200 ms in
+    expect(rampTimes).toContain(0.4) // both lanes' last sample
+  })
+
+  test('should ignore a lane that recorded nothing', () => {
+    const { mockCtx } = mockAudioContextGlobal()
+
+    const { isReplaying, replayPitchHistory } = usePitchReplay()
+
+    replayPitchHistory({ low: createMockSamples(5), high: [] })
+
+    expect(isReplaying.value).toBe(true)
+    expect(mockCtx.createOscillator).toHaveBeenCalledTimes(1)
+  })
+
+  test('should tear down every duet voice on stopReplay', () => {
+    const { mockOscillator, mockGainNode } = mockAudioContextGlobal()
+
+    const { replayPitchHistory, stopReplay } = usePitchReplay()
+
+    replayPitchHistory({
+      low: createMockSamples(5, 48),
+      high: createMockSamples(5, 72),
+    })
+    mockOscillator.disconnect.mockClear()
+    mockGainNode.disconnect.mockClear()
+
+    stopReplay()
+
+    expect(mockOscillator.disconnect).toHaveBeenCalledTimes(2)
+    expect(mockGainNode.disconnect).toHaveBeenCalledTimes(2)
   })
 
   test('should stop previous replay when starting a new one', () => {
@@ -165,12 +238,12 @@ describe('usePitchReplay', () => {
     const { replayPitchHistory } = usePitchReplay()
     const samples = createMockSamples(5)
 
-    replayPitchHistory(samples)
+    replayPitchHistory({ low: samples })
 
     /* Reset to track the second call's oscillator */
     const firstStop = mockOscillator.stop.mock.calls.length
 
-    replayPitchHistory(samples)
+    replayPitchHistory({ low: samples })
 
     /* stopReplay called internally — oscillator.stop called again for cleanup */
     expect(mockOscillator.stop.mock.calls.length).toBeGreaterThan(firstStop)
@@ -187,7 +260,7 @@ describe('usePitchReplay', () => {
     const { replayProgress, replayPitchHistory } = usePitchReplay()
     const samples = createMockSamples(10)
 
-    replayPitchHistory(samples)
+    replayPitchHistory({ low: samples })
 
     expect(replayProgress.value).toBe(0)
   })
@@ -199,7 +272,7 @@ describe('usePitchReplay', () => {
     /* 10 samples × 50ms = 450ms span; at 2× scaled to 225ms + 100ms buffer = 325ms total */
     const samples = createMockSamples(10)
 
-    replayPitchHistory(samples, { speed: 2 })
+    replayPitchHistory({ low: samples }, { speed: 2 })
     expect(isReplaying.value).toBe(true)
 
     /* Halfway through scaled duration — should still be playing */
@@ -217,7 +290,7 @@ describe('usePitchReplay', () => {
     const { replayProgress, replayPitchHistory, stopReplay } = usePitchReplay()
     const samples = createMockSamples(10)
 
-    replayPitchHistory(samples)
+    replayPitchHistory({ low: samples })
     expect(replayProgress.value).toBe(0)
 
     stopReplay()

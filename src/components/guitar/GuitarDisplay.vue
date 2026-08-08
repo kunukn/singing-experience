@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { DuetLane } from '@/components/piano/useDuetPitchDetection'
+import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import {

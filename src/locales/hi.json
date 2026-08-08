@@ -217,6 +217,8 @@
     "sharp": "ऊँचा ♯",
     "clarity": "स्पष्टता",
     "cents": "सेंट्स",
+    "lowVoice": "नीची आवाज़",
+    "highVoice": "ऊँची आवाज़",
     "replaySound": "ध्वनि पुनः चलाएँ\n(पिछले ३० सेकंड)"
   },
   "voiceRanges": {

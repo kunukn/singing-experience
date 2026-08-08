@@ -1,8 +1,5 @@
 <script setup lang="ts">
-import {
-  useDuetPitchDetection,
-  type DuetLane,
-} from '@/components/piano/useDuetPitchDetection'
+import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import {
   DEFAULT_GUITAR_TUNING_ID,
   GUITAR_TUNINGS,

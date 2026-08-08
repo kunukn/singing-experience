@@ -13,20 +13,21 @@ import {
   isPitchInBand,
   rootMeanSquare,
   shouldShowHighLane,
-} from './duetBandSplit'
+} from '@/utils/duetBandSplit'
 
 /*
- * Two-singer pitch preview for the piano.
+ * Two-singer pitch detection, shared by the piano, the guitar and the pitch
+ * detector.
  *
  * One microphone stream and one AudioContext, fanned out to two band-filtered
  * analysers so a low voice and a high voice can be detected at once. Each band
- * gets its own monophonic detector; see duetBandSplit.ts for why the split is
- * needed and how the high band is gated against a solo singer's harmonics.
+ * gets its own monophonic detector; see @/utils/duetBandSplit for why the split
+ * is needed and how the high band is gated against a solo singer's harmonics.
  *
  * Deliberately separate from usePitchDetection/useIdlePreview rather than an
- * option on them: those two are shared by ten other features, and this is the
- * only place that needs a second lane. The handful of duplicated constants
- * below are noted with usePitchDetection.ts as their source of truth.
+ * option on them: those two are shared by ten other features, and none of them
+ * wants a second lane. The handful of duplicated constants below are noted with
+ * usePitchDetection.ts as their source of truth.
  */
 
 /* Mirrors usePitchDetection.ts — practical singing range, ~B1 to ~F#6. */
@@ -60,6 +61,33 @@ const EMPTY_LANE: DuetLane = {
   previewNoteLabel: null,
 }
 
+/*
+ * The full reading for one band, for callers that record rather than preview —
+ * the pitch detector's history chart needs cents (via noteInfo) and clarity,
+ * which DuetLane throws away.
+ *
+ * Deliberately NOT gated by the deaf period, unlike DuetLane: the single-voice
+ * recorder (usePitchDetection) has no deaf period at all, so a tone played from
+ * a chart label lands in the recording today. Blanking it here would make duet
+ * recordings drop notes the single-voice ones keep.
+ */
+export type DuetLaneDetection = {
+  noteInfo: NoteInfo | null
+  frequency: number | null
+  clarity: number
+  /* readLane only ever yields a noteInfo once the clarity threshold, band
+   * membership, range bounds and onset debounce have all passed — so a lane
+   * with a note is by definition a clean one. */
+  isClean: boolean
+}
+
+const EMPTY_LANE_DETECTION: DuetLaneDetection = {
+  noteInfo: null,
+  frequency: null,
+  clarity: 0,
+  isClean: false,
+}
+
 type DuetPitchDetectionOptions = {
   isEnabled: Ref<boolean>
   midiMin: MaybeRefOrGetter<number>
@@ -81,6 +109,7 @@ type LaneTracker = {
 type LaneReading = {
   frequency: number | null
   noteInfo: NoteInfo | null
+  clarity: number
   rms: number
 }
 
@@ -219,7 +248,7 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
       tracker.cleanSinceTimestamp = null
       tracker.smoothedFrequency = null
 
-      return { frequency: null, noteInfo: null, rms }
+      return { frequency: null, noteInfo: null, clarity: detectedClarity, rms }
     }
 
     tracker.smoothedFrequency =
@@ -234,7 +263,7 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
     }
 
     if (now - tracker.cleanSinceTimestamp < ONSET_DEBOUNCE_MS) {
-      return { frequency: null, noteInfo: null, rms }
+      return { frequency: null, noteInfo: null, clarity: detectedClarity, rms }
     }
 
     const reported = tracker.smoothedFrequency
@@ -244,6 +273,7 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
     return {
       frequency: Math.round(reported * 10) / 10, // 0.1 Hz precision
       noteInfo,
+      clarity: detectedClarity,
       rms,
     }
   }
@@ -262,7 +292,12 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
       lowRms: low.rms,
     })
       ? high
-      : { frequency: null, noteInfo: null, rms: high.rms }
+      : {
+          frequency: null,
+          noteInfo: null,
+          clarity: high.clarity,
+          rms: high.rms,
+        }
 
     if (isListening.value) {
       animationFrameId = requestAnimationFrame(() => tick(sampleRate))
@@ -355,6 +390,20 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
   const lowLane = computed(() => toLane(lowReading.value))
   const highLane = computed(() => toLane(highReading.value))
 
+  function toDetection(reading: LaneReading | null): DuetLaneDetection {
+    if (!isEnabled.value || !reading) return EMPTY_LANE_DETECTION
+
+    return {
+      noteInfo: reading.noteInfo,
+      frequency: reading.frequency,
+      clarity: reading.clarity,
+      isClean: reading.noteInfo !== null,
+    }
+  }
+
+  const lowDetection = computed(() => toDetection(lowReading.value))
+  const highDetection = computed(() => toDetection(highReading.value))
+
   const shouldListen = computed(
     () => isEnabled.value && micPermission.value === 'granted',
   )
@@ -412,6 +461,8 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
   return {
     lowLane,
     highLane,
+    lowDetection,
+    highDetection,
     isListening: readonly(isListening),
     micPermission,
     triggerDeafPeriod,

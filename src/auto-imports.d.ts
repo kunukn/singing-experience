@@ -98,6 +98,7 @@ declare global {
   const useDoReMiPlaySequence: typeof import('./composables/useDoReMiPlaySequence').useDoReMiPlaySequence
   const useDocumentDirection: typeof import('./composables/useDocumentDirection').useDocumentDirection
   const useDocumentMeta: typeof import('./composables/useDocumentMeta').useDocumentMeta
+  const useDuetPitchDetection: typeof import('./composables/useDuetPitchDetection').useDuetPitchDetection
   const useErrorToastStore: typeof import('./stores/useErrorToastStore').useErrorToastStore
   const useFaviconPermissionColor: typeof import('./composables/useFaviconPermissionColor').useFaviconPermissionColor
   const useFireConfetti: typeof import('./composables/useConfetti').useFireConfetti
@@ -145,6 +146,9 @@ declare global {
   // @ts-ignore
   export type { ToneLabelMode } from './composables/toneLabelMode'
   import('./composables/toneLabelMode')
+  // @ts-ignore
+  export type { DuetLane, DuetLaneDetection } from './composables/useDuetPitchDetection'
+  import('./composables/useDuetPitchDetection')
   // @ts-ignore
   export type { ScaleModeOptionItem } from './composables/useScaleModeOptions'
   import('./composables/useScaleModeOptions')
@@ -230,6 +234,7 @@ declare module 'vue' {
     readonly useDarkMode: UnwrapRef<typeof import('./composables/useDarkMode')['useDarkMode']>
     readonly useDocumentDirection: UnwrapRef<typeof import('./composables/useDocumentDirection')['useDocumentDirection']>
     readonly useDocumentMeta: UnwrapRef<typeof import('./composables/useDocumentMeta')['useDocumentMeta']>
+    readonly useDuetPitchDetection: UnwrapRef<typeof import('./composables/useDuetPitchDetection')['useDuetPitchDetection']>
     readonly useErrorToastStore: UnwrapRef<typeof import('./stores/useErrorToastStore')['useErrorToastStore']>
     readonly useFaviconPermissionColor: UnwrapRef<typeof import('./composables/useFaviconPermissionColor')['useFaviconPermissionColor']>
     readonly useGuitarSampler: UnwrapRef<typeof import('./composables/useGuitarSampler')['useGuitarSampler']>

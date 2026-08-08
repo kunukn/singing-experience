@@ -217,6 +217,8 @@
     "sharp": "مرتفع ♯",
     "clarity": "الوضوح",
     "cents": "سنت",
+    "lowVoice": "صوت منخفض",
+    "highVoice": "صوت عالٍ",
     "replaySound": "إعادة تشغيل الصوت\n(آخر 30 ثانية)"
   },
   "voiceRanges": {

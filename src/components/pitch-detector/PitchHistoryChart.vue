@@ -6,31 +6,34 @@ import {
 } from '@/constants/chartStyles'
 import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
 import { getAdaptiveGridDivisions } from '@/utils/chartGrid'
-import type { NoteInfo, NoteName } from '@/utils/noteUtils'
+import type { NoteName } from '@/utils/noteUtils'
 import { midiToNoteLabel, noteToFrequency } from '@/utils/noteUtils'
 import PitchHistoryCanvas from './PitchHistoryCanvas.vue'
+import type { PitchSample } from './pitchLaneRecorder'
+import type {
+  PitchLaneDetection,
+  PitchLaneId,
+  PitchPreviewLane,
+} from './pitchLanes'
 
 type Props = {
-  noteInfo: NoteInfo | null
+  /* One entry per singing voice — one in single-voice mode, two in duet. */
+  laneDetections?: PitchLaneDetection[]
+  previewLanes?: PitchPreviewLane[]
   isListening: boolean
-  isClean: boolean
   midiMin?: number
   midiMax?: number
   highlightedMidi?: number | null
   replayProgress?: number | null
-  previewMidi?: number | null
-  previewNoteLabel?: string | null
-  previewFrequency?: number | null
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  laneDetections: () => [],
+  previewLanes: () => [],
   midiMin: 36,
   midiMax: 84,
   highlightedMidi: null,
   replayProgress: null,
-  previewMidi: null,
-  previewNoteLabel: null,
-  previewFrequency: null,
 })
 
 const isRtl = useIsRtl()
@@ -161,8 +164,8 @@ onUnmounted(() => {
 
 const gridNoteCount = computed(() => gridNotes.value.length)
 
-function getSamples() {
-  return canvasComponentRef.value?.getSamples() ?? []
+function getSamples(): Record<PitchLaneId, PitchSample[]> {
+  return canvasComponentRef.value?.getSamples() ?? { low: [], high: [] }
 }
 
 function clearSamples() {
@@ -180,17 +183,14 @@ defineExpose({ gridNoteCount, getSamples, clearSamples })
   >
     <PitchHistoryCanvas
       ref="canvasComponentRef"
-      :noteInfo="noteInfo"
+      :laneDetections="props.laneDetections"
+      :previewLanes="props.previewLanes"
       :isListening="isListening"
-      :isClean="isClean"
       :midiMin="midiMin"
       :midiMax="midiMax"
       :gridMidis="gridMidis"
       :activeMidi="activeMidi"
       :replayProgress="replayProgress"
-      :previewMidi="props.previewMidi"
-      :previewNoteLabel="props.previewNoteLabel"
-      :previewFrequency="props.previewFrequency"
       :isRtl="isRtl"
       @markerClick="handleMarkerClick"
     />

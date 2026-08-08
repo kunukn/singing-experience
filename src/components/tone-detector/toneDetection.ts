@@ -20,7 +20,7 @@
  *    same way. Guessing at it from the even/odd partial balance is possible but
  *    fragile, and would cost accuracy on ordinary single notes.
  *
- *    Note this is the mirror of the piano's duet detection (duetBandSplit.ts),
+ *    Note this is the mirror of the duet detection (@/utils/duetBandSplit),
  *    which splits by frequency band and so CAN separate a twelfth while being
  *    weaker elsewhere. Neither approach beats the physics on exact octaves.
  */

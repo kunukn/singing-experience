@@ -7,7 +7,7 @@ import { midiToFrequency } from '@/utils/noteUtils'
  *
  * Every tunable in that scheme lives here, as a plain function over numbers,
  * so the behaviour is unit-testable without a Web Audio graph. The graph
- * itself is in useDuetPitchDetection.ts.
+ * itself is in @/composables/useDuetPitchDetection.
  *
  * The hard problem this file exists to solve: a voice singing C3 has strong
  * energy at C4, G4, C5… — its own harmonics. A highpass at C4 therefore passes

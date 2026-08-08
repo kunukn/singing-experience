@@ -49,6 +49,15 @@ const COLORS = {
     dot: 'rgba(251, 146, 60, 0.7)',
     label: 'rgba(251, 146, 60, 0.8)',
   },
+  /* The second singer in duet mode. Two dashed lines in the same colour are
+   * impossible to tell apart, so the high voice gets its own hue — the same
+   * blue (--p-blue-400, #60a5fa) the piano and guitar boards give their high
+   * lane. Alphas mirror inRange, which it stands in for. */
+  highLane: {
+    line: 'rgba(96, 165, 250, 0.25)',
+    dot: 'rgba(96, 165, 250, 0.7)',
+    label: 'rgba(96, 165, 250, 0.8)',
+  },
 } as const
 
 /**
@@ -88,13 +97,19 @@ export function clampPitchY(
 /**
  * The shared line/dot/label color triple. `isCorrect` (singer on target) wins
  * over `isOutOfRange`, matching the existing Tier-A ternaries.
+ *
+ * `isHighLane` is checked last, so it only replaces the ordinary in-range
+ * orange: on target or off the chart still reads green or red whichever singer
+ * produced it — those two say something about the pitch, not about who sang it.
  */
 export function pitchLineColors(state: {
   isOutOfRange: boolean
   isCorrect?: boolean
+  isHighLane?: boolean
 }): { line: string; dot: string; label: string } {
   if (state.isCorrect) return COLORS.correct
   if (state.isOutOfRange) return COLORS.outOfRange
+  if (state.isHighLane) return COLORS.highLane
 
   return COLORS.inRange
 }
@@ -112,6 +127,9 @@ type DrawPitchLineOptions = {
   /* Dot + label anchor X. */
   dotX: number
   isCorrect?: boolean
+  /* Draw this line as the duet high voice (blue) rather than the low/only one
+   * (orange). See pitchLineColors. */
+  isHighLane?: boolean
   /* Draw the note label at all. PitchHistory passes false when it has no
    * resolved preview label (matching its old `if (previewNoteLabel)` guard). */
   showLabel?: boolean
@@ -148,6 +166,7 @@ export function drawPitchLine(
     lineX1,
     dotX,
     isCorrect = false,
+    isHighLane = false,
     showLabel = true,
     showDot = true,
     hideLabelWhenCorrect = false,
@@ -166,7 +185,7 @@ export function drawPitchLine(
     paddingTop,
     paddingBottom,
   )
-  const colors = pitchLineColors({ isOutOfRange, isCorrect })
+  const colors = pitchLineColors({ isOutOfRange, isCorrect, isHighLane })
 
   ctx.save()
 

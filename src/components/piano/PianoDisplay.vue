@@ -25,7 +25,7 @@ import {
   type PianoKey,
 } from './pianoLayout'
 import { buildPianoPreviewLines, type PianoPreviewLaneId } from './pianoPreview'
-import type { DuetLane } from './useDuetPitchDetection'
+import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import { usePianoKeyPlayback } from './usePianoKeyPlayback'
 import { usePianoKeyboardInput } from './usePianoKeyboardInput'
 
