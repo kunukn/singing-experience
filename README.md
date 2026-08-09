@@ -32,7 +32,7 @@ Everything is reachable from the home screen, split into **🎛️ Music Tools**
 | 🪕 Instrument Tuner | Guitar and ukulele tunings with a cents bar and an in-tune chime                                  |
 | 🎚️ Tone Detector    | Picks up several notes at once — sing or play a harmony and see every tone                        |
 
-**🎹 Piano** and **🎸 Guitar** are the newest additions. Tap a key or a fret to hear it, or turn the microphone on and watch your own voice light up the board. Both let you highlight a scale, show note names, and — on guitar — switch tuning. Piano adds a **two-singer mode** that splits the mic into a low and a high voice, so two people can sing together and each see their own line.
+The tools all listen to your voice in real time and show you where it lands — on a chart, a staff, a keyboard, or a fretboard. Tap a note to hear it, sing it back, and compare. Each tool has its own settings — voice range, reference pitch, scale highlighting, note names, tuning, and more.
 
 ### 🕹️ Singing Games
 
