@@ -11,14 +11,14 @@ import {
 const selectedRangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
 const holdDurationSec = useLocalStorage<number>(
-  'pitchGame.holdDurationSec',
+  'syng.pitchGameHoldDurationSec',
   0.1,
 )
 if (!HOLD_DURATION_OPTIONS.includes(holdDurationSec.value as HoldDurationSec)) {
   holdDurationSec.value = 0.1
 }
 
-const gameDurationSec = useLocalStorage<number>('pitchGame.gameDurationSec', 20)
+const gameDurationSec = useLocalStorage<number>('syng.pitchGameDurationSec', 20)
 if (!GAME_DURATION_OPTIONS.includes(gameDurationSec.value as GameDurationSec)) {
   gameDurationSec.value = 20
 }

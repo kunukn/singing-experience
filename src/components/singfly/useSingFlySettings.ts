@@ -17,7 +17,7 @@ export function useSingFlySettings() {
   const rangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
   const gameDurationSec = useLocalStorage<number>(
-    'singFly.gameDurationSec',
+    'syng.singFlyGameDurationSec',
     DEFAULT_GAME_DURATION_SEC,
   )
   if (
@@ -27,7 +27,7 @@ export function useSingFlySettings() {
   }
 
   const difficulty = useLocalStorage<Difficulty>(
-    'singFly.difficulty',
+    'syng.singFlyDifficulty',
     DEFAULT_DIFFICULTY,
   )
   if (!DIFFICULTY_OPTIONS.includes(difficulty.value)) {
