@@ -138,6 +138,7 @@ declare module 'vue' {
     TunerTestPage: typeof import('./components/tuner/TunerTestPage.vue')['default']
     UkuleleDisplay: typeof import('./components/ukulele/UkuleleDisplay.vue')['default']
     UkulelePage: typeof import('./components/ukulele/UkulelePage.vue')['default']
+    VoiceRangeSelect: typeof import('./components/generic/VoiceRangeSelect.vue')['default']
     WarmUpChart: typeof import('./components/warm-up/WarmUpChart.vue')['default']
     WarmUpDisplay: typeof import('./components/warm-up/WarmUpDisplay.vue')['default']
     WarmUpPage: typeof import('./components/warm-up/WarmUpPage.vue')['default']

@@ -211,6 +211,11 @@
     "replaySound": "Nipimik uteqqiigit\n(kingulleq 30 sek.)"
   },
   "voiceRanges": {
+    "groups": {
+      "easy": "Nemme valg",
+      "voiceTypes": "Stemmetyper",
+      "wide": "Brede lejer"
+    },
     "full": "Tamaq",
     "choir": "Erinarsoqatigiit",
     "tenorToSoprano": "Tenor–Soprano",

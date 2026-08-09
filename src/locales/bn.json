@@ -223,6 +223,11 @@
     "replaySound": "শব্দ পুনরায় চালান\n(শেষ ৩০ সেকেন্ড)"
   },
   "voiceRanges": {
+    "groups": {
+      "easy": "সহজ পছন্দ",
+      "voiceTypes": "কণ্ঠের ধরন",
+      "wide": "বড় পরিসর"
+    },
     "full": "সম্পূর্ণ",
     "choir": "কোরাস",
     "tenorToSoprano": "টেনর–সোপ্রানো",

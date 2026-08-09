@@ -7,13 +7,7 @@ import {
 
 const { t } = useI18n()
 
-type RangeOption = {
-  label: string
-  value: number
-}
-
 type Props = {
-  rangeOptions: RangeOption[]
   rangeLabel: string
 }
 
@@ -98,21 +92,10 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         rangeLabel
       }}</label>
-      <PrimeSelect
-        v-model="rangeIndex"
-        :options="rangeOptions"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('warmUp.voice') }}
-          </div>
-        </template></PrimeSelect
-      >
+      <VoiceRangeSelect
+        v-model:rangeIndex="rangeIndex"
+        :headerLabel="t('warmUp.voice')"
+      />
     </div>
 
     <div class="settings-item">

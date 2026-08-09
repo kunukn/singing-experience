@@ -1,13 +1,7 @@
 <script setup lang="ts">
 import type { ToneMode } from '@/composables/toneEngine'
 
-type RangeOption = {
-  label: string
-  value: number
-}
-
 type Props = {
-  rangeOptions: RangeOption[]
   rangeLabel: string
   micPermission: PermissionState | null
   error: string | null
@@ -43,7 +37,6 @@ const { t } = useI18n()
       v-model:gameDurationSec="gameDurationSec"
       v-model:rangeIndex="rangeIndex"
       v-model:toneMode="toneMode"
-      :rangeOptions="rangeOptions"
       :rangeLabel="rangeLabel"
     />
 

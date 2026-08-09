@@ -129,6 +129,7 @@ declare global {
   const useToneLabelModeOptions: typeof import('./composables/toneLabelMode').useToneLabelModeOptions
   const useToneModeStore: typeof import('./stores/useToneModeStore').useToneModeStore
   const useTonePlayer: typeof import('./composables/useTonePlayer').useTonePlayer
+  const useVoiceRangeGroups: typeof import('./composables/useVoiceRangeGroups').useVoiceRangeGroups
   const useVoiceRangeIndex: typeof import('./composables/useVoiceRangeIndex').useVoiceRangeIndex
   const watch: typeof import('vue').watch
   const watchEffect: typeof import('vue').watchEffect
@@ -155,6 +156,9 @@ declare global {
   // @ts-ignore
   export type { SimulatedSingerLaneId, SimulatedSingerState, SimulatedSinger } from './composables/useSimulatedSingers'
   import('./composables/useSimulatedSingers')
+  // @ts-ignore
+  export type { VoiceRangeOption, VoiceRangeGroup, VoiceRangeGroupsOptions } from './composables/useVoiceRangeGroups'
+  import('./composables/useVoiceRangeGroups')
 }
 
 // for vue template auto import
@@ -264,6 +268,7 @@ declare module 'vue' {
     readonly useToneLabelModeOptions: UnwrapRef<typeof import('./composables/toneLabelMode')['useToneLabelModeOptions']>
     readonly useToneModeStore: UnwrapRef<typeof import('./stores/useToneModeStore')['useToneModeStore']>
     readonly useTonePlayer: UnwrapRef<typeof import('./composables/useTonePlayer')['useTonePlayer']>
+    readonly useVoiceRangeGroups: UnwrapRef<typeof import('./composables/useVoiceRangeGroups')['useVoiceRangeGroups']>
     readonly useVoiceRangeIndex: UnwrapRef<typeof import('./composables/useVoiceRangeIndex')['useVoiceRangeIndex']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>

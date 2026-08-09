@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import type { ToneMode } from '@/composables/toneEngine'
-import { VOICE_RANGES } from '@/constants/voiceRanges'
-import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
   HOLD_DURATION_OPTIONS,
   PATTERN_SHORT_LABELS,
@@ -48,16 +46,6 @@ const durationOptions = [...HOLD_DURATION_OPTIONS].toReversed().map((sec) => ({
   label: `${sec}s`,
   value: sec,
 }))
-const voiceOptions = computed(() =>
-  WARM_UP_VOICE_RANGE_INDICES.map((index) => {
-    const range = VOICE_RANGES[index]
-
-    return {
-      label: `${t(range.labelKey)} (${midiToNoteLabel(range.midiMin).label})`,
-      value: index,
-    }
-  }),
-)
 const sequenceCountOptions = [...SEQUENCE_COUNT_OPTIONS]
   .toReversed()
   .map((n) => ({
@@ -133,21 +121,12 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('warmUp.voice')
       }}</label>
-      <PrimeSelect
-        v-model="rangeIndex"
-        :options="voiceOptions"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('warmUp.voice') }}
-          </div>
-        </template>
-      </PrimeSelect>
+      <VoiceRangeSelect
+        v-model:rangeIndex="rangeIndex"
+        :allowedIndices="WARM_UP_VOICE_RANGE_INDICES"
+        noteLabelMode="startNote"
+        :headerLabel="t('warmUp.voice')"
+      />
     </div>
 
     <div class="settings-item">

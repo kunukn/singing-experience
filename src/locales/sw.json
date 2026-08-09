@@ -223,6 +223,11 @@
     "replaySound": "Cheza sauti tena\n(sekunde 30 za mwisho)"
   },
   "voiceRanges": {
+    "groups": {
+      "easy": "Chaguo rahisi",
+      "voiceTypes": "Aina za sauti",
+      "wide": "Viwango vipana"
+    },
     "full": "Kamili",
     "choir": "Kwaya",
     "tenorToSoprano": "Tenori–Soprano",

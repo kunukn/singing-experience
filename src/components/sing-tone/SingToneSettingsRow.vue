@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ToneMode } from '@/composables/toneEngine'
-import { VOICE_RANGES } from '@/constants/voiceRanges'
 
 const rangeIndex = defineModel<number>('rangeIndex', { required: true })
 const durationSec = defineModel<number>('durationSec', { required: true })
@@ -14,13 +13,6 @@ const durationOptions = holdDurationOptions.map((sec) => ({
   value: sec,
 }))
 const ROUNDS_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-
-const rangeOptions = computed(() =>
-  VOICE_RANGES.map((range, index) => ({
-    label: `${t(range.labelKey)} (${range.noteRange})`,
-    value: index,
-  })),
-)
 
 const { setToneMode } = useTonePlayer()
 const { toneMode: storedToneMode } = storeToRefs(useToneModeStore())
@@ -47,21 +39,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('generic.voiceRange')
       }}</label>
-      <PrimeSelect
-        v-model="rangeIndex"
-        :options="rangeOptions"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('generic.voiceRange') }}
-          </div>
-        </template>
-      </PrimeSelect>
+      <VoiceRangeSelect v-model:rangeIndex="rangeIndex" />
     </div>
 
     <div class="settings-item">

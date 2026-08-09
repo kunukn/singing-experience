@@ -223,6 +223,11 @@
     "replaySound": "音を再生\n（直近30秒）"
   },
   "voiceRanges": {
+    "groups": {
+      "easy": "かんたん",
+      "voiceTypes": "声の種類",
+      "wide": "広い声域"
+    },
     "full": "フル",
     "choir": "合唱",
     "tenorToSoprano": "テノール–ソプラノ",

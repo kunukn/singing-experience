@@ -2,7 +2,6 @@
 import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import type { ToneMode } from '@/composables/toneEngine'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
-import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { useMediaQuery } from '@vueuse/core'
 
 type Props = {
@@ -37,13 +36,6 @@ const isCoarsePointer = useMediaQuery('(pointer: coarse)')
 
 const { t } = useI18n()
 
-const rangeOptions = computed(() =>
-  VOICE_RANGES.map((range, index) => ({
-    label: `${t(range.labelKey)} (${range.noteRange})`,
-    value: index,
-  })),
-)
-
 const toneLabelModeOptions = useToneLabelModeOptions()
 
 /* Tone-mode selector — mirrors PitchDetectorDisplay. Re-warm the AudioContext
@@ -77,21 +69,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('generic.voiceRange')
       }}</label>
-      <PrimeSelect
-        v-model="rangeIndex"
-        :options="rangeOptions"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('generic.voiceRange') }}
-          </div>
-        </template>
-      </PrimeSelect>
+      <VoiceRangeSelect v-model:rangeIndex="rangeIndex" />
     </div>
 
     <div class="settings-item">

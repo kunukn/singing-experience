@@ -57,13 +57,6 @@ const { frequency, noteInfo, clarity, isClean, error, start, stop } =
 
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
-const rangeOptions = computed(() =>
-  VOICE_RANGES.map((range, index) => ({
-    label: `${t(range.labelKey)} (${range.noteRange})`,
-    value: index,
-  })),
-)
-
 const { isPreviewEnabled } = useSettings()
 
 /* Force-disable idle preview (and the mic it would open) in simulated test pages */
@@ -323,22 +316,7 @@ onUnmounted(() => {
     data-testid="pitch-detector-display"
   >
     <div class="flex w-full flex-wrap items-center gap-2 sm:gap-4">
-      <PrimeSelect
-        v-model="rangeIndex"
-        :options="rangeOptions"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-        class="flex-1"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('generic.voiceRange') }}
-          </div>
-        </template>
-      </PrimeSelect>
+      <VoiceRangeSelect v-model:rangeIndex="rangeIndex" class="flex-1" />
 
       <div class="flex items-center gap-2">
         <label

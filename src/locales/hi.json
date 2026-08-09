@@ -223,6 +223,11 @@
     "replaySound": "ध्वनि पुनः चलाएँ\n(पिछले ३० सेकंड)"
   },
   "voiceRanges": {
+    "groups": {
+      "easy": "आसान विकल्प",
+      "voiceTypes": "आवाज़ के प्रकार",
+      "wide": "बड़ी सीमाएँ"
+    },
     "full": "पूर्ण",
     "choir": "कोरस",
     "tenorToSoprano": "टेनर–सोप्रानो",

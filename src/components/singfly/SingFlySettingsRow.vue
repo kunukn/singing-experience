@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { VOICE_RANGES } from '@/constants/voiceRanges'
 import {
   DIFFICULTY_OPTIONS,
   GAME_DURATION_OPTIONS,
@@ -13,13 +12,6 @@ const gameDurationSec = defineModel<number>('gameDurationSec', {
 })
 const difficulty = defineModel<Difficulty>('difficulty', { required: true })
 const rangeIndex = defineModel<number>('rangeIndex', { required: true })
-
-const rangeOptions = computed(() =>
-  VOICE_RANGES.map((range, index) => ({
-    label: `${t(range.labelKey)} (${range.noteRange})`,
-    value: index,
-  })),
-)
 
 const gameDurationOptions = [...GAME_DURATION_OPTIONS]
   .sort((a, b) => b - a)
@@ -86,21 +78,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('generic.voiceRange')
       }}</label>
-      <PrimeSelect
-        v-model="rangeIndex"
-        :options="rangeOptions"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-      >
-        <template #header>
-          <div
-            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
-          >
-            {{ t('generic.voiceRange') }}
-          </div>
-        </template>
-      </PrimeSelect>
+      <VoiceRangeSelect v-model:rangeIndex="rangeIndex" />
     </div>
   </div>
 </template>

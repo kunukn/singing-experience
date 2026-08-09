@@ -18,6 +18,7 @@ const RANGE: VoiceRange = {
   noteRange: 'C3–C5',
   midiMin: 48,
   midiMax: 72,
+  group: 'easy',
 }
 
 type Api = ReturnType<typeof useSingFly>

@@ -223,6 +223,11 @@
     "replaySound": "إعادة تشغيل الصوت\n(آخر 30 ثانية)"
   },
   "voiceRanges": {
+    "groups": {
+      "easy": "خيارات سهلة",
+      "voiceTypes": "أنواع الأصوات",
+      "wide": "نطاقات واسعة"
+    },
     "full": "كامل",
     "choir": "جوقة",
     "tenorToSoprano": "تينور–سوبرانو",

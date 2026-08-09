@@ -223,6 +223,11 @@
     "replaySound": "Hør igen\n(seneste 30 sek.)"
   },
   "voiceRanges": {
+    "groups": {
+      "easy": "Nemme valg",
+      "voiceTypes": "Stemmetyper",
+      "wide": "Brede lejer"
+    },
     "full": "Fuld",
     "choir": "Kor",
     "tenorToSoprano": "Tenor–Sopran",

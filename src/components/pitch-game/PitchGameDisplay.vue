@@ -65,13 +65,6 @@ const { frequency, noteInfo, isListening, isClean, error, start, stop } =
 
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
-const rangeOptions = computed(() =>
-  VOICE_RANGES.map((range, index) => ({
-    label: `${t(range.labelKey)} (${range.noteRange})`,
-    value: index,
-  })),
-)
-
 const { isPreviewEnabled } = useSettings()
 
 /* Force-disable idle preview (and the mic it would open) in simulated test pages */
@@ -319,7 +312,6 @@ onUnmounted(() => {
         v-model:isPreviewEnabled="isPreviewEnabled"
         v-model:holdDurationSec="holdDurationSec"
         v-model:gameDurationSec="gameDurationSec"
-        :rangeOptions="rangeOptions"
         :rangeLabel="t('generic.voiceRange')"
         :micPermission="micPermission"
         :error="error"

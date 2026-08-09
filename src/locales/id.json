@@ -223,6 +223,11 @@
     "replaySound": "Putar ulang suara\n(30 detik terakhir)"
   },
   "voiceRanges": {
+    "groups": {
+      "easy": "Pilihan mudah",
+      "voiceTypes": "Jenis suara",
+      "wide": "Jangkauan lebar"
+    },
     "full": "Penuh",
     "choir": "Paduan suara",
     "tenorToSoprano": "Tenor–Sopran",

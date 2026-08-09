@@ -223,6 +223,11 @@
     "replaySound": "回放声音\n（最近30秒）"
   },
   "voiceRanges": {
+    "groups": {
+      "easy": "简单选择",
+      "voiceTypes": "声部类型",
+      "wide": "宽音域"
+    },
     "full": "完整",
     "choir": "合唱",
     "tenorToSoprano": "男高音–女高音",

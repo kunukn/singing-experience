@@ -223,6 +223,11 @@
     "replaySound": "Rejouer le son\n(30 dernières s)"
   },
   "voiceRanges": {
+    "groups": {
+      "easy": "Choix faciles",
+      "voiceTypes": "Types de voix",
+      "wide": "Tessitures larges"
+    },
     "full": "Complet",
     "choir": "Chorale",
     "tenorToSoprano": "Ténor–Soprano",
