@@ -50,6 +50,7 @@ declare module 'vue' {
     GuitarScaleSelect: typeof import('./components/guitar/GuitarScaleSelect.vue')['default']
     GuitarSettingsRow: typeof import('./components/guitar/GuitarSettingsRow.vue')['default']
     GuitarTuningSelect: typeof import('./components/guitar/GuitarTuningSelect.vue')['default']
+    KeyboardHintsToggle: typeof import('./components/generic/KeyboardHintsToggle.vue')['default']
     LandingFooter: typeof import('./components/LandingFooter.vue')['default']
     LandingPage: typeof import('./components/LandingPage.vue')['default']
     LanguageSwitcher: typeof import('./components/generic/LanguageSwitcher.vue')['default']

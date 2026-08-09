@@ -3,6 +3,7 @@ import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import type { ToneMode } from '@/composables/toneEngine'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
+import { useMediaQuery } from '@vueuse/core'
 
 type Props = {
   /* Both mic toggles lock out once permission was refused. Matches the shape of
@@ -23,6 +24,16 @@ const isPreviewEnabled = defineModel<boolean>('isPreviewEnabled', {
   required: true,
 })
 const isDuetEnabled = defineModel<boolean>('isDuetEnabled', { required: true })
+const areKeyboardHintsVisible = defineModel<boolean>(
+  'areKeyboardHintsVisible',
+  {
+    required: true,
+  },
+)
+
+/* The chips are only ever drawn where a physical keyboard exists (see keyChar
+ * in PianoDisplay), so on touch the toggle would be a no-op control. */
+const isCoarsePointer = useMediaQuery('(pointer: coarse)')
 
 const { t } = useI18n()
 
@@ -91,7 +102,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <ToneModeSelect v-model="toneMode" />
     </div>
 
-    <!-- Both toggles share one item: ToggleIconButton prints its own label from
+    <!-- The toggles share one item: ToggleIconButton prints its own label from
          md up (icon-only below), so the item's label track stays empty — the
          placeholder div keeps the subgrid pairs aligned with the other items. -->
     <div class="settings-item">
@@ -105,6 +116,11 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         <DuetToggle
           v-model="isDuetEnabled"
           :disabled="!isPreviewEnabled || micPermission === 'denied'"
+        />
+
+        <KeyboardHintsToggle
+          v-if="!isCoarsePointer"
+          v-model="areKeyboardHintsVisible"
         />
       </div>
     </div>

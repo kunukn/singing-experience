@@ -21,6 +21,12 @@ const toneLabelMode = useToneLabelMode('syng.pianoToneLabelMode', 'off')
  * goes on top. Persisted apart from the guitar's own style, like every other
  * per-page board setting. */
 const accidentalStyle = useAccidentalStyle('syng.pianoAccidentals', 'sharp')
+
+/* The computer-key chips printed on each key. Display only — hiding them never
+ * touches the bindings, since usePianoKeyboardInput listens on window and
+ * resolves by event.code, independent of anything drawn. */
+const areKeyboardHintsVisible = useLocalStorage('syng.pianoKeyboardHints', true)
+
 /* Scale highlight — tints the keys of one musical key/mode so the singer sees
  * the shape on the board. Off by default: no root picked, nothing tinted.
  * PrimeSelect's clear button writes null, but -1 is what gets persisted so
@@ -125,6 +131,7 @@ function handleTonePlayed() {
       v-model:accidentalStyle="accidentalStyle"
       v-model:isPreviewEnabled="isPreviewEnabled"
       v-model:isDuetEnabled="isDuetEnabled"
+      v-model:areKeyboardHintsVisible="areKeyboardHintsVisible"
       :micPermission="micPermission"
     />
 
@@ -146,6 +153,7 @@ function handleTonePlayed() {
         :isPreviewEnabled="isPreviewEnabled"
         :toneLabelMode="toneLabelMode"
         :accidentalStyle="accidentalStyle"
+        :areKeyboardHintsVisible="areKeyboardHintsVisible"
         :scaleRoot="scaleRoot"
         :scaleMode="scaleMode"
         @tonePlayed="handleTonePlayed"

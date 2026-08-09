@@ -45,6 +45,9 @@ type Props = {
    * unlike the guitar, where a fret row only has height for one — so this picks
    * which one goes on top and carries the octave digit. */
   accidentalStyle?: AccidentalStyle
+  /* Draws the computer-key chip on each key. Display only — the bindings in
+   * usePianoKeyboardInput are unaffected either way. */
+  areKeyboardHintsVisible?: boolean
   /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
   scaleRoot?: number | null
   scaleMode?: ScaleHighlightMode
@@ -229,9 +232,12 @@ const semitoneUnit = computed(() => {
   return Math.floor(Math.min(Math.max(fitted, minUnit), MAX_SEMITONE_UNIT))
 })
 
-/* Printed only where a physical keyboard exists — on touch the chars are noise. */
+/* Printed only where a physical keyboard exists — on touch the chars are noise —
+ * and only while the hint toggle is on. Hiding them is purely cosmetic: the
+ * keys still play, and aria-keyshortcuts still announces the shortcut. */
 function keyChar(key: PianoKey): string | null {
   if (isCoarsePointer.value) return null
+  if (props.areKeyboardHintsVisible === false) return null
 
   return keyboardCharForMidi(key.midi)
 }
