@@ -3,7 +3,6 @@ import type { ToneMode } from '@/composables/toneEngine'
 import type { ScaleMode } from '@/utils/noteUtils'
 import {
   DEFAULT_STARTING_SEMITONE_OFFSET,
-  SCALE_MODE_GROUPS,
   START_TONE_GROUPS,
 } from './useDoReMiGame'
 
@@ -97,26 +96,10 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         class="hidden text-end text-sm text-(--p-text-muted-color) md:block"
         >{{ t('doReMi.scaleMode') }}</label
       >
-      <PrimeSelect
-        v-model="scaleMode"
-        :options="SCALE_MODE_GROUPS"
-        optionLabel="label"
-        optionValue="id"
-        optionGroupLabel="label"
-        optionGroupChildren="items"
-        scrollHeight="370px"
-        size="small"
-      >
-        <template #optiongroup="{ index, option }">
-          <div
-            :data-index="index + 1"
-            class="select-scale-mode-option-group flex items-center"
-            :class="{ 'mt-4': index !== 0 }"
-          >
-            <div>{{ option.label }}</div>
-          </div>
-        </template>
-      </PrimeSelect>
+      <ScaleModeSelect
+        v-model:scaleMode="scaleMode"
+        :ariaLabel="t('doReMi.scaleMode')"
+      />
     </div>
 
     <div class="settings-item">
@@ -149,7 +132,6 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
   @apply md:grid-cols-[auto_1fr_auto_1fr];
 }
 
-.select-scale-mode-option-group,
 .select-start-tone-option-group {
   color: var(--p-primary-color);
   font-size: 0.75rem;

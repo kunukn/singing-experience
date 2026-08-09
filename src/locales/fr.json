@@ -352,6 +352,16 @@
       "lydian": "Lydien",
       "mixolydian": "Mixolydien",
       "locrian": "Locrien"
+    },
+    "scaleModeGroups": {
+      "popular": "Populaires",
+      "church": "Modes grecs",
+      "melodicMinor": "Mineure mélodique",
+      "harmonicMinor": "Mineure harmonique",
+      "harmonicMajor": "Majeure harmonique",
+      "world": "Du monde entier",
+      "bebop": "Jazz et bebop",
+      "symmetric": "Symétriques"
     }
   }
 }

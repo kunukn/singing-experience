@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {
+  SCALE_HIGHLIGHT_MODES,
   SCALE_ROOT_OPTIONS,
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
@@ -11,8 +12,6 @@ const scaleMode = defineModel<ScaleHighlightMode>('scaleMode', {
 })
 
 const { t } = useI18n()
-
-const modeOptions = useScaleModeOptions()
 </script>
 
 <template>
@@ -39,13 +38,10 @@ const modeOptions = useScaleModeOptions()
       </template>
     </PrimeSelect>
 
-    <PrimeSelect
-      v-model="scaleMode"
-      :options="modeOptions"
-      optionLabel="label"
-      optionValue="id"
+    <ScaleModeSelect
+      v-model:scaleMode="scaleMode"
+      :modes="SCALE_HIGHLIGHT_MODES"
       :disabled="scaleRoot === null"
-      size="small"
       class="min-w-40"
       :ariaLabel="t('scale.scaleMode')"
       data-testid="piano-scale-mode"

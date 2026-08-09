@@ -332,109 +332,176 @@ const SCALE_MODE_SEMITONES: Record<ScaleMode, readonly number[]> = {
   augmented: [0, 3, 4, 7, 8, 11, 12],
 }
 
+type ScaleModeGroupId =
+  | 'popular'
+  | 'church'
+  | 'melodicMinor'
+  | 'harmonicMinor'
+  | 'harmonicMajor'
+  | 'world'
+  | 'bebop'
+  | 'symmetric'
+
 type ScaleModeOption = {
   id: ScaleMode
+  group: ScaleModeGroupId
+  /* English name, used when the mode has no curated locale key of its own. */
   label: string
 }
 
 type ScaleModeGroup = {
+  id: ScaleModeGroupId
   label: string
   items: ScaleModeOption[]
 }
 
-const SCALE_MODE_GROUPS: ScaleModeGroup[] = [
+/*
+ * One flat, ordered catalogue rather than a nested literal — the same shape
+ * GUITAR_TUNINGS uses. Every mode names its own group, so a select can filter to
+ * a subset (the instruments show 17 of these) without the groups having to be
+ * declared twice. Order within a group is the order here.
+ *
+ * 'popular' leads with the six scales a singer or guitarist actually reaches for
+ * first, lifted out of their theory groups so the two names everyone knows sit at
+ * the top of every dropdown. Membership is exclusive — Major appears under
+ * 'popular', not also under 'church'.
+ */
+const SCALE_MODE_OPTIONS: ScaleModeOption[] = [
+  { id: 'ionian', group: 'popular', label: 'Major (Ionian)' },
+  { id: 'aeolian', group: 'popular', label: 'Minor (Aeolian)' },
+  { id: 'majorPentatonic', group: 'popular', label: 'Major Pentatonic' },
+  { id: 'minorPentatonic', group: 'popular', label: 'Minor Pentatonic' },
+  { id: 'majorBlues', group: 'popular', label: 'Major Blues' },
+  { id: 'minorBlues', group: 'popular', label: 'Minor Blues' },
+
+  { id: 'dorian', group: 'church', label: 'Dorian' },
+  { id: 'phrygian', group: 'church', label: 'Phrygian' },
+  { id: 'lydian', group: 'church', label: 'Lydian' },
+  { id: 'mixolydian', group: 'church', label: 'Mixolydian' },
+  { id: 'locrian', group: 'church', label: 'Locrian' },
+
+  { id: 'melodicMinor', group: 'melodicMinor', label: 'Melodic Minor' },
+  { id: 'dorianFlat2', group: 'melodicMinor', label: 'Dorian ♭2' },
+  { id: 'lydianAugmented', group: 'melodicMinor', label: 'Lydian Augmented' },
+  { id: 'lydianDominant', group: 'melodicMinor', label: 'Lydian Dominant' },
+  { id: 'mixolydianFlat6', group: 'melodicMinor', label: 'Mixolydian ♭6' },
+  { id: 'locrianSharp2', group: 'melodicMinor', label: 'Locrian ♮2' },
+  { id: 'alteredScale', group: 'melodicMinor', label: 'Altered Scale' },
+
+  { id: 'harmonicMinor', group: 'harmonicMinor', label: 'Harmonic Minor' },
+  { id: 'locrianSharp6', group: 'harmonicMinor', label: 'Locrian ♮6' },
+  { id: 'ionianSharp5', group: 'harmonicMinor', label: 'Ionian ♯5' },
+  { id: 'ukrainianDorian', group: 'harmonicMinor', label: 'Ukrainian Dorian' },
   {
-    label: 'Church Modes',
-    items: [
-      { id: 'ionian', label: 'Major (Ionian)' },
-      { id: 'dorian', label: 'Dorian' },
-      { id: 'phrygian', label: 'Phrygian' },
-      { id: 'lydian', label: 'Lydian' },
-      { id: 'mixolydian', label: 'Mixolydian' },
-      { id: 'aeolian', label: 'Minor (Aeolian)' },
-      { id: 'locrian', label: 'Locrian' },
-    ],
+    id: 'phrygianDominant',
+    group: 'harmonicMinor',
+    label: 'Phrygian Dominant',
+  },
+  { id: 'lydianSharp2', group: 'harmonicMinor', label: 'Lydian ♯2' },
+  {
+    id: 'superLocrianDoubleFlat7',
+    group: 'harmonicMinor',
+    label: 'Super Locrian ♭♭7',
+  },
+
+  { id: 'harmonicMajor', group: 'harmonicMajor', label: 'Harmonic Major' },
+  { id: 'dorianFlat5', group: 'harmonicMajor', label: 'Dorian ♭5' },
+  { id: 'phrygianFlat4', group: 'harmonicMajor', label: 'Phrygian ♭4' },
+  { id: 'lydianFlat3', group: 'harmonicMajor', label: 'Lydian ♭3' },
+  { id: 'mixolydianFlat2', group: 'harmonicMajor', label: 'Mixolydian ♭2' },
+  {
+    id: 'lydianAugmentedSharp2',
+    group: 'harmonicMajor',
+    label: 'Lydian Augmented ♯2',
   },
   {
-    label: 'Melodic Minor',
-    items: [
-      { id: 'melodicMinor', label: 'Melodic Minor' },
-      { id: 'dorianFlat2', label: 'Dorian ♭2' },
-      { id: 'lydianAugmented', label: 'Lydian Augmented' },
-      { id: 'lydianDominant', label: 'Lydian Dominant' },
-      { id: 'mixolydianFlat6', label: 'Mixolydian ♭6' },
-      { id: 'locrianSharp2', label: 'Locrian ♮2' },
-      { id: 'alteredScale', label: 'Altered Scale' },
-    ],
+    id: 'locrianDoubleFlat7',
+    group: 'harmonicMajor',
+    label: 'Locrian ♭♭7',
+  },
+
+  {
+    id: 'doubleHarmonic',
+    group: 'world',
+    label: 'Double Harmonic (Byzantine)',
+  },
+  { id: 'hungarianMinor', group: 'world', label: 'Hungarian Minor' },
+  { id: 'hungarianMajor', group: 'world', label: 'Hungarian Major' },
+  { id: 'neapolitanMinor', group: 'world', label: 'Neapolitan Minor' },
+  { id: 'neapolitanMajor', group: 'world', label: 'Neapolitan Major' },
+  { id: 'persian', group: 'world', label: 'Persian' },
+  { id: 'majorLocrian', group: 'world', label: 'Major Locrian' },
+  { id: 'leadingWholeTone', group: 'world', label: 'Leading Whole Tone' },
+
+  { id: 'majorBebop', group: 'bebop', label: 'Major Bebop' },
+  { id: 'dominantBebop', group: 'bebop', label: 'Dominant Bebop' },
+  { id: 'minorBebop', group: 'bebop', label: 'Minor Bebop' },
+
+  { id: 'wholeTone', group: 'symmetric', label: 'Whole Tone' },
+  {
+    id: 'diminishedHalfWhole',
+    group: 'symmetric',
+    label: 'Diminished (Half-Whole)',
   },
   {
-    label: 'Harmonic Minor',
-    items: [
-      { id: 'harmonicMinor', label: 'Harmonic Minor' },
-      { id: 'locrianSharp6', label: 'Locrian ♮6' },
-      { id: 'ionianSharp5', label: 'Ionian ♯5' },
-      { id: 'ukrainianDorian', label: 'Ukrainian Dorian' },
-      { id: 'phrygianDominant', label: 'Phrygian Dominant' },
-      { id: 'lydianSharp2', label: 'Lydian ♯2' },
-      { id: 'superLocrianDoubleFlat7', label: 'Super Locrian ♭♭7' },
-    ],
+    id: 'diminishedWholeHalf',
+    group: 'symmetric',
+    label: 'Diminished (Whole-Half)',
   },
-  {
-    label: 'Harmonic Major',
-    items: [
-      { id: 'harmonicMajor', label: 'Harmonic Major' },
-      { id: 'dorianFlat5', label: 'Dorian ♭5' },
-      { id: 'phrygianFlat4', label: 'Phrygian ♭4' },
-      { id: 'lydianFlat3', label: 'Lydian ♭3' },
-      { id: 'mixolydianFlat2', label: 'Mixolydian ♭2' },
-      { id: 'lydianAugmentedSharp2', label: 'Lydian Augmented ♯2' },
-      { id: 'locrianDoubleFlat7', label: 'Locrian ♭♭7' },
-    ],
-  },
-  {
-    label: 'World / Ethnic',
-    items: [
-      { id: 'doubleHarmonic', label: 'Double Harmonic (Byzantine)' },
-      { id: 'hungarianMinor', label: 'Hungarian Minor' },
-      { id: 'hungarianMajor', label: 'Hungarian Major' },
-      { id: 'neapolitanMinor', label: 'Neapolitan Minor' },
-      { id: 'neapolitanMajor', label: 'Neapolitan Major' },
-      { id: 'persian', label: 'Persian' },
-      { id: 'majorLocrian', label: 'Major Locrian' },
-      { id: 'leadingWholeTone', label: 'Leading Whole Tone' },
-    ],
-  },
-  {
-    label: 'Jazz / Bebop',
-    items: [
-      { id: 'majorBebop', label: 'Major Bebop' },
-      { id: 'dominantBebop', label: 'Dominant Bebop' },
-      { id: 'minorBebop', label: 'Minor Bebop' },
-    ],
-  },
-  {
-    label: 'Blues & Pentatonic',
-    items: [
-      { id: 'majorPentatonic', label: 'Major Pentatonic' },
-      { id: 'minorPentatonic', label: 'Minor Pentatonic' },
-      { id: 'majorBlues', label: 'Major Blues' },
-      { id: 'minorBlues', label: 'Minor Blues' },
-    ],
-  },
-  {
-    label: 'Symmetric',
-    items: [
-      { id: 'wholeTone', label: 'Whole Tone' },
-      { id: 'diminishedHalfWhole', label: 'Diminished (Half-Whole)' },
-      { id: 'diminishedWholeHalf', label: 'Diminished (Whole-Half)' },
-      { id: 'augmented', label: 'Augmented' },
-    ],
-  },
+  { id: 'augmented', group: 'symmetric', label: 'Augmented' },
 ]
 
-const SCALE_MODE_OPTIONS: ScaleModeOption[] = SCALE_MODE_GROUPS.flatMap(
-  (g) => g.items,
-)
+const SCALE_MODE_GROUP_ORDER: ScaleModeGroupId[] = [
+  'popular',
+  'church',
+  'melodicMinor',
+  'harmonicMinor',
+  'harmonicMajor',
+  'world',
+  'bebop',
+  'symmetric',
+]
+
+type BuildScaleModeGroupsOptions = {
+  groupLabel: (groupId: ScaleModeGroupId) => string
+  modeLabel: (option: ScaleModeOption) => string
+  /* Restrict the catalogue to these modes. Order still comes from the catalogue,
+   * never from this list, so two selects showing different subsets still agree
+   * about what comes first. Omit to show every mode. */
+  modes?: readonly ScaleMode[]
+}
+
+/**
+ * The catalogue bucketed into PrimeSelect option groups, with labels resolved by
+ * the caller.
+ *
+ * Label resolution is injected rather than done here so this stays a pure
+ * function testable without mounting vue-i18n — the same reason
+ * buildGuitarTuningGroups takes `t`. Groups left empty by `modes` are dropped, so
+ * the instrument selects show five headings rather than eight with three blanks.
+ */
+function buildScaleModeGroups({
+  groupLabel,
+  modeLabel,
+  modes,
+}: BuildScaleModeGroupsOptions): ScaleModeGroup[] {
+  const allowed = modes ? new Set<ScaleMode>(modes) : null
+  const visible = allowed
+    ? SCALE_MODE_OPTIONS.filter((option) => allowed.has(option.id))
+    : SCALE_MODE_OPTIONS
+
+  return SCALE_MODE_GROUP_ORDER.map((id) => ({
+    id,
+    label: groupLabel(id),
+    items: visible
+      .filter((option) => option.group === id)
+      .map((option) => ({
+        id: option.id,
+        group: option.group,
+        label: modeLabel(option),
+      })),
+  })).filter((group) => group.items.length > 0)
+}
 
 type ScaleNote = {
   solfege: string
@@ -643,6 +710,7 @@ export {
   buildChromaticDisplayScale,
   buildMajorScale,
   buildScale,
+  buildScaleModeGroups,
   C3_MIDI,
   G2_MIDI,
   MAJOR_SCALE_SEMITONES,
@@ -652,7 +720,7 @@ export {
   NOTE_NAMES,
   NOTE_NAMES_HIGH_TO_LOW,
   NOTE_OPTIONS_HIGH_TO_LOW,
-  SCALE_MODE_GROUPS,
+  SCALE_MODE_GROUP_ORDER,
   SCALE_MODE_OPTIONS,
   SCALE_MODE_SEMITONES,
   START_TONE_GROUPS,
@@ -664,6 +732,7 @@ export type {
   MidiNoteLabel,
   ScaleMode,
   ScaleModeGroup,
+  ScaleModeGroupId,
   ScaleModeOption,
   ScaleNote,
   StartToneGroup,

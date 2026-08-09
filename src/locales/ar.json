@@ -352,6 +352,16 @@
       "lydian": "ليديان",
       "mixolydian": "ميكسوليديان",
       "locrian": "لوكريان"
+    },
+    "scaleModeGroups": {
+      "popular": "شائعة",
+      "church": "المقامات الكنسية",
+      "melodicMinor": "مينور لحني",
+      "harmonicMinor": "مينور هارموني",
+      "harmonicMajor": "ماجور هارموني",
+      "world": "من حول العالم",
+      "bebop": "جاز وبيبوب",
+      "symmetric": "متماثلة"
     }
   }
 }

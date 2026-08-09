@@ -352,6 +352,16 @@
       "lydian": "লিডিয়ান",
       "mixolydian": "মিক্সোলিডিয়ান",
       "locrian": "লোক্রিয়ান"
+    },
+    "scaleModeGroups": {
+      "popular": "জনপ্রিয়",
+      "church": "চার্চ মোড",
+      "melodicMinor": "মেলোডিক মাইনর",
+      "harmonicMinor": "হারমোনিক মাইনর",
+      "harmonicMajor": "হারমোনিক মেজর",
+      "world": "সারা বিশ্ব থেকে",
+      "bebop": "জ্যাজ ও বিবপ",
+      "symmetric": "সিমেট্রিক"
     }
   }
 }

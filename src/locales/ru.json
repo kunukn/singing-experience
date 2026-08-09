@@ -352,6 +352,16 @@
       "lydian": "Лидийский",
       "mixolydian": "Миксолидийский",
       "locrian": "Локрийский"
+    },
+    "scaleModeGroups": {
+      "popular": "Популярные",
+      "church": "Церковные лады",
+      "melodicMinor": "Мелодический минор",
+      "harmonicMinor": "Гармонический минор",
+      "harmonicMajor": "Гармонический мажор",
+      "world": "Со всего мира",
+      "bebop": "Джаз и бибоп",
+      "symmetric": "Симметричные"
     }
   }
 }

@@ -352,6 +352,16 @@
       "lydian": "Lidia",
       "mixolydian": "Miksolidia",
       "locrian": "Lokria"
+    },
+    "scaleModeGroups": {
+      "popular": "Maarufu",
+      "church": "Modi za kanisa",
+      "melodicMinor": "Maina ya melodia",
+      "harmonicMinor": "Maina ya harmonia",
+      "harmonicMajor": "Meja ya harmonia",
+      "world": "Kutoka duniani kote",
+      "bebop": "Jazz na bebop",
+      "symmetric": "Simetria"
     }
   }
 }

@@ -352,6 +352,16 @@
       "lydian": "Lydisch",
       "mixolydian": "Mixolydisch",
       "locrian": "Lokrisch"
+    },
+    "scaleModeGroups": {
+      "popular": "Beliebt",
+      "church": "Kirchentonarten",
+      "melodicMinor": "Melodisch Moll",
+      "harmonicMinor": "Harmonisch Moll",
+      "harmonicMajor": "Harmonisch Dur",
+      "world": "Aus aller Welt",
+      "bebop": "Jazz und Bebop",
+      "symmetric": "Symmetrisch"
     }
   }
 }

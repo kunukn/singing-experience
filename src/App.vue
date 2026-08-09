@@ -31,6 +31,7 @@ const contentClass = computed(() =>
   <div class="relative flex w-full flex-1 grow flex-col px-0 py-0">
     <canvas
       ref="confettiCanvas"
+      data-confetti-canvas
       class="pointer-events-none absolute inset-0 z-50 mx-auto h-full w-full max-w-3xl"
     />
     <TopBar class="mx-auto w-full max-w-3xl" />

@@ -1,16 +1,10 @@
 import { useMachine } from '@xstate/vue'
-import type {
-  NoteInfo,
-  NoteName,
-  ScaleMode,
-  ScaleModeGroup,
-} from '@/utils/noteUtils'
+import type { NoteInfo, NoteName, ScaleMode } from '@/utils/noteUtils'
 import {
   buildScale,
   C3_MIDI,
   frequencyToCents,
   noteToFrequency,
-  SCALE_MODE_GROUPS,
   SCALE_MODE_OPTIONS,
   START_TONE_GROUPS,
   START_TONE_OPTIONS,
@@ -59,18 +53,12 @@ export {
   DEFAULT_STARTING_SEMITONE_OFFSET,
   GRACE_PERIOD_MS,
   MAX_CENTS_DEVIATION,
-  SCALE_MODE_GROUPS,
   SCALE_MODE_OPTIONS,
   START_TONE_GROUPS,
   START_TONE_OPTIONS,
   TOO_LOW_OR_HIGH_HINT_MS,
 }
-export type {
-  DoReMiGameOptions,
-  PitchDetectionProvider,
-  ScaleModeGroup,
-  ScaleStep,
-}
+export type { DoReMiGameOptions, PitchDetectionProvider, ScaleStep }
 
 export type DoReMiGameResult = ReturnType<typeof useDoReMiGame>
 

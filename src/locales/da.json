@@ -352,6 +352,16 @@
       "lydian": "Lydisk",
       "mixolydian": "Mixolydisk",
       "locrian": "Lokrisk"
+    },
+    "scaleModeGroups": {
+      "popular": "Populære",
+      "church": "Kirketonearter",
+      "melodicMinor": "Melodisk mol",
+      "harmonicMinor": "Harmonisk mol",
+      "harmonicMajor": "Harmonisk dur",
+      "world": "Fra hele verden",
+      "bebop": "Jazz og bebop",
+      "symmetric": "Symmetriske"
     }
   }
 }

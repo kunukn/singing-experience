@@ -7,7 +7,6 @@ import {
 } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import type { DoReMiGameResult } from './useDoReMiGame'
-import { SCALE_MODE_OPTIONS } from './useDoReMiGame'
 import { useDoReMiPlaySequence } from './useDoReMiPlaySequence'
 import { useDoReMiTonesLog } from './useDoReMiTonesLog'
 
@@ -161,11 +160,9 @@ useDoReMiTonesLog({
 
 const elapsedSeconds = computed(() => (elapsedMs.value / 1000).toFixed(1))
 
-const selectedScaleModeLabel = computed(
-  () =>
-    SCALE_MODE_OPTIONS.find((o) => o.id === scaleMode.value)?.label ??
-    scaleMode.value,
-)
+/* Same resolved name the select shows, so the caption never reads "Major
+ * (Ionian)" while the dropdown above it says "Dur". */
+const selectedScaleModeLabel = useScaleModeLabel(scaleMode)
 
 const startToneLabel = computed(() => {
   const first = scaleSteps.value[0]

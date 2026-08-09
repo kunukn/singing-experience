@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 import {
   buildChromaticDisplayScale,
   buildScale,
+  buildScaleModeGroups,
   C3_MIDI,
   frequencyToNote,
   frequencyToNoteName,
@@ -9,6 +10,8 @@ import {
   midiToFrequency,
   midiToNoteLabel,
   noteToFrequency,
+  SCALE_MODE_GROUP_ORDER,
+  SCALE_MODE_OPTIONS,
   SCALE_MODE_SEMITONES,
 } from './noteUtils'
 import type { ScaleMode } from './noteUtils'
@@ -441,5 +444,55 @@ describe('midiToFlatLabel', () => {
     expect(midiToFlatLabel(F_SHARP_4_MIDI)).toBe('G♭')
     expect(midiToFlatLabel(C4_MIDI)).toBeNull()
     expect(midiToFlatLabel(E4_MIDI)).toBeNull()
+  })
+})
+
+describe('buildScaleModeGroups', () => {
+  /* Stand-ins for vue-i18n: echo the group id, keep the catalogue's English mode
+   * name, so grouping can be asserted without loading the locale files. */
+  const groupLabel = (groupId: string) => groupId
+  const modeLabel = ({ label }: { label: string }) => label
+
+  const build = (modes?: readonly ScaleMode[]) =>
+    buildScaleModeGroups({ groupLabel, modeLabel, modes })
+
+  test('orders the groups as SCALE_MODE_GROUP_ORDER declares', () => {
+    expect(build().map((group) => group.id)).toEqual(SCALE_MODE_GROUP_ORDER)
+  })
+
+  test('offers every mode exactly once', () => {
+    const ids = build().flatMap((group) => group.items.map((item) => item.id))
+
+    expect(ids.sort()).toEqual(SCALE_MODE_OPTIONS.map((o) => o.id).sort())
+  })
+
+  test('leads with the two names everyone knows', () => {
+    const [popular] = build()
+
+    expect(popular.id).toBe('popular')
+    expect(popular.items.slice(0, 2).map((item) => item.id)).toEqual([
+      'ionian',
+      'aeolian',
+    ])
+  })
+
+  test('drops groups left empty by a subset', () => {
+    const groups = build(['ionian', 'lydian', 'augmented'])
+
+    expect(groups.map((group) => group.id)).toEqual([
+      'popular',
+      'church',
+      'symmetric',
+    ])
+  })
+
+  test('keeps catalogue order regardless of the order modes are listed in', () => {
+    const groups = build(['minorBlues', 'aeolian', 'ionian'])
+
+    expect(groups[0].items.map((item) => item.id)).toEqual([
+      'ionian',
+      'aeolian',
+      'minorBlues',
+    ])
   })
 })

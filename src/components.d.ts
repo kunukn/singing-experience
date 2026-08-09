@@ -104,6 +104,7 @@ declare module 'vue' {
     PrimeToggleSwitch: typeof import('primevue/toggleswitch')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ScaleModeSelect: typeof import('./components/generic/ScaleModeSelect.vue')['default']
     SettingsPanel: typeof import('./components/generic/SettingsPanel.vue')['default']
     SettingsSlider: typeof import('./components/tone-detector/SettingsSlider.vue')['default']
     SingFlyCanvas: typeof import('./components/singfly/SingFlyCanvas.vue')['default']

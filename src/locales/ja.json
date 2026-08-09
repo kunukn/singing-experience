@@ -352,6 +352,16 @@
       "lydian": "リディアン",
       "mixolydian": "ミクソリディアン",
       "locrian": "ロクリアン"
+    },
+    "scaleModeGroups": {
+      "popular": "人気",
+      "church": "教会旋法",
+      "melodicMinor": "メロディックマイナー",
+      "harmonicMinor": "ハーモニックマイナー",
+      "harmonicMajor": "ハーモニックメジャー",
+      "world": "世界の音階",
+      "bebop": "ジャズ・ビバップ",
+      "symmetric": "シンメトリック"
     }
   }
 }

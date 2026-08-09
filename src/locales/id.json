@@ -352,6 +352,16 @@
       "lydian": "Lydian",
       "mixolydian": "Mixolydian",
       "locrian": "Lokrian"
+    },
+    "scaleModeGroups": {
+      "popular": "Populer",
+      "church": "Modus gereja",
+      "melodicMinor": "Minor melodis",
+      "harmonicMinor": "Minor harmonis",
+      "harmonicMajor": "Mayor harmonis",
+      "world": "Dari seluruh dunia",
+      "bebop": "Jazz dan bebop",
+      "symmetric": "Simetris"
     }
   }
 }

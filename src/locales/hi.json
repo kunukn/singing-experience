@@ -352,6 +352,16 @@
       "lydian": "लिडियन",
       "mixolydian": "मिक्सोलिडियन",
       "locrian": "लोक्रियन"
+    },
+    "scaleModeGroups": {
+      "popular": "लोकप्रिय",
+      "church": "चर्च मोड",
+      "melodicMinor": "मेलोडिक माइनर",
+      "harmonicMinor": "हार्मोनिक माइनर",
+      "harmonicMajor": "हार्मोनिक मेजर",
+      "world": "दुनिया भर से",
+      "bebop": "जैज़ और बीबॉप",
+      "symmetric": "सिमेट्रिक"
     }
   }
 }

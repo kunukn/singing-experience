@@ -352,6 +352,16 @@
       "lydian": "利底亚调式",
       "mixolydian": "混合利底亚调式",
       "locrian": "洛克里亚调式"
+    },
+    "scaleModeGroups": {
+      "popular": "常用",
+      "church": "教会调式",
+      "melodicMinor": "旋律小调",
+      "harmonicMinor": "和声小调",
+      "harmonicMajor": "和声大调",
+      "world": "世界各地",
+      "bebop": "爵士与比波普",
+      "symmetric": "对称音阶"
     }
   }
 }

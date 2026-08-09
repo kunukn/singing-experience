@@ -340,6 +340,16 @@
       "lydian": "Lydisk",
       "mixolydian": "Mixolydisk",
       "locrian": "Lokrisk"
+    },
+    "scaleModeGroups": {
+      "popular": "Nuannarineqarnerpaat",
+      "church": "Kirketonearter",
+      "melodicMinor": "Melodisk mol",
+      "harmonicMinor": "Harmonisk mol",
+      "harmonicMajor": "Harmonisk dur",
+      "world": "Silarsuarmiit",
+      "bebop": "Jazz aamma bebop",
+      "symmetric": "Symmetriske"
     }
   }
 }
