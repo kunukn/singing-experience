@@ -101,6 +101,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/piano-test': RouteRecordInfo<
+      '/piano-test',
+      '/piano-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/pitch-detector': RouteRecordInfo<
       '/pitch-detector',
       '/pitch-detector',
@@ -301,6 +308,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/piano.vue': {
       routes:
         | '/piano'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/piano-test.vue': {
+      routes:
+        | '/piano-test'
       views:
         | never
       pathParamNames:
