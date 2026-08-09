@@ -351,7 +351,10 @@
       "phrygian": "弗里几亚调式",
       "lydian": "利底亚调式",
       "mixolydian": "混合利底亚调式",
-      "locrian": "洛克里亚调式"
+      "locrian": "洛克里亚调式",
+      "melodicMinor": "旋律小调",
+      "harmonicMinor": "和声小调",
+      "harmonicMajor": "和声大调"
     },
     "scaleModeGroups": {
       "popular": "常用",

@@ -351,7 +351,10 @@
       "phrygian": "ফ্রিজিয়ান",
       "lydian": "লিডিয়ান",
       "mixolydian": "মিক্সোলিডিয়ান",
-      "locrian": "লোক্রিয়ান"
+      "locrian": "লোক্রিয়ান",
+      "melodicMinor": "মেলোডিক মাইনর",
+      "harmonicMinor": "হারমোনিক মাইনর",
+      "harmonicMajor": "হারমোনিক মেজর"
     },
     "scaleModeGroups": {
       "popular": "জনপ্রিয়",

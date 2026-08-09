@@ -351,7 +351,10 @@
       "phrygian": "Phrygian",
       "lydian": "Lydian",
       "mixolydian": "Mixolydian",
-      "locrian": "Locrian"
+      "locrian": "Locrian",
+      "melodicMinor": "Melodic Minor",
+      "harmonicMinor": "Harmonic Minor",
+      "harmonicMajor": "Harmonic Major"
     },
     "scaleModeGroups": {
       "popular": "Popular",

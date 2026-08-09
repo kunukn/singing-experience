@@ -1,7 +1,6 @@
 import {
   midiToFlatLabel,
   midiToNoteLabel,
-  SCALE_MODE_OPTIONS,
   SCALE_MODE_SEMITONES,
   type ScaleMode,
 } from '@/utils/noteUtils'
@@ -17,6 +16,10 @@ import {
  * 7 or fewer is fair game to add if it earns its place with singers.
  *
  * Shared with the piano (PianoScaleSelect), so adding here adds there.
+ *
+ * This is a membership list, not a running order: the select groups and orders
+ * these by noteUtils' catalogue, so adding a mode here shows it under whichever
+ * heading the catalogue gives it, wherever that heading falls.
  */
 export const SCALE_HIGHLIGHT_MODES = [
   'ionian',
@@ -25,18 +28,16 @@ export const SCALE_HIGHLIGHT_MODES = [
   'minorPentatonic',
   'majorBlues',
   'minorBlues',
-  /* Church modes, in degree order (2nd, 3rd, 4th, 5th, 7th of the major scale).
-   * Appended rather than slotted in beside the Major so a stored scaleMode keeps
-   * its meaning and the two names everyone knows stay at the top of the list. */
+  /* Church modes, in degree order (2nd, 3rd, 4th, 5th, 7th of the major scale). */
   'dorian',
   'phrygian',
   'lydian',
   'mixolydian',
   'locrian',
-  /* No locale keys of their own — these fall back to noteUtils' English names
-   * (see useScaleModeOptions). Proper nouns every language transliterates, so a
-   * translation would add work without adding meaning, and requiring one is what
-   * used to make each new mode cost 15 files instead of one line. */
+  /* Phrygian and Lydian Dominant have no locale keys — proper nouns every language
+   * transliterates, so they fall back to noteUtils' English names (see
+   * useScaleModeGroups). Requiring a translation is what used to make each new mode
+   * cost 15 files instead of one line. */
   'harmonicMinor',
   'melodicMinor',
   'phrygianDominant',
@@ -81,19 +82,6 @@ export function isScaleHighlightMode(
   value: unknown,
 ): value is ScaleHighlightMode {
   return SCALE_HIGHLIGHT_MODES.includes(value as ScaleHighlightMode)
-}
-
-/**
- * The English name from noteUtils' full mode table, for modes with no locale key
- * of their own.
- *
- * Falls back to the id rather than throwing — a blank option in a select is worse
- * than a rough one — but no mode should ever need that branch, which is what the
- * test asserts. Kept a plain function rather than folded into the composable so
- * it can be tested without mounting vue-i18n.
- */
-export function scaleModeEnglishLabel(mode: ScaleHighlightMode): string {
-  return SCALE_MODE_OPTIONS.find((option) => option.id === mode)?.label ?? mode
 }
 
 /** Chroma 0–11 (C = 0) of a MIDI note, safe for negative input. */

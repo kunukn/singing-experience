@@ -1,4 +1,4 @@
-import { SCALE_MODE_SEMITONES } from '@/utils/noteUtils'
+import { buildScaleModeGroups, SCALE_MODE_SEMITONES } from '@/utils/noteUtils'
 import { describe, expect, it } from 'vitest'
 import {
   buildScalePitchClasses,
@@ -6,7 +6,6 @@ import {
   SCALE_HIGHLIGHT_MODES,
   SCALE_ROOT_OPTIONS,
   scaleEmphasisFor,
-  scaleModeEnglishLabel,
   scaleRoleForMidi,
 } from './scaleHighlight'
 
@@ -122,14 +121,18 @@ describe('option lists', () => {
 
   /*
    * Deliberately NOT "every mode has a locale key" — modes without one are the
-   * point of the English fallback (see useScaleModeOptions). What still has to
-   * hold is that every mode resolves to SOMETHING, so an id that noteUtils does
-   * not know about (a typo in the list) cannot reach a select as a blank row.
+   * point of the English fallback (see useScaleModeGroups). What still has to
+   * hold is that every mode reaches the select at all: a mode listed here but
+   * absent from noteUtils' catalogue would be silently dropped by the builder
+   * rather than showing up as a blank row, which is harder to notice.
    */
-  it('gives every highlight mode a display label', () => {
-    for (const mode of SCALE_HIGHLIGHT_MODES) {
-      /* Returning the id is the lookup's "nothing found" branch. */
-      expect(scaleModeEnglishLabel(mode)).not.toBe(mode)
-    }
+  it('gives every highlight mode a row in the select', () => {
+    const shown = buildScaleModeGroups({
+      modes: SCALE_HIGHLIGHT_MODES,
+      groupLabel: (groupId) => groupId,
+      modeLabel: ({ label }) => label,
+    }).flatMap((group) => group.items.map((item) => item.id))
+
+    expect(shown.toSorted()).toEqual([...SCALE_HIGHLIGHT_MODES].toSorted())
   })
 })

@@ -351,7 +351,10 @@
       "phrygian": "Frigia",
       "lydian": "Lidia",
       "mixolydian": "Miksolidia",
-      "locrian": "Lokria"
+      "locrian": "Lokria",
+      "melodicMinor": "Maina ya melodia",
+      "harmonicMinor": "Maina ya harmonia",
+      "harmonicMajor": "Meja ya harmonia"
     },
     "scaleModeGroups": {
       "popular": "Maarufu",

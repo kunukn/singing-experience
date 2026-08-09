@@ -339,7 +339,10 @@
       "phrygian": "Frygisk",
       "lydian": "Lydisk",
       "mixolydian": "Mixolydisk",
-      "locrian": "Lokrisk"
+      "locrian": "Lokrisk",
+      "melodicMinor": "Melodisk mol",
+      "harmonicMinor": "Harmonisk mol",
+      "harmonicMajor": "Harmonisk dur"
     },
     "scaleModeGroups": {
       "popular": "Nuannarineqarnerpaat",
