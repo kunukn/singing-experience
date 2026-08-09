@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useLocalStorage } from '@vueuse/core'
+import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import {
   DEFAULT_SCALE_HIGHLIGHT_MODE,
   isScaleHighlightMode,
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
+import { useLocalStorage } from '@vueuse/core'
 import type { PianoPreviewLaneId } from './pianoPreview'
-import type { DuetLane } from '@/composables/useDuetPitchDetection'
 
 /* Voice-range selector. The index lives here, not in the settings row, because
  * selectedRange also feeds the keyboard span and the duet band split. */
@@ -124,7 +124,10 @@ function handleTonePlayed() {
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col items-center gap-4" data-testid="piano-page">
+  <div
+    class="flex flex-1 flex-col items-center gap-4 pb-4"
+    data-testid="piano-page"
+  >
     <PianoSettingsRow
       v-model:rangeIndex="rangeIndex"
       v-model:toneLabelMode="toneLabelMode"

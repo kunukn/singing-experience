@@ -1,64 +1,69 @@
 <script setup lang="ts">
 import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import type { ToneLabelMode } from '@/composables/toneLabelMode'
-import { DEFAULT_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
+import {
+  DEFAULT_GUITAR_TUNING_ID,
+  GUITAR_TUNINGS,
+  type GuitarTuningId,
+} from '@/utils/guitarTunings'
 import {
   DEFAULT_SCALE_HIGHLIGHT_MODE,
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
+import { guitarMidiMax, guitarMidiMin } from './guitarLayout'
 
-/* Developer harness for PianoPage: same settings row, scale select and keyboard,
- * but the preview lanes are fed by simulated singers instead of the microphone —
- * so the duet band split, the lane colours and the chip collision handling can
- * be driven without a mic or two real people. */
+/* Developer harness for GuitarPage: same settings row, scale select and
+ * fretboard, but the preview lanes are fed by simulated singers instead of the
+ * microphone — so the duet band split and the string-by-string preview segments
+ * can be driven without a mic or two real people. */
 
 /* Board settings are plain refs here, not useLocalStorage: the harness must not
- * write the syng.piano* keys the real page persists. */
-const rangeIndex = ref(DEFAULT_RANGE_INDEX)
+ * write the syng.guitar* keys the real page persists. */
+const tuningId = ref<GuitarTuningId>(DEFAULT_GUITAR_TUNING_ID)
 const toneLabelMode = ref<ToneLabelMode>('off')
 const accidentalStyle = ref<AccidentalStyle>('sharp')
-const areKeyboardHintsVisible = ref(true)
 const scaleRoot = ref<number | null>(null)
 const scaleMode = ref<ScaleHighlightMode>(DEFAULT_SCALE_HIGHLIGHT_MODE)
 const isDuetEnabled = ref(false)
 
-const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
+const tuningMidi = computed(() => GUITAR_TUNINGS[tuningId.value].midi)
+const midiMin = computed(() => guitarMidiMin(tuningMidi.value))
+const midiMax = computed(() => guitarMidiMax(tuningMidi.value))
 
 /* The shared "See your voice" setting, kept as-is so the toggle behaves exactly
  * as it does on the live page. */
 const { isPreviewEnabled } = useSettings()
 
-/* The two starting notes straddle the duet crossover, so both lanes render as
- * soon as the duet toggle goes on. */
+/* Open low string and first string of standard tuning — either side of the duet
+ * crossover, so both lanes render as soon as the duet toggle goes on. */
 const { visibleSingers, previewLanes, armDeafPeriod } = useSimulatedSingers({
   isPreviewEnabled,
   isDuetEnabled,
-  low: { label: 'Singer A (low)', note: 'G', octave: 3 },
-  high: { label: 'Singer B (high)', note: 'D', octave: 5 },
+  low: { label: 'Singer A (low)', note: 'A', octave: 2 },
+  high: { label: 'Singer B (high)', note: 'E', octave: 4 },
 })
 </script>
 
 <template>
   <div
     class="flex flex-1 flex-col items-center gap-4 pb-4"
-    data-testid="piano-test-page"
+    data-testid="guitar-test-page"
   >
-    <PianoSettingsRow
-      v-model:rangeIndex="rangeIndex"
+    <GuitarSettingsRow
+      v-model:tuningId="tuningId"
       v-model:toneLabelMode="toneLabelMode"
       v-model:accidentalStyle="accidentalStyle"
       v-model:isPreviewEnabled="isPreviewEnabled"
       v-model:isDuetEnabled="isDuetEnabled"
-      v-model:areKeyboardHintsVisible="areKeyboardHintsVisible"
       :micPermission="null"
     />
 
-    <PianoScaleSelect
+    <GuitarScaleSelect
       v-model:scaleRoot="scaleRoot"
       v-model:scaleMode="scaleMode"
     />
 
-    <!-- Narrower than the keyboard below: the harness controls read better
+    <!-- Narrower than the fretboard below: the harness controls read better
          grouped than stretched across a 1600px row. -->
     <div class="flex w-full max-w-3xl flex-col gap-2">
       <SimulatedSingerControls
@@ -68,16 +73,16 @@ const { visibleSingers, previewLanes, armDeafPeriod } = useSimulatedSingers({
       />
     </div>
 
-    <!-- Only the keyboard widens, matching PianoPage. -->
+    <!-- Only the fretboard widens, matching GuitarPage. -->
     <div class="mx-auto w-full max-w-400">
-      <PianoDisplay
-        :midiMin="selectedRange.midiMin"
-        :midiMax="selectedRange.midiMax"
+      <GuitarDisplay
+        :midiMin="midiMin"
+        :midiMax="midiMax"
+        :tuningMidi="tuningMidi"
         :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
         :toneLabelMode="toneLabelMode"
         :accidentalStyle="accidentalStyle"
-        :areKeyboardHintsVisible="areKeyboardHintsVisible"
         :scaleRoot="scaleRoot"
         :scaleMode="scaleMode"
         @tonePlayed="armDeafPeriod"

@@ -122,6 +122,7 @@ declare global {
   const useSettings: typeof import('./composables/useSettings').useSettings
   const useSimulatedMultiToneDetection: typeof import('./composables/useSimulatedMultiToneDetection').useSimulatedMultiToneDetection
   const useSimulatedPitchDetection: typeof import('./composables/useSimulatedPitchDetection').useSimulatedPitchDetection
+  const useSimulatedSingers: typeof import('./composables/useSimulatedSingers').useSimulatedSingers
   const useSlots: typeof import('vue').useSlots
   const useTemplateRef: typeof import('vue').useTemplateRef
   const useToneLabelMode: typeof import('./composables/toneLabelMode').useToneLabelMode
@@ -151,6 +152,9 @@ declare global {
   // @ts-ignore
   export type { DuetLane, DuetLaneDetection } from './composables/useDuetPitchDetection'
   import('./composables/useDuetPitchDetection')
+  // @ts-ignore
+  export type { SimulatedSingerLaneId, SimulatedSingerState, SimulatedSinger } from './composables/useSimulatedSingers'
+  import('./composables/useSimulatedSingers')
 }
 
 // for vue template auto import
@@ -253,6 +257,7 @@ declare module 'vue' {
     readonly useScrollEdgeMask: UnwrapRef<typeof import('./composables/useScrollEdgeMask')['useScrollEdgeMask']>
     readonly useSettings: UnwrapRef<typeof import('./composables/useSettings')['useSettings']>
     readonly useSimulatedPitchDetection: UnwrapRef<typeof import('./composables/useSimulatedPitchDetection')['useSimulatedPitchDetection']>
+    readonly useSimulatedSingers: UnwrapRef<typeof import('./composables/useSimulatedSingers')['useSimulatedSingers']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useToneLabelMode: UnwrapRef<typeof import('./composables/toneLabelMode')['useToneLabelMode']>
