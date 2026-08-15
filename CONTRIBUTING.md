@@ -32,7 +32,7 @@ This project is licensed under [0BSD](LICENSE) — essentially "do what you want
 
 1. Open an issue first to discuss the change — this avoids wasted effort on PRs that won't be merged.
 2. Follow the existing code style and conventions (see `CLAUDE.md` for details).
-3. Use [Conventional Commits](https://www.conventionalcommits.org/) for your commit messages (`fix:`, `refactor:`, `perf:`, `docs:`, etc.).
+3. Use [Conventional Commits](https://www.conventionalcommits.org/) for your commit messages (`fix:`, `refactor:`, `perf:`, `docs:`, etc.). A `commit-msg` hook runs commitlint and rejects messages that don't follow the format.
 4. Run `npm run check` to verify your changes don't introduce errors. (Pre-commit auto-formats staged files; pre-push runs `check` automatically.)
 5. Fill out the PR template completely.
 
