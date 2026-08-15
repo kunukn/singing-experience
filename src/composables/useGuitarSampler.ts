@@ -57,11 +57,26 @@ const EXTRA_SAMPLE_URLS: Record<string, string> = {
   'A#3': 'As3.mp3', // Eb standard string 2
   D4: 'D4.mp3', // DADGAD / Open G / Open D string 1
   'D#4': 'Ds4.mp3', // Eb standard string 1
-  /* Not open-string notes for any tuning — these cover the fretboard's upper
-   * register, where a fretted note would otherwise be stretched up from D#4. */
+  /*
+   * Not open-string notes for any tuning. These are reference points for the
+   * resampler above the open strings: every fretted note routes to this bank
+   * (see STANDARD_NOTE_KEYS below), and Tone picks the nearest key and shifts
+   * from it, so a bare neck of open-string samples would stretch the whole
+   * upper register up from D#4.
+   *
+   * C5 is the one the 19-fret board needs — its top note is B5 (MIDI 83), which
+   * without C5 comes off G#4 fifteen semitones down. It still lands eleven
+   * semitones up from C5, so the very top frets stay thin; adding a G#5 would
+   * close that, and is the next step if it ever grates.
+   *
+   * C5.mp3 is GENERATED, not recorded — pitch-shifted up from Gs4.mp3 with
+   * ffmpeg (asetrate + atempo, so the decay keeps its original length). There is
+   * no source recording to go looking for.
+   */
   C4: 'C4.mp3',
   G4: 'G4.mp3',
   'G#4': 'Gs4.mp3',
+  C5: 'C5.mp3',
 }
 
 const STANDARD_NOTE_KEYS = new Set(Object.keys(STANDARD_SAMPLE_URLS))
@@ -168,7 +183,7 @@ export async function prewarmStandardTuning(): Promise<void> {
 }
 
 /*
- * Both banks up front, for the fretboard: it can sound any of its 96 cells, not
+ * Both banks up front, for the fretboard: it can sound any of its 120 cells, not
  * just six open strings, so there is no useful subset to load lazily and a
  * first press would otherwise wait on the fetch. Same gesture safety as above —
  * the AudioContext is created suspended.

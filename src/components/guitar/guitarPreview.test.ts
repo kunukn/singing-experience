@@ -1,7 +1,13 @@
 import { GUITAR_TUNINGS } from '@/utils/guitarTunings'
 import { midiToFrequency } from '@/utils/noteUtils'
 import { describe, expect, it } from 'vitest'
-import { FRET_ROW_HEIGHT, buildGuitarLayout, guitarFretY } from './guitarLayout'
+import {
+  FRET_ROW_HEIGHT,
+  GUITAR_MAX_FRET,
+  buildGuitarLayout,
+  guitarFretY,
+  guitarMidiMax,
+} from './guitarLayout'
 import {
   buildGuitarPreviewLane,
   buildGuitarPreviewLanes,
@@ -9,6 +15,7 @@ import {
 
 const STRING_6 = 0
 const STRING_5 = 1
+const STRING_1 = 5
 
 const C3_MIDI = 48
 const E2_MIDI = 40
@@ -44,11 +51,47 @@ describe('buildGuitarPreviewLane', () => {
   it('marks every string that can reach the pitch', () => {
     const lane = buildGuitarPreviewLane(laneAt(C3_MIDI, 'C3'), STANDARD)
 
-    /* C3 is reachable only from the two lowest strings within 15 frets. */
+    /* C3 is reachable only from the two lowest strings within the board's fret
+     * window; on string 4 and up it would need a negative fret. */
     expect(lane?.segments).toEqual([
       { stringIndex: STRING_6, y: guitarFretY(8) },
       { stringIndex: STRING_5, y: guitarFretY(3) },
     ])
+  })
+
+  it('reaches the pitches the extra frets added', () => {
+    /*
+     * A♯5 is fret 18 of string 1 — off a 15-fret board entirely, and the only
+     * behavioural proof that lengthening the neck widened the preview's reach
+     * rather than just drawing more empty rows.
+     */
+    const lane = buildGuitarPreviewLane(laneAt(82, 'A♯5'), STANDARD)
+
+    expect(lane?.segments).toEqual([
+      { stringIndex: STRING_1, y: guitarFretY(18) },
+    ])
+  })
+
+  it('draws the very top of the board', () => {
+    const lane = buildGuitarPreviewLane(
+      laneAt(guitarMidiMax(STANDARD), 'B5'),
+      STANDARD,
+    )
+
+    expect(lane?.segments).toEqual([
+      { stringIndex: STRING_1, y: guitarFretY(GUITAR_MAX_FRET) },
+    ])
+  })
+
+  it('keeps the chip when a pitch climbs past the last fret', () => {
+    /* One semitone above the top of the board: named, but nowhere to draw. */
+    const lane = buildGuitarPreviewLane(
+      laneAt(guitarMidiMax(STANDARD) + 1, 'C6'),
+      STANDARD,
+    )
+
+    expect(lane?.text).toBe('C6')
+    expect(lane?.segments).toEqual([])
   })
 
   it('puts an open-string pitch on the open row', () => {

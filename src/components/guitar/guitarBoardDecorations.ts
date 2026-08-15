@@ -32,17 +32,24 @@ export type GuitarStringLine = {
  * Inlay dots, all centred on the board's middle line — the boundary between
  * strings 4 and 3 — so they never sit under a note name.
  *
- * A real neck spreads the 12th fret's pair out to the string-5/4 and 3/2
- * boundaries, but that does not survive the translation to a diagram: with
- * evenly spaced string lines, a dot beside a string reads as belonging to that
- * string rather than to the fret. Keeping the pair tight around the centre
- * reads as one marker.
+ * The 12th fret's pair spreads out to the string-5/4 and 3/2 boundaries, as on
+ * a real neck. Those boundaries survive the translation to a diagram because
+ * they are equidistant from the two string lines either side of them, so
+ * neither string claims the dot; they also fall in the gap between two fret
+ * cells, clear of every note name.
  */
 const INLAY_CENTER_STRING_OFFSET = GUITAR_STRING_COUNT / 2 // 3 — board centre
-export const INLAY_DOT_SIZE = 8 // px
-/* px — each of the 12th fret's pair sits this far to either side of centre,
- * leaving a gap of about half a dot between them. */
-const DOUBLE_INLAY_SPREAD = 7
+export const INLAY_DOT_SIZE = 10 // px
+
+/*
+ * How far each of the 12th fret's pair sits either side of centre, in string
+ * widths: exactly one column, which lands them on the A/D and G/B boundaries.
+ *
+ * A multiple of the column rather than a px constant — stringWidth flexes from
+ * 36 to 72px, and a fixed spread would draw a pair twice as tight, relative to
+ * its own board, on a wide desktop as on a phone.
+ */
+const DOUBLE_INLAY_SPREAD_STRINGS = 1
 
 export function buildGuitarInlays(
   stringWidth: number,
@@ -60,7 +67,7 @@ export function buildGuitarInlays(
     })),
     ...[-1, 1].map((side) => ({
       key: `inlay-${DOUBLE_INLAY_FRET}-${side}`,
-      left: centerLeft + side * DOUBLE_INLAY_SPREAD,
+      left: centerLeft + side * DOUBLE_INLAY_SPREAD_STRINGS * stringWidth,
       top: top(DOUBLE_INLAY_FRET),
     })),
   ]

@@ -8,8 +8,17 @@
 /* Every supported tuning has six strings, so this stays a constant. */
 export const GUITAR_STRING_COUNT = 6
 
-/* Rows 0…15 inclusive — fret 0 is the open string. */
-export const GUITAR_MAX_FRET = 15
+/*
+ * Rows 0…19 inclusive — fret 0 is the open string.
+ *
+ * 19 rather than 15: it carries the 17th and 19th inlays, so the neck reads as a
+ * real fingerboard rather than one cut off mid-position, and it puts the shapes
+ * from the 12th fret upward on the board instead of clipping them three frets
+ * in. The board grows to fill the space a tall window already had spare; on a
+ * short one the rows shrink to their floor and the page scrolls, as it did
+ * before at 15.
+ */
+export const GUITAR_MAX_FRET = 19
 export const GUITAR_FRET_ROW_COUNT = GUITAR_MAX_FRET + 1
 
 /*
@@ -26,14 +35,18 @@ export const GUITAR_FRET_ROW_COUNT = GUITAR_MAX_FRET + 1
 export const FRET_ROW_HEIGHT = 30
 
 /*
- * px — the ceiling on that growth. 16 rows at 46px is a 736px board, which still
- * clears the ~240px of chrome above and below it on a 1080px-tall window without
- * making the page scroll; shorter windows never reach the ceiling anyway, since
- * the row height is fitted to the space available first.
+ * px — the ceiling on that growth. A legibility cap, NOT a promise that the
+ * board fits: past this the rows are as tall as the note names can use, and
+ * whether the whole neck is visible is decided by the fitted-first step below.
+ *
+ * 20 rows at 46px is a 920px board, so the ceiling is only reachable on a window
+ * of ~1161px or taller (920 + BOARD_VERTICAL_CHROME). A 1080px window fits its
+ * rows to 41px instead, which still draws the names at their full size.
  */
 export const MAX_FRET_ROW_HEIGHT = 46
 
-/* px — the 0…15 number column at the inline-start edge of the board. */
+/* px — the 0…19 number column at the inline-start edge of the board. Two digits
+ * still fit: the gutter font is capped well below the note names. */
 export const FRET_NUMBER_GUTTER = 28
 
 /* px — on touch the fret-number column doubles as the strip you grab to pan the
@@ -49,8 +62,9 @@ export const MAX_STRING_WIDTH = 72
 export const MIN_STRING_WIDTH_TOUCH = 44 // px — tap-target floor
 export const MIN_STRING_WIDTH_POINTER = 36 // px
 
-/* Inlays as on a real neck; 12 takes the double dot marking the octave. */
-export const SINGLE_INLAY_FRETS = [3, 5, 7, 9, 15]
+/* Inlays as on a real neck; 12 takes the double dot marking the octave. 17 and
+ * 19 are the upper markers the extra frets brought onto the board. */
+export const SINGLE_INLAY_FRETS = [3, 5, 7, 9, 15, 17, 19]
 export const DOUBLE_INLAY_FRET = 12
 
 export type GuitarCell = {
@@ -90,8 +104,14 @@ export type GuitarBoardScale = {
  * the string-number header, plus the page's bottom padding. Measured from the
  * live page rather than summed from the stylesheets, so it already accounts for
  * the gaps between them.
+ *
+ * A FALLBACK, not the truth: it is only right for /guitar. The /guitar-test
+ * harness stacks a simulated-singer panel above the board and has roughly 130px
+ * more, so a board sized by this constant hangs off the bottom of that page.
+ * GuitarDisplay measures its own offset and passes it in; this value covers the
+ * first render, before there is anything to measure.
  */
-const BOARD_VERTICAL_CHROME = 241
+export const BOARD_VERTICAL_CHROME = 241
 
 /*
  * px — the hover/focus ring is painted as a box-shadow spread, which renders
@@ -137,6 +157,26 @@ const FRET_RING_CLEARANCE = 2
 const BOARD_TOUCH_VIEWPORT_RATIO = 0.7
 
 /**
+ * The height the board has to draw itself in, before it is divided into rows.
+ *
+ * Exported because it is the bound everything else is judged against: the row
+ * solver divides by it, and the tests assert the board fits it rather than
+ * restating the arithmetic and drifting from it. That drift is not
+ * hypothetical — the touch ratio used to exist as three separate copies.
+ */
+export function guitarBoardAvailableHeight(
+  viewportHeight: number,
+  isCoarsePointer: boolean,
+  chromeHeight: number = BOARD_VERTICAL_CHROME,
+): number {
+  const pageFit = viewportHeight - chromeHeight
+
+  if (!isCoarsePointer) return pageFit
+
+  return Math.min(pageFit, viewportHeight * BOARD_TOUCH_VIEWPORT_RATIO)
+}
+
+/**
  * Size the board to the window.
  *
  * Only the height is consulted. The width axis already flexes on its own (see
@@ -146,21 +186,24 @@ const BOARD_TOUCH_VIEWPORT_RATIO = 0.7
  *
  * Touch grows the same way, with one extra bound: the board sits in its own
  * 70svh scroll box there, so the rows may only grow as far as that box can still
- * show all sixteen at once. A tablet clears both tests easily and lands on the
- * same rows a desktop draws — 16 × 30px inside an 826px box left a third of it
- * empty. A phone is held back by whichever bound bites first, and a short one
- * stays on the base row and scrolls, exactly as before.
+ * show the whole neck at once.
+ *
+ * At 20 rows neither branch reaches the ceiling on an ordinary screen — a tablet
+ * lands on rows that fill its box rather than on MAX_FRET_ROW_HEIGHT, and a
+ * laptop under ~841px cannot fit the board even at the base row. That last case
+ * is not a failure: the rows stop at their floor and the board scrolls, on touch
+ * inside its own box and on a pointer by scrolling the page.
  */
 export function buildGuitarBoardScale(
   viewportHeight: number,
   isCoarsePointer: boolean,
+  chromeHeight: number = BOARD_VERTICAL_CHROME,
 ): GuitarBoardScale {
-  const available = isCoarsePointer
-    ? Math.min(
-        viewportHeight - BOARD_VERTICAL_CHROME,
-        viewportHeight * BOARD_TOUCH_VIEWPORT_RATIO,
-      )
-    : viewportHeight - BOARD_VERTICAL_CHROME
+  const available = guitarBoardAvailableHeight(
+    viewportHeight,
+    isCoarsePointer,
+    chromeHeight,
+  )
   const fitted = Math.floor(available / GUITAR_FRET_ROW_COUNT)
   const rowHeight = Math.min(
     Math.max(fitted, FRET_ROW_HEIGHT),
@@ -205,8 +248,8 @@ export function guitarFretMidi(
 
 /*
  * The board's pitch span, derived rather than written by hand so the range the
- * duet band split and the live-pitch preview use cannot fall out of step with the
- * board — including when the tuning changes under them.
+ * live-pitch preview uses cannot fall out of step with the board — including when
+ * the tuning changes under it.
  */
 export function guitarMidiMin(tuning: readonly number[]): number {
   return Math.min(...tuning)
@@ -214,6 +257,24 @@ export function guitarMidiMin(tuning: readonly number[]): number {
 
 export function guitarMidiMax(tuning: readonly number[]): number {
   return Math.max(...tuning) + GUITAR_MAX_FRET
+}
+
+/*
+ * The board's ceiling as the duet split sees it — deliberately NOT
+ * GUITAR_MAX_FRET.
+ *
+ * The crossover between the two singers' lanes is the midpoint of the range it
+ * is handed (see crossoverFrequency in @/utils/duetBandSplit), so frets drawn
+ * above this one would walk that boundary up with them. The split separates two
+ * voices, not two halves of however much neck is on screen: at 15 the crossover
+ * sits between B3 and C4, and lengthening the fingerboard must not push an alto
+ * into the low band. The tuning still moves it, which is the point — retuning
+ * changes what the low voice can actually reach.
+ */
+export const GUITAR_DUET_SPLIT_MAX_FRET = 15
+
+export function guitarDuetMidiMax(tuning: readonly number[]): number {
+  return Math.max(...tuning) + GUITAR_DUET_SPLIT_MAX_FRET
 }
 
 /**
@@ -234,7 +295,7 @@ export function guitarFretY(
 
 /*
  * Every cell of the board, built once per width change rather than once per
- * render — 6 strings × 16 frets is 96 of them.
+ * render — 6 strings × 20 rows is 120 of them.
  */
 export function buildGuitarLayout(
   stringWidth: number,

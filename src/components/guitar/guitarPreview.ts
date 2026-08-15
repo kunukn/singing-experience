@@ -32,7 +32,7 @@ export type GuitarPreviewLaneView = {
   laneId: GuitarPreviewLaneId
   /* Nearest-note label plus a signed cents suffix once past the threshold. */
   text: string
-  /* Empty when the pitch is on no string's 0–15 window — the chip still shows. */
+  /* Empty when the pitch is outside every string's fret window — the chip still shows. */
   segments: GuitarPreviewSegment[]
 }
 

@@ -1,15 +1,21 @@
 import { GUITAR_TUNINGS } from '@/utils/guitarTunings'
 import { describe, expect, it } from 'vitest'
 import {
+  BOARD_VERTICAL_CHROME,
+  DOUBLE_INLAY_FRET,
   FRET_RING_SHADOW_WIDTH,
   FRET_ROW_HEIGHT,
   FRET_WIRE_HEIGHT,
   GUITAR_FRET_ROW_COUNT,
   GUITAR_MAX_FRET,
+  GUITAR_STRING_COUNT,
   MAX_FRET_ROW_HEIGHT,
   NUT_OVERHANG,
+  SINGLE_INLAY_FRETS,
   buildGuitarBoardScale,
   buildGuitarLayout,
+  guitarBoardAvailableHeight,
+  guitarDuetMidiMax,
   guitarFretMidi,
   guitarFretY,
   guitarMidiMax,
@@ -29,7 +35,7 @@ const DROP_D = GUITAR_TUNINGS.dropD.midi
 describe('board range', () => {
   it('derives from the tuning and fret count', () => {
     expect(guitarMidiMin(STANDARD)).toBe(40) // E2, open 6th string
-    expect(guitarMidiMax(STANDARD)).toBe(79) // G5, 15th fret of the 1st string
+    expect(guitarMidiMax(STANDARD)).toBe(83) // B5, 19th fret of the 1st string
     expect(guitarMidiMax(STANDARD)).toBe(
       Math.max(...STANDARD) + GUITAR_MAX_FRET,
     )
@@ -40,6 +46,32 @@ describe('board range', () => {
      * the range the duet split and the preview use must track it. */
     expect(guitarMidiMin(DROP_D)).toBe(38) // D2
     expect(guitarMidiMax(DROP_D)).toBe(guitarMidiMax(STANDARD))
+  })
+
+  it('keeps the duet split off the frets added above it', () => {
+    /*
+     * The crossover is the midpoint of the range it is handed, so a board that
+     * grew four frets taller must not drag the boundary between the two
+     * singers' lanes up with it. This is the whole reason the two ceilings are
+     * separate functions.
+     */
+    expect(guitarDuetMidiMax(STANDARD)).toBe(79) // G5, unchanged at 15 frets
+    expect(guitarMidiMax(STANDARD)).toBeGreaterThan(guitarDuetMidiMax(STANDARD))
+  })
+
+  it('still lets the tuning move the duet split', () => {
+    /* Pinned to a fret, not to a pitch: retuning changes what the low voice can
+     * reach, and the split has to follow that. */
+    expect(guitarDuetMidiMax(DROP_D)).toBe(guitarDuetMidiMax(STANDARD))
+    expect(guitarMidiMin(DROP_D)).toBeLessThan(guitarMidiMin(STANDARD))
+  })
+})
+
+describe('inlays', () => {
+  it('marks only frets the board actually has', () => {
+    for (const fret of [...SINGLE_INLAY_FRETS, DOUBLE_INLAY_FRET]) {
+      expect(fret).toBeLessThanOrEqual(GUITAR_MAX_FRET)
+    }
   })
 })
 
@@ -68,13 +100,20 @@ describe('guitarFretMidi', () => {
 describe('buildGuitarLayout', () => {
   const layout = buildGuitarLayout(60, STANDARD)
 
-  it('covers every string and fret', () => {
-    expect(layout.cells).toHaveLength(6 * 16)
+  it('covers every string and fret exactly once', () => {
+    /* Stronger than a length check, and it never needs renumbering: a duplicated
+     * or missing cell fails here whatever the board's dimensions are. */
+    const positions = new Set(
+      layout.cells.map((cell) => `${cell.stringIndex}-${cell.fret}`),
+    )
+
+    expect(positions.size).toBe(GUITAR_STRING_COUNT * GUITAR_FRET_ROW_COUNT)
+    expect(layout.cells).toHaveLength(positions.size)
   })
 
   it('sizes the board from the string width and the fixed row height', () => {
     expect(layout.boardWidth).toBe(360)
-    expect(layout.boardHeight).toBe(16 * FRET_ROW_HEIGHT)
+    expect(layout.boardHeight).toBe(GUITAR_FRET_ROW_COUNT * FRET_ROW_HEIGHT)
   })
 
   it('takes every cell pitch from the tuning it was given', () => {
@@ -90,9 +129,15 @@ describe('buildGuitarLayout', () => {
 
   it('places cells on a uniform grid', () => {
     const string6 = layout.cells.filter((cell) => cell.stringIndex === STRING_6)
+    const steps = string6
+      .slice(1)
+      .map((cell, index) => cell.topPx - string6[index].topPx)
+
     expect(string6[0].topPx).toBe(0)
-    expect(string6[1].topPx - string6[0].topPx).toBe(FRET_ROW_HEIGHT)
-    expect(string6[15].topPx - string6[14].topPx).toBe(FRET_ROW_HEIGHT)
+    expect(new Set(steps)).toEqual(new Set([FRET_ROW_HEIGHT]))
+    /* Anchored to the last row, so the check keeps reaching the bottom of the
+     * board rather than stopping wherever fret 15 happens to be. */
+    expect(string6.at(-1)?.topPx).toBe(GUITAR_MAX_FRET * FRET_ROW_HEIGHT)
   })
 })
 
@@ -135,7 +180,7 @@ describe('buildGuitarLayout at a resized row height', () => {
   })
 
   it('grows the board by the row height, not the string width', () => {
-    expect(tall.boardHeight).toBe(16 * TALL_ROW)
+    expect(tall.boardHeight).toBe(GUITAR_FRET_ROW_COUNT * TALL_ROW)
     expect(tall.boardWidth).toBe(6 * 72)
   })
 
@@ -164,18 +209,50 @@ describe('buildGuitarBoardScale', () => {
   const SHORT = 600
   const ALL_HEIGHTS = [SHORT, LAPTOP, LARGE_LAPTOP, DESKTOP]
 
-  it('gives a taller window taller rows', () => {
-    const rowHeights = ALL_HEIGHTS.map(
-      (height) => buildGuitarBoardScale(height, false).rowHeight,
-    )
+  it('never shrinks a row as the window grows', () => {
+    /*
+     * Swept rather than sampled: the failure this guards is a clamp that
+     * inverts somewhere between two screen sizes, and four sample points cannot
+     * see it. Not strictly increasing — the floor and the ceiling both flatten
+     * whole stretches of the range, which is the point of having them.
+     */
+    let previous = 0
 
-    for (let index = 1; index < rowHeights.length; index++) {
-      expect(rowHeights[index]).toBeGreaterThan(rowHeights[index - 1])
+    for (
+      let viewportHeight = 400;
+      viewportHeight <= 1600;
+      viewportHeight += 10
+    ) {
+      const { rowHeight } = buildGuitarBoardScale(viewportHeight, false)
+
+      expect(rowHeight).toBeGreaterThanOrEqual(previous)
+      previous = rowHeight
     }
+  })
+
+  it('does grow the rows between a short window and a tall one', () => {
+    /* Paired with the sweep above, which a constant would otherwise satisfy. */
+    expect(buildGuitarBoardScale(DESKTOP, false).rowHeight).toBeGreaterThan(
+      buildGuitarBoardScale(LAPTOP, false).rowHeight,
+    )
   })
 
   it('stops growing at the ceiling, however tall the window', () => {
     expect(buildGuitarBoardScale(4000, false).rowHeight).toBe(
+      MAX_FRET_ROW_HEIGHT,
+    )
+  })
+
+  it('reaches the ceiling as soon as the board fits at full height', () => {
+    /* Keeps the 4000px test above honest about WHERE the ceiling starts biting,
+     * rather than only that it exists somewhere. */
+    const tallestBoard = GUITAR_FRET_ROW_COUNT * MAX_FRET_ROW_HEIGHT
+    const justEnough = ALL_HEIGHTS.concat([1161, 1600]).find(
+      (height) => guitarBoardAvailableHeight(height, false) >= tallestBoard,
+    )
+
+    expect(justEnough).toBeDefined()
+    expect(buildGuitarBoardScale(justEnough!, false).rowHeight).toBe(
       MAX_FRET_ROW_HEIGHT,
     )
   })
@@ -186,17 +263,21 @@ describe('buildGuitarBoardScale', () => {
 
   /*
    * On touch the board lives in its own 70svh scroll box, so the rows may grow
-   * only as far as that box can still show all sixteen at once — a tablet has
-   * room for the full desktop board, a phone does not.
+   * only as far as that box can still show the whole neck at once — a tablet
+   * gets a readable row, a phone is held to the base one and scrolls.
    */
   describe('on touch', () => {
     const TABLET = 1180 // iPad Air
     const PHONE = 844 // iPhone 14
     const SHORT_PHONE = 667 // iPhone SE
 
-    it('gives a tablet the same rows a desktop gets', () => {
-      expect(buildGuitarBoardScale(TABLET, true).rowHeight).toBe(
-        MAX_FRET_ROW_HEIGHT,
+    it('keeps a tablet well clear of the phone base row', () => {
+      expect(buildGuitarBoardScale(TABLET, true).rowHeight).toBeGreaterThan(
+        FRET_ROW_HEIGHT,
+      )
+      /* The user-visible half of it: the names stay at their full size. */
+      expect(buildGuitarBoardScale(TABLET, true).labelFontSize).toBe(
+        buildGuitarBoardScale(4000, true).labelFontSize,
       )
     })
 
@@ -204,19 +285,6 @@ describe('buildGuitarBoardScale', () => {
       expect(buildGuitarBoardScale(SHORT_PHONE, true).rowHeight).toBe(
         FRET_ROW_HEIGHT,
       )
-    })
-
-    it('never grows the board past the box it scrolls in', () => {
-      for (const viewportHeight of [SHORT_PHONE, PHONE, TABLET, 4000]) {
-        const { rowHeight } = buildGuitarBoardScale(viewportHeight, true)
-        /* The base row is the floor, so a board that overflows at 30px still
-         * overflows — that case scrolls by design and is not what this guards. */
-        if (rowHeight === FRET_ROW_HEIGHT) continue
-
-        expect(GUITAR_FRET_ROW_COUNT * rowHeight).toBeLessThanOrEqual(
-          viewportHeight * 0.7,
-        )
-      }
     })
 
     it('never grows a row past what the pointer branch would give', () => {
@@ -230,11 +298,73 @@ describe('buildGuitarBoardScale', () => {
     })
   })
 
-  it('keeps the board fitting the window it was sized for', () => {
-    for (const viewportHeight of ALL_HEIGHTS) {
-      const { rowHeight } = buildGuitarBoardScale(viewportHeight, false)
+  it('keeps the board inside the height it was given, on either pointer', () => {
+    /*
+     * One check for both branches, against the real bound rather than the raw
+     * viewport: the chrome above and below the board is not the board's to use,
+     * and on touch the 70svh box is tighter still.
+     */
+    for (const viewportHeight of [...ALL_HEIGHTS, 667, 844, 1180, 4000]) {
+      for (const isCoarsePointer of [false, true]) {
+        const { rowHeight } = buildGuitarBoardScale(
+          viewportHeight,
+          isCoarsePointer,
+        )
+        /* The base row is the floor, so a board that overflows at 30px still
+         * overflows — that case scrolls by design and is not what this guards. */
+        if (rowHeight === FRET_ROW_HEIGHT) continue
 
-      expect(GUITAR_FRET_ROW_COUNT * rowHeight).toBeLessThan(viewportHeight)
+        expect(GUITAR_FRET_ROW_COUNT * rowHeight).toBeLessThanOrEqual(
+          guitarBoardAvailableHeight(viewportHeight, isCoarsePointer),
+        )
+      }
+    }
+  })
+
+  it('gives a page with more chrome above it a shorter board', () => {
+    /*
+     * /guitar-test stacks a simulated-singer panel above the board, so it has
+     * roughly 130px less to work with than /guitar at the same window height.
+     * Sizing both from one constant is what used to hang the harness's last
+     * frets off the bottom of the screen.
+     */
+    const HARNESS_CHROME = 375
+
+    const page = buildGuitarBoardScale(DESKTOP, false)
+    const harness = buildGuitarBoardScale(DESKTOP, false, HARNESS_CHROME)
+
+    expect(harness.rowHeight).toBeLessThan(page.rowHeight)
+    expect(GUITAR_FRET_ROW_COUNT * harness.rowHeight).toBeLessThanOrEqual(
+      guitarBoardAvailableHeight(DESKTOP, false, HARNESS_CHROME),
+    )
+  })
+
+  it('falls back to the built-in chrome when none is measured yet', () => {
+    expect(buildGuitarBoardScale(DESKTOP, false)).toEqual(
+      buildGuitarBoardScale(DESKTOP, false, BOARD_VERTICAL_CHROME),
+    )
+  })
+
+  it('uses as much of that height as whole rows allow', () => {
+    /* The defining property of the floor division: one more pixel per row would
+     * not fit. Skipped at the clamps, which are bounds of their own. */
+    for (const viewportHeight of [...ALL_HEIGHTS, 667, 844, 1180]) {
+      for (const isCoarsePointer of [false, true]) {
+        const { rowHeight } = buildGuitarBoardScale(
+          viewportHeight,
+          isCoarsePointer,
+        )
+        if (
+          rowHeight === FRET_ROW_HEIGHT ||
+          rowHeight === MAX_FRET_ROW_HEIGHT
+        ) {
+          continue
+        }
+
+        expect(GUITAR_FRET_ROW_COUNT * (rowHeight + 1)).toBeGreaterThan(
+          guitarBoardAvailableHeight(viewportHeight, isCoarsePointer),
+        )
+      }
     }
   })
 

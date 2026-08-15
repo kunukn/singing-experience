@@ -26,6 +26,7 @@ import {
 } from './guitarBoardDecorations'
 import { guitarFretLabel } from './guitarLabels'
 import {
+  BOARD_VERTICAL_CHROME,
   FRET_NUMBER_GUTTER,
   FRET_NUMBER_GUTTER_TOUCH,
   FRET_WIRE_HEIGHT,
@@ -67,6 +68,9 @@ type Props = {
   /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
   scaleRoot?: number | null
   scaleMode?: ScaleHighlightMode
+  /* px of extra chrome stacked above the board by the host page, beyond what
+   * BOARD_VERTICAL_CHROME accounts for. Only /guitar-test needs it. */
+  extraVerticalChrome?: number
 }
 const props = defineProps<Props>()
 
@@ -106,7 +110,7 @@ function cellAriaLabel(cell: GuitarCell): string {
   }).label
 }
 
-/* Built once per scale change, not once per cell — the board has 96 of them. */
+/* Built once per scale change, not once per cell — the board has 120 of them. */
 const scalePitchClasses = computed(() =>
   buildScalePitchClasses(
     props.scaleRoot ?? null,
@@ -185,9 +189,10 @@ const stringWidth = computed(() => {
 })
 
 /*
- * The board is ~500px tall, so on a phone it would push the controls off screen
- * and force the whole document to scroll to reach the low frets. Bounding it to
- * a slice of the viewport keeps the board self-contained instead.
+ * The board is 600px tall at the base row and taller wherever there is room, so
+ * on a phone it would push the controls off screen and force the whole document
+ * to scroll to reach the high frets. Bounding it to a slice of the viewport
+ * keeps the board self-contained instead.
  *
  * svh, not dvh: dvh grows and shrinks as the address bar collapses, which would
  * resize the board mid-scroll. 70% leaves room for the two control rows above,
@@ -206,6 +211,23 @@ useResizeObserver(boardViewport, ([entry]) => {
 })
 
 /*
+ * Chrome above the board that this component cannot see for itself.
+ * BOARD_VERTICAL_CHROME is calibrated for /guitar; the /guitar-test harness
+ * stacks a simulated-singer panel on top and needs ~130px more, or its last
+ * frets hang off the bottom of the screen.
+ *
+ * A prop rather than a measurement taken here. Measuring the board's own offset
+ * looks safe — the board is last in a top-down column, so its height cannot move
+ * its own top — but it oscillates in practice: a taller board toggles the page
+ * scrollbar, the scrollbar changes the viewport width, the width change fires
+ * `resize`, and re-measuring changes the height again. Whoever owns the extra
+ * chrome measures it instead, where nothing the board does can feed back.
+ */
+const verticalChrome = computed(
+  () => BOARD_VERTICAL_CHROME + (props.extraVerticalChrome ?? 0),
+)
+
+/*
  * Row height and everything that scales with it. Driven by the window rather
  * than by a measured container: the board's own height is what we are solving
  * for, so observing it would feed back on itself. Window height is an outside
@@ -213,7 +235,11 @@ useResizeObserver(boardViewport, ([entry]) => {
  */
 const { height: windowHeight } = useWindowSize()
 const boardScale = computed(() =>
-  buildGuitarBoardScale(windowHeight.value, isCoarsePointer.value),
+  buildGuitarBoardScale(
+    windowHeight.value,
+    isCoarsePointer.value,
+    verticalChrome.value,
+  ),
 )
 
 /* The hover ring and press glow live in scoped CSS, which cannot read a ref —
@@ -298,7 +324,7 @@ const LANE_COLOUR_CLASS: Record<
 }
 
 /*
- * Tap versus scroll. The board is ~500px tall, so on a phone the page scrolls
+ * Tap versus scroll. The board is at least 600px tall, so on a phone the page scrolls
  * vertically straight through it, and @pointerdown would sound a note on the
  * first touch of every scroll drag. `click` does not fire on a scroll gesture,
  * so touch plays on click; a mouse keeps pointerdown's instant response, where
@@ -467,7 +493,7 @@ function handleClick(cell: GuitarCell) {
                 aria-hidden="true"
               />
 
-              <!-- The nut (below the open row) and the fret wires below rows 1–15.
+              <!-- The nut (below the open row) and the fret wires below rows 1–19.
                  The nut is thicker and darker, as on a real neck. -->
               <span
                 v-for="fret in fretNumbers"
@@ -509,7 +535,7 @@ function handleClick(cell: GuitarCell) {
               >
                 <!-- Scale highlight. Decorative reinforcement of a filter the user
                  set themselves, so it stays out of the cell's aria-label —
-                 narrating it on 96 cells would drown out the note names. The
+                 narrating it on 120 cells would drown out the note names. The
                  dot doubles as the label's backing, so an unlabelled cell still
                  shows its scale membership. -->
                 <span
@@ -584,7 +610,7 @@ function handleClick(cell: GuitarCell) {
  * rectangle reads as a spreadsheet cell, and being full-bleed it also paints over
  * the string line running through the middle.
  *
- * A pseudo-element rather than a span: there are 96 cells, and none of them need
+ * A pseudo-element rather than a span: there are 120 cells, and none of them need
  * another node just to hold a hover state.
  */
 .guitar-fret::after {

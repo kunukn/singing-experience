@@ -12,7 +12,7 @@ import {
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
 import { useLocalStorage } from '@vueuse/core'
-import { guitarMidiMax, guitarMidiMin } from './guitarLayout'
+import { guitarDuetMidiMax, guitarMidiMax, guitarMidiMin } from './guitarLayout'
 import type { GuitarPreviewLaneId } from './guitarPreview'
 
 /* Which tuning the board is strung to. Owned here rather than in the settings
@@ -99,7 +99,10 @@ const {
 } = useIdlePreview({ isGameActive, isEnabled: isSinglePreviewEnabled })
 
 /* The board's span stands in for the piano's selected voice range as the duet
- * split input, so the split follows a tuning change. */
+ * split input, so the split follows a tuning change — but from the singable part
+ * of the neck, not its full drawn extent (see GUITAR_DUET_SPLIT_MAX_FRET). */
+const duetMidiMax = computed(() => guitarDuetMidiMax(tuningMidi.value))
+
 const {
   lowLane,
   highLane,
@@ -107,7 +110,7 @@ const {
 } = useDuetPitchDetection({
   isEnabled: isDuetPreviewEnabled,
   midiMin: () => midiMin.value,
-  midiMax: () => midiMax.value,
+  midiMax: () => duetMidiMax.value,
 })
 
 /* Single-voice mode renders through the same lane pipeline as duet mode, just

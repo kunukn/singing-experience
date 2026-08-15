@@ -18,7 +18,7 @@ import {
 
 /* px — a round string width keeps the expected positions readable. */
 const STRING_WIDTH = 40
-const BOARD_HEIGHT = GUITAR_FRET_ROW_COUNT * FRET_ROW_HEIGHT // 480
+const BOARD_HEIGHT = GUITAR_FRET_ROW_COUNT * FRET_ROW_HEIGHT // 600
 /* The boundary between strings 4 and 3 — where every inlay is centred. */
 const BOARD_CENTER = (GUITAR_STRING_COUNT / 2) * STRING_WIDTH // 120
 
@@ -56,6 +56,27 @@ describe('buildGuitarInlays', () => {
     /* Equal and opposite offsets, so the pair reads as one centred marker. */
     expect(pair[0].left - BOARD_CENTER).toBe(BOARD_CENTER - pair[1].left)
     expect(pair[0].left).toBeLessThan(BOARD_CENTER)
+  })
+
+  it('lands the 12th fret pair on the string 5/4 and 3/2 boundaries', () => {
+    const pair = buildGuitarInlays(STRING_WIDTH).slice(
+      SINGLE_INLAY_FRETS.length,
+    )
+
+    /* One whole column either side of centre, as on a real neck. */
+    expect(pair[0].left).toBe(BOARD_CENTER - STRING_WIDTH)
+    expect(pair[1].left).toBe(BOARD_CENTER + STRING_WIDTH)
+  })
+
+  it('widens the 12th fret pair with the string width', () => {
+    const pair = buildGuitarInlays(STRING_WIDTH * 2).slice(
+      SINGLE_INLAY_FRETS.length,
+    )
+
+    /* The spread is a share of the board, not a px constant, so the pair keeps
+     * its proportions on a wider board rather than bunching up. */
+    expect(pair[0].left).toBe(BOARD_CENTER * 2 - STRING_WIDTH * 2)
+    expect(pair[1].left).toBe(BOARD_CENTER * 2 + STRING_WIDTH * 2)
   })
 
   it('centres each dot vertically in its fret row', () => {
