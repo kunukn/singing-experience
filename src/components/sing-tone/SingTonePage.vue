@@ -26,7 +26,9 @@ if (!ROUNDS_OPTIONS.includes(selectedRounds.value)) {
   selectedRounds.value = DEFAULT_TOTAL_ROUNDS
 }
 
-const selectedRangeIndex = useVoiceRangeIndex('syng.singToneRangeIndex')
+/* Cross-feature key — also used by pitch-game / piano / pitch-detector /
+ * singfly / warm-up. Keep the string identical across all of them. */
+const selectedRangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
 const game = useSingTone()
 </script>

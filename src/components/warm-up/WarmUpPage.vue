@@ -27,7 +27,11 @@ if (!HOLD_DURATION_OPTIONS.includes(selectedDurationSec.value as never)) {
   selectedDurationSec.value = defaultDurationSec
 }
 
-const selectedRangeIndex = useVoiceRangeIndex('syng.warmup.rangeIndex', {
+/* Cross-feature key — also used by pitch-game / piano / pitch-detector /
+ * singfly / sing-tone. Keep the string identical across all of them.
+ * allowedIndices only filters what warm-up can select/display — it never
+ * rewrites the shared stored value (see useVoiceRangeIndex). */
+const selectedRangeIndex = useVoiceRangeIndex('syng.rangeIndex', {
   allowedIndices: WARM_UP_VOICE_RANGE_INDICES,
 })
 

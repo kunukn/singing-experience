@@ -39,23 +39,41 @@ export function useVoiceRangeIndex(
   const defaultLabelKey = VOICE_RANGES[DEFAULT_RANGE_INDEX].labelKey
   const storedLabelKey = useLocalStorage(storageKey, defaultLabelKey)
 
-  const resolveIndex = (stored: unknown): number => {
+  const resolveStoredIndex = (stored: unknown): number => {
     const labelKey =
       typeof stored === 'string' && /^\d+$/.test(stored)
         ? LEGACY_RANGE_ORDER[Number(stored)]
         : stored
     const index = VOICE_RANGES.findIndex((range) => range.labelKey === labelKey)
-    if (index === -1) return DEFAULT_RANGE_INDEX
+    return index === -1 ? DEFAULT_RANGE_INDEX : index
+  }
 
-    if (options.allowedIndices && !options.allowedIndices.includes(index))
+  /*
+   * Normalise on load so legacy numeric values are rewritten as labelKeys.
+   * Never clamp through allowedIndices here — storageKey is often shared
+   * across features, and a page with a narrower allowedIndices must not
+   * overwrite what another page selected just because it doesn't fit here.
+   */
+  storedLabelKey.value =
+    VOICE_RANGES[resolveStoredIndex(storedLabelKey.value)].labelKey
+
+  /* The fallback has to be something the caller actually offers, otherwise the
+   * select renders blank while the game runs on an unlisted range. */
+  const resolveFallbackIndex = (): number => {
+    const { allowedIndices } = options
+    if (!allowedIndices || allowedIndices.includes(DEFAULT_RANGE_INDEX))
       return DEFAULT_RANGE_INDEX
+
+    return allowedIndices[0] ?? DEFAULT_RANGE_INDEX
+  }
+
+  const resolveIndex = (stored: unknown): number => {
+    const index = resolveStoredIndex(stored)
+    if (options.allowedIndices && !options.allowedIndices.includes(index))
+      return resolveFallbackIndex()
 
     return index
   }
-
-  /* Normalise on load so legacy numeric values are rewritten as labelKeys. */
-  storedLabelKey.value =
-    VOICE_RANGES[resolveIndex(storedLabelKey.value)].labelKey
 
   return computed<number>({
     get: () => resolveIndex(storedLabelKey.value),
