@@ -12,6 +12,12 @@ type StorageMigration =
    * delete it without copying, so it stops lingering in browser storage. */
   | { retire: string }
 
+/*
+ * Delete after 2027-08 — twelve months after the rename landed, by which point
+ * anyone still holding the old keys has been away long enough that recovering
+ * a difficulty setting is not worth the code. `storageMigrations.test.ts`
+ * starts failing on that date so this does not get forgotten.
+ */
 export const STORAGE_MIGRATIONS: readonly StorageMigration[] = [
   /* 706c37d — prefixed every key with `syng.` but shipped no migration. */
   { from: 'pitchGame.holdDurationSec', to: 'syng.pitchGameHoldDurationSec' },

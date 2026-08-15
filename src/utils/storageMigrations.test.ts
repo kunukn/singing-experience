@@ -1,6 +1,24 @@
 import { beforeEach, describe, expect, test } from 'vitest'
 import { migrateStorageKeys } from './storageMigrations'
 
+/*
+ * Deliberate time bomb. A migration table only earns its keep while real
+ * browsers still hold the old keys; past that it is dead code nobody dares
+ * touch. Twelve months after the 706c37d rename this fails and says what to
+ * remove. Do not silence it by pushing the date out — either the migrations
+ * still matter (then say why here) or they go.
+ */
+const REMOVE_MIGRATIONS_AFTER = new Date('2027-08-09')
+
+describe('storage migration lifetime', () => {
+  test('migrations are removed once they stop earning their keep', () => {
+    expect(
+      new Date() < REMOVE_MIGRATIONS_AFTER,
+      'Time to delete: STORAGE_MIGRATIONS and migrateStorageKeys in storageMigrations.ts, the try/catch call in _init.ts, and this whole test file.',
+    ).toBe(true)
+  })
+})
+
 describe('migrateStorageKeys', () => {
   beforeEach(() => {
     localStorage.clear()
