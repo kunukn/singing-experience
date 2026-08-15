@@ -17,12 +17,9 @@ let standardLoadPromise: Promise<void> | null = null
 let extraSampler: ToneType.Sampler | null = null
 let extraReady = false
 let extraLoadPromise: Promise<void> | null = null
-let activeC2Player: ToneType.Player | null = null
 
 const GUITAR_RING_S = 3 // open string rings for ~3 seconds
 const SAMPLER_VOLUME_DB = -6 // dB — reference level for all guitar samples
-const C2_RING_S = 5
-const C2_FADE_OUT_S = 0.3 // graceful tail on stop to avoid an audible click
 
 /* Defers AudioContext creation until the first user gesture (play call).
  * A static top-level import would create the AudioContext on page load,
@@ -57,6 +54,17 @@ const EXTRA_SAMPLE_URLS: Record<string, string> = {
   'A#3': 'As3.mp3', // Eb standard string 2
   D4: 'D4.mp3', // DADGAD / Open G / Open D string 1
   'D#4': 'Ds4.mp3', // Eb standard string 1
+  /*
+   * Drop C / Open C string 6. GENERATED, not recorded — D2.mp3 resampled down
+   * two semitones with ffmpeg, which is precisely what a Tone.Player used to do
+   * to it at playback time, so it sounds the same as it always did.
+   *
+   * Baking it into a file is what removed that Player: building one per press
+   * meant starting it before its buffer had fetched, which threw and took the
+   * whole tuner strum down with it, and it bypassed the sampler's -6 dB
+   * reference level so C2 rang louder than every other string.
+   */
+  C2: 'C2.mp3',
   /*
    * Not open-string notes for any tuning. These are reference points for the
    * resampler above the open strings: every fretted note routes to this bank
@@ -204,23 +212,15 @@ export function useGuitarSampler() {
 
     let needsStandard = false
     let needsExtra = false
-    let needsC2 = false
     for (const s of strings) {
-      const key = `${s.note}${s.octave}`
-      if (s.note === 'C' && s.octave === 2) needsC2 = true
-      else if (STANDARD_NOTE_KEYS.has(key)) needsStandard = true
+      if (STANDARD_NOTE_KEYS.has(`${s.note}${s.octave}`)) needsStandard = true
       else needsExtra = true
     }
-
-    /* C2 uses a Tone.Player on D2.mp3 — D2 lives in the extra bank. */
-    if (needsC2) needsExtra = true
 
     const tasks: Promise<void>[] = []
     if (needsStandard) tasks.push(loadStandard())
     if (needsExtra) tasks.push(loadExtra())
     await Promise.all(tasks)
-
-    if (needsC2) await _tone!.loaded()
   }
 
   /* Schedule a sample at audio-clock time `whenS`. Caller must have awaited
@@ -233,25 +233,6 @@ export function useGuitarSampler() {
     duration: number = GUITAR_RING_S,
   ): void {
     if (!_tone) return
-
-    if (note === 'C' && octave === 2) {
-      if (activeC2Player) {
-        activeC2Player.stop()
-        activeC2Player.dispose()
-        activeC2Player = null
-      }
-      const d2Url = `${SAMPLE_BASE_URL}D2.mp3`
-      const player = new _tone.Player({
-        url: d2Url,
-        fadeOut: C2_FADE_OUT_S,
-      }).toDestination()
-      // 2^(-2/12) ≈ 0.891 — slows playback by 2 semitones, shifting D2 (73.42 Hz) down to C2 (65.41 Hz)
-      player.playbackRate = 2 ** (-2 / 12)
-      player.start(whenS)
-      player.stop(whenS + C2_RING_S)
-      activeC2Player = player
-      return
-    }
 
     const key = `${note}${octave}`
     const useStandard = STANDARD_NOTE_KEYS.has(key)
@@ -269,11 +250,6 @@ export function useGuitarSampler() {
     /* Instant mute on both samplers; restored in play() before each attack. */
     if (standardSampler) standardSampler.volume.value = -Infinity
     if (extraSampler) extraSampler.volume.value = -Infinity
-    if (activeC2Player) {
-      activeC2Player.stop()
-      activeC2Player.dispose()
-      activeC2Player = null
-    }
     isPlaying.value = false
   }
 
@@ -289,37 +265,6 @@ export function useGuitarSampler() {
 
     const tone = await requireTone()
     if (tone.getContext().state === 'suspended') await tone.start()
-
-    // No C2 sample exists; pitch-shift D2 down 2 semitones via a raw Player
-    if (note === 'C' && octave === 2) {
-      if (activeC2Player) {
-        activeC2Player.stop()
-        activeC2Player.dispose()
-        activeC2Player = null
-      }
-      const d2Url = `${SAMPLE_BASE_URL}D2.mp3`
-      const player = new tone.Player({
-        url: d2Url,
-        fadeOut: C2_FADE_OUT_S,
-      }).toDestination()
-      // 2^(-2/12) ≈ 0.891 — slows playback by 2 semitones, shifting D2 (73.42 Hz) down to C2 (65.41 Hz)
-      player.playbackRate = 2 ** (-2 / 12)
-      await tone.loaded()
-      player.start()
-      // Schedule stop — Player has no built-in duration; without this it plays D2.mp3 to the end at 0.891x (longer than the file)
-      player.stop(`+${C2_RING_S}`)
-      activeC2Player = player
-      isPlaying.value = true
-      stopTimer = setTimeout(() => {
-        isPlaying.value = false
-        stopTimer = null
-        if (activeC2Player === player) {
-          player.dispose()
-          activeC2Player = null
-        }
-      }, C2_RING_S * 1000)
-      return
-    }
 
     const key = `${note}${octave}`
     const useStandard = STANDARD_NOTE_KEYS.has(key)

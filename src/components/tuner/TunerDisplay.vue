@@ -105,7 +105,18 @@ async function playTuningSequence() {
 
   steps.forEach((s, i) => {
     const when = startAt + i * intervalS
-    playGuitarSampleAt(s.note, s.octave, when)
+    /*
+     * One unplayable string must not take the other five with it. Scheduling is
+     * synchronous, so a throw here escapes the whole forEach: the strings after
+     * it are never scheduled, and neither is the endAt reset below, which
+     * strands isPlayingSequence true and jams the ♪ button until it is clicked
+     * again. A missing sample is a bad note, not a broken tuner.
+     */
+    try {
+      playGuitarSampleAt(s.note, s.octave, when)
+    } catch (error) {
+      console.error(`Could not play ${s.note}${s.octave}`, error)
+    }
     defaultToneEngine.scheduleDraw(() => {
       if (!isPlayingSequence.value) return
 
