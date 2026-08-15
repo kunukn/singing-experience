@@ -20,9 +20,11 @@ import {
   buildGuitarInlays,
   buildGuitarStringLines,
   guitarFretWireTop,
-  guitarLabelEmphasisClass,
+  guitarLabelTone,
+  guitarLabelToneClass,
   guitarScaleDotClass,
   guitarScaleLabelClass,
+  isGuitarAccidentalMidi,
 } from './guitarBoardDecorations'
 import { guitarFretLabel } from './guitarLabels'
 import {
@@ -32,12 +34,15 @@ import {
   FRET_WIRE_HEIGHT,
   GUITAR_FRET_ROW_COUNT,
   GUITAR_STRING_COUNT,
+  HEADSTOCK_HEIGHT,
+  HEADSTOCK_PEG_SIZE,
   MAX_STRING_WIDTH,
   MIN_STRING_WIDTH_POINTER,
   MIN_STRING_WIDTH_TOUCH,
   NUT_HEIGHT,
   buildGuitarBoardScale,
   buildGuitarLayout,
+  isGuitarMarkerFret,
   type GuitarCell,
 } from './guitarLayout'
 import {
@@ -78,9 +83,10 @@ const props = defineProps<Props>()
  * (stops the guitar's own tone registering as sung pitch). */
 const emit = defineEmits<{ tonePlayed: [] }>()
 
-const { pressCountFor, playFret, handleKeyDown } = useGuitarFretPlayback({
-  onTonePlayed: () => emit('tonePlayed'),
-})
+const { pressCountFor, stringPressCountFor, playFret, handleKeyDown } =
+  useGuitarFretPlayback({
+    onTonePlayed: () => emit('tonePlayed'),
+  })
 
 /* Fetch and decode the guitar samples up front so the first fret press sounds
  * immediately rather than waiting on the network. */
@@ -138,8 +144,16 @@ function labelEmphasis(cell: GuitarCell): ScaleEmphasis {
   return scaleEmphasisFor(scaleRole(cell))
 }
 
-function labelEmphasisClass(cell: GuitarCell): string | null {
-  return guitarLabelEmphasisClass(labelEmphasis(cell))
+const isScaleActive = computed(() => (props.scaleRoot ?? null) !== null)
+
+function labelToneClass(cell: GuitarCell): string | null {
+  return guitarLabelToneClass(
+    guitarLabelTone(
+      labelEmphasis(cell),
+      isScaleActive.value,
+      isGuitarAccidentalMidi(cell.midi),
+    ),
+  )
 }
 
 /* A pressed fret washes green, then fades back out. Same timing as the piano so
@@ -151,6 +165,15 @@ const fretGlowDuration = `${FRET_GLOW_DURATION_MS}ms`
  * number: x1 is how long the green holds before opacity starts moving, and the
  * end pair stays (1, 1) so the drop runs out at full speed. */
 const fretGlowEasing = 'cubic-bezier(0.42, 0, 1, 1)'
+
+/*
+ * How long a plucked string shivers. Short on purpose: a real string's visible
+ * blur is gone long before the note is, so matching the 1200ms glow would read
+ * as a wobbling line rather than a pluck. It ends well inside the sample's ring,
+ * which is what carries the note.
+ */
+const STRING_VIBRATION_DURATION_MS = 380
+const stringVibrationDuration = `${STRING_VIBRATION_DURATION_MS}ms`
 
 /*
  * Fit-to-container string sizing. The scroll box is w-full, so its width comes
@@ -312,15 +335,24 @@ const previewLanes = computed(() =>
   ),
 )
 
-/* Two lanes in the same colour are impossible to tell apart, so the high band
+/*
+ * Two lanes in the same colour are impossible to tell apart, so the high band
  * gets its own hue. Orange stays with the low/only lane, matching the piano and
- * the single-voice preview this grew out of. */
+ * the single-voice preview this grew out of.
+ *
+ * Drawn at FULL opacity, not the /50 these carried on the old grey board. The
+ * lane is the one thing on the board that reports what the singer is doing right
+ * now, and a half-transparent dash takes on the colour it sits over — on pale
+ * maple the orange washed out to nearly nothing. The separation from the wood
+ * comes from .guitar-preview-line's shadow instead, which works on either theme
+ * without spending the lane's own contrast to get it.
+ */
 const LANE_COLOUR_CLASS: Record<
   GuitarPreviewLaneId,
   { line: string; chip: string }
 > = {
-  low: { line: 'border-(--p-orange-400)/50', chip: 'text-(--p-orange-400)' },
-  high: { line: 'border-(--p-blue-400)/50', chip: 'text-(--p-blue-400)' },
+  low: { line: 'border-(--p-orange-400)', chip: 'text-(--p-orange-400)' },
+  high: { line: 'border-(--p-blue-400)', chip: 'text-(--p-blue-400)' },
 }
 
 /*
@@ -344,7 +376,7 @@ function handleClick(cell: GuitarCell) {
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-1">
+  <div class="guitar-board-root flex w-full flex-col gap-1">
     <!-- Live-pitch chips, in a fixed band rather than riding their segments: one
          pitch draws up to six segments, and a chip on each would swamp the
          board. A fixed slot also keeps naming the note when the singer moves
@@ -407,6 +439,45 @@ function handleClick(cell: GuitarCell) {
           </div>
         </div>
 
+        <!-- The headstock, above the nut and OUTSIDE the scroll box below: it
+             marks which end of the neck is fret 0, which it can only do while
+             it is on screen. One peg per string column — a real headstock
+             staggers them three per side, but the pegs here are read as "this
+             string ends at this peg", and that is the column. -->
+        <div class="flex" aria-hidden="true">
+          <div class="shrink-0" :style="{ width: `${fretNumberGutter}px` }" />
+          <div
+            class="guitar-headstock relative shrink-0"
+            :style="{
+              width: `${layout.boardWidth}px`,
+              height: `${HEADSTOCK_HEIGHT}px`,
+            }"
+            data-testid="guitar-headstock"
+          >
+            <span
+              v-for="line in stringLines"
+              :key="`peg-${line.key}`"
+              class="guitar-peg absolute"
+              :style="{
+                insetInlineStart: `${line.left}px`,
+                width: `${HEADSTOCK_PEG_SIZE}px`,
+                height: `${HEADSTOCK_PEG_SIZE}px`,
+              }"
+            />
+            <!-- The run of string from each peg down to the nut, so the six
+                 lines below read as continuing rather than starting at fret 0. -->
+            <span
+              v-for="line in stringLines"
+              :key="`peg-run-${line.key}`"
+              class="guitar-peg-run absolute"
+              :style="{
+                insetInlineStart: `${line.left}px`,
+                width: `${line.width}px`,
+              }"
+            />
+          </div>
+        </div>
+
         <!-- On touch the board scrolls inside this box rather than dragging the
              whole document along with it. On a mouse it stays unbounded, so the
              wheel is never captured when the cursor crosses the board. -->
@@ -437,30 +508,42 @@ function handleClick(cell: GuitarCell) {
               aria-hidden="true"
               data-testid="guitar-drag-gutter"
             >
+              <!-- Marker frets read louder here for the same reason they carry
+                   a face inlay: they are what a player counts positions by, and
+                   a column of twenty numbers in one weight gives the eye nothing
+                   to land on. The side dot beside them is the neck's edge
+                   marker, which is the one a player actually looks at. -->
               <div
                 v-for="fret in fretNumbers"
                 :key="`fret-number-${fret}`"
-                class="flex items-center justify-center text-(--p-surface-400) tabular-nums dark:text-(--p-surface-500)"
+                class="relative flex items-center justify-center tabular-nums"
+                :class="
+                  isGuitarMarkerFret(fret)
+                    ? 'guitar-fret-number-marker font-semibold'
+                    : 'text-(--p-surface-400) dark:text-(--p-surface-500)'
+                "
                 :style="{
                   height: `${layout.rowHeight}px`,
                   fontSize: `${boardScale.gutterFontSize}px`,
                 }"
               >
                 {{ fret }}
+                <span v-if="isGuitarMarkerFret(fret)" class="guitar-side-dot" />
               </div>
             </div>
 
             <div
-              class="relative shrink-0 bg-(--p-surface-50) dark:bg-(--p-surface-800)"
+              class="guitar-board relative shrink-0"
               :style="{
                 width: `${layout.boardWidth}px`,
                 height: `${layout.boardHeight}px`,
               }"
+              data-testid="guitar-board"
             >
               <!-- Inlays, painted under everything: decoration that orients the
                  eye, not information, so they stay out of the accessibility
-                 tree. Drawn in the strings' nickel (see GUITAR_INLAY_DOT_CLASS)
-                 so the board's hardware reads as one material. -->
+                 tree. Mother-of-pearl (see GUITAR_INLAY_DOT_CLASS) — hardware
+                 set into the wood, rather than a dot printed on top of it. -->
               <span
                 v-for="dot in inlays"
                 :key="dot.key"
@@ -471,7 +554,6 @@ function handleClick(cell: GuitarCell) {
                   top: `${dot.top}px`,
                   width: `${INLAY_DOT_SIZE}px`,
                   height: `${INLAY_DOT_SIZE}px`,
-                  transform: 'translateX(-50%)',
                 }"
                 aria-hidden="true"
               />
@@ -479,31 +561,35 @@ function handleClick(cell: GuitarCell) {
               <!-- The strings, thickest at string 6 as on a real instrument.
                  Painted before the fret buttons, so every note name draws over
                  them; the halo on .guitar-fret-label is what stops a string
-                 showing through the gaps in a glyph and reading as a strike. -->
+                 showing through the gaps in a glyph and reading as a strike.
+
+                 Keyed on the string's own press count so a pluck remounts the
+                 element and replays the shiver, the same trick the fret glow
+                 uses — a running animation cannot be restarted by re-applying
+                 the class it is already wearing. -->
               <span
-                v-for="line in stringLines"
-                :key="line.key"
+                v-for="(line, stringIndex) in stringLines"
+                :key="`${line.key}-${stringPressCountFor(stringIndex)}`"
                 class="pointer-events-none absolute inset-y-0"
-                :class="GUITAR_STRING_LINE_CLASS"
+                :class="[
+                  GUITAR_STRING_LINE_CLASS,
+                  stringPressCountFor(stringIndex) && 'guitar-string-vibrating',
+                ]"
                 :style="{
                   insetInlineStart: `${line.left}px`,
                   width: `${line.width}px`,
-                  transform: 'translateX(-50%)',
                 }"
                 aria-hidden="true"
               />
 
               <!-- The nut (below the open row) and the fret wires below rows 1–19.
-                 The nut is thicker and darker, as on a real neck. -->
+                 The nut is bone, the wires nickel — two materials, as on a real
+                 neck, rather than one hairline drawn twice at different weights. -->
               <span
                 v-for="fret in fretNumbers"
                 :key="`wire-${fret}`"
                 class="pointer-events-none absolute inset-x-0"
-                :class="
-                  fret === 0
-                    ? 'bg-(--p-text-color)'
-                    : 'bg-(--p-content-border-color)'
-                "
+                :class="fret === 0 ? 'guitar-nut' : 'guitar-fret-wire'"
                 :style="{
                   top: `${fretWireTop(fret)}px`,
                   height: `${wireHeight(fret)}px`,
@@ -515,7 +601,7 @@ function handleClick(cell: GuitarCell) {
                 v-for="cell in layout.cells"
                 :key="`${cell.stringIndex}-${cell.fret}`"
                 type="button"
-                class="guitar-fret absolute flex touch-manipulation items-center justify-center font-semibold text-(--p-text-color) select-none"
+                class="guitar-fret absolute flex touch-manipulation items-center justify-center font-semibold text-(--guitar-board-text) select-none"
                 :style="{
                   insetInlineStart: `${cell.leftPx}px`,
                   top: `${cell.topPx}px`,
@@ -567,7 +653,7 @@ function handleClick(cell: GuitarCell) {
                 <span
                   v-if="cellLabel(cell)"
                   class="guitar-fret-label relative leading-none"
-                  :class="[scaleLabelClass(cell), labelEmphasisClass(cell)]"
+                  :class="[scaleLabelClass(cell), labelToneClass(cell)]"
                 >
                   {{ cellLabel(cell) }}
                 </span>
@@ -583,7 +669,7 @@ function handleClick(cell: GuitarCell) {
                 <div
                   v-for="segment in lane.segments"
                   :key="`${lane.laneId}-${segment.stringIndex}`"
-                  class="pointer-events-none absolute z-20 h-0 -translate-y-[1.5px] border-t-3 border-dashed"
+                  class="guitar-preview-line pointer-events-none absolute z-20 h-0 -translate-y-[1.5px] border-t-3 border-dashed"
                   :class="LANE_COLOUR_CLASS[lane.laneId].line"
                   :style="{
                     insetInlineStart: `${segment.stringIndex * layout.stringWidth}px`,
@@ -604,6 +690,313 @@ function handleClick(cell: GuitarCell) {
 </template>
 
 <style scoped>
+/*
+ * THE BOARD PALETTE.
+ *
+ * Every colour the fretboard paints itself in, one definition per theme, so
+ * retuning the instrument is an edit in one block rather than a hunt through the
+ * template. Custom properties inherit, so defining them on the root wrapper
+ * reaches the cells, the gutter and the headstock alike; .p-dark sits on <html>
+ * (see useDarkMode), so the dark block is a plain ancestor selector.
+ *
+ * These are literal colours rather than --p-* tokens, which is the exception the
+ * project's colour rule does not cover: Aura ships no wood, bone or pearl ramp,
+ * and the nearest neighbours are wrong in the way that matters — amber-100 is a
+ * yellow, stone-200 a grey, and a fingerboard is neither. Everything that CAN
+ * come from a token still does (the scale dots, the preview lanes, the press
+ * glow), so the parts that answer to the theme are unchanged.
+ *
+ * Light is maple, dark is rosewood — the two fingerboards the instrument
+ * actually comes in, which is why the pair reads as one board under two lights
+ * rather than as two different objects.
+ */
+.guitar-board-root {
+  --guitar-board-surface: #e9dbc0;
+  /* Depth at the edges, so the board reads as a radiused fingerboard rather
+   * than a flat rectangle. Warm, not black: a grey shadow on wood looks like
+   * dirt. */
+  --guitar-board-vignette: rgb(120 85 45 / 0.2);
+  --guitar-board-text: #3b2f24;
+  --guitar-board-text-muted: #8a7863;
+
+  /*
+   * Fretwire, shaded across its 2px height: lit crown, body, shadowed root.
+   *
+   * The whole ramp sits DARKER than its dark-theme counterpart, which is the
+   * rule every piece of hardware on this board follows: metal reads by
+   * contrasting with the wood behind it, so on pale maple it has to go down
+   * where on rosewood it goes up. Lifting these toward white — the obvious
+   * first guess, since real fretwire is bright — is what made the first pass
+   * disappear into the board.
+   */
+  --guitar-wire-high: #d5d9dd;
+  --guitar-wire-body: #8d939a;
+  --guitar-wire-low: #5c6369;
+
+  /* Bone. Warmer and softer than the fretwire it sits in line with, which is
+   * what separates the nut from just being a thicker fret. The low stop carries
+   * the separation from the maple under it. */
+  --guitar-nut-high: #fffdf5;
+  --guitar-nut-body: #e4d8ba;
+  --guitar-nut-low: #9c8f73;
+
+  /* Nickel, DESATURATED — see the note on GUITAR_STRING_LINE_CLASS. The three
+   * stops are one cylinder: shadowed edge, specular highlight, rounded body.
+   * Same darker-on-maple rule as the fretwire above. */
+  --guitar-string-shadow: #4a443d;
+  --guitar-string-high: #d8d3cc;
+  --guitar-string-body: #6f6862;
+
+  /* Mother-of-pearl. The rim is what keeps it visible on pale maple, where the
+   * pearl body and the board are within a few percent of each other. */
+  --guitar-pearl-high: #ffffff;
+  --guitar-pearl-body: #c3d0e0;
+  --guitar-pearl-low: #7f92ad;
+  --guitar-pearl-rim: rgb(85 65 40 / 0.55);
+
+  /* Behind the pegs — the headstock is a separate piece of wood from the
+   * fingerboard on most guitars, and a shade apart says so. */
+  --guitar-headstock-surface: #d3bb94;
+  --guitar-peg-high: #f4f6f8;
+  --guitar-peg-low: #9aa1a8;
+
+  /* What the preview lane is lifted off the wood with. Light board, light
+   * halo. */
+  --guitar-lane-shadow: rgb(255 255 255 / 0.7);
+}
+
+.p-dark .guitar-board-root {
+  --guitar-board-surface: #3a2a1e;
+  --guitar-board-vignette: rgb(0 0 0 / 0.3);
+  --guitar-board-text: #f7ece0;
+  --guitar-board-text-muted: #b09a83;
+
+  --guitar-wire-high: #ffffff;
+  --guitar-wire-body: #c9ced3;
+  --guitar-wire-low: #8a9198;
+
+  --guitar-nut-high: #fffdf5;
+  --guitar-nut-body: #e6dcc4;
+  --guitar-nut-low: #a89b80;
+
+  --guitar-string-shadow: #6b645e;
+  --guitar-string-high: #ffffff;
+  --guitar-string-body: #b8b1aa;
+
+  --guitar-pearl-high: #ffffff;
+  --guitar-pearl-body: #dbe3ee;
+  --guitar-pearl-low: #9aa8bd;
+  --guitar-pearl-rim: rgb(0 0 0 / 0.45);
+
+  --guitar-headstock-surface: #2c1f16;
+  --guitar-peg-high: #e8ebee;
+  --guitar-peg-low: #7d848b;
+
+  --guitar-lane-shadow: rgb(0 0 0 / 0.6);
+}
+
+/*
+ * The board itself: a wood colour, plus grain.
+ *
+ * The grain is an inline feTurbulence rather than an image file — it costs no
+ * request and no bytes, and being procedural it tiles at any board size, which
+ * matters because the board's width and height are both computed in px and
+ * change with the viewport. A photograph would have to stretch (wrong) or tile
+ * (seams), and could not follow the theme: it would bake one lighting direction
+ * into a board that has to work on maple and rosewood both.
+ *
+ * baseFrequency is deliberately lopsided — high across the board, very low down
+ * it — which stretches the noise into streaks running the length of the neck,
+ * the direction real grain runs. soft-light lets the wood colour underneath set
+ * the hue and the noise only vary its value, so one texture serves both themes.
+ */
+.guitar-board {
+  background-color: var(--guitar-board-surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='640'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5 0.005' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='320' height='640' filter='url(%23g)' opacity='0.5'/%3E%3C/svg%3E");
+  background-blend-mode: soft-light;
+  border-radius: 7px;
+  box-shadow: inset 0 0 18px 2px var(--guitar-board-vignette);
+  /* The grain and the vignette both run to the rounded corners; without this
+   * they square them off again. */
+  overflow: hidden;
+}
+
+.guitar-fret-wire {
+  background: linear-gradient(
+    180deg,
+    var(--guitar-wire-high),
+    var(--guitar-wire-body) 50%,
+    var(--guitar-wire-low)
+  );
+  box-shadow: 0 1px 1.5px rgb(0 0 0 / 0.35);
+}
+
+.guitar-nut {
+  background: linear-gradient(
+    180deg,
+    var(--guitar-nut-high),
+    var(--guitar-nut-body) 55%,
+    var(--guitar-nut-low)
+  );
+  box-shadow: 0 2px 4px rgb(0 0 0 / 0.45);
+  border-radius: 1px;
+}
+
+/*
+ * A string is a cylinder, so the ramp runs ACROSS its width (90deg) rather than
+ * down its length: shadowed edge, highlight where the light catches, body,
+ * shadowed edge again. On the 1px treble strings only the highlight survives,
+ * which is correct — a plain steel E really is just a bright line.
+ *
+ * translateX(-50%) is here rather than inline because the vibration keyframes
+ * below also drive transform, and an inline transform in the style attribute
+ * would be the thing they have to fight.
+ */
+.guitar-string {
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    var(--guitar-string-shadow),
+    var(--guitar-string-high) 40%,
+    var(--guitar-string-body) 70%,
+    var(--guitar-string-shadow)
+  );
+  box-shadow: 0 0 1.5px rgb(0 0 0 / 0.45);
+}
+
+/*
+ * A plucked string shivers. Off-centre highlight, decaying swing, and a touch of
+ * blur at the start where a real string is moving fastest — the blur is what
+ * sells it, since a 1px line displaced by a pixel just looks misplaced.
+ *
+ * The offsets are tiny on purpose: the string runs down the middle of a column
+ * of note names, and a wider swing reads as the layout breaking rather than as
+ * the instrument sounding.
+ */
+@keyframes guitar-string-vibrate {
+  0% {
+    transform: translateX(-50%) translateX(0);
+    filter: blur(0);
+  }
+  8% {
+    transform: translateX(-50%) translateX(1.1px);
+    filter: blur(0.7px);
+  }
+  22% {
+    transform: translateX(-50%) translateX(-0.9px);
+  }
+  40% {
+    transform: translateX(-50%) translateX(0.6px);
+    filter: blur(0.35px);
+  }
+  60% {
+    transform: translateX(-50%) translateX(-0.4px);
+  }
+  80% {
+    transform: translateX(-50%) translateX(0.2px);
+  }
+  100% {
+    transform: translateX(-50%) translateX(0);
+    filter: blur(0);
+  }
+}
+
+.guitar-string-vibrating {
+  animation: guitar-string-vibrate v-bind(stringVibrationDuration) ease-out;
+}
+
+/* Motion for its own sake, and the note sounds either way — so drop it rather
+ * than shrink it when the singer has asked for less. */
+@media (prefers-reduced-motion: reduce) {
+  .guitar-string-vibrating {
+    animation: none;
+  }
+}
+
+/*
+ * Mother-of-pearl: a bright off-centre catch falling away to a cool shade, which
+ * is the whole of what makes shell read as shell rather than as a white circle.
+ * The inset shadow seats it IN the wood; the rim keeps its edge on pale maple,
+ * where the pearl and the board are otherwise nearly the same value.
+ */
+.guitar-inlay {
+  transform: translateX(-50%);
+  background: radial-gradient(
+    circle at 34% 26%,
+    var(--guitar-pearl-high),
+    var(--guitar-pearl-body) 52%,
+    var(--guitar-pearl-low)
+  );
+  box-shadow:
+    inset 0 -1px 2px rgb(60 70 90 / 0.45),
+    0 0 0 1px var(--guitar-pearl-rim);
+}
+
+/* The headstock, and the tuning pegs on it. Rounded at the top only — the
+ * bottom edge butts against the nut. */
+.guitar-headstock {
+  background-color: var(--guitar-headstock-surface);
+  border-radius: 7px 7px 0 0;
+  box-shadow: inset 0 0 12px 2px var(--guitar-board-vignette);
+}
+
+.guitar-peg {
+  top: 4px;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  background: linear-gradient(
+    145deg,
+    var(--guitar-peg-high),
+    var(--guitar-peg-low)
+  );
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.45);
+}
+
+/* From under the peg to the bottom of the band, where the board's own string
+ * lines pick it up. */
+.guitar-peg-run {
+  top: 12px;
+  bottom: 0;
+  transform: translateX(-50%);
+  background: linear-gradient(
+    90deg,
+    var(--guitar-string-shadow),
+    var(--guitar-string-high) 40%,
+    var(--guitar-string-body) 70%,
+    var(--guitar-string-shadow)
+  );
+}
+
+/* The neck-edge markers, in the fret-number gutter at the board side of it —
+ * that gutter IS the edge of the neck as this board draws it. */
+.guitar-side-dot {
+  position: absolute;
+  inset-inline-end: 3px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  transform: translateY(-50%);
+  border-radius: 9999px;
+  background: var(--guitar-pearl-body);
+  box-shadow: 0 0 0 0.5px var(--guitar-pearl-rim);
+}
+
+.guitar-fret-number-marker {
+  color: var(--guitar-board-text-muted);
+}
+
+/*
+ * The preview lane, lifted off the wood.
+ *
+ * drop-shadow, not box-shadow: the element is a 0-height box wearing a dashed
+ * border, so a box-shadow would trace the box and not the dashes. drop-shadow
+ * follows the painted alpha, so each dash gets its own edge — which is what
+ * keeps the lane legible where it crosses a string or an inlay.
+ */
+.guitar-preview-line {
+  filter: drop-shadow(0 1px 1px var(--guitar-lane-shadow));
+}
+
 /*
  * Hover affordance: a ring on the fret position, not a wash across the cell. The
  * board is drawn in circles — note badges, scale dots, inlays — so a 60×30 filled
@@ -631,14 +1024,10 @@ function handleClick(cell: GuitarCell) {
   pointer-events: none;
 }
 
+/* Drawn in the board's own muted text rather than a surface grey: the ring sits
+ * on wood, and a slate ring on rosewood reads as a stray artefact. */
 .guitar-fret {
-  --guitar-fret-ring-color: var(--p-surface-400);
-}
-
-/* .p-dark sits on <html> (see useDarkMode), so this is an ancestor selector and
- * needs no :global wrapper. */
-.p-dark .guitar-fret {
-  --guitar-fret-ring-color: var(--p-surface-500);
+  --guitar-fret-ring-color: var(--guitar-board-text-muted);
 }
 
 /* Guarded, or a tap on a touch screen leaves the ring stuck on the last cell
@@ -673,14 +1062,17 @@ function handleClick(cell: GuitarCell) {
  * paint-order puts it under the fill, leaving the glyph itself its normal weight
  * instead of eating 1.5px into it from every side.
  */
+/*
+ * The halo has to BE the board's colour — it works by painting the board back
+ * over the string behind the glyph. Taken from the same custom property the
+ * board's own background reads, so retuning the wood cannot leave note names
+ * ringed in the colour the board used to be. That coupling was previously two
+ * hard-coded surface tokens, which is exactly the pair that would have been
+ * missed here.
+ */
 .guitar-fret-label {
-  -webkit-text-stroke: 3px var(--p-surface-50);
+  -webkit-text-stroke: 3px var(--guitar-board-surface);
   paint-order: stroke fill;
-}
-
-/* .p-dark sits on <html> (see useDarkMode), so this is an ancestor selector. */
-.p-dark .guitar-fret-label {
-  -webkit-text-stroke-color: var(--p-surface-800);
 }
 
 /* A highlighted cell needs none of this: the scale dot behind the name already

@@ -28,8 +28,21 @@ export function useGuitarFretPlayback(options: GuitarFretPlaybackOptions = {}) {
    * remounts it and the fade restarts at full colour. */
   const pressCounts = reactive(new Map<string, number>())
 
+  /*
+   * The same count collapsed onto the string, which is what actually vibrates:
+   * a string rings whichever fret stopped it, so the cell-keyed map above cannot
+   * drive it — fretting the 5th and then the 7th on one string are two presses
+   * of two different cells but the same string, and the animation has to restart
+   * for the second.
+   */
+  const stringPressCounts = reactive(new Map<number, number>())
+
   function pressCountFor(stringIndex: number, fret: number): number {
     return pressCounts.get(cellKey(stringIndex, fret)) ?? 0
+  }
+
+  function stringPressCountFor(stringIndex: number): number {
+    return stringPressCounts.get(stringIndex) ?? 0
   }
 
   async function playFret(stringIndex: number, fret: number, midi: number) {
@@ -37,6 +50,7 @@ export function useGuitarFretPlayback(options: GuitarFretPlaybackOptions = {}) {
       cellKey(stringIndex, fret),
       pressCountFor(stringIndex, fret) + 1,
     )
+    stringPressCounts.set(stringIndex, stringPressCountFor(stringIndex) + 1)
 
     /*
      * The sampler is keyed by note name, so `.note` — the raw name, 'C#'. Not
@@ -69,5 +83,5 @@ export function useGuitarFretPlayback(options: GuitarFretPlaybackOptions = {}) {
     void playFret(stringIndex, fret, midi)
   }
 
-  return { pressCountFor, playFret, handleKeyDown }
+  return { pressCountFor, stringPressCountFor, playFret, handleKeyDown }
 }

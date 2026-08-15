@@ -7,7 +7,11 @@
  * the same split guitarLayout/guitarPreview/guitarLabels already follow.
  */
 
-import type { ScaleEmphasis, ScaleRole } from '@/utils/scaleHighlight'
+import {
+  pitchClassOf,
+  type ScaleEmphasis,
+  type ScaleRole,
+} from '@/utils/scaleHighlight'
 import {
   DOUBLE_INLAY_FRET,
   FRET_ROW_HEIGHT,
@@ -15,6 +19,17 @@ import {
   GUITAR_STRING_COUNT,
   SINGLE_INLAY_FRETS,
 } from './guitarLayout'
+
+/*
+ * The five pitch classes that take a sharp or a flat — the piano's black keys.
+ * Read off the pitch class rather than the drawn label, which changes with the
+ * accidental style (C♯ vs D♭) and is null altogether in 'off' mode.
+ */
+const ACCIDENTAL_PITCH_CLASSES = new Set([1, 3, 6, 8, 10])
+
+export function isGuitarAccidentalMidi(midi: number): boolean {
+  return ACCIDENTAL_PITCH_CLASSES.has(pitchClassOf(midi))
+}
 
 export type GuitarInlayDot = {
   key: string
@@ -79,33 +94,29 @@ const MIN_STRING_LINE_WIDTH = 1
 const MAX_STRING_LINE_WIDTH = 2.5
 
 /*
- * Warm nickel — a wound string's colour, and deliberately NOT a hue. The board is
- * the slate ramp, so a neutral from the warm `stone` ramp differs from it in both
- * value and temperature while staying desaturated.
+ * Strings and inlays are drawn as gradients now — a cylinder's specular highlight
+ * and a pearl's sheen are both a ramp across the shape, which no single-colour
+ * utility can express — so these name a class that GuitarDisplay's scoped CSS
+ * paints, rather than carrying the colour themselves.
  *
- * Desaturated is the requirement, not a compromise: an earlier bronze pass
- * (amber-600/400) collided with the low preview lane's orange-400, and a dashed
- * segment that reads as the same colour as the strings it crosses stops being a
- * preview. The strings are structure; the lane is information, and it has to win.
- *
- * These are 1–2.5px hairlines, which need more contrast against their background
- * than a filled shape of the same colour would — hence a mid shade in light theme
- * and a lighter one in dark, rather than the near-background slate-300/600 these
- * lines used to be drawn in.
+ * Every colour they resolve to lives in the --guitar-* block at the top of that
+ * stylesheet, one definition per theme. That block is also where the string
+ * palette's hard constraint is recorded: strings stay DESATURATED. An earlier
+ * bronze pass (amber-600/400) collided with the low preview lane's orange-400,
+ * and a dashed segment that reads as the same colour as the strings it crosses
+ * stops being a preview. The board's warmth belongs to the wood, which is a
+ * large field the lane sits on top of; the strings are hairlines the lane has to
+ * cross, and it has to win.
  */
-export const GUITAR_STRING_LINE_CLASS =
-  'bg-(--p-stone-500) dark:bg-(--p-stone-400)'
+export const GUITAR_STRING_LINE_CLASS = 'guitar-string'
 
 /*
- * The inlays take the strings' colour rather than a grey of their own, so the
- * board reads as one instrument — nickel hardware on wood — instead of strings in
- * one material and markers in another.
- *
- * An alias rather than a copy of the value: the two are meant to move together, so
- * retuning the strings retunes the dots, and the day they should differ is a
- * one-line change here rather than a hunt for a duplicated colour.
+ * The inlays are their own material — mother-of-pearl, not the strings' nickel —
+ * so unlike before they no longer alias the string class. Both are still
+ * hardware on wood, but a pearl dot that took the strings' flat grey disappeared
+ * into pale maple, where a rimmed pearl reads at any board colour.
  */
-export const GUITAR_INLAY_DOT_CLASS = GUITAR_STRING_LINE_CLASS
+export const GUITAR_INLAY_DOT_CLASS = 'guitar-inlay'
 
 export function buildGuitarStringLines(
   stringWidth: number,
@@ -190,13 +201,47 @@ export function guitarScaleLabelClass(role: ScaleRole): string | null {
  * in.
  */
 
-/* The emphasized style is the fret button's own, so only the stepped-back state
- * needs an override — the muted grey these names carried before note names were
- * promoted above the string and fret numbers. */
-export function guitarLabelEmphasisClass(
-  emphasis: ScaleEmphasis,
-): string | null {
-  if (emphasis === 'emphasized') return null
+/*
+ * How prominently a note name is drawn.
+ *
+ * 'emphasized' is the fret button's own style, so it needs no override; the
+ * other two are the stepped-back readings.
+ */
+export type GuitarLabelTone = 'emphasized' | 'natural' | 'muted'
 
-  return 'font-normal text-(--p-text-muted-color)'
+/**
+ * Resolve a cell's label tone.
+ *
+ * With a scale selected, membership is the only thing worth reading and every
+ * name outside it recedes equally — a board that also promoted the out-of-scale
+ * naturals would be arguing with the highlight the singer just asked for.
+ *
+ * With no scale selected there is nothing competing, and a board of 120 names in
+ * one grey is the flat, undifferentiated wall this split exists to break up.
+ * Naturals carry the note names a beginner already knows, so they take the
+ * foreground and the accidentals between them stay back. That is the same figure
+ * the piano draws with white and black keys, and it costs no hue — so it cannot
+ * collide with the scale dots or the preview lane.
+ */
+export function guitarLabelTone(
+  emphasis: ScaleEmphasis,
+  isScaleActive: boolean,
+  isAccidental: boolean,
+): GuitarLabelTone {
+  if (emphasis === 'emphasized') return 'emphasized'
+  if (isScaleActive) return 'muted'
+
+  return isAccidental ? 'muted' : 'natural'
+}
+
+export function guitarLabelToneClass(tone: GuitarLabelTone): string | null {
+  if (tone === 'emphasized') return null
+
+  /* Both step back from the fret button's weight; they differ in how far. The
+   * colours are board-relative (see the --guitar-* block in GuitarDisplay) —
+   * --p-text-* is tuned for a surface background, and on wood the muted end of
+   * it drops under a readable contrast. */
+  if (tone === 'natural') return 'font-normal text-(--guitar-board-text)'
+
+  return 'font-normal text-(--guitar-board-text-muted)'
 }

@@ -4,17 +4,23 @@ import {
   buildGuitarInlays,
   buildGuitarStringLines,
   guitarFretWireTop,
-  guitarLabelEmphasisClass,
+  guitarLabelTone,
+  guitarLabelToneClass,
   guitarScaleDotClass,
   guitarScaleLabelClass,
+  isGuitarAccidentalMidi,
 } from './guitarBoardDecorations'
 import {
   DOUBLE_INLAY_FRET,
   FRET_ROW_HEIGHT,
+  FRET_WIRE_HEIGHT,
   GUITAR_FRET_ROW_COUNT,
   GUITAR_STRING_COUNT,
   SINGLE_INLAY_FRETS,
 } from './guitarLayout'
+
+/* A wire is centred on its fret boundary, so it rides this far above it. */
+const WIRE_RISE = Math.floor(FRET_WIRE_HEIGHT / 2)
 
 /* px — a round string width keeps the expected positions readable. */
 const STRING_WIDTH = 40
@@ -144,16 +150,20 @@ describe('buildGuitarStringLines', () => {
 
 describe('guitarFretWireTop', () => {
   it('sits the wire at the bottom of its fret row', () => {
-    expect(guitarFretWireTop(0, BOARD_HEIGHT)).toBe(FRET_ROW_HEIGHT)
-    expect(guitarFretWireTop(3, BOARD_HEIGHT)).toBe(4 * FRET_ROW_HEIGHT)
+    expect(guitarFretWireTop(0, BOARD_HEIGHT)).toBe(FRET_ROW_HEIGHT - WIRE_RISE)
+    expect(guitarFretWireTop(3, BOARD_HEIGHT)).toBe(
+      4 * FRET_ROW_HEIGHT - WIRE_RISE,
+    )
   })
 
   it('tucks the last wire inside the board', () => {
     const lastFret = GUITAR_FRET_ROW_COUNT - 1
 
-    /* Unclamped it would land at exactly boardHeight and, being 1px tall, push
-     * content past the box — a permanent scrollbar on a board that fits. */
-    expect(guitarFretWireTop(lastFret, BOARD_HEIGHT)).toBe(BOARD_HEIGHT - 1)
+    /* Unclamped it would land at exactly boardHeight and push its own height
+     * past the box — a permanent scrollbar on a board that fits. */
+    expect(guitarFretWireTop(lastFret, BOARD_HEIGHT)).toBe(
+      BOARD_HEIGHT - FRET_WIRE_HEIGHT,
+    )
   })
 
   it('never returns a position past the board height', () => {
@@ -177,11 +187,15 @@ describe('at a resized row height', () => {
   })
 
   it('keeps the wires on the taller row boundaries, last one still tucked in', () => {
-    expect(guitarFretWireTop(0, TALL_BOARD, TALL_ROW)).toBe(TALL_ROW)
-    expect(guitarFretWireTop(3, TALL_BOARD, TALL_ROW)).toBe(4 * TALL_ROW)
+    expect(guitarFretWireTop(0, TALL_BOARD, TALL_ROW)).toBe(
+      TALL_ROW - WIRE_RISE,
+    )
+    expect(guitarFretWireTop(3, TALL_BOARD, TALL_ROW)).toBe(
+      4 * TALL_ROW - WIRE_RISE,
+    )
     expect(
       guitarFretWireTop(GUITAR_FRET_ROW_COUNT - 1, TALL_BOARD, TALL_ROW),
-    ).toBe(TALL_BOARD - 1)
+    ).toBe(TALL_BOARD - FRET_WIRE_HEIGHT)
   })
 
   it('falls back to the base row when none is given', () => {
@@ -208,12 +222,54 @@ describe('scale highlight classes', () => {
   })
 
   it('leaves an emphasized name to the fret button own style', () => {
-    expect(guitarLabelEmphasisClass('emphasized')).toBeNull()
+    expect(guitarLabelToneClass('emphasized')).toBeNull()
   })
 
-  it('returns a name outside the scale to the muted, unbolded reading', () => {
-    expect(guitarLabelEmphasisClass('diminished')).toBe(
-      'font-normal text-(--p-text-muted-color)',
+  it('draws the two stepped-back readings in the board palette', () => {
+    expect(guitarLabelToneClass('natural')).toBe(
+      'font-normal text-(--guitar-board-text)',
     )
+    expect(guitarLabelToneClass('muted')).toBe(
+      'font-normal text-(--guitar-board-text-muted)',
+    )
+  })
+})
+
+describe('guitarLabelTone', () => {
+  it('leaves a name in the scale emphasized, accidental or not', () => {
+    expect(guitarLabelTone('emphasized', true, false)).toBe('emphasized')
+    expect(guitarLabelTone('emphasized', true, true)).toBe('emphasized')
+  })
+
+  it('recedes every name outside the selected scale equally', () => {
+    /* Promoting the out-of-scale naturals here would argue with the highlight
+     * the singer just asked for — membership is the only figure worth reading
+     * while a scale is on. */
+    expect(guitarLabelTone('diminished', true, false)).toBe('muted')
+    expect(guitarLabelTone('diminished', true, true)).toBe('muted')
+  })
+
+  it('splits naturals from accidentals once no scale is competing', () => {
+    expect(guitarLabelTone('diminished', false, false)).toBe('natural')
+    expect(guitarLabelTone('diminished', false, true)).toBe('muted')
+  })
+})
+
+describe('isGuitarAccidentalMidi', () => {
+  it('marks the five sharp/flat pitch classes and no others', () => {
+    /* C4 = 60, so the octave from it covers every pitch class once. */
+    const accidentals = Array.from({ length: 12 }, (_, index) => 60 + index)
+      .filter(isGuitarAccidentalMidi)
+      .map((midi) => midi - 60)
+
+    expect(accidentals).toEqual([1, 3, 6, 8, 10])
+  })
+
+  it('reads the same in every octave, including below middle C', () => {
+    /* E2 (40) is the low open string, F♯2 (42) the first accidental above it. */
+    expect(isGuitarAccidentalMidi(40)).toBe(false)
+    expect(isGuitarAccidentalMidi(41)).toBe(false) // F2 — a natural
+    expect(isGuitarAccidentalMidi(42)).toBe(true)
+    expect(isGuitarAccidentalMidi(0)).toBe(false)
   })
 })

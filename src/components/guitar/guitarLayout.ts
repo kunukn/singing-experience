@@ -67,6 +67,33 @@ export const MIN_STRING_WIDTH_POINTER = 36 // px
 export const SINGLE_INLAY_FRETS = [3, 5, 7, 9, 15, 17, 19]
 export const DOUBLE_INLAY_FRET = 12
 
+/*
+ * Every fret a player navigates by. The face inlays mark exactly these, and so
+ * do the side dots along the neck edge and the emphasised fret numbers — three
+ * views of one fact, so they read off one list rather than three copies that
+ * can drift apart.
+ */
+const MARKER_FRETS = new Set([...SINGLE_INLAY_FRETS, DOUBLE_INLAY_FRET])
+
+export function isGuitarMarkerFret(fret: number): boolean {
+  return MARKER_FRETS.has(fret)
+}
+
+/*
+ * px — the headstock band above the nut, carrying one tuning peg per string.
+ *
+ * Orientation, not information: it names which end of the board is the nut, so
+ * the neck reads as an instrument rather than a table that happens to start at
+ * fret 0. Kept shallow deliberately — it is the one part of the board that
+ * shows no pitch, so every px it takes is a px the frets do not get.
+ *
+ * Drawn outside the touch scroll box, so it stays put while the neck pans.
+ */
+export const HEADSTOCK_HEIGHT = 26
+
+/* px — the peg circles on that band, and the gap holding them off the nut. */
+export const HEADSTOCK_PEG_SIZE = 9
+
 export type GuitarCell = {
   stringIndex: number
   fret: number
@@ -110,8 +137,12 @@ export type GuitarBoardScale = {
  * more, so a board sized by this constant hangs off the bottom of that page.
  * GuitarDisplay measures its own offset and passes it in; this value covers the
  * first render, before there is anything to measure.
+ *
+ * The headstock is part of this rather than part of the board: it sits above
+ * the scroll box and pushes the frets down exactly as the control rows do, so
+ * leaving it out would size the rows for space the neck no longer has.
  */
-export const BOARD_VERTICAL_CHROME = 241
+export const BOARD_VERTICAL_CHROME = 241 + HEADSTOCK_HEIGHT
 
 /*
  * px — the hover/focus ring is painted as a box-shadow spread, which renders
@@ -123,16 +154,25 @@ export const BOARD_VERTICAL_CHROME = 241
 export const FRET_RING_SHADOW_WIDTH = 2
 
 /* px — a fret wire is drawn along the top edge of every fretted cell, so the
- * ring has to start below it rather than under it. */
-export const FRET_WIRE_HEIGHT = 1
+ * ring has to start below it rather than under it.
+ *
+ * 2 rather than 1: fretwire is a rounded crown of nickel, and a 1px hairline
+ * has no room to shade across its height — it reads as a table rule, which is
+ * what made the board look like a spreadsheet. At 2px the highlight and the
+ * shadow each get a pixel and the wire reads as metal. */
+export const FRET_WIRE_HEIGHT = 2
 
 /*
  * px — the nut is thicker than a fret wire, as on a real neck, and it lands on
  * the top edge of row 1. That makes it the worst case the ring has to clear:
  * the ring is centred in its cell, so every row is sized for the thickest thing
- * any row has above it, not the 1px hairline most of them get.
+ * any row has above it, not the hairline most of them get.
+ *
+ * 4, not 5: NUT_OVERHANG is ceil(half), so 4 buys a visibly chunkier bone nut
+ * while landing on the same overhang 3 did — the ring clearance, and every size
+ * derived from it, is unchanged.
  */
-export const NUT_HEIGHT = 3
+export const NUT_HEIGHT = 4
 
 /*
  * px — how far the nut actually reaches into the row below it. Wires are centred
