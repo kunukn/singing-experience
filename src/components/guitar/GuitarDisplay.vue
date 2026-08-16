@@ -516,7 +516,7 @@ function handleClick(cell: GuitarCell) {
               <div
                 v-for="fret in fretNumbers"
                 :key="`fret-number-${fret}`"
-                class="relative flex items-center justify-center tabular-nums"
+                class="guitar-fret-number relative flex items-center justify-center tabular-nums"
                 :class="
                   isGuitarMarkerFret(fret)
                     ? 'guitar-fret-number-marker font-semibold'
@@ -711,13 +711,26 @@ function handleClick(cell: GuitarCell) {
  * rather than as two different objects.
  */
 .guitar-board-root {
-  --guitar-board-surface: #e9dbc0;
+  --guitar-board-surface: #f4ecdd;
+  /* Grain strength, tuned per theme — see the note on .guitar-board. Light
+   * maple takes about half the dark board's, because soft-light darkens where
+   * it has room to and a pale board has nothing but room. */
+  --guitar-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='640'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5 0.005' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='320' height='640' filter='url(%23g)' opacity='0.28'/%3E%3C/svg%3E");
   /* Depth at the edges, so the board reads as a radiused fingerboard rather
    * than a flat rectangle. Warm, not black: a grey shadow on wood looks like
-   * dirt. */
-  --guitar-board-vignette: rgb(120 85 45 / 0.2);
+   * dirt. Light on maple: at the dark board's strength it stops reading as a
+   * radius and starts reading as grime around the rim. */
+  --guitar-board-vignette: rgb(120 85 45 / 0.09);
   --guitar-board-text: #3b2f24;
-  --guitar-board-text-muted: #8a7863;
+  /*
+   * 5.6:1 on the board, against the naturals' 11:1 — stepped back by half, not
+   * by two thirds. The accidentals are the labels this paints, and they are
+   * 11–14px at normal weight, so they need the full 4.5:1; the previous #8a7863
+   * sat at 3.6 and read as washed out rather than as quiet. Dark mode's muted
+   * has always been ~5.1:1 against its own board, so this is light catching up
+   * to a step the other theme already had right.
+   */
+  --guitar-board-text-muted: #6b5a45;
 
   /*
    * Fretwire, shaded across its 2px height: lit crown, body, shadowed root.
@@ -752,11 +765,11 @@ function handleClick(cell: GuitarCell) {
   --guitar-pearl-high: #ffffff;
   --guitar-pearl-body: #c3d0e0;
   --guitar-pearl-low: #7f92ad;
-  --guitar-pearl-rim: rgb(85 65 40 / 0.55);
+  --guitar-pearl-rim: rgb(85 65 40 / 0.65);
 
   /* Behind the pegs — the headstock is a separate piece of wood from the
    * fingerboard on most guitars, and a shade apart says so. */
-  --guitar-headstock-surface: #d3bb94;
+  --guitar-headstock-surface: #e3d3b6;
   --guitar-peg-high: #f4f6f8;
   --guitar-peg-low: #9aa1a8;
 
@@ -767,9 +780,14 @@ function handleClick(cell: GuitarCell) {
 
 .p-dark .guitar-board-root {
   --guitar-board-surface: #3a2a1e;
+  --guitar-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='640'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5 0.005' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='320' height='640' filter='url(%23g)' opacity='0.5'/%3E%3C/svg%3E");
   --guitar-board-vignette: rgb(0 0 0 / 0.3);
   --guitar-board-text: #f7ece0;
-  --guitar-board-text-muted: #b09a83;
+  /* 6.1:1 against rosewood, the same ~2x step back from the naturals that the
+   * light board takes. The old #b09a83 cleared 4.5:1 on paper but stepped back
+   * 2.3x, and it does it over grain at twice the light board's strength — so the
+   * accidentals read fainter than the ratio alone suggests. */
+  --guitar-board-text-muted: #bfa992;
 
   --guitar-wire-high: #ffffff;
   --guitar-wire-body: #c9ced3;
@@ -809,10 +827,16 @@ function handleClick(cell: GuitarCell) {
  * it — which stretches the noise into streaks running the length of the neck,
  * the direction real grain runs. soft-light lets the wood colour underneath set
  * the hue and the noise only vary its value, so one texture serves both themes.
+ *
+ * Its strength is not shared, though: --guitar-grain carries the same SVG at a
+ * different rect opacity per theme. soft-light pushes further toward black than
+ * toward white, so one opacity that reads as grain on rosewood reads as dirt on
+ * maple. The opacity is baked into the data URI because a background-image
+ * cannot be faded on its own — only the whole element can.
  */
 .guitar-board {
   background-color: var(--guitar-board-surface);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='640'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5 0.005' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='320' height='640' filter='url(%23g)' opacity='0.5'/%3E%3C/svg%3E");
+  background-image: var(--guitar-grain);
   background-blend-mode: soft-light;
   border-radius: 7px;
   box-shadow: inset 0 0 18px 2px var(--guitar-board-vignette);
@@ -965,6 +989,25 @@ function handleClick(cell: GuitarCell) {
     var(--guitar-string-body) 70%,
     var(--guitar-string-shadow)
   );
+}
+
+/*
+ * The dot's lane, kept clear of the number.
+ *
+ * The number is centred and the dot is pinned to the end, so the number's end
+ * edge walks outward with every digit while the dot stays put: frets 0–9 cleared
+ * it by 3.4px, frets 12/15/19 overlapped it by 0.3. Reserving the lane as padding
+ * takes the dot out of the centring altogether, so the clearance no longer
+ * depends on how many digits the fret has.
+ *
+ * Padding rather than a narrower centring box: an absolutely positioned element
+ * is offset from its container's PADDING box, so this re-centres the number
+ * without moving the dot a pixel. Applied to every row, dot or not, so the column
+ * of numbers stays on one axis.
+ */
+.guitar-fret-number {
+  /* 4px dot + its 3px inset from the edge, + 2px so they read as separate. */
+  padding-inline-end: 9px;
 }
 
 /* The neck-edge markers, in the fret-number gutter at the board side of it —
