@@ -94,27 +94,29 @@ const MIN_STRING_LINE_WIDTH = 1
 const MAX_STRING_LINE_WIDTH = 2.5
 
 /*
- * Strings and inlays are drawn as gradients now — a cylinder's specular highlight
- * and a pearl's sheen are both a ramp across the shape, which no single-colour
- * utility can express — so these name a class that GuitarDisplay's scoped CSS
- * paints, rather than carrying the colour themselves.
+ * A string is drawn as a gradient — a cylinder's specular highlight is a ramp
+ * across the shape, which no single-colour utility can express — so this names a
+ * class that GuitarDisplay's scoped CSS paints rather than carrying the colour
+ * itself.
  *
- * Every colour they resolve to lives in the --guitar-* block at the top of that
+ * Every colour it resolves to lives in the --guitar-* block at the top of that
  * stylesheet, one definition per theme. That block is also where the string
  * palette's hard constraint is recorded: strings stay DESATURATED. An earlier
  * bronze pass (amber-600/400) collided with the low preview lane's orange-400,
  * and a dashed segment that reads as the same colour as the strings it crosses
- * stops being a preview. The board's warmth belongs to the wood, which is a
- * large field the lane sits on top of; the strings are hairlines the lane has to
- * cross, and it has to win.
+ * stops being a preview. The strings are structure; the lane is information, and
+ * it has to win.
  */
 export const GUITAR_STRING_LINE_CLASS = 'guitar-string'
 
 /*
- * The inlays are their own material — mother-of-pearl, not the strings' nickel —
- * so unlike before they no longer alias the string class. Both are still
- * hardware on wood, but a pearl dot that took the strings' flat grey disappeared
- * into pale maple, where a rimmed pearl reads at any board colour.
+ * A flat dot, not a shaded one — the board is a flat surface field, and a marker
+ * with its own highlight and shadow reads as sitting on top of the board rather
+ * than as part of it. Its colour is shared with the neck-edge side dots, since
+ * they mark the same frets.
+ *
+ * A class rather than a background utility only because the dot needs a centring
+ * transform; the colour itself comes from --guitar-inlay-color.
  */
 export const GUITAR_INLAY_DOT_CLASS = 'guitar-inlay'
 
@@ -238,10 +240,9 @@ export function guitarLabelToneClass(tone: GuitarLabelTone): string | null {
   if (tone === 'emphasized') return null
 
   /* Both step back from the fret button's weight; they differ in how far. The
-   * colours are board-relative (see the --guitar-* block in GuitarDisplay) —
-   * --p-text-* is tuned for a surface background, and on wood the muted end of
-   * it drops under a readable contrast. */
-  if (tone === 'natural') return 'font-normal text-(--guitar-board-text)'
+   * board is a plain --p-surface-* field, which is exactly what the --p-text-*
+   * pair is tuned against, so the split costs no board-specific colour. */
+  if (tone === 'natural') return 'font-normal text-(--p-text-color)'
 
-  return 'font-normal text-(--guitar-board-text-muted)'
+  return 'font-normal text-(--p-text-muted-color)'
 }

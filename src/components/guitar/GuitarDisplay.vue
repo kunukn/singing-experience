@@ -335,24 +335,15 @@ const previewLanes = computed(() =>
   ),
 )
 
-/*
- * Two lanes in the same colour are impossible to tell apart, so the high band
+/* Two lanes in the same colour are impossible to tell apart, so the high band
  * gets its own hue. Orange stays with the low/only lane, matching the piano and
- * the single-voice preview this grew out of.
- *
- * Drawn at FULL opacity, not the /50 these carried on the old grey board. The
- * lane is the one thing on the board that reports what the singer is doing right
- * now, and a half-transparent dash takes on the colour it sits over — on pale
- * maple the orange washed out to nearly nothing. The separation from the wood
- * comes from .guitar-preview-line's shadow instead, which works on either theme
- * without spending the lane's own contrast to get it.
- */
+ * the single-voice preview this grew out of. */
 const LANE_COLOUR_CLASS: Record<
   GuitarPreviewLaneId,
   { line: string; chip: string }
 > = {
-  low: { line: 'border-(--p-orange-400)', chip: 'text-(--p-orange-400)' },
-  high: { line: 'border-(--p-blue-400)', chip: 'text-(--p-blue-400)' },
+  low: { line: 'border-(--p-orange-400)/50', chip: 'text-(--p-orange-400)' },
+  high: { line: 'border-(--p-blue-400)/50', chip: 'text-(--p-blue-400)' },
 }
 
 /*
@@ -542,8 +533,8 @@ function handleClick(cell: GuitarCell) {
             >
               <!-- Inlays, painted under everything: decoration that orients the
                  eye, not information, so they stay out of the accessibility
-                 tree. Mother-of-pearl (see GUITAR_INLAY_DOT_CLASS) — hardware
-                 set into the wood, rather than a dot printed on top of it. -->
+                 tree. Flat dots (see GUITAR_INLAY_DOT_CLASS), in the same grey
+                 as the side markers along the neck edge. -->
               <span
                 v-for="dot in inlays"
                 :key="dot.key"
@@ -601,7 +592,7 @@ function handleClick(cell: GuitarCell) {
                 v-for="cell in layout.cells"
                 :key="`${cell.stringIndex}-${cell.fret}`"
                 type="button"
-                class="guitar-fret absolute flex touch-manipulation items-center justify-center font-semibold text-(--guitar-board-text) select-none"
+                class="guitar-fret absolute flex touch-manipulation items-center justify-center font-semibold text-(--p-text-color) select-none"
                 :style="{
                   insetInlineStart: `${cell.leftPx}px`,
                   top: `${cell.topPx}px`,
@@ -669,7 +660,7 @@ function handleClick(cell: GuitarCell) {
                 <div
                   v-for="segment in lane.segments"
                   :key="`${lane.laneId}-${segment.stringIndex}`"
-                  class="guitar-preview-line pointer-events-none absolute z-20 h-0 -translate-y-[1.5px] border-t-3 border-dashed"
+                  class="pointer-events-none absolute z-20 h-0 -translate-y-[1.5px] border-t-3 border-dashed"
                   :class="LANE_COLOUR_CLASS[lane.laneId].line"
                   :style="{
                     insetInlineStart: `${segment.stringIndex * layout.stringWidth}px`,
@@ -699,149 +690,95 @@ function handleClick(cell: GuitarCell) {
  * reaches the cells, the gutter and the headstock alike; .p-dark sits on <html>
  * (see useDarkMode), so the dark block is a plain ancestor selector.
  *
- * These are literal colours rather than --p-* tokens, which is the exception the
- * project's colour rule does not cover: Aura ships no wood, bone or pearl ramp,
- * and the nearest neighbours are wrong in the way that matters — amber-100 is a
- * yellow, stone-200 a grey, and a fingerboard is neither. Everything that CAN
- * come from a token still does (the scale dots, the preview lanes, the press
- * glow), so the parts that answer to the theme are unchanged.
- *
- * Light is maple, dark is rosewood — the two fingerboards the instrument
- * actually comes in, which is why the pair reads as one board under two lights
- * rather than as two different objects.
+ * The board itself is a plain --p-surface-* field, so it follows the theme like
+ * every other panel in the app. The HARDWARE is the exception the project's
+ * colour rule does not cover, and the only thing here written as literal hex:
+ * Aura ships no nickel or bone ramp, and each of these is a three-stop gradient
+ * across a 1–4px shape — a shaded crown, a specular highlight — which no single
+ * token can express. Everything else the board draws (scale dots, preview lanes,
+ * press glow, note names) comes from tokens.
  */
 .guitar-board-root {
-  --guitar-board-surface: #f4ecdd;
-  /* Grain strength, tuned per theme — see the note on .guitar-board. Light
-   * maple takes about half the dark board's, because soft-light darkens where
-   * it has room to and a pale board has nothing but room. */
-  --guitar-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='640'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5 0.005' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='320' height='640' filter='url(%23g)' opacity='0.28'/%3E%3C/svg%3E");
-  /* Depth at the edges, so the board reads as a radiused fingerboard rather
-   * than a flat rectangle. Warm, not black: a grey shadow on wood looks like
-   * dirt. Light on maple: at the dark board's strength it stops reading as a
-   * radius and starts reading as grime around the rim. */
-  --guitar-board-vignette: rgb(120 85 45 / 0.09);
-  --guitar-board-text: #3b2f24;
-  /*
-   * 5.6:1 on the board, against the naturals' 11:1 — stepped back by half, not
-   * by two thirds. The accidentals are the labels this paints, and they are
-   * 11–14px at normal weight, so they need the full 4.5:1; the previous #8a7863
-   * sat at 3.6 and read as washed out rather than as quiet. Dark mode's muted
-   * has always been ~5.1:1 against its own board, so this is light catching up
-   * to a step the other theme already had right.
-   */
-  --guitar-board-text-muted: #6b5a45;
+  --guitar-board-surface: var(--p-surface-50);
+
+  /* The face inlays and the neck-edge side dots — the same markers seen from
+   * two angles, so they take one colour. Flat, deliberately: they orient the
+   * eye and nothing more, and a shaded dot on a flat board reads as a bubble
+   * sitting on top of it rather than as a marker set into it. */
+  --guitar-inlay-color: var(--p-stone-500);
 
   /*
    * Fretwire, shaded across its 2px height: lit crown, body, shadowed root.
    *
    * The whole ramp sits DARKER than its dark-theme counterpart, which is the
    * rule every piece of hardware on this board follows: metal reads by
-   * contrasting with the wood behind it, so on pale maple it has to go down
-   * where on rosewood it goes up. Lifting these toward white — the obvious
-   * first guess, since real fretwire is bright — is what made the first pass
-   * disappear into the board.
+   * contrasting with the board behind it, so on a pale surface it has to go
+   * down where on a dark one it goes up. Lifting these toward white — the
+   * obvious first guess, since real fretwire is bright — is what made the first
+   * pass disappear into the board.
    */
   --guitar-wire-high: #d5d9dd;
   --guitar-wire-body: #8d939a;
   --guitar-wire-low: #5c6369;
 
-  /* Bone. Warmer and softer than the fretwire it sits in line with, which is
+  /*
+   * Bone. Warmer and softer than the fretwire it sits in line with, which is
    * what separates the nut from just being a thicker fret. The low stop carries
-   * the separation from the maple under it. */
-  --guitar-nut-high: #fffdf5;
-  --guitar-nut-body: #e4d8ba;
-  --guitar-nut-low: #9c8f73;
+   * the separation from the pale board under it.
+   *
+   * Warm by hue only, not by saturation: the body stop is held near 12%, where
+   * it reads as off-white bone. An earlier pass ran it at 34% and the nut came
+   * out visibly tan — at 4px tall and spanning the whole board, this is the
+   * largest single field of colour on the neck, so it takes far more saturation
+   * than its area suggests.
+   */
+  --guitar-nut-high: #eae6df;
+  --guitar-nut-body: #cbc5b9;
+  --guitar-nut-low: #877f72;
 
   /* Nickel, DESATURATED — see the note on GUITAR_STRING_LINE_CLASS. The three
    * stops are one cylinder: shadowed edge, specular highlight, rounded body.
-   * Same darker-on-maple rule as the fretwire above. */
+   * Same darker-on-a-pale-board rule as the fretwire above. */
   --guitar-string-shadow: #4a443d;
   --guitar-string-high: #d8d3cc;
   --guitar-string-body: #6f6862;
 
-  /* Mother-of-pearl. The rim is what keeps it visible on pale maple, where the
-   * pearl body and the board are within a few percent of each other. */
-  --guitar-pearl-high: #ffffff;
-  --guitar-pearl-body: #c3d0e0;
-  --guitar-pearl-low: #7f92ad;
-  --guitar-pearl-rim: rgb(85 65 40 / 0.65);
-
-  /* Behind the pegs — the headstock is a separate piece of wood from the
-   * fingerboard on most guitars, and a shade apart says so. */
-  --guitar-headstock-surface: #e3d3b6;
+  /* Behind the pegs — the headstock is a separate piece from the fingerboard on
+   * a real guitar, and a shade apart says so. */
+  --guitar-headstock-surface: var(--p-surface-100);
   --guitar-peg-high: #f4f6f8;
   --guitar-peg-low: #9aa1a8;
-
-  /* What the preview lane is lifted off the wood with. Light board, light
-   * halo. */
-  --guitar-lane-shadow: rgb(255 255 255 / 0.7);
 }
 
 .p-dark .guitar-board-root {
-  --guitar-board-surface: #3a2a1e;
-  --guitar-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='640'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5 0.005' numOctaves='4' seed='11'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='320' height='640' filter='url(%23g)' opacity='0.5'/%3E%3C/svg%3E");
-  --guitar-board-vignette: rgb(0 0 0 / 0.3);
-  --guitar-board-text: #f7ece0;
-  /* 6.1:1 against rosewood, the same ~2x step back from the naturals that the
-   * light board takes. The old #b09a83 cleared 4.5:1 on paper but stepped back
-   * 2.3x, and it does it over grain at twice the light board's strength — so the
-   * accidentals read fainter than the ratio alone suggests. */
-  --guitar-board-text-muted: #bfa992;
+  --guitar-board-surface: var(--p-surface-800);
+
+  --guitar-inlay-color: var(--p-stone-400);
 
   --guitar-wire-high: #ffffff;
   --guitar-wire-body: #c9ced3;
   --guitar-wire-low: #8a9198;
 
-  --guitar-nut-high: #fffdf5;
-  --guitar-nut-body: #e6dcc4;
-  --guitar-nut-low: #a89b80;
+  --guitar-nut-high: #f7f5f0;
+  --guitar-nut-body: #ddd8cd;
+  --guitar-nut-low: #a09a8e;
 
   --guitar-string-shadow: #6b645e;
   --guitar-string-high: #ffffff;
   --guitar-string-body: #b8b1aa;
 
-  --guitar-pearl-high: #ffffff;
-  --guitar-pearl-body: #dbe3ee;
-  --guitar-pearl-low: #9aa8bd;
-  --guitar-pearl-rim: rgb(0 0 0 / 0.45);
-
-  --guitar-headstock-surface: #2c1f16;
+  --guitar-headstock-surface: var(--p-surface-700);
   --guitar-peg-high: #e8ebee;
   --guitar-peg-low: #7d848b;
-
-  --guitar-lane-shadow: rgb(0 0 0 / 0.6);
 }
 
-/*
- * The board itself: a wood colour, plus grain.
- *
- * The grain is an inline feTurbulence rather than an image file — it costs no
- * request and no bytes, and being procedural it tiles at any board size, which
- * matters because the board's width and height are both computed in px and
- * change with the viewport. A photograph would have to stretch (wrong) or tile
- * (seams), and could not follow the theme: it would bake one lighting direction
- * into a board that has to work on maple and rosewood both.
- *
- * baseFrequency is deliberately lopsided — high across the board, very low down
- * it — which stretches the noise into streaks running the length of the neck,
- * the direction real grain runs. soft-light lets the wood colour underneath set
- * the hue and the noise only vary its value, so one texture serves both themes.
- *
- * Its strength is not shared, though: --guitar-grain carries the same SVG at a
- * different rect opacity per theme. soft-light pushes further toward black than
- * toward white, so one opacity that reads as grain on rosewood reads as dirt on
- * maple. The opacity is baked into the data URI because a background-image
- * cannot be faded on its own — only the whole element can.
- */
+/* The board itself: one flat surface colour, so it sits in the theme like any
+ * other panel and leaves the contrast to the hardware drawn on top of it. */
 .guitar-board {
   background-color: var(--guitar-board-surface);
-  background-image: var(--guitar-grain);
-  background-blend-mode: soft-light;
   border-radius: 7px;
-  box-shadow: inset 0 0 18px 2px var(--guitar-board-vignette);
-  /* The grain and the vignette both run to the rounded corners; without this
-   * they square them off again. */
+  /* The fret wires and the strings run edge to edge; without this they square
+   * the rounded corners off again. */
   overflow: hidden;
 }
 
@@ -937,23 +874,12 @@ function handleClick(cell: GuitarCell) {
   }
 }
 
-/*
- * Mother-of-pearl: a bright off-centre catch falling away to a cool shade, which
- * is the whole of what makes shell read as shell rather than as a white circle.
- * The inset shadow seats it IN the wood; the rim keeps its edge on pale maple,
- * where the pearl and the board are otherwise nearly the same value.
- */
+/* A flat marker dot. Scoped CSS rather than a background utility only because
+ * of the centring transform: the dot is positioned by its column's centre line,
+ * and half its own width has to come back off. */
 .guitar-inlay {
   transform: translateX(-50%);
-  background: radial-gradient(
-    circle at 34% 26%,
-    var(--guitar-pearl-high),
-    var(--guitar-pearl-body) 52%,
-    var(--guitar-pearl-low)
-  );
-  box-shadow:
-    inset 0 -1px 2px rgb(60 70 90 / 0.45),
-    0 0 0 1px var(--guitar-pearl-rim);
+  background: var(--guitar-inlay-color);
 }
 
 /* The headstock, and the tuning pegs on it. Rounded at the top only — the
@@ -961,7 +887,6 @@ function handleClick(cell: GuitarCell) {
 .guitar-headstock {
   background-color: var(--guitar-headstock-surface);
   border-radius: 7px 7px 0 0;
-  box-shadow: inset 0 0 12px 2px var(--guitar-board-vignette);
 }
 
 .guitar-peg {
@@ -1020,24 +945,13 @@ function handleClick(cell: GuitarCell) {
   height: 4px;
   transform: translateY(-50%);
   border-radius: 9999px;
-  background: var(--guitar-pearl-body);
-  box-shadow: 0 0 0 0.5px var(--guitar-pearl-rim);
+  /* The same colour as the face inlay it sits level with — one marker, seen
+   * from the face and from the edge. */
+  background: var(--guitar-inlay-color);
 }
 
 .guitar-fret-number-marker {
-  color: var(--guitar-board-text-muted);
-}
-
-/*
- * The preview lane, lifted off the wood.
- *
- * drop-shadow, not box-shadow: the element is a 0-height box wearing a dashed
- * border, so a box-shadow would trace the box and not the dashes. drop-shadow
- * follows the painted alpha, so each dash gets its own edge — which is what
- * keeps the lane legible where it crosses a string or an inlay.
- */
-.guitar-preview-line {
-  filter: drop-shadow(0 1px 1px var(--guitar-lane-shadow));
+  color: var(--p-text-muted-color);
 }
 
 /*
@@ -1067,10 +981,14 @@ function handleClick(cell: GuitarCell) {
   pointer-events: none;
 }
 
-/* Drawn in the board's own muted text rather than a surface grey: the ring sits
- * on wood, and a slate ring on rosewood reads as a stray artefact. */
 .guitar-fret {
-  --guitar-fret-ring-color: var(--guitar-board-text-muted);
+  --guitar-fret-ring-color: var(--p-surface-400);
+}
+
+/* .p-dark sits on <html> (see useDarkMode), so this is an ancestor selector and
+ * needs no :global wrapper. */
+.p-dark .guitar-fret {
+  --guitar-fret-ring-color: var(--p-surface-500);
 }
 
 /* Guarded, or a tap on a touch screen leaves the ring stuck on the last cell

@@ -225,12 +225,12 @@ describe('scale highlight classes', () => {
     expect(guitarLabelToneClass('emphasized')).toBeNull()
   })
 
-  it('draws the two stepped-back readings in the board palette', () => {
+  it('draws the two stepped-back readings in the theme text tokens', () => {
     expect(guitarLabelToneClass('natural')).toBe(
-      'font-normal text-(--guitar-board-text)',
+      'font-normal text-(--p-text-color)',
     )
     expect(guitarLabelToneClass('muted')).toBe(
-      'font-normal text-(--guitar-board-text-muted)',
+      'font-normal text-(--p-text-muted-color)',
     )
   })
 })
