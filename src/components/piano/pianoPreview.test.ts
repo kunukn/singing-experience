@@ -211,4 +211,45 @@ describe('buildPianoPreviewLines', () => {
     expect(lines[1].x - lines[0].x).toBeLessThan(PREVIEW_LABEL_COLLISION_PX)
     expect(lines.map((line) => line.labelRow)).toEqual([0, 1])
   })
+
+  /*
+   * The chip slides in off its line near the ends of the keyboard, so an
+   * out-of-range voice — whose line pins to the very edge — does not hang half a
+   * chip past the last key. The expected offsets are half an estimated chip
+   * (4px + 7.5px per character); see estimateLabelWidth.
+   */
+  describe('chip clamping', () => {
+    it('leaves the chip on its line in the middle of the keyboard', () => {
+      const [line] = buildPianoPreviewLines([laneFor('low', 60, 'C4')])
+
+      expect(line.labelX).toBe(line.x)
+    })
+
+    it('slides the chip in where the line pins to the top end', () => {
+      const [line] = buildPianoPreviewLines([laneFor('low', 97, 'C♯7')])
+
+      expect(line.x).toBeCloseTo(layout.totalWidth)
+      // Half a 3-character chip clear of the end: (4 + 3 × 7.5) / 2
+      expect(layout.totalWidth - line.labelX).toBeCloseTo(13.25)
+    })
+
+    it('slides the chip in where the line pins to the bottom end', () => {
+      const [line] = buildPianoPreviewLines([laneFor('low', 35, 'B1')])
+
+      expect(line.x).toBe(0)
+      // Half a 2-character chip: (4 + 2 × 7.5) / 2
+      expect(line.labelX).toBeCloseTo(9.5)
+    })
+
+    it('slides a chip carrying cents further in than a bare one', () => {
+      const detuned = midiToFrequency(97) * Math.pow(2, 45 / 1200)
+      const [line] = buildPianoPreviewLines([
+        { ...laneFor('low', 97, 'C♯7'), previewFrequency: detuned },
+      ])
+
+      expect(line.text).toBe('C♯7 +45¢')
+      // Half an 8-character chip: (4 + 8 × 7.5) / 2
+      expect(layout.totalWidth - line.labelX).toBeCloseTo(32)
+    })
+  })
 })

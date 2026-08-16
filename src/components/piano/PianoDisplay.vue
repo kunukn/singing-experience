@@ -24,7 +24,11 @@ import {
   pianoSpanUnits,
   type PianoKey,
 } from './pianoLayout'
-import { buildPianoPreviewLines, type PianoPreviewLaneId } from './pianoPreview'
+import {
+  PREVIEW_EDGE_GUTTER_PX,
+  buildPianoPreviewLines,
+  type PianoPreviewLaneId,
+} from './pianoPreview'
 import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import { usePianoKeyPlayback } from './usePianoKeyPlayback'
 import { usePianoKeyboardInput } from './usePianoKeyboardInput'
@@ -318,14 +322,19 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
     <div class="relative w-full">
       <!-- A piano is a fixed physical instrument (low pitch always on the left), so
          force LTR even in RTL locales; inline-start then coincides with left.
-         The gutter is padding on the scroll box rather than a strip inside it:
+         Both gutters are padding on the scroll box rather than strips inside it:
          padding belongs to the container, not the scrolled content, so it stays
-         put however far the keys are scrolled. contentRect.width excludes it,
-         so containerWidth (and with it the fitted key size) is unaffected. -->
+         put however far the keys are scrolled.
+         The block gutter is the drag handle's; the inline one is the sliver the
+         live-pitch line needs where it pins to an end (see
+         PREVIEW_EDGE_GUTTER_PX). contentRect.width excludes padding, so the
+         inline gutter comes off containerWidth on its own and the fitted key
+         size already accounts for it. -->
       <div
         ref="scrollBox"
         class="w-full overflow-x-auto"
         :style="{
+          paddingInline: `${PREVIEW_EDGE_GUTTER_PX}px`,
           paddingBlockEnd: isDragGutterVisible
             ? `${PIANO_DRAG_GUTTER_HEIGHT}px`
             : undefined,
@@ -549,11 +558,17 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               data-testid="piano-preview-line"
               :data-lane="line.laneId"
             />
+            <!-- labelX, not x: near the ends of the keyboard the chip slides in
+             off its line so it stays over the keys (see clampLabelX).
+             whitespace-nowrap because the chip is absolutely positioned: at the
+             right-hand edge of the track its available width is zero, so a
+             "C♯4 −47¢" chip would otherwise break at the space and stack the
+             cents under the note name. -->
             <span
-              class="pointer-events-none absolute z-30 -translate-x-1/2 rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold tabular-nums"
+              class="pointer-events-none absolute z-30 -translate-x-1/2 rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold whitespace-nowrap tabular-nums"
               :class="LANE_COLOUR_CLASS[line.laneId].chip"
               :style="{
-                insetInlineStart: `${line.x}px`,
+                insetInlineStart: `${line.labelX}px`,
                 top: `${4 + line.labelRow * PREVIEW_LABEL_ROW_HEIGHT}px`,
               }"
               data-testid="piano-preview-label"
