@@ -61,20 +61,20 @@ describe('buildGuitarPreviewLane', () => {
 
   it('reaches the pitches the extra frets added', () => {
     /*
-     * A♯5 is fret 18 of string 1 — off a 15-fret board entirely, and the only
-     * behavioural proof that lengthening the neck widened the preview's reach
-     * rather than just drawing more empty rows.
+     * C♯6 is fret 21 of string 1 — off both the old 15- and 19-fret boards, and
+     * the only behavioural proof that lengthening the neck widened the
+     * preview's reach rather than just drawing more empty rows.
      */
-    const lane = buildGuitarPreviewLane(laneAt(82, 'A♯5'), STANDARD)
+    const lane = buildGuitarPreviewLane(laneAt(85, 'C♯6'), STANDARD)
 
     expect(lane?.segments).toEqual([
-      { stringIndex: STRING_1, y: guitarFretY(18) },
+      { stringIndex: STRING_1, y: guitarFretY(21) },
     ])
   })
 
   it('draws the very top of the board', () => {
     const lane = buildGuitarPreviewLane(
-      laneAt(guitarMidiMax(STANDARD), 'B5'),
+      laneAt(guitarMidiMax(STANDARD), 'D6'),
       STANDARD,
     )
 
@@ -86,11 +86,11 @@ describe('buildGuitarPreviewLane', () => {
   it('keeps the chip when a pitch climbs past the last fret', () => {
     /* One semitone above the top of the board: named, but nowhere to draw. */
     const lane = buildGuitarPreviewLane(
-      laneAt(guitarMidiMax(STANDARD) + 1, 'C6'),
+      laneAt(guitarMidiMax(STANDARD) + 1, 'D♯6'),
       STANDARD,
     )
 
-    expect(lane?.text).toBe('C6')
+    expect(lane?.text).toBe('D♯6')
     expect(lane?.segments).toEqual([])
   })
 

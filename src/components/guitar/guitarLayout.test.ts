@@ -35,7 +35,7 @@ const DROP_D = GUITAR_TUNINGS.dropD.midi
 describe('board range', () => {
   it('derives from the tuning and fret count', () => {
     expect(guitarMidiMin(STANDARD)).toBe(40) // E2, open 6th string
-    expect(guitarMidiMax(STANDARD)).toBe(83) // B5, 19th fret of the 1st string
+    expect(guitarMidiMax(STANDARD)).toBe(86) // D6, 22nd fret of the 1st string
     expect(guitarMidiMax(STANDARD)).toBe(
       Math.max(...STANDARD) + GUITAR_MAX_FRET,
     )
@@ -51,9 +51,10 @@ describe('board range', () => {
   it('keeps the duet split off the frets added above it', () => {
     /*
      * The crossover is the midpoint of the range it is handed, so a board that
-     * grew four frets taller must not drag the boundary between the two
+     * grew seven frets taller must not drag the boundary between the two
      * singers' lanes up with it. This is the whole reason the two ceilings are
-     * separate functions.
+     * separate functions — and this number staying put across the 19 → 22
+     * change is the evidence they are still separate.
      */
     expect(guitarDuetMidiMax(STANDARD)).toBe(79) // G5, unchanged at 15 frets
     expect(guitarMidiMax(STANDARD)).toBeGreaterThan(guitarDuetMidiMax(STANDARD))
@@ -136,7 +137,8 @@ describe('buildGuitarLayout', () => {
     expect(string6[0].topPx).toBe(0)
     expect(new Set(steps)).toEqual(new Set([FRET_ROW_HEIGHT]))
     /* Anchored to the last row, so the check keeps reaching the bottom of the
-     * board rather than stopping wherever fret 15 happens to be. */
+     * board rather than stopping wherever the neck happened to end when this
+     * was written — it has moved from 15 to 19 to 22 already. */
     expect(string6.at(-1)?.topPx).toBe(GUITAR_MAX_FRET * FRET_ROW_HEIGHT)
   })
 })
@@ -247,7 +249,7 @@ describe('buildGuitarBoardScale', () => {
     /* Keeps the 4000px test above honest about WHERE the ceiling starts biting,
      * rather than only that it exists somewhere. */
     const tallestBoard = GUITAR_FRET_ROW_COUNT * MAX_FRET_ROW_HEIGHT
-    const justEnough = ALL_HEIGHTS.concat([1161, 1600]).find(
+    const justEnough = ALL_HEIGHTS.concat([1325, 1600]).find(
       (height) => guitarBoardAvailableHeight(height, false) >= tallestBoard,
     )
 
@@ -275,9 +277,16 @@ describe('buildGuitarBoardScale', () => {
       expect(buildGuitarBoardScale(TABLET, true).rowHeight).toBeGreaterThan(
         FRET_ROW_HEIGHT,
       )
-      /* The user-visible half of it: the names stay at their full size. */
-      expect(buildGuitarBoardScale(TABLET, true).labelFontSize).toBe(
-        buildGuitarBoardScale(4000, true).labelFontSize,
+      /*
+       * The user-visible half of it: the names are bigger than a phone's.
+       *
+       * Bigger, not maximal. At 20 rows a tablet did reach the 14px cap; at 23
+       * it lands on 13, because the ceiling now wants ~1358px of window and a
+       * tablet's 70% box offers ~826px. Growing over the base row is what the
+       * extra height was for — reaching the cap never was.
+       */
+      expect(buildGuitarBoardScale(TABLET, true).labelFontSize).toBeGreaterThan(
+        buildGuitarBoardScale(SHORT_PHONE, true).labelFontSize,
       )
     })
 
@@ -396,8 +405,21 @@ describe('buildGuitarBoardScale', () => {
   })
 
   it('stops growing the label once the rows stop growing', () => {
+    /*
+     * Derived rather than pinned to a named viewport. The window needed to
+     * reach MAX_FRET_ROW_HEIGHT moves with the fret count — 23 rows want
+     * ~1325px where 20 wanted ~1187px — so the old DESKTOP (1080) pin stopped
+     * being a window that saturates at all, and would have gone on asserting
+     * something it no longer set up.
+     */
+    const ceilingHeight =
+      GUITAR_FRET_ROW_COUNT * MAX_FRET_ROW_HEIGHT + BOARD_VERTICAL_CHROME
+    expect(buildGuitarBoardScale(ceilingHeight, false).rowHeight).toBe(
+      MAX_FRET_ROW_HEIGHT,
+    )
+
     expect(buildGuitarBoardScale(4000, false).labelFontSize).toBe(
-      buildGuitarBoardScale(DESKTOP, false).labelFontSize,
+      buildGuitarBoardScale(ceilingHeight, false).labelFontSize,
     )
   })
 

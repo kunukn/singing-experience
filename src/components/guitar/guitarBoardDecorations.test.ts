@@ -24,7 +24,7 @@ const WIRE_RISE = Math.floor(FRET_WIRE_HEIGHT / 2)
 
 /* px — a round string width keeps the expected positions readable. */
 const STRING_WIDTH = 40
-const BOARD_HEIGHT = GUITAR_FRET_ROW_COUNT * FRET_ROW_HEIGHT // 600
+const BOARD_HEIGHT = GUITAR_FRET_ROW_COUNT * FRET_ROW_HEIGHT // 690
 /* The boundary between strings 4 and 3 — where every inlay is centred. */
 const BOARD_CENTER = (GUITAR_STRING_COUNT / 2) * STRING_WIDTH // 120
 

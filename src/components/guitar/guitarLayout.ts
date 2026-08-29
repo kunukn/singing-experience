@@ -9,16 +9,18 @@
 export const GUITAR_STRING_COUNT = 6
 
 /*
- * Rows 0…19 inclusive — fret 0 is the open string.
+ * Rows 0…22 inclusive — fret 0 is the open string.
  *
- * 19 rather than 15: it carries the 17th and 19th inlays, so the neck reads as a
- * real fingerboard rather than one cut off mid-position, and it puts the shapes
- * from the 12th fret upward on the board instead of clipping them three frets
- * in. The board grows to fill the space a tall window already had spare; on a
- * short one the rows shrink to their floor and the page scrolls, as it did
- * before at 15.
+ * 22 because that is what is under a player's hand: it covers essentially every
+ * current production electric, where 19 stopped three frets short of the neck
+ * they are holding. It carries the 21st inlay too, so the fingerboard ends
+ * where a real one does rather than mid-position.
+ *
+ * Three more rows than 19 cost real height — see MAX_FRET_ROW_HEIGHT — and are
+ * affordable only because the board scrolls inside its own bounded box. Before
+ * that, three more rows meant three more rows of page overflow.
  */
-export const GUITAR_MAX_FRET = 19
+export const GUITAR_MAX_FRET = 22
 export const GUITAR_FRET_ROW_COUNT = GUITAR_MAX_FRET + 1
 
 /*
@@ -39,13 +41,19 @@ export const FRET_ROW_HEIGHT = 30
  * board fits: past this the rows are as tall as the note names can use, and
  * whether the whole neck is visible is decided by the fitted-first step below.
  *
- * 20 rows at 46px is a 920px board, so the ceiling is only reachable on a window
- * of ~1161px or taller (920 + BOARD_VERTICAL_CHROME). A 1080px window fits its
- * rows to 41px instead, which still draws the names at their full size.
+ * 23 rows at 46px is a 1058px board, so the ceiling is only reachable on a
+ * window of ~1325px or taller (1058 + BOARD_VERTICAL_CHROME) — a tall monitor,
+ * not a laptop. A 1080px window fits its rows to 35px instead.
+ *
+ * That is a real loss of whitespace against the 20-row board, which reached
+ * 41px there, and it was accepted rather than answered by raising this number:
+ * the cap exists because past ~46px a three-character name like C♯3 outgrows
+ * the scale dot behind it, and labelFontSize is clamped to 11–14px anyway, so
+ * shorter rows cost air rather than readability.
  */
 export const MAX_FRET_ROW_HEIGHT = 46
 
-/* px — the 0…19 number column at the inline-start edge of the board. Two digits
+/* px — the 0…22 number column at the inline-start edge of the board. Two digits
  * still fit: the gutter font is capped well below the note names. */
 export const FRET_NUMBER_GUTTER = 28
 
@@ -69,9 +77,10 @@ export const MAX_STRING_WIDTH = 72
 export const MIN_STRING_WIDTH_TOUCH = 44 // px — tap-target floor
 export const MIN_STRING_WIDTH_POINTER = 36 // px
 
-/* Inlays as on a real neck; 12 takes the double dot marking the octave. 17 and
- * 19 are the upper markers the extra frets brought onto the board. */
-export const SINGLE_INLAY_FRETS = [3, 5, 7, 9, 15, 17, 19]
+/* Inlays as on a real neck; 12 takes the double dot marking the octave. 17, 19
+ * and 21 are the upper markers the extra frets brought onto the board. 22 is
+ * deliberately absent — a real neck leaves its last fret unmarked. */
+export const SINGLE_INLAY_FRETS = [3, 5, 7, 9, 15, 17, 19, 21]
 export const DOUBLE_INLAY_FRET = 12
 
 /*
@@ -269,11 +278,14 @@ export function guitarBoardAvailableHeight(
  * 70svh scroll box there, so the rows may only grow as far as that box can still
  * show the whole neck at once.
  *
- * At 20 rows neither branch reaches the ceiling on an ordinary screen — a tablet
+ * At 23 rows neither branch reaches the ceiling on an ordinary screen — a tablet
  * lands on rows that fill its box rather than on MAX_FRET_ROW_HEIGHT, and a
- * laptop under ~841px cannot fit the board even at the base row. That last case
- * is not a failure: the rows stop at their floor and the board scrolls, on touch
- * inside its own box and on a pointer by scrolling the page.
+ * laptop under ~957px cannot fit the board even at the base row. That last case
+ * is not a failure: the rows stop at their floor and the board scrolls inside
+ * its own box.
+ *
+ * That ~957px threshold is where the 22nd fret cost the most: at 20 rows it was
+ * ~867px, so laptops between the two now scroll a neck they used to see whole.
  */
 export function buildGuitarBoardScale(
   viewportHeight: number,
@@ -376,7 +388,7 @@ export function guitarFretY(
 
 /*
  * Every cell of the board, built once per width change rather than once per
- * render — 6 strings × 20 rows is 120 of them.
+ * render — 6 strings × 23 rows is 138 of them.
  */
 export function buildGuitarLayout(
   stringWidth: number,

@@ -119,7 +119,7 @@ function cellAriaLabel(cell: GuitarCell): string {
   }).label
 }
 
-/* Built once per scale change, not once per cell — the board has 120 of them. */
+/* Built once per scale change, not once per cell — the board has 138 of them. */
 const scalePitchClasses = computed(() =>
   buildScalePitchClasses(
     props.scaleRoot ?? null,
@@ -297,7 +297,7 @@ const verticalChrome = computed(() =>
 /*
  * The board scrolls inside its own box rather than taking the page with it.
  *
- * At the base row the board is 600px tall and taller wherever there is room, so
+ * At the base row the board is 690px tall and taller wherever there is room, so
  * unbounded it pushes the controls off the top of a laptop window and the whole
  * document has to scroll to reach the high frets — the controls you reach for
  * mid-practice scroll away with it. Bounding it keeps the neck self-contained
@@ -410,7 +410,7 @@ const LANE_COLOUR_CLASS: Record<
 }
 
 /*
- * Tap versus scroll. The board is at least 600px tall and its box on a phone is
+ * Tap versus scroll. The board is at least 690px tall and its box on a phone is
  * shorter than that, so a finger dragged across it pans the neck — and
  * @pointerdown would sound a note on the first touch of every such drag. `click` does not fire on a scroll gesture,
  * so touch plays on click; a mouse keeps pointerdown's instant response, where
@@ -579,8 +579,8 @@ function handleClick(cell: GuitarCell) {
             >
               <!-- Marker frets read louder here for the same reason they carry
                    a face inlay: they are what a player counts positions by, and
-                   a column of twenty numbers in one weight gives the eye nothing
-                   to land on. The side dot beside them is the neck's edge
+                   a column of twenty-three numbers in one weight gives the eye
+                   nothing to land on. The side dot beside them is the neck's edge
                    marker, which is the one a player actually looks at. -->
               <div
                 v-for="fret in fretNumbers"
@@ -651,7 +651,7 @@ function handleClick(cell: GuitarCell) {
                 aria-hidden="true"
               />
 
-              <!-- The nut (below the open row) and the fret wires below rows 1–19.
+              <!-- The nut (below the open row) and the fret wires below rows 1–22.
                  The nut is bone, the wires nickel — two materials, as on a real
                  neck, rather than one hairline drawn twice at different weights. -->
               <span
@@ -1032,7 +1032,7 @@ function handleClick(cell: GuitarCell) {
  *
  * The number is centred and the dot is pinned to the end, so the number's end
  * edge walks outward with every digit while the dot stays put: frets 0–9 cleared
- * it by 3.4px, frets 12/15/19 overlapped it by 0.3. Reserving the lane as padding
+ * it by 3.4px, frets 12/15/19/21/22 overlapped it by 0.3. Reserving the lane as padding
  * takes the dot out of the centring altogether, so the clearance no longer
  * depends on how many digits the fret has.
  *

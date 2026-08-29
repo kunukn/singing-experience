@@ -59,9 +59,11 @@ export function useGuitarFretPlayback(options: GuitarFretPlaybackOptions = {}) {
      * play() starts the AudioContext itself within the press gesture and
      * restores sampler volume after any prior stop() from the tuner, so no
      * separate warm-up is needed. Its default ring is used rather than the
-     * synth's shorter duration: a plucked string should ring out. The one
-     * exception is C2 (Drop C / Open C open low string), which has no sample and
-     * plays through a pitch-shifted Player that cuts its own previous note.
+     * synth's shorter duration: a plucked string should ring out.
+     *
+     * Every cell resolves to a sample: Tone picks the nearest key in the bank
+     * and shifts from it, so no fret can miss. How far it shifts is the only
+     * question, and that is the sample bank's problem — see EXTRA_SAMPLE_URLS.
      */
     const { note, octave } = midiToNoteLabel(midi)
     await playGuitarSample(note, octave)

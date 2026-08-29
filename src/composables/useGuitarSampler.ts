@@ -72,19 +72,35 @@ const EXTRA_SAMPLE_URLS: Record<string, string> = {
    * from it, so a bare neck of open-string samples would stretch the whole
    * upper register up from D#4.
    *
-   * C5 is the one the 19-fret board needs — its top note is B5 (MIDI 83), which
-   * without C5 comes off G#4 fifteen semitones down. It still lands eleven
-   * semitones up from C5, so the very top frets stay thin; adding a G#5 would
-   * close that, and is the next step if it ever grates.
+   * G#4 is the highest REAL recording here. Everything above it is generated —
+   * there is no source material further up to go looking for.
    *
-   * C5.mp3 is GENERATED, not recorded — pitch-shifted up from Gs4.mp3 with
-   * ffmpeg (asetrate + atempo, so the decay keeps its original length). There is
-   * no source recording to go looking for.
+   * The two above it exist because Tone extrapolates upward off the topmost key
+   * with nothing bracketing it, and the board's top note is a long way past
+   * G#4: at 22 frets it is D6 (MIDI 86), since no tuning puts string 1 above
+   * E4. Left to G#4 alone that is eighteen semitones up, played at 2.8x — a
+   * chirp, not a guitar.
+   *
+   *   samples in the bank   D6 stretches
+   *   G#4                   +18 st
+   *   + C5                  +14 st
+   *   + G#5                  +6 st   ← where we are
+   *
+   * C5.mp3 was shifted up four semitones from Gs4.mp3, for the 19-fret board.
+   * Gs5.mp3 came with the 22nd fret, shifted a whole octave — an exact 2x
+   * ratio, and taken from the real Gs4.mp3 rather than from the already
+   * synthetic C5, so it does not compound one resampling with another. Both use
+   * ffmpeg asetrate + atempo, which keeps the decay its original length instead
+   * of halving it the way a bare rate change would:
+   *
+   *   ffmpeg -i Gs4.mp3 -filter:a \
+   *     "asetrate=44100*2,aresample=44100,atempo=0.5" -ac 1 -b:a 192k Gs5.mp3
    */
   C4: 'C4.mp3',
   G4: 'G4.mp3',
   'G#4': 'Gs4.mp3',
   C5: 'C5.mp3',
+  'G#5': 'Gs5.mp3',
 }
 
 const STANDARD_NOTE_KEYS = new Set(Object.keys(STANDARD_SAMPLE_URLS))
