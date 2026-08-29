@@ -1,0 +1,1 @@
+function e(e){return e>=550?12:e>=400?8:4}export{e as t};

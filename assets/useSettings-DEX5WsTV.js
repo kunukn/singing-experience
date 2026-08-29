@@ -1,0 +1,1 @@
+import{a as e}from"./dist-BtSoxIJ0.js";var t=.9,n=.4,r=.01,i=e(`syng.clarityThreshold`,t),a=e(`syng.previewEnabled`,!1);(i.value<.4||i.value>1)&&(i.value=t);function o(){function e(){i.value=t,a.value=!1}return{clarityThreshold:i,isPreviewEnabled:a,resetToDefaults:e}}export{n,o as r,r as t};

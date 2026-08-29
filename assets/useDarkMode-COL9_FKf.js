@@ -1,0 +1,1 @@
+import{Ht as e,_n as t}from"./runtime-core.esm-bundler-CJOrt7RF.js";import{a as n}from"./dist-BtSoxIJ0.js";var r=`syng.darkMode`,i=`p-dark`,a=window.matchMedia(`(prefers-color-scheme: dark)`).matches,o=n(r,a);function s(e){document.documentElement.classList.toggle(i,e)}function c(){s(o.value),e(o,s);function n(){o.value=!o.value}return{isDark:t(o),toggleDark:n}}export{c as t};
