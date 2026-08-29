@@ -154,6 +154,9 @@ declare global {
   export type { DuetLane, DuetLaneDetection } from './composables/useDuetPitchDetection'
   import('./composables/useDuetPitchDetection')
   // @ts-ignore
+  export type { ScrollEdgeAxis } from './composables/useScrollEdgeMask'
+  import('./composables/useScrollEdgeMask')
+  // @ts-ignore
   export type { SimulatedSingerLaneId, SimulatedSingerState, SimulatedSinger } from './composables/useSimulatedSingers'
   import('./composables/useSimulatedSingers')
   // @ts-ignore

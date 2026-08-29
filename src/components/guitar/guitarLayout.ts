@@ -49,10 +49,17 @@ export const MAX_FRET_ROW_HEIGHT = 46
  * still fit: the gutter font is capped well below the note names. */
 export const FRET_NUMBER_GUTTER = 28
 
-/* px — on touch the fret-number column doubles as the strip you grab to pan the
- * board, since it is the only full-height area with no fret cells in it. 44 is
- * the Apple HIG minimum tap target, the same value and reasoning as the piano's
- * PIANO_DRAG_GUTTER_HEIGHT; narrower and it is too easy to miss and hit a fret. */
+/*
+ * px — the same column, wider on touch. For legibility, not as a tap target:
+ * nothing in it is tappable. A phone draws these two-digit numbers at the
+ * gutter font's floor, at arm's length, beside a neck that is itself only just
+ * wide enough — 28px leaves them cramped against the low E string.
+ *
+ * It is NOT the piano's PIANO_DRAG_GUTTER_HEIGHT, which this once copied. That
+ * strip is a place to start a pan that is not a key, because a piano key sounds
+ * on pointerdown. A fret sounds on click, which no scroll gesture fires, so a
+ * pan can start anywhere on the neck and the guitar needs no such handle.
+ */
 export const FRET_NUMBER_GUTTER_TOUCH = 44
 
 /* px — wide enough to give a three-character name (C♯3) and its scale dot room
@@ -87,7 +94,10 @@ export function isGuitarMarkerFret(fret: number): boolean {
  * fret 0. Kept shallow deliberately — it is the one part of the board that
  * shows no pitch, so every px it takes is a px the frets do not get.
  *
- * Drawn outside the touch scroll box, so it stays put while the neck pans.
+ * Drawn INSIDE the board's scroll box: it is fastened to fret 0, so pinning it
+ * while the neck scrolled under it joined the pegs to whatever fret happened to
+ * be at the top. It scrolls away instead, and hands its height to the frets
+ * once you are past it.
  */
 export const HEADSTOCK_HEIGHT = 26
 
@@ -132,17 +142,45 @@ export type GuitarBoardScale = {
  * live page rather than summed from the stylesheets, so it already accounts for
  * the gaps between them.
  *
- * A FALLBACK, not the truth: it is only right for /guitar. The /guitar-test
- * harness stacks a simulated-singer panel above the board and has roughly 130px
- * more, so a board sized by this constant hangs off the bottom of that page.
- * GuitarDisplay measures its own offset and passes it in; this value covers the
- * first render, before there is anything to measure.
+ * A FIRST-RENDER FALLBACK, not the truth. It is a single number for a stack
+ * whose height moves: it is only right for /guitar at a width where the
+ * settings row fits on one line, and a narrower window wraps that row and adds
+ * ~40px the constant cannot know about — which is what used to hang the last
+ * fret off the bottom of the page. /guitar-test is further out still, stacking
+ * a simulated-singer panel above the board.
  *
- * The headstock is part of this rather than part of the board: it sits above
- * the scroll box and pushes the frets down exactly as the control rows do, so
- * leaving it out would size the rows for space the neck no longer has.
+ * GuitarDisplay measures the board's real top offset and sizes from that; this
+ * value only covers the frame before there is anything to measure.
+ *
+ * The headstock counts as chrome rather than as board even though it scrolls
+ * with the neck: it sits above fret 0 inside the box and pushes the frets down
+ * exactly as the control rows do, so leaving it out would size the rows for
+ * space the neck does not have at rest.
  */
 export const BOARD_VERTICAL_CHROME = 241 + HEADSTOCK_HEIGHT
+
+/*
+ * px — the one piece of chrome that sits BELOW the board: the page's own bottom
+ * padding. The board is the last thing on the page, so nothing else does.
+ *
+ * Still a constant while the chrome above the board is measured, because it is
+ * the one number a measurement cannot reach: a bottom padding leaves no element
+ * to observe, and the slack under a board shorter than its box is not chrome.
+ * Keep in step with the `pb-4` on GuitarPage's root.
+ */
+export const BOARD_BOTTOM_CHROME = 16
+
+/*
+ * px — the floor on the board's own scroll box, below which shrinking it stops
+ * helping. Eight rows at the base height: enough neck to still read as one and
+ * to play a position out of, and the point past which taking more from the
+ * board would be worse than letting the page scroll the last of the chrome away.
+ *
+ * Reached only on a very short window — a phone in landscape, or a desktop
+ * window dragged down to a strip — where guitarBoardAvailableHeight would
+ * otherwise return a height near zero or below it.
+ */
+export const MIN_BOARD_VIEWPORT_HEIGHT = 8 * FRET_ROW_HEIGHT
 
 /*
  * px — the hover/focus ring is painted as a box-shadow spread, which renders
@@ -186,8 +224,11 @@ export const NUT_OVERHANG = Math.ceil(NUT_HEIGHT / 2)
 const FRET_RING_CLEARANCE = 2
 
 /*
- * The share of the window the board's own scroll box takes on touch. Mirrors
- * BOARD_MAX_VIEWPORT_HEIGHT ('70svh') in GuitarDisplay — keep the two in step.
+ * The share of the window the board's own scroll box takes on touch.
+ *
+ * Touch only. On a pointer the box is bounded by the page fit alone: there is
+ * nothing below the fold to reach for there, so holding back 30% of the window
+ * would shrink the neck to protect space nothing uses.
  *
  * Read off window.innerHeight rather than svh, which CSS alone knows: innerHeight
  * follows the LARGE viewport once the address bar collapses, so 0.7 × it can

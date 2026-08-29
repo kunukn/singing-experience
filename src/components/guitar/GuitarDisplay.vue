@@ -28,6 +28,7 @@ import {
 } from './guitarBoardDecorations'
 import { guitarFretLabel } from './guitarLabels'
 import {
+  BOARD_BOTTOM_CHROME,
   BOARD_VERTICAL_CHROME,
   FRET_NUMBER_GUTTER,
   FRET_NUMBER_GUTTER_TOUCH,
@@ -38,10 +39,12 @@ import {
   HEADSTOCK_PEG_SIZE,
   MAX_STRING_WIDTH,
   MIN_STRING_WIDTH_POINTER,
+  MIN_BOARD_VIEWPORT_HEIGHT,
   MIN_STRING_WIDTH_TOUCH,
   NUT_HEIGHT,
   buildGuitarBoardScale,
   buildGuitarLayout,
+  guitarBoardAvailableHeight,
   isGuitarMarkerFret,
   type GuitarCell,
 } from './guitarLayout'
@@ -193,6 +196,19 @@ const fretNumberGutter = computed(() =>
   isCoarsePointer.value ? FRET_NUMBER_GUTTER_TOUCH : FRET_NUMBER_GUTTER,
 )
 
+const boardViewport = useTemplateRef<HTMLElement>('boardViewport')
+/*
+ * px taken by the board's own vertical scrollbar, where the platform draws a
+ * classic one rather than an overlay. The board inside is a fixed pixel width,
+ * so a scrollbar that ate into the box would push it out the side and park a
+ * horizontal scrollbar here too — see the width the wrapper below is given.
+ */
+const boardScrollbarWidth = ref(0)
+useResizeObserver(boardViewport, ([entry]) => {
+  const element = entry.target as HTMLElement
+  boardScrollbarWidth.value = element.offsetWidth - element.clientWidth
+})
+
 /* Grow the strings to fill the container, bounded by a tap-target floor (larger
  * on touch) and a readable ceiling. Only the horizontal axis flexes: row height
  * is the pitch axis and must stay one fixed semitone unit. */
@@ -203,8 +219,13 @@ const stringWidth = computed(() => {
   /* Before the first ResizeObserver callback there is nothing to fit to. */
   if (!containerWidth.value) return minWidth
 
+  /* The board's own scrollbar sits beside the neck inside this container, so
+   * the strings have that much less to grow into. */
   const fitted =
-    (containerWidth.value - fretNumberGutter.value) / GUITAR_STRING_COUNT
+    (containerWidth.value -
+      fretNumberGutter.value -
+      boardScrollbarWidth.value) /
+    GUITAR_STRING_COUNT
 
   /* Floor to whole px so a fractional remainder can't overflow by a hair and
    * trigger a scrollbar on a board that was meant to fit. */
@@ -212,51 +233,103 @@ const stringWidth = computed(() => {
 })
 
 /*
- * The board is 600px tall at the base row and taller wherever there is room, so
- * on a phone it would push the controls off screen and force the whole document
- * to scroll to reach the high frets. Bounding it to a slice of the viewport
- * keeps the board self-contained instead.
- *
- * svh, not dvh: dvh grows and shrinks as the address bar collapses, which would
- * resize the board mid-scroll. 70% leaves room for the two control rows above,
- * and being proportional it degrades sensibly — a tall phone shows the whole
- * board, a short one scrolls a few rows.
- *
- * Touch only. On a mouse the board would capture the wheel whenever the cursor
- * crossed it on a short window, and there is no drag gesture to protect anyway.
+ * The window is the outside input every vertical size here is solved against.
+ * The board's own height is what is being solved for, so measuring that would
+ * feed back on itself; the window cannot.
  */
-const BOARD_MAX_VIEWPORT_HEIGHT = '70svh'
-
-const boardViewport = useTemplateRef<HTMLElement>('boardViewport')
-const boardViewportHeight = ref(0)
-useResizeObserver(boardViewport, ([entry]) => {
-  boardViewportHeight.value = entry.contentRect.height
-})
+const { height: windowHeight } = useWindowSize()
 
 /*
- * Chrome above the board that this component cannot see for itself.
- * BOARD_VERTICAL_CHROME is calibrated for /guitar; the /guitar-test harness
- * stacks a simulated-singer panel on top and needs ~130px more, or its last
- * frets hang off the bottom of the screen.
+ * Everything above the board, measured rather than assumed.
  *
- * A prop rather than a measurement taken here. Measuring the board's own offset
- * looks safe — the board is last in a top-down column, so its height cannot move
- * its own top — but it oscillates in practice: a taller board toggles the page
- * scrollbar, the scrollbar changes the viewport width, the width change fires
- * `resize`, and re-measuring changes the height again. Whoever owns the extra
- * chrome measures it instead, where nothing the board does can feed back.
+ * The board is last in a top-down column, so its own height cannot move its own
+ * top — but a single constant still cannot describe this stack, because the
+ * settings row wraps to a second line on a narrower window and adds ~40px to it.
+ * That is what used to size the rows for space the page did not have and hang
+ * the last fret off the bottom.
+ *
+ * Measuring was avoided before because it oscillated: a taller board toggled the
+ * page scrollbar, the scrollbar changed the viewport width, and the width change
+ * re-measured to a different answer. Bounding the board to its own scroll box is
+ * what closes that loop — the page no longer grows with the board, so nothing
+ * the board does can come back around and move its top.
  */
-const verticalChrome = computed(
-  () => BOARD_VERTICAL_CHROME + (props.extraVerticalChrome ?? 0),
+const boardTopOffset = ref(0)
+
+function measureBoardTopOffset() {
+  const element = boardViewport.value
+  if (!element) return
+
+  boardTopOffset.value = element.getBoundingClientRect().top + window.scrollY
+}
+
+/*
+ * Re-measure on anything that can re-flow the chrome, not just on resize: a
+ * locale switch relayouts the settings row without the window moving at all.
+ * Observing the body catches every one of them, and converges in a single pass
+ * because the offset it reads does not depend on the height it produces.
+ */
+onMounted(() => {
+  measureBoardTopOffset()
+})
+useResizeObserver(
+  () => document.body,
+  () => measureBoardTopOffset(),
 )
 
 /*
- * Row height and everything that scales with it. Driven by the window rather
- * than by a measured container: the board's own height is what we are solving
- * for, so observing it would feed back on itself. Window height is an outside
- * input and cannot.
+ * The headstock is measured as chrome even though it scrolls with the neck: it
+ * sits above fret 0 inside the box, so it pushes the frets down exactly as the
+ * control rows do and the rows must not be sized for the space it occupies.
+ * boardMaxHeight adds it back to the box, which is what lets it scroll away and
+ * hand its height to the frets once you are past it.
+ *
+ * BOARD_VERTICAL_CHROME (plus the harness prop, for /guitar-test) covers only
+ * the first frame, before the board is in the document to be measured; it
+ * already carries HEADSTOCK_HEIGHT for the same reason.
  */
-const { height: windowHeight } = useWindowSize()
+const verticalChrome = computed(() =>
+  boardTopOffset.value > 0
+    ? boardTopOffset.value + HEADSTOCK_HEIGHT + BOARD_BOTTOM_CHROME
+    : BOARD_VERTICAL_CHROME + (props.extraVerticalChrome ?? 0),
+)
+
+/*
+ * The board scrolls inside its own box rather than taking the page with it.
+ *
+ * At the base row the board is 600px tall and taller wherever there is room, so
+ * unbounded it pushes the controls off the top of a laptop window and the whole
+ * document has to scroll to reach the high frets — the controls you reach for
+ * mid-practice scroll away with it. Bounding it keeps the neck self-contained
+ * and the controls where they were.
+ *
+ * The wheel is not captured in the way that kept this to touch before: once the
+ * board is scrolled to the last fret the wheel chains out to the page as usual,
+ * and on a window that fits the whole neck there is nothing for it to capture.
+ */
+const boardFretsHeight = computed(() =>
+  Math.max(
+    guitarBoardAvailableHeight(
+      windowHeight.value,
+      isCoarsePointer.value,
+      verticalChrome.value,
+    ),
+    MIN_BOARD_VIEWPORT_HEIGHT,
+  ),
+)
+
+/* The box holds the headstock as well as the frets, so it is that much taller
+ * than the neck it is sized to show. */
+const boardMaxHeight = computed(
+  () => `${boardFretsHeight.value + HEADSTOCK_HEIGHT}px`,
+)
+
+/* Which edge of the board still has neck behind it — drives the fade that says
+ * a row clipped at the boundary is not where the fingerboard ends. */
+const { canScrollStart: canScrollUp, canScrollEnd: canScrollDown } =
+  useScrollEdgeMask(boardViewport, 'block')
+
+/* Row height and everything that scales with it. */
 const boardScale = computed(() =>
   buildGuitarBoardScale(
     windowHeight.value,
@@ -275,16 +348,6 @@ const layout = computed(() =>
     props.tuningMidi,
     boardScale.value.rowHeight,
   ),
-)
-
-/* Tint the fret-number column while it is acting as the strip you pan by. Same
- * shape as the piano's isDragGutterVisible: pointless without a touch gesture,
- * and pointless when the whole board already fits. */
-const isDragGutterVisible = computed(
-  () =>
-    isCoarsePointer.value &&
-    boardViewportHeight.value > 0 &&
-    layout.value.boardHeight > boardViewportHeight.value,
 )
 
 const fretNumbers = Array.from(
@@ -347,9 +410,9 @@ const LANE_COLOUR_CLASS: Record<
 }
 
 /*
- * Tap versus scroll. The board is at least 600px tall, so on a phone the page scrolls
- * vertically straight through it, and @pointerdown would sound a note on the
- * first touch of every scroll drag. `click` does not fire on a scroll gesture,
+ * Tap versus scroll. The board is at least 600px tall and its box on a phone is
+ * shorter than that, so a finger dragged across it pans the neck — and
+ * @pointerdown would sound a note on the first touch of every such drag. `click` does not fire on a scroll gesture,
  * so touch plays on click; a mouse keeps pointerdown's instant response, where
  * the scrollbar makes drag-panning unnecessary anyway.
  */
@@ -402,9 +465,14 @@ function handleClick(cell: GuitarCell) {
       dir="ltr"
       data-testid="guitar-display"
     >
+      <!-- Wide enough for the board plus whatever the board's own scrollbar
+           takes, so a classic (non-overlay) scrollbar narrows the box without
+           squeezing the fixed-width neck out the side of it. -->
       <div
         class="mx-auto"
-        :style="{ width: `${fretNumberGutter + layout.boardWidth}px` }"
+        :style="{
+          width: `${fretNumberGutter + layout.boardWidth + boardScrollbarWidth}px`,
+        }"
       >
         <!-- String numbers, counted the way guitarists do: string 1 is the
              thinnest and highest, string 6 the thickest and lowest. Decoration
@@ -430,74 +498,84 @@ function handleClick(cell: GuitarCell) {
           </div>
         </div>
 
-        <!-- The headstock, above the nut and OUTSIDE the scroll box below: it
-             marks which end of the neck is fret 0, which it can only do while
-             it is on screen. One peg per string column — a real headstock
-             staggers them three per side, but the pegs here are read as "this
-             string ends at this peg", and that is the column. -->
-        <div class="flex" aria-hidden="true">
-          <div class="shrink-0" :style="{ width: `${fretNumberGutter}px` }" />
-          <div
-            class="guitar-headstock relative shrink-0"
-            :style="{
-              width: `${layout.boardWidth}px`,
-              height: `${HEADSTOCK_HEIGHT}px`,
-            }"
-            data-testid="guitar-headstock"
-          >
-            <span
-              v-for="line in stringLines"
-              :key="`peg-${line.key}`"
-              class="guitar-peg absolute"
-              :style="{
-                insetInlineStart: `${line.left}px`,
-                width: `${HEADSTOCK_PEG_SIZE}px`,
-                height: `${HEADSTOCK_PEG_SIZE}px`,
-              }"
-            />
-            <!-- The run of string from each peg down to the nut, so the six
-                 lines below read as continuing rather than starting at fret 0. -->
-            <span
-              v-for="line in stringLines"
-              :key="`peg-run-${line.key}`"
-              class="guitar-peg-run absolute"
-              :style="{
-                insetInlineStart: `${line.left}px`,
-                width: `${line.width}px`,
-              }"
-            />
-          </div>
-        </div>
+        <!-- The board scrolls inside this box rather than dragging the whole
+             document along with it, so the controls above it stay put however
+             far down the neck you are. Bounded on every pointer type: see
+             boardMaxHeight.
 
-        <!-- On touch the board scrolls inside this box rather than dragging the
-             whole document along with it. On a mouse it stays unbounded, so the
-             wheel is never captured when the cursor crosses the board. -->
+             The edge fade is the only thing that says a fretboard clipped
+             mid-row has more neck below rather than simply ending there — the
+             board's own rounded, filled bottom edge otherwise reads as
+             finished. Same mask the settings rows use, on the block axis. -->
         <div
           ref="boardViewport"
-          :class="isCoarsePointer && 'overflow-y-auto'"
-          :style="{
-            maxHeight: isCoarsePointer ? BOARD_MAX_VIEWPORT_HEIGHT : undefined,
-          }"
+          class="guitar-board-viewport overflow-y-auto"
+          :class="{ 'mask-start': canScrollUp, 'mask-end': canScrollDown }"
+          :style="{ maxHeight: boardMaxHeight }"
           data-testid="guitar-board-viewport"
         >
+          <!-- The headstock, above the nut and INSIDE the scroll box: it is
+               fastened to fret 0, so pinning it while the neck scrolled under
+               it drew pegs joined to strings that started six frets down. What
+               it was pinned for — which end of the neck you are looking at —
+               the fret-number gutter answers at every scroll position anyway.
+
+               One peg per string column: a real headstock staggers them three
+               per side, but the pegs here are read as "this string ends at this
+               peg", and that is the column. -->
+          <div class="flex" aria-hidden="true">
+            <div class="shrink-0" :style="{ width: `${fretNumberGutter}px` }" />
+            <div
+              class="guitar-headstock relative shrink-0"
+              :style="{
+                width: `${layout.boardWidth}px`,
+                height: `${HEADSTOCK_HEIGHT}px`,
+              }"
+              data-testid="guitar-headstock"
+            >
+              <span
+                v-for="line in stringLines"
+                :key="`peg-${line.key}`"
+                class="guitar-peg absolute"
+                :style="{
+                  insetInlineStart: `${line.left}px`,
+                  width: `${HEADSTOCK_PEG_SIZE}px`,
+                  height: `${HEADSTOCK_PEG_SIZE}px`,
+                }"
+              />
+              <!-- The run of string from each peg down to the nut, so the six
+                   lines below read as continuing rather than starting at fret 0. -->
+              <span
+                v-for="line in stringLines"
+                :key="`peg-run-${line.key}`"
+                class="guitar-peg-run absolute"
+                :style="{
+                  insetInlineStart: `${line.left}px`,
+                  width: `${line.width}px`,
+                }"
+              />
+            </div>
+          </div>
           <div
             class="relative flex"
             :style="{ height: `${layout.boardHeight}px` }"
           >
             <!-- Fret numbers. aria-hidden because each cell's own aria-label
                  already names its note; reading "3" before every note would be
-                 noise. On touch this column is also the only full-height strip
-                 with no fret cells in it, so it is what you grab to pan the
-                 board — hence the tint once the board actually overflows. -->
+                 noise.
+
+                 Deliberately untinted, unlike the piano's drag gutter. That
+                 strip exists because a piano key sounds on @pointerdown, so a
+                 pan has to start somewhere that is not a key; a fret sounds on
+                 @click, which no scroll gesture fires, so the neck itself is
+                 already somewhere you can start a pan. Advertising this column
+                 as the handle would teach a gesture nobody needs — and the
+                 board's edge fade already says there is more neck below. -->
             <div
               class="shrink-0"
-              :class="
-                isDragGutterVisible &&
-                'bg-(--p-surface-100) dark:bg-(--p-surface-800)'
-              "
               :style="{ width: `${fretNumberGutter}px` }"
               aria-hidden="true"
-              data-testid="guitar-drag-gutter"
+              data-testid="guitar-fret-numbers"
             >
               <!-- Marker frets read louder here for the same reason they carry
                    a face inlay: they are what a player counts positions by, and
@@ -770,6 +848,39 @@ function handleClick(cell: GuitarCell) {
   --guitar-headstock-surface: var(--p-surface-700);
   --guitar-peg-high: #e8ebee;
   --guitar-peg-low: #7d848b;
+}
+
+/*
+ * Edge fade on whichever end of the neck still has frets behind it. The board
+ * is a filled, rounded panel, so a boundary that clips a row mid-height reads
+ * as the fingerboard ending rather than continuing — this is what tells the two
+ * apart. Same mask-start/mask-end contract as EdgeFadeScroller, on the block
+ * axis, so both fades come and go with useScrollEdgeMask.
+ *
+ * 1.25rem rather than the 1.5rem the settings rows fade over: a fret row is
+ * only 30px at its floor, and a wider fade would wash out the note names on the
+ * last row instead of just softening the cut.
+ */
+.guitar-board-viewport.mask-start.mask-end {
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    black 1.25rem,
+    black calc(100% - 1.25rem),
+    transparent 100%
+  );
+}
+
+.guitar-board-viewport.mask-start:not(.mask-end) {
+  mask-image: linear-gradient(to bottom, transparent 0, black 1.25rem);
+}
+
+.guitar-board-viewport.mask-end:not(.mask-start) {
+  mask-image: linear-gradient(
+    to bottom,
+    black calc(100% - 1.25rem),
+    transparent 100%
+  );
 }
 
 /* The board itself: one flat surface colour, so it sits in the theme like any
