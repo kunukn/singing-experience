@@ -33,6 +33,7 @@
     "difficulty_hard": "Difícil",
     "voiceRange": "Extensão vocal",
     "voiceTypeSpan": "{name}, {from}–{to}",
+    "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Oitava abaixo",
     "octaveUp": "Oitava acima",
     "congratulations": "Parabéns!",

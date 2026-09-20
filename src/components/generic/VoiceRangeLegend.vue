@@ -101,6 +101,20 @@ const rows = computed(() => segments.value.toReversed())
         >
           {{ row.noteSpan }}
         </span>
+        <!--
+          How much of the voice the selected range covers, the number
+          MIN_VOICE_COVERAGE judges a voice by. Absent for a range that names
+          its own voices, since nothing measured those. Fixed width so 75% and
+          100% line up down the list, and tied to the note span's breakpoint:
+          both are reference detail the narrow layout has no room for.
+        -->
+        <span
+          v-if="row.coveragePercent"
+          aria-hidden="true"
+          class="hidden w-10 text-end text-xs whitespace-nowrap text-(--p-text-muted-color) tabular-nums md:inline"
+        >
+          {{ row.coveragePercent }}
+        </span>
       </button>
     </li>
   </ul>

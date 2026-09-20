@@ -33,6 +33,7 @@
     "difficulty_hard": "कठिन",
     "voiceRange": "आवाज़ की सीमा",
     "voiceTypeSpan": "{name}, {from}–{to}",
+    "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "ऑक्टेव नीचे",
     "octaveUp": "ऑक्टेव ऊपर",
     "congratulations": "बधाई हो!",

@@ -21,6 +21,10 @@ export type VoiceTypeSegment = {
   /* Position among all six voice types, low to high — the identity that picks
    * the colour, so Bass stays burgundy whichever other voices are on screen. */
   stopIndex: number
+  /* 0–1, how much of this voice the selected range covers — the number the
+   * MIN_VOICE_COVERAGE test is made of. Null for a range that names its own
+   * voices: nothing measured them, so there is no figure to report. */
+  coverage: number | null
 }
 
 /* px — the coloured bar and the full column it sits in. The column is wider so
@@ -79,20 +83,19 @@ export function getVoiceTypeSegments(
     const midiTo = Math.min(range.midiMax, midiMax)
     if (midiTo <= midiFrom) return
 
+    /*
+     * Measured against the smaller of the two spans, so it reads as "most of
+     * the voice is on screen, or the voice covers most of what is on screen".
+     * Dividing by the voice's own span alone would empty the ribbon for every
+     * range narrower than a voice type — all six are 24 semitones, so against
+     * the default Everyone (G3–G4) none of them could clear even half.
+     */
+    const coverage =
+      (midiTo - midiFrom) / Math.min(range.midiMax - range.midiMin, chartSpan)
+
     if (focusVoices) {
       if (!focusVoices.includes(range.labelKey)) return
-    } else {
-      /*
-       * Measured against the smaller of the two spans, so it reads as "most of
-       * the voice is on screen, or the voice covers most of what is on screen".
-       * Dividing by the voice's own span alone would empty the ribbon for every
-       * range narrower than a voice type — all six are 24 semitones, so against
-       * the default Everyone (G3–G4) none of them could clear even half.
-       */
-      const coverage =
-        (midiTo - midiFrom) / Math.min(range.midiMax - range.midiMin, chartSpan)
-      if (coverage < MIN_VOICE_COVERAGE) return
-    }
+    } else if (coverage < MIN_VOICE_COVERAGE) return
 
     segments.push({
       rangeIndex,
@@ -103,6 +106,7 @@ export function getVoiceTypeSegments(
       isClippedHigh: range.midiMax > midiMax,
       lane: segments.length,
       stopIndex,
+      coverage: focusVoices ? null : coverage,
     })
   })
 

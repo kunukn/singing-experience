@@ -33,6 +33,7 @@
     "difficulty_hard": "কঠিন",
     "voiceRange": "কণ্ঠস্বরের পরিসর",
     "voiceTypeSpan": "{name}, {from}–{to}",
+    "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "অকটেভ নিচে",
     "octaveUp": "অকটেভ উপরে",
     "congratulations": "অভিনন্দন!",

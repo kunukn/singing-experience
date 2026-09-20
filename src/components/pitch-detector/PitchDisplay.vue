@@ -230,13 +230,14 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
       <!--
         The legend sits at the row's inline-start, so the readouts give it that
         much padding rather than spreading underneath it. 12rem clears the
-        154px the widest key occupies in any locale.
+        154px the widest key occupies in any locale; from md the key adds its
+        coverage column, so 14rem covers the ~202px that leaves.
       -->
       <div
         class="flex w-full items-center justify-around gap-2 [grid-area:1/1] sm:gap-4"
         :class="[
           showReadout ? 'visible' : 'pointer-events-none invisible',
-          isVoiceTypeRibbonVisible ? 'min-[716px]:ps-48' : '',
+          isVoiceTypeRibbonVisible ? 'min-[716px]:ps-48 md:ps-56' : '',
         ]"
       >
         <PitchReadout

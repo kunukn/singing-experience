@@ -113,8 +113,17 @@ describe('VoiceRangeRibbon', () => {
     )
   })
 
-  test('should label a segment with its voice name and real note span', () => {
+  test('should label a segment with its voice name, note span and coverage', () => {
+    /* The bar shows no percentage, but its accessible name carries the same
+     * figure the legend row for that voice does. */
     const wrapper = mountRibbon('voiceRanges.choir')
+    const tenor = wrapper.get('[data-voice-type="voiceRanges.tenor"]')
+
+    expect(tenor.attributes('aria-label')).toBe('Tenor, C3–C5, 100%')
+  })
+
+  test("should label a focused range's segment without a coverage figure", () => {
+    const wrapper = mountRibbon('voiceRanges.tenorToSoprano')
     const tenor = wrapper.get('[data-voice-type="voiceRanges.tenor"]')
 
     expect(tenor.attributes('aria-label')).toBe('Tenor, C3–C5')

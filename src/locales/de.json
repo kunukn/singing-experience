@@ -33,6 +33,7 @@
     "difficulty_hard": "Schwer",
     "voiceRange": "Stimmumfang",
     "voiceTypeSpan": "{name}, {from}–{to}",
+    "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Oktave tiefer",
     "octaveUp": "Oktave höher",
     "congratulations": "Herzlichen Glückwunsch!",

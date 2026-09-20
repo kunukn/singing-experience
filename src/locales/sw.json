@@ -33,6 +33,7 @@
     "difficulty_hard": "Ngumu",
     "voiceRange": "Kiwango cha sauti",
     "voiceTypeSpan": "{name}, {from}–{to}",
+    "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Oktavu chini",
     "octaveUp": "Oktavu juu",
     "congratulations": "Hongera!",

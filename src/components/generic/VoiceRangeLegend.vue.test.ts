@@ -61,6 +61,30 @@ describe('VoiceRangeLegend', () => {
     expect(row.attributes('aria-label')).toBe('Soprano, C4–C6')
   })
 
+  test('should show how much of the range each voice covers', () => {
+    /* Comfy – Women C4–C5 is the narrow case: four voices span the whole
+     * window, while Baritone stops at A4 and sits on the 75% minimum. */
+    const wrapper = mountLegend('voiceRanges.comfyWomen')
+    const textOf = (labelKey: string) =>
+      wrapper.get(`[data-voice-type="${labelKey}"]`).text()
+
+    expect(textOf('voiceRanges.soprano')).toContain('100%')
+    expect(textOf('voiceRanges.baritone')).toContain('75%')
+    expect(
+      wrapper
+        .get('[data-voice-type="voiceRanges.baritone"]')
+        .attributes('aria-label'),
+    ).toBe('Baritone, C4–A4, 75%')
+  })
+
+  test('should omit coverage for a range that names its own voices', () => {
+    /* Nothing measured Tenor and Soprano here — the range named them. */
+    const wrapper = mountLegend('voiceRanges.tenorToSoprano')
+    const rows = wrapper.findAll('[data-testid="voice-range-legend-row"]')
+
+    expect(rows.every((row) => !row.text().includes('%'))).toBe(true)
+  })
+
   test('should mark the row matching the selected voice type', () => {
     const wrapper = mountLegend('voiceRanges.mezzoSoprano')
 
