@@ -32,6 +32,13 @@ export const RIBBON_LANE_WIDTH = 5
 /* px between the last column and the chart's vertical axis line. */
 export const RIBBON_AXIS_GAP = 6
 
+/*
+ * How much of a voice type has to be on screen before it earns a bar. Without
+ * it, picking Bass–Baritone (C2–C4) still paints Mezzo-Soprano off an eighth
+ * of its A3–A5 span, burying the two voices the range exists to show.
+ */
+export const MIN_VOICE_COVERAGE = 0.6
+
 /* Ascending by pitch, so stopIndex 0 is Bass and 5 is Soprano. */
 const VOICE_TYPES = VOICE_RANGES.map((range, rangeIndex) => ({
   range,
@@ -41,20 +48,33 @@ const VOICE_TYPES = VOICE_RANGES.map((range, rangeIndex) => ({
   .sort((a, b) => a.range.midiMin - b.range.midiMin)
 
 /*
- * Every voice type that genuinely overlaps [midiMin, midiMax]. A type touching
+ * Every voice type that is a real part of [midiMin, midiMax]. A type touching
  * the range at a single note is dropped — Soprano starts exactly where the
- * Bass–Baritone range ends, and a zero-height bar says nothing.
+ * Bass–Baritone range ends, and a zero-height bar says nothing — and so is one
+ * that barely reaches in, per MIN_VOICE_COVERAGE.
  */
 export function getVoiceTypeSegments(
   midiMin: number,
   midiMax: number,
 ): VoiceTypeSegment[] {
   const segments: VoiceTypeSegment[] = []
+  const chartSpan = midiMax - midiMin
 
   VOICE_TYPES.forEach(({ range, rangeIndex }, stopIndex) => {
     const midiFrom = Math.max(range.midiMin, midiMin)
     const midiTo = Math.min(range.midiMax, midiMax)
     if (midiTo <= midiFrom) return
+
+    /*
+     * Measured against the smaller of the two spans, so it reads as "most of
+     * the voice is on screen, or the voice covers most of what is on screen".
+     * Dividing by the voice's own span alone would empty the ribbon for every
+     * range narrower than a voice type — all six are 24 semitones, so against
+     * the default Everyone (G3–G4) none of them could clear even half.
+     */
+    const coverage =
+      (midiTo - midiFrom) / Math.min(range.midiMax - range.midiMin, chartSpan)
+    if (coverage < MIN_VOICE_COVERAGE) return
 
     segments.push({
       rangeIndex,

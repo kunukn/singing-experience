@@ -40,13 +40,13 @@ describe('getVoiceTypeSegments', () => {
   })
 
   test('clamps and flags a voice type that overflows the range', () => {
-    /* voiceRanges.bassToBaritone — C2–C4 cuts Tenor's C3–C5 in half */
-    const tenor = segmentFor('voiceRanges.tenor', 36, 60)
+    /* voiceRanges.bassToBaritone — C2–C4 cuts Baritone's A2–A4 short */
+    const baritone = segmentFor('voiceRanges.baritone', 36, 60)
 
-    expect(tenor?.midiFrom).toBe(48)
-    expect(tenor?.midiTo).toBe(60)
-    expect(tenor?.isClippedLow).toBe(false)
-    expect(tenor?.isClippedHigh).toBe(true)
+    expect(baritone?.midiFrom).toBe(45)
+    expect(baritone?.midiTo).toBe(60)
+    expect(baritone?.isClippedLow).toBe(false)
+    expect(baritone?.isClippedHigh).toBe(true)
   })
 
   test('drops a voice type that only touches the range at one note', () => {
@@ -56,7 +56,26 @@ describe('getVoiceTypeSegments', () => {
     expect(
       segments.some((segment) => segment.labelKey === 'voiceRanges.soprano'),
     ).toBe(false)
-    expect(segments).toHaveLength(5)
+  })
+
+  test('keeps only the two voices a Bass–Baritone range is about', () => {
+    /* C2–C4 reaches into all of Bass, Baritone, Tenor, Alto and Mezzo, but the
+     * upper three barely — Tenor lands on half, Mezzo on an eighth. */
+    const segments = getVoiceTypeSegments(36, 60)
+
+    expect(segments.map((segment) => segment.labelKey)).toEqual([
+      'voiceRanges.bass',
+      'voiceRanges.baritone',
+    ])
+  })
+
+  test('keeps a ribbon for a range narrower than any voice type', () => {
+    /* The default range, Everyone G3–G4, spans 12 semitones while every voice
+     * type spans 24 — so no voice can ever have half of itself on screen.
+     * Judging coverage by the voice's own span alone would leave this empty. */
+    const segments = getVoiceTypeSegments(55, 67)
+
+    expect(segments.length).toBeGreaterThan(0)
   })
 
   test('clips a voice type at both ends when the range sits inside it', () => {
@@ -71,36 +90,56 @@ describe('getVoiceTypeSegments', () => {
   })
 
   test('numbers lanes consecutively while colours stay tied to the voice', () => {
-    /* A range above Bass's ceiling: Baritone becomes the first column, but it
-     * keeps ramp stop 1 so its colour does not shift to Bass's burgundy. */
+    /* A high range: Alto becomes the first column, but it keeps ramp stop 3 so
+     * its colour does not shift down to Bass's burgundy. */
     const segments = getVoiceTypeSegments(65, 84)
 
-    expect(segments.map((segment) => segment.lane)).toEqual([0, 1, 2, 3, 4])
-    expect(segments[0].labelKey).toBe('voiceRanges.baritone')
-    expect(segments[0].stopIndex).toBe(1)
+    expect(segments.map((segment) => segment.lane)).toEqual([0, 1, 2])
+    expect(segments[0].labelKey).toBe('voiceRanges.alto')
+    expect(segments[0].stopIndex).toBe(3)
   })
 
   test('returns nothing for a range below every voice type', () => {
     expect(getVoiceTypeSegments(12, 24)).toEqual([])
   })
 
-  test('still finds every voice type inside a single-voice range', () => {
-    /* Mezzo-Soprano A3–A5 is one voice type, but all six overlap it somewhere,
-     * which is what lets the ribbon show where a singer sits against them. */
+  test('finds the neighbouring voices inside a single-voice range', () => {
+    /* Mezzo-Soprano A3–A5 overlaps all six, but Bass and Baritone only reach
+     * a third and a half of the way in, so the ribbon keeps the four that
+     * genuinely sit around the singer. */
     const segments = getVoiceTypeSegments(57, 81)
 
-    expect(segments).toHaveLength(6)
+    expect(segments.map((segment) => segment.labelKey)).toEqual([
+      'voiceRanges.tenor',
+      'voiceRanges.alto',
+      'voiceRanges.mezzoSoprano',
+      'voiceRanges.soprano',
+    ])
 
-    const bass = segmentFor('voiceRanges.bass', 57, 81)
-    expect(bass?.midiFrom).toBe(57)
-    expect(bass?.midiTo).toBe(64)
-    expect(bass?.isClippedLow).toBe(true)
-    expect(bass?.isClippedHigh).toBe(false)
+    const tenor = segmentFor('voiceRanges.tenor', 57, 81)
+    expect(tenor?.midiFrom).toBe(57)
+    expect(tenor?.midiTo).toBe(72)
+    expect(tenor?.isClippedLow).toBe(true)
+    expect(tenor?.isClippedHigh).toBe(false)
 
     const mezzo = segmentFor('voiceRanges.mezzoSoprano', 57, 81)
     expect(mezzo?.isClippedLow).toBe(false)
     expect(mezzo?.isClippedHigh).toBe(false)
   })
+
+  test.each([
+    { labelKey: 'voiceRanges.bass', midiMin: 40, midiMax: 64 },
+    { labelKey: 'voiceRanges.baritone', midiMin: 45, midiMax: 69 },
+    { labelKey: 'voiceRanges.tenor', midiMin: 48, midiMax: 72 },
+    { labelKey: 'voiceRanges.alto', midiMin: 53, midiMax: 77 },
+    { labelKey: 'voiceRanges.mezzoSoprano', midiMin: 57, midiMax: 81 },
+    { labelKey: 'voiceRanges.soprano', midiMin: 60, midiMax: 84 },
+  ])(
+    'never filters out $labelKey when it is the chosen range',
+    ({ labelKey, midiMin, midiMax }) => {
+      expect(segmentFor(labelKey, midiMin, midiMax)).toBeDefined()
+    },
+  )
 })
 
 describe('getRibbonWidth', () => {

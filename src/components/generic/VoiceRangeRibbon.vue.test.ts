@@ -36,18 +36,32 @@ describe('VoiceRangeRibbon', () => {
     )
   })
 
-  test('should render every overlapping voice for a single-voice range', () => {
-    /* Mezzo-Soprano A3–A5 overlaps all six, most of them clipped */
+  test('should render the neighbouring voices for a single-voice range', () => {
+    /* Mezzo-Soprano A3–A5 keeps the four voices that reach meaningfully into
+     * it; Bass and Baritone barely do and are filtered out. */
     const wrapper = mountRibbon('voiceRanges.mezzoSoprano')
 
     expect(wrapper.findAll('[data-testid="voice-range-segment"]')).toHaveLength(
-      6,
+      4,
     )
     expect(
       wrapper
-        .get('[data-voice-type="voiceRanges.bass"]')
+        .get('[data-voice-type="voiceRanges.tenor"]')
         .attributes('data-clipped-low'),
     ).toBe('true')
+    expect(wrapper.find('[data-voice-type="voiceRanges.bass"]').exists()).toBe(
+      false,
+    )
+  })
+
+  test('should render only Bass and Baritone for the Bass–Baritone range', () => {
+    const wrapper = mountRibbon('voiceRanges.bassToBaritone')
+
+    expect(
+      wrapper
+        .findAll('[data-testid="voice-range-segment"]')
+        .map((segment) => segment.attributes('data-voice-type')),
+    ).toEqual(['voiceRanges.bass', 'voiceRanges.baritone'])
   })
 
   test('should mark the segment matching the selected voice type', () => {
@@ -90,12 +104,12 @@ describe('VoiceRangeRibbon', () => {
   })
 
   test('should flag the end where a voice runs past the visible range', () => {
-    /* bassToBaritone is C2–C4, so Tenor's C5 ceiling falls outside it */
+    /* bassToBaritone is C2–C4, so Baritone's A4 ceiling falls outside it */
     const wrapper = mountRibbon('voiceRanges.bassToBaritone')
-    const tenor = wrapper.get('[data-voice-type="voiceRanges.tenor"]')
+    const baritone = wrapper.get('[data-voice-type="voiceRanges.baritone"]')
 
-    expect(tenor.attributes('data-clipped-low')).toBe('false')
-    expect(tenor.attributes('data-clipped-high')).toBe('true')
+    expect(baritone.attributes('data-clipped-low')).toBe('false')
+    expect(baritone.attributes('data-clipped-high')).toBe('true')
   })
 
   test('should emit the voice type range index when a segment is clicked', async () => {
