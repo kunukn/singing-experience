@@ -6,6 +6,14 @@ export type VoiceRange = {
   midiMin: number
   midiMax: number
   group: VoiceRangeGroupId
+  /*
+   * labelKeys of the voice types this range is named after. When present the
+   * voice-type ribbon shows exactly these, instead of judging each voice by how
+   * much of it is on screen — C3–C6 genuinely contains all six voices, but a
+   * range called Tenor–Soprano should not say so. Ranges without it fall back
+   * to the coverage test in voiceRangeSegments.ts.
+   */
+  focusVoices?: readonly string[]
 }
 
 /* Display order of the option groups in the voice-range select. */
@@ -101,18 +109,41 @@ export const VOICE_RANGES: VoiceRange[] = [
     midiMax: 64,
     group: 'voiceTypes',
   },
+  /* Wide ranges, low to high, with the two catch-alls last. The pairs named
+   * after voices carry focusVoices; the plain spans let the coverage rule
+   * decide what the ribbon shows. */
+  {
+    labelKey: 'voiceRanges.lowVoices',
+    noteRange: 'C2–C4',
+    midiMin: 36,
+    midiMax: 60,
+    group: 'wide',
+  },
+  /* E2–A4 is the union of Bass (E2–E4) and Baritone (A2–A4). It reaches well
+   * into Tenor and Alto too, hence the focus list. */
+  {
+    labelKey: 'voiceRanges.bassToBaritone',
+    noteRange: 'E2–A4',
+    midiMin: 40,
+    midiMax: 69,
+    group: 'wide',
+    focusVoices: ['voiceRanges.bass', 'voiceRanges.baritone'],
+  },
+  /* C3–C6 is the union of Tenor (C3–C5) and Soprano (C4–C6), which happens to
+   * contain every other voice as well. */
   {
     labelKey: 'voiceRanges.tenorToSoprano',
     noteRange: 'C3–C6',
     midiMin: 48,
     midiMax: 84,
     group: 'wide',
+    focusVoices: ['voiceRanges.tenor', 'voiceRanges.soprano'],
   },
   {
-    labelKey: 'voiceRanges.bassToBaritone',
-    noteRange: 'C2–C4',
-    midiMin: 36,
-    midiMax: 60,
+    labelKey: 'voiceRanges.highVoices',
+    noteRange: 'C4–C6',
+    midiMin: 60,
+    midiMax: 84,
     group: 'wide',
   },
   {

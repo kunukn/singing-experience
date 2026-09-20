@@ -34,8 +34,10 @@ export const RIBBON_AXIS_GAP = 6
 
 /*
  * How much of a voice type has to be on screen before it earns a bar. Without
- * it, picking Bass–Baritone (C2–C4) still paints Mezzo-Soprano off an eighth
- * of its A3–A5 span, burying the two voices the range exists to show.
+ * it, picking Low voices (C2–C4) still paints Mezzo-Soprano off an eighth of
+ * its A3–A5 span, burying the two voices that range is really about. Only
+ * consulted for ranges that do not name their own voices — see focusVoices in
+ * constants/voiceRanges.ts.
  */
 export const MIN_VOICE_COVERAGE = 0.6
 
@@ -50,12 +52,16 @@ const VOICE_TYPES = VOICE_RANGES.map((range, rangeIndex) => ({
 /*
  * Every voice type that is a real part of [midiMin, midiMax]. A type touching
  * the range at a single note is dropped — Soprano starts exactly where the
- * Bass–Baritone range ends, and a zero-height bar says nothing — and so is one
- * that barely reaches in, per MIN_VOICE_COVERAGE.
+ * Low voices range ends, and a zero-height bar says nothing.
+ *
+ * What counts as "real" depends on the range. One named after voices passes
+ * focusVoices and gets exactly those; any other range falls back to how much
+ * of each voice is on screen, per MIN_VOICE_COVERAGE.
  */
 export function getVoiceTypeSegments(
   midiMin: number,
   midiMax: number,
+  focusVoices?: readonly string[],
 ): VoiceTypeSegment[] {
   const segments: VoiceTypeSegment[] = []
   const chartSpan = midiMax - midiMin
@@ -65,16 +71,20 @@ export function getVoiceTypeSegments(
     const midiTo = Math.min(range.midiMax, midiMax)
     if (midiTo <= midiFrom) return
 
-    /*
-     * Measured against the smaller of the two spans, so it reads as "most of
-     * the voice is on screen, or the voice covers most of what is on screen".
-     * Dividing by the voice's own span alone would empty the ribbon for every
-     * range narrower than a voice type — all six are 24 semitones, so against
-     * the default Everyone (G3–G4) none of them could clear even half.
-     */
-    const coverage =
-      (midiTo - midiFrom) / Math.min(range.midiMax - range.midiMin, chartSpan)
-    if (coverage < MIN_VOICE_COVERAGE) return
+    if (focusVoices) {
+      if (!focusVoices.includes(range.labelKey)) return
+    } else {
+      /*
+       * Measured against the smaller of the two spans, so it reads as "most of
+       * the voice is on screen, or the voice covers most of what is on screen".
+       * Dividing by the voice's own span alone would empty the ribbon for every
+       * range narrower than a voice type — all six are 24 semitones, so against
+       * the default Everyone (G3–G4) none of them could clear even half.
+       */
+      const coverage =
+        (midiTo - midiFrom) / Math.min(range.midiMax - range.midiMin, chartSpan)
+      if (coverage < MIN_VOICE_COVERAGE) return
+    }
 
     segments.push({
       rangeIndex,
@@ -89,6 +99,24 @@ export function getVoiceTypeSegments(
   })
 
   return segments
+}
+
+/*
+ * Segments for the selected range — the same as getVoiceTypeSegments, but it
+ * picks up whatever voices that range names. Both the ribbon and the chart that
+ * sizes its gutter go through here, so the two can never disagree on how many
+ * bars there are.
+ */
+export function getSegmentsForRange(
+  rangeIndex: number,
+  midiMin: number,
+  midiMax: number,
+): VoiceTypeSegment[] {
+  return getVoiceTypeSegments(
+    midiMin,
+    midiMax,
+    VOICE_RANGES[rangeIndex]?.focusVoices,
+  )
 }
 
 /* Width the ribbon needs, including the gap before the axis line. */

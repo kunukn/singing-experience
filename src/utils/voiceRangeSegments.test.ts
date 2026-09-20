@@ -1,5 +1,23 @@
 import { describe, expect, test } from 'vitest'
-import { getRibbonWidth, getVoiceTypeSegments } from './voiceRangeSegments'
+import { VOICE_RANGES } from '@/constants/voiceRanges'
+import {
+  getRibbonWidth,
+  getSegmentsForRange,
+  getVoiceTypeSegments,
+} from './voiceRangeSegments'
+
+function indexOfRange(labelKey: string): number {
+  return VOICE_RANGES.findIndex((range) => range.labelKey === labelKey)
+}
+
+function voiceTypesForRange(labelKey: string): string[] {
+  const index = indexOfRange(labelKey)
+  const range = VOICE_RANGES[index]
+
+  return getSegmentsForRange(index, range.midiMin, range.midiMax).map(
+    (segment) => segment.labelKey,
+  )
+}
 
 function segmentFor(labelKey: string, midiMin: number, midiMax: number) {
   return getVoiceTypeSegments(midiMin, midiMax).find(
@@ -40,7 +58,7 @@ describe('getVoiceTypeSegments', () => {
   })
 
   test('clamps and flags a voice type that overflows the range', () => {
-    /* voiceRanges.bassToBaritone — C2–C4 cuts Baritone's A2–A4 short */
+    /* voiceRanges.lowVoices — C2–C4 cuts Baritone's A2–A4 short */
     const baritone = segmentFor('voiceRanges.baritone', 36, 60)
 
     expect(baritone?.midiFrom).toBe(45)
@@ -50,7 +68,7 @@ describe('getVoiceTypeSegments', () => {
   })
 
   test('drops a voice type that only touches the range at one note', () => {
-    /* Soprano starts at C4/60, exactly where bassToBaritone ends */
+    /* Soprano starts at C4/60, exactly where lowVoices ends */
     const segments = getVoiceTypeSegments(36, 60)
 
     expect(
@@ -58,7 +76,7 @@ describe('getVoiceTypeSegments', () => {
     ).toBe(false)
   })
 
-  test('keeps only the two voices a Bass–Baritone range is about', () => {
+  test('keeps only the two voices a Low voices range is about', () => {
     /* C2–C4 reaches into all of Bass, Baritone, Tenor, Alto and Mezzo, but the
      * upper three barely — Tenor lands on half, Mezzo on an eighth. */
     const segments = getVoiceTypeSegments(36, 60)
@@ -79,8 +97,8 @@ describe('getVoiceTypeSegments', () => {
   })
 
   test('clips a voice type at both ends when the range sits inside it', () => {
-    /* voiceRanges.tenorToSoprano — C3–C6 starts above Bass's E2 and ends above
-     * its E4, so Bass survives as a clipped sliver rather than dropping out. */
+    /* C3–C6 starts above Bass's E2 and ends above its E4, so on the coverage
+     * path Bass survives as a clipped sliver rather than dropping out. */
     const bass = segmentFor('voiceRanges.bass', 48, 84)
 
     expect(bass?.midiFrom).toBe(48)
@@ -140,6 +158,53 @@ describe('getVoiceTypeSegments', () => {
       expect(segmentFor(labelKey, midiMin, midiMax)).toBeDefined()
     },
   )
+})
+
+describe('getSegmentsForRange', () => {
+  test('shows only the voices a focused range names', () => {
+    /* Both spans reach further than their names: E2–A4 covers most of Tenor
+     * and two-thirds of Alto, and C3–C6 contains all six outright. */
+    expect(voiceTypesForRange('voiceRanges.bassToBaritone')).toEqual([
+      'voiceRanges.bass',
+      'voiceRanges.baritone',
+    ])
+    expect(voiceTypesForRange('voiceRanges.tenorToSoprano')).toEqual([
+      'voiceRanges.tenor',
+      'voiceRanges.soprano',
+    ])
+  })
+
+  test('falls back to coverage for a range that names no voices', () => {
+    expect(voiceTypesForRange('voiceRanges.lowVoices')).toEqual([
+      'voiceRanges.bass',
+      'voiceRanges.baritone',
+    ])
+    expect(voiceTypesForRange('voiceRanges.highVoices')).toEqual([
+      'voiceRanges.alto',
+      'voiceRanges.mezzoSoprano',
+      'voiceRanges.soprano',
+    ])
+    expect(voiceTypesForRange('voiceRanges.choir')).toHaveLength(6)
+    expect(voiceTypesForRange('voiceRanges.full')).toHaveLength(6)
+  })
+
+  test('still drops a named voice that does not overlap at all', () => {
+    /* A focus list cannot conjure a bar out of nothing — a zero-height segment
+     * would be invisible anyway, and its caps would claim boundaries the chart
+     * does not show. */
+    const segments = getVoiceTypeSegments(36, 44, ['voiceRanges.soprano'])
+
+    expect(segments).toEqual([])
+  })
+
+  test('keeps lanes consecutive when a focus list skips voices', () => {
+    const index = indexOfRange('voiceRanges.tenorToSoprano')
+    const segments = getSegmentsForRange(index, 48, 84)
+
+    expect(segments.map((segment) => segment.lane)).toEqual([0, 1])
+    /* Colours stay tied to the voice: Tenor is ramp stop 2, Soprano stop 5 */
+    expect(segments.map((segment) => segment.stopIndex)).toEqual([2, 5])
+  })
 })
 
 describe('getRibbonWidth', () => {

@@ -54,14 +54,35 @@ describe('VoiceRangeRibbon', () => {
     )
   })
 
-  test('should render only Bass and Baritone for the Bass–Baritone range', () => {
-    const wrapper = mountRibbon('voiceRanges.bassToBaritone')
+  function voiceTypesOf(labelKey: string) {
+    return mountRibbon(labelKey)
+      .findAll('[data-testid="voice-range-segment"]')
+      .map((segment) => segment.attributes('data-voice-type'))
+  }
 
-    expect(
-      wrapper
-        .findAll('[data-testid="voice-range-segment"]')
-        .map((segment) => segment.attributes('data-voice-type')),
-    ).toEqual(['voiceRanges.bass', 'voiceRanges.baritone'])
+  test('should show only the voices a focused range names', () => {
+    /* E2–A4 reaches well into Tenor and Alto, and C3–C6 contains every voice
+     * outright, but both ranges are named after a pair and say only that. */
+    expect(voiceTypesOf('voiceRanges.bassToBaritone')).toEqual([
+      'voiceRanges.bass',
+      'voiceRanges.baritone',
+    ])
+    expect(voiceTypesOf('voiceRanges.tenorToSoprano')).toEqual([
+      'voiceRanges.tenor',
+      'voiceRanges.soprano',
+    ])
+  })
+
+  test('should fall back to coverage for a range that names no voices', () => {
+    expect(voiceTypesOf('voiceRanges.lowVoices')).toEqual([
+      'voiceRanges.bass',
+      'voiceRanges.baritone',
+    ])
+    expect(voiceTypesOf('voiceRanges.highVoices')).toEqual([
+      'voiceRanges.alto',
+      'voiceRanges.mezzoSoprano',
+      'voiceRanges.soprano',
+    ])
   })
 
   test('should mark the segment matching the selected voice type', () => {
@@ -104,8 +125,8 @@ describe('VoiceRangeRibbon', () => {
   })
 
   test('should flag the end where a voice runs past the visible range', () => {
-    /* bassToBaritone is C2–C4, so Baritone's A4 ceiling falls outside it */
-    const wrapper = mountRibbon('voiceRanges.bassToBaritone')
+    /* lowVoices is C2–C4, so Baritone's A4 ceiling falls outside it */
+    const wrapper = mountRibbon('voiceRanges.lowVoices')
     const baritone = wrapper.get('[data-voice-type="voiceRanges.baritone"]')
 
     expect(baritone.attributes('data-clipped-low')).toBe('false')

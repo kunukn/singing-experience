@@ -4,7 +4,8 @@ import { midiToChartY } from '@/utils/chartGrid'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { octaveStopColor } from '@/utils/pitchColors'
 import {
-  getVoiceTypeSegments,
+  getSegmentsForRange,
+  type VoiceTypeSegment,
   RIBBON_BAR_WIDTH,
   RIBBON_LANE_WIDTH,
 } from '@/utils/voiceRangeSegments'
@@ -40,7 +41,7 @@ const BAR_OPACITY = 0.55
 
 const segments = computed(() =>
   props.containerHeight
-    ? getVoiceTypeSegments(props.midiMin, props.midiMax)
+    ? getSegmentsForRange(props.rangeIndex, props.midiMin, props.midiMax)
     : [],
 )
 
@@ -51,7 +52,7 @@ const selectedLabelKey = computed(
   () => VOICE_RANGES[props.rangeIndex]?.labelKey ?? null,
 )
 
-type PositionedSegment = ReturnType<typeof getVoiceTypeSegments>[number] & {
+type PositionedSegment = VoiceTypeSegment & {
   top: number
   height: number
   color: string

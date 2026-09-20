@@ -10,10 +10,7 @@ import { getGridMidis, midiToChartY } from '@/utils/chartGrid'
 import type { NoteName } from '@/utils/noteUtils'
 import { midiToNoteLabel, noteToFrequency } from '@/utils/noteUtils'
 import { textColorAtMidi } from '@/utils/pitchColors'
-import {
-  getRibbonWidth,
-  getVoiceTypeSegments,
-} from '@/utils/voiceRangeSegments'
+import { getRibbonWidth, getSegmentsForRange } from '@/utils/voiceRangeSegments'
 import PitchHistoryCanvas from './PitchHistoryCanvas.vue'
 import type { PitchSample } from './pitchLaneRecorder'
 import type {
@@ -31,8 +28,8 @@ type Props = {
   midiMax?: number
   highlightedMidi?: number | null
   replayProgress?: number | null
-  /* Index into VOICE_RANGES. Only the wide ranges get a voice-type ribbon;
-   * -1 opts out entirely. */
+  /* Index into VOICE_RANGES — picks which voices the ribbon draws, and marks
+   * the chosen one when the range is itself a voice type. -1 means no range. */
   rangeIndex?: number
 }
 
@@ -134,7 +131,7 @@ const ribbonWidth = computed(() => {
   if (!isVoiceTypeRibbonVisible.value) return 0
 
   return getRibbonWidth(
-    getVoiceTypeSegments(props.midiMin, props.midiMax).length,
+    getSegmentsForRange(props.rangeIndex, props.midiMin, props.midiMax).length,
   )
 })
 
