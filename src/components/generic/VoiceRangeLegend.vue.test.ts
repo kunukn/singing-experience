@@ -90,6 +90,15 @@ describe('VoiceRangeLegend', () => {
     ).toContain('79%')
   })
 
+  test('should omit coverage for a range that holds every voice whole', () => {
+    /* Choir E2–C6 contains all six outright, so the column would read 100%
+     * six times over. Same for Full. */
+    const wrapper = mountLegend('voiceRanges.choir')
+    const rows = wrapper.findAll('[data-testid="voice-range-legend-row"]')
+
+    expect(rows.every((row) => !row.text().includes('%'))).toBe(true)
+  })
+
   test('should omit coverage for a range that names its own voices', () => {
     /* Nothing measured Tenor and Soprano here — the range named them. */
     const wrapper = mountLegend('voiceRanges.tenorToSoprano')

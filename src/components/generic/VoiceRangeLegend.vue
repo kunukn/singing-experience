@@ -37,11 +37,15 @@ const rows = computed(() => segments.value.toReversed())
 /*
  * Coverage is a column, not a per-row extra: the chosen voice leaves its cell
  * empty, and without the cell the note span's ms-auto would pull that one row's
- * span out of line with its neighbours. A range whose voices are all unmeasured
- * drops the column entirely rather than trailing an empty one.
+ * span out of line with its neighbours.
+ *
+ * The column appears only once a voice is short of the range, which is the only
+ * thing it can tell the singer. A range that names its voices measures none of
+ * them, and one wide enough to hold every voice whole — Choir, Full — would
+ * just repeat 100% down the list.
  */
-const hasCoverage = computed(() =>
-  rows.value.some((row) => row.coveragePercent),
+const hasPartialCoverage = computed(() =>
+  rows.value.some((row) => row.coveragePercent != null && row.coverage !== 1),
 )
 </script>
 
@@ -120,7 +124,7 @@ const hasCoverage = computed(() =>
           for.
         -->
         <span
-          v-if="hasCoverage"
+          v-if="hasPartialCoverage"
           aria-hidden="true"
           class="hidden w-10 text-end text-xs whitespace-nowrap text-(--p-text-muted-color) tabular-nums md:inline"
         >
