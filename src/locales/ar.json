@@ -32,6 +32,7 @@
     "difficulty_normal": "عادي",
     "difficulty_hard": "صعب",
     "voiceRange": "نطاق الصوت",
+    "voiceTypeSpan": "{name}، {from}–{to}",
     "octaveDown": "أوكتاف لأسفل",
     "octaveUp": "أوكتاف لأعلى",
     "congratulations": "تهانينا!",

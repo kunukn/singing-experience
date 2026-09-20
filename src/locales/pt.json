@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Difícil",
     "voiceRange": "Extensão vocal",
+    "voiceTypeSpan": "{name}, {from}–{to}",
     "octaveDown": "Oitava abaixo",
     "octaveUp": "Oitava acima",
     "congratulations": "Parabéns!",

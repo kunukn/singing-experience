@@ -70,6 +70,8 @@ const effectivePreviewEnabled = computed(
  * Persisted per page, like the piano's and guitar's own duet flags.
  */
 const isDuetEnabled = useLocalStorage('syng.pitchDetectorDuetEnabled', false)
+
+const { isVoiceTypeRibbonVisible } = useVoiceTypeRibbon()
 const isDuetAvailable = computed(() => !props.disableIdlePreview)
 const effectiveDuetEnabled = computed(
   () => isDuetAvailable.value && isDuetEnabled.value,
@@ -316,7 +318,12 @@ onUnmounted(() => {
     data-testid="pitch-detector-display"
   >
     <div class="flex w-full flex-wrap items-center gap-2 sm:gap-4">
-      <VoiceRangeSelect v-model:rangeIndex="rangeIndex" class="flex-1" />
+      <!-- Shrinks rather than wrapping the row, but not past a readable floor:
+           a plain min-w-0 collapses it to a sliver once the toggles wrap. -->
+      <VoiceRangeSelect
+        v-model:rangeIndex="rangeIndex"
+        class="min-w-32 flex-1"
+      />
 
       <div class="flex items-center gap-2">
         <label
@@ -325,7 +332,9 @@ onUnmounted(() => {
         >
           {{ t('sounds.toneSound') }}
         </label>
-        <ToneModeSelect v-model="toneMode" class="min-w-30 flex-1" />
+        <!-- min-w-28, not 30: the tone names are short, and those 8px are what
+             keep the longest voice-range label from being clipped -->
+        <ToneModeSelect v-model="toneMode" class="min-w-28 flex-1" />
       </div>
 
       <PreviewToggle
@@ -337,6 +346,20 @@ onUnmounted(() => {
         v-if="isDuetAvailable"
         v-model="isDuetEnabled"
         :disabled="!isPreviewEnabled || micPermission === 'denied'"
+      />
+
+      <!--
+        Label reuses the select's own group heading rather than a new key: it is
+        the same concept, already translated in every locale. Kept icon-only —
+        the row is 736px at max-w-3xl and two labelled toggles already spend it,
+        so a third label pushes Start onto its own line.
+      -->
+      <ToggleIconButton
+        v-model="isVoiceTypeRibbonVisible"
+        iconOn="pi pi-eye"
+        iconOff="pi pi-eye-slash"
+        :label="t('voiceRanges.groups.voiceTypes')"
+        isLabelHidden
       />
 
       <PrimeButton
@@ -361,9 +384,11 @@ onUnmounted(() => {
       :isListening="isListening"
       :midiMin="selectedRange.midiMin"
       :midiMax="selectedRange.midiMax"
+      :rangeIndex="rangeIndex"
       :isPreviewEnabled="effectivePreviewEnabled"
       :isMicPermissionGranted="micPermission === 'granted'"
       @tonePlayed="handleTonePlayed"
+      @selectRange="rangeIndex = $event"
     />
   </div>
 </template>

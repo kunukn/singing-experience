@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Hard",
     "voiceRange": "Nipit annertussusia",
+    "voiceTypeSpan": "{name}, {from}–{to}",
     "octaveDown": "Octave down",
     "octaveUp": "Octave up",
     "congratulations": "Pilluarit!",

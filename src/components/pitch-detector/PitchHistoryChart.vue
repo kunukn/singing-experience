@@ -2,12 +2,18 @@
 import {
   CHART_LABEL_ACTIVE,
   CHART_LABEL_BASE,
-  CHART_LABEL_INACTIVE,
+  CHART_LABEL_GUTTER_WIDTH,
+  CHART_LABEL_WIDTH,
 } from '@/constants/chartStyles'
 import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
-import { getAdaptiveGridDivisions } from '@/utils/chartGrid'
+import { getGridMidis, midiToChartY } from '@/utils/chartGrid'
 import type { NoteName } from '@/utils/noteUtils'
 import { midiToNoteLabel, noteToFrequency } from '@/utils/noteUtils'
+import { textColorAtMidi } from '@/utils/pitchColors'
+import {
+  getRibbonWidth,
+  getVoiceTypeSegments,
+} from '@/utils/voiceRangeSegments'
 import PitchHistoryCanvas from './PitchHistoryCanvas.vue'
 import type { PitchSample } from './pitchLaneRecorder'
 import type {
@@ -25,6 +31,9 @@ type Props = {
   midiMax?: number
   highlightedMidi?: number | null
   replayProgress?: number | null
+  /* Index into VOICE_RANGES. Only the wide ranges get a voice-type ribbon;
+   * -1 opts out entirely. */
+  rangeIndex?: number
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -34,9 +43,12 @@ const props = withDefaults(defineProps<Props>(), {
   midiMax: 84,
   highlightedMidi: null,
   replayProgress: null,
+  rangeIndex: -1,
 })
 
 const isRtl = useIsRtl()
+const { isDark } = useDarkMode()
+const { isVoiceTypeRibbonVisible } = useVoiceTypeRibbon()
 
 type GridNote = {
   midi: number
@@ -45,13 +57,11 @@ type GridNote = {
   octave: number
 }
 
-const PADDING_TOP = 16
-const PADDING_BOTTOM = 16
-
 const { playTone } = useTonePlayer()
 
 const emit = defineEmits<{
   tonePlayed: []
+  selectRange: [rangeIndex: number]
 }>()
 
 const clickedMidi = ref<number | null>(null)
@@ -80,39 +90,19 @@ function handleMarkerClick(midiNote: number) {
 const activeMidi = computed(() => props.highlightedMidi ?? clickedMidi.value)
 
 /*
- * Build grid reference notes at even intervals from midiMin.
- * The step is adaptive: ~5 grid lines by default, ~9 at ≥ MEDIUM,
- * or ~13 at ≥ TALL (showing every semitone for small ranges like C3–C4).
+ * Grid reference notes at even intervals from midiMin. The step is adaptive:
+ * ~5 grid lines by default, ~9 at ≥ MEDIUM, or ~13 at ≥ TALL (showing every
+ * semitone for small ranges like C3–C4).
  */
-const gridNotes = computed<GridNote[]>(() => {
-  const notes: GridNote[] = []
-  const range = props.midiMax - props.midiMin
-  const divisions = getAdaptiveGridDivisions(containerHeight.value)
-  const step = Math.max(1, Math.round(range / divisions))
+const gridNotes = computed<GridNote[]>(() =>
+  getGridMidis(props.midiMin, props.midiMax, containerHeight.value).map(
+    (midi) => {
+      const info = midiToNoteLabel(midi)
 
-  for (let midi = props.midiMin; midi <= props.midiMax; midi += step) {
-    const info = midiToNoteLabel(midi)
-    notes.push({
-      midi,
-      label: info.label,
-      note: info.note,
-      octave: info.octave,
-    })
-  }
-
-  // Ensure the top boundary note is always included
-  if (notes.length === 0 || notes[notes.length - 1].midi !== props.midiMax) {
-    const info = midiToNoteLabel(props.midiMax)
-    notes.push({
-      midi: props.midiMax,
-      label: info.label,
-      note: info.note,
-      octave: info.octave,
-    })
-  }
-
-  return notes
-})
+      return { midi, label: info.label, note: info.note, octave: info.octave }
+    },
+  ),
+)
 
 const gridMidis = computed(() => gridNotes.value.map((n) => n.midi))
 
@@ -125,16 +115,30 @@ const containerHeight = ref(0)
 const labelPositions = computed(() => {
   if (!containerHeight.value) return []
 
-  const height = containerHeight.value
-  const usableHeight = height - PADDING_TOP - PADDING_BOTTOM
-
   return gridNotes.value.map((n) => {
-    const ratio = (n.midi - props.midiMin) / (props.midiMax - props.midiMin)
-    const y = PADDING_TOP + usableHeight * (1 - ratio)
+    const y = midiToChartY(n.midi, {
+      midiMin: props.midiMin,
+      midiMax: props.midiMax,
+      height: containerHeight.value,
+    })
 
     return Object.assign({}, n, { y })
   })
 })
+
+/*
+ * The ribbon widens the start gutter only while it is on screen, so with the
+ * setting off the plot keeps every pixel it had before the ribbon existed.
+ */
+const ribbonWidth = computed(() => {
+  if (!isVoiceTypeRibbonVisible.value) return 0
+
+  return getRibbonWidth(
+    getVoiceTypeSegments(props.midiMin, props.midiMax).length,
+  )
+})
+
+const gutterWidth = computed(() => CHART_LABEL_GUTTER_WIDTH + ribbonWidth.value)
 
 function updateContainerHeight() {
   if (containerRef.value) {
@@ -192,7 +196,17 @@ defineExpose({ gridNoteCount, getSamples, clearSamples })
       :activeMidi="activeMidi"
       :replayProgress="replayProgress"
       :isRtl="isRtl"
+      :gutterWidth="gutterWidth"
       @markerClick="handleMarkerClick"
+    />
+    <VoiceRangeRibbon
+      v-if="isVoiceTypeRibbonVisible"
+      :midiMin="midiMin"
+      :midiMax="midiMax"
+      :rangeIndex="rangeIndex"
+      :containerHeight="containerHeight"
+      :insetStart="CHART_LABEL_GUTTER_WIDTH"
+      @selectRange="emit('selectRange', $event)"
     />
     <button
       v-for="pos in labelPositions"
@@ -200,12 +214,13 @@ defineExpose({ gridNoteCount, getSamples, clearSamples })
       :data-testid="`btn-${pos.label}`"
       :class="[
         CHART_LABEL_BASE,
-        activeMidi === pos.midi ? CHART_LABEL_ACTIVE : CHART_LABEL_INACTIVE,
+        activeMidi === pos.midi ? CHART_LABEL_ACTIVE : 'chart-label-tinted',
       ]"
       :style="{
         top: `${pos.y}px`,
-        width: '36px',
+        width: `${CHART_LABEL_WIDTH}px`,
         textAlign: 'end',
+        '--label-tint': textColorAtMidi(pos.midi, isDark),
       }"
       :title="`Play ${pos.label}`"
       @click="handleLabelClick(pos.note, pos.octave, pos.midi)"
@@ -215,4 +230,17 @@ defineExpose({ gridNoteCount, getSamples, clearSamples })
   </div>
 </template>
 
-<style scoped lang="css"></style>
+<style scoped lang="css">
+/*
+ * The tint arrives as an inline custom property rather than an inline colour,
+ * so the hover rule below can still win — an inline `color` would outrank any
+ * class and the labels would lose their hover feedback.
+ */
+.chart-label-tinted {
+  color: var(--label-tint);
+}
+
+.chart-label-tinted:hover {
+  color: var(--p-text-color);
+}
+</style>

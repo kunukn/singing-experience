@@ -53,6 +53,7 @@ const STORAGE_KEYS = [
   'syng.singToneRounds',
   'syng.startOffset',
   'syng.toneMode',
+  'syng.voiceTypeRibbon',
   'syng.warmup.durationSec',
   'syng.warmup.patternId',
   'syng.warmup.semitoneStep',

@@ -58,10 +58,40 @@ export function colorAtMidi(midi: number, opacity: number): string {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`
 }
 
-export function textColorAtMidi(midi: number): string {
-  const [r, g, b] = interpolateColor(OCTAVE_TEXT_COLORS, midi)
+/*
+ * Defaults to the dark-background ramp, which is where this started life. Pass
+ * isDark to let it pick the deeper stops instead — the bright variants wash
+ * out on a light surface.
+ */
+export function textColorAtMidi(midi: number, isDark = true): string {
+  const [r, g, b] = interpolateColor(
+    isDark ? OCTAVE_TEXT_COLORS : OCTAVE_COLORS,
+    midi,
+  )
 
   return `rgb(${r}, ${g}, ${b})`
+}
+
+/*
+ * A single ramp stop by index, for entities that map one-to-one onto the six
+ * octave colours — the six classical voice types — instead of onto a position
+ * along the pitch axis. Picking those by MIDI would not work: every voice
+ * type's midpoint sits between MIDI 52 and 72, barely a third of the ramp, so
+ * interpolation would hand back six near-identical colours.
+ *
+ * Light mode takes the deep OCTAVE_COLORS, dark mode the brighter text
+ * variants — the same isDark split cleanTextColor uses.
+ */
+export function octaveStopColor(
+  stopIndex: number,
+  isDark: boolean,
+  opacity = 1,
+): string {
+  const colors = isDark ? OCTAVE_TEXT_COLORS : OCTAVE_COLORS
+  const index = Math.max(0, Math.min(colors.length - 1, stopIndex))
+  const [r, g, b] = colors[index]
+
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`
 }
 
 /* Canvas palette — saturated tuples for spline and dots on dark chart bg */

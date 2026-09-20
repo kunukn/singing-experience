@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Difficile",
     "voiceRange": "Tessiture ",
+    "voiceTypeSpan": "{name}, {from}–{to}",
     "octaveDown": "Octave en bas",
     "octaveUp": "Octave en haut",
     "congratulations": "Félicitations !",

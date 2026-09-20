@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { CHART_LABEL_GUTTER_WIDTH } from '@/constants/chartStyles'
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
 import { cleanColor, cleanColorRgb } from '@/utils/pitchColors'
 import { drawPitchLine } from '@/utils/pitchLineRenderer'
@@ -31,6 +32,9 @@ type Props = {
   activeMidi?: number | null
   replayProgress?: number | null
   isRtl?: boolean
+  /* px reserved at the start edge for the axis labels, and for the voice-type
+   * ribbon when a wide range puts one there. Defaults to labels only. */
+  gutterWidth?: number
 }
 
 type MarkerHitArea = {
@@ -47,7 +51,6 @@ const emit = defineEmits<{
   markerClick: [midiNote: number]
 }>()
 
-const LABEL_WIDTH = 40
 const PADDING_TOP = 16
 const PADDING_BOTTOM = 16
 const PADDING_RIGHT = 16
@@ -125,8 +128,12 @@ type ChartGeometry = {
   chartRightX: number
 }
 
-function computeGeometry(width: number, isRtl: boolean): ChartGeometry {
-  const labelAxisX = isRtl ? width - LABEL_WIDTH : LABEL_WIDTH
+function computeGeometry(
+  width: number,
+  isRtl: boolean,
+  gutterWidth: number,
+): ChartGeometry {
+  const labelAxisX = isRtl ? width - gutterWidth : gutterWidth
   const farAxisX = isRtl ? PADDING_RIGHT : width - PADDING_RIGHT
   const nowEdgeX = isRtl
     ? PADDING_RIGHT + CHART_INSET_RIGHT
@@ -355,7 +362,11 @@ function drawChart() {
   const labelBgColor = withAlpha(contentBg, 0.9)
   const headGlowColor = withAlpha(textColor, 0.25)
 
-  const geom = computeGeometry(width, props.isRtl ?? false)
+  const geom = computeGeometry(
+    width,
+    props.isRtl ?? false,
+    props.gutterWidth ?? CHART_LABEL_GUTTER_WIDTH,
+  )
 
   // Draw horizontal grid lines at octave boundaries
   ctx.lineWidth = 1
@@ -617,7 +628,7 @@ watch(
 )
 
 watch(
-  () => props.isRtl,
+  () => [props.isRtl, props.gutterWidth],
   () => drawChart(),
 )
 

@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Svær",
     "voiceRange": "Stemmeleje",
+    "voiceTypeSpan": "{name}, {from}–{to}",
     "octaveDown": "Oktav ned",
     "octaveUp": "Oktav op",
     "congratulations": "Tillykke!",

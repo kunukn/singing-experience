@@ -21,6 +21,9 @@ type Props = {
   isListening: boolean
   midiMin?: number
   midiMax?: number
+  /* Index into VOICE_RANGES, forwarded so the chart can draw the voice-type
+   * ribbon for a wide range. */
+  rangeIndex?: number
   isPreviewEnabled?: boolean
   isMicPermissionGranted?: boolean
 }
@@ -30,12 +33,14 @@ const props = withDefaults(defineProps<Props>(), {
   previewLanes: () => [],
   midiMin: 36,
   midiMax: 96,
+  rangeIndex: -1,
   isPreviewEnabled: false,
   isMicPermissionGranted: true,
 })
 
 const emit = defineEmits<{
   tonePlayed: []
+  selectRange: [rangeIndex: number]
 }>()
 
 const {
@@ -264,9 +269,11 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
       :isListening="isListening"
       :midiMin="props.midiMin"
       :midiMax="props.midiMax"
+      :rangeIndex="props.rangeIndex"
       :highlightedMidi="highlightedMidi"
       :replayProgress="replayProgress"
       @tonePlayed="emit('tonePlayed')"
+      @selectRange="emit('selectRange', $event)"
     />
   </div>
 </template>

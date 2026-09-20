@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Schwer",
     "voiceRange": "Stimmumfang",
+    "voiceTypeSpan": "{name}, {from}–{to}",
     "octaveDown": "Oktave tiefer",
     "octaveUp": "Oktave höher",
     "congratulations": "Herzlichen Glückwunsch!",

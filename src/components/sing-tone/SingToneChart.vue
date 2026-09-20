@@ -5,7 +5,7 @@ import {
   CHART_LABEL_INACTIVE,
 } from '@/constants/chartStyles'
 import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
-import { getAdaptiveGridDivisions } from '@/utils/chartGrid'
+import { getGridMidis } from '@/utils/chartGrid'
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
 import type { MidiNoteLabel, NoteName } from '@/utils/noteUtils'
 import { midiToNoteLabel, noteToFrequency } from '@/utils/noteUtils'
@@ -111,30 +111,15 @@ function midiToY(midi: number, height: number): number {
  * or ~13 at ≥ TALL (showing every semitone for small ranges like C3–C4).
  */
 const gridNotes = computed<GridNote[]>(() => {
-  const notes: GridNote[] = []
-  const range = props.midiMax - props.midiMin
-  const divisions = getAdaptiveGridDivisions(containerHeight.value)
-  const step = Math.max(1, Math.round(range / divisions))
-
-  for (let midi = props.midiMin; midi <= props.midiMax; midi += step) {
+  const notes: GridNote[] = getGridMidis(
+    props.midiMin,
+    props.midiMax,
+    containerHeight.value,
+  ).map((midi) => {
     const info = midiToNoteLabel(midi)
-    notes.push({
-      midi,
-      label: info.label,
-      note: info.note,
-      octave: info.octave,
-    })
-  }
 
-  if (notes.length === 0 || notes[notes.length - 1].midi !== props.midiMax) {
-    const info = midiToNoteLabel(props.midiMax)
-    notes.push({
-      midi: props.midiMax,
-      label: info.label,
-      note: info.note,
-      octave: info.octave,
-    })
-  }
+    return { midi, label: info.label, note: info.note, octave: info.octave }
+  })
 
   return notes
 })

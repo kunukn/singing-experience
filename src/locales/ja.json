@@ -32,6 +32,7 @@
     "difficulty_normal": "ふつう",
     "difficulty_hard": "むずかしい",
     "voiceRange": "声域",
+    "voiceTypeSpan": "{name}、{from}–{to}",
     "octaveDown": "1オクターブ下げる",
     "octaveUp": "1オクターブ上げる",
     "congratulations": "おめでとう!",

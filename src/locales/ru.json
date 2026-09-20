@@ -32,6 +32,7 @@
     "difficulty_normal": "Обычный",
     "difficulty_hard": "Сложный",
     "voiceRange": "Диапазон голоса",
+    "voiceTypeSpan": "{name}, {from}–{to}",
     "octaveDown": "Октава вниз",
     "octaveUp": "Октава вверх",
     "congratulations": "Поздравляем!",

@@ -11,6 +11,12 @@ export const CHART_LABEL_ACTIVE =
 export const CHART_LABEL_INACTIVE =
   'text-(--p-surface-400) hover:text-(--p-text-color)'
 
+/* px reserved at the chart's start edge for the note-label buttons, and the
+ * width of a single label inside it. The gutter grows past this when a voice
+ * type ribbon is shown; the labels themselves never move. */
+export const CHART_LABEL_GUTTER_WIDTH = 40
+export const CHART_LABEL_WIDTH = 36
+
 /* Extra offset past the chart edge used to visually signal an
  * out-of-range singer pitch. Applied as a canvas clamp on the three
  * canvas charts, and as a CSS offset on the DoReMiScale overflow

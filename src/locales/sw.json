@@ -32,6 +32,7 @@
     "difficulty_normal": "Kawaida",
     "difficulty_hard": "Ngumu",
     "voiceRange": "Kiwango cha sauti",
+    "voiceTypeSpan": "{name}, {from}–{to}",
     "octaveDown": "Oktavu chini",
     "octaveUp": "Oktavu juu",
     "congratulations": "Hongera!",

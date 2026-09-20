@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Sulit",
     "voiceRange": "Jangkauan suara",
+    "voiceTypeSpan": "{name}, {from}–{to}",
     "octaveDown": "Turun satu oktaf",
     "octaveUp": "Naik satu oktaf",
     "congratulations": "Selamat!",

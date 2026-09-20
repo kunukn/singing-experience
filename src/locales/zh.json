@@ -32,6 +32,7 @@
     "difficulty_normal": "普通",
     "difficulty_hard": "困难",
     "voiceRange": "音域",
+    "voiceTypeSpan": "{name}，{from}–{to}",
     "octaveDown": "低八度",
     "octaveUp": "高八度",
     "congratulations": "恭喜！",

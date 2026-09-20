@@ -6,16 +6,23 @@ type Props = {
   iconOff: string
   label: string
   disabled?: boolean
+  /* Stay a circle at every width. For a row that has already spent its space
+   * on other labelled toggles — the label still reaches screen readers and the
+   * tooltip through aria-label/title. */
+  isLabelHidden?: boolean
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const modelValue = defineModel<boolean>({ required: true })
 
 /* Show the text label from Tailwind's md (768px) up; below that PrimeVue renders the button
  * icon-only — a native circle (rounded + p-button-icon-only), no CSS overrides needed. */
 const breakpoints = useBreakpoints(breakpointsTailwind)
-const isLabelVisible = breakpoints.greaterOrEqual('md')
+const isWideViewport = breakpoints.greaterOrEqual('md')
+const isLabelVisible = computed(
+  () => isWideViewport.value && !props.isLabelHidden,
+)
 </script>
 
 <template>
