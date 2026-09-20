@@ -65,12 +65,13 @@ describe('VoiceRangeLegend', () => {
 
   test('should show how much of the range each voice covers', () => {
     /* Comfy – Women C4–C5 is the narrow case: four voices span the whole
-     * window, while Baritone stops at A4 and sits on the 75% minimum. */
+     * window and so report nothing, while Baritone stops at A4 and sits on
+     * the 75% minimum. */
     const wrapper = mountLegend('voiceRanges.comfyWomen')
     const textOf = (labelKey: string) =>
       wrapper.get(`[data-voice-type="${labelKey}"]`).text()
 
-    expect(textOf('voiceRanges.soprano')).toContain('100%')
+    expect(textOf('voiceRanges.soprano')).not.toContain('%')
     expect(textOf('voiceRanges.baritone')).toContain('75%')
     expect(
       wrapper
@@ -89,6 +90,20 @@ describe('VoiceRangeLegend', () => {
     expect(bass.attributes('aria-label')).toBe('Bass, E2–E4')
     expect(
       wrapper.get('[data-voice-type="voiceRanges.baritone"]').text(),
+    ).toContain('79%')
+  })
+
+  test('should omit coverage for a voice the range covers whole', () => {
+    /* Men & Women is C3–C5, the same span as Tenor, so the Tenor row has to
+     * read exactly as it does when Tenor itself is picked — a 100% here would
+     * only say the voice fits, which its bar already shows. */
+    const wrapper = mountLegend('voiceRanges.duet')
+    const tenor = wrapper.get('[data-voice-type="voiceRanges.tenor"]')
+
+    expect(tenor.text()).not.toContain('%')
+    expect(tenor.attributes('aria-label')).toBe('Tenor, C3–C5')
+    expect(
+      wrapper.get('[data-voice-type="voiceRanges.alto"]').text(),
     ).toContain('79%')
   })
 

@@ -78,15 +78,13 @@ const ribbonHeight = computed(
 
 /*
  * Coverage only ever tells the singer that a voice is short of the range, so
- * the figure is dropped when nothing is short: a range that names its voices
- * measures none of them, and one wide enough to hold every voice whole — Choir,
- * Full — would just repeat 100% down the list. Same rule as the legend's
- * percentage column, so the two never disagree.
+ * the figure is dropped when nothing is short. A voice the range covers whole
+ * already has a null coveragePercent, so one non-null figure among the rows is
+ * the whole test. Same rule as the legend's percentage column, so the two
+ * never disagree.
  */
 const hasPartialCoverage = computed(() =>
-  positionedSegments.value.some(
-    (segment) => segment.coveragePercent != null && segment.coverage !== 1,
-  ),
+  positionedSegments.value.some((segment) => segment.coveragePercent != null),
 )
 </script>
 

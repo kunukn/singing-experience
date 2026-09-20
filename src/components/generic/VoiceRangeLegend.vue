@@ -40,12 +40,12 @@ const rows = computed(() => segments.value.toReversed())
  * span out of line with its neighbours.
  *
  * The column appears only once a voice is short of the range, which is the only
- * thing it can tell the singer. A range that names its voices measures none of
- * them, and one wide enough to hold every voice whole — Choir, Full — would
- * just repeat 100% down the list.
+ * thing it can tell the singer. Anything else — a range that names its voices,
+ * or one that covers a voice whole — leaves coveragePercent null, so asking
+ * for a single non-null figure is the whole test.
  */
 const hasPartialCoverage = computed(() =>
-  rows.value.some((row) => row.coveragePercent != null && row.coverage !== 1),
+  rows.value.some((row) => row.coveragePercent != null),
 )
 </script>
 
@@ -116,12 +116,12 @@ const hasPartialCoverage = computed(() =>
           {{ row.noteSpan }}
         </span>
         <!--
-          How much of the voice the selected range covers, the number
-          MIN_VOICE_COVERAGE judges a voice by. Blank for the chosen voice
-          itself, whose 100% is a restatement of the dropdown. Fixed width so
-          75% and 100% line up down the list, and tied to the note span's
-          breakpoint: both are reference detail the narrow layout has no room
-          for.
+          How much of the selected range's voices fall short, the number
+          MIN_VOICE_COVERAGE judges a voice by. Blank for any voice the range
+          covers whole — the chosen one, and any other that happens to fit.
+          Fixed width so 75% and 88% line up down the list, and tied to the
+          note span's breakpoint: both are reference detail the narrow layout
+          has no room for.
         -->
         <span
           v-if="hasPartialCoverage"

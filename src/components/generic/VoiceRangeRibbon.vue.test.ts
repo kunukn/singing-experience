@@ -119,10 +119,19 @@ describe('VoiceRangeRibbon', () => {
   test('should label a segment with its voice name, note span and coverage', () => {
     /* The bar shows no percentage, but its accessible name carries the same
      * figure the legend row for that voice does. */
-    const wrapper = mountRibbon('voiceRanges.choir')
+    const wrapper = mountRibbon('voiceRanges.duet')
+    const baritone = wrapper.get('[data-voice-type="voiceRanges.baritone"]')
+
+    expect(baritone.attributes('aria-label')).toBe('Baritone, C3–A4, 88%')
+  })
+
+  test("should leave coverage out of a whole-covered voice's label", () => {
+    /* Men & Women is C3–C5, exactly Tenor's span, so the bar says nothing a
+     * sighted user cannot see — and neither does its accessible name. */
+    const wrapper = mountRibbon('voiceRanges.duet')
     const tenor = wrapper.get('[data-voice-type="voiceRanges.tenor"]')
 
-    expect(tenor.attributes('aria-label')).toBe('Tenor, C3–C5, 100%')
+    expect(tenor.attributes('aria-label')).toBe('Tenor, C3–C5')
   })
 
   test("should label a focused range's segment without a coverage figure", () => {

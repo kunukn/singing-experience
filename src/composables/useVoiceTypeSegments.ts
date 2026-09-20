@@ -14,8 +14,9 @@ export type DecoratedVoiceTypeSegment = VoiceTypeSegment & {
   spanLabel: string
   /* "C4–C6" alone, for a row that already shows the name in its own column. */
   noteSpan: string
-  /* "75%" — how much of the voice the range covers, or null for a range that
-   * names its voices instead of measuring them. */
+  /* "75%" — how much of the voice the range covers, or null when there is
+   * nothing to report: a range that names its voices instead of measuring
+   * them, or a voice the range already covers whole. */
   coveragePercent: string | null
   isSelected: boolean
 }
@@ -49,12 +50,15 @@ export function useVoiceTypeSegments(
       const from = midiToNoteLabel(segment.midiFrom).label
       const to = midiToNoteLabel(segment.midiTo).label
       const isSelected = segment.labelKey === selectedLabelKey
-      /* The chosen voice type is the range, so its coverage is always 100% —
-       * a figure that tells the singer nothing they did not just pick. */
-      const percent =
-        isSelected || segment.coverage == null
-          ? null
-          : Math.round(segment.coverage * 100)
+      /*
+       * 100% is never worth printing. Either the singer picked this voice, so
+       * the figure repeats the dropdown, or the range happens to cover it
+       * whole — Tenor under Men & Women, both C3–C5 — and the bar says that
+       * already. Dropping it makes the two selections read alike.
+       */
+      const rounded =
+        segment.coverage == null ? null : Math.round(segment.coverage * 100)
+      const percent = isSelected || rounded === 100 ? null : rounded
 
       return Object.assign({}, segment, {
         color: octaveStopColor(segment.stopIndex, isDark.value),
