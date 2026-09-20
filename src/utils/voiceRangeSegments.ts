@@ -41,11 +41,13 @@ export const RIBBON_BAR_OPACITY = 0.55
 /*
  * How much of a voice type has to be on screen before it earns a bar. Without
  * it, picking Low voices (C2–C4) still paints Mezzo-Soprano off an eighth of
- * its A3–A5 span, burying the two voices that range is really about. Only
- * consulted for ranges that do not name their own voices — see focusVoices in
+ * its A3–A5 span, burying the voices that range is really about. Set high
+ * enough that a neighbour has to genuinely share the singer's territory:
+ * three quarters of a voice type is 18 of its 24 semitones. Only consulted for
+ * ranges that do not name their own voices — see focusVoices in
  * constants/voiceRanges.ts.
  */
-export const MIN_VOICE_COVERAGE = 0.6
+export const MIN_VOICE_COVERAGE = 0.75
 
 /* Ascending by pitch, so stopIndex 0 is Bass and 5 is Soprano. */
 const VOICE_TYPES = VOICE_RANGES.map((range, rangeIndex) => ({

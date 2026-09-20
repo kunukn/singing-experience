@@ -58,13 +58,13 @@ describe('getVoiceTypeSegments', () => {
   })
 
   test('clamps and flags a voice type that overflows the range', () => {
-    /* voiceRanges.lowVoices — C2–C4 cuts Baritone's A2–A4 short */
-    const baritone = segmentFor('voiceRanges.baritone', 36, 60)
+    /* voiceRanges.lowVoices — C2–C4 cuts Bass's E2–E4 short */
+    const bass = segmentFor('voiceRanges.bass', 36, 60)
 
-    expect(baritone?.midiFrom).toBe(45)
-    expect(baritone?.midiTo).toBe(60)
-    expect(baritone?.isClippedLow).toBe(false)
-    expect(baritone?.isClippedHigh).toBe(true)
+    expect(bass?.midiFrom).toBe(40)
+    expect(bass?.midiTo).toBe(60)
+    expect(bass?.isClippedLow).toBe(false)
+    expect(bass?.isClippedHigh).toBe(true)
   })
 
   test('drops a voice type that only touches the range at one note', () => {
@@ -76,14 +76,14 @@ describe('getVoiceTypeSegments', () => {
     ).toBe(false)
   })
 
-  test('keeps only the two voices a Low voices range is about', () => {
-    /* C2–C4 reaches into all of Bass, Baritone, Tenor, Alto and Mezzo, but the
-     * upper three barely — Tenor lands on half, Mezzo on an eighth. */
+  test('keeps only the voice a Low voices range is about', () => {
+    /* C2–C4 reaches into Bass, Baritone, Tenor, Alto and Mezzo, but only Bass
+     * has three quarters of itself on screen — Baritone lands on five eighths,
+     * Tenor on half, Mezzo on an eighth. */
     const segments = getVoiceTypeSegments(36, 60)
 
     expect(segments.map((segment) => segment.labelKey)).toEqual([
       'voiceRanges.bass',
-      'voiceRanges.baritone',
     ])
   })
 
@@ -96,25 +96,25 @@ describe('getVoiceTypeSegments', () => {
     expect(segments.length).toBeGreaterThan(0)
   })
 
-  test('clips a voice type at both ends when the range sits inside it', () => {
-    /* C3–C6 starts above Bass's E2 and ends above its E4, so on the coverage
-     * path Bass survives as a clipped sliver rather than dropping out. */
-    const bass = segmentFor('voiceRanges.bass', 48, 84)
+  test('clips a voice type that starts below the range', () => {
+    /* C3–C6 starts above Baritone's A2, so on the coverage path Baritone
+     * survives with its floor cut off rather than dropping out. */
+    const baritone = segmentFor('voiceRanges.baritone', 48, 84)
 
-    expect(bass?.midiFrom).toBe(48)
-    expect(bass?.midiTo).toBe(64)
-    expect(bass?.isClippedLow).toBe(true)
-    expect(bass?.isClippedHigh).toBe(false)
+    expect(baritone?.midiFrom).toBe(48)
+    expect(baritone?.midiTo).toBe(69)
+    expect(baritone?.isClippedLow).toBe(true)
+    expect(baritone?.isClippedHigh).toBe(false)
   })
 
   test('numbers lanes consecutively while colours stay tied to the voice', () => {
-    /* A high range: Alto becomes the first column, but it keeps ramp stop 3 so
-     * its colour does not shift down to Bass's burgundy. */
+    /* A high range: Mezzo-Soprano becomes the first column, but it keeps ramp
+     * stop 4 so its colour does not shift down to Bass's burgundy. */
     const segments = getVoiceTypeSegments(65, 84)
 
-    expect(segments.map((segment) => segment.lane)).toEqual([0, 1, 2])
-    expect(segments[0].labelKey).toBe('voiceRanges.alto')
-    expect(segments[0].stopIndex).toBe(3)
+    expect(segments.map((segment) => segment.lane)).toEqual([0, 1])
+    expect(segments[0].labelKey).toBe('voiceRanges.mezzoSoprano')
+    expect(segments[0].stopIndex).toBe(4)
   })
 
   test('returns nothing for a range below every voice type', () => {
@@ -122,23 +122,22 @@ describe('getVoiceTypeSegments', () => {
   })
 
   test('finds the neighbouring voices inside a single-voice range', () => {
-    /* Mezzo-Soprano A3–A5 overlaps all six, but Bass and Baritone only reach
-     * a third and a half of the way in, so the ribbon keeps the four that
-     * genuinely sit around the singer. */
+    /* Mezzo-Soprano A3–A5 overlaps all six, but Bass, Baritone and Tenor only
+     * reach a third, a half and five eighths of the way in, so the ribbon
+     * keeps the three that genuinely sit around the singer. */
     const segments = getVoiceTypeSegments(57, 81)
 
     expect(segments.map((segment) => segment.labelKey)).toEqual([
-      'voiceRanges.tenor',
       'voiceRanges.alto',
       'voiceRanges.mezzoSoprano',
       'voiceRanges.soprano',
     ])
 
-    const tenor = segmentFor('voiceRanges.tenor', 57, 81)
-    expect(tenor?.midiFrom).toBe(57)
-    expect(tenor?.midiTo).toBe(72)
-    expect(tenor?.isClippedLow).toBe(true)
-    expect(tenor?.isClippedHigh).toBe(false)
+    const alto = segmentFor('voiceRanges.alto', 57, 81)
+    expect(alto?.midiFrom).toBe(57)
+    expect(alto?.midiTo).toBe(77)
+    expect(alto?.isClippedLow).toBe(true)
+    expect(alto?.isClippedHigh).toBe(false)
 
     const mezzo = segmentFor('voiceRanges.mezzoSoprano', 57, 81)
     expect(mezzo?.isClippedLow).toBe(false)
@@ -177,10 +176,8 @@ describe('getSegmentsForRange', () => {
   test('falls back to coverage for a range that names no voices', () => {
     expect(voiceTypesForRange('voiceRanges.lowVoices')).toEqual([
       'voiceRanges.bass',
-      'voiceRanges.baritone',
     ])
     expect(voiceTypesForRange('voiceRanges.highVoices')).toEqual([
-      'voiceRanges.alto',
       'voiceRanges.mezzoSoprano',
       'voiceRanges.soprano',
     ])

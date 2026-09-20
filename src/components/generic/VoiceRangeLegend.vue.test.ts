@@ -71,7 +71,7 @@ describe('VoiceRangeLegend', () => {
     ).toBe('true')
     expect(
       wrapper
-        .get('[data-voice-type="voiceRanges.tenor"]')
+        .get('[data-voice-type="voiceRanges.alto"]')
         .attributes('data-selected'),
     ).toBe('false')
   })
@@ -110,9 +110,9 @@ describe('VoiceRangeLegend', () => {
   })
 
   test('should mark a clipped end so a row never claims a boundary it lacks', () => {
-    /* Low voices C2–C4 cuts Baritone off at its top. */
+    /* Low voices C2–C4 cuts Bass off at its top. */
     const wrapper = mountLegend('voiceRanges.lowVoices')
-    const row = wrapper.get('[data-voice-type="voiceRanges.baritone"]')
+    const row = wrapper.get('[data-voice-type="voiceRanges.bass"]')
 
     expect(row.attributes('data-clipped-high')).toBe('true')
     expect(row.attributes('data-clipped-low')).toBe('false')
