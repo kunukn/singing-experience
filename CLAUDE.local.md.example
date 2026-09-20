@@ -1,6 +1,6 @@
 # CLAUDE.local.md
 
-Personal notes for this repo (gitignored).
+Personal notes for this repo (gitignored). Project instructions live in `AGENTS.md`; `.claude/settings.json` sets `instructionFiles` so this file loads alongside it instead of replacing it.
 
 ## Context
 

@@ -18,5 +18,12 @@
       "Bash(npx tsc *)",
       "Bash(npx oxlint *)"
     ]
+  },
+  "pluginConfigs": {
+    "agents-md@builtin": {
+      "options": {
+        "instructionFiles": "claude-md-and-agents-md"
+      }
+    }
   }
 }
