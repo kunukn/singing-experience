@@ -230,6 +230,7 @@ Always copy before sorting: `.sort()` mutates, and these option arrays are usual
 **What this rule does not cover**
 
 - **Named ordinal scales** keep their conventional order — difficulty stays Easy, Normal, Hard. The rule is about measurable quantities, not every list that happens to have an order.
+- **Pitch _classes_ are not pitches.** [SCALE_ROOT_OPTIONS](src/utils/scaleHighlight.ts) lists keys C → B ascending and stays that way. A key has no octave — picking D highlights every D on the instrument — so the chromatic circle has no top or bottom to sort by, and listing keys from C is the universal convention. Pinned by `scaleHighlight.test.ts`.
 - **Lists with no magnitude at all** — timbres, scale modes, tunings, languages — are ordered however suits them.
 - **A horizontal control flips**: left to right runs low to high, the way a keyboard does. See the comment in [GraceKellyPartLadder.vue](src/components/grace-kelly/GraceKellyPartLadder.vue), which stacks vertically high-first and lays out horizontally low-first.
 

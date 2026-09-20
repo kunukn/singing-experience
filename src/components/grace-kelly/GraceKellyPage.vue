@@ -51,7 +51,7 @@ if (
 }
 
 const bpm = useLocalStorage('syng.graceKellyBpm', DEFAULT_BPM)
-if (!ALLOWED_BPMS.includes(bpm.value)) {
+if (!(ALLOWED_BPMS as readonly number[]).includes(bpm.value)) {
   bpm.value = DEFAULT_BPM
 }
 

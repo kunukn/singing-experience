@@ -57,10 +57,14 @@ const startToneOptions = Array.from(
   },
 )
 
-const bpmOptions = ALLOWED_BPMS.sort((a, b) => b - a).map((value) => ({
-  label: `${value} BPM`,
-  value,
-}))
+/* Copy before sorting — ALLOWED_BPMS is a shared constant, and sort mutates.
+ * Largest first, per "Vertical Ordering" in AGENTS.md. */
+const bpmOptions = [...ALLOWED_BPMS]
+  .sort((a, b) => b - a)
+  .map((value) => ({
+    label: `${value} BPM`,
+    value,
+  }))
 
 const { setToneMode, warmUp } = useTonePlayer()
 const { toneMode: storedToneMode } = storeToRefs(useToneModeStore())
