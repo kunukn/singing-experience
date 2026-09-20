@@ -7,12 +7,14 @@ const totalRounds = defineModel<number>('totalRounds', { required: true })
 
 const { t } = useI18n()
 
+/* Declared ascending for readability, shown largest first — see "Vertical
+ * Ordering" in AGENTS.md. */
 const holdDurationOptions = [0.1, 0.3, 0.5, 0.75, 1, 2, 3, 4, 5, 6, 7, 10]
-const durationOptions = holdDurationOptions.map((sec) => ({
+const durationOptions = holdDurationOptions.toReversed().map((sec) => ({
   label: `${sec}s`,
   value: sec,
 }))
-const ROUNDS_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+const ROUNDS_OPTIONS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].toReversed()
 
 const { setToneMode } = useTonePlayer()
 const { toneMode: storedToneMode } = storeToRefs(useToneModeStore())

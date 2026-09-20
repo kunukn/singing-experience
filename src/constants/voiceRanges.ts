@@ -24,18 +24,16 @@ export const VOICE_RANGE_GROUP_ORDER = [
 ] as const satisfies readonly VoiceRangeGroupId[]
 
 /*
- * Ordered for the select: everyday picks first, then the classical voice types
- * from high to low, then the wide spans. Reordering is safe — selections are
- * persisted by labelKey (see useVoiceRangeIndex).
+ * Ordered for the select: everyday picks, then the classical voice types, then
+ * the wide spans. Within every group the options run high to low, matching the
+ * chart's y-axis — see "Pitch Orientation" in AGENTS.md. A range sorts on its
+ * midpoint, since a span has no single pitch; the catch-alls (choir, full) sit
+ * below the pitch-ordered entries. Guarded by voiceRanges.test.ts.
+ *
+ * Reordering is safe — selections are persisted by labelKey, not index (see
+ * useVoiceRangeIndex).
  */
 export const VOICE_RANGES: VoiceRange[] = [
-  {
-    labelKey: 'voiceRanges.everyone',
-    noteRange: 'G3–G4',
-    midiMin: 55,
-    midiMax: 67,
-    group: 'easy',
-  },
   {
     labelKey: 'voiceRanges.kids',
     noteRange: 'D4–D5',
@@ -51,10 +49,10 @@ export const VOICE_RANGES: VoiceRange[] = [
     group: 'easy',
   },
   {
-    labelKey: 'voiceRanges.comfyMen',
-    noteRange: 'C3–C4',
-    midiMin: 48,
-    midiMax: 60,
+    labelKey: 'voiceRanges.everyone',
+    noteRange: 'G3–G4',
+    midiMin: 55,
+    midiMax: 67,
     group: 'easy',
   },
   /* Union of comfyMen (C3–C4) and comfyWomen (C4–C5) — the two octaves a man
@@ -65,6 +63,13 @@ export const VOICE_RANGES: VoiceRange[] = [
     noteRange: 'C3–C5',
     midiMin: 48,
     midiMax: 72,
+    group: 'easy',
+  },
+  {
+    labelKey: 'voiceRanges.comfyMen',
+    noteRange: 'C3–C4',
+    midiMin: 48,
+    midiMax: 60,
     group: 'easy',
   },
   {
@@ -109,25 +114,15 @@ export const VOICE_RANGES: VoiceRange[] = [
     midiMax: 64,
     group: 'voiceTypes',
   },
-  /* Wide ranges, low to high, with the two catch-alls last. The pairs named
-   * after voices carry focusVoices; the plain spans let the coverage rule
-   * decide what the ribbon shows. */
+  /* Wide ranges, high to low by midpoint, with the two catch-alls last. The
+   * pairs named after voices carry focusVoices; the plain spans let the
+   * coverage rule decide what the ribbon shows. */
   {
-    labelKey: 'voiceRanges.lowVoices',
-    noteRange: 'C2–C4',
-    midiMin: 36,
-    midiMax: 60,
+    labelKey: 'voiceRanges.highVoices',
+    noteRange: 'C4–C6',
+    midiMin: 60,
+    midiMax: 84,
     group: 'wide',
-  },
-  /* E2–A4 is the union of Bass (E2–E4) and Baritone (A2–A4). It reaches well
-   * into Tenor and Alto too, hence the focus list. */
-  {
-    labelKey: 'voiceRanges.bassToBaritone',
-    noteRange: 'E2–A4',
-    midiMin: 40,
-    midiMax: 69,
-    group: 'wide',
-    focusVoices: ['voiceRanges.bass', 'voiceRanges.baritone'],
   },
   /* C3–C6 is the union of Tenor (C3–C5) and Soprano (C4–C6), which happens to
    * contain every other voice as well. */
@@ -139,11 +134,21 @@ export const VOICE_RANGES: VoiceRange[] = [
     group: 'wide',
     focusVoices: ['voiceRanges.tenor', 'voiceRanges.soprano'],
   },
+  /* E2–A4 is the union of Bass (E2–E4) and Baritone (A2–A4). It reaches well
+   * into Tenor and Alto too, hence the focus list. */
   {
-    labelKey: 'voiceRanges.highVoices',
-    noteRange: 'C4–C6',
-    midiMin: 60,
-    midiMax: 84,
+    labelKey: 'voiceRanges.bassToBaritone',
+    noteRange: 'E2–A4',
+    midiMin: 40,
+    midiMax: 69,
+    group: 'wide',
+    focusVoices: ['voiceRanges.bass', 'voiceRanges.baritone'],
+  },
+  {
+    labelKey: 'voiceRanges.lowVoices',
+    noteRange: 'C2–C4',
+    midiMin: 36,
+    midiMax: 60,
     group: 'wide',
   },
   {

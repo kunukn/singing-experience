@@ -202,6 +202,39 @@ The app supports RTL languages (Arabic). All spacing, alignment, and positioning
 
 Physical `top`/`bottom` and `mt-*`/`mb-*` are fine — they don't flip in RTL.
 
+### Vertical Ordering — more at the top
+
+**Anything with a magnitude reads high at the top and low at the bottom.** It starts with pitch, because this is a singing app and every chart draws high notes up top — [midiToChartY](src/utils/chartGrid.ts) inverts the ratio for exactly that reason — but the same mindset carries to every measurable quantity in a vertical list, so a dropdown reads the way the charts do.
+
+**Pitch**
+
+- **Order pitch options high to low.** Soprano before Bass, C5 before C3. [NOTE_NAMES_HIGH_TO_LOW and NOTE_OPTIONS_HIGH_TO_LOW](src/utils/noteUtils.ts) already encode this for single notes — reach for them instead of re-sorting by hand.
+- **A range sorts on its midpoint**, `(midiMin + midiMax) / 2` descending, because a span has no single pitch. Sorting a span by its top or bottom note gives a list that reads wrong.
+- **Catch-all options go last**, below the pitch-ordered ones — `choir` and `full` in [VOICE_RANGES](src/constants/voiceRanges.ts).
+
+**Every other quantity — same direction**
+
+Seconds, BPM, counts, semitone steps: the **largest value sits at the top**, the smallest at the bottom. Hold duration runs `1s` down to `0.05s`; Step runs `5` down to `1`. Build the list in whatever order reads best in source, then reverse it at the point of use:
+
+```typescript
+/* ✅ Largest first, matching every other dropdown in the app */
+const durationOptions = [...HOLD_DURATION_OPTIONS].toReversed()
+const bpmOptions = [...ALLOWED_BPMS].sort((a, b) => b - a)
+
+/* ❌ Ascending — reads upside down next to its siblings */
+const durationOptions = [0.05, 0.1, 0.2, 0.5, 1]
+```
+
+Always copy before sorting: `.sort()` mutates, and these option arrays are usually shared module constants.
+
+**What this rule does not cover**
+
+- **Named ordinal scales** keep their conventional order — difficulty stays Easy, Normal, Hard. The rule is about measurable quantities, not every list that happens to have an order.
+- **Lists with no magnitude at all** — timbres, scale modes, tunings, languages — are ordered however suits them.
+- **A horizontal control flips**: left to right runs low to high, the way a keyboard does. See the comment in [GraceKellyPartLadder.vue](src/components/grace-kelly/GraceKellyPartLadder.vue), which stacks vertically high-first and lays out horizontally low-first.
+
+The pitch half is guarded by [voiceRanges.test.ts](src/constants/voiceRanges.test.ts), which asserts the rule rather than snapshotting today's order. Adding another ordered list? Add a case there too.
+
 ### Color Variables
 
 Use **PrimeVue CSS custom properties** (`--p-*`) for all colors — text, backgrounds, borders, and shadows. Do **not** use Tailwind's built-in color palette classes (`text-red-400`, `bg-green-500`, etc.). PrimeVue variables respect the active theme and automatically adapt to light/dark mode.
@@ -403,6 +436,7 @@ If `.temp/` does not exist, create it first.
 - ✅ Do not manually import `ref`, `computed`, `watch`, etc. from `vue` — they are auto-imported
 - ✅ Co-locate domain-specific composables, types, and tests with their feature folder — only shared composables stay in `src/composables/`
 - ✅ Use CSS logical properties (`ms-*`, `me-*`, `start`, `end`) — never physical `ml-*`/`mr-*`/`left`/`right` for horizontal spacing or alignment
+- ✅ Order dropdowns by magnitude, largest at the top — pitch, seconds, BPM, counts — see "Vertical Ordering"
 - ✅ Use PrimeVue CSS variables (`--p-*`) for all colors with Tailwind v4 shorthand `text-(--p-*)` — never Tailwind color palette classes (`text-red-400`, `bg-green-500`)
 - ✅ Wrap user-facing strings with `$t()` / `t()` for i18n — never hardcode display text
 - ✅ Keep translated copy informal and child-friendly — see "i18n Copy & Translations"
