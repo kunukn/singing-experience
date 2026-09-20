@@ -33,6 +33,16 @@ const segments = useVoiceTypeSegments(() => ({
  * stacks its columns in. A vertical list reads the other way — see "Vertical
  * Ordering" in AGENTS.md — so Soprano sits on top, as it does on the chart. */
 const rows = computed(() => segments.value.toReversed())
+
+/*
+ * Coverage is a column, not a per-row extra: the chosen voice leaves its cell
+ * empty, and without the cell the note span's ms-auto would pull that one row's
+ * span out of line with its neighbours. A range whose voices are all unmeasured
+ * drops the column entirely rather than trailing an empty one.
+ */
+const hasCoverage = computed(() =>
+  rows.value.some((row) => row.coveragePercent),
+)
 </script>
 
 <template>
@@ -103,13 +113,14 @@ const rows = computed(() => segments.value.toReversed())
         </span>
         <!--
           How much of the voice the selected range covers, the number
-          MIN_VOICE_COVERAGE judges a voice by. Absent for a range that names
-          its own voices, since nothing measured those. Fixed width so 75% and
-          100% line up down the list, and tied to the note span's breakpoint:
-          both are reference detail the narrow layout has no room for.
+          MIN_VOICE_COVERAGE judges a voice by. Blank for the chosen voice
+          itself, whose 100% is a restatement of the dropdown. Fixed width so
+          75% and 100% line up down the list, and tied to the note span's
+          breakpoint: both are reference detail the narrow layout has no room
+          for.
         -->
         <span
-          v-if="row.coveragePercent"
+          v-if="hasCoverage"
           aria-hidden="true"
           class="hidden w-10 text-end text-xs whitespace-nowrap text-(--p-text-muted-color) tabular-nums md:inline"
         >

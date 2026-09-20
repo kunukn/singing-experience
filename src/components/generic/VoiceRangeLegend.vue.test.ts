@@ -77,6 +77,19 @@ describe('VoiceRangeLegend', () => {
     ).toBe('Baritone, C4–A4, 75%')
   })
 
+  test('should omit coverage for the voice type that is the range', () => {
+    /* Picking Bass makes Bass the range, so its 100% only repeats the
+     * dropdown; Baritone's 79% is the figure worth reading. */
+    const wrapper = mountLegend('voiceRanges.bass')
+    const bass = wrapper.get('[data-voice-type="voiceRanges.bass"]')
+
+    expect(bass.text()).not.toContain('%')
+    expect(bass.attributes('aria-label')).toBe('Bass, E2–E4')
+    expect(
+      wrapper.get('[data-voice-type="voiceRanges.baritone"]').text(),
+    ).toContain('79%')
+  })
+
   test('should omit coverage for a range that names its own voices', () => {
     /* Nothing measured Tenor and Soprano here — the range named them. */
     const wrapper = mountLegend('voiceRanges.tenorToSoprano')

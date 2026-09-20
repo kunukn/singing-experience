@@ -48,8 +48,13 @@ export function useVoiceTypeSegments(
       const name = t(segment.labelKey)
       const from = midiToNoteLabel(segment.midiFrom).label
       const to = midiToNoteLabel(segment.midiTo).label
+      const isSelected = segment.labelKey === selectedLabelKey
+      /* The chosen voice type is the range, so its coverage is always 100% —
+       * a figure that tells the singer nothing they did not just pick. */
       const percent =
-        segment.coverage == null ? null : Math.round(segment.coverage * 100)
+        isSelected || segment.coverage == null
+          ? null
+          : Math.round(segment.coverage * 100)
 
       return Object.assign({}, segment, {
         color: octaveStopColor(segment.stopIndex, isDark.value),
@@ -64,7 +69,7 @@ export function useVoiceTypeSegments(
          * every locale, the way VOICE_RANGES builds its own noteRange. */
         noteSpan: `${from}–${to}`,
         coveragePercent: percent == null ? null : `${percent}%`,
-        isSelected: segment.labelKey === selectedLabelKey,
+        isSelected,
       })
     })
   })
