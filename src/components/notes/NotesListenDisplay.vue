@@ -108,7 +108,6 @@ const currentToneLabel = computed(() => {
     <NotesSettingsRow
       v-model:clefIndex="clefIndex"
       v-model:bpm="bpm"
-      :showToneLabelToggle="false"
       :isRunning="isRunning"
     />
 

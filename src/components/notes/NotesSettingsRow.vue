@@ -6,14 +6,9 @@ type Props = {
   /* True while a sequence is playing or paused — the selects stay locked so the
    * running timeline can't be changed underneath it. */
   isRunning: boolean
-  /* Show the tone-sound (timbre) select. The "Sing live" tab hides it — there is
-   * no playback there, so the timbre choice is meaningless. */
-  showToneMode?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
-  showToneMode: true,
-})
+const props = defineProps<Props>()
 
 const clefIndex = defineModel<number>('clefIndex', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
@@ -59,7 +54,6 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     :class="{
       'mask-start': canScrollStart,
       'mask-end': canScrollEnd,
-      'no-tone': !props.showToneMode,
     }"
   >
     <div class="settings-item">
@@ -97,7 +91,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       </PrimeSelect>
     </div>
 
-    <div v-if="props.showToneMode" class="settings-item">
+    <div class="settings-item">
       <label class="hidden text-sm text-(--p-text-muted-color) lg:block">{{
         t('sounds.toneSound')
       }}</label>
@@ -112,11 +106,5 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 /* One row from md up: 6 columns so all three items (each col-span-2) sit side by side. */
 .settings-row {
   @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr];
-}
-
-/* The "Sing live" tab hides the tone-sound select — two items remain, so drop
-   to 4 columns to center them without two phantom trailing columns. */
-.settings-row.no-tone {
-  @apply md:grid-cols-[auto_1fr_auto_1fr];
 }
 </style>
