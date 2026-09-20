@@ -23,10 +23,6 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const emit = defineEmits<{
-  selectRange: [rangeIndex: number]
-}>()
-
 /* px — the opaque cap that marks a voice's true start or stop note. */
 const CAP_HEIGHT = 3
 
@@ -68,16 +64,23 @@ const positionedSegments = computed<PositionedSegment[]>(() => {
     class="pointer-events-none absolute top-0 h-full"
     :style="{ insetInlineStart: `${props.insetStart}px` }"
   >
-    <button
+    <!--
+      Reference material, not a control. A lane is RIBBON_LANE_WIDTH wide and
+      there are up to six of them, so no arrangement of these can reach the
+      24px minimum target size — the voice range select and the legend offer
+      the same choice at a usable size. role="img" keeps the name readable to
+      assistive tech on narrow screens, where no legend is rendered.
+    -->
+    <div
       v-for="segment in positionedSegments"
       :key="segment.labelKey"
-      type="button"
+      role="img"
       data-testid="voice-range-segment"
       :data-voice-type="segment.labelKey"
       :data-clipped-low="segment.isClippedLow"
       :data-clipped-high="segment.isClippedHigh"
       :data-selected="segment.isSelected"
-      class="group pointer-events-auto absolute cursor-pointer border-none bg-transparent p-0"
+      class="group pointer-events-auto absolute"
       :style="{
         insetInlineStart: `${segment.lane * RIBBON_LANE_WIDTH}px`,
         width: `${RIBBON_LANE_WIDTH}px`,
@@ -86,11 +89,10 @@ const positionedSegments = computed<PositionedSegment[]>(() => {
       }"
       :title="segment.spanLabel"
       :aria-label="segment.spanLabel"
-      @click="emit('selectRange', segment.rangeIndex)"
     >
       <span
         aria-hidden="true"
-        class="absolute top-0 h-full transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+        class="absolute top-0 h-full transition-opacity duration-150 group-hover:opacity-100"
         :class="[
           !segment.isClippedHigh && 'rounded-t-full',
           !segment.isClippedLow && 'rounded-b-full',
@@ -121,11 +123,11 @@ const positionedSegments = computed<PositionedSegment[]>(() => {
       />
       <span
         aria-hidden="true"
-        class="pointer-events-none absolute start-full top-1/2 z-10 ms-2 -translate-y-1/2 rounded border border-(--p-content-border-color) bg-(--p-content-background) px-1.5 py-0.5 text-xs whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+        class="pointer-events-none absolute start-full top-1/2 z-10 ms-2 -translate-y-1/2 rounded border border-(--p-content-border-color) bg-(--p-content-background) px-1.5 py-0.5 text-xs whitespace-nowrap opacity-0 transition-opacity duration-150 group-hover:opacity-100"
         :style="{ color: segment.color }"
       >
         {{ segment.spanLabel }}
       </span>
-    </button>
+    </div>
   </div>
 </template>

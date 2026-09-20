@@ -133,14 +133,15 @@ describe('VoiceRangeRibbon', () => {
     expect(baritone.attributes('data-clipped-high')).toBe('true')
   })
 
-  test('should emit the voice type range index when a segment is clicked', async () => {
+  test('should present segments as images rather than controls', () => {
+    /* A 5px lane can never be a 24px target, so picking a voice belongs to the
+     * range select and the legend — see VoiceRangeLegend. */
     const wrapper = mountRibbon('voiceRanges.choir')
 
-    await wrapper.get('[data-voice-type="voiceRanges.tenor"]').trigger('click')
-
-    expect(wrapper.emitted('selectRange')).toEqual([
-      [indexOfRange('voiceRanges.tenor')],
-    ])
+    expect(wrapper.findAll('button')).toHaveLength(0)
+    expect(
+      wrapper.get('[data-voice-type="voiceRanges.tenor"]').attributes('role'),
+    ).toBe('img')
   })
 
   test('should place a higher voice above a lower one', () => {

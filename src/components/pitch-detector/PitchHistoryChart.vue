@@ -58,7 +58,6 @@ const { playTone } = useTonePlayer()
 
 const emit = defineEmits<{
   tonePlayed: []
-  selectRange: [rangeIndex: number]
 }>()
 
 const clickedMidi = ref<number | null>(null)
@@ -203,7 +202,6 @@ defineExpose({ gridNoteCount, getSamples, clearSamples })
       :rangeIndex="rangeIndex"
       :containerHeight="containerHeight"
       :insetStart="CHART_LABEL_GUTTER_WIDTH"
-      @selectRange="emit('selectRange', $event)"
     />
     <button
       v-for="pos in labelPositions"

@@ -230,13 +230,13 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
       <!--
         The legend sits at the row's inline-start, so the readouts give it that
         much padding rather than spreading underneath it. 12rem covers the
-        184px the centred controls leave free in the 736px panel.
+        158px the key occupies at the widest panel.
       -->
       <div
         class="flex w-full items-center justify-around gap-2 [grid-area:1/1] sm:gap-4"
         :class="[
           showReadout ? 'visible' : 'pointer-events-none invisible',
-          isVoiceTypeRibbonVisible ? 'lg:ps-48' : '',
+          isVoiceTypeRibbonVisible ? 'md:ps-48' : '',
         ]"
       >
         <PitchReadout
@@ -275,16 +275,19 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
       <!--
         Names the ribbon's colours in the space the centred controls leave
         empty, on the same inline-start edge the bars themselves run down, so
-        the eye travels straight from a row to its bar. Only from lg up: below
-        it the column is narrower than its 768px cap and the key would crowd
-        the note buttons.
+        the eye travels straight from a row to its bar.
+
+        md is the floor, which is also iPad portrait width. The widest key is
+        150px and it starts 8px in, so it needs 158px of the (panel - 368px
+        controls) / 2 that the centred cluster leaves free — panel 684px, i.e.
+        a 716px viewport. md clears that; sm would leave 120px and collide.
       -->
       <VoiceRangeLegend
         v-if="isVoiceTypeRibbonVisible"
         :midiMin="props.midiMin"
         :midiMax="props.midiMax"
         :rangeIndex="props.rangeIndex"
-        class="absolute start-2 top-1/2 hidden -translate-y-1/2 lg:block"
+        class="absolute start-2 top-1/2 hidden -translate-y-1/2 md:block"
         @selectRange="emit('selectRange', $event)"
       />
     </div>
@@ -301,7 +304,6 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
       :highlightedMidi="highlightedMidi"
       :replayProgress="replayProgress"
       @tonePlayed="emit('tonePlayed')"
-      @selectRange="emit('selectRange', $event)"
     />
   </div>
 </template>
