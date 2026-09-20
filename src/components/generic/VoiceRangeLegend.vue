@@ -89,9 +89,15 @@ const rows = computed(() => segments.value.toReversed())
         >
           {{ row.name }}
         </span>
+        <!--
+          Dropped below md, where the key and the centred controls are
+          competing for the same 158px and the names alone need 108. The bar
+          on the chart already shows a voice's extent, and the full
+          "Soprano, C4–C6" stays in the row's accessible name either way.
+        -->
         <span
           aria-hidden="true"
-          class="ms-auto text-xs whitespace-nowrap text-(--p-text-muted-color) tabular-nums"
+          class="ms-auto hidden text-xs whitespace-nowrap text-(--p-text-muted-color) tabular-nums md:inline"
         >
           {{ row.noteSpan }}
         </span>

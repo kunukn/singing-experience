@@ -229,14 +229,14 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
     <div class="relative grid w-full items-center justify-center">
       <!--
         The legend sits at the row's inline-start, so the readouts give it that
-        much padding rather than spreading underneath it. 12rem covers the
-        158px the key occupies at the widest panel.
+        much padding rather than spreading underneath it. 12rem clears the
+        154px the widest key occupies in any locale.
       -->
       <div
         class="flex w-full items-center justify-around gap-2 [grid-area:1/1] sm:gap-4"
         :class="[
           showReadout ? 'visible' : 'pointer-events-none invisible',
-          isVoiceTypeRibbonVisible ? 'md:ps-48' : '',
+          isVoiceTypeRibbonVisible ? 'min-[716px]:ps-48' : '',
         ]"
       >
         <PitchReadout
@@ -275,19 +275,21 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
       <!--
         Names the ribbon's colours in the space the centred controls leave
         empty, on the same inline-start edge the bars themselves run down, so
-        the eye travels straight from a row to its bar.
+        the eye travels straight from a row to its bar, flush with the note
+        labels below it.
 
-        md is the floor, which is also iPad portrait width. The widest key is
-        150px and it starts 8px in, so it needs 158px of the (panel - 368px
-        controls) / 2 that the centred cluster leaves free — panel 684px, i.e.
-        a 716px viewport. md clears that; sm would leave 120px and collide.
+        716px is the floor, measured rather than picked: the centred controls
+        reach 368px once a recording exists, leaving (panel - 368) / 2 free on
+        each side — 158px at a 684px panel. Between 716px and md the key drops
+        its note spans to fit that in 108px with room to breathe; the full
+        154px rows return at md. sm would leave 120px and collide either way.
       -->
       <VoiceRangeLegend
         v-if="isVoiceTypeRibbonVisible"
         :midiMin="props.midiMin"
         :midiMax="props.midiMax"
         :rangeIndex="props.rangeIndex"
-        class="absolute start-2 top-1/2 hidden -translate-y-1/2 md:block"
+        class="absolute start-0 top-1/2 hidden -translate-y-1/2 min-[716px]:block"
         @selectRange="emit('selectRange', $event)"
       />
     </div>
