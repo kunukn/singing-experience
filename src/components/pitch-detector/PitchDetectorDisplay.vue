@@ -348,19 +348,7 @@ onUnmounted(() => {
         :disabled="!isPreviewEnabled || micPermission === 'denied'"
       />
 
-      <!--
-        Label reuses the select's own group heading rather than a new key: it is
-        the same concept, already translated in every locale. Kept icon-only —
-        the row is 736px at max-w-3xl and two labelled toggles already spend it,
-        so a third label pushes Start onto its own line.
-      -->
-      <ToggleIconButton
-        v-model="isVoiceTypeRibbonVisible"
-        iconOn="pi pi-eye"
-        iconOff="pi pi-eye-slash"
-        :label="t('voiceRanges.groups.voiceTypes')"
-        isLabelHidden
-      />
+      <VoiceTypeRibbonToggle v-model="isVoiceTypeRibbonVisible" />
 
       <PrimeButton
         class="ms-auto min-w-20"

@@ -11,6 +11,7 @@ import {
 } from '@/utils/scaleHighlight'
 import { useMediaQuery, useResizeObserver } from '@vueuse/core'
 import PianoOctaveShift from './PianoOctaveShift.vue'
+import PianoVoiceRangeRibbon from './PianoVoiceRangeRibbon.vue'
 import { pianoKeyAltLabel, pianoKeyLabel } from './pianoLabels'
 import {
   BLACK_KEY_HEIGHT_RATIO,
@@ -55,8 +56,16 @@ type Props = {
   /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
   scaleRoot?: number | null
   scaleMode?: ScaleHighlightMode
+  /* Index into VOICE_RANGES — picks which voices the ribbon above the keys
+   * draws, and marks the chosen one. midiMin/midiMax come from the same range,
+   * but the index is what names it. */
+  rangeIndex?: number
 }
 const props = defineProps<Props>()
+
+/* The same switch the pitch detector's chart ribbon reads, so one toggle drives
+ * the bars on every board. */
+const { isVoiceTypeRibbonVisible } = useVoiceTypeRibbon()
 
 const accidentalStyle = computed<AccidentalStyle>(
   () => props.accidentalStyle ?? 'sharp',
@@ -342,6 +351,17 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
         dir="ltr"
         data-testid="piano-display"
       >
+        <!-- Inside the scroll box, above the key track and the same width, so
+             the bars stay on their keys however the board is sized: a narrow
+             range centres both with the shared mx-auto, and a wide one pans
+             both together. Outside the box they would drift apart the moment
+             the keys scrolled. -->
+        <PianoVoiceRangeRibbon
+          v-if="isVoiceTypeRibbonVisible && rangeIndex !== undefined"
+          :layout="layout"
+          :rangeIndex="rangeIndex"
+        />
+
         <div
           class="relative mx-auto"
           :style="{

@@ -34,6 +34,10 @@ const areKeyboardHintsVisible = defineModel<boolean>(
  * in PianoDisplay), so on touch the toggle would be a no-op control. */
 const isCoarsePointer = useMediaQuery('(pointer: coarse)')
 
+/* The same switch the keyboard's ribbon reads — and the pitch detector's chart
+ * ribbon with it, since the flag is one key across the app. */
+const { isVoiceTypeRibbonVisible } = useVoiceTypeRibbon()
+
 const { t } = useI18n()
 
 const toneLabelModeOptions = useToneLabelModeOptions()
@@ -84,8 +88,9 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
          md up (icon-only below), so the item's label track stays empty — the
          placeholder div keeps the subgrid pairs aligned with the other items.
 
-         At md the item spans the whole grid. Three labelled toggles are the
-         widest thing in the row, and because every item shares the subgrid's
+         At md the item spans the whole grid. Three labelled toggles (plus the
+         icon-only voice-types one) are the widest thing in the row, and
+         because every item shares the subgrid's
          columns, letting them sit in column 2 pins that column for the voice
          range and tone-label rows too — in the kl locale that pushed the row
          past the viewport at 768px. On its own row the cluster sizes nothing
@@ -109,6 +114,8 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
           v-if="!isCoarsePointer"
           v-model="areKeyboardHintsVisible"
         />
+
+        <VoiceTypeRibbonToggle v-model="isVoiceTypeRibbonVisible" />
       </div>
     </div>
 

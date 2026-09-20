@@ -150,6 +150,7 @@ function handleTonePlayed() {
          the controls above size themselves. -->
     <div class="mx-auto w-full max-w-400">
       <PianoDisplay
+        :rangeIndex="rangeIndex"
         :midiMin="selectedRange.midiMin"
         :midiMax="selectedRange.midiMax"
         :previewLanes="previewLanes"

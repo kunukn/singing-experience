@@ -71,6 +71,7 @@ const { visibleSingers, previewLanes, armDeafPeriod } = useSimulatedSingers({
     <!-- Only the keyboard widens, matching PianoPage. -->
     <div class="mx-auto w-full max-w-400">
       <PianoDisplay
+        :rangeIndex="rangeIndex"
         :midiMin="selectedRange.midiMin"
         :midiMax="selectedRange.midiMax"
         :previewLanes="previewLanes"
