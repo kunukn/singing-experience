@@ -82,10 +82,19 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 
     <!-- The toggles share one item: ToggleIconButton prints its own label from
          md up (icon-only below), so the item's label track stays empty — the
-         placeholder div keeps the subgrid pairs aligned with the other items. -->
-    <div class="settings-item">
+         placeholder div keeps the subgrid pairs aligned with the other items.
+
+         At md the item spans the whole grid. Three labelled toggles are the
+         widest thing in the row, and because every item shares the subgrid's
+         columns, letting them sit in column 2 pins that column for the voice
+         range and tone-label rows too — in the kl locale that pushed the row
+         past the viewport at 768px. On its own row the cluster sizes nothing
+         but itself; five items still take three rows, so nothing gets taller. -->
+    <div class="settings-item md:col-span-full lg:col-span-2">
       <div />
-      <div class="flex items-center gap-2">
+      <div
+        class="flex items-center gap-2 md:col-[2/-1] md:justify-self-start lg:col-auto lg:justify-self-auto"
+      >
         <PreviewToggle
           v-model="isPreviewEnabled"
           :disabled="micPermission === 'denied'"
