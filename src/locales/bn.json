@@ -245,6 +245,7 @@
     "tenor": "টেনর",
     "baritone": "ব্যারিটোন",
     "bass": "বেস",
+    "baritoneToTenor": "ব্যারিটোন–টেনর",
     "bassToBaritone": "বেস–ব্যারিটোন",
     "duet": "পুরুষ ও মহিলা"
   },

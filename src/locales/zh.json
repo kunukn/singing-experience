@@ -245,6 +245,7 @@
     "tenor": "男高音",
     "baritone": "男中音",
     "bass": "男低音",
+    "baritoneToTenor": "男中音–男高音",
     "bassToBaritone": "男低音–男中音",
     "duet": "男声与女声"
   },

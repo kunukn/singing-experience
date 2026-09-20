@@ -124,15 +124,34 @@ export const VOICE_RANGES: VoiceRange[] = [
     midiMax: 84,
     group: 'wide',
   },
-  /* C3–C6 is the union of Tenor (C3–C5) and Soprano (C4–C6), which happens to
-   * contain every other voice as well. */
+  /* C3–C6 is the union of Tenor (C3–C5) and Soprano (C4–C6). Alto and
+   * Mezzo-Soprano sit whole inside it, so they are named too — a focus list is
+   * the run of voices from one end of the name to the other. Baritone is not on
+   * it: C3–C6 covers seven eighths of it, enough to pass the coverage test, but
+   * a bar below Tenor would contradict a range called Tenor–Soprano. */
   {
     labelKey: 'voiceRanges.tenorToSoprano',
     noteRange: 'C3–C6',
     midiMin: 48,
     midiMax: 84,
     group: 'wide',
-    focusVoices: ['voiceRanges.tenor', 'voiceRanges.soprano'],
+    focusVoices: [
+      'voiceRanges.tenor',
+      'voiceRanges.alto',
+      'voiceRanges.mezzoSoprano',
+      'voiceRanges.soprano',
+    ],
+  },
+  /* A2–C5 is the union of Baritone (A2–A4) and Tenor (C3–C5) — the middle of
+   * the voice stack, between the Bass–Baritone and Tenor–Soprano pairs. The two
+   * are neighbours, so nothing sits between them to name. */
+  {
+    labelKey: 'voiceRanges.baritoneToTenor',
+    noteRange: 'A2–C5',
+    midiMin: 45,
+    midiMax: 72,
+    group: 'wide',
+    focusVoices: ['voiceRanges.baritone', 'voiceRanges.tenor'],
   },
   /* E2–A4 is the union of Bass (E2–E4) and Baritone (A2–A4). It reaches well
    * into Tenor and Alto too, hence the focus list. */

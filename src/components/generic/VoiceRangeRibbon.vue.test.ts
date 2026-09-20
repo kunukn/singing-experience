@@ -62,13 +62,16 @@ describe('VoiceRangeRibbon', () => {
 
   test('should show only the voices a focused range names', () => {
     /* E2–A4 reaches well into Tenor and Alto, and C3–C6 contains every voice
-     * outright, but both ranges are named after a pair and say only that. */
+     * outright, but a focus list is the run between the two ends of the name,
+     * so the voices past either end stay off the ribbon. */
     expect(voiceTypesOf('voiceRanges.bassToBaritone')).toEqual([
       'voiceRanges.bass',
       'voiceRanges.baritone',
     ])
     expect(voiceTypesOf('voiceRanges.tenorToSoprano')).toEqual([
       'voiceRanges.tenor',
+      'voiceRanges.alto',
+      'voiceRanges.mezzoSoprano',
       'voiceRanges.soprano',
     ])
   })

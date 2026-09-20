@@ -7,6 +7,14 @@ const VOICE_TYPE_LABEL_KEYS = VOICE_RANGES.filter(
   (range) => range.group === 'voiceTypes',
 ).map((range) => range.labelKey)
 
+/* The same six low to high — the stack a focusVoices list has to be a run of.
+ * VOICE_TYPE_LABEL_KEYS is in declaration order, which runs the other way. */
+const VOICE_TYPES_LOW_TO_HIGH = VOICE_RANGES.filter(
+  (range) => range.group === 'voiceTypes',
+)
+  .toSorted((a, b) => a.midiMin - b.midiMin)
+  .map((range) => range.labelKey)
+
 /* Ranges that mean "everything" rather than a particular tessitura. They sit
  * below the pitch-ordered entries instead of competing with them on midpoint. */
 const CATCH_ALL_LABEL_KEYS = ['voiceRanges.choir', 'voiceRanges.full']
@@ -46,6 +54,28 @@ describe('VOICE_RANGES', () => {
       for (const labelKey of range.focusVoices ?? []) {
         expect(VOICE_TYPE_LABEL_KEYS).toContain(labelKey)
       }
+    }
+  })
+
+  /*
+   * A focus list names the two ends of a span, so it has to carry everything in
+   * between. Tenor–Soprano shipped naming only its endpoints, which hid Alto
+   * and Mezzo-Soprano from the ribbon even though C3–C6 contains both whole.
+   */
+  test('focusVoices is an uninterrupted run of voice types', () => {
+    for (const range of VOICE_RANGES) {
+      if (!range.focusVoices) continue
+
+      const positions = range.focusVoices
+        .map((labelKey) => VOICE_TYPES_LOW_TO_HIGH.indexOf(labelKey))
+        .toSorted((a, b) => a - b)
+      const lowest = positions[0]
+      const run = Array.from(
+        { length: positions[positions.length - 1] - lowest + 1 },
+        (_, offset) => lowest + offset,
+      )
+
+      expect(positions).toEqual(run)
     }
   })
 

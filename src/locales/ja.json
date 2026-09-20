@@ -245,6 +245,7 @@
     "tenor": "テノール",
     "baritone": "バリトン",
     "bass": "バス",
+    "baritoneToTenor": "バリトン–テノール",
     "bassToBaritone": "バス–バリトン",
     "duet": "男性と女性"
   },

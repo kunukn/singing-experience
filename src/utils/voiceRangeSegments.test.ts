@@ -131,7 +131,12 @@ describe('getVoiceTypeSegments', () => {
     const index = indexOfRange('voiceRanges.tenorToSoprano')
     const segments = getSegmentsForRange(index, 48, 84)
 
-    expect(segments.map((segment) => segment.coverage)).toEqual([null, null])
+    expect(segments.map((segment) => segment.coverage)).toEqual([
+      null,
+      null,
+      null,
+      null,
+    ])
   })
 
   test('returns nothing for a range below every voice type', () => {
@@ -178,14 +183,22 @@ describe('getVoiceTypeSegments', () => {
 
 describe('getSegmentsForRange', () => {
   test('shows only the voices a focused range names', () => {
-    /* Both spans reach further than their names: E2–A4 covers most of Tenor
-     * and two-thirds of Alto, and C3–C6 contains all six outright. */
+    /* Every one of these spans reaches past the voices it is named for: E2–A4
+     * covers most of Tenor and two-thirds of Alto, A2–C5 nearly four fifths of
+     * both Bass and Alto, and C3–C6 contains all six outright. A focus list is
+     * the run between the two ends of the name, so the neighbours stay out. */
     expect(voiceTypesForRange('voiceRanges.bassToBaritone')).toEqual([
       'voiceRanges.bass',
       'voiceRanges.baritone',
     ])
+    expect(voiceTypesForRange('voiceRanges.baritoneToTenor')).toEqual([
+      'voiceRanges.baritone',
+      'voiceRanges.tenor',
+    ])
     expect(voiceTypesForRange('voiceRanges.tenorToSoprano')).toEqual([
       'voiceRanges.tenor',
+      'voiceRanges.alto',
+      'voiceRanges.mezzoSoprano',
       'voiceRanges.soprano',
     ])
   })
@@ -212,12 +225,16 @@ describe('getSegmentsForRange', () => {
   })
 
   test('keeps lanes consecutive when a focus list skips voices', () => {
-    const index = indexOfRange('voiceRanges.tenorToSoprano')
-    const segments = getSegmentsForRange(index, 48, 84)
+    /* No shipped range skips a voice — a focus list names a run — so the gap
+     * this guards against has to be built by hand. */
+    const segments = getVoiceTypeSegments(40, 84, [
+      'voiceRanges.bass',
+      'voiceRanges.soprano',
+    ])
 
     expect(segments.map((segment) => segment.lane)).toEqual([0, 1])
-    /* Colours stay tied to the voice: Tenor is ramp stop 2, Soprano stop 5 */
-    expect(segments.map((segment) => segment.stopIndex)).toEqual([2, 5])
+    /* Colours stay tied to the voice: Bass is ramp stop 0, Soprano stop 5 */
+    expect(segments.map((segment) => segment.stopIndex)).toEqual([0, 5])
   })
 })
 

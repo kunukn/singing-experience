@@ -40,6 +40,8 @@ describe('VoiceRangeLegend', () => {
   test('should order rows high to low, the reverse of the ribbon columns', () => {
     expect(voiceTypesOf('voiceRanges.tenorToSoprano')).toEqual([
       'voiceRanges.soprano',
+      'voiceRanges.mezzoSoprano',
+      'voiceRanges.alto',
       'voiceRanges.tenor',
     ])
     expect(voiceTypesOf('voiceRanges.choir')).toEqual([
@@ -100,7 +102,7 @@ describe('VoiceRangeLegend', () => {
   })
 
   test('should omit coverage for a range that names its own voices', () => {
-    /* Nothing measured Tenor and Soprano here — the range named them. */
+    /* Nothing measured these four — the range named them. */
     const wrapper = mountLegend('voiceRanges.tenorToSoprano')
     const rows = wrapper.findAll('[data-testid="voice-range-legend-row"]')
 
