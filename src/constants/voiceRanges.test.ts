@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { midiToNoteLabel } from '@/utils/noteUtils'
+import { getSegmentsForRange } from '@/utils/voiceRangeSegments'
 import { VOICE_RANGE_GROUP_ORDER, VOICE_RANGES } from './voiceRanges'
 
 const VOICE_TYPE_LABEL_KEYS = VOICE_RANGES.filter(
@@ -85,6 +86,29 @@ describe('VOICE_RANGES ordering', () => {
       expect(isCatchAll.slice(firstCatchAll).every(Boolean)).toBe(true)
     },
   )
+
+  /*
+   * The ribbon stacks its columns low-to-high because lane 0 sits nearest the
+   * axis, so every vertical rendering of those segments has to turn them
+   * around. Asserted here rather than in the legend's own test: it is the rule
+   * that is being pinned, not one component's markup.
+   */
+  test('a vertical list of voice type segments reads high to low', () => {
+    const choirIndex = VOICE_RANGES.findIndex(
+      (range) => range.labelKey === 'voiceRanges.choir',
+    )
+    const choir = VOICE_RANGES[choirIndex]
+    const rows = getSegmentsForRange(
+      choirIndex,
+      choir.midiMin,
+      choir.midiMax,
+    ).toReversed()
+    const midpoints = rows.map(
+      (segment) => (segment.midiFrom + segment.midiTo) / 2,
+    )
+
+    expect(midpoints).toEqual([...midpoints].sort((a, b) => b - a))
+  })
 
   test('groups appear in VOICE_RANGE_GROUP_ORDER, uninterrupted', () => {
     const groupsInArrayOrder = VOICE_RANGES.map((range) => range.group).filter(

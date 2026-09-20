@@ -31,6 +31,12 @@ export const RIBBON_BAR_WIDTH = 3
 export const RIBBON_LANE_WIDTH = 5
 /* px between the last column and the chart's vertical axis line. */
 export const RIBBON_AXIS_GAP = 6
+/*
+ * Dimmed enough to read as background structure: the pitch trace carries the
+ * information, and it has to stay the loudest thing on the chart. Shared with
+ * the legend, so a bar and its key row never dim differently.
+ */
+export const RIBBON_BAR_OPACITY = 0.55
 
 /*
  * How much of a voice type has to be on screen before it earns a bar. Without

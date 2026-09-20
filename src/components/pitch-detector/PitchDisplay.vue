@@ -58,6 +58,10 @@ const {
   stopReplay,
 } = usePitchReplay()
 
+/* The same switch the chart's ribbon reads, so one toggle drives the bars and
+ * the key that names them. */
+const { isVoiceTypeRibbonVisible } = useVoiceTypeRibbon()
+
 const hasSamples = ref(false)
 const replaySpeed = ref<1 | 2>(1)
 
@@ -223,9 +227,17 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
 <template>
   <div class="flex w-full flex-1 flex-col gap-4">
     <div class="relative grid w-full items-center justify-center">
+      <!--
+        The legend sits at the row's inline-start, so the readouts give it that
+        much padding rather than spreading underneath it. 12rem covers the
+        184px the centred controls leave free in the 736px panel.
+      -->
       <div
         class="flex w-full items-center justify-around gap-2 [grid-area:1/1] sm:gap-4"
-        :class="showReadout ? 'visible' : 'pointer-events-none invisible'"
+        :class="[
+          showReadout ? 'visible' : 'pointer-events-none invisible',
+          isVoiceTypeRibbonVisible ? 'lg:ps-48' : '',
+        ]"
       >
         <PitchReadout
           v-for="lane in props.laneDetections"
@@ -259,6 +271,22 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
       >
         ⏱ {{ timerLabel }}
       </span>
+
+      <!--
+        Names the ribbon's colours in the space the centred controls leave
+        empty, on the same inline-start edge the bars themselves run down, so
+        the eye travels straight from a row to its bar. Only from lg up: below
+        it the column is narrower than its 768px cap and the key would crowd
+        the note buttons.
+      -->
+      <VoiceRangeLegend
+        v-if="isVoiceTypeRibbonVisible"
+        :midiMin="props.midiMin"
+        :midiMax="props.midiMax"
+        :rangeIndex="props.rangeIndex"
+        class="absolute start-2 top-1/2 hidden -translate-y-1/2 lg:block"
+        @selectRange="emit('selectRange', $event)"
+      />
     </div>
 
     <!-- Pitch history chart -->

@@ -132,6 +132,7 @@ declare global {
   const useVoiceRangeGroups: typeof import('./composables/useVoiceRangeGroups').useVoiceRangeGroups
   const useVoiceRangeIndex: typeof import('./composables/useVoiceRangeIndex').useVoiceRangeIndex
   const useVoiceTypeRibbon: typeof import('./composables/useVoiceTypeRibbon').useVoiceTypeRibbon
+  const useVoiceTypeSegments: typeof import('./composables/useVoiceTypeSegments').useVoiceTypeSegments
   const watch: typeof import('vue').watch
   const watchEffect: typeof import('vue').watchEffect
   const watchPostEffect: typeof import('vue').watchPostEffect
@@ -163,6 +164,9 @@ declare global {
   // @ts-ignore
   export type { VoiceRangeOption, VoiceRangeGroup, VoiceRangeGroupsOptions } from './composables/useVoiceRangeGroups'
   import('./composables/useVoiceRangeGroups')
+  // @ts-ignore
+  export type { DecoratedVoiceTypeSegment, VoiceTypeSegmentsOptions } from './composables/useVoiceTypeSegments'
+  import('./composables/useVoiceTypeSegments')
 }
 
 // for vue template auto import
@@ -275,6 +279,7 @@ declare module 'vue' {
     readonly useVoiceRangeGroups: UnwrapRef<typeof import('./composables/useVoiceRangeGroups')['useVoiceRangeGroups']>
     readonly useVoiceRangeIndex: UnwrapRef<typeof import('./composables/useVoiceRangeIndex')['useVoiceRangeIndex']>
     readonly useVoiceTypeRibbon: UnwrapRef<typeof import('./composables/useVoiceTypeRibbon')['useVoiceTypeRibbon']>
+    readonly useVoiceTypeSegments: UnwrapRef<typeof import('./composables/useVoiceTypeSegments')['useVoiceTypeSegments']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>

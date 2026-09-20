@@ -1,14 +1,11 @@
 <script setup lang="ts">
-import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { midiToChartY } from '@/utils/chartGrid'
-import { midiToNoteLabel } from '@/utils/noteUtils'
-import { octaveStopColor } from '@/utils/pitchColors'
 import {
-  getSegmentsForRange,
-  type VoiceTypeSegment,
+  RIBBON_BAR_OPACITY,
   RIBBON_BAR_WIDTH,
   RIBBON_LANE_WIDTH,
 } from '@/utils/voiceRangeSegments'
+import type { DecoratedVoiceTypeSegment } from '@/composables/useVoiceTypeSegments'
 
 type Props = {
   /* The span the chart is drawing, which the segments get clamped to. */
@@ -30,62 +27,38 @@ const emit = defineEmits<{
   selectRange: [rangeIndex: number]
 }>()
 
-const { t } = useI18n()
-const { isDark } = useDarkMode()
-
 /* px — the opaque cap that marks a voice's true start or stop note. */
 const CAP_HEIGHT = 3
-/* Dimmed enough to read as background structure: the pitch trace carries the
- * information, and it has to stay the loudest thing on the chart. */
-const BAR_OPACITY = 0.55
 
-const segments = computed(() =>
-  props.containerHeight
-    ? getSegmentsForRange(props.rangeIndex, props.midiMin, props.midiMax)
-    : [],
-)
+const segments = useVoiceTypeSegments(() => ({
+  rangeIndex: props.rangeIndex,
+  midiMin: props.midiMin,
+  midiMax: props.midiMax,
+}))
 
-/* The chosen range is often a span like Choir rather than a single voice. When
- * it is one of the six, that column earns full opacity — with every
- * overlapping voice on screen, it answers "which one is me?". */
-const selectedLabelKey = computed(
-  () => VOICE_RANGES[props.rangeIndex]?.labelKey ?? null,
-)
-
-type PositionedSegment = VoiceTypeSegment & {
+type PositionedSegment = DecoratedVoiceTypeSegment & {
   top: number
   height: number
-  color: string
-  name: string
-  spanLabel: string
-  isSelected: boolean
 }
 
-const positionedSegments = computed<PositionedSegment[]>(() =>
-  segments.value.map((segment) => {
-    const scale = {
-      midiMin: props.midiMin,
-      midiMax: props.midiMax,
-      height: props.containerHeight,
-    }
+const positionedSegments = computed<PositionedSegment[]>(() => {
+  if (!props.containerHeight) return []
+
+  const scale = {
+    midiMin: props.midiMin,
+    midiMax: props.midiMax,
+    height: props.containerHeight,
+  }
+
+  return segments.value.map((segment) => {
     const top = midiToChartY(segment.midiTo, scale)
-    const bottom = midiToChartY(segment.midiFrom, scale)
-    const name = t(segment.labelKey)
 
     return Object.assign({}, segment, {
       top,
-      height: bottom - top,
-      color: octaveStopColor(segment.stopIndex, isDark.value),
-      name,
-      spanLabel: t('generic.voiceTypeSpan', {
-        name,
-        from: midiToNoteLabel(segment.midiFrom).label,
-        to: midiToNoteLabel(segment.midiTo).label,
-      }),
-      isSelected: segment.labelKey === selectedLabelKey.value,
+      height: midiToChartY(segment.midiFrom, scale) - top,
     })
-  }),
-)
+  })
+})
 </script>
 
 <template>
@@ -126,7 +99,7 @@ const positionedSegments = computed<PositionedSegment[]>(() =>
           insetInlineStart: `${(RIBBON_LANE_WIDTH - RIBBON_BAR_WIDTH) / 2}px`,
           width: `${RIBBON_BAR_WIDTH}px`,
           backgroundColor: segment.color,
-          opacity: segment.isSelected ? 1 : BAR_OPACITY,
+          opacity: segment.isSelected ? 1 : RIBBON_BAR_OPACITY,
         }"
       />
       <!--
