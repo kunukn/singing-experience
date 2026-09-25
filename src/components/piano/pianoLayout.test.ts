@@ -1,6 +1,7 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 import {
   buildPianoLayout,
+  pianoEdgeHints,
   pianoPitchXForMidi,
   pianoSpanUnits,
   SEMITONE_UNIT,
@@ -9,6 +10,9 @@ import {
 /* Voice-range endpoints under test */
 const EVERYONE = { midiMin: 55, midiMax: 67 } // G3–G4
 const FULL = { midiMin: 36, midiMax: 96 } // C2–C7
+const CHOIR = { midiMin: 40, midiMax: 84 } // E2–C6
+const TENOR = { midiMin: 48, midiMax: 72 } // C3–C5
+const BASS = { midiMin: 40, midiMax: 64 } // E2–E4
 
 describe('buildPianoLayout', () => {
   /* The core invariant: hint lines are drawn at pitchX, so equal spacing here
@@ -161,6 +165,54 @@ describe('pianoPitchXForMidi', () => {
     expect(pianoPitchXForMidi(layout, 120)).toBeCloseTo(
       pianoPitchXForMidi(layout, FULL.midiMax),
     )
+  })
+})
+
+describe('pianoEdgeHints', () => {
+  test('returns the missing black note on both edges for E2–C6', () => {
+    const layout = buildPianoLayout(CHOIR.midiMin, CHOIR.midiMax)
+
+    // D♯2 (39) sits on E2's outer edge, C♯6 (85) on C6's
+    expect(pianoEdgeHints(layout)).toEqual([
+      { midi: 39, pitchX: 0 },
+      { midi: 85, pitchX: layout.totalWidth },
+    ])
+  })
+
+  test('skips a C start, where the key edge already is the ±50¢ boundary', () => {
+    const layout = buildPianoLayout(TENOR.midiMin, TENOR.midiMax)
+
+    // B2 is one semitone below C3 and would land half a unit off the board
+    expect(pianoEdgeHints(layout)).toEqual([
+      { midi: 73, pitchX: layout.totalWidth },
+    ])
+  })
+
+  test('skips an E end, where the key edge already is the ±50¢ boundary', () => {
+    const layout = buildPianoLayout(BASS.midiMin, BASS.midiMax)
+
+    expect(pianoEdgeHints(layout)).toEqual([{ midi: 39, pitchX: 0 }])
+  })
+
+  test('keeps the hints on the edges at any unit', () => {
+    for (const unit of [17, SEMITONE_UNIT, 36, 48]) {
+      const layout = buildPianoLayout(FULL.midiMin, FULL.midiMax, unit)
+
+      // C2 start is skipped; C♯7 (97) lands on C7's outer edge
+      expect(pianoEdgeHints(layout)).toEqual([
+        { midi: 97, pitchX: layout.totalWidth },
+      ])
+    }
+  })
+
+  test('lines up one semitone unit outside the end key’s hint line', () => {
+    const layout = buildPianoLayout(CHOIR.midiMin, CHOIR.midiMax)
+    const [low, high] = pianoEdgeHints(layout)
+
+    expect(layout.whites[0].pitchX - low.pitchX).toBeCloseTo(SEMITONE_UNIT)
+    expect(
+      high.pitchX - layout.whites[layout.whites.length - 1].pitchX,
+    ).toBeCloseTo(SEMITONE_UNIT)
   })
 })
 

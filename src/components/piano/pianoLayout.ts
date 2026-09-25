@@ -28,6 +28,10 @@ import { midiToNoteLabel } from '@/utils/noteUtils'
  * apart; rectangle centers would alternate between 0.75 and 1.5 units (e.g.
  * D♯→E 18px but E→F 36px at a 24px unit). The price is a line drawn a quarter
  * unit off-center on C/E/F/B.
+ *
+ * At the ends of the keyboard that outer neighbour matters for the preview:
+ * when it is two semitones away, the missing black note in between sits exactly
+ * on the key's outer edge — see pianoEdgeHints.
  */
 
 /* Nearest natural (white-key) note strictly below / above a given midi. */
@@ -107,6 +111,28 @@ export function pianoPitchXForMidi(layout: PianoLayout, midi: number): number {
   const clamped = Math.max(layout.midiMin, Math.min(layout.midiMax, midi))
 
   return (clamped - layout.originPitch) * layout.unit
+}
+
+export type PianoEdgeHint = { midi: number; pitchX: number }
+
+/*
+ * The notes one semitone outside the range whose pitch position lands on the
+ * keyboard. A note owns ±50¢ — the half unit either side of its hint line — so
+ * its boundary is the midpoint to the neighbouring line, and the end keys have
+ * no neighbour to read against. Where the end key's outer neighbour natural is
+ * two semitones away (a D/E/G/A/B start, a C/D/F/G/A end) the missing black
+ * note in between sits exactly on the key's outer edge, so its line can be
+ * drawn there and the end key reads as one full step in like every other key.
+ * Where the neighbour is one semitone away (a C/F start, an E/B end) the key
+ * edge already is the ±50¢ boundary and the note would fall half a unit off the
+ * board, so nothing is returned for that end.
+ */
+export function pianoEdgeHints(layout: PianoLayout): PianoEdgeHint[] {
+  const { midiMin, midiMax, originPitch, unit, totalWidth } = layout
+
+  return [midiMin - 1, midiMax + 1]
+    .map((midi) => ({ midi, pitchX: (midi - originPitch) * unit }))
+    .filter(({ pitchX }) => pitchX >= 0 && pitchX <= totalWidth)
 }
 
 /*

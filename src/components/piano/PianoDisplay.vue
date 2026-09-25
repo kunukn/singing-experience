@@ -22,6 +22,7 @@ import {
   PIANO_LABEL_BAND_HEIGHT,
   WHITE_KEY_HEIGHT,
   buildPianoLayout,
+  pianoEdgeHints,
   pianoSpanUnits,
   type PianoKey,
 } from './pianoLayout'
@@ -264,6 +265,11 @@ const isOctaveShiftVisible = computed(
 const layout = computed(() =>
   buildPianoLayout(props.midiMin, props.midiMax, semitoneUnit.value),
 )
+
+/* The missing black note just outside either end of the range, where it lands
+ * on the keyboard edge — gives the end key a neighbouring hint line to read
+ * its ±50¢ boundary against (see pianoEdgeHints). */
+const edgeHints = computed(() => pianoEdgeHints(layout.value))
 
 const blackKeyHeight = WHITE_KEY_HEIGHT * BLACK_KEY_HEIGHT_RATIO
 const trackHeight = WHITE_KEY_HEIGHT + PIANO_LABEL_BAND_HEIGHT
@@ -532,7 +538,14 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
            asymmetric around their pitch (see pianoLayout).
            Every line also gets a short solid tick above the keys: white and
            black key tops share one y, so the ticks land on a single row against
-           the flat label band, where the even semitone spacing is obvious. -->
+           the flat label band, where the even semitone spacing is obvious.
+           An end key whose outer neighbour is a black note (E2 next to D♯2)
+           gets that note's line too, on the keyboard's outer edge where the
+           note would sit: without it the end key has no second line to read
+           its ±50¢ boundary against. Black-key height like the other black
+           notes, but green-500 — there is no key under it, only the white
+           face. Nothing is drawn for a C/F start or an E/B end, where the key
+           edge already is the boundary (see pianoEdgeHints). -->
           <template v-if="isPreviewEnabled">
             <div
               v-for="key in layout.whites"
@@ -554,7 +567,19 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               }"
             />
             <div
-              v-for="key in [...layout.whites, ...layout.blacks]"
+              v-for="hint in edgeHints"
+              :key="`hint-${hint.midi}`"
+              class="pointer-events-none absolute z-[5] w-0 -translate-x-[0.5px] border-l border-dotted border-(--p-green-500)"
+              :style="{
+                insetInlineStart: `${hint.pitchX}px`,
+                top: `${PIANO_LABEL_BAND_HEIGHT}px`,
+                height: `${blackKeyHeight}px`,
+              }"
+              data-testid="piano-edge-hint"
+              :data-midi="hint.midi"
+            />
+            <div
+              v-for="key in [...layout.whites, ...layout.blacks, ...edgeHints]"
               :key="`tick-${key.midi}`"
               class="pointer-events-none absolute z-[15] w-0 -translate-x-[0.5px] border-l border-solid border-(--p-green-500)"
               :style="{
