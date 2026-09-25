@@ -124,6 +124,22 @@ export const VOICE_RANGES: VoiceRange[] = [
     midiMax: 84,
     group: 'wide',
   },
+  /* F3–C6 is the union of Alto (F3–F5) and Soprano (C4–C6) — the women's
+   * counterpart of Bass–Tenor. Mezzo-Soprano sits whole between them, so it is
+   * named too. Tenor is not on it: F3–C6 covers most of it, but a bar below
+   * Alto would contradict a range called Alto–Soprano. */
+  {
+    labelKey: 'voiceRanges.altoToSoprano',
+    noteRange: 'F3–C6',
+    midiMin: 53,
+    midiMax: 84,
+    group: 'wide',
+    focusVoices: [
+      'voiceRanges.alto',
+      'voiceRanges.mezzoSoprano',
+      'voiceRanges.soprano',
+    ],
+  },
   /* C3–C6 is the union of Tenor (C3–C5) and Soprano (C4–C6). Alto and
    * Mezzo-Soprano sit whole inside it, so they are named too — a focus list is
    * the run of voices from one end of the name to the other. Baritone is not on

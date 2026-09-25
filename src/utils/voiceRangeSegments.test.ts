@@ -185,8 +185,8 @@ describe('getSegmentsForRange', () => {
   test('shows only the voices a focused range names', () => {
     /* Every one of these spans reaches past the voices it is named for: E2–A4
      * covers most of Tenor and two-thirds of Alto, A2–C5 nearly four fifths of
-     * both Bass and Alto, E2–C5 most of Alto, and C3–C6 contains all six
-     * outright. A focus list is the run between the two ends of the name, so
+     * both Bass and Alto, E2–C5 most of Alto, F3–C6 most of Tenor, and C3–C6
+     * contains all six outright. A focus list is the run between the two ends of the name, so
      * the neighbours stay out — and the voices inside the run stay in, which
      * is why Bass–Tenor names Baritone. */
     expect(voiceTypesForRange('voiceRanges.bassToBaritone')).toEqual([
@@ -201,6 +201,11 @@ describe('getSegmentsForRange', () => {
       'voiceRanges.bass',
       'voiceRanges.baritone',
       'voiceRanges.tenor',
+    ])
+    expect(voiceTypesForRange('voiceRanges.altoToSoprano')).toEqual([
+      'voiceRanges.alto',
+      'voiceRanges.mezzoSoprano',
+      'voiceRanges.soprano',
     ])
     expect(voiceTypesForRange('voiceRanges.tenorToSoprano')).toEqual([
       'voiceRanges.tenor',

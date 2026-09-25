@@ -232,6 +232,7 @@
     },
     "full": "完整",
     "choir": "合唱",
+    "altoToSoprano": "女低音–女高音",
     "tenorToSoprano": "男高音–女高音",
     "lowVoices": "低音声部",
     "highVoices": "高音声部",
