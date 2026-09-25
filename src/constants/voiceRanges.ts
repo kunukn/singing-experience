@@ -153,6 +153,22 @@ export const VOICE_RANGES: VoiceRange[] = [
     group: 'wide',
     focusVoices: ['voiceRanges.baritone', 'voiceRanges.tenor'],
   },
+  /* E2–C5 is the union of Bass (E2–E4) and Tenor (C3–C5). Baritone sits whole
+   * between them, so it is named too — a focus list is the run from one end of
+   * the name to the other. Alto is not on it: E2–C5 covers most of it, but a
+   * bar above Tenor would contradict a range called Bass–Tenor. */
+  {
+    labelKey: 'voiceRanges.bassToTenor',
+    noteRange: 'E2–C5',
+    midiMin: 40,
+    midiMax: 72,
+    group: 'wide',
+    focusVoices: [
+      'voiceRanges.bass',
+      'voiceRanges.baritone',
+      'voiceRanges.tenor',
+    ],
+  },
   /* E2–A4 is the union of Bass (E2–E4) and Baritone (A2–A4). It reaches well
    * into Tenor and Alto too, hence the focus list. */
   {
