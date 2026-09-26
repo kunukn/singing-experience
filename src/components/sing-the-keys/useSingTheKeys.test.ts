@@ -12,7 +12,7 @@ import { defineComponent, nextTick } from 'vue'
 import { createMockToneEngine } from '@/composables/toneEngine.mock'
 import { midiToFrequency } from '@/utils/noteUtils'
 import type { Song } from './singTheKeysSongs'
-import { LOOKAHEAD_MS } from './singTheKeysTimeline'
+import { ENDING_GLIDE_MS, LOOKAHEAD_MS } from './singTheKeysTimeline'
 import { useSingTheKeys } from './useSingTheKeys'
 
 const C4 = 60
@@ -121,41 +121,109 @@ describe('useSingTheKeys', () => {
     expect(game.activeNoteIndex.value).toBe(1)
   })
 
-  test('should finish after the last note and keep the ending in view', async () => {
-    const { game } = createGame()
+  test('should keep the lane on the clock through the last note', async () => {
+    const { game, nowS } = createGame()
 
-    /* Half speed doubles the 2.4 s song to 4.8 s, longer than the lane. */
-    await game.start({ ...startParams(), speed: 0.5 })
-    vi.advanceTimersByTime((SONG_START_S + 4.8) * 1000 + 1)
+    await game.start(startParams())
+    /* The last note starts at 1200 ms and is still being sung at 1800. */
+    nowS.value = SONG_START_S + 1.8
+    vi.advanceTimersByTime(20)
+    await nextTick()
+
+    expect(game.elapsedMs.value).toBeCloseTo(1800, 5)
+    expect(game.laneElapsedMs.value).toBeCloseTo(1800, 5)
+  })
+
+  test('should fall on while the last guide tone rings, then glide back to the ending', async () => {
+    const { game, nowS } = createGame()
+
+    await game.start(startParams(true))
+    nowS.value = SONG_START_S + 2.4
+    vi.advanceTimersByTime((SONG_START_S + 2.4) * 1000 + 1)
     await nextTick()
 
     expect(game.isDone.value).toBe(true)
     expect(game.isShowingEnding.value).toBe(true)
-    /* The last LOOKAHEAD_MS of the song fills the lane. */
-    expect(game.elapsedMs.value).toBe(4800 - LOOKAHEAD_MS)
+    expect(game.isEndingSettled.value).toBe(false)
     expect(game.activeNoteIndex.value).toBeNull()
-  })
 
-  test('should park a song shorter than the lane on its opening', async () => {
-    const { game } = createGame()
-
-    await game.start(startParams())
-    vi.advanceTimersByTime((SONG_START_S + 2.4) * 1000 + 1)
+    /* The last tone ends at 1200 + 1200 × 0.92 = 2304 ms and the mock's
+     * keyboard mode releases for 0.8 s more, so the sound stops at 3104 ms. */
+    const fallEndMs = 1200 + 1200 * 0.92 + 800
+    nowS.value = SONG_START_S + 3
+    vi.advanceTimersByTime(20)
     await nextTick()
 
-    expect(game.elapsedMs.value).toBe(0)
-    expect(game.isShowingEnding.value).toBe(true)
+    expect(game.laneElapsedMs.value).toBeCloseTo(3000, 5)
+    /* The scorer's clock stays on the finish. */
+    expect(game.elapsedMs.value).toBeCloseTo(2400, 5)
+
+    nowS.value = SONG_START_S + (fallEndMs + ENDING_GLIDE_MS / 2) / 1000
+    vi.advanceTimersByTime(20)
+    await nextTick()
+
+    expect(game.laneElapsedMs.value).toBeGreaterThan(0)
+    expect(game.laneElapsedMs.value).toBeLessThan(fallEndMs)
+    expect(game.isEndingSettled.value).toBe(false)
+
+    nowS.value = SONG_START_S + (fallEndMs + ENDING_GLIDE_MS) / 1000 + 0.05
+    vi.advanceTimersByTime(20)
+    await nextTick()
+
+    /* A song shorter than the lane settles on its opening. */
+    expect(game.laneElapsedMs.value).toBe(0)
+    expect(game.isEndingSettled.value).toBe(true)
+  })
+
+  test('should glide back as soon as the song ends when the guide is off', async () => {
+    const { game, nowS } = createGame()
+
+    /* Half speed doubles the 2.4 s song to 4.8 s, longer than the lane. */
+    await game.start({ ...startParams(false), speed: 0.5 })
+    nowS.value = SONG_START_S + 4.8
+    vi.advanceTimersByTime((SONG_START_S + 4.8) * 1000 + 1)
+    await nextTick()
+
+    expect(game.laneElapsedMs.value).toBeCloseTo(4800, 5)
+
+    nowS.value = SONG_START_S + 4.8 + ENDING_GLIDE_MS / 1000 + 0.05
+    vi.advanceTimersByTime(20)
+    await nextTick()
+
+    /* The last LOOKAHEAD_MS of the song fills the lane. */
+    expect(game.laneElapsedMs.value).toBe(4800 - LOOKAHEAD_MS)
+    expect(game.isEndingSettled.value).toBe(true)
+  })
+
+  test('should drop the glide when a setting changes mid-way', async () => {
+    const { game, nowS } = createGame()
+
+    await game.start(startParams(false))
+    nowS.value = SONG_START_S + 2.4
+    vi.advanceTimersByTime((SONG_START_S + 2.4) * 1000 + 1)
+    nowS.value = SONG_START_S + 2.6
+    vi.advanceTimersByTime(20)
+    game.preview(song, C4, 1)
+
+    nowS.value = SONG_START_S + 5
+    vi.advanceTimersByTime(100)
+    await nextTick()
+
+    expect(game.laneElapsedMs.value).toBe(0)
+    expect(game.isEndingSettled.value).toBe(false)
   })
 
   test('should go back to the opening preview after the ending', async () => {
-    const { game } = createGame()
+    const { game, nowS } = createGame()
 
-    await game.start({ ...startParams(), speed: 0.5 })
-    vi.advanceTimersByTime((SONG_START_S + 4.8) * 1000 + 1)
+    await game.start(startParams())
+    nowS.value = SONG_START_S + 2.4
+    vi.advanceTimersByTime((SONG_START_S + 2.4) * 1000 + 1)
     await nextTick()
-    game.preview(song, C4, 0.5)
+    game.preview(song, C4, 1)
 
     expect(game.elapsedMs.value).toBe(0)
+    expect(game.laneElapsedMs.value).toBe(0)
     expect(game.isShowingEnding.value).toBe(false)
   })
 

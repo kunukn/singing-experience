@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { buildPianoLayout } from '@/components/piano/pianoLayout'
+import {
+  buildPianoLayout,
+  PIANO_LABEL_BAND_HEIGHT,
+} from '@/components/piano/pianoLayout'
 import SingTheKeysLane from './SingTheKeysLane.vue'
 import type { TimelineNote } from './singTheKeysTimeline'
 
@@ -31,6 +34,7 @@ function mountLane(
       sungFrequency: null,
       isScored: true,
       isShowingEnding: false,
+      isEndingSettled: false,
       beatLines: [],
       beatFlash: null,
       beatLight: null,
@@ -129,6 +133,31 @@ describe('SingTheKeysLane', () => {
     expect(
       wrapper.get('[data-testid="lane-note-2"]').attributes('data-status'),
     ).toBe('missed')
+  })
+
+  test('should clip blocks at the top of the keys, and at the hit line once the ending settles', () => {
+    const laneHeightOf = (props: {
+      isShowingEnding: boolean
+      isEndingSettled: boolean
+    }) =>
+      pxOf(
+        mountLane(props)
+          .get('[data-testid="sing-the-keys-lane"]')
+          .attributes('style'),
+        'height',
+      )
+
+    /* While playing, and while the ending still falls and glides back, the
+     * tail runs through the label band and stops at the top of the keys. */
+    expect(
+      laneHeightOf({ isShowingEnding: false, isEndingSettled: false }),
+    ).toBe(LANE_HEIGHT + PIANO_LABEL_BAND_HEIGHT)
+    expect(
+      laneHeightOf({ isShowingEnding: true, isEndingSettled: false }),
+    ).toBe(LANE_HEIGHT + PIANO_LABEL_BAND_HEIGHT)
+    expect(laneHeightOf({ isShowingEnding: true, isEndingSettled: true })).toBe(
+      LANE_HEIGHT,
+    )
   })
 
   test('should spell the label after the accidental style', () => {

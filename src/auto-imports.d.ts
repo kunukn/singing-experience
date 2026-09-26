@@ -26,6 +26,7 @@ declare global {
   const SCALE_STEPS: typeof import('./composables/useDoReMiGame').SCALE_STEPS
   const SCORE_TOLERANCE_CENTS: typeof import('./composables/useDwellSingScore').SCORE_TOLERANCE_CENTS
   const START_TONE_OPTIONS: typeof import('./composables/useDoReMiGame').START_TONE_OPTIONS
+  const TONE_MODE_RELEASE_S: typeof import('./composables/toneEngine').TONE_MODE_RELEASE_S
   const TOO_LOW_OR_HIGH_HINT_MS: typeof import('./composables/useDoReMiGame').TOO_LOW_OR_HIGH_HINT_MS
   const computed: typeof import('vue').computed
   const confettiKey: typeof import('./composables/useConfetti').confettiKey
@@ -184,6 +185,7 @@ declare module 'vue' {
     readonly MAX_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['MAX_CLARITY_THRESHOLD']>
     readonly MIN_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['MIN_CLARITY_THRESHOLD']>
     readonly SCORE_TOLERANCE_CENTS: UnwrapRef<typeof import('./composables/useDwellSingScore')['SCORE_TOLERANCE_CENTS']>
+    readonly TONE_MODE_RELEASE_S: UnwrapRef<typeof import('./composables/toneEngine')['TONE_MODE_RELEASE_S']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createMockToneEngine: UnwrapRef<typeof import('./composables/toneEngine.mock')['createMockToneEngine']>

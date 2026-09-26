@@ -81,6 +81,8 @@ const {
   timeline,
   elapsedMs,
   isShowingEnding,
+  isEndingSettled,
+  laneElapsedMs,
   activeNoteIndex,
   noteDurationsMs,
 } = game
@@ -171,13 +173,13 @@ const resultNoteIndices = computed(() =>
  * down rather than mixing with it. */
 const beatFlash = computed(() =>
   isPlaying.value && isBeatLinesEnabled.value && !areBeatLightsEnabled.value
-    ? beatFlashAt(timeline.value.beatLines, elapsedMs.value)
+    ? beatFlashAt(timeline.value.beatLines, laneElapsedMs.value)
     : null,
 )
 
 const beatLight = computed(() =>
   isPlaying.value && areBeatLightsEnabled.value
-    ? beatPulseAt(timeline.value.beatLines, elapsedMs.value)
+    ? beatPulseAt(timeline.value.beatLines, laneElapsedMs.value)
     : null,
 )
 
@@ -406,7 +408,7 @@ onUnmounted(() => {
       </span>
 
       <PrimeButton
-        v-else
+        v-if="!isPlaying"
         class="min-h-8.75 min-w-20"
         severity="success"
         size="small"
@@ -468,8 +470,9 @@ onUnmounted(() => {
             :notes="timeline.notes"
             :layout="layout"
             :laneHeight="laneHeight"
-            :elapsedMs="elapsedMs"
+            :elapsedMs="laneElapsedMs"
             :isShowingEnding="isShowingEnding"
+            :isEndingSettled="isEndingSettled"
             :activeNoteIndex="activeNoteIndex"
             :correctNoteIndices="resultNoteIndices"
             :accidentalStyle="accidentalStyle"

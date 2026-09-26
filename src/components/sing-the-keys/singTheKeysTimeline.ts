@@ -166,6 +166,36 @@ export function activeNoteIndexAt(
   return null
 }
 
+/* ms — how long the lane takes to ease back up to the ending view once the
+ * last sound has stopped: long enough to read as a glide rather than a jump,
+ * short enough not to hold up Play again. */
+export const ENDING_GLIDE_MS = 600
+
+type EndingPath = {
+  /* When the last sound stops: the blocks fall with the clock until here. */
+  fallEndMs: number
+  /* Where the lane settles, showing the song's last stretch. */
+  endingViewMs: number
+}
+
+/* Lane position after a natural finish, from the clock alone: it keeps
+ * falling until the sound stops, then glides back to the ending view with a
+ * cubic ease-out (fast start, soft landing). */
+export function endingLaneMsAt(
+  nowMs: number,
+  { fallEndMs, endingViewMs }: EndingPath,
+): { laneMs: number; isSettled: boolean } {
+  if (nowMs < fallEndMs) return { laneMs: nowMs, isSettled: false }
+
+  const progress = Math.min(1, (nowMs - fallEndMs) / ENDING_GLIDE_MS)
+  const eased = 1 - (1 - progress) ** 3
+
+  return {
+    laneMs: fallEndMs + (endingViewMs - fallEndMs) * eased,
+    isSettled: progress === 1,
+  }
+}
+
 /* Keyboard span for a transposed song: one semitone of margin on each side so
  * the end notes have a neighbouring hint line, then widened outward to a
  * natural note so the keyboard starts and ends on a white key. */

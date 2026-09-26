@@ -7,6 +7,8 @@ import {
   beatFlashAt,
   beatPulseAt,
   buildTimeline,
+  ENDING_GLIDE_MS,
+  endingLaneMsAt,
   LOOKAHEAD_MS,
   songMidiRange,
 } from './singTheKeysTimeline'
@@ -184,6 +186,35 @@ describe('activeNoteIndexAt', () => {
     { elapsedMs: 2400, expected: null },
   ])('returns $expected at $elapsedMs ms', ({ elapsedMs, expected }) => {
     expect(activeNoteIndexAt(notes, elapsedMs)).toBe(expected)
+  })
+})
+
+describe('endingLaneMsAt', () => {
+  const path = { fallEndMs: 3000, endingViewMs: 1000 }
+
+  test('should keep falling with the clock until the sound stops', () => {
+    expect(endingLaneMsAt(2500, path)).toEqual({
+      laneMs: 2500,
+      isSettled: false,
+    })
+  })
+
+  test('should be part-way back, past the linear midpoint, halfway through the glide', () => {
+    const { laneMs, isSettled } = endingLaneMsAt(
+      3000 + ENDING_GLIDE_MS / 2,
+      path,
+    )
+
+    /* Ease-out covers 87.5% of the distance in the first half. */
+    expect(laneMs).toBeCloseTo(3000 - 2000 * 0.875, 5)
+    expect(isSettled).toBe(false)
+  })
+
+  test('should settle on the ending view once the glide is over', () => {
+    expect(endingLaneMsAt(3000 + ENDING_GLIDE_MS + 50, path)).toEqual({
+      laneMs: 1000,
+      isSettled: true,
+    })
   })
 })
 

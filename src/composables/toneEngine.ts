@@ -113,6 +113,18 @@ const TUNING2_OPTIONS = {
   envelope: { attack: 0.01, decay: 0, sustain: 1.0, release: 0.1 },
 } as const
 
+/* Seconds a note keeps sounding after its written end — the amplitude
+ * envelope's release per mode, read from the configs above so it cannot drift
+ * from what actually plays. */
+export const TONE_MODE_RELEASE_S: Record<ToneMode, number> = {
+  keyboard: KEYBOARD_OPTIONS.envelope.release,
+  bell: BELL_OPTIONS.envelope.release,
+  tuning: TUNING_OPTIONS.envelope.release,
+  tuning2: TUNING2_OPTIONS.envelope.release,
+  bass: BASS_OPTIONS.envelope.release,
+  square: SQUARE_OPTIONS.envelope.release,
+}
+
 /**
  * Creates a Tone.js-backed audio engine that can play notes.
  * Lazily initialises each synth on

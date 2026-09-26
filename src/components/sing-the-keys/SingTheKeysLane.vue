@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import {
+  PIANO_LABEL_BAND_HEIGHT,
   pianoNoteBlockSpan,
   type PianoLayout,
 } from '@/components/piano/pianoLayout'
@@ -41,6 +42,8 @@ type Props = {
    * has been sung, so an unhit one is missed even though it still sits above
    * the hit line. */
   isShowingEnding: boolean
+  /* The ending glide has landed and the lane is at rest. */
+  isEndingSettled: boolean
   /* Pulse lines falling with the blocks; empty when beat lines are off. */
   beatLines: BeatLine[]
   /* Glow on the hit line as a beat line crosses it; null between beats and
@@ -89,13 +92,18 @@ const STATUS_CLASS: Record<NoteStatus, string> = {
   passed: 'bg-(--p-surface-400)/60 text-(--p-surface-0)',
 }
 
-/* px — how far a block keeps falling past the hit line before it is clipped,
- * over the key track's label band and the tops of the keys, like the tutorial
- * videos where the block runs on into the key. This is where a miss becomes
- * visible: a note can be hit right up to its end, so it only turns red once its
- * whole block is already below the line. At the lane's px/ms this is roughly
- * half a second to a second on screen. */
-const HIT_LINE_TAIL_PX = 64
+/* px — how far a block keeps falling past the hit line before it is clipped:
+ * through the key track's label band, stopping where the keys begin so no
+ * block ever covers a key. This is where a miss becomes visible: a note can be
+ * hit right up to its end, so it only turns red once its whole block is
+ * already below the line. */
+const HIT_LINE_TAIL_PX = PIANO_LABEL_BAND_HEIGHT
+
+/* Once the lane comes to rest on the ending, a block caught mid-tail would sit
+ * in the label band for good; clip at the hit line instead. Not before: while
+ * the lane still falls and glides back, the tail stays so no block is cut off
+ * mid-move. */
+const tailPx = computed(() => (props.isEndingSettled ? 0 : HIT_LINE_TAIL_PX))
 
 const blocks = computed(() =>
   props.notes.map((note) => {
@@ -212,17 +220,19 @@ const sungLine = computed(() => {
        by the same amount with a negative margin. overflow-hidden keeps the
        blocks parked above and below from adding scrollable overflow to the
        piano's scroll box (a clip-path would clip the paint but the scroll box
-       would still grow a scrollbar as the strip travels). z-10 paints the tail
-       over the keys, which come later in the DOM; pointer-events-none keeps
-       the key tops under it clickable.
+       would still grow a scrollbar as the strip travels). The key track
+       makes no stacking context, so its layers compete with this box
+       directly: z-[11] sits above the keys (black keys are z-10) and below
+       the pitch ticks (z-15), live-pitch line (z-20) and chip (z-30).
+       pointer-events-none keeps anything under it clickable.
        LTR like the keyboard under it: pitch runs low→high left→right on a
        piano whatever the page direction. -->
   <div
-    class="pointer-events-none relative z-10 mx-auto overflow-hidden"
+    class="pointer-events-none relative z-[11] mx-auto overflow-hidden"
     :style="{
       width: `${layout.totalWidth}px`,
-      height: `${laneHeight + HIT_LINE_TAIL_PX}px`,
-      marginBottom: `-${HIT_LINE_TAIL_PX}px`,
+      height: `${laneHeight + tailPx}px`,
+      marginBottom: `-${tailPx}px`,
     }"
     dir="ltr"
     data-testid="sing-the-keys-lane"

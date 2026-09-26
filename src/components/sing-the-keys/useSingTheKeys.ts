@@ -1,12 +1,16 @@
 import { useMachine } from '@xstate/vue'
 import type { ToneEngine } from '@/composables/toneEngine'
-import { defaultToneEngine } from '@/composables/toneEngine'
+import {
+  defaultToneEngine,
+  TONE_MODE_RELEASE_S,
+} from '@/composables/toneEngine'
 import { midiToFrequency } from '@/utils/noteUtils'
 import { singTheKeysMachine, type SingTheKeysPhase } from './singTheKeysMachine'
 import type { Song } from './singTheKeysSongs'
 import {
   activeNoteIndexAt,
   buildTimeline,
+  endingLaneMsAt,
   LOOKAHEAD_MS,
   type Timeline,
 } from './singTheKeysTimeline'
@@ -51,9 +55,11 @@ type Options = {
  *
  * `elapsedMs` counts from the song's first note: it is negative during the
  * LOOKAHEAD_MS lead-in while the first blocks fall in, and sits at 0 while
- * idle so the lane shows the opening of the tune as a still preview. On a
- * natural finish it parks on the song's last LOOKAHEAD_MS instead, so the
- * singer keeps the ending (and its hits and misses) in view.
+ * idle so the lane shows the opening of the tune as a still preview.
+ * `laneElapsedMs` is what the lane draws: the same clock while playing. After a
+ * natural finish it keeps falling while the last note still sounds, then
+ * glides back to the song's last stretch so the ending (and its hits and
+ * misses) stays in view — see endingLaneMsAt.
  */
 export function useSingTheKeys(options: Options = {}) {
   const engine = options.toneEngine ?? defaultToneEngine
@@ -72,6 +78,11 @@ export function useSingTheKeys(options: Options = {}) {
    * is showing the ending, so every note in it has already been sung. */
   const isShowingEnding = ref(false)
 
+  const laneElapsedMs = ref(0)
+  /* True once the ending glide has landed: the lane is at rest on the ending
+   * view, so blocks left part-way past the hit line can be clipped there. */
+  const isEndingSettled = ref(false)
+
   const activeNoteIndex = computed(() =>
     isPlaying.value
       ? activeNoteIndexAt(timeline.value.notes, elapsedMs.value)
@@ -87,6 +98,7 @@ export function useSingTheKeys(options: Options = {}) {
   /* Audio-clock second at which elapsedMs would read −LOOKAHEAD_MS. */
   let toneStartS = 0
   let rafId: number | null = null
+  let endingPath = { fallEndMs: 0, endingViewMs: 0 }
 
   function readElapsedMs() {
     return (engine.getNow() - toneStartS) * 1000 - LOOKAHEAD_MS
@@ -94,7 +106,23 @@ export function useSingTheKeys(options: Options = {}) {
 
   function tick() {
     elapsedMs.value = readElapsedMs()
+    laneElapsedMs.value = elapsedMs.value
     rafId = requestAnimationFrame(tick)
+  }
+
+  /* After DONE: the lane alone moves on; elapsedMs stays frozen at the finish
+   * for the scorer and the tally. */
+  function tickEnding() {
+    const { laneMs, isSettled } = endingLaneMsAt(readElapsedMs(), endingPath)
+    laneElapsedMs.value = laneMs
+    if (isSettled) {
+      isEndingSettled.value = true
+      rafId = null
+
+      return
+    }
+
+    rafId = requestAnimationFrame(tickEnding)
   }
 
   function stopTicking() {
@@ -109,9 +137,12 @@ export function useSingTheKeys(options: Options = {}) {
   function preview(song: Song, tonicMidi: number, speed: number) {
     if (isPlaying.value) return
 
+    stopTicking()
     timeline.value = buildTimeline(song, tonicMidi, speed)
     elapsedMs.value = 0
+    laneElapsedMs.value = 0
     isShowingEnding.value = false
+    isEndingSettled.value = false
   }
 
   async function start(params: SingTheKeysStartParams) {
@@ -122,6 +153,25 @@ export function useSingTheKeys(options: Options = {}) {
     const built = buildTimeline(params.song, params.tonicMidi, params.speed)
     timeline.value = built
     isShowingEnding.value = false
+    isEndingSettled.value = false
+
+    /* The lane falls on while there is still sound: with the guide on, until
+     * the last tone's release has died away; with it off, the singer's own
+     * note ends with the song. */
+    const lastNote = built.notes.at(-1)
+    const lastToneEndMs =
+      params.isMelodyGuideEnabled && lastNote
+        ? lastNote.startMs +
+          lastNote.durationMs * ARTICULATION +
+          TONE_MODE_RELEASE_S[engine.toneMode.value] * 1000
+        : 0
+    endingPath = {
+      fallEndMs: Math.max(built.totalMs, lastToneEndMs),
+      /* The last LOOKAHEAD_MS of the song fills the lane, the final note
+       * ending at its top; a song shorter than the lane settles on its
+       * opening. */
+      endingViewMs: Math.max(0, built.totalMs - LOOKAHEAD_MS),
+    }
 
     toneStartS = engine.getNow() + SCHEDULE_AHEAD_S
     const songStartS = toneStartS + LOOKAHEAD_MS / 1000
@@ -141,10 +191,10 @@ export function useSingTheKeys(options: Options = {}) {
     engine.scheduleDraw(
       () => {
         stopTicking()
-        /* The last notes fill the lane, the final one ending at its top. */
-        elapsedMs.value = Math.max(0, built.totalMs - LOOKAHEAD_MS)
+        elapsedMs.value = readElapsedMs()
         isShowingEnding.value = true
         send({ type: 'DONE' })
+        tickEnding()
       },
       songStartS + built.totalMs / 1000,
     )
@@ -153,6 +203,7 @@ export function useSingTheKeys(options: Options = {}) {
      * SCHEDULE_AHEAD_S in the future, so the flat value would sit on the first
      * count-in beat line and the first frame would jump back off it. */
     elapsedMs.value = readElapsedMs()
+    laneElapsedMs.value = elapsedMs.value
     send({ type: 'START' })
     rafId = requestAnimationFrame(tick)
   }
@@ -161,7 +212,9 @@ export function useSingTheKeys(options: Options = {}) {
     engine.cancelScheduled()
     stopTicking()
     elapsedMs.value = 0
+    laneElapsedMs.value = 0
     isShowingEnding.value = false
+    isEndingSettled.value = false
     send({ type: 'STOP' })
   }
 
@@ -178,6 +231,8 @@ export function useSingTheKeys(options: Options = {}) {
     timeline,
     elapsedMs,
     isShowingEnding,
+    isEndingSettled,
+    laneElapsedMs,
     activeNoteIndex,
     noteDurationsMs,
     preview,
