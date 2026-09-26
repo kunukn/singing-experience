@@ -340,6 +340,7 @@
     "pickRangeHeader": "Wähle einen Bereich, der zu deiner Stimme passt",
     "pickRangeFooter": "⭐ = ein guter Anfang",
     "melodyGuide": "Hilfe",
+    "preview": "Vorschau",
     "beatLines": "Takt",
     "beatLights": "Lichter",
     "scoreCorrect": "{percent}% richtig",

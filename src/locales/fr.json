@@ -340,6 +340,7 @@
     "pickRangeHeader": "Choisis une tessiture qui va à ta voix",
     "pickRangeFooter": "⭐ = un bon point de départ",
     "melodyGuide": "Guide",
+    "preview": "Aperçu",
     "beatLines": "Rythme",
     "beatLights": "Lumières",
     "scoreCorrect": "{percent}% correct",

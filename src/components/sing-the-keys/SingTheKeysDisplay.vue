@@ -140,6 +140,15 @@ const isOnPitchForScore = computed(() => {
 const isScored = computed(() => !isMelodyGuideEnabled.value)
 const isScoring = computed(() => isPlaying.value && isScored.value)
 
+/* Guide on means the next run is unscored practice, so the button says so —
+ * even over a finished scored run's Play Again — and turns blue, leaving green
+ * for the scored run. */
+const startLabel = computed(() => {
+  if (!isScored.value) return t('singTheKeys.preview')
+
+  return showResult.value ? t('generic.playAgain') : t('generic.start')
+})
+
 /* Whether the last run was scored, fixed at Start. The lane paints passed
  * blocks from this rather than the live toggle, so flipping Guide after a
  * practice run ends does not turn its unsung notes red. */
@@ -424,12 +433,12 @@ onUnmounted(() => {
       <PrimeButton
         v-if="!isPlaying"
         class="min-h-8.75 min-w-20"
-        severity="success"
+        :severity="isScored ? 'success' : 'info'"
         size="small"
         rounded
         @click="startSinging"
       >
-        {{ showResult ? t('generic.playAgain') : t('generic.start') }}
+        {{ startLabel }}
       </PrimeButton>
 
       <ToggleIconButton

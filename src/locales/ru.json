@@ -340,6 +340,7 @@
     "pickRangeHeader": "Выбери диапазон под свой голос",
     "pickRangeFooter": "⭐ = хорошее начало",
     "melodyGuide": "Подсказка",
+    "preview": "Прослушать",
     "beatLines": "Ритм",
     "beatLights": "Огни",
     "scoreCorrect": "{percent}% правильно",
