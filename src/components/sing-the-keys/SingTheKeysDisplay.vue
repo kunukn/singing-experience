@@ -405,14 +405,6 @@ onUnmounted(() => {
       />
     </EdgeFadeScroller>
 
-    <p
-      v-if="false && isMelodyGuideEnabled"
-      class="text-xs text-(--p-text-muted-color)"
-      data-testid="sing-the-keys-practice-hint"
-    >
-      {{ t('singTheKeys.practiceHint') }}
-    </p>
-
     <p v-if="error" class="text-sm text-(--p-red-400)">{{ error }}</p>
 
     <slot />
