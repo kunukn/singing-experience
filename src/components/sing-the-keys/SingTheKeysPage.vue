@@ -46,6 +46,9 @@ const isMelodyGuideEnabled = useLocalStorage(
   true,
 )
 
+const isBeatLinesEnabled = useLocalStorage('syng.singTheKeysBeatLines', true)
+const areBeatLightsEnabled = useLocalStorage('syng.singTheKeysBeatLights', true)
+
 const range = computed(() =>
   songMidiRange(SONGS[songId.value], C3_MIDI + startOffset.value),
 )
@@ -80,5 +83,7 @@ const detection = usePitchDetection({
     v-model:startOffset="startOffset"
     v-model:speed="speed"
     v-model:isMelodyGuideEnabled="isMelodyGuideEnabled"
+    v-model:isBeatLinesEnabled="isBeatLinesEnabled"
+    v-model:areBeatLightsEnabled="areBeatLightsEnabled"
   />
 </template>

@@ -337,6 +337,8 @@
     "song": "গান",
     "speed": "গতি",
     "melodyGuide": "সাহায্য",
+    "beatLines": "তাল",
+    "beatLights": "আলো",
     "scoreCorrect": "{percent}% সঠিক",
     "songs": {
       "twinkle": "টুইঙ্কল টুইঙ্কল লিটল স্টার",

@@ -337,6 +337,8 @@
     "song": "Música",
     "speed": "Velocidade",
     "melodyGuide": "Guia",
+    "beatLines": "Ritmo",
+    "beatLights": "Luzes",
     "scoreCorrect": "{percent}% correto",
     "songs": {
       "twinkle": "Brilha, brilha, estrelinha",

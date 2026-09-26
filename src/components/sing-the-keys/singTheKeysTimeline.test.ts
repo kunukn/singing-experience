@@ -3,7 +3,11 @@ import type { Song } from './singTheKeysSongs'
 import { SONGS } from './singTheKeysSongs'
 import {
   activeNoteIndexAt,
+  BEAT_FLASH_MS,
+  beatFlashAt,
+  beatPulseAt,
   buildTimeline,
+  LOOKAHEAD_MS,
   songMidiRange,
 } from './singTheKeysTimeline'
 
@@ -12,6 +16,7 @@ const C4 = 60
 const song: Song = {
   id: 'twinkle',
   bpm: 100,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 },
   notes: [
     { midiOffset: 0, beats: 1 },
     { midiOffset: 7, beats: 0.5, restAfterBeats: 0.5 },
@@ -35,6 +40,132 @@ describe('buildTimeline', () => {
       { index: 2, midi: 58, startMs: 1200, durationMs: 1200 },
     ])
     expect(totalMs).toBe(2400)
+  })
+})
+
+describe('buildTimeline - beat lines', () => {
+  test('lays a line every beat with a bar line every 4 in 4/4', () => {
+    const { beatLines, beatMs } = buildTimeline(SONGS.twinkle, C4, 1)
+    const downbeat = beatLines.findIndex((line) => line.ms === 0)
+
+    expect(beatLines.slice(downbeat, downbeat + 5)).toEqual([
+      { ms: 0, pulseInBar: 0, isBarStart: true },
+      { ms: beatMs, pulseInBar: 1, isBarStart: false },
+      { ms: 2 * beatMs, pulseInBar: 2, isBarStart: false },
+      { ms: 3 * beatMs, pulseInBar: 3, isBarStart: false },
+      { ms: 4 * beatMs, pulseInBar: 0, isBarStart: true },
+    ])
+  })
+
+  test('starts the lines at the lead-in and ends them at the song end', () => {
+    const { beatLines, totalMs } = buildTimeline(SONGS.twinkle, C4, 1)
+
+    /* 3000ms lead-in over a 600ms beat: exactly five count-in lines. */
+    expect(beatLines[0].ms).toBe(-LOOKAHEAD_MS)
+    expect(beatLines.at(-1)?.ms).toBe(totalMs)
+  })
+
+  test('puts the first bar line after the pickup', () => {
+    /* Happy Birthday: the two-eighth pickup fills one beat, so "birth" (note
+     * 2) lands on the first bar line. */
+    const { beatLines, beatMs, notes } = buildTimeline(
+      SONGS.happyBirthday,
+      C4,
+      1,
+    )
+    const firstBar = beatLines.find((line) => line.isBarStart && line.ms >= 0)
+
+    expect(firstBar?.ms).toBe(beatMs)
+    expect(notes[2].startMs).toBe(beatMs)
+  })
+
+  test('marks bar lines every 3 beats in 3/4, including the lead-in', () => {
+    const { beatLines, beatMs } = buildTimeline(SONGS.happyBirthday, C4, 1)
+    const barLines = beatLines
+      .filter((line) => line.isBarStart)
+      .map((line) => line.ms)
+
+    expect(barLines.slice(0, 3)).toEqual([
+      beatMs - 6 * beatMs,
+      beatMs - 3 * beatMs,
+      beatMs,
+    ])
+  })
+
+  test('pulses on the eighth for Für Elise', () => {
+    const { beatLines, beatMs } = buildTimeline(SONGS.furElise, C4, 1)
+
+    expect(beatLines[1].ms - beatLines[0].ms).toBe(beatMs / 2)
+  })
+
+  test('scales the line spacing with speed', () => {
+    const slow = buildTimeline(SONGS.twinkle, C4, 0.5).beatLines
+    const fast = buildTimeline(SONGS.twinkle, C4, 1.25).beatLines
+
+    expect(slow[1].ms - slow[0].ms).toBe(1200)
+    expect(fast[1].ms - fast[0].ms).toBe(480)
+  })
+})
+
+describe('buildTimeline - pulse in bar', () => {
+  test('counts 1 2 3 across the lead-in and the pickup in 3/4', () => {
+    /* Happy Birthday's first downbeat is at 1 beat (600ms); the lead-in lines
+     * from −3000ms count back from it. */
+    const { beatLines } = buildTimeline(SONGS.happyBirthday, C4, 1)
+
+    expect(beatLines.slice(0, 7).map((line) => line.pulseInBar)).toEqual([
+      0, 1, 2, 0, 1, 2, 0,
+    ])
+    expect(beatLines[6].ms).toBe(600)
+  })
+})
+
+describe('beatPulseAt', () => {
+  const lines = [
+    { ms: 0, pulseInBar: 0, isBarStart: true },
+    { ms: 600, pulseInBar: 1, isBarStart: false },
+    { ms: 1200, pulseInBar: 2, isBarStart: false },
+  ]
+
+  test('returns null before the first line', () => {
+    expect(beatPulseAt(lines, -1)).toBeNull()
+  })
+
+  test.each([
+    { elapsedMs: 0, pulseInBar: 0, progress: 0 },
+    { elapsedMs: 300, pulseInBar: 0, progress: 0.5 },
+    { elapsedMs: 600, pulseInBar: 1, progress: 0 },
+    /* After the last line there is no next one to measure against. */
+    { elapsedMs: 1500, pulseInBar: 2, progress: 1 },
+  ])(
+    'is at pulse $pulseInBar, $progress along, at $elapsedMs ms',
+    ({ elapsedMs, pulseInBar, progress }) => {
+      const pulse = beatPulseAt(lines, elapsedMs)
+
+      expect(pulse?.pulseInBar).toBe(pulseInBar)
+      expect(pulse?.progress).toBeCloseTo(progress)
+    },
+  )
+})
+
+describe('beatFlashAt', () => {
+  const lines = [
+    { ms: 0, pulseInBar: 0, isBarStart: true },
+    { ms: 600, pulseInBar: 1, isBarStart: false },
+  ]
+
+  test.each([
+    { elapsedMs: -1, expected: null },
+    { elapsedMs: 0, expected: { intensity: 1, isBarStart: true } },
+    {
+      elapsedMs: BEAT_FLASH_MS / 2,
+      expected: { intensity: 0.5, isBarStart: true },
+    },
+    { elapsedMs: BEAT_FLASH_MS, expected: null },
+    { elapsedMs: 599, expected: null },
+    { elapsedMs: 600, expected: { intensity: 1, isBarStart: false } },
+  ])('returns $expected at $elapsedMs ms', ({ elapsedMs, expected }) => {
+    expect(beatFlashAt(lines, elapsedMs)).toEqual(expected)
   })
 })
 

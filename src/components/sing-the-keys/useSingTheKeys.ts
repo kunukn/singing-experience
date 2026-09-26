@@ -19,7 +19,21 @@ const ARTICULATION = 0.92
  * latency so the count-in click is not clipped. */
 const SCHEDULE_AHEAD_S = 0.05
 
-const EMPTY_TIMELINE: Timeline = { notes: [], totalMs: 0, beatMs: 0 }
+/* s — how long the starting note sounds at the top of the lead-in: long
+ * enough to catch the pitch, and over well before the first note is due
+ * LOOKAHEAD_MS later, so it never plays into the scoring window. */
+const START_TONE_S = 1
+
+/* s — pause after Start before the starting note, so it doesn't land on the
+ * button press. At 1× (600 ms beats) it falls on the second count-in click. */
+const START_TONE_DELAY_S = 0.6
+
+const EMPTY_TIMELINE: Timeline = {
+  notes: [],
+  totalMs: 0,
+  beatMs: 0,
+  beatLines: [],
+}
 
 export type SingTheKeysStartParams = {
   song: Song
@@ -78,8 +92,12 @@ export function useSingTheKeys(options: Options = {}) {
   let toneStartS = 0
   let rafId: number | null = null
 
+  function readElapsedMs() {
+    return (engine.getNow() - toneStartS) * 1000 - LOOKAHEAD_MS
+  }
+
   function tick() {
-    elapsedMs.value = (engine.getNow() - toneStartS) * 1000 - LOOKAHEAD_MS
+    elapsedMs.value = readElapsedMs()
     rafId = requestAnimationFrame(tick)
   }
 
@@ -110,9 +128,26 @@ export function useSingTheKeys(options: Options = {}) {
     toneStartS = engine.getNow() + SCHEDULE_AHEAD_S
     const songStartS = toneStartS + LOOKAHEAD_MS / 1000
 
-    /* One accented click a beat before the first note, so the singer hears the
-     * tempo and the entry rather than reading it off the lane alone. */
-    engine.playClickAt(songStartS - built.beatMs / 1000, true)
+    /* Count-in: one click per lead-in beat line, so the singer hears the pulse
+     * the lines show and a bar start rings as the accented "1". Stops when the
+     * song starts. */
+    for (const line of built.beatLines) {
+      if (line.ms >= 0) break
+
+      engine.playClickAt(songStartS + line.ms / 1000, line.isBarStart)
+    }
+
+    /* Starting pitch: the melody's first note, once, early in the lead-in, so
+     * the singer has the key before the count-in runs out. Plays with the
+     * guide off too — that is when the singer needs it most. */
+    const firstNote = built.notes[0]
+    if (firstNote) {
+      engine.playToneAt(
+        midiToFrequency(firstNote.midi),
+        START_TONE_S,
+        toneStartS + START_TONE_DELAY_S,
+      )
+    }
 
     if (params.isMelodyGuideEnabled) {
       for (const note of built.notes) {
@@ -133,7 +168,10 @@ export function useSingTheKeys(options: Options = {}) {
       songStartS + built.totalMs / 1000,
     )
 
-    elapsedMs.value = -LOOKAHEAD_MS
+    /* From the clock, not a flat −LOOKAHEAD_MS: the clock starts
+     * SCHEDULE_AHEAD_S in the future, so the flat value would sit on the first
+     * count-in beat line and the first frame would jump back off it. */
+    elapsedMs.value = readElapsedMs()
     send({ type: 'START' })
     rafId = requestAnimationFrame(tick)
   }

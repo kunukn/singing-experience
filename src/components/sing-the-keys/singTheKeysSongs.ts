@@ -26,10 +26,22 @@ export const SONG_IDS = [
 
 export type SongId = (typeof SONG_IDS)[number]
 
+/* Where the felt beat falls, for the lane's beat lines. All in quarter-note
+ * beats, like SongNote.beats. */
+export type SongMeter = {
+  /* Felt pulse — one lane line each. */
+  pulseBeats: number
+  /* Pulses per bar — every Nth line is a bold bar line. */
+  pulsesPerBar: number
+  /* Beats before the first downbeat (anacrusis). */
+  pickupBeats: number
+}
+
 export type Song = {
   id: SongId
   /* Quarter notes per minute at 1× speed. */
   bpm: number
+  meter: SongMeter
   notes: SongNote[]
 }
 
@@ -95,6 +107,7 @@ const TWINKLE_PHRASE_B: SongNote[] = [
 const TWINKLE: Song = {
   id: 'twinkle',
   bpm: 100,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
   notes: [
     ...TWINKLE_PHRASE_A,
     ...TWINKLE_PHRASE_B,
@@ -123,6 +136,7 @@ const ODE_TO_JOY_OPENING: SongNote[] = [
 const ODE_TO_JOY: Song = {
   id: 'odeToJoy',
   bpm: 100,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
   notes: [
     ...ODE_TO_JOY_OPENING,
     note(4, 1.5),
@@ -142,6 +156,8 @@ const ODE_TO_JOY: Song = {
 const HAPPY_BIRTHDAY: Song = {
   id: 'happyBirthday',
   bpm: 100,
+  // 3/4; the two-eighth pickup fills one beat before "birth" lands on 1
+  meter: { pulseBeats: 1, pulsesPerBar: 3, pickupBeats: 1 },
   notes: [
     note(-5, 0.5),
     note(-5, 0.5),
@@ -196,6 +212,9 @@ const FUR_ELISE_ANSWER: SongNote[] = [
 const FUR_ELISE: Song = {
   id: 'furElise',
   bpm: 50,
+  /* 3/8, felt on the eighth (a quarter pulse would not line up with the
+   * 1.5-beat bar); the E–D♯ sixteenth pickup is half a beat. */
+  meter: { pulseBeats: 0.5, pulsesPerBar: 3, pickupBeats: 0.5 },
   notes: [
     ...FUR_ELISE_TRILL,
     ...FUR_ELISE_ANSWER,

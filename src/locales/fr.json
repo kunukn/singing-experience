@@ -337,6 +337,8 @@
     "song": "Chanson",
     "speed": "Vitesse",
     "melodyGuide": "Guide",
+    "beatLines": "Rythme",
+    "beatLights": "Lumières",
     "scoreCorrect": "{percent}% correct",
     "songs": {
       "twinkle": "Ah ! vous dirai-je, maman",

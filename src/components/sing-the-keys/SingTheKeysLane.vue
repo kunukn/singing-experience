@@ -7,7 +7,13 @@ import {
 import { buildPianoPreviewLine } from '@/components/piano/pianoPreview'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { isNaturalMidi } from '@/components/notes/notesScales'
-import { LOOKAHEAD_MS, type TimelineNote } from './singTheKeysTimeline'
+import {
+  LOOKAHEAD_MS,
+  type BeatFlash,
+  type BeatPulse,
+  type BeatLine,
+  type TimelineNote,
+} from './singTheKeysTimeline'
 
 /*
  * The falling-note lane above the keyboard. Every block is laid out once, in
@@ -32,6 +38,14 @@ type Props = {
   /* False in practice mode (melody guide on): passed blocks go neutral rather
    * than red, since nothing was being judged. */
   isScored: boolean
+  /* Pulse lines falling with the blocks; empty when beat lines are off. */
+  beatLines: BeatLine[]
+  /* Glow on the hit line as a beat line crosses it; null between beats and
+   * while idle. */
+  beatFlash: BeatFlash | null
+  /* Beat lights: the hit line glows in the current pulse's colour and fades
+   * back to orange by the next beat. Null while idle or when lights are off. */
+  beatLight: BeatPulse | null
 }
 
 const props = defineProps<Props>()
@@ -107,6 +121,77 @@ const blocks = computed(() =>
   }),
 )
 
+/* A pulse flashes softer than a bar start, so "1" still stands out. */
+const PULSE_FLASH_OPACITY = 0.6
+
+/* px — how far the beat glow rises above the hit line. */
+const BEAT_FLASH_HEIGHT_PX = 12
+
+const beatLineRows = computed(() =>
+  props.beatLines.map((line) => ({
+    line,
+    top: `${props.laneHeight - line.ms * pxPerMs.value}px`,
+  })),
+)
+
+const beatFlashOpacity = computed(() => {
+  if (!props.beatFlash) return 0
+
+  return props.beatFlash.isBarStart
+    ? props.beatFlash.intensity
+    : props.beatFlash.intensity * PULSE_FLASH_OPACITY
+})
+
+/* One colour per pulse in the bar, cycled. The downbeat is pink so "1" is the
+ * warmest, most noticeable colour; the rest stay apart from each other and
+ * from the orange hit line in both themes. */
+const BEAT_LIGHT_COLORS = [
+  'var(--p-pink-400)',
+  'var(--p-cyan-400)',
+  'var(--p-yellow-400)',
+  'var(--p-purple-400)',
+]
+
+/* px — how much thicker than the 2px hit line the light gets at full
+ * brightness: most on the downbeat, so the bar's "1" stands out. */
+const BEAT_LIGHT_DOWNBEAT_EXTRA_PX = 4
+const BEAT_LIGHT_PULSE_EXTRA_PX = 2
+const HIT_LINE_PX = 2
+
+/* px — how far the light's glow rises above the hit line at full brightness. */
+const BEAT_LIGHT_GLOW_PX = 20
+
+const beatLight = computed(() => {
+  if (!props.beatLight) return null
+
+  const color =
+    BEAT_LIGHT_COLORS[props.beatLight.pulseInBar % BEAT_LIGHT_COLORS.length]
+  /* Full on the beat, fading back to plain orange as the next beat arrives. */
+  const intensity = 1 - props.beatLight.progress
+  const extraPx = props.beatLight.isBarStart
+    ? BEAT_LIGHT_DOWNBEAT_EXTRA_PX
+    : BEAT_LIGHT_PULSE_EXTRA_PX
+  const thicknessPx = HIT_LINE_PX + extraPx * intensity
+  const glowPx = BEAT_LIGHT_GLOW_PX * intensity
+
+  return {
+    pulseInBar: props.beatLight.pulseInBar,
+    intensity,
+    lineStyle: {
+      top: `${props.laneHeight - thicknessPx}px`,
+      height: `${thicknessPx}px`,
+      backgroundColor: color,
+      opacity: intensity,
+    },
+    glowStyle: {
+      top: `${props.laneHeight - glowPx}px`,
+      height: `${glowPx}px`,
+      backgroundImage: `linear-gradient(to top, ${color}, transparent)`,
+      opacity: intensity,
+    },
+  }
+})
+
 const stripStyle = computed(() => ({
   transform: `translateY(${props.elapsedMs * pxPerMs.value}px)`,
 }))
@@ -153,6 +238,55 @@ const sungLine = computed(() => {
       aria-hidden="true"
     />
 
+    <!-- Beat glows, rising off the hit line behind the blocks so the label of
+         the note being sung stays readable: orange as each beat line crosses
+         (Beat), or the beat's own colour (Lights). -->
+    <div
+      class="absolute inset-x-0 bg-linear-to-t from-(--p-orange-400) to-transparent"
+      :style="{
+        top: `${laneHeight - BEAT_FLASH_HEIGHT_PX}px`,
+        height: `${BEAT_FLASH_HEIGHT_PX}px`,
+        opacity: beatFlashOpacity,
+      }"
+      data-testid="sing-the-keys-beat-flash"
+      aria-hidden="true"
+    />
+    <div
+      v-if="beatLight"
+      class="absolute inset-x-0"
+      :style="beatLight.glowStyle"
+      data-testid="sing-the-keys-beat-light-glow"
+      aria-hidden="true"
+    />
+
+    <!-- Beat lines, behind the blocks and clipped at the hit line: unlike the
+         blocks they stop there rather than running on over the keys. -->
+    <div
+      v-if="beatLineRows.length > 0"
+      class="absolute inset-x-0 top-0 overflow-hidden"
+      :style="{ height: `${laneHeight}px` }"
+      aria-hidden="true"
+    >
+      <div
+        class="absolute inset-x-0 top-0 will-change-transform"
+        :style="stripStyle"
+      >
+        <div
+          v-for="row in beatLineRows"
+          :key="row.line.ms"
+          class="absolute inset-x-0"
+          :class="
+            row.line.isBarStart
+              ? 'h-0.5 bg-(--p-surface-400) dark:bg-(--p-surface-600)'
+              : 'h-px bg-(--p-surface-300) dark:bg-(--p-surface-700)'
+          "
+          :style="{ top: row.top }"
+          data-testid="sing-the-keys-beat-line"
+          :data-bar="row.line.isBarStart"
+        />
+      </div>
+    </div>
+
     <div
       class="absolute inset-x-0 top-0 will-change-transform"
       :style="stripStyle"
@@ -186,6 +320,18 @@ const sungLine = computed(() => {
     <div
       class="absolute inset-x-0 z-20 h-0.5 bg-(--p-orange-400)"
       :style="{ top: `${laneHeight - 2}px` }"
+      aria-hidden="true"
+    />
+
+    <!-- Beat light: the hit line itself lights up in the beat's colour, where
+         the singer is already looking, then fades back to orange. -->
+    <div
+      v-if="beatLight"
+      class="absolute inset-x-0 z-20"
+      :style="beatLight.lineStyle"
+      data-testid="sing-the-keys-beat-light"
+      :data-pulse="beatLight.pulseInBar"
+      :data-intensity="beatLight.intensity.toFixed(2)"
       aria-hidden="true"
     />
   </div>

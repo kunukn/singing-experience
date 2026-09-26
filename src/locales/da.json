@@ -337,6 +337,8 @@
     "song": "Sang",
     "speed": "Hastighed",
     "melodyGuide": "Guide",
+    "beatLines": "Takt",
+    "beatLights": "Lys",
     "scoreCorrect": "{percent}% rigtigt",
     "songs": {
       "twinkle": "Blinke, blinke, lille stjerne",

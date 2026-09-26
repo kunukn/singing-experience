@@ -337,6 +337,8 @@
     "song": "曲",
     "speed": "速さ",
     "melodyGuide": "ガイド",
+    "beatLines": "ビート",
+    "beatLights": "ライト",
     "scoreCorrect": "{percent}% 正解",
     "songs": {
       "twinkle": "きらきら星",

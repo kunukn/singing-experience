@@ -337,6 +337,8 @@
     "song": "歌曲",
     "speed": "速度",
     "melodyGuide": "引导",
+    "beatLines": "节拍",
+    "beatLights": "灯光",
     "scoreCorrect": "{percent}% 正确",
     "songs": {
       "twinkle": "小星星",

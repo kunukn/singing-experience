@@ -337,6 +337,8 @@
     "song": "Lagu",
     "speed": "Kecepatan",
     "melodyGuide": "Bantuan",
+    "beatLines": "Ketukan",
+    "beatLights": "Lampu",
     "scoreCorrect": "{percent}% benar",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",

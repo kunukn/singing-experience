@@ -30,6 +30,9 @@ function mountLane(
       sungMidi: null,
       sungFrequency: null,
       isScored: true,
+      beatLines: [],
+      beatFlash: null,
+      beatLight: null,
       ...props,
     },
   })
@@ -134,5 +137,91 @@ describe('SingTheKeysLane', () => {
         .find('[data-testid="sing-the-keys-sung-line"]')
         .exists(),
     ).toBe(true)
+  })
+
+  test('should draw a beat line per pulse, marking bar starts', () => {
+    const wrapper = mountLane({
+      beatLines: [
+        { ms: 0, pulseInBar: 0, isBarStart: true },
+        { ms: 600, pulseInBar: 1, isBarStart: false },
+      ],
+    })
+    const lines = wrapper.findAll('[data-testid="sing-the-keys-beat-line"]')
+
+    expect(lines).toHaveLength(2)
+    expect(lines[0].attributes('data-bar')).toBe('true')
+    expect(lines[1].attributes('data-bar')).toBe('false')
+    /* 600ms × 0.1px/ms = 60px above the 300px hit line. */
+    expect(pxOf(lines[0].attributes('style'), 'top')).toBe(300)
+    expect(pxOf(lines[1].attributes('style'), 'top')).toBe(240)
+  })
+
+  test('should draw no beat lines when given none', () => {
+    expect(
+      mountLane().find('[data-testid="sing-the-keys-beat-line"]').exists(),
+    ).toBe(false)
+  })
+
+  test.each([
+    { beatFlash: null, expected: 0 },
+    { beatFlash: { intensity: 1, isBarStart: true }, expected: 1 },
+    { beatFlash: { intensity: 1, isBarStart: false }, expected: 0.6 },
+    { beatFlash: { intensity: 0.5, isBarStart: true }, expected: 0.5 },
+  ])(
+    'should glow the hit line at $expected for $beatFlash',
+    ({ beatFlash, expected }) => {
+      const style = mountLane({ beatFlash })
+        .get('[data-testid="sing-the-keys-beat-flash"]')
+        .attributes('style')
+      const opacity = Number(/opacity:\s*([\d.]+)/.exec(style ?? '')?.[1])
+
+      expect(opacity).toBeCloseTo(expected)
+    },
+  )
+
+  test('should not light the hit line without a beat light', () => {
+    expect(
+      mountLane().find('[data-testid="sing-the-keys-beat-light"]').exists(),
+    ).toBe(false)
+  })
+
+  test.each([
+    { pulseInBar: 0, progress: 0, intensity: '1.00' },
+    { pulseInBar: 2, progress: 0.5, intensity: '0.50' },
+    { pulseInBar: 3, progress: 1, intensity: '0.00' },
+  ])(
+    'should light the hit line for pulse $pulseInBar at $intensity',
+    ({ pulseInBar, progress, intensity }) => {
+      const light = mountLane({
+        beatLight: {
+          pulseInBar,
+          isBarStart: pulseInBar === 0,
+          sinceMs: 0,
+          progress,
+        },
+      }).get('[data-testid="sing-the-keys-beat-light"]')
+
+      expect(light.attributes('data-pulse')).toBe(String(pulseInBar))
+      expect(light.attributes('data-intensity')).toBe(intensity)
+    },
+  )
+
+  test('should thicken the hit line most on the downbeat', () => {
+    const heightFor = (isBarStart: boolean) =>
+      pxOf(
+        mountLane({
+          beatLight: {
+            pulseInBar: isBarStart ? 0 : 1,
+            isBarStart,
+            sinceMs: 0,
+            progress: 0,
+          },
+        })
+          .get('[data-testid="sing-the-keys-beat-light"]')
+          .attributes('style'),
+        'height',
+      )
+
+    expect(heightFor(true)).toBeGreaterThan(heightFor(false))
   })
 })

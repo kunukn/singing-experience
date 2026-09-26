@@ -21,6 +21,7 @@ const C4 = 60
 const song: Song = {
   id: 'twinkle',
   bpm: 100,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 },
   notes: [
     { midiOffset: 0, beats: 1 },
     { midiOffset: 7, beats: 0.5, restAfterBeats: 0.5 },
@@ -64,44 +65,95 @@ describe('useSingTheKeys', () => {
     vi.useRealTimers()
   })
 
+  test('should play the first note as a start tone shortly into the lead-in', async () => {
+    const { engine, game } = createGame()
+
+    await game.start(startParams(false))
+
+    expect(engine.playToneAt).toHaveBeenCalledTimes(1)
+    expect(engine.playToneAt).toHaveBeenCalledWith(
+      midiToFrequency(60),
+      1,
+      /* 0.6 s after the lead-in begins, not on the button press. */
+      expect.closeTo(TONE_START_S + 0.6, 5),
+    )
+  })
+
+  test('should end the start tone before the first note is due', async () => {
+    const { engine, game } = createGame()
+
+    await game.start(startParams(false))
+
+    const [, durationS, whenS] = vi.mocked(engine.playToneAt).mock.calls[0]
+
+    expect(whenS + durationS).toBeLessThan(SONG_START_S)
+  })
+
   test('should schedule one guide tone per note when the guide is on', async () => {
     const { engine, game } = createGame()
 
     await game.start(startParams(true))
 
-    expect(engine.playToneAt).toHaveBeenCalledTimes(3)
+    /* The start tone first, then the three guide notes. */
+    expect(engine.playToneAt).toHaveBeenCalledTimes(4)
     expect(engine.playToneAt).toHaveBeenNthCalledWith(
-      1,
+      2,
       midiToFrequency(60),
       expect.closeTo(0.6 * 0.92, 5),
       expect.closeTo(SONG_START_S, 5),
     )
     expect(engine.playToneAt).toHaveBeenNthCalledWith(
-      3,
+      4,
       midiToFrequency(64),
       expect.closeTo(1.2 * 0.92, 5),
       expect.closeTo(SONG_START_S + 1.2, 5),
     )
   })
 
-  test('should stay silent when the guide is off', async () => {
+  test('should play no melody notes when the guide is off', async () => {
     const { engine, game } = createGame()
 
     await game.start(startParams(false))
 
-    expect(engine.playToneAt).not.toHaveBeenCalled()
+    /* Only the start tone, which sounds during the lead-in. */
+    for (const [, , whenS] of vi.mocked(engine.playToneAt).mock.calls) {
+      expect(whenS).toBeLessThan(SONG_START_S)
+    }
   })
 
-  test('should click once, one beat before the first note', async () => {
+  test('should click every lead-in beat line, accenting bar starts', async () => {
     const { engine, game } = createGame()
 
     await game.start(startParams())
 
-    expect(engine.playClickAt).toHaveBeenCalledTimes(1)
-    expect(engine.playClickAt).toHaveBeenCalledWith(
-      expect.closeTo(SONG_START_S - 0.6, 5),
-      true,
-    )
+    /* 600 ms beat in 4/4 with no pickup: the 3 s lead-in holds five beats,
+     * and the bar line two before the song ("4 | 1 2 3 4") is the accent. */
+    const clicks = vi
+      .mocked(engine.playClickAt)
+      .mock.calls.map(([whenS, accent]) => [whenS - SONG_START_S, accent])
+    const expected = [
+      [-3, false],
+      [-2.4, true],
+      [-1.8, false],
+      [-1.2, false],
+      [-0.6, false],
+    ]
+
+    expect(clicks).toHaveLength(expected.length)
+    clicks.forEach(([offsetS, accent], index) => {
+      expect(offsetS).toBeCloseTo(expected[index][0] as number, 5)
+      expect(accent).toBe(expected[index][1])
+    })
+  })
+
+  test('should not click once the song has started', async () => {
+    const { engine, game } = createGame()
+
+    await game.start(startParams())
+
+    for (const [whenS] of vi.mocked(engine.playClickAt).mock.calls) {
+      expect(whenS).toBeLessThan(SONG_START_S)
+    }
   })
 
   test('should start in the lead-in and track the audio clock each frame', async () => {
@@ -109,7 +161,11 @@ describe('useSingTheKeys', () => {
 
     await game.start(startParams())
     expect(game.isPlaying.value).toBe(true)
-    expect(game.elapsedMs.value).toBe(-LOOKAHEAD_MS)
+    /* The clock is still SCHEDULE_AHEAD_S short of the lead-in's start. */
+    expect(game.elapsedMs.value).toBeCloseTo(
+      -LOOKAHEAD_MS - TONE_START_S * 1000,
+      5,
+    )
     expect(game.activeNoteIndex.value).toBeNull()
 
     nowS.value = SONG_START_S + 0.7

@@ -337,6 +337,8 @@
     "song": "Lied",
     "speed": "Tempo",
     "melodyGuide": "Hilfe",
+    "beatLines": "Takt",
+    "beatLights": "Lichter",
     "scoreCorrect": "{percent}% richtig",
     "songs": {
       "twinkle": "Funkel, funkel, kleiner Stern",

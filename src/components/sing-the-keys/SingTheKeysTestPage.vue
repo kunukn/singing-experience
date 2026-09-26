@@ -18,6 +18,8 @@ const songId = ref<SongId>(DEFAULT_SONG_ID)
 const startOffset = ref(DEFAULT_START_OFFSET)
 const speed = ref<SpeedOption>(DEFAULT_SPEED)
 const isMelodyGuideEnabled = ref(true)
+const isBeatLinesEnabled = ref(true)
+const areBeatLightsEnabled = ref(true)
 
 const selectedNote = ref<NoteName>('G')
 const selectedOctave = ref(3)
@@ -55,6 +57,8 @@ function followTarget(midi: number | null) {
     v-model:startOffset="startOffset"
     v-model:speed="speed"
     v-model:isMelodyGuideEnabled="isMelodyGuideEnabled"
+    v-model:isBeatLinesEnabled="isBeatLinesEnabled"
+    v-model:areBeatLightsEnabled="areBeatLightsEnabled"
     @targetChange="followTarget"
   >
     <div

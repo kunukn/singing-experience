@@ -337,6 +337,8 @@
     "song": "Canción",
     "speed": "Velocidad",
     "melodyGuide": "Guía",
+    "beatLines": "Ritmo",
+    "beatLights": "Luces",
     "scoreCorrect": "{percent}% correcto",
     "songs": {
       "twinkle": "Estrellita, ¿dónde estás?",

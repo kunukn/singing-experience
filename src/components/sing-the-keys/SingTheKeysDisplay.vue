@@ -13,7 +13,7 @@ import { useWindowSize } from '@vueuse/core'
 import SingTheKeysLane from './SingTheKeysLane.vue'
 import SingTheKeysSettingsRow from './SingTheKeysSettingsRow.vue'
 import { SONGS, type SongId, type SpeedOption } from './singTheKeysSongs'
-import { songMidiRange } from './singTheKeysTimeline'
+import { beatFlashAt, beatPulseAt, songMidiRange } from './singTheKeysTimeline'
 import { useSingTheKeys } from './useSingTheKeys'
 
 type PitchDetectionInput = {
@@ -44,6 +44,16 @@ const songId = defineModel<SongId>('songId', { required: true })
 const startOffset = defineModel<number>('startOffset', { required: true })
 const speed = defineModel<SpeedOption>('speed', { required: true })
 const isMelodyGuideEnabled = defineModel<boolean>('isMelodyGuideEnabled', {
+  required: true,
+})
+/* Pulse lines falling with the blocks, so the beat is visible without a
+ * metronome. Visual only, so it can be flipped mid-run. */
+const isBeatLinesEnabled = defineModel<boolean>('isBeatLinesEnabled', {
+  required: true,
+})
+/* Beat lights: the hit line glows in a colour per pulse in the bar, where the
+ * singer is already looking. Visual only, like the lines. */
+const areBeatLightsEnabled = defineModel<boolean>('areBeatLightsEnabled', {
   required: true,
 })
 
@@ -152,6 +162,22 @@ const missCount = computed(() => {
  * so a stale map never sits over a re-laid tune. */
 const resultNoteIndices = computed(() =>
   showResult.value || isPlaying.value ? correctNoteIndices.value : [],
+)
+
+/* Only while playing: idle sits at elapsedMs 0, where a song without a pickup
+ * has a line, and the hit line would glow on the still preview. The coloured
+ * beat light takes over the hit line when on, so the orange flash stands
+ * down rather than mixing with it. */
+const beatFlash = computed(() =>
+  isPlaying.value && isBeatLinesEnabled.value && !areBeatLightsEnabled.value
+    ? beatFlashAt(timeline.value.beatLines, elapsedMs.value)
+    : null,
+)
+
+const beatLight = computed(() =>
+  isPlaying.value && areBeatLightsEnabled.value
+    ? beatPulseAt(timeline.value.beatLines, elapsedMs.value)
+    : null,
 )
 
 const isTargetCorrect = computed(
@@ -397,6 +423,20 @@ onUnmounted(() => {
         :disabled="isPlaying"
       />
 
+      <ToggleIconButton
+        v-model="isBeatLinesEnabled"
+        iconOn="pi pi-bars"
+        iconOff="pi pi-bars"
+        :label="t('singTheKeys.beatLines')"
+      />
+
+      <ToggleIconButton
+        v-model="areBeatLightsEnabled"
+        iconOn="pi pi-sun"
+        iconOff="pi pi-sun"
+        :label="t('singTheKeys.beatLights')"
+      />
+
       <PreviewToggle
         v-model="isPreviewEnabled"
         :disabled="
@@ -434,6 +474,9 @@ onUnmounted(() => {
             :sungMidi="sungMidi"
             :sungFrequency="liveFrequency"
             :isScored="isScored"
+            :beatLines="isBeatLinesEnabled ? timeline.beatLines : []"
+            :beatFlash="beatFlash"
+            :beatLight="beatLight"
           />
         </template>
       </PianoDisplay>

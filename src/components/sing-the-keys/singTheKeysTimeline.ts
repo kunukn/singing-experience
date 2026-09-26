@@ -15,12 +15,43 @@ export type TimelineNote = {
   durationMs: number
 }
 
+/* ms — how long the hit line glows after a beat line crosses it. Well under
+ * the shortest pulse (480ms at 1.25×), and the pulse itself stays under 3 Hz,
+ * the photosensitivity flash limit. */
+export const BEAT_FLASH_MS = 180
+
+/* One felt pulse in the lane, falling with the blocks. */
+export type BeatLine = {
+  /* Ms from the song's start; negative for the lead-in count-in lines. */
+  ms: number
+  /* Position in the bar, 0 = downbeat. */
+  pulseInBar: number
+  isBarStart: boolean
+}
+
+/* Where the song is inside the current pulse. */
+export type BeatPulse = {
+  pulseInBar: number
+  isBarStart: boolean
+  /* Ms since the latest line crossed the hit line. */
+  sinceMs: number
+  /* 0 on the line, rising to 1 as the next line arrives; 1 after the last. */
+  progress: number
+}
+
+export type BeatFlash = {
+  /* 1 as the line crosses the hit line, fading to 0 over BEAT_FLASH_MS. */
+  intensity: number
+  isBarStart: boolean
+}
+
 export type Timeline = {
   notes: TimelineNote[]
   /* End of the last note (its trailing rest included). */
   totalMs: number
   /* One quarter-note beat at the chosen speed. */
   beatMs: number
+  beatLines: BeatLine[]
 }
 
 /* Lays the song out in ms at a tonic and speed. Rests advance the cursor
@@ -45,7 +76,78 @@ export function buildTimeline(
     cursorMs += durationMs + (note.restAfterBeats ?? 0) * beatMs
   })
 
-  return { notes, totalMs: cursorMs, beatMs }
+  return {
+    notes,
+    totalMs: cursorMs,
+    beatMs,
+    beatLines: buildBeatLines(song, beatMs, cursorMs),
+  }
+}
+
+/* One line per pulse from the start of the lead-in to the end of the song,
+ * counted from the first downbeat so bar lines land on "1" even after a
+ * pickup. Lines before the first note fall during the lead-in as a silent
+ * visual count-in. */
+function buildBeatLines(
+  song: Song,
+  beatMs: number,
+  totalMs: number,
+): BeatLine[] {
+  const { pulseBeats, pulsesPerBar, pickupBeats } = song.meter
+  const pulseMs = pulseBeats * beatMs
+  const downbeatMs = pickupBeats * beatMs
+  const firstPulse = Math.ceil((-LOOKAHEAD_MS - downbeatMs) / pulseMs)
+  const lastPulse = Math.floor((totalMs - downbeatMs) / pulseMs)
+  const lines: BeatLine[] = []
+
+  for (let pulse = firstPulse; pulse <= lastPulse; pulse++) {
+    /* Positive modulo: pulses before the first downbeat are negative. */
+    const pulseInBar = ((pulse % pulsesPerBar) + pulsesPerBar) % pulsesPerBar
+    lines.push({
+      ms: downbeatMs + pulse * pulseMs,
+      pulseInBar,
+      isBarStart: pulseInBar === 0,
+    })
+  }
+
+  return lines
+}
+
+/* The pulse the song is in: the latest line to cross the hit line and how far
+ * along it is towards the next. Null before the first line. */
+export function beatPulseAt(
+  lines: BeatLine[],
+  elapsedMs: number,
+): BeatPulse | null {
+  const index = lines.findLastIndex((candidate) => candidate.ms <= elapsedMs)
+  if (index === -1) return null
+
+  const line = lines[index]
+  const next = lines[index + 1]
+  const sinceMs = elapsedMs - line.ms
+  const progress = next ? Math.min(1, sinceMs / (next.ms - line.ms)) : 1
+
+  return {
+    pulseInBar: line.pulseInBar,
+    isBarStart: line.isBarStart,
+    sinceMs,
+    progress,
+  }
+}
+
+/* The glow from the beat line that most recently crossed the hit line; null
+ * once it has faded or before the first line. */
+export function beatFlashAt(
+  lines: BeatLine[],
+  elapsedMs: number,
+): BeatFlash | null {
+  const pulse = beatPulseAt(lines, elapsedMs)
+  if (!pulse) return null
+
+  const intensity = 1 - pulse.sinceMs / BEAT_FLASH_MS
+  if (intensity <= 0) return null
+
+  return { intensity, isBarStart: pulse.isBarStart }
 }
 
 /* The note sounding at `elapsedMs`: start inclusive, end exclusive. Null

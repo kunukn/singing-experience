@@ -337,6 +337,8 @@
     "song": "أغنية",
     "speed": "السرعة",
     "melodyGuide": "مساعدة",
+    "beatLines": "إيقاع",
+    "beatLights": "أضواء",
     "scoreCorrect": "{percent}% صحيح",
     "songs": {
       "twinkle": "تلألئي يا نجمة",

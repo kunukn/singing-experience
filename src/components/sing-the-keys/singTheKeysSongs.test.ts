@@ -22,6 +22,15 @@ describe('singTheKeysSongs', () => {
     }
   })
 
+  test.each(SONG_IDS)('%s has a pickup shorter than a bar', (id) => {
+    const { pulseBeats, pulsesPerBar, pickupBeats } = SONGS[id].meter
+
+    expect(pulseBeats).toBeGreaterThan(0)
+    expect(Number.isInteger(pulsesPerBar)).toBe(true)
+    expect(pickupBeats).toBeGreaterThanOrEqual(0)
+    expect(pickupBeats).toBeLessThan(pulseBeats * pulsesPerBar)
+  })
+
   test('Twinkle Twinkle has 42 notes and ends on the tonic', () => {
     expect(SONGS.twinkle.notes).toHaveLength(42)
     expect(SONGS.twinkle.notes.at(-1)?.midiOffset).toBe(0)

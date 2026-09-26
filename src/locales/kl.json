@@ -337,6 +337,8 @@
     "song": "Erinarsuut",
     "speed": "Sukkassusaa",
     "melodyGuide": "Guide",
+    "beatLines": "Takt",
+    "beatLights": "Qaammaqqutit",
     "scoreCorrect": "{percent}% eqqortoq",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",

@@ -337,6 +337,8 @@
     "song": "गाना",
     "speed": "रफ़्तार",
     "melodyGuide": "मदद",
+    "beatLines": "ताल",
+    "beatLights": "रोशनी",
     "scoreCorrect": "{percent}% सही",
     "songs": {
       "twinkle": "ट्विंकल ट्विंकल लिटिल स्टार",

@@ -337,6 +337,8 @@
     "song": "Песня",
     "speed": "Скорость",
     "melodyGuide": "Подсказка",
+    "beatLines": "Ритм",
+    "beatLights": "Огни",
     "scoreCorrect": "{percent}% правильно",
     "songs": {
       "twinkle": "Ты мерцай, звезда ночная",

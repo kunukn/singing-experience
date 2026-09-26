@@ -337,6 +337,8 @@
     "song": "Song",
     "speed": "Speed",
     "melodyGuide": "Guide",
+    "beatLines": "Beat",
+    "beatLights": "Lights",
     "scoreCorrect": "{percent}% correct",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",
