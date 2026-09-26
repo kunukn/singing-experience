@@ -1,14 +1,15 @@
 <script setup lang="ts">
-import { C3_MIDI, midiToFrequency, START_TONE_OPTIONS } from '@/utils/noteUtils'
+import { midiToFrequency, START_TONE_OPTIONS } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import SingTheKeysDisplay from './SingTheKeysDisplay.vue'
 import {
   DEFAULT_SONG_ID,
+  DEFAULT_RANGE_OFFSET,
   DEFAULT_SPEED,
-  DEFAULT_START_OFFSET,
   isSongId,
   isSpeedOption,
   SONGS,
+  tonicMidiForRange,
   type SongId,
   type SpeedOption,
 } from './singTheKeysSongs'
@@ -22,17 +23,18 @@ const songId = useLocalStorage<SongId>(
 )
 if (!isSongId(songId.value)) songId.value = DEFAULT_SONG_ID
 
-/* Its own key, not Do-Re-Mi's syng.startOffset: the tonic that suits a scale
- * run is not necessarily the one that suits a song. */
-const startOffset = useLocalStorage(
+/* Its own key, not Do-Re-Mi's syng.startOffset: a song sits by the middle of
+ * its range, not on its tonic. The key name predates the range picker; the
+ * value space (start-tone offsets) is unchanged, so saved picks still load. */
+const rangeOffset = useLocalStorage(
   'syng.singTheKeysStartOffset',
-  DEFAULT_START_OFFSET,
+  DEFAULT_RANGE_OFFSET,
 )
 if (
-  !Number.isInteger(startOffset.value) ||
-  !START_TONE_OPTIONS.some((option) => option.offset === startOffset.value)
+  !Number.isInteger(rangeOffset.value) ||
+  !START_TONE_OPTIONS.some((option) => option.offset === rangeOffset.value)
 ) {
-  startOffset.value = DEFAULT_START_OFFSET
+  rangeOffset.value = DEFAULT_RANGE_OFFSET
 }
 
 const speed = useLocalStorage<SpeedOption>(
@@ -50,7 +52,10 @@ const isBeatLinesEnabled = useLocalStorage('syng.singTheKeysBeatLines', true)
 const areBeatLightsEnabled = useLocalStorage('syng.singTheKeysBeatLights', true)
 
 const range = computed(() =>
-  songMidiRange(SONGS[songId.value], C3_MIDI + startOffset.value),
+  songMidiRange(
+    SONGS[songId.value],
+    tonicMidiForRange(SONGS[songId.value], rangeOffset.value),
+  ),
 )
 
 /* Same detector tuning as Grace Kelly "Sing live": no onset debounce (fast
@@ -80,7 +85,7 @@ const detection = usePitchDetection({
   <SingTheKeysDisplay
     :detection="detection"
     v-model:songId="songId"
-    v-model:startOffset="startOffset"
+    v-model:rangeOffset="rangeOffset"
     v-model:speed="speed"
     v-model:isMelodyGuideEnabled="isMelodyGuideEnabled"
     v-model:isBeatLinesEnabled="isBeatLinesEnabled"

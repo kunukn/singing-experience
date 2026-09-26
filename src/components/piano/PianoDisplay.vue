@@ -73,15 +73,23 @@ type Props = {
    * wash) instead of across the whole key. Sing the Keys turns this on so a
    * played key and a landing block share one shape. */
   isPressGlowBlockShaped?: boolean
+  /* In 'simple' mode, keep the octave on the C keys (C3, D, E… C4) so the
+   * other bare names can be placed by counting from the nearest C. */
+  isOctaveShownOnC?: boolean
 }
 const props = defineProps<Props>()
 
 /* Slot for a game to draw in the space above the keys — inside the scroll box
  * and the same width as the key track, so whatever it draws stays on its keys
  * however the board is sized or panned (the same reason the voice-range ribbon
- * lives here). It gets the layout so it can place things by pitchX. */
+ * lives here). It gets the layout so it can place things by pitchX, and
+ * playKey so something drawn over a key can sound it exactly as the key does,
+ * press glow included. */
 defineSlots<{
-  lane?: (props: { layout: PianoLayout }) => unknown
+  lane?: (props: {
+    layout: PianoLayout
+    playKey: (midi: number) => void
+  }) => unknown
 }>()
 
 /* 'active' while the note is due, 'correct' once it has been sung; undefined
@@ -114,6 +122,7 @@ function keyLabel(key: PianoKey): string | null {
     props.toneLabelMode ?? 'off',
     { midiMin: props.midiMin, midiMax: props.midiMax },
     accidentalStyle.value,
+    props.isOctaveShownOnC,
   )
 }
 
@@ -223,6 +232,10 @@ const emit = defineEmits<{ tonePlayed: [] }>()
 const { pressCountFor, playKey, handleKeyDown } = usePianoKeyPlayback({
   onTonePlayed: () => emit('tonePlayed'),
 })
+
+function playLaneKey(midi: number) {
+  void playKey(midi)
+}
 
 /* A pressed key washes green, then fades back out. Slower than the flash used
  * elsewhere (TONE_CLICK_HIGHLIGHT_DURATION_MS) so the tail reads as a fade
@@ -433,7 +446,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
           :rangeIndex="rangeIndex"
         />
 
-        <slot name="lane" :layout="layout" />
+        <slot name="lane" :layout="layout" :playKey="playLaneKey" />
 
         <div
           class="relative mx-auto"

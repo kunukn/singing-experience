@@ -1,6 +1,8 @@
+import { C3_MIDI } from '@/utils/noteUtils'
+
 /* Sing the Keys — melody data.
  *
- * Pitches are semitone offsets from the song's tonic, so one start-tone pick
+ * Pitches are semitone offsets from the song's tonic, so one range pick
  * transposes any song: sounding MIDI = tonicMidi + midiOffset. Durations are in
  * quarter-note beats; `bpm` is the song's own quarter-note tempo, scaled by the
  * speed select at play time. All four tunes are public domain. */
@@ -54,8 +56,43 @@ export type SpeedOption = (typeof SPEED_OPTIONS)[number]
 
 export const DEFAULT_SPEED: SpeedOption = 1
 
-/* G3 — the same tonic default as Do-Re-Mi (DEFAULT_STARTING_SEMITONE_OFFSET). */
-export const DEFAULT_START_OFFSET = 7
+/* The Song range picker reuses the start-tone options (G4 … G2, offsets from
+ * C3) and their voice tiers, but an option places the song by the middle of
+ * its range rather than naming its tonic. A start tone in Do-Re-Mi begins a
+ * one-octave scale whose middle sits SCALE_CENTER_SEMITONES above it; the song
+ * is centred on that same pitch, so every tier holds a song as it holds a
+ * scale, whatever the song's own span. Switching songs keeps the voice. */
+const SCALE_CENTER_SEMITONES = 6
+
+/* G3 — the same default as Do-Re-Mi (DEFAULT_STARTING_SEMITONE_OFFSET): the
+ * song is centred on C♯4, the middle of the G3–G4 scale. */
+export const DEFAULT_RANGE_OFFSET = 7
+
+/* Lowest and highest sung note, as semitones from the tonic. */
+function offsetSpan(song: Song): { min: number; max: number } {
+  const offsets = song.notes.map((note) => note.midiOffset)
+
+  return { min: Math.min(...offsets), max: Math.max(...offsets) }
+}
+
+/* Tonic that centres the song on the picked range option. The span's middle
+ * can fall between two semitones; rounding it keeps the tonic a real key. */
+export function tonicMidiForRange(song: Song, rangeOffset: number): number {
+  const { min, max } = offsetSpan(song)
+  const centerMidi = C3_MIDI + rangeOffset + SCALE_CENTER_SEMITONES
+
+  return centerMidi - Math.round((min + max) / 2)
+}
+
+/* The notes the singer actually has to reach, tonic applied. */
+export function sungMidiRange(
+  song: Song,
+  tonicMidi: number,
+): { lowestMidi: number; highestMidi: number } {
+  const { min, max } = offsetSpan(song)
+
+  return { lowestMidi: tonicMidi + min, highestMidi: tonicMidi + max }
+}
 
 export function isSongId(value: unknown): value is SongId {
   return SONG_IDS.includes(value as SongId)

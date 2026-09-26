@@ -44,6 +44,9 @@ type Props = {
   isShowingEnding: boolean
   /* The ending glide has landed and the lane is at rest. */
   isEndingSettled: boolean
+  /* Blocks sound their note when pressed. Off during a run: a moving block is
+   * hard to hit, and its tone would reach the mic mid-song. */
+  areBlocksPressable: boolean
   /* Pulse lines falling with the blocks; empty when beat lines are off. */
   beatLines: BeatLine[]
   /* Glow on the hit line as a beat line crosses it; null between beats and
@@ -55,6 +58,9 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+
+/* A block was pressed: sound its note as if its key had been. */
+const emit = defineEmits<{ blockPress: [midi: number] }>()
 
 type NoteStatus = 'upcoming' | 'active' | 'correct' | 'missed' | 'passed'
 
@@ -302,11 +308,16 @@ const sungLine = computed(() => {
         v-for="block in blocks"
         :key="block.note.index"
         class="absolute flex items-end justify-center rounded-md pb-0.5 text-sm leading-none font-semibold select-none"
-        :class="STATUS_CLASS[statusOf(block.note)]"
+        :class="[
+          STATUS_CLASS[statusOf(block.note)],
+          areBlocksPressable &&
+            'pointer-events-auto cursor-pointer touch-manipulation hover:brightness-110',
+        ]"
         :style="block.style"
         :data-testid="`lane-note-${block.note.index}`"
         :data-status="statusOf(block.note)"
         :data-midi="block.note.midi"
+        @pointerdown="areBlocksPressable && emit('blockPress', block.note.midi)"
       >
         {{ block.label }}
       </div>

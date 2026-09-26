@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'vitest'
+import { C3_MIDI, START_TONE_OPTIONS } from '@/utils/noteUtils'
 import {
+  DEFAULT_RANGE_OFFSET,
   DEFAULT_SONG_ID,
   DEFAULT_SPEED,
   isSongId,
@@ -7,6 +9,8 @@ import {
   SONG_IDS,
   SONGS,
   SPEED_OPTIONS,
+  sungMidiRange,
+  tonicMidiForRange,
 } from './singTheKeysSongs'
 
 describe('singTheKeysSongs', () => {
@@ -60,5 +64,49 @@ describe('singTheKeysSongs', () => {
     expect([...SPEED_OPTIONS]).toEqual(
       [...SPEED_OPTIONS].toSorted((a, b) => b - a),
     )
+  })
+
+  describe('song range', () => {
+    const rangeMidpoint = (id: (typeof SONG_IDS)[number], offset: number) => {
+      const song = SONGS[id]
+      const { lowestMidi, highestMidi } = sungMidiRange(
+        song,
+        tonicMidiForRange(song, offset),
+      )
+
+      return (lowestMidi + highestMidi) / 2
+    }
+
+    /* Each option centres the song where the same Do-Re-Mi start tone's
+     * one-octave scale is centred (6 semitones up), within the half-semitone
+     * rounding an odd span needs. */
+    test.each(SONG_IDS)('%s is centred on the option', (id) => {
+      for (const { offset } of START_TONE_OPTIONS) {
+        const scaleMidpoint = C3_MIDI + offset + 6
+
+        expect(
+          Math.abs(rangeMidpoint(id, offset) - scaleMidpoint),
+        ).toBeLessThanOrEqual(0.5)
+      }
+    })
+
+    /* "Vertical Ordering" in AGENTS.md: a range sorts on its midpoint. */
+    test.each(SONG_IDS)('%s options run high to low by midpoint', (id) => {
+      const midpoints = START_TONE_OPTIONS.map(({ offset }) =>
+        rangeMidpoint(id, offset),
+      )
+
+      expect(midpoints).toEqual(midpoints.toSorted((a, b) => b - a))
+    })
+
+    test('the default puts Für Elise at F3–A4', () => {
+      const song = SONGS.furElise
+      const tonicMidi = tonicMidiForRange(song, DEFAULT_RANGE_OFFSET)
+
+      expect(sungMidiRange(song, tonicMidi)).toEqual({
+        lowestMidi: 53,
+        highestMidi: 69,
+      })
+    })
   })
 })

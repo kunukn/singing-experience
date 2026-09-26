@@ -4,8 +4,8 @@ import { midiToNoteLabel, NOTE_OPTIONS_HIGH_TO_LOW } from '@/utils/noteUtils'
 import SingTheKeysDisplay from './SingTheKeysDisplay.vue'
 import {
   DEFAULT_SONG_ID,
+  DEFAULT_RANGE_OFFSET,
   DEFAULT_SPEED,
-  DEFAULT_START_OFFSET,
   type SongId,
   type SpeedOption,
 } from './singTheKeysSongs'
@@ -15,7 +15,7 @@ import {
  * settings are plain refs so the harness never writes the syng.singTheKeys*
  * keys the real page persists. */
 const songId = ref<SongId>(DEFAULT_SONG_ID)
-const startOffset = ref(DEFAULT_START_OFFSET)
+const rangeOffset = ref(DEFAULT_RANGE_OFFSET)
 const speed = ref<SpeedOption>(DEFAULT_SPEED)
 const isMelodyGuideEnabled = ref(true)
 const isBeatLinesEnabled = ref(true)
@@ -54,7 +54,7 @@ function followTarget(midi: number | null) {
     titleSuffix="(Test)"
     simulateIdlePreview
     v-model:songId="songId"
-    v-model:startOffset="startOffset"
+    v-model:rangeOffset="rangeOffset"
     v-model:speed="speed"
     v-model:isMelodyGuideEnabled="isMelodyGuideEnabled"
     v-model:isBeatLinesEnabled="isBeatLinesEnabled"

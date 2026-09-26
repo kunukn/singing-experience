@@ -35,6 +35,7 @@ function mountLane(
       isScored: true,
       isShowingEnding: false,
       isEndingSettled: false,
+      areBlocksPressable: true,
       beatLines: [],
       beatFlash: null,
       beatLight: null,
@@ -106,6 +107,25 @@ describe('SingTheKeysLane', () => {
     expect(
       wrapper.get('[data-testid="lane-note-0"]').attributes('data-status'),
     ).toBe('missed')
+  })
+
+  test('should emit the block midi when a block is pressed', async () => {
+    const wrapper = mountLane()
+    const block = wrapper.get('[data-testid="lane-note-1"]')
+
+    await block.trigger('pointerdown')
+
+    expect(wrapper.emitted('blockPress')).toEqual([
+      [Number(block.attributes('data-midi'))],
+    ])
+  })
+
+  test('should ignore block presses while blocks are not pressable', async () => {
+    const wrapper = mountLane({ areBlocksPressable: false })
+
+    await wrapper.get('[data-testid="lane-note-1"]').trigger('pointerdown')
+
+    expect(wrapper.emitted('blockPress')).toBeUndefined()
   })
 
   test('should mark a passed note as passed, not missed, when unscored', () => {

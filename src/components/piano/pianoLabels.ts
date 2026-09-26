@@ -19,6 +19,9 @@ function isRangeEdge(key: PianoKey, range: PianoRange): boolean {
  * carry the octave so the range reads unambiguously. 'simple' and 'advanced'
  * label every key, with the octave digit only in 'advanced'.
  *
+ * isOctaveShownOnC keeps the C-key octave markers in 'simple' too (C3, D, E…
+ * C4), so a bare D can be placed by counting up from the nearest C.
+ *
  * Black keys need no separate rule: their key.label is always null, so in 'off'
  * they fall through to the range-edge check.
  *
@@ -31,6 +34,7 @@ export function pianoKeyLabel(
   mode: ToneLabelMode,
   range: PianoRange,
   accidentalStyle: AccidentalStyle,
+  isOctaveShownOnC = false,
 ): string | null {
   const preferFlats = accidentalStyle === 'flat'
 
@@ -41,6 +45,8 @@ export function pianoKeyLabel(
 
     return null
   }
+
+  if (mode === 'simple' && isOctaveShownOnC && key.label) return key.label
 
   return midiToNoteLabel(key.midi, {
     showOctave: mode === 'advanced',

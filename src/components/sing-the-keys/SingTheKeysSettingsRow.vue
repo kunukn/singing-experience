@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import type { ToneMode } from '@/composables/toneEngine'
+import SongRangeSelect from './SongRangeSelect.vue'
 import {
-  DEFAULT_START_OFFSET,
   SONG_IDS,
   SPEED_OPTIONS,
+  type Song,
   type SongId,
   type SpeedOption,
 } from './singTheKeysSongs'
@@ -12,12 +14,15 @@ type Props = {
   /* True while a run is going — the selects stay locked so the timeline
    * can't be changed underneath it. */
   isRunning: boolean
+  /* The selected song, so the range options show its own lowest–highest. */
+  song: Song
+  accidentalStyle: AccidentalStyle
 }
 
 const props = defineProps<Props>()
 
 const songId = defineModel<SongId>('songId', { required: true })
-const startOffset = defineModel<number>('startOffset', { required: true })
+const rangeOffset = defineModel<number>('rangeOffset', { required: true })
 const speed = defineModel<SpeedOption>('speed', { required: true })
 
 const { t, locale } = useI18n()
@@ -79,11 +84,12 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     <div class="settings-item">
       <label
         class="hidden text-end text-sm text-(--p-text-muted-color) md:block"
-        >{{ t('doReMi.startTone') }}</label
+        >{{ t('singTheKeys.songRange') }}</label
       >
-      <StartToneSelect
-        v-model:startOffset="startOffset"
-        :defaultOffset="DEFAULT_START_OFFSET"
+      <SongRangeSelect
+        v-model:rangeOffset="rangeOffset"
+        :song="props.song"
+        :accidentalStyle="props.accidentalStyle"
         :disabled="props.isRunning"
       />
     </div>

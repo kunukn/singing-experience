@@ -3,7 +3,6 @@ import type { PianoPreviewLaneId } from '@/components/piano/pianoPreview'
 import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import type { NoteInfo } from '@/utils/noteUtils'
 import {
-  C3_MIDI,
   frequencyToMidi,
   midiToFrequency,
   toAccidentalGlyph,
@@ -12,7 +11,12 @@ import { isOnPitch } from '@/utils/pitchMatch'
 import { useWindowSize } from '@vueuse/core'
 import SingTheKeysLane from './SingTheKeysLane.vue'
 import SingTheKeysSettingsRow from './SingTheKeysSettingsRow.vue'
-import { SONGS, type SongId, type SpeedOption } from './singTheKeysSongs'
+import {
+  SONGS,
+  tonicMidiForRange,
+  type SongId,
+  type SpeedOption,
+} from './singTheKeysSongs'
 import { beatFlashAt, beatPulseAt, songMidiRange } from './singTheKeysTimeline'
 import { useSingTheKeys } from './useSingTheKeys'
 
@@ -41,7 +45,7 @@ type Props = {
 const props = defineProps<Props>()
 
 const songId = defineModel<SongId>('songId', { required: true })
-const startOffset = defineModel<number>('startOffset', { required: true })
+const rangeOffset = defineModel<number>('rangeOffset', { required: true })
 const speed = defineModel<SpeedOption>('speed', { required: true })
 const isMelodyGuideEnabled = defineModel<boolean>('isMelodyGuideEnabled', {
   required: true,
@@ -66,7 +70,9 @@ const { frequency, noteInfo, isListening, isClean, error, start, stop } =
   props.detection
 
 const song = computed(() => SONGS[songId.value])
-const tonicMidi = computed(() => C3_MIDI + startOffset.value)
+const tonicMidi = computed(() =>
+  tonicMidiForRange(song.value, rangeOffset.value),
+)
 /* Keyboard span: the transposed song plus a semitone of margin, on white keys. */
 const range = computed(() => songMidiRange(song.value, tonicMidi.value))
 
@@ -367,8 +373,10 @@ onUnmounted(() => {
 
     <SingTheKeysSettingsRow
       v-model:songId="songId"
-      v-model:startOffset="startOffset"
+      v-model:rangeOffset="rangeOffset"
       v-model:speed="speed"
+      :song="song"
+      :accidentalStyle="accidentalStyle"
       :isRunning="isPlaying"
     />
 
@@ -466,13 +474,14 @@ onUnmounted(() => {
         :previewLanes="previewLanes"
         :isPreviewEnabled="true"
         toneLabelMode="simple"
+        :isOctaveShownOnC="true"
         :accidentalStyle="accidentalStyle"
         :areKeyboardHintsVisible="false"
         :targetMidi="targetMidi"
         :isTargetCorrect="isTargetCorrect"
         :isPressGlowBlockShaped="true"
       >
-        <template #lane="{ layout }">
+        <template #lane="{ layout, playKey }">
           <SingTheKeysLane
             :notes="timeline.notes"
             :layout="layout"
@@ -480,6 +489,7 @@ onUnmounted(() => {
             :elapsedMs="laneElapsedMs"
             :isShowingEnding="isShowingEnding"
             :isEndingSettled="isEndingSettled"
+            :areBlocksPressable="!isPlaying"
             :activeNoteIndex="activeNoteIndex"
             :correctNoteIndices="resultNoteIndices"
             :accidentalStyle="accidentalStyle"
@@ -489,6 +499,7 @@ onUnmounted(() => {
             :beatLines="isBeatLinesEnabled ? timeline.beatLines : []"
             :beatFlash="beatFlash"
             :beatLight="beatLight"
+            @blockPress="playKey"
           />
         </template>
       </PianoDisplay>

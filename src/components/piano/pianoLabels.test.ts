@@ -42,6 +42,16 @@ describe('pianoKeyLabel', () => {
     expect(labelFor(62, 'simple')).toBe('D')
   })
 
+  it("keeps the octave on C keys only in 'simple' with isOctaveShownOnC", () => {
+    const label = (midi: number) =>
+      pianoKeyLabel(keyFor(midi), 'simple', RANGE, 'sharp', true)
+
+    expect(label(60)).toBe('C4')
+    expect(label(72)).toBe('C5')
+    expect(label(61)).toBe('C♯')
+    expect(label(62)).toBe('D')
+  })
+
   it("labels every key with the octave in 'advanced'", () => {
     expect(labelFor(60, 'advanced')).toBe('C4')
     expect(labelFor(61, 'advanced')).toBe('C♯4')
