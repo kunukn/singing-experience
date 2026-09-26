@@ -331,18 +331,21 @@ const whiteTargetWash = computed(() => {
   }
 })
 
-/* A white key's press glow in the block shape, relative to the key since the
- * glow lives inside the key button. Undefined leaves the full-key inset-0. */
-function whiteGlowStyle(key: PianoKey) {
-  if (!props.isPressGlowBlockShaped) return undefined
+/* White keys' press glows in the block shape, drawn as one layer over all the
+ * white keys like the target wash. Inside each key button the block's overhang
+ * past the key edge (E/F, B/C) was clipped unevenly: the later key's face
+ * painted over E's overhang while F's spilled over E. */
+const whitePressGlows = computed(() => {
+  if (!props.isPressGlowBlockShaped) return []
 
-  const span = pianoNoteBlockSpan(layout.value, key.midi)
-
-  return {
-    insetInlineStart: `${span.leftPx - key.leftPx}px`,
-    width: `${span.widthPx}px`,
-  }
-}
+  return layout.value.whites
+    .filter((key) => pressCountFor(key.midi))
+    .map((key) => ({
+      midi: key.midi,
+      pressCount: pressCountFor(key.midi),
+      ...pianoNoteBlockSpan(layout.value, key.midi),
+    }))
+})
 
 /* The missing black note just outside either end of the range, where it lands
  * on the keyboard edge — gives the end key a neighbouring hint line to read
@@ -487,15 +490,15 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
 
             <!-- Press highlight. Keyed on the press count so a fresh press
              remounts the element and replays the fade from full colour; an
-             opacity transition would instead be a no-op while already lit. -->
+             opacity transition would instead be a no-op while already lit.
+             The block-shaped variant lives outside the key (whitePressGlows). -->
             <span
-              v-if="pressCountFor(key.midi)"
+              v-if="pressCountFor(key.midi) && !isPressGlowBlockShaped"
               :key="`glow-${pressCountFor(key.midi)}`"
-              class="piano-key-glow pointer-events-none absolute rounded-b-md bg-(--p-primary-color)"
-              :class="isPressGlowBlockShaped ? 'inset-y-0' : 'inset-0'"
-              :style="whiteGlowStyle(key)"
+              class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
               aria-hidden="true"
               data-testid="piano-key-glow"
+              :data-midi="key.midi"
             />
 
             <!-- Sits on the key's pitch position, not its rectangle center, so the
@@ -529,6 +532,24 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               {{ keyChar(key) }}
             </span>
           </button>
+
+          <!-- Block-shaped press glows (see whitePressGlows). pointer-events-none
+               so presses reach the keys underneath; z-[1] ahead of the target
+               wash in DOM order keeps the wash, labels (z-[2]) and black keys
+               (z-10) above it, as when the glow lived inside the key. -->
+          <span
+            v-for="glow in whitePressGlows"
+            :key="`glow-${glow.midi}-${glow.pressCount}`"
+            class="piano-key-glow pointer-events-none absolute bottom-0 z-[1] rounded-b-md bg-(--p-primary-color)"
+            :style="{
+              insetInlineStart: `${glow.leftPx}px`,
+              width: `${glow.widthPx}px`,
+              height: `${WHITE_KEY_HEIGHT}px`,
+            }"
+            aria-hidden="true"
+            data-testid="piano-key-glow"
+            :data-midi="glow.midi"
+          />
 
           <!-- Game target wash on a white key: where the next falling block
                lands, in the block's own shape (see whiteTargetWash). -->

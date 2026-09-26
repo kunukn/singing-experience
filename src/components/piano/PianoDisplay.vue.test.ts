@@ -105,17 +105,38 @@ describe('PianoDisplay - target key', () => {
     expect(style).toContain('width: 29.76px')
   })
 
-  /* Same E4 block as above, relative to the E key's own left edge at 84px. */
+  /* Same E4 block as the target wash above — the full block, overhang past
+   * the E key's right edge included. */
   test("should shape a white key's press glow like the block when asked", async () => {
     const wrapper = mountDisplay({ isPressGlowBlockShaped: true })
 
     await wrapper.get('[data-testid="piano-key-64"]').trigger('pointerdown')
 
     const style = wrapper
-      .get('[data-testid="piano-key-64"] [data-testid="piano-key-glow"]')
+      .get('[data-testid="piano-key-glow"][data-midi="64"]')
       .attributes('style')
-    expect(pxOf(style, 'inset-inline-start')).toBeCloseTo(9.12, 5)
+    expect(pxOf(style, 'inset-inline-start')).toBeCloseTo(93.12, 5)
     expect(pxOf(style, 'width')).toBeCloseTo(29.76, 5)
+  })
+
+  /* E4 and F4 blocks overhang their shared edge by the same amount, so the
+   * two glows mirror each other around it (E/F edge at 120px). */
+  test('should overhang the E/F edge equally from both sides', async () => {
+    const wrapper = mountDisplay({ isPressGlowBlockShaped: true })
+
+    await wrapper.get('[data-testid="piano-key-64"]').trigger('pointerdown')
+    await wrapper.get('[data-testid="piano-key-65"]').trigger('pointerdown')
+
+    const eStyle = wrapper
+      .get('[data-testid="piano-key-glow"][data-midi="64"]')
+      .attributes('style')
+    const fStyle = wrapper
+      .get('[data-testid="piano-key-glow"][data-midi="65"]')
+      .attributes('style')
+    const eOverhang =
+      pxOf(eStyle, 'inset-inline-start') + pxOf(eStyle, 'width') - 120
+    const fOverhang = 120 - pxOf(fStyle, 'inset-inline-start')
+    expect(eOverhang).toBeCloseTo(fOverhang, 5)
   })
 
   test('should glow across the whole white key by default', async () => {
@@ -125,7 +146,7 @@ describe('PianoDisplay - target key', () => {
 
     expect(
       wrapper
-        .get('[data-testid="piano-key-64"] [data-testid="piano-key-glow"]')
+        .get('[data-testid="piano-key-glow"][data-midi="64"]')
         .attributes('style'),
     ).toBeUndefined()
   })
