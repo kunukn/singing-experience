@@ -51,8 +51,8 @@ const isMelodyGuideEnabled = defineModel<boolean>('isMelodyGuideEnabled', {
 const isBeatLinesEnabled = defineModel<boolean>('isBeatLinesEnabled', {
   required: true,
 })
-/* Beat lights: the hit line glows light blue on each beat, where the singer is
- * already looking. Visual only, like the lines. */
+/* Beat lights: the hit line thickens and glows on each beat, where the singer
+ * is already looking. Visual only, like the lines. */
 const areBeatLightsEnabled = defineModel<boolean>('areBeatLightsEnabled', {
   required: true,
 })
@@ -133,6 +133,11 @@ const isOnPitchForScore = computed(() => {
  * but no tally, result or confetti. */
 const isScored = computed(() => !isMelodyGuideEnabled.value)
 const isScoring = computed(() => isPlaying.value && isScored.value)
+
+/* Whether the last run was scored, fixed at Start. The lane paints passed
+ * blocks from this rather than the live toggle, so flipping Guide after a
+ * practice run ends does not turn its unsung notes red. */
+const isRunScored = ref(isScored.value)
 
 const {
   reachedThreshold,
@@ -288,6 +293,7 @@ const laneHeight = computed(() =>
 async function startSinging() {
   showResult.value = false
   resetScore()
+  isRunScored.value = isScored.value
   if (isScored.value) {
     await start()
     if (!isListening.value) return
@@ -479,7 +485,7 @@ onUnmounted(() => {
             :accidentalStyle="accidentalStyle"
             :sungMidi="sungMidi"
             :sungFrequency="liveFrequency"
-            :isScored="isScored"
+            :isScored="isRunScored"
             :beatLines="isBeatLinesEnabled ? timeline.beatLines : []"
             :beatFlash="beatFlash"
             :beatLight="beatLight"

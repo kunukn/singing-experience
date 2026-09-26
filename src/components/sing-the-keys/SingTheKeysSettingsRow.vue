@@ -20,11 +20,14 @@ const songId = defineModel<SongId>('songId', { required: true })
 const startOffset = defineModel<number>('startOffset', { required: true })
 const speed = defineModel<SpeedOption>('speed', { required: true })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
-/* Easiest first — a named list, not a magnitude, so it keeps its own order. */
+/* A to Z by translated title, so the order follows the active language. */
 const songOptions = computed(() =>
-  SONG_IDS.map((id) => ({ label: t(`singTheKeys.songs.${id}`), value: id })),
+  SONG_IDS.map((id) => ({
+    label: t(`singTheKeys.songs.${id}`),
+    value: id,
+  })).toSorted((a, b) => a.label.localeCompare(b.label, locale.value)),
 )
 
 /* SPEED_OPTIONS is already largest first ("Vertical Ordering" in AGENTS.md).

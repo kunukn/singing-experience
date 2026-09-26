@@ -49,8 +49,8 @@ type Props = {
   /* Glow on the hit line as a beat line crosses it; null between beats and
    * while idle. */
   beatFlash: BeatFlash | null
-  /* Beat lights: the hit line glows light blue on each beat and fades
-   * back to orange by the next beat. Null while idle or when lights are off. */
+  /* Beat lights: the hit line thickens and glows on each beat and fades
+   * back to its resting width by the next beat. Null while idle or when lights are off. */
   beatLight: BeatPulse | null
 }
 
@@ -154,10 +154,10 @@ const beatFlashOpacity = computed(() => {
     : props.beatFlash.intensity * PULSE_FLASH_OPACITY
 })
 
-/* One colour for every beat — a light blue that belongs with the blue blocks
- * yet still stands apart from them and from the orange hit line. Colour per
- * beat read as noise; the downbeat stands out by thickness instead. */
-const BEAT_LIGHT_COLOR = 'var(--p-cyan-400)'
+/* The hit line's own orange: a second hue fading over it blended into a
+ * muddy grey mid-fade, and orange keeps the landing edge distinct from the
+ * blue blocks. The downbeat stands out by thickness instead. */
+const BEAT_LIGHT_COLOR = 'var(--p-orange-400)'
 
 /* px — how much thicker than the 2px hit line the light gets at full
  * brightness: most on the downbeat, so the bar's "1" stands out. */
@@ -171,7 +171,7 @@ const BEAT_LIGHT_GLOW_PX = 20
 const beatLight = computed(() => {
   if (!props.beatLight) return null
 
-  /* Full on the beat, fading back to plain orange as the next beat arrives. */
+  /* Full on the beat, fading back to the plain hit line as the next beat arrives. */
   const intensity = 1 - props.beatLight.progress
   const extraPx = props.beatLight.isBarStart
     ? BEAT_LIGHT_DOWNBEAT_EXTRA_PX
@@ -246,8 +246,8 @@ const sungLine = computed(() => {
     />
 
     <!-- Beat glows, rising off the hit line behind the blocks so the label of
-         the note being sung stays readable: orange as each beat line crosses
-         (Beat), or light blue (Lights). -->
+         the note being sung stays readable: as each beat line crosses (Beat),
+         or on each beat (Lights). -->
     <div
       class="absolute inset-x-0 bg-linear-to-t from-(--p-orange-400) to-transparent"
       :style="{
@@ -330,8 +330,8 @@ const sungLine = computed(() => {
       aria-hidden="true"
     />
 
-    <!-- Beat light: the hit line itself lights up light blue, where
-         the singer is already looking, then fades back to orange. -->
+    <!-- Beat light: the hit line itself thickens and glows, where the
+         singer is already looking, then fades back to its resting width. -->
     <div
       v-if="beatLight"
       class="absolute inset-x-0 z-20"
