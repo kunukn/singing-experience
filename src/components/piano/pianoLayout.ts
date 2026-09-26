@@ -113,6 +113,30 @@ export function pianoPitchXForMidi(layout: PianoLayout, midi: number): number {
   return (clamped - layout.originPitch) * layout.unit
 }
 
+/* Fraction of a semitone unit a game's falling block spans. A natural is wider
+ * than the 1.24 black-key block so the two read as white vs black key, like the
+ * tutorial videos Sing the Keys borrows from. The accidental block is exactly a
+ * black key's width. */
+export const NATURAL_BLOCK_UNITS = 1.4
+export const ACCIDENTAL_BLOCK_UNITS = 2 * BLACK_KEY_WIDTH_RATIO
+
+/**
+ * Horizontal span of a note's falling block, centred on its pitch — not on the
+ * key face, which is asymmetric around the pitch on C/E/F/B. The Sing the Keys
+ * lane draws its blocks with it and the keyboard draws the target wash with it,
+ * so a block and the key wash it lands on always share one shape.
+ */
+export function pianoNoteBlockSpan(
+  layout: PianoLayout,
+  midi: number,
+): { leftPx: number; widthPx: number } {
+  const widthPx =
+    layout.unit *
+    (isNaturalMidi(midi) ? NATURAL_BLOCK_UNITS : ACCIDENTAL_BLOCK_UNITS)
+
+  return { leftPx: pianoPitchXForMidi(layout, midi) - widthPx / 2, widthPx }
+}
+
 export type PianoEdgeHint = { midi: number; pitchX: number }
 
 /*

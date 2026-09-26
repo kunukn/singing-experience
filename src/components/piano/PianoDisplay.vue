@@ -23,6 +23,7 @@ import {
   WHITE_KEY_HEIGHT,
   buildPianoLayout,
   pianoEdgeHints,
+  pianoNoteBlockSpan,
   pianoSpanUnits,
   type PianoKey,
   type PianoLayout,
@@ -297,6 +298,22 @@ const layout = computed(() =>
   buildPianoLayout(props.midiMin, props.midiMax, semitoneUnit.value),
 )
 
+/* A white target's wash is drawn in the falling block's shape, not the key's:
+ * centred on the pitch and the block's width, full key height, under the black
+ * keys so they cover its top corners. A black key already is the block's shape,
+ * so its wash stays on the key itself. */
+const whiteTargetWash = computed(() => {
+  const key = layout.value.whites.find(
+    (white) => white.midi === props.targetMidi,
+  )
+  if (!key) return null
+
+  return {
+    ...pianoNoteBlockSpan(layout.value, key.midi),
+    state: targetState(key)!,
+  }
+})
+
 /* The missing black note just outside either end of the range, where it lands
  * on the keyboard edge — gives the end key a neighbouring hint line to read
  * its ±50¢ boundary against (see pianoEdgeHints). */
@@ -448,19 +465,12 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               aria-hidden="true"
             />
 
-            <!-- Game target wash: where the next falling block lands. -->
-            <span
-              v-if="targetState(key)"
-              class="pointer-events-none absolute inset-0 rounded-b-md"
-              :class="TARGET_WASH_CLASS[targetState(key)!]"
-              aria-hidden="true"
-            />
-
             <!-- Sits on the key's pitch position, not its rectangle center, so the
-             label lines up with the hint line (they differ on C/E/F/B). -->
+             label lines up with the hint line (they differ on C/E/F/B). z-[2]
+             keeps it above the target wash, a sibling of the keys. -->
             <span
               v-if="keyLabel(key)"
-              class="absolute -translate-x-1/2"
+              class="absolute z-[2] -translate-x-1/2"
               :class="whiteLabelClass"
               :style="{
                 insetInlineStart: `${key.pitchX - key.leftPx}px`,
@@ -476,7 +486,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
              already announces it, hence aria-hidden here. -->
             <span
               v-if="keyChar(key)"
-              class="absolute -translate-x-1/2 rounded border border-(--p-content-border-color) px-1 text-[10px] leading-4 text-(--p-text-muted-color)"
+              class="absolute z-[2] -translate-x-1/2 rounded border border-(--p-content-border-color) px-1 text-[10px] leading-4 text-(--p-text-muted-color)"
               :style="{
                 insetInlineStart: `${key.pitchX - key.leftPx}px`,
                 bottom: `${KEY_CHAR_BOTTOM}px`,
@@ -486,6 +496,21 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               {{ keyChar(key) }}
             </span>
           </button>
+
+          <!-- Game target wash on a white key: where the next falling block
+               lands, in the block's own shape (see whiteTargetWash). -->
+          <div
+            v-if="whiteTargetWash"
+            class="pointer-events-none absolute bottom-0 z-[1] rounded-b-md"
+            :class="TARGET_WASH_CLASS[whiteTargetWash.state]"
+            :style="{
+              insetInlineStart: `${whiteTargetWash.leftPx}px`,
+              width: `${whiteTargetWash.widthPx}px`,
+              height: `${WHITE_KEY_HEIGHT}px`,
+            }"
+            aria-hidden="true"
+            data-testid="piano-target-wash"
+          />
 
           <button
             v-for="key in layout.blacks"

@@ -50,6 +50,7 @@ function followTarget(midi: number | null) {
   <SingTheKeysDisplay
     :detection="detection"
     titleSuffix="(Test)"
+    simulateIdlePreview
     v-model:songId="songId"
     v-model:startOffset="startOffset"
     v-model:speed="speed"

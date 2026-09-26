@@ -2,6 +2,7 @@ import { describe, expect, it, test } from 'vitest'
 import {
   buildPianoLayout,
   pianoEdgeHints,
+  pianoNoteBlockSpan,
   pianoPitchXForMidi,
   pianoSpanUnits,
   SEMITONE_UNIT,
@@ -244,5 +245,41 @@ describe('pianoSpanUnits', () => {
     // A3–A5 (Mezzo-Soprano) vs the same range widened to the enclosing
     // accidentals — the white-key extremes, and so the span, are unchanged.
     expect(pianoSpanUnits(57, 81)).toBe(pianoSpanUnits(56, 82))
+  })
+})
+
+describe('pianoNoteBlockSpan', () => {
+  const layout = buildPianoLayout(TENOR.midiMin, TENOR.midiMax)
+
+  test('centres every block on its pitch position', () => {
+    for (const key of [...layout.whites, ...layout.blacks]) {
+      const span = pianoNoteBlockSpan(layout, key.midi)
+      expect(span.leftPx + span.widthPx / 2).toBeCloseTo(key.pitchX)
+    }
+  })
+
+  test('gives a natural 1.4 semitone units', () => {
+    expect(pianoNoteBlockSpan(layout, 62).widthPx).toBeCloseTo(
+      1.4 * SEMITONE_UNIT,
+    )
+  })
+
+  test('matches a black key exactly', () => {
+    for (const key of layout.blacks) {
+      const span = pianoNoteBlockSpan(layout, key.midi)
+      expect(span.leftPx).toBeCloseTo(key.leftPx)
+      expect(span.widthPx).toBeCloseTo(key.widthPx)
+    }
+  })
+
+  /* E's face runs 1 semitone down but only ½ up, so a pitch-centred block
+   * overhangs its upper edge — the same overhang the falling block shows. */
+  test('runs past the upper edge of an E key', () => {
+    const eKey = layout.whites.find((key) => key.midi === 64)!
+    const span = pianoNoteBlockSpan(layout, 64)
+
+    expect(span.leftPx + span.widthPx).toBeGreaterThan(
+      eKey.leftPx + eKey.widthPx,
+    )
   })
 })

@@ -28,11 +28,14 @@ type PitchDetectionInput = {
 }
 
 type Props = {
-  /* The one microphone source: scoring and the sung-pitch line both read it.
+  /* The microphone source for a run: scoring and the sung-pitch line read it.
    * The real page passes usePitchDetection; the test page passes a simulated
-   * detector, so this component never opens a mic itself. */
+   * detector. */
   detection: PitchDetectionInput
   titleSuffix?: string
+  /* Test pages: route the idle "See your voice" preview through `detection`
+   * instead of opening the real mic via useIdlePreview. */
+  simulateIdlePreview?: boolean
 }
 
 const props = defineProps<Props>()
@@ -157,26 +160,74 @@ const isTargetCorrect = computed(
     correctNoteIndices.value.includes(activeNoteIndex.value),
 )
 
+const { isPreviewEnabled } = useSettings()
+
+/* "See your voice" — the live pitch while idle, so the singer can find the
+ * first key before pressing Start. Listens only while no run is playing, the
+ * same split as Grace Kelly "Sing live": during a run the scoring mic draws the
+ * line, and in practice mode nothing does. The setter keeps the shared setting
+ * writable, so useIdlePreview can flip it off when permission is denied; the
+ * getter is always false on a simulated page, so the real mic never opens. */
+const isRealIdlePreviewEnabled = computed({
+  get: () => isPreviewEnabled.value && !props.simulateIdlePreview,
+  set: (enabled: boolean) => {
+    isPreviewEnabled.value = enabled
+  },
+})
+
+const {
+  rawFrequency: idleFrequency,
+  rawNoteInfo: idleNoteInfo,
+  rawIsClean: idleIsClean,
+  isPreviewListening: isIdleListening,
+  micPermission,
+} = useIdlePreview({
+  isGameActive: isPlaying,
+  isEnabled: isRealIdlePreviewEnabled,
+})
+
+/* The pitch the lines are drawn from: the idle preview between runs, the run's
+ * detector while playing. A simulated page has only the one detector. */
+const isIdleSource = computed(
+  () => !isPlaying.value && !props.simulateIdlePreview,
+)
+const liveFrequency = computed(() =>
+  isIdleSource.value ? idleFrequency.value : frequency.value,
+)
+const liveNoteInfo = computed(() =>
+  isIdleSource.value ? idleNoteInfo.value : noteInfo.value,
+)
+const isLiveClean = computed(() =>
+  isIdleSource.value ? idleIsClean.value : isClean.value,
+)
+const isLiveListening = computed(() =>
+  isIdleSource.value ? isIdleListening.value : isListening.value,
+)
+
 /* Continuous MIDI of the singer's live pitch for the lane and key-track lines;
  * null when nothing clean is detected. */
 const sungMidi = computed(() => {
-  if (!isListening.value || !isClean.value || frequency.value === null)
+  if (
+    !isLiveListening.value ||
+    !isLiveClean.value ||
+    liveFrequency.value === null
+  )
     return null
 
-  return frequencyToMidi(frequency.value)
+  return frequencyToMidi(liveFrequency.value)
 })
 
 /* One lane through the keyboard's own preview pipeline — the dashed line and
  * note chip on the keys, same as the piano page's single-voice mode. */
 const previewLanes = computed<Array<DuetLane & { laneId: PianoPreviewLaneId }>>(
   () => {
-    const info = noteInfo.value
+    const info = liveNoteInfo.value
     const isVisible = sungMidi.value !== null && info !== null
 
     return [
       {
         previewMidi: isVisible ? info.midiNote : null,
-        previewFrequency: isVisible ? frequency.value : null,
+        previewFrequency: isVisible ? liveFrequency.value : null,
         previewNoteLabel: isVisible
           ? toAccidentalGlyph(`${info.note}${info.octave}`)
           : null,
@@ -230,6 +281,23 @@ function stopSinging() {
 watch(isPlaying, (playing) => {
   if (!playing) stop()
 })
+
+/* Simulated idle preview: the one detector runs between runs while the toggle
+ * is on. Declared after the watcher above so a run ending stops, then restarts
+ * it. A scored run keeps the detector it just started; practice mode closes it
+ * like the real mic. */
+const isSimulatedIdlePreviewOn = computed(
+  () =>
+    !!props.simulateIdlePreview && isPreviewEnabled.value && !isPlaying.value,
+)
+watch(
+  isSimulatedIdlePreviewOn,
+  (isOn) => {
+    if (isOn) void start()
+    else if (!isScoring.value) stop()
+  },
+  { immediate: true },
+)
 
 const { fireConfetti } = useConfettiStore()
 
@@ -328,10 +396,17 @@ onUnmounted(() => {
         :label="t('singTheKeys.melodyGuide')"
         :disabled="isPlaying"
       />
+
+      <PreviewToggle
+        v-model="isPreviewEnabled"
+        :disabled="
+          isPlaying || (!simulateIdlePreview && micPermission === 'denied')
+        "
+      />
     </EdgeFadeScroller>
 
     <p
-      v-if="isMelodyGuideEnabled"
+      v-if="false && isMelodyGuideEnabled"
       class="text-xs text-(--p-text-muted-color)"
       data-testid="sing-the-keys-practice-hint"
     >
@@ -365,7 +440,7 @@ onUnmounted(() => {
             :correctNoteIndices="resultNoteIndices"
             :accidentalStyle="accidentalStyle"
             :sungMidi="sungMidi"
-            :sungFrequency="frequency"
+            :sungFrequency="liveFrequency"
             :isScored="isScored"
           />
         </template>

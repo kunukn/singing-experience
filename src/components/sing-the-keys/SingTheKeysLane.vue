@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import {
-  BLACK_KEY_WIDTH_RATIO,
+  pianoNoteBlockSpan,
   type PianoLayout,
 } from '@/components/piano/pianoLayout'
-import { pianoPitchXForMidi } from '@/components/piano/pianoLayout'
 import { buildPianoPreviewLine } from '@/components/piano/pianoPreview'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { isNaturalMidi } from '@/components/notes/notesScales'
@@ -40,13 +39,6 @@ const props = defineProps<Props>()
 type NoteStatus = 'upcoming' | 'active' | 'correct' | 'missed' | 'passed'
 
 const pxPerMs = computed(() => props.laneHeight / LOOKAHEAD_MS)
-
-/* Fraction of a semitone unit a natural's block spans. Wider than the 1.24
- * black-key block so the two read as white vs black key, like the tutorial
- * videos this game borrows from. Naturals are asymmetric around pitchX on
- * C/E/F/B, so the block is centred on the pitch, not the key face. */
-const NATURAL_BLOCK_UNITS = 1.4
-const ACCIDENTAL_BLOCK_UNITS = 2 * BLACK_KEY_WIDTH_RATIO
 
 /* px — gap between consecutive blocks of the same pitch so repeated notes read
  * as separate hits rather than one long bar. */
@@ -88,9 +80,8 @@ const HIT_LINE_TAIL_PX = 64
 const blocks = computed(() =>
   props.notes.map((note) => {
     const isNatural = isNaturalMidi(note.midi)
-    const width =
-      props.layout.unit *
-      (isNatural ? NATURAL_BLOCK_UNITS : ACCIDENTAL_BLOCK_UNITS)
+    /* Shared with the keyboard's target wash so block and key match. */
+    const span = pianoNoteBlockSpan(props.layout, note.midi)
     const height = Math.max(
       BLOCK_GAP_PX,
       note.durationMs * pxPerMs.value - BLOCK_GAP_PX,
@@ -104,12 +95,12 @@ const blocks = computed(() =>
       }).label,
       isNatural,
       style: {
-        insetInlineStart: `${pianoPitchXForMidi(props.layout, note.midi) - width / 2}px`,
+        insetInlineStart: `${span.leftPx}px`,
         /* Strip coordinates: y = 0 is the hit line at elapsedMs 0, so a note
          * that starts later sits higher up (negative top), and the strip is
          * translated down by elapsedMs × pxPerMs. */
         top: `${props.laneHeight - (note.startMs + note.durationMs) * pxPerMs.value}px`,
-        width: `${width}px`,
+        width: `${span.widthPx}px`,
         height: `${height}px`,
       },
     }
