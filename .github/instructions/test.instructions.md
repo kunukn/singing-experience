@@ -46,10 +46,10 @@ expect(wrapper.get('[data-testid="status-icon"]').text()).toBe('○')
 
 ## File Naming
 
-| Extension | Usage |
-|-----------|-------|
-| `.test.ts` | Utility/logic functions and composables |
-| `.vue.test.ts` | Vue SFC components |
+| Extension      | Usage                                   |
+| -------------- | --------------------------------------- |
+| `.test.ts`     | Utility/logic functions and composables |
+| `.vue.test.ts` | Vue SFC components                      |
 
 Test files live next to the source file they test:
 
@@ -207,7 +207,7 @@ wrapper.get('button')
 wrapper.get('[data-testid="score"]')
 
 /* May be absent — returns DOMWrapper or errorWrapper */
-wrapper.find('.optional-element').exists()  // → boolean
+wrapper.find('.optional-element').exists() // → boolean
 
 /* All matches */
 wrapper.findAll('li')
@@ -252,8 +252,12 @@ test('should detect correct note', async () => {
 Use `vi.useFakeTimers()` / `vi.advanceTimersByTime()` when composables use `setTimeout`, `setInterval`, or `requestAnimationFrame`:
 
 ```typescript
-beforeEach(() => { vi.useFakeTimers() })
-afterEach(() => { vi.useRealTimers() })
+beforeEach(() => {
+  vi.useFakeTimers()
+})
+afterEach(() => {
+  vi.useRealTimers()
+})
 
 test('should accumulate hold time', async () => {
   await game.start()
@@ -270,17 +274,17 @@ test('should accumulate hold time', async () => {
 
 Use the correct matcher for the value type:
 
-| Value type | Matcher |
-|-----------|---------|
-| Primitives (string, number, boolean) | `toBe()` |
-| Objects and arrays | `toEqual()` |
-| Array length | `toHaveLength()` |
-| Approximate numbers | `toBeCloseTo(n, precision)` |
-| DOM/wrapper exists | `wrapper.exists()` → `toBe(true/false)` |
-| DOM text content | `wrapper.text()` → `toContain()` / `toBe()` |
-| DOM attributes | `wrapper.attributes('name')` → `toBe()` / `toBeDefined()` |
-| Mock called | `toHaveBeenCalledTimes(n)` / `toHaveBeenCalledWith(args)` |
-| Mock not called | `not.toHaveBeenCalled()` |
+| Value type                           | Matcher                                                   |
+| ------------------------------------ | --------------------------------------------------------- |
+| Primitives (string, number, boolean) | `toBe()`                                                  |
+| Objects and arrays                   | `toEqual()`                                               |
+| Array length                         | `toHaveLength()`                                          |
+| Approximate numbers                  | `toBeCloseTo(n, precision)`                               |
+| DOM/wrapper exists                   | `wrapper.exists()` → `toBe(true/false)`                   |
+| DOM text content                     | `wrapper.text()` → `toContain()` / `toBe()`               |
+| DOM attributes                       | `wrapper.attributes('name')` → `toBe()` / `toBeDefined()` |
+| Mock called                          | `toHaveBeenCalledTimes(n)` / `toHaveBeenCalledWith(args)` |
+| Mock not called                      | `not.toHaveBeenCalled()`                                  |
 
 Use `wrapper.get()` when the element must exist. Use `wrapper.find().exists()` when asserting presence/absence.
 
@@ -299,7 +303,9 @@ test('should return correct note name', () => {
 Define at the top of the test file with sensible defaults and allow overrides:
 
 ```typescript
-const createMockPitchDetection = (overrides?: Partial<PitchDetectionProvider>) => ({
+const createMockPitchDetection = (
+  overrides?: Partial<PitchDetectionProvider>,
+) => ({
   frequency: ref<number | null>(null),
   noteInfo: ref(null),
   isListening: ref(false),
@@ -359,12 +365,12 @@ assert. Use names that describe the **state or role**, never the visual appearan
 
 Common patterns used in this codebase:
 
-| Attribute | Example values | What it expresses |
-|---|---|---|
-| `data-status` | `"completed"` / `"current"` / `"upcoming"` | Step progression state |
-| `data-highlighted` | `"true"` / `"false"` | Whether the item is highlighted |
-| `data-included` | `"true"` / `"false"` | Whether the item is part of the active set |
-| `data-testid` | `"status-icon"`, `"scale-step-0"` | Semantic element identity for querying |
+| Attribute          | Example values                             | What it expresses                          |
+| ------------------ | ------------------------------------------ | ------------------------------------------ |
+| `data-status`      | `"completed"` / `"current"` / `"upcoming"` | Step progression state                     |
+| `data-highlighted` | `"true"` / `"false"`                       | Whether the item is highlighted            |
+| `data-included`    | `"true"` / `"false"`                       | Whether the item is part of the active set |
+| `data-testid`      | `"status-icon"`, `"scale-step-0"`          | Semantic element identity for querying     |
 
 ### Asserting in tests
 
