@@ -37,6 +37,10 @@ type Props = {
   /* False in practice mode (melody guide on): passed blocks go neutral rather
    * than red, since nothing was being judged. */
   isScored: boolean
+  /* The lane is parked on the song's ending after a natural finish: every note
+   * has been sung, so an unhit one is missed even though it still sits above
+   * the hit line. */
+  isShowingEnding: boolean
   /* Pulse lines falling with the blocks; empty when beat lines are off. */
   beatLines: BeatLine[]
   /* Glow on the hit line as a beat line crosses it; null between beats and
@@ -62,7 +66,10 @@ const correctSet = computed(() => new Set(props.correctNoteIndices))
 function statusOf(note: TimelineNote): NoteStatus {
   if (correctSet.value.has(note.index)) return 'correct'
   if (note.index === props.activeNoteIndex) return 'active'
-  if (note.startMs + note.durationMs <= props.elapsedMs)
+  if (
+    props.isShowingEnding ||
+    note.startMs + note.durationMs <= props.elapsedMs
+  )
     return props.isScored ? 'missed' : 'passed'
 
   return 'upcoming'

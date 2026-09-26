@@ -121,16 +121,42 @@ describe('useSingTheKeys', () => {
     expect(game.activeNoteIndex.value).toBe(1)
   })
 
-  test('should finish after the last note and reset the lane preview', async () => {
+  test('should finish after the last note and keep the ending in view', async () => {
+    const { game } = createGame()
+
+    /* Half speed doubles the 2.4 s song to 4.8 s, longer than the lane. */
+    await game.start({ ...startParams(), speed: 0.5 })
+    vi.advanceTimersByTime((SONG_START_S + 4.8) * 1000 + 1)
+    await nextTick()
+
+    expect(game.isDone.value).toBe(true)
+    expect(game.isShowingEnding.value).toBe(true)
+    /* The last LOOKAHEAD_MS of the song fills the lane. */
+    expect(game.elapsedMs.value).toBe(4800 - LOOKAHEAD_MS)
+    expect(game.activeNoteIndex.value).toBeNull()
+  })
+
+  test('should park a song shorter than the lane on its opening', async () => {
     const { game } = createGame()
 
     await game.start(startParams())
     vi.advanceTimersByTime((SONG_START_S + 2.4) * 1000 + 1)
     await nextTick()
 
-    expect(game.isDone.value).toBe(true)
     expect(game.elapsedMs.value).toBe(0)
-    expect(game.activeNoteIndex.value).toBeNull()
+    expect(game.isShowingEnding.value).toBe(true)
+  })
+
+  test('should go back to the opening preview after the ending', async () => {
+    const { game } = createGame()
+
+    await game.start({ ...startParams(), speed: 0.5 })
+    vi.advanceTimersByTime((SONG_START_S + 4.8) * 1000 + 1)
+    await nextTick()
+    game.preview(song, C4, 0.5)
+
+    expect(game.elapsedMs.value).toBe(0)
+    expect(game.isShowingEnding.value).toBe(false)
   })
 
   test('should cancel scheduled audio and return to idle on stop', async () => {

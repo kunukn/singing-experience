@@ -30,6 +30,7 @@ function mountLane(
       sungMidi: null,
       sungFrequency: null,
       isScored: true,
+      isShowingEnding: false,
       beatLines: [],
       beatFlash: null,
       beatLight: null,
@@ -113,6 +114,21 @@ describe('SingTheKeysLane', () => {
     expect(
       wrapper.get('[data-testid="lane-note-0"]').attributes('data-status'),
     ).toBe('passed')
+  })
+
+  test('should mark every unhit note missed while showing the ending', () => {
+    const wrapper = mountLane({
+      elapsedMs: 0,
+      correctNoteIndices: [0],
+      isShowingEnding: true,
+    })
+
+    expect(
+      wrapper.get('[data-testid="lane-note-0"]').attributes('data-status'),
+    ).toBe('correct')
+    expect(
+      wrapper.get('[data-testid="lane-note-2"]').attributes('data-status'),
+    ).toBe('missed')
   })
 
   test('should spell the label after the accidental style', () => {

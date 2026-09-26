@@ -80,6 +80,7 @@ const {
   isDone,
   timeline,
   elapsedMs,
+  isShowingEnding,
   activeNoteIndex,
   noteDurationsMs,
 } = game
@@ -468,6 +469,7 @@ onUnmounted(() => {
             :layout="layout"
             :laneHeight="laneHeight"
             :elapsedMs="elapsedMs"
+            :isShowingEnding="isShowingEnding"
             :activeNoteIndex="activeNoteIndex"
             :correctNoteIndices="resultNoteIndices"
             :accidentalStyle="accidentalStyle"

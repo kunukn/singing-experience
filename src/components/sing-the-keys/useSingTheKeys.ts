@@ -43,7 +43,7 @@ type Options = {
 
 /*
  * Drives one Sing the Keys run. The Tone.js audio clock is the single time
- * source: the guide notes and the count-in are scheduled on it, and the lane's
+ * source: the guide notes are scheduled on it, and the lane's
  * `elapsedMs` is read back from it every animation frame, so the falling
  * blocks and the sound cannot drift apart. `activeNoteIndex` is derived from
  * the same `elapsedMs`, so the key highlight, the lane and the scorer always
@@ -51,7 +51,9 @@ type Options = {
  *
  * `elapsedMs` counts from the song's first note: it is negative during the
  * LOOKAHEAD_MS lead-in while the first blocks fall in, and sits at 0 while
- * idle or done so the lane shows the opening of the tune as a still preview.
+ * idle so the lane shows the opening of the tune as a still preview. On a
+ * natural finish it parks on the song's last LOOKAHEAD_MS instead, so the
+ * singer keeps the ending (and its hits and misses) in view.
  */
 export function useSingTheKeys(options: Options = {}) {
   const engine = options.toneEngine ?? defaultToneEngine
@@ -66,6 +68,9 @@ export function useSingTheKeys(options: Options = {}) {
 
   const timeline = ref<Timeline>(EMPTY_TIMELINE)
   const elapsedMs = ref(0)
+  /* True from a natural finish until the next preview, start or stop: the lane
+   * is showing the ending, so every note in it has already been sung. */
+  const isShowingEnding = ref(false)
 
   const activeNoteIndex = computed(() =>
     isPlaying.value
@@ -106,6 +111,7 @@ export function useSingTheKeys(options: Options = {}) {
 
     timeline.value = buildTimeline(song, tonicMidi, speed)
     elapsedMs.value = 0
+    isShowingEnding.value = false
   }
 
   async function start(params: SingTheKeysStartParams) {
@@ -115,6 +121,7 @@ export function useSingTheKeys(options: Options = {}) {
 
     const built = buildTimeline(params.song, params.tonicMidi, params.speed)
     timeline.value = built
+    isShowingEnding.value = false
 
     toneStartS = engine.getNow() + SCHEDULE_AHEAD_S
     const songStartS = toneStartS + LOOKAHEAD_MS / 1000
@@ -134,7 +141,9 @@ export function useSingTheKeys(options: Options = {}) {
     engine.scheduleDraw(
       () => {
         stopTicking()
-        elapsedMs.value = 0
+        /* The last notes fill the lane, the final one ending at its top. */
+        elapsedMs.value = Math.max(0, built.totalMs - LOOKAHEAD_MS)
+        isShowingEnding.value = true
         send({ type: 'DONE' })
       },
       songStartS + built.totalMs / 1000,
@@ -152,6 +161,7 @@ export function useSingTheKeys(options: Options = {}) {
     engine.cancelScheduled()
     stopTicking()
     elapsedMs.value = 0
+    isShowingEnding.value = false
     send({ type: 'STOP' })
   }
 
@@ -167,6 +177,7 @@ export function useSingTheKeys(options: Options = {}) {
     isDone,
     timeline,
     elapsedMs,
+    isShowingEnding,
     activeNoteIndex,
     noteDurationsMs,
     preview,
