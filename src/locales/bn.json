@@ -129,6 +129,10 @@
         "name": "Grace Kelly চ্যালেঞ্জ",
         "description": "MIKA-র \"Grace Kelly\" গানের সাথে গাও। একটা সুর বেছে নাও আর তাল মিলিয়ে গাও।"
       },
+      "singTheKeys": {
+        "name": "কী গাও",
+        "description": "সুরগুলো পিয়ানোর ওপর পড়ে। প্রতিটি সুর তার কী-তে পৌঁছালেই গাও।"
+      },
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
@@ -326,6 +330,20 @@
     "barHighlight": "বক্স",
     "toneLabels": "স্বর",
     "melodyGuide": "সাহায্য"
+  },
+  "singTheKeys": {
+    "title": "কী গাও",
+    "subtitle": "প্রতিটি সুর কী-তে পৌঁছালেই গাও",
+    "song": "গান",
+    "speed": "গতি",
+    "melodyGuide": "সাহায্য",
+    "scoreCorrect": "{percent}% সঠিক",
+    "songs": {
+      "twinkle": "টুইঙ্কল টুইঙ্কল লিটল স্টার",
+      "odeToJoy": "ওড টু জয়",
+      "happyBirthday": "হ্যাপি বার্থডে",
+      "furElise": "ফ্যুর এলিজে"
+    }
   },
   "notes": {
     "title": "Notes",

@@ -25,6 +25,7 @@ import {
   pianoEdgeHints,
   pianoSpanUnits,
   type PianoKey,
+  type PianoLayout,
 } from './pianoLayout'
 import {
   PREVIEW_EDGE_GUTTER_PX,
@@ -61,8 +62,35 @@ type Props = {
    * draws, and marks the chosen one. midiMin/midiMax come from the same range,
    * but the index is what names it. */
   rangeIndex?: number
+  /* The note a game is asking for right now (Sing the Keys). That key gets a
+   * wash so the singer sees where the falling block is about to land; null or
+   * undefined marks nothing. */
+  targetMidi?: number | null
+  /* Turns the target wash green once the singer has hit the note. */
+  isTargetCorrect?: boolean
 }
 const props = defineProps<Props>()
+
+/* Slot for a game to draw in the space above the keys — inside the scroll box
+ * and the same width as the key track, so whatever it draws stays on its keys
+ * however the board is sized or panned (the same reason the voice-range ribbon
+ * lives here). It gets the layout so it can place things by pitchX. */
+defineSlots<{
+  lane?: (props: { layout: PianoLayout }) => unknown
+}>()
+
+/* 'active' while the note is due, 'correct' once it has been sung; undefined
+ * (no attribute) on every other key. */
+function targetState(key: PianoKey): 'active' | 'correct' | undefined {
+  if (props.targetMidi !== key.midi) return undefined
+
+  return props.isTargetCorrect ? 'correct' : 'active'
+}
+
+const TARGET_WASH_CLASS: Record<'active' | 'correct', string> = {
+  active: 'bg-(--p-primary-color)/40',
+  correct: 'bg-(--p-green-400)/60',
+}
 
 /* The same switch the pitch detector's chart ribbon reads, so one toggle drives
  * the bars on every board. */
@@ -368,6 +396,8 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
           :rangeIndex="rangeIndex"
         />
 
+        <slot name="lane" :layout="layout" />
+
         <div
           class="relative mx-auto"
           :style="{
@@ -387,6 +417,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             }"
             :data-testid="`piano-key-${key.midi}`"
             :data-scale-role="scaleRole(key) ?? undefined"
+            :data-target="targetState(key)"
             :aria-label="keyAriaLabel(key)"
             :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
             @pointerdown="playKey(key.midi)"
@@ -411,6 +442,14 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               v-if="pressCountFor(key.midi)"
               :key="`glow-${pressCountFor(key.midi)}`"
               class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
+              aria-hidden="true"
+            />
+
+            <!-- Game target wash: where the next falling block lands. -->
+            <span
+              v-if="targetState(key)"
+              class="pointer-events-none absolute inset-0 rounded-b-md"
+              :class="TARGET_WASH_CLASS[targetState(key)!]"
               aria-hidden="true"
             />
 
@@ -461,6 +500,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             }"
             :data-testid="`piano-key-${key.midi}`"
             :data-scale-role="scaleRole(key) ?? undefined"
+            :data-target="targetState(key)"
             :aria-label="keyAriaLabel(key)"
             :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
             @pointerdown="playKey(key.midi)"
@@ -478,6 +518,13 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               v-if="pressCountFor(key.midi)"
               :key="`glow-${pressCountFor(key.midi)}`"
               class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
+              aria-hidden="true"
+            />
+
+            <span
+              v-if="targetState(key)"
+              class="pointer-events-none absolute inset-0 rounded-b-md"
+              :class="TARGET_WASH_CLASS[targetState(key)!]"
               aria-hidden="true"
             />
 

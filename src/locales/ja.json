@@ -129,6 +129,10 @@
         "name": "Grace Kelly チャレンジ",
         "description": "MIKAの「Grace Kelly」に合わせて歌おう。パートを選んで音をたどってね。"
       },
+      "singTheKeys": {
+        "name": "キーを歌おう",
+        "description": "音符がピアノに落ちてくるよ。鍵盤に着いたら、その音を歌おう。"
+      },
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
@@ -326,6 +330,20 @@
     "barHighlight": "小節",
     "toneLabels": "音名",
     "melodyGuide": "ガイド"
+  },
+  "singTheKeys": {
+    "title": "キーを歌おう",
+    "subtitle": "音符が鍵盤に着いたら歌おう",
+    "song": "曲",
+    "speed": "速さ",
+    "melodyGuide": "ガイド",
+    "scoreCorrect": "{percent}% 正解",
+    "songs": {
+      "twinkle": "きらきら星",
+      "odeToJoy": "歓喜の歌",
+      "happyBirthday": "ハッピーバースデー",
+      "furElise": "エリーゼのために"
+    }
   },
   "notes": {
     "title": "Notes",

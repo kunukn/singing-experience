@@ -129,6 +129,10 @@
         "name": "Tantangan Grace Kelly",
         "description": "Nyanyi bareng \"Grace Kelly\" dari MIKA. Pilih suara dan ikuti nadanya."
       },
+      "singTheKeys": {
+        "name": "Nyanyikan Tutsnya",
+        "description": "Nada jatuh ke piano. Nyanyikan tiap nada saat mendarat di tutsnya."
+      },
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
@@ -326,6 +330,20 @@
     "barHighlight": "Birama",
     "toneLabels": "Nada",
     "melodyGuide": "Bantuan"
+  },
+  "singTheKeys": {
+    "title": "Nyanyikan Tutsnya",
+    "subtitle": "Nyanyikan tiap nada saat mendarat di tuts",
+    "song": "Lagu",
+    "speed": "Kecepatan",
+    "melodyGuide": "Bantuan",
+    "scoreCorrect": "{percent}% benar",
+    "songs": {
+      "twinkle": "Twinkle Twinkle Little Star",
+      "odeToJoy": "Ode to Joy",
+      "happyBirthday": "Selamat Ulang Tahun",
+      "furElise": "Für Elise"
+    }
   },
   "notes": {
     "title": "Notes",

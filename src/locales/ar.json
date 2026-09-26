@@ -129,6 +129,10 @@
         "name": "تحدّي Grace Kelly",
         "description": "غنّي مع \"Grace Kelly\" لـ MIKA. اختار صوت وتابع النغمات."
       },
+      "singTheKeys": {
+        "name": "غنِّ المفاتيح",
+        "description": "النوتات تسقط على البيانو. غنِّ كل نوتة عندما تصل إلى مفتاحها."
+      },
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
@@ -326,6 +330,20 @@
     "barHighlight": "مربع",
     "toneLabels": "النغمات",
     "melodyGuide": "مساعدة"
+  },
+  "singTheKeys": {
+    "title": "غنِّ المفاتيح",
+    "subtitle": "غنِّ كل نوتة عندما تصل إلى المفاتيح",
+    "song": "أغنية",
+    "speed": "السرعة",
+    "melodyGuide": "مساعدة",
+    "scoreCorrect": "{percent}% صحيح",
+    "songs": {
+      "twinkle": "تلألئي يا نجمة",
+      "odeToJoy": "نشيد الفرح",
+      "happyBirthday": "عيد ميلاد سعيد",
+      "furElise": "إلى إليز"
+    }
   },
   "notes": {
     "title": "Notes",

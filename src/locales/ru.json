@@ -129,6 +129,10 @@
         "name": "Челлендж Grace Kelly",
         "description": "Подпевай песне \"Grace Kelly\" от MIKA. Выбери партию и следи за нотами."
       },
+      "singTheKeys": {
+        "name": "Спой клавиши",
+        "description": "Ноты падают на пианино. Пой каждую, когда она приземляется на свою клавишу."
+      },
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
@@ -326,6 +330,20 @@
     "barHighlight": "Такт",
     "toneLabels": "Ноты",
     "melodyGuide": "Подсказка"
+  },
+  "singTheKeys": {
+    "title": "Спой клавиши",
+    "subtitle": "Пой каждую ноту, когда она приземляется на клавиши",
+    "song": "Песня",
+    "speed": "Скорость",
+    "melodyGuide": "Подсказка",
+    "scoreCorrect": "{percent}% правильно",
+    "songs": {
+      "twinkle": "Ты мерцай, звезда ночная",
+      "odeToJoy": "Ода к радости",
+      "happyBirthday": "С днём рождения тебя",
+      "furElise": "К Элизе"
+    }
   },
   "notes": {
     "title": "Notes",

@@ -129,6 +129,10 @@
         "name": "Grace Kelly 挑战",
         "description": "跟着 MIKA 的《Grace Kelly》一起唱。选一个声部，跟着音调唱。"
       },
+      "singTheKeys": {
+        "name": "唱出琴键",
+        "description": "音符落到钢琴上。每个音符落到琴键时，把它唱出来。"
+      },
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
@@ -326,6 +330,20 @@
     "barHighlight": "小节",
     "toneLabels": "音名",
     "melodyGuide": "引导"
+  },
+  "singTheKeys": {
+    "title": "唱出琴键",
+    "subtitle": "音符落到琴键时唱出来",
+    "song": "歌曲",
+    "speed": "速度",
+    "melodyGuide": "引导",
+    "scoreCorrect": "{percent}% 正确",
+    "songs": {
+      "twinkle": "小星星",
+      "odeToJoy": "欢乐颂",
+      "happyBirthday": "生日快乐",
+      "furElise": "致爱丽丝"
+    }
   },
   "notes": {
     "title": "Notes",

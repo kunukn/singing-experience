@@ -129,6 +129,10 @@
         "name": "Changamoto ya Grace Kelly",
         "description": "Imba pamoja na \"Grace Kelly\" ya MIKA. Chagua sauti na ufuate toni."
       },
+      "singTheKeys": {
+        "name": "Imba Vitufe",
+        "description": "Noti zinaanguka kwenye piano. Imba kila moja inapofika kwenye kitufe chake."
+      },
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
@@ -326,6 +330,20 @@
     "barHighlight": "Boksi",
     "toneLabels": "Noti",
     "melodyGuide": "Mwongozo"
+  },
+  "singTheKeys": {
+    "title": "Imba Vitufe",
+    "subtitle": "Imba kila noti inapofika kwenye vitufe",
+    "song": "Wimbo",
+    "speed": "Kasi",
+    "melodyGuide": "Mwongozo",
+    "scoreCorrect": "{percent}% sahihi",
+    "songs": {
+      "twinkle": "Twinkle Twinkle Little Star",
+      "odeToJoy": "Ode to Joy",
+      "happyBirthday": "Heri ya Kuzaliwa",
+      "furElise": "Für Elise"
+    }
   },
   "notes": {
     "title": "Notes",

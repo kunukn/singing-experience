@@ -129,6 +129,10 @@
         "name": "Défi Grace Kelly",
         "description": "Chante sur \"Grace Kelly\" de MIKA. Choisis une voix et suis les notes."
       },
+      "singTheKeys": {
+        "name": "Chante les touches",
+        "description": "Les notes tombent sur le piano. Chante chacune quand elle arrive sur sa touche."
+      },
       "notes": {
         "name": "Notes",
         "description": "Vois chaque note sur la portée et apprends son nom."
@@ -326,6 +330,20 @@
     "barHighlight": "Mesure",
     "toneLabels": "Notes",
     "melodyGuide": "Guide"
+  },
+  "singTheKeys": {
+    "title": "Chante les touches",
+    "subtitle": "Chante chaque note quand elle arrive sur les touches",
+    "song": "Chanson",
+    "speed": "Vitesse",
+    "melodyGuide": "Guide",
+    "scoreCorrect": "{percent}% correct",
+    "songs": {
+      "twinkle": "Ah ! vous dirai-je, maman",
+      "odeToJoy": "Ode à la joie",
+      "happyBirthday": "Joyeux anniversaire",
+      "furElise": "Lettre à Élise"
+    }
   },
   "notes": {
     "title": "Notes",

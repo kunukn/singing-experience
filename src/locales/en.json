@@ -129,6 +129,10 @@
         "name": "Grace Kelly Challenge",
         "description": "Sing along to MIKA's \"Grace Kelly\". Pick a harmony part and follow the tones."
       },
+      "singTheKeys": {
+        "name": "Sing the Keys",
+        "description": "Notes fall onto the piano. Sing each one as it lands on its key."
+      },
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
@@ -326,6 +330,20 @@
     "barHighlight": "Bar",
     "toneLabels": "Tones",
     "melodyGuide": "Guide"
+  },
+  "singTheKeys": {
+    "title": "Sing the Keys",
+    "subtitle": "Sing each note as it lands on the keys",
+    "song": "Song",
+    "speed": "Speed",
+    "melodyGuide": "Guide",
+    "scoreCorrect": "{percent}% correct",
+    "songs": {
+      "twinkle": "Twinkle Twinkle Little Star",
+      "odeToJoy": "Ode to Joy",
+      "happyBirthday": "Happy Birthday",
+      "furElise": "Für Elise"
+    }
   },
   "notes": {
     "title": "Notes",

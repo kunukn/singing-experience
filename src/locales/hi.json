@@ -129,6 +129,10 @@
         "name": "Grace Kelly चैलेंज",
         "description": "MIKA के \"Grace Kelly\" के साथ गाओ। एक आवाज़ चुनो और सुरों के साथ चलो।"
       },
+      "singTheKeys": {
+        "name": "कुंजियाँ गाओ",
+        "description": "सुर पियानो पर गिरते हैं। हर सुर को उसकी कुंजी पर पहुँचते ही गाओ।"
+      },
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
@@ -326,6 +330,20 @@
     "barHighlight": "बॉक्स",
     "toneLabels": "स्वर",
     "melodyGuide": "मदद"
+  },
+  "singTheKeys": {
+    "title": "कुंजियाँ गाओ",
+    "subtitle": "हर सुर को कुंजियों पर पहुँचते ही गाओ",
+    "song": "गाना",
+    "speed": "रफ़्तार",
+    "melodyGuide": "मदद",
+    "scoreCorrect": "{percent}% सही",
+    "songs": {
+      "twinkle": "ट्विंकल ट्विंकल लिटिल स्टार",
+      "odeToJoy": "ओड टू जॉय",
+      "happyBirthday": "हैप्पी बर्थडे",
+      "furElise": "फ़्यूर एलीज़"
+    }
   },
   "notes": {
     "title": "Notes",

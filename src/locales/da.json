@@ -129,6 +129,10 @@
         "name": "Grace Kelly-udfordring",
         "description": "Syng med på MIKAs \"Grace Kelly\". Vælg en stemme og følg tonerne."
       },
+      "singTheKeys": {
+        "name": "Syng tangenterne",
+        "description": "Toner falder ned på klaveret. Syng hver enkelt, når den lander på sin tangent."
+      },
       "notes": {
         "name": "Noder",
         "description": "Se hver node på nodelinjen og lær dens navn."
@@ -326,6 +330,20 @@
     "barHighlight": "Boks",
     "toneLabels": "Toner",
     "melodyGuide": "Guide"
+  },
+  "singTheKeys": {
+    "title": "Syng tangenterne",
+    "subtitle": "Syng hver tone, når den lander på tangenterne",
+    "song": "Sang",
+    "speed": "Hastighed",
+    "melodyGuide": "Guide",
+    "scoreCorrect": "{percent}% rigtigt",
+    "songs": {
+      "twinkle": "Blinke, blinke, lille stjerne",
+      "odeToJoy": "Ode til glæden",
+      "happyBirthday": "Happy Birthday",
+      "furElise": "Für Elise"
+    }
   },
   "notes": {
     "title": "Noder",

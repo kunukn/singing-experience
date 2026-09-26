@@ -129,6 +129,10 @@
         "name": "Reto Grace Kelly",
         "description": "Canta con \"Grace Kelly\" de MIKA. Elige una voz y sigue los tonos."
       },
+      "singTheKeys": {
+        "name": "Canta las teclas",
+        "description": "Las notas caen sobre el piano. Canta cada una cuando llegue a su tecla."
+      },
       "notes": {
         "name": "Notas",
         "description": "Ve cada nota en el pentagrama y aprende su nombre."
@@ -326,6 +330,20 @@
     "barHighlight": "Compás",
     "toneLabels": "Tonos",
     "melodyGuide": "Guía"
+  },
+  "singTheKeys": {
+    "title": "Canta las teclas",
+    "subtitle": "Canta cada nota cuando llegue a las teclas",
+    "song": "Canción",
+    "speed": "Velocidad",
+    "melodyGuide": "Guía",
+    "scoreCorrect": "{percent}% correcto",
+    "songs": {
+      "twinkle": "Estrellita, ¿dónde estás?",
+      "odeToJoy": "Himno a la alegría",
+      "happyBirthday": "Cumpleaños feliz",
+      "furElise": "Para Elisa"
+    }
   },
   "notes": {
     "title": "Notas",

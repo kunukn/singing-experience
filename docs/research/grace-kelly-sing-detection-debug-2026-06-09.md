@@ -94,7 +94,7 @@ Scoped to Grace Kelly because the "Sing live" timeline is **silent** — there i
 
 ## Related Scoring Changes (context, validated by this session)
 
-The same effort moved the per-note scoring to a model this debugging confirmed is sound (see [useGraceKellySingScore.ts](../../src/components/grace-kelly/useGraceKellySingScore.ts)):
+The same effort moved the per-note scoring to a model this debugging confirmed is sound (see [useDwellSingScore.ts](../../src/composables/useDwellSingScore.ts)):
 
 - **Min on-pitch dwell**: a note is correct once the singer is on its target pitch (±40¢) for `min(100 ms, 0.5 × note duration)` — a minimum dwell, not a majority. Tolerant of wrong-pitch time and of detection latency.
 - **±40¢ scoring tolerance** (`SCORE_TOLERANCE_CENTS`), distinct from the ±25¢ visual pitch line.

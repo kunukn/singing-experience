@@ -129,6 +129,10 @@
         "name": "Grace Kelly Challenge",
         "description": "MIKA-p \"Grace Kelly\"-ata ilagalugu erinnaqqit. Nipaa toqqarlugu nipit malillugit."
       },
+      "singTheKeys": {
+        "name": "Sing the Keys",
+        "description": "Nipit klaverimut nakkartarput. Ataasiakkaarlugit tangentiminut pigunik erinarsukkit."
+      },
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
@@ -326,6 +330,20 @@
     "barHighlight": "Boks",
     "toneLabels": "Nodit",
     "melodyGuide": "Guide"
+  },
+  "singTheKeys": {
+    "title": "Sing the Keys",
+    "subtitle": "Nipi tangentimut piguni erinarsukkuk",
+    "song": "Erinarsuut",
+    "speed": "Sukkassusaa",
+    "melodyGuide": "Guide",
+    "scoreCorrect": "{percent}% eqqortoq",
+    "songs": {
+      "twinkle": "Twinkle Twinkle Little Star",
+      "odeToJoy": "Ode to Joy",
+      "happyBirthday": "Happy Birthday",
+      "furElise": "Für Elise"
+    }
   },
   "notes": {
     "title": "Notes",

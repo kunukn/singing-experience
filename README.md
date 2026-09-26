@@ -22,27 +22,28 @@ Everything is reachable from the home screen, split into **🎛️ Music Tools**
 
 ### 🎛️ Music Tools
 
-| Tool                | What it does                                                                                     |
-| ------------------- | ------------------------------------------------------------------------------------------------ |
-| 🎤 Pitch Detector   | Shows the note, frequency, and how sharp or flat you are — with a pitch history chart             |
-| 🎙️ Vocal Warm-Up    | Guided pitch sequences that transpose up a half step each round                                   |
-| 🎵 Notes            | Every note on the staff, with its name and sound                                                  |
-| 🎹 Piano            | Play the keys and watch your voice land on the keyboard                                           |
-| 🎸 Guitar           | Play the fretboard and watch your voice land on it                                                |
-| 🪕 Instrument Tuner | Guitar and ukulele tunings with a cents bar and an in-tune chime                                  |
-| 🎚️ Tone Detector    | Picks up several notes at once — sing or play a harmony and see every tone                        |
+| Tool                | What it does                                                                          |
+| ------------------- | ------------------------------------------------------------------------------------- |
+| 🎤 Pitch Detector   | Shows the note, frequency, and how sharp or flat you are — with a pitch history chart |
+| 🎙️ Vocal Warm-Up    | Guided pitch sequences that transpose up a half step each round                       |
+| 🎵 Notes            | Every note on the staff, with its name and sound                                      |
+| 🎹 Piano            | Play the keys and watch your voice land on the keyboard                               |
+| 🎸 Guitar           | Play the fretboard and watch your voice land on it                                    |
+| 🪕 Instrument Tuner | Guitar and ukulele tunings with a cents bar and an in-tune chime                      |
+| 🎚️ Tone Detector    | Picks up several notes at once — sing or play a harmony and see every tone            |
 
 The tools all listen to your voice in real time and show you where it lands — on a chart, a staff, a keyboard, or a fretboard. Tap a note to hear it, sing it back, and compare. Each tool has its own settings — voice range, reference pitch, scale highlighting, note names, tuning, and more.
 
 ### 🕹️ Singing Games
 
-| Game                   | What you do                                                             |
-| ---------------------- | ----------------------------------------------------------------------- |
-| 🎯 Sing Tone Game      | A random tone plays — sing it back. Match a row of them to win           |
-| 🎶 DO RE MI Game       | Sing up the scale, holding each note steady to advance                   |
-| 👑 Grace Kelly Challenge | Sing along to MIKA's "Grace Kelly" with real sheet music and harmonies |
-| 🐦 Singfly             | Your pitch flies the bird through the gaps                               |
-| 🎼 Pitch Game          | Hit as many scrolling target notes as you can before the clock runs out  |
+| Game                     | What you do                                                             |
+| ------------------------ | ----------------------------------------------------------------------- |
+| 🎯 Sing Tone Game        | A random tone plays — sing it back. Match a row of them to win          |
+| 🎶 DO RE MI Game         | Sing up the scale, holding each note steady to advance                  |
+| 🎹 Sing the Keys         | Notes fall onto a piano — sing each one as it lands on its key          |
+| 👑 Grace Kelly Challenge | Sing along to MIKA's "Grace Kelly" with real sheet music and harmonies  |
+| 🐦 Singfly               | Your pitch flies the bird through the gaps                              |
+| 🎼 Pitch Game            | Hit as many scrolling target notes as you can before the clock runs out |
 
 Each program has its own settings — voice range, difficulty, tempo, hold time, and more. The DO RE MI Game alone offers 40+ scale modes spanning classical, jazz, and world music.
 

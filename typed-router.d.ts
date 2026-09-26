@@ -143,6 +143,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/sing-the-keys': RouteRecordInfo<
+      '/sing-the-keys',
+      '/sing-the-keys',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/sing-the-keys-test': RouteRecordInfo<
+      '/sing-the-keys-test',
+      '/sing-the-keys-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/sing-tone': RouteRecordInfo<
       '/sing-tone',
       '/sing-tone',
@@ -363,6 +377,22 @@ declare module 'vue-router/auto-routes' {
     'src/pages/pitch-game-test.vue': {
       routes:
         | '/pitch-game-test'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/sing-the-keys.vue': {
+      routes:
+        | '/sing-the-keys'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/sing-the-keys-test.vue': {
+      routes:
+        | '/sing-the-keys-test'
       views:
         | never
       pathParamNames:

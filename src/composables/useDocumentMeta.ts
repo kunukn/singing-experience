@@ -67,6 +67,11 @@ const ROUTE_META: Record<string, DocumentMeta> = {
     description:
       'Play a guitar fretboard in your browser and see your singing voice mapped onto the strings in real time.',
   },
+  '/sing-the-keys': {
+    title: 'Sing the Keys Game',
+    description:
+      'Notes fall onto a piano keyboard like a piano tutorial — sing each one as it lands. Twinkle Twinkle, Ode to Joy, Happy Birthday, Für Elise, in any key.',
+  },
 }
 
 /*

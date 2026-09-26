@@ -16,6 +16,11 @@ export const games: Program[] = [
     route: '/do-re-mi',
   },
   {
+    key: 'singTheKeys',
+    icon: '🎹',
+    route: '/sing-the-keys',
+  },
+  {
     key: 'graceKelly',
     icon: '👑',
     route: '/grace-kelly-challenge',

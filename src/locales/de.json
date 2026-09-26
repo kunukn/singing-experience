@@ -129,6 +129,10 @@
         "name": "Grace Kelly Challenge",
         "description": "Sing zu MIKAs \"Grace Kelly\" mit. Wähl eine Stimme und folge den Tönen."
       },
+      "singTheKeys": {
+        "name": "Sing die Tasten",
+        "description": "Noten fallen aufs Klavier. Sing jede, wenn sie auf ihrer Taste landet."
+      },
       "notes": {
         "name": "Noten",
         "description": "Sieh jede Note im Notensystem und lerne ihren Namen."
@@ -326,6 +330,20 @@
     "barHighlight": "Box",
     "toneLabels": "Töne",
     "melodyGuide": "Hilfe"
+  },
+  "singTheKeys": {
+    "title": "Sing die Tasten",
+    "subtitle": "Sing jede Note, wenn sie auf den Tasten landet",
+    "song": "Lied",
+    "speed": "Tempo",
+    "melodyGuide": "Hilfe",
+    "scoreCorrect": "{percent}% richtig",
+    "songs": {
+      "twinkle": "Funkel, funkel, kleiner Stern",
+      "odeToJoy": "Ode an die Freude",
+      "happyBirthday": "Happy Birthday",
+      "furElise": "Für Elise"
+    }
   },
   "notes": {
     "title": "Noten",

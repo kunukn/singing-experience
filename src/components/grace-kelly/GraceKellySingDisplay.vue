@@ -4,6 +4,7 @@ import {
   midiToFrequency,
   midiToNoteLabel,
 } from '@/utils/noteUtils'
+import { isOnPitch as isWithinTolerance } from '@/utils/pitchMatch'
 import BarHighlightToggle from './BarHighlightToggle.vue'
 import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
 import GraceKellySingSheet from './GraceKellySingSheet.vue'
@@ -15,9 +16,7 @@ import {
   GRACE_KELLY_SYLLABLES,
 } from './graceKellyLyrics'
 import { VOZ_MELODIES } from './graceKellyMelodies'
-import { isOnPitch as isWithinTolerance } from './graceKellySingPitch'
 import type { GraceKellyResult } from './useGraceKelly'
-import { useGraceKellySingScore } from './useGraceKellySingScore'
 import { useStableSungLabel } from './useStableSungLabel'
 
 type Props = {
@@ -231,14 +230,8 @@ const isOnPitch = computed(() => {
   return isWithinTolerance(frequency.value, targetFrequency.value)
 })
 
-/* On-pitch tolerance used for scoring only — distinct from the ±25¢ `isOnPitch`
- * that drives the visual pitch line. 50¢ is exactly half a semitone: the
- * deliberate upper bound, as forgiving as scoring can safely go. Beyond it a
- * note sung toward the next semitone would start to count; at 50¢ a genuinely
- * wrong tone (≥ half a semitone off) still costs points. Forgiving of normal
- * vibrato/drift and child voices. */
-const SCORE_TOLERANCE_CENTS = 50
-
+/* Scoring uses the wider SCORE_TOLERANCE_CENTS (±50¢) — distinct from the ±25¢
+ * `isOnPitch` that drives the visual pitch line. */
 const isOnPitchForScore = computed(() => {
   if (frequency.value === null || targetFrequency.value === null) return false
 
@@ -269,7 +262,7 @@ const {
   reset: resetSingScore,
   onPitchRatio,
   correctNoteIndices,
-} = useGraceKellySingScore({
+} = useDwellSingScore({
   isPlaying,
   isOnPitch: isOnPitchForScore,
   activeNoteIndex: singActiveNoteIndex,

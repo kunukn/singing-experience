@@ -1,0 +1,125 @@
+import { describe, expect, test } from 'vitest'
+import { mount } from '@vue/test-utils'
+import { buildPianoLayout } from '@/components/piano/pianoLayout'
+import SingTheKeysLane from './SingTheKeysLane.vue'
+import type { TimelineNote } from './singTheKeysTimeline'
+
+/* C4–G4 at the default 24px unit; lane 300px tall over a 3000ms lookahead, so
+ * 1ms = 0.1px. */
+const layout = buildPianoLayout(60, 67)
+const LANE_HEIGHT = 300
+
+const notes: TimelineNote[] = [
+  { index: 0, midi: 60, startMs: 0, durationMs: 600 },
+  { index: 1, midi: 61, startMs: 600, durationMs: 300 },
+  { index: 2, midi: 64, startMs: 1200, durationMs: 1200 },
+]
+
+function mountLane(
+  props: Partial<InstanceType<typeof SingTheKeysLane>['$props']> = {},
+) {
+  return mount(SingTheKeysLane, {
+    props: {
+      notes,
+      layout,
+      laneHeight: LANE_HEIGHT,
+      elapsedMs: 0,
+      activeNoteIndex: null,
+      correctNoteIndices: [],
+      accidentalStyle: 'sharp',
+      sungMidi: null,
+      sungFrequency: null,
+      ...props,
+    },
+  })
+}
+
+function pxOf(style: string | undefined, property: string): number {
+  const match = new RegExp(`${property}:\\s*(-?[\\d.]+)px`).exec(style ?? '')
+
+  return Number(match?.[1])
+}
+
+describe('SingTheKeysLane', () => {
+  test('should render one block per note', () => {
+    const wrapper = mountLane()
+
+    expect(wrapper.findAll('[data-testid^="lane-note-"]')).toHaveLength(3)
+  })
+
+  test('should size and stack blocks from their timing', () => {
+    const wrapper = mountLane()
+    const first = wrapper.get('[data-testid="lane-note-0"]').attributes('style')
+    const third = wrapper.get('[data-testid="lane-note-2"]').attributes('style')
+
+    /* Note 0 spans 0–600ms → 60px tall (minus the 2px gap), bottom on the hit
+     * line: top = 300 − 60 = 240. */
+    expect(pxOf(first, 'height')).toBe(58)
+    expect(pxOf(first, 'top')).toBe(240)
+    /* Note 2 spans 1200–2400ms → top = 300 − 240 = 60, 120px tall. */
+    expect(pxOf(third, 'top')).toBe(60)
+    expect(pxOf(third, 'height')).toBe(118)
+  })
+
+  test('should give accidentals a narrower block than naturals', () => {
+    const wrapper = mountLane()
+    const natural = wrapper
+      .get('[data-testid="lane-note-0"]')
+      .attributes('style')
+    const accidental = wrapper
+      .get('[data-testid="lane-note-1"]')
+      .attributes('style')
+
+    expect(pxOf(accidental, 'width')).toBeLessThan(pxOf(natural, 'width'))
+  })
+
+  test('should report each note status', () => {
+    const wrapper = mountLane({
+      elapsedMs: 700,
+      activeNoteIndex: 1,
+      correctNoteIndices: [0],
+    })
+
+    expect(
+      wrapper.get('[data-testid="lane-note-0"]').attributes('data-status'),
+    ).toBe('correct')
+    expect(
+      wrapper.get('[data-testid="lane-note-1"]').attributes('data-status'),
+    ).toBe('active')
+    expect(
+      wrapper.get('[data-testid="lane-note-2"]').attributes('data-status'),
+    ).toBe('upcoming')
+  })
+
+  test('should mark a passed note that was never hit as missed', () => {
+    const wrapper = mountLane({ elapsedMs: 1300, activeNoteIndex: 2 })
+
+    expect(
+      wrapper.get('[data-testid="lane-note-0"]').attributes('data-status'),
+    ).toBe('missed')
+  })
+
+  test('should spell the label after the accidental style', () => {
+    expect(
+      mountLane({ accidentalStyle: 'sharp' })
+        .get('[data-testid="lane-note-1"]')
+        .text(),
+    ).toBe('C♯')
+    expect(
+      mountLane({ accidentalStyle: 'flat' })
+        .get('[data-testid="lane-note-1"]')
+        .text(),
+    ).toBe('D♭')
+  })
+
+  test('should draw the sung line only while a pitch is detected', () => {
+    expect(
+      mountLane().find('[data-testid="sing-the-keys-sung-line"]').exists(),
+    ).toBe(false)
+    expect(
+      mountLane({ sungMidi: 62, sungFrequency: 293.66 })
+        .find('[data-testid="sing-the-keys-sung-line"]')
+        .exists(),
+    ).toBe(true)
+  })
+})

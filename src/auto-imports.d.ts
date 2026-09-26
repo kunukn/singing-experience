@@ -24,6 +24,7 @@ declare global {
   const NOTE_INTERVAL_MS: typeof import('./composables/useDoReMiPlaySequence').NOTE_INTERVAL_MS
   const SCALE_MODE_OPTIONS: typeof import('./composables/useDoReMiGame').SCALE_MODE_OPTIONS
   const SCALE_STEPS: typeof import('./composables/useDoReMiGame').SCALE_STEPS
+  const SCORE_TOLERANCE_CENTS: typeof import('./composables/useDwellSingScore').SCORE_TOLERANCE_CENTS
   const START_TONE_OPTIONS: typeof import('./composables/useDoReMiGame').START_TONE_OPTIONS
   const TOO_LOW_OR_HIGH_HINT_MS: typeof import('./composables/useDoReMiGame').TOO_LOW_OR_HIGH_HINT_MS
   const computed: typeof import('vue').computed
@@ -99,6 +100,7 @@ declare global {
   const useDocumentDirection: typeof import('./composables/useDocumentDirection').useDocumentDirection
   const useDocumentMeta: typeof import('./composables/useDocumentMeta').useDocumentMeta
   const useDuetPitchDetection: typeof import('./composables/useDuetPitchDetection').useDuetPitchDetection
+  const useDwellSingScore: typeof import('./composables/useDwellSingScore').useDwellSingScore
   const useErrorToastStore: typeof import('./stores/useErrorToastStore').useErrorToastStore
   const useFaviconPermissionColor: typeof import('./composables/useFaviconPermissionColor').useFaviconPermissionColor
   const useFireConfetti: typeof import('./composables/useConfetti').useFireConfetti
@@ -181,6 +183,7 @@ declare module 'vue' {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly MAX_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['MAX_CLARITY_THRESHOLD']>
     readonly MIN_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['MIN_CLARITY_THRESHOLD']>
+    readonly SCORE_TOLERANCE_CENTS: UnwrapRef<typeof import('./composables/useDwellSingScore')['SCORE_TOLERANCE_CENTS']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createMockToneEngine: UnwrapRef<typeof import('./composables/toneEngine.mock')['createMockToneEngine']>
@@ -250,6 +253,7 @@ declare module 'vue' {
     readonly useDocumentDirection: UnwrapRef<typeof import('./composables/useDocumentDirection')['useDocumentDirection']>
     readonly useDocumentMeta: UnwrapRef<typeof import('./composables/useDocumentMeta')['useDocumentMeta']>
     readonly useDuetPitchDetection: UnwrapRef<typeof import('./composables/useDuetPitchDetection')['useDuetPitchDetection']>
+    readonly useDwellSingScore: UnwrapRef<typeof import('./composables/useDwellSingScore')['useDwellSingScore']>
     readonly useErrorToastStore: UnwrapRef<typeof import('./stores/useErrorToastStore')['useErrorToastStore']>
     readonly useFaviconPermissionColor: UnwrapRef<typeof import('./composables/useFaviconPermissionColor')['useFaviconPermissionColor']>
     readonly useGuitarSampler: UnwrapRef<typeof import('./composables/useGuitarSampler')['useGuitarSampler']>

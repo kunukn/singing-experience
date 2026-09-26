@@ -1,5 +1,13 @@
 import type { Ref } from 'vue'
 
+/* On-pitch tolerance for scoring. 50¢ is exactly half a semitone: the
+ * deliberate upper bound, as forgiving as scoring can safely go. Beyond it a
+ * note sung toward the next semitone would start to count; at 50¢ a genuinely
+ * wrong tone (≥ half a semitone off) still costs points. Forgiving of normal
+ * vibrato/drift and child voices. Distinct from the ±25¢ CLOSE_CENTS that
+ * drives the visual pitch line. */
+export const SCORE_TOLERANCE_CENTS = 50
+
 /* Minimum fraction of notes that must be sung correctly for the end-of-song
  * celebration to fire. 0.8 = 80%. */
 const CONFETTI_THRESHOLD = 0.8
@@ -18,18 +26,18 @@ const MAX_ON_PITCH_MS = 60
 const DWELL_FRACTION = 0.15
 
 /*
- * Scores a live sing run note by note. Each frame, the on-pitch time is added to
+ * Scores a live sing run note by note — shared by every game that lines a sung
+ * pitch up against a timed melody (Grace Kelly "Sing live", Sing the Keys). Each frame, the on-pitch time is added to
  * a bucket for the note the timeline is currently on; the note is marked correct
  * the moment its bucket reaches `min(MAX_ON_PITCH_MS, DWELL_FRACTION ×
  * noteDuration)` — a minimum dwell, not a majority. Marking happens live
- * (mid-run) so the sheet can paint
- * noteheads green in real time. The overall score is correct notes ÷ total
+ * (mid-run) so the sheet or lane can paint notes green in real time. The overall score is correct notes ÷ total
  * notes, and `correctNoteIndices` drives the green notehead feedback.
  *
  * The requestAnimationFrame loop runs only while `isPlaying`, so pauses are
  * excluded.
  */
-export function useGraceKellySingScore(params: {
+export function useDwellSingScore(params: {
   isPlaying: Ref<boolean>
   /* True while the sung pitch is within scoring tolerance of the target note.
    * Implies a clean voiced pitch (it's false when no pitch is detected). */

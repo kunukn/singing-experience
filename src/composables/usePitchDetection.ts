@@ -33,14 +33,16 @@ type UsePitchDetectionOptions = {
    * gates it, AGC ducks steady notes, and echo cancellation erases any sound the
    * device itself is playing. Use for singing/pitch games where the input is a
    * held musical tone. Leave off for games that play reference tones through the
-   * speaker while listening (they rely on echo cancellation + deaf windows). */
-  rawAudio?: boolean
+   * speaker while listening (they rely on echo cancellation + deaf windows).
+   * Accepts a ref/getter, read on each start(), for a game whose playback is a
+   * toggle (Sing the Keys' melody guide). */
+  rawAudio?: MaybeRefOrGetter<boolean>
   /* The two clear wins for sung-tone detection (noise suppression + auto gain
    * control OFF) while KEEPING echo cancellation ON. For games that play
    * reference tones through the speaker while listening — softer/steadier notes
    * register, but the mic still rejects the device's own playback. Ignored when
    * `rawAudio` is set (rawAudio is the stronger, EC-off variant). */
-  softRawAudio?: boolean
+  softRawAudio?: MaybeRefOrGetter<boolean>
   /* Expected pitch band in Hz (e.g. the melody's range ± a semitone). Clean
    * frames OUTSIDE the band are still reported (frequency/noteInfo/isClean from
    * the raw pitch — the caller keeps full visual feedback) but bypass the EMA
@@ -173,7 +175,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
    * while listening, so the mic still rejects their own playback). Default true
    * = browser defaults (all on). */
   function resolveAudioConstraints(): MediaStreamConstraints['audio'] {
-    if (options.rawAudio) {
+    if (toValue(options.rawAudio)) {
       return {
         echoCancellation: false,
         noiseSuppression: false,
@@ -181,7 +183,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
       }
     }
 
-    if (options.softRawAudio) {
+    if (toValue(options.softRawAudio)) {
       return {
         echoCancellation: true,
         noiseSuppression: false,

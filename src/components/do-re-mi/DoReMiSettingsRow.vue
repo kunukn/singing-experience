@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import type { ToneMode } from '@/composables/toneEngine'
 import type { ScaleMode } from '@/utils/noteUtils'
-import {
-  DEFAULT_STARTING_SEMITONE_OFFSET,
-  START_TONE_GROUPS,
-} from './useDoReMiGame'
+import { DEFAULT_STARTING_SEMITONE_OFFSET } from './useDoReMiGame'
 
 const startOffset = defineModel<number>('startOffset', { required: true })
 const scaleMode = defineModel<ScaleMode>('scaleMode', { required: true })
@@ -47,50 +44,10 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('doReMi.startTone')
       }}</label>
-      <PrimeSelect
-        v-model="startOffset"
-        :options="START_TONE_GROUPS"
-        optionLabel="label"
-        optionValue="offset"
-        optionGroupLabel="voiceTier"
-        optionGroupChildren="items"
-        size="small"
-        scrollHeight="370px"
-      >
-        <template #header>
-          <div class="p-3 text-sm font-medium">
-            {{ t('doReMi.pickToneHeader') }}
-          </div>
-        </template>
-        <template #optiongroup="{ index, option }">
-          <div
-            :data-index="index + 1"
-            class="select-start-tone-option-group flex items-center"
-            :class="{ 'mt-4': index !== 0 }"
-          >
-            <div>{{ t(`doReMi.voiceTier.${option.voiceTier}`) }}</div>
-          </div>
-        </template>
-        <template #option="{ option }">
-          <div class="flex items-center justify-between gap-3">
-            <div class="flex items-center font-medium">
-              <span class="block min-w-8">
-                {{ option.label }}
-              </span>
-              <span
-                v-if="option.offset === DEFAULT_STARTING_SEMITONE_OFFSET"
-                class="ms-1"
-                >⭐</span
-              >
-            </div>
-          </div>
-        </template>
-        <template #footer>
-          <div class="p-3 text-xs text-(--p-text-muted-color)">
-            {{ t('doReMi.pickToneFooter') }}
-          </div>
-        </template>
-      </PrimeSelect>
+      <StartToneSelect
+        v-model:startOffset="startOffset"
+        :defaultOffset="DEFAULT_STARTING_SEMITONE_OFFSET"
+      />
     </div>
 
     <div class="settings-item">
@@ -132,13 +89,5 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 
 .settings-row {
   @apply md:grid-cols-[auto_1fr_auto_1fr];
-}
-
-.select-start-tone-option-group {
-  color: var(--p-primary-color);
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 </style>
