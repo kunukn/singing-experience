@@ -59,12 +59,24 @@ function statusOf(note: TimelineNote): NoteStatus {
   return 'upcoming'
 }
 
+/* Four hues that stay apart whatever the theme's primary colour is (green in
+ * this app, which made "upcoming" and "hit" look alike): blue on the way in,
+ * orange while due (the hit line and sung line are orange too), green once
+ * hit, red once it has passed unsung. */
 const STATUS_CLASS: Record<NoteStatus, string> = {
-  upcoming: 'bg-(--p-primary-color)/70 text-(--p-primary-contrast-color)',
-  active: 'bg-(--p-primary-color) text-(--p-primary-contrast-color)',
+  upcoming: 'bg-(--p-blue-400) text-(--p-surface-0)',
+  active: 'bg-(--p-orange-400) text-(--p-surface-900)',
   correct: 'bg-(--p-green-400) text-(--p-surface-900)',
-  missed: 'bg-(--p-surface-400)/60 text-(--p-surface-900)',
+  missed: 'bg-(--p-red-400) text-(--p-surface-0)',
 }
+
+/* px — how far a block keeps falling past the hit line before it is clipped,
+ * over the key track's label band and the tops of the keys, like the tutorial
+ * videos where the block runs on into the key. This is where a miss becomes
+ * visible: a note can be hit right up to its end, so it only turns red once its
+ * whole block is already below the line. At the lane's px/ms this is roughly
+ * half a second to a second on screen. */
+const HIT_LINE_TAIL_PX = 64
 
 const blocks = computed(() =>
   props.notes.map((note) => {
@@ -116,14 +128,33 @@ const sungLine = computed(() => {
 </script>
 
 <template>
-  <!-- LTR like the keyboard under it: pitch runs low→high left→right on a
+  <!-- Clipping box, TAIL px taller than the lane and pulled over the key track
+       by the same amount with a negative margin. overflow-hidden keeps the
+       blocks parked above and below from adding scrollable overflow to the
+       piano's scroll box (a clip-path would clip the paint but the scroll box
+       would still grow a scrollbar as the strip travels). z-10 paints the tail
+       over the keys, which come later in the DOM; pointer-events-none keeps
+       the key tops under it clickable.
+       LTR like the keyboard under it: pitch runs low→high left→right on a
        piano whatever the page direction. -->
   <div
-    class="relative mx-auto overflow-hidden rounded-t-md bg-(--p-surface-100) dark:bg-(--p-surface-900)"
-    :style="{ width: `${layout.totalWidth}px`, height: `${laneHeight}px` }"
+    class="pointer-events-none relative z-10 mx-auto overflow-hidden"
+    :style="{
+      width: `${layout.totalWidth}px`,
+      height: `${laneHeight + HIT_LINE_TAIL_PX}px`,
+      marginBottom: `-${HIT_LINE_TAIL_PX}px`,
+    }"
     dir="ltr"
     data-testid="sing-the-keys-lane"
   >
+    <!-- The lane surface: only the part above the hit line is painted, so the
+         tail stays see-through over the label band and keys. -->
+    <div
+      class="absolute inset-x-0 top-0 rounded-t-md bg-(--p-surface-100) dark:bg-(--p-surface-900)"
+      :style="{ height: `${laneHeight}px` }"
+      aria-hidden="true"
+    />
+
     <div
       class="absolute inset-x-0 top-0 will-change-transform"
       :style="stripStyle"
@@ -145,14 +176,18 @@ const sungLine = computed(() => {
     <!-- The singer's pitch, continued up from the key track's dashed line. -->
     <div
       v-if="sungLine"
-      class="pointer-events-none absolute inset-y-0 z-10 w-0 -translate-x-[1.5px] border-l-3 border-dashed border-(--p-orange-400)/50"
-      :style="{ insetInlineStart: `${sungLine.x}px` }"
+      class="absolute top-0 z-10 w-0 -translate-x-[1.5px] border-l-3 border-dashed border-(--p-orange-400)/50"
+      :style="{
+        insetInlineStart: `${sungLine.x}px`,
+        height: `${laneHeight}px`,
+      }"
       data-testid="sing-the-keys-sung-line"
     />
 
     <!-- Hit line: the top of the keys. A block lands here when its note is due. -->
     <div
-      class="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-0.5 bg-(--p-orange-400)"
+      class="absolute inset-x-0 z-20 h-0.5 bg-(--p-orange-400)"
+      :style="{ top: `${laneHeight - 2}px` }"
       aria-hidden="true"
     />
   </div>

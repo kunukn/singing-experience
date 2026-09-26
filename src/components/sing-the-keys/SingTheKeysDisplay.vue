@@ -123,6 +123,19 @@ const {
 
 const scorePercent = computed(() => Math.round(onPitchRatio.value * 100))
 
+/* Live tally beside the Stop button, so the end score is never a surprise.
+ * A note is missed once it has fully passed the hit line without being hit —
+ * the same rule the lane uses to paint a block red. */
+const hitCount = computed(() => correctNoteIndices.value.length)
+const missCount = computed(() => {
+  const hit = new Set(correctNoteIndices.value)
+
+  return timeline.value.notes.filter(
+    (note) =>
+      !hit.has(note.index) && note.startMs + note.durationMs <= elapsedMs.value,
+  ).length
+})
+
 /* Green blocks live while singing and on the result screen; none while idle
  * so a stale map never sits over a re-laid tune. */
 const resultNoteIndices = computed(() =>
@@ -268,6 +281,18 @@ onUnmounted(() => {
       >
         {{ t('generic.stop') }}
       </PrimeButton>
+
+      <!-- Symbols and digits only, so nothing here needs translating. -->
+      <span
+        v-if="isPlaying"
+        class="flex items-center gap-2 text-sm font-semibold tabular-nums"
+        data-testid="sing-the-keys-tally"
+        :data-hits="hitCount"
+        :data-misses="missCount"
+      >
+        <span class="text-(--p-green-400)">✓ {{ hitCount }}</span>
+        <span class="text-(--p-red-400)">✗ {{ missCount }}</span>
+      </span>
 
       <PrimeButton
         v-else
