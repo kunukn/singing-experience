@@ -338,6 +338,7 @@
     "speed": "Hastighed",
     "melodyGuide": "Guide",
     "scoreCorrect": "{percent}% rigtigt",
+    "practiceHint": "Guide til: bare øv dig, ingen score",
     "songs": {
       "twinkle": "Blinke, blinke, lille stjerne",
       "odeToJoy": "Ode til glæden",

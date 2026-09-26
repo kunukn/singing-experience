@@ -29,6 +29,7 @@ function mountLane(
       accidentalStyle: 'sharp',
       sungMidi: null,
       sungFrequency: null,
+      isScored: true,
       ...props,
     },
   })
@@ -97,6 +98,18 @@ describe('SingTheKeysLane', () => {
     expect(
       wrapper.get('[data-testid="lane-note-0"]').attributes('data-status'),
     ).toBe('missed')
+  })
+
+  test('should mark a passed note as passed, not missed, when unscored', () => {
+    const wrapper = mountLane({
+      elapsedMs: 1300,
+      activeNoteIndex: 2,
+      isScored: false,
+    })
+
+    expect(
+      wrapper.get('[data-testid="lane-note-0"]').attributes('data-status'),
+    ).toBe('passed')
   })
 
   test('should spell the label after the accidental style', () => {

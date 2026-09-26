@@ -87,11 +87,11 @@ function targetState(key: PianoKey): 'active' | 'correct' | undefined {
   return props.isTargetCorrect ? 'correct' : 'active'
 }
 
-/* Orange while due, green once hit — the lane's block colours, so the key and
+/* Blue while due, green once hit — the lane's block colours, so the key and
  * the block landing on it agree. Not the primary colour: it is green in this
  * app, which made "due" and "hit" indistinguishable. */
 const TARGET_WASH_CLASS: Record<'active' | 'correct', string> = {
-  active: 'bg-(--p-orange-400)/50',
+  active: 'bg-(--p-blue-400)/40',
   correct: 'bg-(--p-green-400)/60',
 }
 

@@ -109,13 +109,22 @@ const isOnPitchForScore = computed(() => {
   )
 })
 
+/* Scoring is off while the melody guide plays. The guide tone is the exact
+ * target pitch inside the exact scoring window: with echo cancellation off it
+ * scores itself, and with echo cancellation on the canceller damps the
+ * singer's own sustained tone as well, so neither mic profile gives an honest
+ * number. Guide on is practice — the lane, key wash and sung line still work,
+ * but no tally, result or confetti. */
+const isScored = computed(() => !isMelodyGuideEnabled.value)
+const isScoring = computed(() => isPlaying.value && isScored.value)
+
 const {
   reachedThreshold,
   reset: resetScore,
   onPitchRatio,
   correctNoteIndices,
 } = useDwellSingScore({
-  isPlaying,
+  isPlaying: isScoring,
   isOnPitch: isOnPitchForScore,
   activeNoteIndex,
   noteDurationsMs,
@@ -193,12 +202,16 @@ const laneHeight = computed(() =>
 )
 
 /* Open the mic first so a permission prompt never eats the count-in, then
- * launch the timeline. */
+ * launch the timeline. In practice mode (guide on) the mic stays closed: with
+ * the speaker playing the melody, the detected line whips between the guide
+ * tone, the voice and their echo and only confuses — and nothing is scored. */
 async function startSinging() {
   showResult.value = false
   resetScore()
-  await start()
-  if (!isListening.value) return
+  if (isScored.value) {
+    await start()
+    if (!isListening.value) return
+  }
 
   await game.start({
     song: song.value,
@@ -223,7 +236,7 @@ const { fireConfetti } = useConfettiStore()
 /* Reveal the result on a natural finish (never a manual stop) and celebrate
  * when enough notes were correct. */
 watch(isDone, (done) => {
-  if (!done) return
+  if (!done || !isScored.value) return
 
   showResult.value = true
   if (reachedThreshold.value) fireConfetti()
@@ -268,15 +281,18 @@ onUnmounted(() => {
       </p>
     </div>
 
+    <!-- Centred, with a little top padding: the scroller clips vertically too,
+         and a focus ring on the toggle would otherwise lose its top edge. The
+         Start/Stop buttons take the toggle's 35px height so the row is even. -->
     <EdgeFadeScroller
-      class="flex min-w-50 items-baseline justify-center-safe gap-2 pb-2"
+      class="flex min-w-50 items-center justify-center-safe gap-2 pt-1 pb-2"
     >
       <PrimeButton
         v-if="isPlaying"
         severity="danger"
         size="small"
         rounded
-        class="min-w-20"
+        class="min-h-8.75 min-w-20"
         @click="stopSinging"
       >
         {{ t('generic.stop') }}
@@ -284,7 +300,7 @@ onUnmounted(() => {
 
       <!-- Symbols and digits only, so nothing here needs translating. -->
       <span
-        v-if="isPlaying"
+        v-if="isScoring"
         class="flex items-center gap-2 text-sm font-semibold tabular-nums"
         data-testid="sing-the-keys-tally"
         :data-hits="hitCount"
@@ -296,7 +312,7 @@ onUnmounted(() => {
 
       <PrimeButton
         v-else
-        class="min-w-20"
+        class="min-h-8.75 min-w-20"
         severity="success"
         size="small"
         rounded
@@ -313,6 +329,14 @@ onUnmounted(() => {
         :disabled="isPlaying"
       />
     </EdgeFadeScroller>
+
+    <p
+      v-if="isMelodyGuideEnabled"
+      class="text-xs text-(--p-text-muted-color)"
+      data-testid="sing-the-keys-practice-hint"
+    >
+      {{ t('singTheKeys.practiceHint') }}
+    </p>
 
     <p v-if="error" class="text-sm text-(--p-red-400)">{{ error }}</p>
 
@@ -342,6 +366,7 @@ onUnmounted(() => {
             :accidentalStyle="accidentalStyle"
             :sungMidi="sungMidi"
             :sungFrequency="frequency"
+            :isScored="isScored"
           />
         </template>
       </PianoDisplay>

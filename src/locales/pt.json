@@ -338,6 +338,7 @@
     "speed": "Velocidade",
     "melodyGuide": "Guia",
     "scoreCorrect": "{percent}% correto",
+    "practiceHint": "Guia ligado: só para praticar, sem pontuação",
     "songs": {
       "twinkle": "Brilha, brilha, estrelinha",
       "odeToJoy": "Ode à Alegria",

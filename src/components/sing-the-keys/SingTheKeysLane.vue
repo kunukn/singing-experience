@@ -30,11 +30,14 @@ type Props = {
    * aim at the incoming block. Null while nothing clean is detected. */
   sungMidi: number | null
   sungFrequency: number | null
+  /* False in practice mode (melody guide on): passed blocks go neutral rather
+   * than red, since nothing was being judged. */
+  isScored: boolean
 }
 
 const props = defineProps<Props>()
 
-type NoteStatus = 'upcoming' | 'active' | 'correct' | 'missed'
+type NoteStatus = 'upcoming' | 'active' | 'correct' | 'missed' | 'passed'
 
 const pxPerMs = computed(() => props.laneHeight / LOOKAHEAD_MS)
 
@@ -54,20 +57,24 @@ const correctSet = computed(() => new Set(props.correctNoteIndices))
 function statusOf(note: TimelineNote): NoteStatus {
   if (correctSet.value.has(note.index)) return 'correct'
   if (note.index === props.activeNoteIndex) return 'active'
-  if (note.startMs + note.durationMs <= props.elapsedMs) return 'missed'
+  if (note.startMs + note.durationMs <= props.elapsedMs)
+    return props.isScored ? 'missed' : 'passed'
 
   return 'upcoming'
 }
 
-/* Four hues that stay apart whatever the theme's primary colour is (green in
- * this app, which made "upcoming" and "hit" look alike): blue on the way in,
- * orange while due (the hit line and sung line are orange too), green once
- * hit, red once it has passed unsung. */
+/* Hues that stay apart whatever the theme's primary colour is (green in this
+ * app, which made "upcoming" and "hit" look alike): blue until the note is
+ * decided, then green (hit) or red (passed unsung). A due block keeps the blue
+ * on purpose — a third colour there read as "wrong, then right" on every note,
+ * when the singer has simply not locked on yet. The key wash and hit line show
+ * what is due. Passed blocks in practice mode go neutral: nothing was judged. */
 const STATUS_CLASS: Record<NoteStatus, string> = {
   upcoming: 'bg-(--p-blue-400) text-(--p-surface-0)',
-  active: 'bg-(--p-orange-400) text-(--p-surface-900)',
+  active: 'bg-(--p-blue-400) text-(--p-surface-0)',
   correct: 'bg-(--p-green-400) text-(--p-surface-900)',
   missed: 'bg-(--p-red-400) text-(--p-surface-0)',
+  passed: 'bg-(--p-surface-400)/60 text-(--p-surface-0)',
 }
 
 /* px — how far a block keeps falling past the hit line before it is clipped,

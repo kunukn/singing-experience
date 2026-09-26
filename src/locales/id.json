@@ -338,6 +338,7 @@
     "speed": "Kecepatan",
     "melodyGuide": "Bantuan",
     "scoreCorrect": "{percent}% benar",
+    "practiceHint": "Bantuan nyala: latihan saja, tanpa skor",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",
       "odeToJoy": "Ode to Joy",

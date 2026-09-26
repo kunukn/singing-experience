@@ -338,6 +338,7 @@
     "speed": "Tempo",
     "melodyGuide": "Hilfe",
     "scoreCorrect": "{percent}% richtig",
+    "practiceHint": "Hilfe an: nur üben, keine Punkte",
     "songs": {
       "twinkle": "Funkel, funkel, kleiner Stern",
       "odeToJoy": "Ode an die Freude",

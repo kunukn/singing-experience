@@ -338,6 +338,7 @@
     "speed": "السرعة",
     "melodyGuide": "مساعدة",
     "scoreCorrect": "{percent}% صحيح",
+    "practiceHint": "المساعدة مفعّلة: تدريب فقط، بلا نتيجة",
     "songs": {
       "twinkle": "تلألئي يا نجمة",
       "odeToJoy": "نشيد الفرح",

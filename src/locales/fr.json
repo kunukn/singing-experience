@@ -338,6 +338,7 @@
     "speed": "Vitesse",
     "melodyGuide": "Guide",
     "scoreCorrect": "{percent}% correct",
+    "practiceHint": "Guide activé : juste pour t'entraîner, pas de score",
     "songs": {
       "twinkle": "Ah ! vous dirai-je, maman",
       "odeToJoy": "Ode à la joie",
