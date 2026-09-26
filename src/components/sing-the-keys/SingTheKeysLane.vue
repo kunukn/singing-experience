@@ -6,7 +6,6 @@ import {
 } from '@/components/piano/pianoLayout'
 import { buildPianoPreviewLine } from '@/components/piano/pianoPreview'
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import { isNaturalMidi } from '@/components/notes/notesScales'
 import {
   LOOKAHEAD_MS,
   type BeatFlash,
@@ -43,7 +42,7 @@ type Props = {
   /* Glow on the hit line as a beat line crosses it; null between beats and
    * while idle. */
   beatFlash: BeatFlash | null
-  /* Beat lights: the hit line glows in the current pulse's colour and fades
+  /* Beat lights: the hit line glows light blue on each beat and fades
    * back to orange by the next beat. Null while idle or when lights are off. */
   beatLight: BeatPulse | null
 }
@@ -93,7 +92,6 @@ const HIT_LINE_TAIL_PX = 64
 
 const blocks = computed(() =>
   props.notes.map((note) => {
-    const isNatural = isNaturalMidi(note.midi)
     /* Shared with the keyboard's target wash so block and key match. */
     const span = pianoNoteBlockSpan(props.layout, note.midi)
     const height = Math.max(
@@ -107,7 +105,6 @@ const blocks = computed(() =>
         showOctave: false,
         preferFlats: props.accidentalStyle === 'flat',
       }).label,
-      isNatural,
       style: {
         insetInlineStart: `${span.leftPx}px`,
         /* Strip coordinates: y = 0 is the hit line at elapsedMs 0, so a note
@@ -142,15 +139,10 @@ const beatFlashOpacity = computed(() => {
     : props.beatFlash.intensity * PULSE_FLASH_OPACITY
 })
 
-/* One colour per pulse in the bar, cycled. The downbeat is pink so "1" is the
- * warmest, most noticeable colour; the rest stay apart from each other and
- * from the orange hit line in both themes. */
-const BEAT_LIGHT_COLORS = [
-  'var(--p-pink-400)',
-  'var(--p-cyan-400)',
-  'var(--p-yellow-400)',
-  'var(--p-purple-400)',
-]
+/* One colour for every beat — a light blue that belongs with the blue blocks
+ * yet still stands apart from them and from the orange hit line. Colour per
+ * beat read as noise; the downbeat stands out by thickness instead. */
+const BEAT_LIGHT_COLOR = 'var(--p-cyan-400)'
 
 /* px — how much thicker than the 2px hit line the light gets at full
  * brightness: most on the downbeat, so the bar's "1" stands out. */
@@ -164,8 +156,6 @@ const BEAT_LIGHT_GLOW_PX = 20
 const beatLight = computed(() => {
   if (!props.beatLight) return null
 
-  const color =
-    BEAT_LIGHT_COLORS[props.beatLight.pulseInBar % BEAT_LIGHT_COLORS.length]
   /* Full on the beat, fading back to plain orange as the next beat arrives. */
   const intensity = 1 - props.beatLight.progress
   const extraPx = props.beatLight.isBarStart
@@ -180,13 +170,13 @@ const beatLight = computed(() => {
     lineStyle: {
       top: `${props.laneHeight - thicknessPx}px`,
       height: `${thicknessPx}px`,
-      backgroundColor: color,
+      backgroundColor: BEAT_LIGHT_COLOR,
       opacity: intensity,
     },
     glowStyle: {
       top: `${props.laneHeight - glowPx}px`,
       height: `${glowPx}px`,
-      backgroundImage: `linear-gradient(to top, ${color}, transparent)`,
+      backgroundImage: `linear-gradient(to top, ${BEAT_LIGHT_COLOR}, transparent)`,
       opacity: intensity,
     },
   }
@@ -240,7 +230,7 @@ const sungLine = computed(() => {
 
     <!-- Beat glows, rising off the hit line behind the blocks so the label of
          the note being sung stays readable: orange as each beat line crosses
-         (Beat), or the beat's own colour (Lights). -->
+         (Beat), or light blue (Lights). -->
     <div
       class="absolute inset-x-0 bg-linear-to-t from-(--p-orange-400) to-transparent"
       :style="{
@@ -323,7 +313,7 @@ const sungLine = computed(() => {
       aria-hidden="true"
     />
 
-    <!-- Beat light: the hit line itself lights up in the beat's colour, where
+    <!-- Beat light: the hit line itself lights up light blue, where
          the singer is already looking, then fades back to orange. -->
     <div
       v-if="beatLight"

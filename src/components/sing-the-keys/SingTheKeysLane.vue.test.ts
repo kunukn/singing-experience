@@ -65,7 +65,7 @@ describe('SingTheKeysLane', () => {
     expect(pxOf(third, 'height')).toBe(118)
   })
 
-  test('should give accidentals a narrower block than naturals', () => {
+  test('should give naturals and accidentals the same block width', () => {
     const wrapper = mountLane()
     const natural = wrapper
       .get('[data-testid="lane-note-0"]')
@@ -74,7 +74,7 @@ describe('SingTheKeysLane', () => {
       .get('[data-testid="lane-note-1"]')
       .attributes('style')
 
-    expect(pxOf(accidental, 'width')).toBeLessThan(pxOf(natural, 'width'))
+    expect(pxOf(accidental, 'width')).toBeCloseTo(pxOf(natural, 'width'))
   })
 
   test('should report each note status', () => {

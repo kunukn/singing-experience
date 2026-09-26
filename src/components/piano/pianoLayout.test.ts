@@ -258,10 +258,10 @@ describe('pianoNoteBlockSpan', () => {
     }
   })
 
-  test('gives a natural 1.4 semitone units', () => {
-    expect(pianoNoteBlockSpan(layout, 62).widthPx).toBeCloseTo(
-      1.4 * SEMITONE_UNIT,
-    )
+  test('gives a natural the same width as a black key', () => {
+    const blackKeyWidth = layout.blacks[0].widthPx
+
+    expect(pianoNoteBlockSpan(layout, 62).widthPx).toBeCloseTo(blackKeyWidth)
   })
 
   test('matches a black key exactly', () => {

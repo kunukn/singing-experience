@@ -51,8 +51,8 @@ const isMelodyGuideEnabled = defineModel<boolean>('isMelodyGuideEnabled', {
 const isBeatLinesEnabled = defineModel<boolean>('isBeatLinesEnabled', {
   required: true,
 })
-/* Beat lights: the hit line glows in a colour per pulse in the bar, where the
- * singer is already looking. Visual only, like the lines. */
+/* Beat lights: the hit line glows light blue on each beat, where the singer is
+ * already looking. Visual only, like the lines. */
 const areBeatLightsEnabled = defineModel<boolean>('areBeatLightsEnabled', {
   required: true,
 })

@@ -70,16 +70,17 @@ describe('PianoDisplay - target key', () => {
   })
 
   /* Unit 24 (no container width in happy-dom). E4's pitch sits 4.5 units in
-   * from the C4 key's outer edge (C4 − ½), so the 1.4-unit block is centred on
-   * 108px: 91.2px → 124.8px, past the E key's own right edge at 120px. */
+   * from the C4 key's outer edge (C4 − ½), so the 1.24-unit (black-key wide)
+   * block is centred on 108px: 93.12px → 122.88px, past the E key's own right
+   * edge at 120px. */
   test('should wash a white target in the falling block shape', () => {
     const wrapper = mountDisplay({ targetMidi: 64 })
 
     const style = wrapper
       .get('[data-testid="piano-target-wash"]')
       .attributes('style')
-    expect(style).toContain('inset-inline-start: 91.2px')
-    expect(style).toContain('width: 33.6px')
+    expect(style).toContain('inset-inline-start: 93.12px')
+    expect(style).toContain('width: 29.76px')
   })
 
   /* A black key already is the block's shape, so its wash stays on the key. */
