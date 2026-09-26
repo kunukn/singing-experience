@@ -57,8 +57,8 @@ Test files live next to the source file they test:
 src/utils/noteUtils.ts
 src/utils/noteUtils.test.ts
 
-src/composables/useDoReMiGame.ts
-src/composables/useDoReMiGame.test.ts
+src/components/do-re-mi/useDoReMiGame.ts
+src/components/do-re-mi/useDoReMiGame.test.ts
 
 src/components/do-re-mi/DoReMiScale.vue
 src/components/do-re-mi/DoReMiScale.vue.test.ts
@@ -160,7 +160,7 @@ expect(onComplete).toHaveBeenCalledTimes(1)
 
 ### Spies — `vi.spyOn()`
 
-Use for observing existing functions without replacing them. Always use `vi.spyOn` (not `vitest.spyOn`):
+Use for observing existing functions without replacing them:
 
 ```typescript
 const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
@@ -220,7 +220,7 @@ expect(wrapper.exists()).toBe(true)
 expect(wrapper.text()).toContain('Do')
 expect(wrapper.get('h1').text()).toBe('Sing!')
 expect(wrapper.get('button').attributes('disabled')).toBeDefined()
-expect(wrapper.get('button').classes()).toContain('active')
+expect(wrapper.attributes('data-status')).toBe('current')
 ```
 
 ### Triggering events
@@ -279,7 +279,6 @@ Use the correct matcher for the value type:
 | DOM/wrapper exists | `wrapper.exists()` → `toBe(true/false)` |
 | DOM text content | `wrapper.text()` → `toContain()` / `toBe()` |
 | DOM attributes | `wrapper.attributes('name')` → `toBe()` / `toBeDefined()` |
-| DOM classes | `wrapper.classes()` → `toContain()` |
 | Mock called | `toHaveBeenCalledTimes(n)` / `toHaveBeenCalledWith(args)` |
 | Mock not called | `not.toHaveBeenCalled()` |
 
@@ -317,11 +316,10 @@ test('should call stop on reset', () => {
 
 ### Separate mock files — for large datasets
 
-Use `*.mock.ts` or `*.mock.json` next to the test file:
+Use `*.mock.ts` or `*.mock.json` next to the module being mocked; import shared ones by absolute path:
 
 ```typescript
-import { getMockScaleSteps } from './useDoReMiGame.mock'
-import mockNotes from './noteUtils.mock.json'
+import { createMockToneEngine } from '@/composables/toneEngine.mock'
 ```
 
 ## Setup & Teardown
@@ -414,7 +412,6 @@ test('should report completed status via data attribute', () => {
 ## Common Pitfalls
 
 - **Always import vitest APIs explicitly** — `vi`, `describe`, `test`, `expect`, `beforeEach`, `afterEach` are not global
-- **Use `vi.spyOn`**, not `vitest.spyOn`
 - **Use `wrapper.find().exists()`** for optional elements — `wrapper.get()` throws if the element is missing
 - **Await `nextTick()`** after reactive state changes before asserting DOM or reactive values
 - **Use `vi.useFakeTimers()`** for composables that rely on timing — restore with `vi.useRealTimers()` in `afterEach`

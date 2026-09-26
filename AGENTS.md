@@ -167,7 +167,6 @@ See `src/auto-imports.d.ts` for the full list of available auto-imports.
 - Flat is better than nested
 - No generic 'helpers' folders
 - Keep business logic in composables or utils
-- Separate API calls into the `/src/apis/` directory
 - Prefer absolute import paths when not in the same folder. E.g. `import { Gallery } from '@/Gallery'` instead of `import { Gallery } from '../../Gallery'`
 - Use relative imports for co-located files within the same feature folder. E.g. `import { useDoReMiGame } from './useDoReMiGame'`
 
@@ -286,13 +285,13 @@ Always add a blank line after a single-line `return` (including early/guard retu
 
 ```typescript
 // ❌ Bad - no blank line after single-line return
-if (!locationId) return
-const fetchedLocation = await cpmsGatewayApi.getLocation(locationId, undefined)
+if (!songId) return
+const song = await songLibrary.fetchSong(songId)
 
 // ✅ Good - blank line after single-line return
-if (!locationId) return
+if (!songId) return
 
-const fetchedLocation = await cpmsGatewayApi.getLocation(locationId, undefined)
+const song = await songLibrary.fetchSong(songId)
 ```
 
 ### State Management

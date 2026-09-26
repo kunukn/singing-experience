@@ -29,4 +29,4 @@ This app is used by children as well as adults. All user-facing strings in `src/
 ## Process
 
 - When in doubt about a language you don't speak natively, change only the lowest-risk items (parenthetical plurals, dropping "please") and flag the file for native-speaker review. Don't guess.
-- After editing locale files, run `npm run check:fix` — it validates the JSON and re-runs the build smoke check.
+- After editing locale files, run `npm run check:fix` — locale JSON is imported at build time, so a malformed file fails the build step.
