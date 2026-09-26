@@ -11,7 +11,9 @@ function prewarmAudio() {
 
 <template>
   <div class="flex grow flex-col items-center pt-1 pb-4">
-    <h2 class="product-title mb-2 font-bold">{{ t('tools.title') }}</h2>
+    <h2 class="product-title mb-2 font-bold">
+      {{ t('home.programs.singingTools.name') }}
+    </h2>
 
     <p class="mb-4 text-(--p-text-muted-color)">
       {{ t('tools.subtitle') }}

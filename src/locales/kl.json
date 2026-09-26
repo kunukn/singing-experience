@@ -5,7 +5,6 @@
     "pause": "Unitsikkit",
     "resume": "Nangikkit",
     "clear": "Peerit",
-    "backToMenuArrow": "←",
     "back": "Uteqqigit",
     "hz": "Hz",
     "previewSoundLabel": "Nipaat takunniaruk",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "Taartumik atuinerup allanngortinnera",
     "toggleFullscreen": "Skærmi tamaat allanngortinnera",
     "fullscreen": "Skærmi tamaat",
-    "settings": "Aaqqissuussinerit",
     "showNoteTarget": "Nalunaarsorneq naaperineqarpoq",
     "pageNotFound": "Nalunaarsorneq nassatarisassanngilaq",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "Pinnguarit aqqissaaq",
     "score": "Naatsorsuut",
     "time": "Piffissaq",
-    "reset": "Reset",
-    "off": "Off"
+    "off": "Off",
+    "cents": "cent",
+    "listening": "Tusarnarpoq...",
+    "tempo": "Tempo",
+    "toneLabels": "Nodit",
+    "melodyGuide": "Guide",
+    "scoreCorrect": "{percent}% eqqortoq",
+    "beat": "Takt",
+    "sing": "Erinarsorit"
   },
   "errors": {
     "microphoneAccess": "Mikrofoni atorsinnaanngilaq",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "Nipi",
-    "piano": "Piano",
     "keyboard": "Keyboard",
     "bell": "Klokki",
     "bass": "Bass",
@@ -141,11 +145,9 @@
     "privacy": "Nammineersinnaassuseq illersorneqarpoq — app tamaat browserimi suliassarineqarpoq. Nipeqarneq nassiunnissaq pilersitsinaveersaarneqarpoq."
   },
   "tools": {
-    "title": "Nipilersuutit atortut",
     "subtitle": "Atortoq toqqaruk"
   },
   "games": {
-    "title": "Erinarsorpalaaq pinnguartakkat",
     "subtitle": "Pinnguarneq toqqaruk"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "halvtonit"
   },
   "doReMi": {
-    "title": "DO RE MI Pinnguaq",
     "singNoteFor": "Nota ataatsimik {seconds} secondsimik tigusimaaruk siusinnaannginnarlutit",
     "congratulationsMessage": "{mode} nipiliuineq {startTone}-mit aallarnerlugu naammassineqarpoq, nota ataatsimik {seconds} secondsimik tigusimassutit!",
     "time": "⏱ Piffissaq",
     "singThisNote": "Una niperusillugu",
-    "youreSinging": "Niperuserputit",
-    "perfect": "Pitsaaneq",
-    "cents": "cent",
     "allowedRange": "Atorsinnaasut: ±50 cent · Siuarsarfissaq: {hz} Hz",
     "playSolfege": "{solfege} nipiliigiuk",
     "scaleMode": "Skalaap suussusia",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "Tusarnarpoq...",
     "flat": "♭ Mikippoq",
-    "inTune": "Tuneqarpoq",
     "sharp": "Qaffasip­pallappoq ♯",
     "clarity": "Paatsin­naaneq",
-    "cents": "cent",
     "lowVoice": "Nipi portusooq",
     "highVoice": "Nipi qiterisooq",
     "replaySound": "Nipimik uteqqiigit\n(kingulleq 30 sek.)"
@@ -256,7 +251,6 @@
     "duet": "Angutit aamma arnat"
   },
   "toneDetector": {
-    "listening": "Tusarnarpoq...",
     "tonesDetected": "{count} nipi nassaarineqarput",
     "pressStart": "Aallartitsimik tooruk nipilerisarniarlutit",
     "pageDescription": "Nipit ataatsimut nassaarinnaalerput (C2–C7). Erinarsortaruk, nipit amerlasuut niperusigit aamma nipi ataatsimik takusinnaavat.",
@@ -270,13 +264,10 @@
     "loud": "Uuttortarneq annertusoq"
   },
   "singTone": {
-    "title": "Niperuserneq Pinnguaq",
     "subtitle": "Nipi nalinginnaasumik nipilerisarpoq — utertitsillugu niperusillugu!",
     "play": "Pinnguarit",
-    "singThisNote": "Una niperusillugu",
     "rounds": "Pinnguaqataanermi",
     "congratulationsMessage": "Nipit {rounds} tamarmik {seconds} secondsimi {holdDuration}s tigusimassutit naammassineqarput!",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "Nipit {rounds} niperusigit {holdDuration}s tigusimassutit"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "Erinnartimmiaq",
     "subtitle": "Nipi tamaasa erinnarlugu putummut ikaarniarit"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "Nipi toqqarlugu erinarsorlutillu",
-    "sing": "Erinarsorit",
     "voz": "Nipi",
     "startTone": "Aallartivik",
-    "tempo": "Tempo",
     "showAllParts": "Nipit tamaasa",
     "tabs": {
       "singAlong": "Ilagalugu erinarsorit",
@@ -325,25 +312,17 @@
       "lessLow": "Annikitsumik appasitsoq",
       "low": "Appasitsoq"
     },
-    "scoreCorrect": "{percent}% eqqortoq",
-    "metronome": "Takt",
-    "barHighlight": "Boks",
-    "toneLabels": "Nodit",
-    "melodyGuide": "Guide"
+    "barHighlight": "Boks"
   },
   "singTheKeys": {
-    "title": "Sing the Keys",
     "subtitle": "Nipi tangentimut piguni erinarsukkuk",
     "song": "Erinarsuut",
     "speed": "Sukkassusaa",
     "songRange": "Nipit annertussusia",
     "pickRangeHeader": "Pick a range that fits your voice",
     "pickRangeFooter": "⭐ = a good place to start",
-    "melodyGuide": "Guide",
     "preview": "Preview",
-    "beatLines": "Takt",
     "beatLights": "Qaammaqqutit",
-    "scoreCorrect": "{percent}% eqqortoq",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",
       "odeToJoy": "Ode to Joy",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notes",
-    "subtitle": "See every note and its name",
-    "clef": "Clef",
-    "tempo": "Tempo",
-    "toneLabels": "Nodit",
     "accidentals": "Kryds & b'er",
-    "noteNumbers": "Nodenummeri",
-    "sing": "Erinarsorit",
     "tabs": {
       "listen": "Listen",
       "overview": "Overview"

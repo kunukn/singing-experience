@@ -9,7 +9,7 @@ const { t } = useI18n()
     v-model="modelValue"
     iconOn="pi pi-volume-up"
     iconOff="pi pi-volume-off"
-    :label="t('graceKelly.melodyGuide')"
+    :label="t('generic.melodyGuide')"
     :disabled="disabled"
   />
 </template>

@@ -5,7 +5,6 @@
     "pause": "إيقاف مؤقت",
     "resume": "متابعة",
     "clear": "مسح",
-    "backToMenuArrow": "→",
     "back": "رجوع",
     "hz": "Hz",
     "previewSoundLabel": "شاهد صوتك",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "تبديل الوضع الداكن",
     "toggleFullscreen": "تبديل ملء الشاشة",
     "fullscreen": "ملء الشاشة",
-    "settings": "الإعدادات",
     "showNoteTarget": "إظهار هدف النغمة",
     "pageNotFound": "الصفحة غير موجودة",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "العب مرة أخرى",
     "score": "النتيجة",
     "time": "الوقت",
-    "reset": "إعادة",
-    "off": "بدون"
+    "off": "بدون",
+    "cents": "سنت",
+    "listening": "يستمع…",
+    "tempo": "السرعة",
+    "toneLabels": "النغمات",
+    "melodyGuide": "مساعدة",
+    "scoreCorrect": "{percent}% صحيح",
+    "beat": "إيقاع",
+    "sing": "غنِّ"
   },
   "errors": {
     "microphoneAccess": "فشل الوصول إلى الميكروفون",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "صوت النغمة",
-    "piano": "بيانو",
     "keyboard": "لوحة المفاتيح",
     "bell": "جرس",
     "bass": "باس",
@@ -141,11 +145,9 @@
     "privacy": "خصوصيتك آمنة — يعمل هذا التطبيق بالكامل في متصفحك. لا يتم تسجيل أي صوت أو إرساله."
   },
   "tools": {
-    "title": "أدوات الموسيقى",
     "subtitle": "اختر أداة"
   },
   "games": {
-    "title": "ألعاب الغناء",
     "subtitle": "اختر لعبة"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "أنصاف نغمات"
   },
   "doReMi": {
-    "title": "لعبة DO RE MI",
     "singNoteFor": "غنِّ كل نوتة لمدة {seconds} ثوانٍ للتقدم",
     "congratulationsMessage": "لقد أكملت سلم {mode} بدءًا من {startTone} مع إمساك كل نوتة لمدة {seconds} ثوانٍ!",
     "time": "⏱ الوقت",
     "singThisNote": "غنِّ هذه",
-    "youreSinging": "أنت تغني",
-    "perfect": "ممتاز",
-    "cents": "سنت",
     "allowedRange": "النطاق المسموح: ±50 سنت · الهدف: {hz} Hz",
     "playSolfege": "تشغيل {solfege}",
     "scaleMode": "نوع السلم",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "يستمع…",
     "flat": "♭ منخفض",
-    "inTune": "متناغم",
     "sharp": "مرتفع ♯",
     "clarity": "الوضوح",
-    "cents": "سنت",
     "lowVoice": "صوت منخفض",
     "highVoice": "صوت عالٍ",
     "replaySound": "إعادة تشغيل الصوت\n(آخر 30 ثانية)"
@@ -256,7 +251,6 @@
     "duet": "رجال ونساء"
   },
   "toneDetector": {
-    "listening": "يستمع…",
     "tonesDetected": "تم العثور على {count} نغمات",
     "pressStart": "اضغط ابدأ لاكتشاف النغمات",
     "pageDescription": "اكتشف نغمات متعددة في وقت واحد (C2–C7). غنِّ هارموني أو دندن عدة نوتات وشاهد كل نغمة في الوقت الفعلي.",
@@ -270,13 +264,10 @@
     "loud": "تصفية أكثر"
   },
   "singTone": {
-    "title": "لعبة غناء النغمة",
     "subtitle": "يتم تشغيل نغمة عشوائية — غنِّها لتطابقها!",
     "play": "تشغيل",
-    "singThisNote": "غنِّ هذه",
     "rounds": "الجولات",
     "congratulationsMessage": "لقد طابقت جميع النغمات الـ {rounds} في {seconds} ثانية بمدة إمساك {holdDuration} ثانية!",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "غنِّ {rounds} نغمات بمدة إمساك {holdDuration} ثانية"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "غنِّ وطِر",
     "subtitle": "غنّي كل نغمة وعدّي الفجوة"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "اختر صوتًا وغنِّ معه",
-    "sing": "غنِّ",
     "voz": "الصوت",
     "startTone": "النغمة الأولى للصوت المنخفض",
-    "tempo": "السرعة",
     "showAllParts": "كل الأصوات",
     "tabs": {
       "singAlong": "غنِّ معنا",
@@ -325,25 +312,17 @@
       "lessLow": "أقل انخفاضًا",
       "low": "منخفض"
     },
-    "scoreCorrect": "{percent}% صحيح",
-    "metronome": "إيقاع",
-    "barHighlight": "مربع",
-    "toneLabels": "النغمات",
-    "melodyGuide": "مساعدة"
+    "barHighlight": "مربع"
   },
   "singTheKeys": {
-    "title": "غنِّ المفاتيح",
     "subtitle": "غنِّ كل نوتة عندما تصل إلى المفاتيح",
     "song": "أغنية",
     "speed": "السرعة",
     "songRange": "مدى الأغنية",
     "pickRangeHeader": "اختر مدى يناسب صوتك",
     "pickRangeFooter": "⭐ = بداية جيدة",
-    "melodyGuide": "مساعدة",
     "preview": "معاينة",
-    "beatLines": "إيقاع",
     "beatLights": "أضواء",
-    "scoreCorrect": "{percent}% صحيح",
     "songs": {
       "twinkle": "تلألئي يا نجمة",
       "odeToJoy": "نشيد الفرح",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notes",
-    "subtitle": "See every note and its name",
-    "clef": "Clef",
-    "tempo": "السرعة",
-    "toneLabels": "النغمات",
     "accidentals": "دييز وبيمول",
-    "noteNumbers": "أرقام النوتات",
-    "sing": "غنِّ",
     "tabs": {
       "listen": "Listen",
       "overview": "نظرة عامة"

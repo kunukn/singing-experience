@@ -76,7 +76,7 @@ const { t } = useI18n()
               : 'text-(--p-blue-400)',
         ]"
       >
-        <span>{{ t('doReMi.cents') }} </span>
+        <span>{{ t('generic.cents') }} </span>
         <span class="tabular-nums">
           {{ ((centsFromTarget ?? 0) > 0 ? '+' : '') + (centsFromTarget ?? 0) }}
         </span>

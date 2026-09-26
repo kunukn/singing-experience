@@ -5,7 +5,6 @@
     "pause": "Pumzika",
     "resume": "Endelea",
     "clear": "Futa",
-    "backToMenuArrow": "←",
     "back": "Rudi",
     "hz": "Hz",
     "previewSoundLabel": "Ona sauti yako",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "Geuza hali ya giza",
     "toggleFullscreen": "Geuza skrini nzima",
     "fullscreen": "Skrini nzima",
-    "settings": "Mipangilio",
     "showNoteTarget": "Onyesha noti lengo",
     "pageNotFound": "Ukurasa haukupatikana",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "Cheza Tena",
     "score": "Alama",
     "time": "Muda",
-    "reset": "Weka upya",
-    "off": "Hakuna"
+    "off": "Hakuna",
+    "cents": "senti",
+    "listening": "Inasikiliza...",
+    "tempo": "Tempo",
+    "toneLabels": "Noti",
+    "melodyGuide": "Mwongozo",
+    "scoreCorrect": "{percent}% sahihi",
+    "beat": "Mdundo",
+    "sing": "Imba"
   },
   "errors": {
     "microphoneAccess": "Imeshindwa kufikia maikrofoni",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "Sauti ya toni",
-    "piano": "Piano",
     "keyboard": "Kibodi",
     "bell": "Kengele",
     "bass": "Besi",
@@ -141,11 +145,9 @@
     "privacy": "Faragha yako ni salama — programu hii inafanya kazi 100% kwenye kivinjari chako. Hakuna sauti inayorekodiwa au kutumwa popote."
   },
   "tools": {
-    "title": "Zana za Muziki",
     "subtitle": "Chagua zana"
   },
   "games": {
-    "title": "Michezo ya Kuimba",
     "subtitle": "Chagua mchezo"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "nusu-toni"
   },
   "doReMi": {
-    "title": "Mchezo wa DO RE MI",
     "singNoteFor": "Imba kila noti kwa sekunde {seconds} ili kuendelea",
     "congratulationsMessage": "Umekamilisha mizani ya {mode} ukianzia {startTone} ukishikilia kila noti kwa sekunde {seconds}!",
     "time": "⏱ Muda",
     "singThisNote": "Imba hii",
-    "youreSinging": "Unaimba",
-    "perfect": "Kamili",
-    "cents": "senti",
     "allowedRange": "Kiwango kinachoruhusiwa: ±50 senti · Lengo: {hz} Hz",
     "playSolfege": "Cheza {solfege}",
     "scaleMode": "Aina ya mizani",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "Inasikiliza...",
     "flat": "♭ Chini",
-    "inTune": "Sahihi",
     "sharp": "Juu ♯",
     "clarity": "Uwazi",
-    "cents": "senti",
     "lowVoice": "Sauti ya chini",
     "highVoice": "Sauti ya juu",
     "replaySound": "Cheza sauti tena\n(sekunde 30 za mwisho)"
@@ -256,7 +251,6 @@
     "duet": "Wanaume na wanawake"
   },
   "toneDetector": {
-    "listening": "Inasikiliza...",
     "tonesDetected": "Toni {count} zimegunduliwa",
     "pressStart": "Bonyeza Anza kugundua toni",
     "pageDescription": "Hugundua toni nyingi kwa wakati mmoja (C2–C7). Imba harmoni, piga noti kadhaa na uone kila toni ikionyeshwa moja kwa moja.",
@@ -270,13 +264,10 @@
     "loud": "Kuchuja zaidi"
   },
   "singTone": {
-    "title": "Mchezo wa Kuimba Toni",
     "subtitle": "Toni ya nasibu inachezwa — iimbe tena kulinganisha!",
     "play": "Cheza",
-    "singThisNote": "Imba hii",
     "rounds": "Raundi",
     "congratulationsMessage": "Umelinganisha toni zote {rounds} katika sekunde {seconds} na muda wa kushikilia wa sekunde {holdDuration}!",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "Imba toni {rounds} na muda wa kushikilia wa sekunde {holdDuration}"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "Imbaruka",
     "subtitle": "Imba kila noti upite kwenye mwanya"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "Chagua sehemu na uimbe pamoja",
-    "sing": "Imba",
     "voz": "Sehemu",
     "startTone": "Noti ya kuanza ya sauti ya chini",
-    "tempo": "Tempo",
     "showAllParts": "Sehemu zote",
     "tabs": {
       "singAlong": "Imba pamoja",
@@ -325,25 +312,17 @@
       "lessLow": "Chini kidogo",
       "low": "Chini"
     },
-    "scoreCorrect": "{percent}% sahihi",
-    "metronome": "Mdundo",
-    "barHighlight": "Boksi",
-    "toneLabels": "Noti",
-    "melodyGuide": "Mwongozo"
+    "barHighlight": "Boksi"
   },
   "singTheKeys": {
-    "title": "Imba Vitufe",
     "subtitle": "Imba kila noti inapofika kwenye vitufe",
     "song": "Wimbo",
     "speed": "Kasi",
     "songRange": "Kiwango cha sauti",
     "pickRangeHeader": "Chagua kiwango kinachofaa sauti yako",
     "pickRangeFooter": "⭐ = mahali pazuri pa kuanzia",
-    "melodyGuide": "Mwongozo",
     "preview": "Hakiki",
-    "beatLines": "Mdundo",
     "beatLights": "Taa",
-    "scoreCorrect": "{percent}% sahihi",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",
       "odeToJoy": "Ode to Joy",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notes",
-    "subtitle": "See every note and its name",
-    "clef": "Clef",
-    "tempo": "Tempo",
-    "toneLabels": "Noti",
     "accidentals": "Shap na flati",
-    "noteNumbers": "Nambari za noti",
-    "sing": "Imba",
     "tabs": {
       "listen": "Listen",
       "overview": "Muhtasari"

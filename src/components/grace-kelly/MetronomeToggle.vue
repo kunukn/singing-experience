@@ -9,7 +9,7 @@ const { t } = useI18n()
     v-model="modelValue"
     iconOn="pi pi-stopwatch"
     iconOff="pi pi-stopwatch"
-    :label="t('graceKelly.metronome')"
+    :label="t('generic.beat')"
     :disabled="disabled"
   />
 </template>

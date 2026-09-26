@@ -448,7 +448,7 @@ watch(
           </span>
         </div>
         <div v-else class="text-(--p-text-muted-color)">
-          <p class="text-sm">{{ t('pitchDetector.listening') }}</p>
+          <p class="text-sm">{{ t('generic.listening') }}</p>
         </div>
 
         <div
@@ -456,7 +456,7 @@ watch(
           class="mt-1 flex items-center gap-1 text-xs tabular-nums"
           :style="{ color: centsColor ?? undefined }"
         >
-          <span>{{ t('pitchDetector.cents') }}</span>
+          <span>{{ t('generic.cents') }}</span>
           <span class="min-w-6 text-end tabular-nums">
             {{ noteInfo.cents > 0 ? '+' : '' }}{{ noteInfo.cents }}
           </span>

@@ -5,7 +5,6 @@
     "pause": "Pausa",
     "resume": "Sigue",
     "clear": "Borrar",
-    "backToMenuArrow": "←",
     "back": "Volver",
     "hz": "Hz",
     "previewSoundLabel": "Mira tu voz",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "Alternar modo oscuro",
     "toggleFullscreen": "Alternar pantalla completa",
     "fullscreen": "Pantalla completa",
-    "settings": "Ajustes",
     "showNoteTarget": "Mostrar nota objetivo",
     "pageNotFound": "Página no encontrada",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "Jugar de nuevo",
     "score": "Puntos",
     "time": "Tiempo",
-    "reset": "Reiniciar",
-    "off": "Ninguno"
+    "off": "Ninguno",
+    "cents": "cents",
+    "listening": "Escuchando…",
+    "tempo": "Tempo",
+    "toneLabels": "Tonos",
+    "melodyGuide": "Guía",
+    "scoreCorrect": "{percent}% correcto",
+    "beat": "Ritmo",
+    "sing": "Canta"
   },
   "errors": {
     "microphoneAccess": "No se pudo acceder al micrófono",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "Sonido de tono",
-    "piano": "Piano",
     "keyboard": "Teclado",
     "bell": "Campana",
     "bass": "Bajo",
@@ -141,11 +145,9 @@
     "privacy": "Tu privacidad está segura — esta aplicación funciona 100% en tu navegador. No se graba ni envía ningún audio."
   },
   "tools": {
-    "title": "Herramientas de música",
     "subtitle": "Elige una herramienta"
   },
   "games": {
-    "title": "Juegos de canto",
     "subtitle": "Elige un juego"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "semitonos"
   },
   "doReMi": {
-    "title": "Juego DO RE MI",
     "singNoteFor": "Canta cada nota durante {seconds} segundos para avanzar",
     "congratulationsMessage": "¡Completaste la escala {mode} comenzando en {startTone}, manteniendo cada nota durante {seconds} segundos!",
     "time": "⏱ Tiempo",
     "singThisNote": "Canta esto",
-    "youreSinging": "Estás cantando",
-    "perfect": "Perfecto",
-    "cents": "cents",
     "allowedRange": "Rango permitido: ±50 cents · Objetivo: {hz} Hz",
     "playSolfege": "Reproducir {solfege}",
     "scaleMode": "Modo de escala",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "Escuchando…",
     "flat": "♭ Bemol",
-    "inTune": "Afinado",
     "sharp": "Sostenido ♯",
     "clarity": "Claridad",
-    "cents": "cents",
     "lowVoice": "Voz grave",
     "highVoice": "Voz aguda",
     "replaySound": "Reproducir sonido\n(últimos 30 s)"
@@ -256,7 +251,6 @@
     "duet": "Hombres y mujeres"
   },
   "toneDetector": {
-    "listening": "Escuchando…",
     "tonesDetected": "{count} tonos encontrados",
     "pressStart": "Pulsa Iniciar para encontrar tonos",
     "pageDescription": "Detecta múltiples tonos a la vez (C2–C7). Canta una armonía, tararea varias notas y observa cada tono en tiempo real.",
@@ -270,13 +264,10 @@
     "loud": "Más filtrado"
   },
   "singTone": {
-    "title": "Juego Canta el Tono",
     "subtitle": "Se reproduce un tono aleatorio — ¡cántalo para igualarlo!",
     "play": "Reproducir",
-    "singThisNote": "Canta esto",
     "rounds": "Rondas",
     "congratulationsMessage": "¡Acertaste los {rounds} tonos en {seconds} segundos con {holdDuration}s de mantenimiento!",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "Canta {rounds} tonos con {holdDuration}s de mantenimiento"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "Cantavuela",
     "subtitle": "Canta cada nota y pasa por el hueco"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "Elige una voz y canta",
-    "sing": "Canta",
     "voz": "Voz",
     "startTone": "Nota inicial de la voz grave",
-    "tempo": "Tempo",
     "showAllParts": "Todas las voces",
     "tabs": {
       "singAlong": "Canta con",
@@ -325,25 +312,17 @@
       "lessLow": "Menos grave",
       "low": "Grave"
     },
-    "scoreCorrect": "{percent}% correcto",
-    "metronome": "Ritmo",
-    "barHighlight": "Compás",
-    "toneLabels": "Tonos",
-    "melodyGuide": "Guía"
+    "barHighlight": "Compás"
   },
   "singTheKeys": {
-    "title": "Canta las teclas",
     "subtitle": "Canta cada nota cuando llegue a las teclas",
     "song": "Canción",
     "speed": "Velocidad",
     "songRange": "Rango",
     "pickRangeHeader": "Elige un rango que vaya con tu voz",
     "pickRangeFooter": "⭐ = un buen punto de partida",
-    "melodyGuide": "Guía",
     "preview": "Vista previa",
-    "beatLines": "Ritmo",
     "beatLights": "Luces",
-    "scoreCorrect": "{percent}% correcto",
     "songs": {
       "twinkle": "Estrellita, ¿dónde estás?",
       "odeToJoy": "Himno a la alegría",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notas",
-    "subtitle": "Ve cada nota y su nombre",
-    "clef": "Clave",
-    "tempo": "Tempo",
-    "toneLabels": "Tonos",
     "accidentals": "Sostenidos y bemoles",
-    "noteNumbers": "Números de notas",
-    "sing": "Canta",
     "tabs": {
       "listen": "Escucha",
       "overview": "Vista general"

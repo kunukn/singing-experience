@@ -415,7 +415,7 @@ defineExpose({
   >
     <div class="flex min-h-17 flex-col items-center gap-4">
       <h1 class="flex items-center gap-2 text-2xl font-semibold">
-        <span>{{ t('singFly.title') }}</span>
+        <span>{{ t('home.programs.singFly.name') }}</span>
       </h1>
       <!-- Kept mounted (v-show, not v-if) so the header block holds a stable
         height across state changes and the layout doesn't reflow. -->

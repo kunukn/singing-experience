@@ -373,7 +373,7 @@ onUnmounted(() => {
     <div class="text-center">
       <h1 class="flex items-center justify-center gap-2 text-2xl font-semibold">
         <span>🎹</span>
-        <span>{{ t('singTheKeys.title') }} {{ titleSuffix }}</span>
+        <span>{{ t('home.programs.singTheKeys.name') }} {{ titleSuffix }}</span>
       </h1>
       <p class="text-sm text-(--p-text-muted-color)">
         {{ t('singTheKeys.subtitle') }}
@@ -397,7 +397,7 @@ onUnmounted(() => {
         "
         data-testid="sing-the-keys-result"
       >
-        {{ t('singTheKeys.scoreCorrect', { percent: scorePercent }) }}
+        {{ t('generic.scoreCorrect', { percent: scorePercent }) }}
       </p>
     </div>
 
@@ -445,7 +445,7 @@ onUnmounted(() => {
         v-model="isMelodyGuideEnabled"
         iconOn="pi pi-volume-up"
         iconOff="pi pi-volume-off"
-        :label="t('singTheKeys.melodyGuide')"
+        :label="t('generic.melodyGuide')"
         :disabled="isPlaying"
       />
 
@@ -453,7 +453,7 @@ onUnmounted(() => {
         v-model="isBeatLinesEnabled"
         iconOn="pi pi-bars"
         iconOff="pi pi-bars"
-        :label="t('singTheKeys.beatLines')"
+        :label="t('generic.beat')"
       />
 
       <ToggleIconButton

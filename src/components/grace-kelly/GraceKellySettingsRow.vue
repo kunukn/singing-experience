@@ -143,7 +143,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 
     <div class="settings-item">
       <label class="text-sm text-(--p-text-muted-color) md:block">{{
-        t('graceKelly.tempo')
+        t('generic.tempo')
       }}</label>
       <PrimeSelect
         v-model="bpm"
@@ -157,7 +157,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
           <div
             class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
           >
-            {{ t('graceKelly.tempo') }}
+            {{ t('generic.tempo') }}
           </div>
         </template>
       </PrimeSelect>
@@ -172,7 +172,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 
     <div v-if="props.showToneLabelToggle" class="settings-item">
       <label class="text-sm text-(--p-text-muted-color) md:block">{{
-        t('graceKelly.toneLabels')
+        t('generic.toneLabels')
       }}</label>
       <PrimeToggleSwitch v-model="areToneLabelsShown" />
     </div>

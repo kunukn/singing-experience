@@ -5,7 +5,6 @@
     "pause": "रुको",
     "resume": "जारी रखो",
     "clear": "साफ़ करें",
-    "backToMenuArrow": "←",
     "back": "वापस",
     "hz": "Hz",
     "previewSoundLabel": "अपनी आवाज़ देखें",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "डार्क मोड टॉगल करें",
     "toggleFullscreen": "फ़ुलस्क्रीन टॉगल करें",
     "fullscreen": "फ़ुलस्क्रीन",
-    "settings": "सेटिंग्स",
     "showNoteTarget": "लक्ष्य नोट दिखाएं",
     "pageNotFound": "पृष्ठ नहीं मिला",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "फिर से खेलें",
     "score": "स्कोर",
     "time": "समय",
-    "reset": "रीसेट",
-    "off": "बंद"
+    "off": "बंद",
+    "cents": "सेंट्स",
+    "listening": "सुन रहे हैं…",
+    "tempo": "गति",
+    "toneLabels": "स्वर",
+    "melodyGuide": "मदद",
+    "scoreCorrect": "{percent}% सही",
+    "beat": "ताल",
+    "sing": "गाओ"
   },
   "errors": {
     "microphoneAccess": "माइक्रोफ़ोन तक पहुँच नहीं हो सकी",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "स्वर ध्वनि",
-    "piano": "पियानो",
     "keyboard": "कीबोर्ड",
     "bell": "घंटी",
     "bass": "बेस",
@@ -141,11 +145,9 @@
     "privacy": "आपकी गोपनीयता सुरक्षित है — यह ऐप 100% आपके ब्राउज़र में चलता है। कोई ऑडियो रिकॉर्ड या कहीं भेजा नहीं जाता।"
   },
   "tools": {
-    "title": "म्यूज़िक टूल",
     "subtitle": "एक टूल चुनो"
   },
   "games": {
-    "title": "गाने के खेल",
     "subtitle": "एक खेल चुनो"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "सेमिटोन"
   },
   "doReMi": {
-    "title": "DO RE MI खेल",
     "singNoteFor": "आगे बढ़ने के लिए प्रत्येक स्वर को {seconds} सेकंड तक गाएँ",
     "congratulationsMessage": "आपने {startTone} से शुरू करके {mode} स्वर-सप्तक पूरा किया, प्रत्येक स्वर को {seconds} सेकंड तक पकड़ कर!",
     "time": "⏱ समय",
     "singThisNote": "यह गाएँ",
-    "youreSinging": "आप गा रहे हैं",
-    "perfect": "बिल्कुल सही",
-    "cents": "सेंट्स",
     "allowedRange": "अनुमत सीमा: ±50 सेंट्स · लक्ष्य: {hz} Hz",
     "playSolfege": "{solfege} बजाएँ",
     "scaleMode": "स्वर-सप्तक प्रकार",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "सुन रहे हैं…",
     "flat": "♭ नीचा",
-    "inTune": "सुर में",
     "sharp": "ऊँचा ♯",
     "clarity": "स्पष्टता",
-    "cents": "सेंट्स",
     "lowVoice": "नीची आवाज़",
     "highVoice": "ऊँची आवाज़",
     "replaySound": "ध्वनि पुनः चलाएँ\n(पिछले ३० सेकंड)"
@@ -256,7 +251,6 @@
     "duet": "पुरुष और महिला"
   },
   "toneDetector": {
-    "listening": "सुन रहे हैं…",
     "tonesDetected": "{count} स्वर पहचाने गए",
     "pressStart": "स्वर पहचानने के लिए शुरू दबाएँ",
     "pageDescription": "एक साथ कई स्वर पहचानें (C2–C7)। सामंजस्य गाएँ, कई स्वर गुनगुनाएँ और प्रत्येक स्वर वास्तविक समय में देखें।",
@@ -270,13 +264,10 @@
     "loud": "अधिक फ़िल्टरिंग"
   },
   "singTone": {
-    "title": "सिंग टोन गेम",
     "subtitle": "एक यादृच्छिक स्वर बजाया जाता है — उसे गाकर मिलाएँ!",
     "play": "बजाएँ",
-    "singThisNote": "यह गाएँ",
     "rounds": "राउंड",
     "congratulationsMessage": "आपने {holdDuration} सेकंड की होल्ड अवधि के साथ {seconds} सेकंड में सभी {rounds} स्वर मिलाए!",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "{holdDuration} सेकंड की होल्ड अवधि के साथ {rounds} स्वर गाएँ"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "गा उड़",
     "subtitle": "हर सुर गाओ और छेद से निकलो"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "एक आवाज़ चुनो और साथ गाओ",
-    "sing": "गाओ",
     "voz": "आवाज़",
     "startTone": "नीची आवाज़ का शुरुआती स्वर",
-    "tempo": "गति",
     "showAllParts": "सभी आवाज़ें",
     "tabs": {
       "singAlong": "साथ गाओ",
@@ -325,25 +312,17 @@
       "lessLow": "कम नीची",
       "low": "नीची"
     },
-    "scoreCorrect": "{percent}% सही",
-    "metronome": "ताल",
-    "barHighlight": "बॉक्स",
-    "toneLabels": "स्वर",
-    "melodyGuide": "मदद"
+    "barHighlight": "बॉक्स"
   },
   "singTheKeys": {
-    "title": "कुंजियाँ गाओ",
     "subtitle": "हर सुर को कुंजियों पर पहुँचते ही गाओ",
     "song": "गाना",
     "speed": "रफ़्तार",
     "songRange": "सुर की रेंज",
     "pickRangeHeader": "अपनी आवाज़ के हिसाब से रेंज चुनो",
     "pickRangeFooter": "⭐ = शुरू करने के लिए बढ़िया",
-    "melodyGuide": "मदद",
     "preview": "झलक",
-    "beatLines": "ताल",
     "beatLights": "रोशनी",
-    "scoreCorrect": "{percent}% सही",
     "songs": {
       "twinkle": "ट्विंकल ट्विंकल लिटिल स्टार",
       "odeToJoy": "ओड टू जॉय",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notes",
-    "subtitle": "See every note and its name",
-    "clef": "Clef",
-    "tempo": "गति",
-    "toneLabels": "स्वर",
     "accidentals": "शार्प और फ्लैट",
-    "noteNumbers": "नोट नंबर",
-    "sing": "गाओ",
     "tabs": {
       "listen": "Listen",
       "overview": "अवलोकन"

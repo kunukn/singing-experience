@@ -5,7 +5,6 @@
     "pause": "Pause",
     "resume": "Weiter",
     "clear": "Löschen",
-    "backToMenuArrow": "←",
     "back": "Zurück",
     "hz": "Hz",
     "previewSoundLabel": "Sieh deine Stimme",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "Dunkelmodus umschalten",
     "toggleFullscreen": "Vollbild umschalten",
     "fullscreen": "Vollbild",
-    "settings": "Einstellungen",
     "showNoteTarget": "Notenzielpunkt anzeigen",
     "pageNotFound": "Seite nicht gefunden",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "Nochmal spielen",
     "score": "Punkte",
     "time": "Zeit",
-    "reset": "Zurücksetzen",
-    "off": "Aus"
+    "off": "Aus",
+    "cents": "Cent",
+    "listening": "Höre zu...",
+    "tempo": "Tempo",
+    "toneLabels": "Töne",
+    "melodyGuide": "Hilfe",
+    "scoreCorrect": "{percent}% richtig",
+    "beat": "Takt",
+    "sing": "Sing"
   },
   "errors": {
     "microphoneAccess": "Zugriff auf das Mikrofon fehlgeschlagen",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "Tonklang",
-    "piano": "Klavier",
     "keyboard": "Keyboard",
     "bell": "Glocke",
     "bass": "Bass",
@@ -141,11 +145,9 @@
     "privacy": "Deine Privatsphäre ist geschützt – diese App läuft vollständig im Browser. Kein Audio wird aufgezeichnet oder übertragen."
   },
   "tools": {
-    "title": "Musikwerkzeuge",
     "subtitle": "Wähl ein Werkzeug"
   },
   "games": {
-    "title": "Gesangsspiele",
     "subtitle": "Wähl ein Spiel"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "Halbtöne"
   },
   "doReMi": {
-    "title": "DO RE MI Spiel",
     "singNoteFor": "Halte jede Note {seconds} Sekunden, um weiterzukommen",
     "congratulationsMessage": "Du hast die {mode}-Tonleiter ab {startTone} abgeschlossen und jede Note {seconds} Sekunden gehalten!",
     "time": "⏱ Zeit",
     "singThisNote": "Singe dies",
-    "youreSinging": "Du singst",
-    "perfect": "Perfekt",
-    "cents": "Cent",
     "allowedRange": "Erlaubter Bereich: ±50 Cent · Ziel: {hz} Hz",
     "playSolfege": "{solfege} spielen",
     "scaleMode": "Tonleitermodus",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "Höre zu...",
     "flat": "♭ Zu tief",
-    "inTune": "Sauber",
     "sharp": "Zu hoch ♯",
     "clarity": "Klarheit",
-    "cents": "Cent",
     "lowVoice": "Tiefe Stimme",
     "highVoice": "Hohe Stimme",
     "replaySound": "Ton wiederholen\n(letzte 30 Sek.)"
@@ -256,7 +251,6 @@
     "duet": "Männer & Frauen"
   },
   "toneDetector": {
-    "listening": "Höre zu...",
     "tonesDetected": "{count} Töne gefunden",
     "pressStart": "Drück Start, um Töne zu finden",
     "pageDescription": "Erkennt mehrere Töne gleichzeitig (C2–C7). Singe eine Harmonie, summe mehrere Noten und sieh jeden Ton in Echtzeit.",
@@ -270,13 +264,10 @@
     "loud": "Mehr Filterung"
   },
   "singTone": {
-    "title": "Ton-Sing-Spiel",
     "subtitle": "Ein zufälliger Ton wird gespielt – singe ihn nach!",
     "play": "Spielen",
-    "singThisNote": "Singe dies",
     "rounds": "Runden",
     "congratulationsMessage": "Du hast alle {rounds} Töne in {seconds} Sekunden mit {holdDuration}s Haltedauer getroffen!",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "Singe {rounds} Töne mit {holdDuration}s Haltedauer"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "Singflug",
     "subtitle": "Singe jeden Ton und flieg durch die Lücke"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "Wähl eine Stimme und sing mit",
-    "sing": "Sing",
     "voz": "Stimme",
     "startTone": "Startton für die tiefe Stimme",
-    "tempo": "Tempo",
     "showAllParts": "Alle Stimmen",
     "tabs": {
       "singAlong": "Mitsingen",
@@ -325,25 +312,17 @@
       "lessLow": "Weniger tief",
       "low": "Tief"
     },
-    "scoreCorrect": "{percent}% richtig",
-    "metronome": "Takt",
-    "barHighlight": "Box",
-    "toneLabels": "Töne",
-    "melodyGuide": "Hilfe"
+    "barHighlight": "Box"
   },
   "singTheKeys": {
-    "title": "Sing die Tasten",
     "subtitle": "Sing jede Note, wenn sie auf den Tasten landet",
     "song": "Lied",
     "speed": "Tempo",
     "songRange": "Tonbereich",
     "pickRangeHeader": "Wähle einen Bereich, der zu deiner Stimme passt",
     "pickRangeFooter": "⭐ = ein guter Anfang",
-    "melodyGuide": "Hilfe",
     "preview": "Vorschau",
-    "beatLines": "Takt",
     "beatLights": "Lichter",
-    "scoreCorrect": "{percent}% richtig",
     "songs": {
       "twinkle": "Funkel, funkel, kleiner Stern",
       "odeToJoy": "Ode an die Freude",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Noten",
-    "subtitle": "Sieh jede Note und ihren Namen",
-    "clef": "Schlüssel",
-    "tempo": "Tempo",
-    "toneLabels": "Töne",
     "accidentals": "Kreuze & Be",
-    "noteNumbers": "Notennummern",
-    "sing": "Sing",
     "tabs": {
       "listen": "Hören",
       "overview": "Übersicht"

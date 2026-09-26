@@ -51,7 +51,7 @@ const appVersion = import.meta.env.VITE_APP_VERSION
   >
     <span class="inline-flex items-center gap-2">
       <i class="pi pi-cog" />
-      <span class="hidden text-sm md:inline">{{ t('generic.settings') }}</span>
+      <span class="hidden text-sm md:inline">{{ t('settings.title') }}</span>
     </span>
   </PrimeButton>
 

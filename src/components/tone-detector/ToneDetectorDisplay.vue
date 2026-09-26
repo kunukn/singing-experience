@@ -53,7 +53,7 @@ onUnmounted(() => {
           v-if="detectedTones.length === 0"
           class="text-sm text-(--p-text-muted-color)"
         >
-          {{ t('toneDetector.listening') }}
+          {{ t('generic.listening') }}
         </p>
 
         <div

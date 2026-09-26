@@ -348,7 +348,7 @@ const vozLabel = computed(() =>
           reachedThreshold ? 'text-(--p-green-400)' : 'text-(--p-text-color)'
         "
       >
-        {{ t('graceKelly.scoreCorrect', { percent: scorePercent }) }}
+        {{ t('generic.scoreCorrect', { percent: scorePercent }) }}
       </p>
     </div>
 
@@ -395,7 +395,7 @@ const vozLabel = computed(() =>
         :disabled="isPreviewPlaying"
         @click="startSinging"
       >
-        {{ showResult ? t('generic.playAgain') : t('graceKelly.sing') }}
+        {{ showResult ? t('generic.playAgain') : t('generic.sing') }}
       </PrimeButton>
 
       <PrimeButton

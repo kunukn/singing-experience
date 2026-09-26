@@ -5,7 +5,6 @@
     "pause": "Pause",
     "resume": "Reprends",
     "clear": "Effacer",
-    "backToMenuArrow": "←",
     "back": "Retour",
     "hz": "Hz",
     "previewSoundLabel": "Regarde ta voix",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "Basculer le mode sombre",
     "toggleFullscreen": "Basculer en plein écran",
     "fullscreen": "Plein écran",
-    "settings": "Réglages",
     "showNoteTarget": "Afficher la cible de note",
     "pageNotFound": "Page introuvable",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "Rejouer",
     "score": "Score",
     "time": "Temps",
-    "reset": "Réinitialiser",
-    "off": "Aucun"
+    "off": "Aucun",
+    "cents": "cents",
+    "listening": "Écoute en cours...",
+    "tempo": "Tempo ",
+    "toneLabels": "Notes",
+    "melodyGuide": "Guide",
+    "scoreCorrect": "{percent}% correct",
+    "beat": "Rythme",
+    "sing": "Chante"
   },
   "errors": {
     "microphoneAccess": "Impossible d'accéder au microphone",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "Son de tonalité ",
-    "piano": "Piano",
     "keyboard": "Clavier",
     "bell": "Cloche",
     "bass": "Basse",
@@ -141,11 +145,9 @@
     "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Aucun son n'est enregistré ni envoyé."
   },
   "tools": {
-    "title": "Outils de musique",
     "subtitle": "Choisis un outil"
   },
   "games": {
-    "title": "Jeux de chant",
     "subtitle": "Choisis un jeu"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "demi-tons"
   },
   "doReMi": {
-    "title": "Jeu DO RÉ MI",
     "singNoteFor": "Tiens chaque note pendant {seconds} secondes pour continuer",
     "congratulationsMessage": "Tu as fait la gamme {mode} en partant de {startTone}, en tenant chaque note pendant {seconds} secondes !",
     "time": "⏱ Temps ",
     "singThisNote": "Chante ceci ",
-    "youreSinging": "Tu chantes ",
-    "perfect": "Parfait",
-    "cents": "cents",
     "allowedRange": "Plage autorisée : ±50 cents · Cible : {hz} Hz",
     "playSolfege": "Jouer {solfege}",
     "scaleMode": "Mode de gamme ",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "Écoute en cours...",
     "flat": "♭ Bémol",
-    "inTune": "Juste",
     "sharp": "Dièse ♯",
     "clarity": "Clarté",
-    "cents": "cents",
     "lowVoice": "Voix grave",
     "highVoice": "Voix aiguë",
     "replaySound": "Rejouer le son\n(30 dernières s)"
@@ -256,7 +251,6 @@
     "duet": "Hommes et femmes"
   },
   "toneDetector": {
-    "listening": "Écoute en cours...",
     "tonesDetected": "{count} tons trouvés",
     "pressStart": "Appuie sur Démarrer pour trouver les tons",
     "pageDescription": "Détecte plusieurs tons à la fois (C2–C7). Chante une harmonie, fredonne plusieurs notes et vois chaque ton en temps réel.",
@@ -270,13 +264,10 @@
     "loud": "Plus de filtrage"
   },
   "singTone": {
-    "title": "Jeu Chante le Ton",
     "subtitle": "Un ton aléatoire est joué — chante-le pour le reproduire !",
     "play": "Jouer",
-    "singThisNote": "Chante ceci ",
     "rounds": "Manches ",
     "congratulationsMessage": "Tu as reproduit les {rounds} tons en {seconds} secondes avec un maintien de {holdDuration}s !",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "Chante {rounds} tons avec un maintien de {holdDuration}s"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "Chantevole",
     "subtitle": "Chante chaque note et passe le trou"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "Choisis une voix et chante",
-    "sing": "Chante",
     "voz": "Voix ",
     "startTone": "Note de départ de la voix grave ",
-    "tempo": "Tempo ",
     "showAllParts": "Toutes les voix",
     "tabs": {
       "singAlong": "Chante avec",
@@ -325,25 +312,17 @@
       "lessLow": "Moins grave",
       "low": "Grave"
     },
-    "scoreCorrect": "{percent}% correct",
-    "metronome": "Rythme",
-    "barHighlight": "Mesure",
-    "toneLabels": "Notes",
-    "melodyGuide": "Guide"
+    "barHighlight": "Mesure"
   },
   "singTheKeys": {
-    "title": "Chante les touches",
     "subtitle": "Chante chaque note quand elle arrive sur les touches",
     "song": "Chanson",
     "speed": "Vitesse",
     "songRange": "Tessiture",
     "pickRangeHeader": "Choisis une tessiture qui va à ta voix",
     "pickRangeFooter": "⭐ = un bon point de départ",
-    "melodyGuide": "Guide",
     "preview": "Aperçu",
-    "beatLines": "Rythme",
     "beatLights": "Lumières",
-    "scoreCorrect": "{percent}% correct",
     "songs": {
       "twinkle": "Ah ! vous dirai-je, maman",
       "odeToJoy": "Ode à la joie",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notes",
-    "subtitle": "Vois chaque note et son nom",
-    "clef": "Clé",
-    "tempo": "Tempo ",
-    "toneLabels": "Notes",
     "accidentals": "Dièses et bémols",
-    "noteNumbers": "Numéros des notes",
-    "sing": "Chante",
     "tabs": {
       "listen": "Écoute",
       "overview": "Aperçu"

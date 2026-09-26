@@ -60,7 +60,7 @@ const noteSlotHeight = computed(() =>
         </span>
       </div>
       <p v-else class="text-sm text-(--p-text-muted-color)">
-        {{ t('pitchDetector.listening') }}
+        {{ t('generic.listening') }}
       </p>
     </div>
 
@@ -71,7 +71,7 @@ const noteSlotHeight = computed(() =>
       :style="{ color: noteColor ?? undefined }"
     >
       <template v-if="noteInfo && isClean">
-        <span>{{ t('pitchDetector.cents') }}</span>
+        <span>{{ t('generic.cents') }}</span>
         <span class="min-w-6 text-end tabular-nums">
           {{ noteInfo.cents > 0 ? '+' : '' }}{{ noteInfo.cents }}
         </span>

@@ -5,7 +5,6 @@
     "pause": "Jeda",
     "resume": "Lanjut",
     "clear": "Hapus",
-    "backToMenuArrow": "←",
     "back": "Kembali",
     "hz": "Hz",
     "previewSoundLabel": "Lihat suaramu",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "Alihkan mode gelap",
     "toggleFullscreen": "Alihkan layar penuh",
     "fullscreen": "Layar penuh",
-    "settings": "Pengaturan",
     "showNoteTarget": "Tampilkan not target",
     "pageNotFound": "Halaman tidak ditemukan",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "Main Lagi",
     "score": "Skor",
     "time": "Waktu",
-    "reset": "Reset",
-    "off": "Mati"
+    "off": "Mati",
+    "cents": "sen",
+    "listening": "Mendengarkan...",
+    "tempo": "Tempo",
+    "toneLabels": "Nada",
+    "melodyGuide": "Bantuan",
+    "scoreCorrect": "{percent}% benar",
+    "beat": "Ketukan",
+    "sing": "Nyanyi"
   },
   "errors": {
     "microphoneAccess": "Gagal mengakses mikrofon",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "Suara nada",
-    "piano": "Piano",
     "keyboard": "Keyboard",
     "bell": "Lonceng",
     "bass": "Bass",
@@ -141,11 +145,9 @@
     "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Tidak ada audio yang direkam atau dikirim ke mana pun."
   },
   "tools": {
-    "title": "Alat Musik",
     "subtitle": "Pilih alat"
   },
   "games": {
-    "title": "Permainan Bernyanyi",
     "subtitle": "Pilih permainan"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "semiton"
   },
   "doReMi": {
-    "title": "Permainan DO RE MI",
     "singNoteFor": "Nyanyikan setiap not selama {seconds} detik untuk melanjutkan",
     "congratulationsMessage": "Anda menyelesaikan tangga nada {mode} mulai dari {startTone} dengan menahan setiap not selama {seconds} detik!",
     "time": "⏱ Waktu",
     "singThisNote": "Nyanyikan ini",
-    "youreSinging": "Kamu menyanyikan",
-    "perfect": "Sempurna",
-    "cents": "sen",
     "allowedRange": "Rentang yang diizinkan: ±50 sen · Target: {hz} Hz",
     "playSolfege": "Putar {solfege}",
     "scaleMode": "Mode tangga nada",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "Mendengarkan...",
     "flat": "♭ Rendah",
-    "inTune": "Tepat nada",
     "sharp": "Tinggi ♯",
     "clarity": "Kejernihan",
-    "cents": "sen",
     "lowVoice": "Suara rendah",
     "highVoice": "Suara tinggi",
     "replaySound": "Putar ulang suara\n(30 detik terakhir)"
@@ -256,7 +251,6 @@
     "duet": "Pria & wanita"
   },
   "toneDetector": {
-    "listening": "Mendengarkan...",
     "tonesDetected": "{count} nada terdeteksi",
     "pressStart": "Tekan Mulai untuk mendeteksi nada",
     "pageDescription": "Mendeteksi beberapa nada sekaligus (C2–C7). Nyanyikan harmoni, senandungkan beberapa not dan lihat setiap nada ditampilkan secara langsung.",
@@ -270,13 +264,10 @@
     "loud": "Lebih banyak filter"
   },
   "singTone": {
-    "title": "Permainan Tebak Nada",
     "subtitle": "Sebuah nada acak dimainkan — nyanyikan kembali untuk mencocokkan!",
     "play": "Putar",
-    "singThisNote": "Nyanyikan ini",
     "rounds": "Putaran",
     "congratulationsMessage": "Anda mencocokkan semua {rounds} nada dalam {seconds} detik dengan durasi tahan {holdDuration} detik!",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "Nyanyikan {rounds} nada dengan durasi tahan {holdDuration} detik"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "Nyanyibang",
     "subtitle": "Nyanyikan tiap nada buat lewat celah"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "Pilih suara dan ikut bernyanyi",
-    "sing": "Nyanyi",
     "voz": "Suara",
     "startTone": "Nada awal suara rendah",
-    "tempo": "Tempo",
     "showAllParts": "Semua suara",
     "tabs": {
       "singAlong": "Ikut nyanyi",
@@ -325,25 +312,17 @@
       "lessLow": "Kurang rendah",
       "low": "Rendah"
     },
-    "scoreCorrect": "{percent}% benar",
-    "metronome": "Ketukan",
-    "barHighlight": "Birama",
-    "toneLabels": "Nada",
-    "melodyGuide": "Bantuan"
+    "barHighlight": "Birama"
   },
   "singTheKeys": {
-    "title": "Nyanyikan Tutsnya",
     "subtitle": "Nyanyikan tiap nada saat mendarat di tuts",
     "song": "Lagu",
     "speed": "Kecepatan",
     "songRange": "Rentang nada",
     "pickRangeHeader": "Pilih rentang nada yang pas untuk suaramu",
     "pickRangeFooter": "⭐ = awal yang bagus",
-    "melodyGuide": "Bantuan",
     "preview": "Pratinjau",
-    "beatLines": "Ketukan",
     "beatLights": "Lampu",
-    "scoreCorrect": "{percent}% benar",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",
       "odeToJoy": "Ode to Joy",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notes",
-    "subtitle": "See every note and its name",
-    "clef": "Clef",
-    "tempo": "Tempo",
-    "toneLabels": "Nada",
     "accidentals": "Kres & mol",
-    "noteNumbers": "Nomor nada",
-    "sing": "Nyanyi",
     "tabs": {
       "listen": "Listen",
       "overview": "Ikhtisar"

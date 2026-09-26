@@ -5,7 +5,6 @@
     "pause": "一時停止",
     "resume": "再開",
     "clear": "クリア",
-    "backToMenuArrow": "←",
     "back": "戻る",
     "hz": "Hz",
     "previewSoundLabel": "自分の声を見る",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "ダークモードを切り替え",
     "toggleFullscreen": "フルスクリーンを切り替え",
     "fullscreen": "フルスクリーン",
-    "settings": "設定",
     "showNoteTarget": "目標音符を表示",
     "pageNotFound": "ページが見つかりません",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "もう一度",
     "score": "スコア",
     "time": "タイム",
-    "reset": "リセット",
-    "off": "オフ"
+    "off": "オフ",
+    "cents": "セント",
+    "listening": "聴いています...",
+    "tempo": "テンポ",
+    "toneLabels": "音名",
+    "melodyGuide": "ガイド",
+    "scoreCorrect": "{percent}% 正解",
+    "beat": "ビート",
+    "sing": "歌おう"
   },
   "errors": {
     "microphoneAccess": "マイクにアクセスできませんでした",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "音色",
-    "piano": "ピアノ",
     "keyboard": "キーボード",
     "bell": "ベル",
     "bass": "ベース",
@@ -141,11 +145,9 @@
     "privacy": "プライバシーは守られます。このアプリは100%ブラウザ内で動作します。音声が録音されたり送信されたりすることはありません。"
   },
   "tools": {
-    "title": "音楽ツール",
     "subtitle": "ツールを選んでね"
   },
   "games": {
-    "title": "歌のゲーム",
     "subtitle": "ゲームを選んでね"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "半音"
   },
   "doReMi": {
-    "title": "ドレミゲーム",
     "singNoteFor": "各音を{seconds}秒キープすると次に進みます",
     "congratulationsMessage": "{startTone}から始まる{mode}スケールを各音{seconds}秒キープして最後まで歌い切りました!",
     "time": "⏱ 時間",
     "singThisNote": "この音を歌って",
-    "youreSinging": "今の音",
-    "perfect": "ぴったり",
-    "cents": "セント",
     "allowedRange": "許容範囲: ±50セント ・ 目標: {hz} Hz",
     "playSolfege": "{solfege}を再生",
     "scaleMode": "スケールモード",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "聴いています...",
     "flat": "♭ フラット",
-    "inTune": "合っています",
     "sharp": "シャープ ♯",
     "clarity": "明瞭さ",
-    "cents": "セント",
     "lowVoice": "低い声",
     "highVoice": "高い声",
     "replaySound": "音を再生\n（直近30秒）"
@@ -256,7 +251,6 @@
     "duet": "男性と女性"
   },
   "toneDetector": {
-    "listening": "聴いています...",
     "tonesDetected": "{count}音を検出",
     "pressStart": "開始を押すと音を検出します",
     "pageDescription": "複数の音を同時に検出します（C2-C7）。ハモったり複数の音をハミングしたりして、各音をリアルタイムで確認できます。",
@@ -270,13 +264,10 @@
     "loud": "強め"
   },
   "singTone": {
-    "title": "音まねゲーム",
     "subtitle": "ランダムな音が再生されます。まねして歌って一致させましょう!",
     "play": "再生",
-    "singThisNote": "この音を歌って",
     "rounds": "ラウンド数",
     "congratulationsMessage": "{holdDuration}秒キープで全{rounds}音を{seconds}秒で一致させました!",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "{holdDuration}秒キープで{rounds}音を歌う"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "歌飛び",
     "subtitle": "音を歌って、すき間を通り抜けよう"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "パートを選んで一緒に歌おう",
-    "sing": "歌おう",
     "voz": "パート",
     "startTone": "低い声の開始音",
-    "tempo": "テンポ",
     "showAllParts": "すべてのパート",
     "tabs": {
       "singAlong": "いっしょに歌う",
@@ -325,25 +312,17 @@
       "lessLow": "少し低い",
       "low": "低い"
     },
-    "scoreCorrect": "{percent}% 正解",
-    "metronome": "ビート",
-    "barHighlight": "小節",
-    "toneLabels": "音名",
-    "melodyGuide": "ガイド"
+    "barHighlight": "小節"
   },
   "singTheKeys": {
-    "title": "キーを歌おう",
     "subtitle": "音符が鍵盤に着いたら歌おう",
     "song": "曲",
     "speed": "速さ",
     "songRange": "音域",
     "pickRangeHeader": "自分の声に合う音域を選ぼう",
     "pickRangeFooter": "⭐ = おすすめ",
-    "melodyGuide": "ガイド",
     "preview": "プレビュー",
-    "beatLines": "ビート",
     "beatLights": "ライト",
-    "scoreCorrect": "{percent}% 正解",
     "songs": {
       "twinkle": "きらきら星",
       "odeToJoy": "歓喜の歌",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notes",
-    "subtitle": "See every note and its name",
-    "clef": "Clef",
-    "tempo": "テンポ",
-    "toneLabels": "音名",
     "accidentals": "シャープとフラット",
-    "noteNumbers": "音の番号",
-    "sing": "歌おう",
     "tabs": {
       "listen": "Listen",
       "overview": "概要"

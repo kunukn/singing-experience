@@ -122,7 +122,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     <div class="settings-item">
       <label
         class="hidden text-end text-sm text-(--p-text-muted-color) md:block"
-        >{{ t('notes.toneLabels') }}</label
+        >{{ t('generic.toneLabels') }}</label
       >
       <PrimeSelectButton
         v-model="toneLabelMode"
@@ -131,7 +131,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         optionValue="value"
         :allowEmpty="false"
         size="small"
-        :aria-label="t('notes.toneLabels')"
+        :aria-label="t('generic.toneLabels')"
       />
     </div>
 

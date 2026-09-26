@@ -267,7 +267,8 @@ onUnmounted(() => {
       <h1 class="flex items-center gap-2 text-2xl font-semibold">
         <span>🎶</span>
         <span>
-          {{ t('doReMi.title') }}{{ titleSuffix ? ` ${titleSuffix}` : '' }}
+          {{ t('home.programs.doReMi.name')
+          }}{{ titleSuffix ? ` ${titleSuffix}` : '' }}
         </span>
       </h1>
       <p

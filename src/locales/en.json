@@ -5,7 +5,6 @@
     "pause": "Pause",
     "resume": "Resume",
     "clear": "Clear",
-    "backToMenuArrow": "←",
     "back": "Back",
     "hz": "Hz",
     "previewSoundLabel": "See your voice",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "Toggle dark mode",
     "toggleFullscreen": "Toggle fullscreen",
     "fullscreen": "Fullscreen",
-    "settings": "Settings",
     "showNoteTarget": "Show note target",
     "pageNotFound": "Page not found",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "Play Again",
     "score": "Score",
     "time": "Time",
-    "reset": "Reset",
-    "off": "Off"
+    "off": "Off",
+    "cents": "cents",
+    "listening": "Listening...",
+    "tempo": "Tempo",
+    "toneLabels": "Tones",
+    "melodyGuide": "Guide",
+    "scoreCorrect": "{percent}% correct",
+    "beat": "Beat",
+    "sing": "Sing"
   },
   "errors": {
     "microphoneAccess": "Failed to access microphone",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "Tone sound",
-    "piano": "Piano",
     "keyboard": "Keyboard",
     "bell": "Bell",
     "bass": "Bass",
@@ -141,11 +145,9 @@
     "privacy": "Your privacy is safe — this app runs 100% in your browser. No audio is recorded or sent anywhere."
   },
   "tools": {
-    "title": "Music Tools",
     "subtitle": "Pick a tool to use"
   },
   "games": {
-    "title": "Singing Games",
     "subtitle": "Pick a game to play"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "semitones"
   },
   "doReMi": {
-    "title": "DO RE MI Game",
     "singNoteFor": "Hold each note for {seconds} seconds to continue",
     "congratulationsMessage": "You completed the {mode} scale starting on {startTone}, holding each note for {seconds} seconds!",
     "time": "⏱ Time",
     "singThisNote": "Sing this",
-    "youreSinging": "You're singing",
-    "perfect": "Perfect",
-    "cents": "cents",
     "allowedRange": "Allowed range: ±50 cents · Target: {hz} Hz",
     "playSolfege": "Play {solfege}",
     "scaleMode": "Scale mode",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "Listening...",
     "flat": "♭ Flat",
-    "inTune": "In tune",
     "sharp": "Sharp ♯",
     "clarity": "Clarity",
-    "cents": "cents",
     "lowVoice": "Low voice",
     "highVoice": "High voice",
     "replaySound": "Replay\n(last 30s)"
@@ -256,7 +251,6 @@
     "duet": "Men & Women"
   },
   "toneDetector": {
-    "listening": "Listening...",
     "tonesDetected": "{count} tones found",
     "pressStart": "Press Start to find tones",
     "pageDescription": "Detects multiple tones at once (C2–C7). Sing a harmony, hum several notes and see each tone displayed in real time.",
@@ -270,13 +264,10 @@
     "loud": "More filtering"
   },
   "singTone": {
-    "title": "Sing Tone Game",
     "subtitle": "A random tone is played — sing it back to match!",
     "play": "Play",
-    "singThisNote": "Sing this",
     "rounds": "Rounds",
     "congratulationsMessage": "You matched all {rounds} tones in {seconds} seconds with {holdDuration}s hold duration!",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "Sing {rounds} tones with {holdDuration}s hold duration"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "Singfly",
     "subtitle": "Sing each note to fly through the gap"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "Pick a part and sing along",
-    "sing": "Sing",
     "voz": "Part",
     "startTone": "Low singer start tone",
-    "tempo": "Tempo",
     "showAllParts": "All parts",
     "tabs": {
       "singAlong": "Sing along",
@@ -325,25 +312,17 @@
       "lessLow": "Less low",
       "low": "Low"
     },
-    "scoreCorrect": "{percent}% correct",
-    "metronome": "Beat",
-    "barHighlight": "Bar",
-    "toneLabels": "Tones",
-    "melodyGuide": "Guide"
+    "barHighlight": "Bar"
   },
   "singTheKeys": {
-    "title": "Sing the Keys",
     "subtitle": "Sing each note as it lands on the keys",
     "song": "Song",
     "speed": "Speed",
     "songRange": "Song range",
     "pickRangeHeader": "Pick a range that fits your voice",
     "pickRangeFooter": "⭐ = a good place to start",
-    "melodyGuide": "Guide",
     "preview": "Preview",
-    "beatLines": "Beat",
     "beatLights": "Lights",
-    "scoreCorrect": "{percent}% correct",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",
       "odeToJoy": "Ode to Joy",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notes",
-    "subtitle": "See every note and its name",
-    "clef": "Clef",
-    "tempo": "Tempo",
-    "toneLabels": "Tones",
     "accidentals": "Sharps & flats",
-    "noteNumbers": "Note numbers",
-    "sing": "Sing",
     "tabs": {
       "listen": "Listen",
       "overview": "Overview"

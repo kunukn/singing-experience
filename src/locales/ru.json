@@ -5,7 +5,6 @@
     "pause": "Пауза",
     "resume": "Продолжить",
     "clear": "Очистить",
-    "backToMenuArrow": "←",
     "back": "Назад",
     "hz": "Гц",
     "previewSoundLabel": "Увидеть свой голос",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "Переключить тёмный режим",
     "toggleFullscreen": "Переключить полный экран",
     "fullscreen": "Полный экран",
-    "settings": "Настройки",
     "showNoteTarget": "Показать цель ноты",
     "pageNotFound": "Страница не найдена",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "Играть снова",
     "score": "Счёт",
     "time": "Время",
-    "reset": "Сбросить",
-    "off": "Выкл."
+    "off": "Выкл.",
+    "cents": "центов",
+    "listening": "Слушаю...",
+    "tempo": "Темп",
+    "toneLabels": "Ноты",
+    "melodyGuide": "Подсказка",
+    "scoreCorrect": "{percent}% правильно",
+    "beat": "Ритм",
+    "sing": "Пой"
   },
   "errors": {
     "microphoneAccess": "Не удалось получить доступ к микрофону",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "Звук тона",
-    "piano": "Пианино",
     "keyboard": "Клавишные",
     "bell": "Колокол",
     "bass": "Бас",
@@ -141,11 +145,9 @@
     "privacy": "Ваша конфиденциальность защищена — это приложение работает на 100% в вашем браузере. Никакое аудио не записывается и никуда не отправляется."
   },
   "tools": {
-    "title": "Музыкальные инструменты",
     "subtitle": "Выбери инструмент"
   },
   "games": {
-    "title": "Игры для пения",
     "subtitle": "Выбери игру"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "полутонов"
   },
   "doReMi": {
-    "title": "Игра ДО РЕ МИ",
     "singNoteFor": "Пойте каждую ноту {seconds} секунд, чтобы продвинуться",
     "congratulationsMessage": "Вы прошли гамму {mode}, начав с {startTone} и удерживая каждую ноту {seconds} секунд!",
     "time": "⏱ Время",
     "singThisNote": "Спойте это",
-    "youreSinging": "Вы поёте",
-    "perfect": "Идеально",
-    "cents": "центов",
     "allowedRange": "Допустимый диапазон: ±50 центов · Цель: {hz} Гц",
     "playSolfege": "Воспроизвести {solfege}",
     "scaleMode": "Режим гаммы",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "Слушаю...",
     "flat": "♭ Бемоль",
-    "inTune": "Чисто",
     "sharp": "Диез ♯",
     "clarity": "Чёткость",
-    "cents": "центов",
     "lowVoice": "Низкий голос",
     "highVoice": "Высокий голос",
     "replaySound": "Воспроизвести звук\n(последние 30 с)"
@@ -256,7 +251,6 @@
     "duet": "Мужчины и женщины"
   },
   "toneDetector": {
-    "listening": "Слушаю...",
     "tonesDetected": "Обнаружено тонов: {count}",
     "pressStart": "Нажмите Старт для обнаружения тонов",
     "pageDescription": "Обнаруживает несколько тонов одновременно (C2–C7). Спойте гармонию, пропойте несколько нот и увидьте каждый тон в реальном времени.",
@@ -270,13 +264,10 @@
     "loud": "Больше фильтрации"
   },
   "singTone": {
-    "title": "Игра «Спой тон»",
     "subtitle": "Воспроизводится случайный тон — спойте его, чтобы повторить!",
     "play": "Воспроизвести",
-    "singThisNote": "Спойте это",
     "rounds": "Раунды",
     "congratulationsMessage": "Вы угадали все {rounds} тонов за {seconds} секунд с удержанием {holdDuration}с!",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "Спойте {rounds} тонов с удержанием {holdDuration}с"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "Пой-лети",
     "subtitle": "Спой каждую ноту и пролети сквозь щель"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "Выбери партию и пой",
-    "sing": "Пой",
     "voz": "Партия",
     "startTone": "Начальная нота низкого голоса",
-    "tempo": "Темп",
     "showAllParts": "Все партии",
     "tabs": {
       "singAlong": "Пой вместе",
@@ -325,25 +312,17 @@
       "lessLow": "Менее низкая",
       "low": "Низкая"
     },
-    "scoreCorrect": "{percent}% правильно",
-    "metronome": "Ритм",
-    "barHighlight": "Такт",
-    "toneLabels": "Ноты",
-    "melodyGuide": "Подсказка"
+    "barHighlight": "Такт"
   },
   "singTheKeys": {
-    "title": "Спой клавиши",
     "subtitle": "Пой каждую ноту, когда она приземляется на клавиши",
     "song": "Песня",
     "speed": "Скорость",
     "songRange": "Диапазон",
     "pickRangeHeader": "Выбери диапазон под свой голос",
     "pickRangeFooter": "⭐ = хорошее начало",
-    "melodyGuide": "Подсказка",
     "preview": "Прослушать",
-    "beatLines": "Ритм",
     "beatLights": "Огни",
-    "scoreCorrect": "{percent}% правильно",
     "songs": {
       "twinkle": "Ты мерцай, звезда ночная",
       "odeToJoy": "Ода к радости",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notes",
-    "subtitle": "See every note and its name",
-    "clef": "Clef",
-    "tempo": "Темп",
-    "toneLabels": "Ноты",
     "accidentals": "Диезы и бемоли",
-    "noteNumbers": "Номера нот",
-    "sing": "Пой",
     "tabs": {
       "listen": "Listen",
       "overview": "Обзор"

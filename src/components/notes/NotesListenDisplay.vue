@@ -161,7 +161,7 @@ const currentToneLabel = computed(() => {
 
       <div class="flex items-center gap-2">
         <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
-          t('notes.toneLabels')
+          t('generic.toneLabels')
         }}</label>
         <PrimeSelectButton
           v-model="toneLabelMode"
@@ -170,7 +170,7 @@ const currentToneLabel = computed(() => {
           optionValue="value"
           :allowEmpty="false"
           size="small"
-          :aria-label="t('notes.toneLabels')"
+          :aria-label="t('generic.toneLabels')"
         />
       </div>
 

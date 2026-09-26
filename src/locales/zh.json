@@ -5,7 +5,6 @@
     "pause": "暂停",
     "resume": "继续",
     "clear": "清除",
-    "backToMenuArrow": "←",
     "back": "返回",
     "hz": "Hz",
     "previewSoundLabel": "查看你的声音",
@@ -14,7 +13,6 @@
     "toggleDarkMode": "切换深色模式",
     "toggleFullscreen": "切换全屏",
     "fullscreen": "全屏",
-    "settings": "设置",
     "showNoteTarget": "显示目标音符",
     "pageNotFound": "页面未找到",
     "previewButton": "♪",
@@ -41,8 +39,15 @@
     "playAgain": "再玩一次",
     "score": "得分",
     "time": "时间",
-    "reset": "重置",
-    "off": "关"
+    "off": "关",
+    "cents": "音分",
+    "listening": "正在聆听…",
+    "tempo": "速度",
+    "toneLabels": "音名",
+    "melodyGuide": "引导",
+    "scoreCorrect": "{percent}% 正确",
+    "beat": "节拍",
+    "sing": "唱"
   },
   "errors": {
     "microphoneAccess": "无法访问麦克风",
@@ -66,7 +71,6 @@
   },
   "sounds": {
     "toneSound": "音色",
-    "piano": "钢琴",
     "keyboard": "键盘",
     "bell": "铃声",
     "bass": "低音",
@@ -141,11 +145,9 @@
     "privacy": "你的隐私是安全的 — 此应用完全在浏览器中运行。不会录制或发送任何音频。"
   },
   "tools": {
-    "title": "音乐工具",
     "subtitle": "选个工具用"
   },
   "games": {
-    "title": "唱歌游戏",
     "subtitle": "选个游戏玩"
   },
   "warmUp": {
@@ -195,14 +197,10 @@
     "semitonesUnit": "半音"
   },
   "doReMi": {
-    "title": "DO RE MI 游戏",
     "singNoteFor": "每个音符唱 {seconds} 秒即可前进",
     "congratulationsMessage": "你从 {startTone} 开始完成了 {mode} 音阶，每个音符保持了 {seconds} 秒！",
     "time": "⏱ 时间",
     "singThisNote": "唱这个",
-    "youreSinging": "你在唱",
-    "perfect": "完美",
-    "cents": "音分",
     "allowedRange": "允许范围：±50 音分 · 目标：{hz} Hz",
     "playSolfege": "播放 {solfege}",
     "scaleMode": "音阶模式",
@@ -218,12 +216,9 @@
     }
   },
   "pitchDetector": {
-    "listening": "正在聆听…",
     "flat": "♭ 偏低",
-    "inTune": "音准",
     "sharp": "偏高 ♯",
     "clarity": "清晰度",
-    "cents": "音分",
     "lowVoice": "低音",
     "highVoice": "高音",
     "replaySound": "回放声音\n（最近30秒）"
@@ -256,7 +251,6 @@
     "duet": "男声与女声"
   },
   "toneDetector": {
-    "listening": "正在聆听…",
     "tonesDetected": "检测到 {count} 个音调",
     "pressStart": "按开始检测音调",
     "pageDescription": "同时检测多个音调（C2–C7）。唱和声、哼几个音符，实时查看每个音调。",
@@ -270,13 +264,10 @@
     "loud": "更多过滤"
   },
   "singTone": {
-    "title": "唱音游戏",
     "subtitle": "播放一个随机音调 — 唱出来匹配！",
     "play": "播放",
-    "singThisNote": "唱这个",
     "rounds": "回合数",
     "congratulationsMessage": "你在 {seconds} 秒内匹配了全部 {rounds} 个音调，保持时长为 {holdDuration} 秒！",
-    "roundProgress": "{current} / {total}",
     "settingsSummary": "唱 {rounds} 个音调，保持时长 {holdDuration} 秒"
   },
   "tuner": {
@@ -298,16 +289,12 @@
     }
   },
   "singFly": {
-    "title": "唱飞",
     "subtitle": "唱出每个音，飞过缺口"
   },
   "graceKelly": {
-    "title": "Grace Kelly",
     "subtitle": "选个声部，跟着唱",
-    "sing": "唱",
     "voz": "声部",
     "startTone": "低声部起始音",
-    "tempo": "速度",
     "showAllParts": "所有声部",
     "tabs": {
       "singAlong": "跟着唱",
@@ -325,25 +312,17 @@
       "lessLow": "不太低",
       "low": "低"
     },
-    "scoreCorrect": "{percent}% 正确",
-    "metronome": "节拍",
-    "barHighlight": "小节",
-    "toneLabels": "音名",
-    "melodyGuide": "引导"
+    "barHighlight": "小节"
   },
   "singTheKeys": {
-    "title": "唱出琴键",
     "subtitle": "音符落到琴键时唱出来",
     "song": "歌曲",
     "speed": "速度",
     "songRange": "音域",
     "pickRangeHeader": "选一个适合你声音的音域",
     "pickRangeFooter": "⭐ = 推荐",
-    "melodyGuide": "引导",
     "preview": "预览",
-    "beatLines": "节拍",
     "beatLights": "灯光",
-    "scoreCorrect": "{percent}% 正确",
     "songs": {
       "twinkle": "小星星",
       "odeToJoy": "欢乐颂",
@@ -352,14 +331,7 @@
     }
   },
   "notes": {
-    "title": "Notes",
-    "subtitle": "See every note and its name",
-    "clef": "Clef",
-    "tempo": "速度",
-    "toneLabels": "音名",
     "accidentals": "升号和降号",
-    "noteNumbers": "音符编号",
-    "sing": "唱",
     "tabs": {
       "listen": "Listen",
       "overview": "概览"
