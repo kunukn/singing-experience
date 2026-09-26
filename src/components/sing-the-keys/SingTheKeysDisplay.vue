@@ -278,7 +278,7 @@ const laneHeight = computed(() =>
   ),
 )
 
-/* Open the mic first so a permission prompt never eats the count-in, then
+/* Open the mic first so a permission prompt never eats the lead-in, then
  * launch the timeline. In practice mode (guide on) the mic stays closed: with
  * the speaker playing the melody, the detected line whips between the guide
  * tone, the voice and their echo and only confuses — and nothing is scored. */

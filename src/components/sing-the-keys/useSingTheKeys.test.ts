@@ -65,95 +65,40 @@ describe('useSingTheKeys', () => {
     vi.useRealTimers()
   })
 
-  test('should play the first note as a start tone shortly into the lead-in', async () => {
-    const { engine, game } = createGame()
-
-    await game.start(startParams(false))
-
-    expect(engine.playToneAt).toHaveBeenCalledTimes(1)
-    expect(engine.playToneAt).toHaveBeenCalledWith(
-      midiToFrequency(60),
-      1,
-      /* 0.6 s after the lead-in begins, not on the button press. */
-      expect.closeTo(TONE_START_S + 0.6, 5),
-    )
-  })
-
-  test('should end the start tone before the first note is due', async () => {
-    const { engine, game } = createGame()
-
-    await game.start(startParams(false))
-
-    const [, durationS, whenS] = vi.mocked(engine.playToneAt).mock.calls[0]
-
-    expect(whenS + durationS).toBeLessThan(SONG_START_S)
-  })
-
   test('should schedule one guide tone per note when the guide is on', async () => {
     const { engine, game } = createGame()
 
     await game.start(startParams(true))
 
-    /* The start tone first, then the three guide notes. */
-    expect(engine.playToneAt).toHaveBeenCalledTimes(4)
+    expect(engine.playToneAt).toHaveBeenCalledTimes(3)
     expect(engine.playToneAt).toHaveBeenNthCalledWith(
-      2,
+      1,
       midiToFrequency(60),
       expect.closeTo(0.6 * 0.92, 5),
       expect.closeTo(SONG_START_S, 5),
     )
     expect(engine.playToneAt).toHaveBeenNthCalledWith(
-      4,
+      3,
       midiToFrequency(64),
       expect.closeTo(1.2 * 0.92, 5),
       expect.closeTo(SONG_START_S + 1.2, 5),
     )
   })
 
-  test('should play no melody notes when the guide is off', async () => {
+  test('should stay silent when the guide is off', async () => {
     const { engine, game } = createGame()
 
     await game.start(startParams(false))
 
-    /* Only the start tone, which sounds during the lead-in. */
-    for (const [, , whenS] of vi.mocked(engine.playToneAt).mock.calls) {
-      expect(whenS).toBeLessThan(SONG_START_S)
-    }
+    expect(engine.playToneAt).not.toHaveBeenCalled()
   })
 
-  test('should click every lead-in beat line, accenting bar starts', async () => {
+  test('should play no metronome clicks', async () => {
     const { engine, game } = createGame()
 
-    await game.start(startParams())
+    await game.start(startParams(false))
 
-    /* 600 ms beat in 4/4 with no pickup: the 3 s lead-in holds five beats,
-     * and the bar line two before the song ("4 | 1 2 3 4") is the accent. */
-    const clicks = vi
-      .mocked(engine.playClickAt)
-      .mock.calls.map(([whenS, accent]) => [whenS - SONG_START_S, accent])
-    const expected = [
-      [-3, false],
-      [-2.4, true],
-      [-1.8, false],
-      [-1.2, false],
-      [-0.6, false],
-    ]
-
-    expect(clicks).toHaveLength(expected.length)
-    clicks.forEach(([offsetS, accent], index) => {
-      expect(offsetS).toBeCloseTo(expected[index][0] as number, 5)
-      expect(accent).toBe(expected[index][1])
-    })
-  })
-
-  test('should not click once the song has started', async () => {
-    const { engine, game } = createGame()
-
-    await game.start(startParams())
-
-    for (const [whenS] of vi.mocked(engine.playClickAt).mock.calls) {
-      expect(whenS).toBeLessThan(SONG_START_S)
-    }
+    expect(engine.playClickAt).not.toHaveBeenCalled()
   })
 
   test('should start in the lead-in and track the audio clock each frame', async () => {
