@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
@@ -6,6 +6,28 @@ import en from '@/locales/en.json'
 import PianoDisplay from './PianoDisplay.vue'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
+
+/* A key press plays a tone; keep the real player but silence its audio calls,
+ * which need a Web Audio context happy-dom doesn't have. */
+vi.mock('@/composables/useTonePlayer', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('@/composables/useTonePlayer')>()
+
+  return {
+    useTonePlayer: () => ({
+      ...actual.useTonePlayer(),
+      warmUp: vi.fn().mockResolvedValue(undefined),
+      playToneAt: vi.fn(),
+      getNow: () => 0,
+    }),
+  }
+})
+
+function pxOf(style: string | undefined, property: string): number {
+  const match = new RegExp(`${property}:\\s*(-?[\\d.]+)px`).exec(style ?? '')
+
+  return Number(match?.[1])
+}
 
 /* C4–G4 — a short board; enough keys to tell the target from its neighbours. */
 const RANGE = { midiMin: 60, midiMax: 67 }
@@ -81,6 +103,31 @@ describe('PianoDisplay - target key', () => {
       .attributes('style')
     expect(style).toContain('inset-inline-start: 93.12px')
     expect(style).toContain('width: 29.76px')
+  })
+
+  /* Same E4 block as above, relative to the E key's own left edge at 84px. */
+  test("should shape a white key's press glow like the block when asked", async () => {
+    const wrapper = mountDisplay({ isPressGlowBlockShaped: true })
+
+    await wrapper.get('[data-testid="piano-key-64"]').trigger('pointerdown')
+
+    const style = wrapper
+      .get('[data-testid="piano-key-64"] [data-testid="piano-key-glow"]')
+      .attributes('style')
+    expect(pxOf(style, 'inset-inline-start')).toBeCloseTo(9.12, 5)
+    expect(pxOf(style, 'width')).toBeCloseTo(29.76, 5)
+  })
+
+  test('should glow across the whole white key by default', async () => {
+    const wrapper = mountDisplay()
+
+    await wrapper.get('[data-testid="piano-key-64"]').trigger('pointerdown')
+
+    expect(
+      wrapper
+        .get('[data-testid="piano-key-64"] [data-testid="piano-key-glow"]')
+        .attributes('style'),
+    ).toBeUndefined()
   })
 
   /* A black key already is the block's shape, so its wash stays on the key. */

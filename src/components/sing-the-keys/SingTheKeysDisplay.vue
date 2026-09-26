@@ -464,6 +464,7 @@ onUnmounted(() => {
         :areKeyboardHintsVisible="false"
         :targetMidi="targetMidi"
         :isTargetCorrect="isTargetCorrect"
+        :isPressGlowBlockShaped="true"
       >
         <template #lane="{ layout }">
           <SingTheKeysLane

@@ -69,6 +69,10 @@ type Props = {
   targetMidi?: number | null
   /* Turns the target wash green once the singer has hit the note. */
   isTargetCorrect?: boolean
+  /* Draw a white key's press glow in the falling block's shape (like the target
+   * wash) instead of across the whole key. Sing the Keys turns this on so a
+   * played key and a landing block share one shape. */
+  isPressGlowBlockShaped?: boolean
 }
 const props = defineProps<Props>()
 
@@ -314,6 +318,19 @@ const whiteTargetWash = computed(() => {
   }
 })
 
+/* A white key's press glow in the block shape, relative to the key since the
+ * glow lives inside the key button. Undefined leaves the full-key inset-0. */
+function whiteGlowStyle(key: PianoKey) {
+  if (!props.isPressGlowBlockShaped) return undefined
+
+  const span = pianoNoteBlockSpan(layout.value, key.midi)
+
+  return {
+    insetInlineStart: `${span.leftPx - key.leftPx}px`,
+    width: `${span.widthPx}px`,
+  }
+}
+
 /* The missing black note just outside either end of the range, where it lands
  * on the keyboard edge — gives the end key a neighbouring hint line to read
  * its ±50¢ boundary against (see pianoEdgeHints). */
@@ -461,8 +478,11 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             <span
               v-if="pressCountFor(key.midi)"
               :key="`glow-${pressCountFor(key.midi)}`"
-              class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
+              class="piano-key-glow pointer-events-none absolute rounded-b-md bg-(--p-primary-color)"
+              :class="isPressGlowBlockShaped ? 'inset-y-0' : 'inset-0'"
+              :style="whiteGlowStyle(key)"
               aria-hidden="true"
+              data-testid="piano-key-glow"
             />
 
             <!-- Sits on the key's pitch position, not its rectangle center, so the
