@@ -1,0 +1,1 @@
+var e=`absolute start-0 origin-center -translate-y-1/2 cursor-pointer border-none bg-transparent px-0 font-mono text-base transition-all duration-150`,t=`scale-110 text-(--p-button-success-background)`,n=`text-(--p-surface-400) hover:text-(--p-text-color)`;export{e as n,n as r,t};

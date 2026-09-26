@@ -1,0 +1,1 @@
+import{Ft as e,N as t,_ as n,f as r,mt as i}from"./runtime-core.esm-bundler-DrRprvDE.js";import{n as a}from"./vue-i18n--DI7X7hn.js";var o={class:`text-center`},s=n({__name:`[...pathMatch]`,setup(n){let{t:s}=a();return(n,a)=>(t(),r(`p`,o,e(i(s)(`generic.pageNotFound`)),1))}});export{s as default};

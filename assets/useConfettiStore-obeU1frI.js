@@ -1,0 +1,1 @@
+import{ot as e}from"./runtime-core.esm-bundler-DrRprvDE.js";import{n as t}from"./pinia-DXtlFFZI.js";var n=t(`confetti`,()=>{let t=e(()=>{console.warn(`useConfettiStore: no confetti provider registered`)});function n(e){t.value=e}function r(){t.value()}return{registerFireConfetti:n,fireConfetti:r}});export{n as t};
