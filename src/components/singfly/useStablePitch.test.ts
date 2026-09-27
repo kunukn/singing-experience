@@ -281,4 +281,22 @@ describe('useStablePitch — voice-range gate', () => {
     expect(stableNoteInfo.value?.cents).toBe(0)
     expect(stableNoteInfo.value?.frequency).toBeCloseTo(midiToFrequency(E3), 6)
   })
+
+  test('should hold the snapped note while the pitch hovers on the midpoint', async () => {
+    const isSnapped = ref(true)
+    const { stableNoteInfo } = useStablePitch({ noteInfo, isClean, isSnapped })
+
+    await lockE3(stableNoteInfo)
+
+    /* Plain rounding would flip E3 ↔ F3 here and strand the bird between. */
+    for (let i = 0; i < 10; i++) {
+      await feed(E3 + (i % 2 === 0 ? 0.45 : 0.55), 16)
+      expect(stableNoteInfo.value?.midiNote).toBe(E3)
+      expect(stableNoteInfo.value?.cents).toBe(0)
+    }
+
+    /* Clearly past the midpoint: the snap moves on. */
+    await feedSteady(E3 + 0.7, 10, 16)
+    expect(stableNoteInfo.value?.midiNote).toBe(F3)
+  })
 })

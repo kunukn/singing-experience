@@ -112,6 +112,11 @@ export const STABILIZE_ACCEPT_HOLD_MS = 50
  * within this of the candidate anchor, so a wandering spike never adopts while
  * a steady new note does. */
 export const STABILIZE_ACCEPT_BAND_SEMITONES = 2
+/* Snap hysteresis: with Snap on, the bird keeps its note until the pitch is
+ * more than 60 cents away — 10 cents past the midpoint — so a voice hovering
+ * between two notes commits to one instead of flipping every frame and leaving
+ * the bird stranded between them. */
+export const SNAP_HYSTERESIS_SEMITONES = 0.6
 
 /* --- Bird motion (useBirdMotion) — constant-time, never teleport ---
  * Sits after the stabilizer: the stabilizer decides WHICH note, this decides

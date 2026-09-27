@@ -4,10 +4,11 @@ import {
   frequencyToMidi,
   frequencyToNote,
   midiToFrequency,
-  snapFrequencyToSemitone,
+  snapMidiWithHysteresis,
 } from '@/utils/noteUtils'
 
 import {
+  SNAP_HYSTERESIS_SEMITONES,
   STABILIZE_ACCEPT_BAND_SEMITONES,
   STABILIZE_ACCEPT_HOLD_MS,
   STABILIZE_FAR_SEMITONES,
@@ -32,9 +33,10 @@ type UseStablePitchOptions = {
   midiMin?: Ref<number>
   midiMax?: Ref<number>
   gapHalfSemitones?: Ref<number>
-  /* Child-friendly snap: emit the nearest semitone instead of the exact
-   * pitch. The median and holds still run on the continuous pitch, so the
-   * fluke gating is unchanged — only the output is rounded. */
+  /* Child-friendly snap: emit a whole semitone instead of the exact pitch,
+   * with hysteresis (SNAP_HYSTERESIS_SEMITONES) so a midpoint pitch doesn't
+   * flip notes. The median and holds still run on the continuous pitch, so
+   * the fluke gating is unchanged — only the output is rounded. */
   isSnapped?: Ref<boolean>
 }
 
@@ -83,12 +85,15 @@ export function useStablePitch(options: UseStablePitchOptions) {
    * null when no hold is in progress. */
   let candidateMidi: number | null = null
   let candidateSince = 0
+  /* The note Snap last emitted, kept for hysteresis. null while snap is off. */
+  let snappedMidi: number | null = null
 
   function reset() {
     samples = []
     stableMidi = null
     candidateMidi = null
     candidateSince = 0
+    snappedMidi = null
     stableNoteInfo.value = null
   }
 
@@ -98,10 +103,18 @@ export function useStablePitch(options: UseStablePitchOptions) {
       return
     }
 
-    const frequency = midiToFrequency(stableMidi)
-    stableNoteInfo.value = frequencyToNote(
-      options.isSnapped?.value ? snapFrequencyToSemitone(frequency) : frequency,
+    if (!options.isSnapped?.value) {
+      snappedMidi = null
+      stableNoteInfo.value = frequencyToNote(midiToFrequency(stableMidi))
+      return
+    }
+
+    snappedMidi = snapMidiWithHysteresis(
+      stableMidi,
+      snappedMidi,
+      SNAP_HYSTERESIS_SEMITONES,
     )
+    stableNoteInfo.value = frequencyToNote(midiToFrequency(snappedMidi))
   }
 
   watch(

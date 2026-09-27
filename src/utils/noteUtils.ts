@@ -159,6 +159,26 @@ export function snapFrequencyToSemitone(hz: number): number {
 }
 
 /**
+ * Snap a MIDI value to a semitone, but keep the previous snapped note until the
+ * pitch strays more than `marginSemitones` from it. A margin above 0.5 stops a
+ * pitch that hovers on the midpoint between two notes from flipping every
+ * frame.
+ */
+export function snapMidiWithHysteresis(
+  midi: number,
+  previousSnappedMidi: number | null,
+  marginSemitones: number,
+): number {
+  if (
+    previousSnappedMidi !== null &&
+    Math.abs(midi - previousSnappedMidi) <= marginSemitones
+  )
+    return previousSnappedMidi
+
+  return Math.round(midi)
+}
+
+/**
  * Convert a frequency in Hz to a note name string like "C4" or "F#3".
  * Returns null if frequency is invalid.
  */

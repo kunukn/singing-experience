@@ -14,6 +14,7 @@ import {
   SCALE_MODE_OPTIONS,
   SCALE_MODE_SEMITONES,
   snapFrequencyToSemitone,
+  snapMidiWithHysteresis,
 } from './noteUtils'
 import type { ScaleMode } from './noteUtils'
 
@@ -140,6 +141,24 @@ describe('snapFrequencyToSemitone', () => {
       noteToFrequency('G#', 3),
       6,
     )
+  })
+})
+
+describe('snapMidiWithHysteresis', () => {
+  const MARGIN = 0.6
+
+  test('rounds when there is no previous note', () => {
+    expect(snapMidiWithHysteresis(48.55, null, MARGIN)).toBe(49)
+  })
+
+  test.each([
+    { midi: 48.55, expected: 48 },
+    { midi: 47.45, expected: 48 },
+    { midi: 48.61, expected: 49 },
+    { midi: 47.39, expected: 47 },
+    { midi: 50.4, expected: 50 },
+  ])('snaps $midi to $expected when previously on 48', ({ midi, expected }) => {
+    expect(snapMidiWithHysteresis(midi, 48, MARGIN)).toBe(expected)
   })
 })
 
