@@ -188,20 +188,31 @@ const resultNoteIndices = computed(() =>
 )
 
 /* Only while playing: idle sits at elapsedMs 0, where a song without a pickup
- * has a line, and the hit line would glow on the still preview. The coloured
- * beat light takes over the hit line when on, so the orange flash stands
- * down rather than mixing with it. */
+ * has a line, and the hit line would glow on the still preview. Independent of
+ * the beat lights, which glow on the lane edges rather than the hit line. */
 const beatFlash = computed(() =>
-  isPlaying.value && isBeatLinesEnabled.value && !areBeatLightsEnabled.value
+  isPlaying.value && isBeatLinesEnabled.value
     ? beatFlashAt(timeline.value.beatLines, laneElapsedMs.value)
     : null,
 )
 
-const beatLight = computed(() =>
-  isPlaying.value && areBeatLightsEnabled.value
-    ? beatPulseAt(timeline.value.beatLines, laneElapsedMs.value)
-    : null,
-)
+/* Other beats pulse the key softer than the bar's "1", so the downbeat stands out. */
+const OFFBEAT_PULSE_STRENGTH = 0.5
+
+/* Beat lights: the key being sung brightens on each beat and fades by the
+ * next, right where the singer is aiming. Dark while no note is due (lead-in,
+ * rests), as there is no key to light. */
+const targetPulse = computed(() => {
+  if (!isPlaying.value || !areBeatLightsEnabled.value) return null
+  if (targetMidi.value === null) return null
+
+  const pulse = beatPulseAt(timeline.value.beatLines, laneElapsedMs.value)
+  if (!pulse) return null
+
+  const strength = pulse.isBarStart ? 1 : OFFBEAT_PULSE_STRENGTH
+
+  return (1 - pulse.progress) * strength
+})
 
 const isTargetCorrect = computed(
   () =>
@@ -488,6 +499,7 @@ onUnmounted(() => {
         :areKeyboardHintsVisible="false"
         :targetMidi="targetMidi"
         :isTargetCorrect="isTargetCorrect"
+        :targetPulse="targetPulse"
         :isPressGlowBlockShaped="true"
       >
         <template #lane="{ layout, playKey }">
@@ -507,7 +519,6 @@ onUnmounted(() => {
             :isScored="isRunScored"
             :beatLines="isBeatLinesEnabled ? timeline.beatLines : []"
             :beatFlash="beatFlash"
-            :beatLight="beatLight"
             @blockPress="playKey"
           />
         </template>

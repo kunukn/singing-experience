@@ -38,7 +38,6 @@ function mountLane(
       areBlocksPressable: true,
       beatLines: [],
       beatFlash: null,
-      beatLight: null,
       ...props,
     },
   })
@@ -243,50 +242,4 @@ describe('SingTheKeysLane', () => {
       expect(opacity).toBeCloseTo(expected)
     },
   )
-
-  test('should not light the hit line without a beat light', () => {
-    expect(
-      mountLane().find('[data-testid="sing-the-keys-beat-light"]').exists(),
-    ).toBe(false)
-  })
-
-  test.each([
-    { pulseInBar: 0, progress: 0, intensity: '1.00' },
-    { pulseInBar: 2, progress: 0.5, intensity: '0.50' },
-    { pulseInBar: 3, progress: 1, intensity: '0.00' },
-  ])(
-    'should light the hit line for pulse $pulseInBar at $intensity',
-    ({ pulseInBar, progress, intensity }) => {
-      const light = mountLane({
-        beatLight: {
-          pulseInBar,
-          isBarStart: pulseInBar === 0,
-          sinceMs: 0,
-          progress,
-        },
-      }).get('[data-testid="sing-the-keys-beat-light"]')
-
-      expect(light.attributes('data-pulse')).toBe(String(pulseInBar))
-      expect(light.attributes('data-intensity')).toBe(intensity)
-    },
-  )
-
-  test('should thicken the hit line most on the downbeat', () => {
-    const heightFor = (isBarStart: boolean) =>
-      pxOf(
-        mountLane({
-          beatLight: {
-            pulseInBar: isBarStart ? 0 : 1,
-            isBarStart,
-            sinceMs: 0,
-            progress: 0,
-          },
-        })
-          .get('[data-testid="sing-the-keys-beat-light"]')
-          .attributes('style'),
-        'height',
-      )
-
-    expect(heightFor(true)).toBeGreaterThan(heightFor(false))
-  })
 })

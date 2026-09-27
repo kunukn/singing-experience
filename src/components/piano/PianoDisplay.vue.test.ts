@@ -159,4 +159,36 @@ describe('PianoDisplay - target key', () => {
       false,
     )
   })
+
+  test.each([
+    { targetPulse: undefined },
+    { targetPulse: null },
+    { targetPulse: 0 },
+  ])('should leave the wash steady for $targetPulse', ({ targetPulse }) => {
+    const wrapper = mountDisplay({ targetMidi: 64, targetPulse })
+
+    expect(wrapper.find('[data-testid="piano-target-pulse"]').exists()).toBe(
+      false,
+    )
+  })
+
+  test.each([
+    { targetMidi: 64, keyKind: 'white' },
+    { targetMidi: 63, keyKind: 'black' },
+  ])('should pulse a $keyKind target key', ({ targetMidi }) => {
+    const pulses = mountDisplay({ targetMidi, targetPulse: 0.5 }).findAll(
+      '[data-testid="piano-target-pulse"]',
+    )
+
+    expect(pulses).toHaveLength(1)
+    expect(pulses[0].attributes('data-intensity')).toBe('0.50')
+  })
+
+  test('should not pulse without a target key', () => {
+    const wrapper = mountDisplay({ targetMidi: null, targetPulse: 1 })
+
+    expect(wrapper.find('[data-testid="piano-target-pulse"]').exists()).toBe(
+      false,
+    )
+  })
 })

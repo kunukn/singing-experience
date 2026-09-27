@@ -10,7 +10,6 @@ import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
   LOOKAHEAD_MS,
   type BeatFlash,
-  type BeatPulse,
   type BeatLine,
   type TimelineNote,
 } from './singTheKeysTimeline'
@@ -52,9 +51,6 @@ type Props = {
   /* Glow on the hit line as a beat line crosses it; null between beats and
    * while idle. */
   beatFlash: BeatFlash | null
-  /* Beat lights: the hit line thickens and glows on each beat and fades
-   * back to its resting width by the next beat. Null while idle or when lights are off. */
-  beatLight: BeatPulse | null
 }
 
 const props = defineProps<Props>()
@@ -160,49 +156,6 @@ const beatFlashOpacity = computed(() => {
     : props.beatFlash.intensity * PULSE_FLASH_OPACITY
 })
 
-/* The hit line's own orange: a second hue fading over it blended into a
- * muddy grey mid-fade, and orange keeps the landing edge distinct from the
- * blue blocks. The downbeat stands out by thickness instead. */
-const BEAT_LIGHT_COLOR = 'var(--p-orange-400)'
-
-/* px — how much thicker than the 2px hit line the light gets at full
- * brightness: most on the downbeat, so the bar's "1" stands out. */
-const BEAT_LIGHT_DOWNBEAT_EXTRA_PX = 4
-const BEAT_LIGHT_PULSE_EXTRA_PX = 2
-const HIT_LINE_PX = 2
-
-/* px — how far the light's glow rises above the hit line at full brightness. */
-const BEAT_LIGHT_GLOW_PX = 20
-
-const beatLight = computed(() => {
-  if (!props.beatLight) return null
-
-  /* Full on the beat, fading back to the plain hit line as the next beat arrives. */
-  const intensity = 1 - props.beatLight.progress
-  const extraPx = props.beatLight.isBarStart
-    ? BEAT_LIGHT_DOWNBEAT_EXTRA_PX
-    : BEAT_LIGHT_PULSE_EXTRA_PX
-  const thicknessPx = HIT_LINE_PX + extraPx * intensity
-  const glowPx = BEAT_LIGHT_GLOW_PX * intensity
-
-  return {
-    pulseInBar: props.beatLight.pulseInBar,
-    intensity,
-    lineStyle: {
-      top: `${props.laneHeight - thicknessPx}px`,
-      height: `${thicknessPx}px`,
-      backgroundColor: BEAT_LIGHT_COLOR,
-      opacity: intensity,
-    },
-    glowStyle: {
-      top: `${props.laneHeight - glowPx}px`,
-      height: `${glowPx}px`,
-      backgroundImage: `linear-gradient(to top, ${BEAT_LIGHT_COLOR}, transparent)`,
-      opacity: intensity,
-    },
-  }
-})
-
 const stripStyle = computed(() => ({
   transform: `translateY(${props.elapsedMs * pxPerMs.value}px)`,
 }))
@@ -251,9 +204,8 @@ const sungLine = computed(() => {
       aria-hidden="true"
     />
 
-    <!-- Beat glows, rising off the hit line behind the blocks so the label of
-         the note being sung stays readable: as each beat line crosses (Beat),
-         or on each beat (Lights). -->
+    <!-- Beat flash, rising off the hit line behind the blocks so the label of
+         the note being sung stays readable, as each beat line crosses. -->
     <div
       class="absolute inset-x-0 bg-linear-to-t from-(--p-orange-400) to-transparent"
       :style="{
@@ -262,13 +214,6 @@ const sungLine = computed(() => {
         opacity: beatFlashOpacity,
       }"
       data-testid="sing-the-keys-beat-flash"
-      aria-hidden="true"
-    />
-    <div
-      v-if="beatLight"
-      class="absolute inset-x-0"
-      :style="beatLight.glowStyle"
-      data-testid="sing-the-keys-beat-light-glow"
       aria-hidden="true"
     />
 
@@ -338,18 +283,6 @@ const sungLine = computed(() => {
     <div
       class="absolute inset-x-0 z-20 h-0.5 bg-(--p-orange-400)"
       :style="{ top: `${laneHeight - 2}px` }"
-      aria-hidden="true"
-    />
-
-    <!-- Beat light: the hit line itself thickens and glows, where the
-         singer is already looking, then fades back to its resting width. -->
-    <div
-      v-if="beatLight"
-      class="absolute inset-x-0 z-20"
-      :style="beatLight.lineStyle"
-      data-testid="sing-the-keys-beat-light"
-      :data-pulse="beatLight.pulseInBar"
-      :data-intensity="beatLight.intensity.toFixed(2)"
       aria-hidden="true"
     />
   </div>
