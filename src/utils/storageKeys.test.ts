@@ -11,6 +11,7 @@ import { describe, expect, test } from 'vitest'
 const STORAGE_KEYS = [
   'syng.clarityThreshold',
   'syng.darkMode',
+  'syng.doReMiPitchSnap',
   'syng.durationSec',
   'syng.graceKellyBarHighlight',
   'syng.graceKellyBpm',

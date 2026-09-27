@@ -2,6 +2,8 @@
 import type { ScaleMode } from '@/utils/noteUtils'
 import {
   NOTE_NAMES,
+  frequencyToCents,
+  midiToFrequency,
   midiToNoteLabel,
   toAccidentalGlyph,
 } from '@/utils/noteUtils'
@@ -58,6 +60,10 @@ const { isPlayingSequence, currentPlayingIndex, playSequence, stopSequence } =
 
 const { isPreviewEnabled } = useSettings()
 const showDoReMiTarget = useLocalStorage('syng.showDoReMiTarget', true)
+/* Snap: the sung pitch is shown on its note, cents hidden — child friendly.
+ * Display only: scoring's ±50¢ window already is the nearest-note rule, so
+ * the snapped view reads green/0¢ exactly when the note counts. */
+const isPitchSnapEnabled = useLocalStorage('syng.doReMiPitchSnap', false)
 
 /* Force-disable idle preview (and the mic it would open) in simulated test pages */
 const effectivePreviewEnabled = computed(
@@ -141,11 +147,42 @@ const previewNoteLabel = computed(() => {
 const previewFrequency = computed(() => {
   if (previewMidi.value === null) return null
 
+  /* Snap to the labelled note rather than Math.round: the label's note has
+   * the detector's hysteresis, and a line snapped to a different semitone
+   * would clamp to the edge of its row. */
+  if (isPitchSnapEnabled.value) return midiToFrequency(previewMidi.value)
+
   if (isGameActive.value && isPreviewEnabled.value) {
     return props.overridePreviewFrequency ?? currentFrequency.value
   }
 
   return props.overridePreviewFrequency ?? rawPreviewFrequency.value
+})
+
+/* The target box's Hz and cents, snapped to the detected note when Snap is
+ * on — cents then read 0 on the right note and ±100·n off it. The too-low /
+ * too-high arrows keep the raw pitch. */
+const displayedFrequency = computed(() => {
+  const midi = gameNoteInfo.value?.midiNote
+  if (
+    !isPitchSnapEnabled.value ||
+    currentFrequency.value === null ||
+    midi === undefined
+  )
+    return currentFrequency.value
+
+  return midiToFrequency(midi)
+})
+
+const displayedCentsFromTarget = computed(() => {
+  if (
+    !isPitchSnapEnabled.value ||
+    centsFromTarget.value === null ||
+    displayedFrequency.value === null
+  )
+    return centsFromTarget.value
+
+  return frequencyToCents(displayedFrequency.value, targetFrequency.value)
 })
 
 const { fireConfetti } = useConfettiStore()
@@ -293,6 +330,7 @@ onUnmounted(() => {
         v-model:durationSec="durationSec"
         v-model:isPreviewEnabled="isPreviewEnabled"
         v-model:showDoReMiTarget="showDoReMiTarget"
+        v-model:isPitchSnapEnabled="isPitchSnapEnabled"
         :isPlayingSequence="isPlayingSequence"
         :micPermission="micPermission"
         :error="error"
@@ -335,8 +373,8 @@ onUnmounted(() => {
       :showDoReMiTarget="showDoReMiTarget"
       :targetStep="targetStep"
       :targetFrequency="targetFrequency"
-      :currentFrequency="currentFrequency"
-      :centsFromTarget="centsFromTarget"
+      :currentFrequency="displayedFrequency"
+      :centsFromTarget="displayedCentsFromTarget"
       :isSingingCorrectNote="isSingingCorrectNote"
       :tooLowMs="tooLowMs"
       :tooHighMs="tooHighMs"

@@ -23,6 +23,9 @@ const isPreviewEnabled = defineModel<boolean>('isPreviewEnabled', {
 const showDoReMiTarget = defineModel<boolean>('showDoReMiTarget', {
   required: true,
 })
+const isPitchSnapEnabled = defineModel<boolean>('isPitchSnapEnabled', {
+  required: true,
+})
 
 const { t } = useI18n()
 </script>
@@ -68,6 +71,13 @@ const { t } = useI18n()
         iconOn="pi pi-eye"
         iconOff="pi pi-eye-slash"
         :label="t('generic.showNoteTarget')"
+      />
+
+      <ToggleIconButton
+        v-model="isPitchSnapEnabled"
+        iconOn="pi pi-bullseye"
+        iconOff="pi pi-bullseye"
+        :label="t('generic.pitchSnap')"
       />
     </div>
 
