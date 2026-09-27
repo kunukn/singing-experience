@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { createI18n } from 'vue-i18n'
@@ -270,100 +270,120 @@ describe('SingTheKeysLane', () => {
 })
 
 /* 300px lane over a 3000ms lookahead: 1px of wheel or drag = 10ms of song. */
+/* 300px lane over a 3000ms lookahead: 1px of scroll = 10ms of song. With
+ * 5000ms to scroll, the song's start sits at scrollTop 500 and its end at 0. */
 describe('SingTheKeysLane - scrolling', () => {
   const scrollable = { isScrollable: true, scrollMaxMs: 5000 }
 
-  function dispatchWheel(
-    wrapper: ReturnType<typeof mountLane>,
-    init: WheelEventInit,
-  ) {
-    const event = new WheelEvent('wheel', { cancelable: true, ...init })
-    wrapper
-      .get('[data-testid="sing-the-keys-lane"]')
-      .element.dispatchEvent(event)
-
-    return event
+  function scrollerOf(wrapper: ReturnType<typeof mountLane>) {
+    return wrapper.get('[data-testid="sing-the-keys-scroller"]')
   }
 
+  test('should offer a labelled scroller only while scrollable', async () => {
+    const idle = await mountLaneForInput(scrollable)
+    const playing = await mountLaneForInput({ isPlaying: true })
+
+    expect(scrollerOf(idle).attributes('aria-label')).toBe(
+      'Scroll through the song',
+    )
+    expect(
+      playing.find('[data-testid="sing-the-keys-scroller"]').exists(),
+    ).toBe(false)
+  })
+
   test.each([
-    { deltaY: 100, expected: 1000 },
-    { deltaY: 1000, expected: 5000 },
+    { elapsedMs: 0, scrollTop: 500 },
+    { elapsedMs: 2000, scrollTop: 300 },
+    { elapsedMs: 5000, scrollTop: 0 },
   ])(
-    'should scroll ahead to $expected ms on a wheel down of $deltaY px',
-    async ({ deltaY, expected }) => {
-      const wrapper = await mountLaneForInput(scrollable)
+    'should open the scroller at $scrollTop px for $elapsedMs ms',
+    async ({ elapsedMs, scrollTop }) => {
+      const wrapper = await mountLaneForInput({ ...scrollable, elapsedMs })
 
-      const event = dispatchWheel(wrapper, { deltaY })
-
-      expect(wrapper.emitted('scrollTo')).toEqual([[expected]])
-      expect(event.defaultPrevented).toBe(true)
+      expect(scrollerOf(wrapper).element.scrollTop).toBe(scrollTop)
     },
   )
 
-  test('should let the page scroll when the wheel is at the start', async () => {
-    const wrapper = await mountLaneForInput(scrollable)
-
-    const event = dispatchWheel(wrapper, { deltaY: -100 })
-
-    expect(wrapper.emitted('scrollTo')).toBeUndefined()
-    expect(event.defaultPrevented).toBe(false)
-  })
-
   test.each([
-    { name: 'not scrollable', props: {}, init: { deltaY: 100 } },
-    {
-      name: 'mostly sideways',
-      props: scrollable,
-      init: { deltaX: 80, deltaY: 10 },
+    { scrollTop: 200, expected: 3000 },
+    { scrollTop: -40, expected: 5000 },
+    { scrollTop: 560, expected: 0 },
+  ])(
+    'should scroll the lane to $expected ms at scrollTop $scrollTop',
+    async ({ scrollTop, expected }) => {
+      const wrapper = await mountLaneForInput(scrollable)
+      const scroller = scrollerOf(wrapper)
+
+      scroller.element.scrollTop = scrollTop
+      await scroller.trigger('scroll')
+
+      expect(wrapper.emitted('scrollTo')).toEqual([[expected]])
     },
-  ])('should ignore the wheel when $name', async ({ props, init }) => {
-    const wrapper = await mountLaneForInput(props)
+  )
 
-    dispatchWheel(wrapper, init)
+  /* Mid-fling the scroller has already moved on when the echo arrives;
+   * writing the echo back would drag it a frame behind and stop it. */
+  test('should not write its own scroll back to the scroller', async () => {
+    const wrapper = await mountLaneForInput(scrollable)
+    const scroller = scrollerOf(wrapper)
 
-    expect(wrapper.emitted('scrollTo')).toBeUndefined()
+    scroller.element.scrollTop = 200
+    await scroller.trigger('scroll')
+    scroller.element.scrollTop = 190
+    await wrapper.setProps({ elapsedMs: 3000 })
+
+    expect(scroller.element.scrollTop).toBe(190)
   })
 
-  test('should scroll ahead when dragged down', async () => {
-    const wrapper = await mountLaneForInput(scrollable)
-    const lane = wrapper.get('[data-testid="sing-the-keys-lane"]')
+  test('should follow an elapsedMs set from outside', async () => {
+    const wrapper = await mountLaneForInput({ ...scrollable, elapsedMs: 3000 })
 
-    await lane.trigger('pointerdown', { button: 0, pointerId: 1, clientY: 100 })
-    await lane.trigger('pointermove', { pointerId: 1, clientY: 130 })
-    await lane.trigger('pointerup', { button: 0, pointerId: 1, clientY: 130 })
+    await wrapper.setProps({ elapsedMs: 0 })
 
-    expect(wrapper.emitted('scrollTo')).toEqual([[300]])
+    expect(scrollerOf(wrapper).element.scrollTop).toBe(500)
   })
 
-  test('should not sound a block when a drag starts on it', async () => {
+  test('should scroll ahead when dragged down with a mouse', async () => {
     const wrapper = await mountLaneForInput(scrollable)
-    const block = wrapper.get('[data-testid="lane-note-1"]')
+    const scroller = scrollerOf(wrapper)
+    const pointer = { button: 0, pointerId: 1, pointerType: 'mouse' }
 
-    await block.trigger('pointerdown', {
-      button: 0,
-      pointerId: 1,
-      clientY: 100,
-    })
-    await block.trigger('pointermove', { pointerId: 1, clientY: 130 })
-    await block.trigger('pointerup', { button: 0, pointerId: 1, clientY: 130 })
+    await scroller.trigger('pointerdown', { ...pointer, clientY: 100 })
+    await scroller.trigger('pointermove', { ...pointer, clientY: 130 })
+    await scroller.trigger('pointerup', { ...pointer, clientY: 130 })
 
+    expect(scroller.element.scrollTop).toBe(470)
     expect(wrapper.emitted('blockPress')).toBeUndefined()
-    expect(wrapper.emitted('scrollTo')).toEqual([[300]])
   })
 
-  test.each([
-    { key: 'End', expected: 5000 },
-    { key: 'Home', expected: 0 },
-    { key: 'ArrowDown', expected: 2500 },
-    { key: 'ArrowUp', expected: 1500 },
-  ])('should scroll to $expected ms on $key', async ({ key, expected }) => {
-    const wrapper = await mountLaneForInput({ ...scrollable, elapsedMs: 2000 })
+  test('should leave a touch drag to the browser', async () => {
+    const wrapper = await mountLaneForInput(scrollable)
+    const scroller = scrollerOf(wrapper)
+    const pointer = { button: 0, pointerId: 1, pointerType: 'touch' }
 
-    await wrapper
-      .get('[data-testid="sing-the-keys-lane"]')
-      .trigger('keydown', { key })
+    await scroller.trigger('pointerdown', { ...pointer, clientY: 100 })
+    await scroller.trigger('pointermove', { ...pointer, clientY: 130 })
 
-    expect(wrapper.emitted('scrollTo')).toEqual([[expected]])
+    expect(scroller.element.scrollTop).toBe(500)
+  })
+
+  test('should sound the block under a tap on the scroller', async () => {
+    const wrapper = await mountLaneForInput(scrollable)
+    const scroller = scrollerOf(wrapper)
+    const block = wrapper.get('[data-testid="lane-note-1"]')
+    /* happy-dom has no hit testing: stand in for the browser's answer. */
+    Object.defineProperty(document, 'elementsFromPoint', {
+      configurable: true,
+      value: vi.fn(() => [scroller.element, block.element]),
+    })
+
+    await scroller.trigger('pointerdown', { button: 0, pointerId: 1 })
+    await scroller.trigger('pointerup', { button: 0, pointerId: 1 })
+
+    expect(wrapper.emitted('blockPress')).toEqual([
+      [Number(block.attributes('data-midi'))],
+    ])
+    Reflect.deleteProperty(document, 'elementsFromPoint')
   })
 
   test('should keep blocks scrolled past the hit line upcoming outside a run', () => {

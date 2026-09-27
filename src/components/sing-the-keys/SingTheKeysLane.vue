@@ -55,8 +55,8 @@ type Props = {
   /* A run is under way: a block the lane has moved past was due and is judged.
    * Outside a run the lane is only being browsed, so nothing is. */
   isPlaying: boolean
-  /* The singer can scroll through the song (wheel, drag, keys) — while not
-   * playing, once any ending glide has landed. */
+  /* The singer can scroll through the song natively (touch, wheel, keys, plus
+   * mouse drag) — while not playing, once any ending glide has landed. */
   isScrollable: boolean
   /* The furthest the lane scrolls: the view with the song's last note ending
    * at the lane's top. 0 when the whole song already fits. */
@@ -177,30 +177,81 @@ const stripStyle = computed(() => ({
 }))
 
 const laneRef = ref<HTMLElement | null>(null)
+const scrollerRef = ref<HTMLElement | null>(null)
 
 function clampScrollMs(ms: number) {
   return Math.min(props.scrollMaxMs, Math.max(0, ms))
 }
 
-function scrollTo(ms: number) {
-  emit('scrollTo', clampScrollMs(ms))
+/*
+ * Native scrolling: while browsable, an invisible scroller covers the lane
+ * and its scrollTop drives elapsedMs; the blocks still move by the strip
+ * transform. The spacer puts the song's start at the bottom (scrollTop at its
+ * max) and its end at the top, the way the song is laid out in the lane, so
+ * scrolling up or dragging down moves ahead.
+ */
+const scrollSpacerHeightPx = computed(
+  () => props.laneHeight + props.scrollMaxMs * pxPerMs.value,
+)
+
+function scrollTopFor(ms: number) {
+  return (props.scrollMaxMs - ms) * pxPerMs.value
 }
 
-function scrollBy(deltaMs: number) {
-  const next = clampScrollMs(props.elapsedMs + deltaMs)
-  if (next === props.elapsedMs) return false
+/* The position this lane last reported from its own scroll. An elapsedMs
+ * matching it is our own echo and must not be written back: mid-fling that
+ * write would land a frame late and stop the momentum. */
+let lastScrolledMs: number | null = null
 
-  emit('scrollTo', next)
+function handleScroll() {
+  const element = scrollerRef.value
+  if (!element) return
 
-  return true
+  /* Clamped: iOS's rubber band takes scrollTop past either end. */
+  const ms = clampScrollMs(
+    props.scrollMaxMs - element.scrollTop / pxPerMs.value,
+  )
+  lastScrolledMs = ms
+  emit('scrollTo', ms)
 }
+
+/* Moves the scroller to match an elapsedMs set from outside — a settings
+ * change, Stop, the ending settling — or a new song length or lane height,
+ * and places it when it first appears. */
+watch(
+  [() => props.elapsedMs, () => props.scrollMaxMs, pxPerMs, scrollerRef],
+  ([elapsedMs], [previousElapsedMs]) => {
+    const element = scrollerRef.value
+    if (!element) {
+      lastScrolledMs = null
+
+      return
+    }
+
+    const isOwnEcho =
+      elapsedMs === lastScrolledMs && elapsedMs !== previousElapsedMs
+    if (isOwnEcho) return
+
+    element.scrollTop = scrollTopFor(elapsedMs)
+  },
+  { flush: 'post' },
+)
 
 /* A tap (no drag) on a block sounds it. On release rather than press, so a
- * drag that happens to start on a block scrolls without playing a note. */
+ * drag that happens to start on a block scrolls without playing a note. While
+ * browsable the scroller sits over the blocks, so the block is found under the
+ * tap point rather than from the event target. */
 function pressTappedBlock(event: PointerEvent) {
   if (!props.areBlocksPressable) return
 
-  const block = (event.target as Element | null)?.closest('[data-midi]')
+  const block =
+    (event.target as Element | null)?.closest('[data-midi]') ??
+    document
+      .elementsFromPoint(event.clientX, event.clientY)
+      .find(
+        (element) =>
+          element.matches('[data-midi]') && laneRef.value?.contains(element),
+      )
   if (!block) return
 
   emit('blockPress', Number(block.getAttribute('data-midi')))
@@ -208,10 +259,7 @@ function pressTappedBlock(event: PointerEvent) {
 
 useLaneScroll({
   target: laneRef,
-  isEnabled: () => props.isScrollable,
-  pxPerMs: () => pxPerMs.value,
-  scrollBy,
-  scrollTo,
+  scroller: scrollerRef,
   onTap: pressTappedBlock,
 })
 
@@ -253,25 +301,20 @@ const sungLine = computed(() => {
        makes no stacking context, so its layers compete with this box
        directly: z-[11] sits above the keys (black keys are z-10) and below
        the pitch ticks (z-15), live-pitch line (z-20) and chip (z-30).
-       pointer-events-none keeps anything under it clickable; the surface and
-       blocks opt back in, and their events bubble here for useLaneScroll.
-       pan-x leaves horizontal touch pans to the piano's scroll box and hands
-       vertical drags to the lane.
+       pointer-events-none keeps anything under it clickable; the blocks and
+       the scroller opt back in, and their events bubble here for
+       useLaneScroll.
        LTR like the keyboard under it: pitch runs low→high left→right on a
        piano whatever the page direction. -->
   <div
     ref="laneRef"
-    class="pointer-events-none relative z-[11] mx-auto overflow-hidden select-none focus-visible:outline-2 focus-visible:outline-(--p-primary-color)"
-    :class="isScrollable && 'touch-pan-x'"
+    class="pointer-events-none relative z-[11] mx-auto overflow-hidden select-none"
     :style="{
       width: `${layout.totalWidth}px`,
       height: `${laneHeight + tailPx}px`,
       marginBottom: `-${tailPx}px`,
     }"
     dir="ltr"
-    :role="isScrollable ? 'region' : undefined"
-    :tabindex="isScrollable ? 0 : undefined"
-    :aria-label="isScrollable ? t('singTheKeys.scrollSong') : undefined"
     data-testid="sing-the-keys-lane"
     :data-scrollable="isScrollable"
   >
@@ -279,9 +322,6 @@ const sungLine = computed(() => {
          tail stays see-through over the label band and keys. -->
     <div
       class="absolute inset-x-0 top-0 rounded-t-md bg-(--p-surface-100) dark:bg-(--p-surface-900)"
-      :class="
-        isScrollable && 'pointer-events-auto cursor-grab active:cursor-grabbing'
-      "
       :style="{ height: `${laneHeight}px` }"
       aria-hidden="true"
     />
@@ -347,6 +387,26 @@ const sungLine = computed(() => {
       >
         {{ block.label }}
       </div>
+    </div>
+
+    <!-- Native scroller while browsing (see scrollSpacerHeightPx): invisible,
+         over the blocks so it takes the touches, under the position bar, sung
+         line and hit line. overscroll-contain keeps a fling that hits either
+         end of the song from carrying on into the page. The scrollbar is
+         hidden: a classic one would narrow the lane off its keys, and the
+         position bar stands in for it. -->
+    <div
+      v-if="isScrollable"
+      ref="scrollerRef"
+      class="pointer-events-auto absolute inset-x-0 top-0 cursor-grab touch-manipulation [scrollbar-width:none] overflow-y-auto overscroll-y-contain focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--p-primary-color) active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+      :style="{ height: `${laneHeight}px` }"
+      role="region"
+      tabindex="0"
+      :aria-label="t('singTheKeys.scrollSong')"
+      data-testid="sing-the-keys-scroller"
+      @scroll="handleScroll"
+    >
+      <div :style="{ height: `${scrollSpacerHeightPx}px` }" />
     </div>
 
     <!-- Song position while browsing (see scrollThumb). Above the blocks so an
