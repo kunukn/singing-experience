@@ -60,6 +60,12 @@ const isBeatLinesEnabled = defineModel<boolean>('isBeatLinesEnabled', {
 const areBeatLightsEnabled = defineModel<boolean>('areBeatLightsEnabled', {
   required: true,
 })
+/* Snap: the sung line and note chip sit on the nearest key instead of drifting
+ * with the cents — child friendly, a slightly flat G3 shows as G3. Visual only,
+ * like the lines. */
+const isPitchSnapEnabled = defineModel<boolean>('isPitchSnapEnabled', {
+  required: true,
+})
 
 /* The note currently due, for a test page that wants to sing along by itself. */
 const emit = defineEmits<{ targetChange: [midi: number | null] }>()
@@ -253,9 +259,18 @@ const {
 const isIdleSource = computed(
   () => !isPlaying.value && !props.simulateIdlePreview,
 )
-const liveFrequency = computed(() =>
+const rawLiveFrequency = computed(() =>
   isIdleSource.value ? idleFrequency.value : frequency.value,
 )
+/* Snapped to the equal-tempered pitch of the nearest semitone. Scoring keeps
+ * the raw pitch: its ±50 cent window is already the nearest-key rule, so the
+ * key the snapped line lands on is the key that scores. */
+const liveFrequency = computed(() => {
+  const hz = rawLiveFrequency.value
+  if (hz === null || !isPitchSnapEnabled.value) return hz
+
+  return midiToFrequency(Math.round(frequencyToMidi(hz)))
+})
 const liveNoteInfo = computed(() =>
   isIdleSource.value ? idleNoteInfo.value : noteInfo.value,
 )
@@ -474,6 +489,13 @@ onUnmounted(() => {
         iconOn="pi pi-sun"
         iconOff="pi pi-sun"
         :label="t('singTheKeys.beatLights')"
+      />
+
+      <ToggleIconButton
+        v-model="isPitchSnapEnabled"
+        iconOn="pi pi-bullseye"
+        iconOff="pi pi-bullseye"
+        :label="t('singTheKeys.pitchSnap')"
       />
 
       <PreviewToggle
