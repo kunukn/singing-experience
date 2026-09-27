@@ -11,6 +11,7 @@ import {
   activeNoteIndexAt,
   buildTimeline,
   endingLaneMsAt,
+  laneEndViewMs,
   LOOKAHEAD_MS,
   type Timeline,
 } from './singTheKeysTimeline'
@@ -167,10 +168,7 @@ export function useSingTheKeys(options: Options = {}) {
         : 0
     endingPath = {
       fallEndMs: Math.max(built.totalMs, lastToneEndMs),
-      /* The last LOOKAHEAD_MS of the song fills the lane, the final note
-       * ending at its top; a song shorter than the lane settles on its
-       * opening. */
-      endingViewMs: Math.max(0, built.totalMs - LOOKAHEAD_MS),
+      endingViewMs: laneEndViewMs(built.totalMs),
     }
 
     toneStartS = engine.getNow() + SCHEDULE_AHEAD_S
@@ -208,6 +206,25 @@ export function useSingTheKeys(options: Options = {}) {
     rafId = requestAnimationFrame(tick)
   }
 
+  /* Scroll range for browsing the song while not playing: the opening view
+   * up to the ending view. */
+  const laneScrollMaxMs = computed(() => laneEndViewMs(timeline.value.totalMs))
+
+  /* Idle, or done once the ending glide has landed — mid-glide its rAF would
+   * overwrite the scroll on the next frame. */
+  const canScrollLane = computed(
+    () => !isPlaying.value && (!isShowingEnding.value || isEndingSettled.value),
+  )
+
+  /* Moves the lane only: elapsedMs stays where it is (0 in the preview, the
+   * finish after a run) for the scorer and the tally. preview, start and stop
+   * all put the lane back, so a scroll never outlives its song. */
+  function scrollLaneTo(ms: number) {
+    if (!canScrollLane.value) return
+
+    laneElapsedMs.value = Math.min(laneScrollMaxMs.value, Math.max(0, ms))
+  }
+
   function stop() {
     engine.cancelScheduled()
     stopTicking()
@@ -235,8 +252,11 @@ export function useSingTheKeys(options: Options = {}) {
     laneElapsedMs,
     activeNoteIndex,
     noteDurationsMs,
+    laneScrollMaxMs,
+    canScrollLane,
     preview,
     start,
     stop,
+    scrollLaneTo,
   }
 }

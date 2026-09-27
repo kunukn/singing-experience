@@ -171,6 +171,13 @@ export function activeNoteIndexAt(
  * short enough not to hold up Play again. */
 export const ENDING_GLIDE_MS = 600
 
+/* The lane view showing the song's last stretch: the final note ending at the
+ * lane's top. A song shorter than the lane stays on its opening (0). Both the
+ * ending glide and the idle scroll stop here. */
+export function laneEndViewMs(totalMs: number): number {
+  return Math.max(0, totalMs - LOOKAHEAD_MS)
+}
+
 type EndingPath = {
   /* When the last sound stops: the blocks fall with the clock until here. */
   fallEndMs: number

@@ -9,6 +9,7 @@ import {
   buildTimeline,
   ENDING_GLIDE_MS,
   endingLaneMsAt,
+  laneEndViewMs,
   LOOKAHEAD_MS,
   songMidiRange,
 } from './singTheKeysTimeline'
@@ -235,5 +236,15 @@ describe('songMidiRange', () => {
       midiMin: 47,
       midiMax: 62,
     })
+  })
+})
+
+describe('laneEndViewMs', () => {
+  test.each([
+    { totalMs: 10_000, expected: 10_000 - LOOKAHEAD_MS },
+    { totalMs: LOOKAHEAD_MS, expected: 0 },
+    { totalMs: 2400, expected: 0 },
+  ])('returns $expected for a $totalMs ms song', ({ totalMs, expected }) => {
+    expect(laneEndViewMs(totalMs)).toBe(expected)
   })
 })

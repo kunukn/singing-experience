@@ -91,6 +91,8 @@ const {
   laneElapsedMs,
   activeNoteIndex,
   noteDurationsMs,
+  laneScrollMaxMs,
+  canScrollLane,
 } = game
 
 /* Drives the result panel + the green blocks. Set when the song finishes on its
@@ -519,7 +521,11 @@ onUnmounted(() => {
             :isScored="isRunScored"
             :beatLines="isBeatLinesEnabled ? timeline.beatLines : []"
             :beatFlash="beatFlash"
+            :isPlaying="isPlaying"
+            :isScrollable="canScrollLane"
+            :scrollMaxMs="laneScrollMaxMs"
             @blockPress="playKey"
+            @scrollTo="game.scrollLaneTo"
           />
         </template>
       </PianoDisplay>

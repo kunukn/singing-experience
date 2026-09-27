@@ -249,3 +249,85 @@ describe('useSingTheKeys', () => {
     expect(game.isIdle.value).toBe(true)
   })
 })
+
+/* Half speed doubles the 2.4 s song to 4.8 s: 1.8 s more than the lane shows. */
+describe('useSingTheKeys - lane scroll', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  test.each([
+    { ms: 1000, expected: 1000 },
+    { ms: -500, expected: 0 },
+    { ms: 9000, expected: 1800 },
+  ])(
+    'should scroll the preview to $expected ms for $ms',
+    ({ ms, expected }) => {
+      const { game } = createGame()
+      game.preview(song, C4, 0.5)
+
+      game.scrollLaneTo(ms)
+
+      expect(game.laneScrollMaxMs.value).toBe(1800)
+      expect(game.laneElapsedMs.value).toBe(expected)
+      /* Only the lane moves; the scorer's clock stays put. */
+      expect(game.elapsedMs.value).toBe(0)
+    },
+  )
+
+  test('should not scroll a song that fits the lane', () => {
+    const { game } = createGame()
+    game.preview(song, C4, 1)
+
+    game.scrollLaneTo(1000)
+
+    expect(game.laneElapsedMs.value).toBe(0)
+  })
+
+  test('should go back to the opening when a setting changes', () => {
+    const { game } = createGame()
+    game.preview(song, C4, 0.5)
+    game.scrollLaneTo(1000)
+
+    game.preview(song, C4, 0.5)
+
+    expect(game.laneElapsedMs.value).toBe(0)
+  })
+
+  test('should not scroll during a run', async () => {
+    const { game } = createGame()
+    await game.start({ ...startParams(), speed: 0.5 })
+    const laneMs = game.laneElapsedMs.value
+
+    game.scrollLaneTo(1000)
+
+    expect(game.canScrollLane.value).toBe(false)
+    expect(game.laneElapsedMs.value).toBe(laneMs)
+  })
+
+  test('should scroll the result only once the ending glide has landed', async () => {
+    const { game, nowS } = createGame()
+    await game.start({ ...startParams(false), speed: 0.5 })
+    nowS.value = SONG_START_S + 4.8
+    vi.advanceTimersByTime((SONG_START_S + 4.8) * 1000 + 1)
+    await nextTick()
+
+    game.scrollLaneTo(0)
+
+    expect(game.canScrollLane.value).toBe(false)
+    expect(game.laneElapsedMs.value).toBeCloseTo(4800, 5)
+
+    nowS.value = SONG_START_S + 4.8 + ENDING_GLIDE_MS / 1000 + 0.05
+    vi.advanceTimersByTime(20)
+    await nextTick()
+    game.scrollLaneTo(0)
+
+    expect(game.canScrollLane.value).toBe(true)
+    expect(game.laneElapsedMs.value).toBe(0)
+    expect(game.elapsedMs.value).toBeCloseTo(4800, 5)
+  })
+})

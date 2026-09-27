@@ -13,6 +13,7 @@ import {
   type BeatLine,
   type TimelineNote,
 } from './singTheKeysTimeline'
+import { useLaneScroll } from './useLaneScroll'
 
 /*
  * The falling-note lane above the keyboard. Every block is laid out once, in
@@ -51,12 +52,27 @@ type Props = {
   /* Glow on the hit line as a beat line crosses it; null between beats and
    * while idle. */
   beatFlash: BeatFlash | null
+  /* A run is under way: a block the lane has moved past was due and is judged.
+   * Outside a run the lane is only being browsed, so nothing is. */
+  isPlaying: boolean
+  /* The singer can scroll through the song (wheel, drag, keys) — while not
+   * playing, once any ending glide has landed. */
+  isScrollable: boolean
+  /* The furthest the lane scrolls: the view with the song's last note ending
+   * at the lane's top. 0 when the whole song already fits. */
+  scrollMaxMs: number
 }
 
 const props = defineProps<Props>()
 
-/* A block was pressed: sound its note as if its key had been. */
-const emit = defineEmits<{ blockPress: [midi: number] }>()
+const emit = defineEmits<{
+  /* A block was tapped: sound its note as if its key had been. */
+  blockPress: [midi: number]
+  /* Scroll the lane to this ms position, already clamped to the song. */
+  scrollTo: [ms: number]
+}>()
+
+const { t } = useI18n()
 
 type NoteStatus = 'upcoming' | 'active' | 'correct' | 'missed' | 'passed'
 
@@ -73,7 +89,7 @@ function statusOf(note: TimelineNote): NoteStatus {
   if (note.index === props.activeNoteIndex) return 'active'
   if (
     props.isShowingEnding ||
-    note.startMs + note.durationMs <= props.elapsedMs
+    (props.isPlaying && note.startMs + note.durationMs <= props.elapsedMs)
   )
     return props.isScored ? 'missed' : 'passed'
 
@@ -160,6 +176,60 @@ const stripStyle = computed(() => ({
   transform: `translateY(${props.elapsedMs * pxPerMs.value}px)`,
 }))
 
+const laneRef = ref<HTMLElement | null>(null)
+
+function clampScrollMs(ms: number) {
+  return Math.min(props.scrollMaxMs, Math.max(0, ms))
+}
+
+function scrollTo(ms: number) {
+  emit('scrollTo', clampScrollMs(ms))
+}
+
+function scrollBy(deltaMs: number) {
+  const next = clampScrollMs(props.elapsedMs + deltaMs)
+  if (next === props.elapsedMs) return false
+
+  emit('scrollTo', next)
+
+  return true
+}
+
+/* A tap (no drag) on a block sounds it. On release rather than press, so a
+ * drag that happens to start on a block scrolls without playing a note. */
+function pressTappedBlock(event: PointerEvent) {
+  if (!props.areBlocksPressable) return
+
+  const block = (event.target as Element | null)?.closest('[data-midi]')
+  if (!block) return
+
+  emit('blockPress', Number(block.getAttribute('data-midi')))
+}
+
+useLaneScroll({
+  target: laneRef,
+  isEnabled: () => props.isScrollable,
+  pxPerMs: () => pxPerMs.value,
+  scrollBy,
+  scrollTo,
+  onTap: pressTappedBlock,
+})
+
+/* Position bar on the lane's end edge. The song runs bottom to top in the
+ * lane (later notes higher up), so the thumb starts at the bottom and climbs
+ * to the top at the song's end. Its height is the share of the song on
+ * screen. */
+const scrollThumb = computed(() => {
+  if (!props.isScrollable || props.scrollMaxMs <= 0) return null
+
+  const heightPx =
+    (props.laneHeight * LOOKAHEAD_MS) / (props.scrollMaxMs + LOOKAHEAD_MS)
+  const progress = clampScrollMs(props.elapsedMs) / props.scrollMaxMs
+  const topPx = (props.laneHeight - heightPx) * (1 - progress)
+
+  return { heightPx, topPx, progress }
+})
+
 /* Reuses the keyboard's own line mapping so the lane's line and the key
  * track's line meet at the same x, edge pinning included. */
 const sungLine = computed(() => {
@@ -183,23 +253,35 @@ const sungLine = computed(() => {
        makes no stacking context, so its layers compete with this box
        directly: z-[11] sits above the keys (black keys are z-10) and below
        the pitch ticks (z-15), live-pitch line (z-20) and chip (z-30).
-       pointer-events-none keeps anything under it clickable.
+       pointer-events-none keeps anything under it clickable; the surface and
+       blocks opt back in, and their events bubble here for useLaneScroll.
+       pan-x leaves horizontal touch pans to the piano's scroll box and hands
+       vertical drags to the lane.
        LTR like the keyboard under it: pitch runs low→high left→right on a
        piano whatever the page direction. -->
   <div
-    class="pointer-events-none relative z-[11] mx-auto overflow-hidden"
+    ref="laneRef"
+    class="pointer-events-none relative z-[11] mx-auto overflow-hidden select-none focus-visible:outline-2 focus-visible:outline-(--p-primary-color)"
+    :class="isScrollable && 'touch-pan-x'"
     :style="{
       width: `${layout.totalWidth}px`,
       height: `${laneHeight + tailPx}px`,
       marginBottom: `-${tailPx}px`,
     }"
     dir="ltr"
+    :role="isScrollable ? 'region' : undefined"
+    :tabindex="isScrollable ? 0 : undefined"
+    :aria-label="isScrollable ? t('singTheKeys.scrollSong') : undefined"
     data-testid="sing-the-keys-lane"
+    :data-scrollable="isScrollable"
   >
     <!-- The lane surface: only the part above the hit line is painted, so the
          tail stays see-through over the label band and keys. -->
     <div
       class="absolute inset-x-0 top-0 rounded-t-md bg-(--p-surface-100) dark:bg-(--p-surface-900)"
+      :class="
+        isScrollable && 'pointer-events-auto cursor-grab active:cursor-grabbing'
+      "
       :style="{ height: `${laneHeight}px` }"
       aria-hidden="true"
     />
@@ -262,11 +344,24 @@ const sungLine = computed(() => {
         :data-testid="`lane-note-${block.note.index}`"
         :data-status="statusOf(block.note)"
         :data-midi="block.note.midi"
-        @pointerdown="areBlocksPressable && emit('blockPress', block.note.midi)"
       >
         {{ block.label }}
       </div>
     </div>
+
+    <!-- Song position while browsing (see scrollThumb). Above the blocks so an
+         edge key's block can't hide it. -->
+    <div
+      v-if="scrollThumb"
+      class="absolute end-1 z-10 w-1 rounded-full bg-(--p-surface-400)/70 dark:bg-(--p-surface-500)/70"
+      :style="{
+        top: `${scrollThumb.topPx}px`,
+        height: `${scrollThumb.heightPx}px`,
+      }"
+      aria-hidden="true"
+      data-testid="sing-the-keys-scroll-thumb"
+      :data-progress="scrollThumb.progress.toFixed(2)"
+    />
 
     <!-- The singer's pitch, continued up from the key track's dashed line. -->
     <div
