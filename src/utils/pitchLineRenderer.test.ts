@@ -1,6 +1,7 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test, vi } from 'vitest'
 import {
   clampPitchY,
+  drawPitchLine,
   pitchLineColors,
   resolveEffectiveMidi,
 } from './pitchLineRenderer'
@@ -98,5 +99,101 @@ describe('pitchLineColors', () => {
       isHighLane: true,
     })
     expect(colors.dot).toBe('rgba(74, 222, 128, 0.8)')
+  })
+})
+
+describe('drawPitchLine - cents colour', () => {
+  /* A4 sung 30¢ sharp — 1200 cents per octave. */
+  const A4_30_CENTS_SHARP = 440 * 2 ** (30 / 1200)
+
+  /* Records the colour in effect when the line, dot and label are painted. */
+  function createColorRecordingContext() {
+    const recorded = {
+      line: null as string | null,
+      dot: null as string | null,
+      label: null as string | null,
+    }
+    const ctx = {
+      strokeStyle: '',
+      fillStyle: '',
+      save: vi.fn(),
+      restore: vi.fn(),
+      beginPath: vi.fn(),
+      moveTo: vi.fn(),
+      lineTo: vi.fn(),
+      setLineDash: vi.fn(),
+      arc: vi.fn(),
+      stroke: vi.fn(() => {
+        recorded.line = ctx.strokeStyle
+      }),
+      fill: vi.fn(() => {
+        recorded.dot = ctx.fillStyle
+      }),
+      fillText: vi.fn(() => {
+        recorded.label = ctx.fillStyle
+      }),
+    }
+
+    return { ctx: ctx as unknown as CanvasRenderingContext2D, recorded }
+  }
+
+  /* Height 100 keeps y 50 inside the padded band and y -100 outside it. */
+  function drawColors(options: {
+    isOutOfRange?: boolean
+    isHighLane?: boolean
+    colorForCents?: (cents: number, opacity: number) => string
+  }) {
+    const { ctx, recorded } = createColorRecordingContext()
+    drawPitchLine(ctx, {
+      midi: 69,
+      frequency: A4_30_CENTS_SHARP,
+      height: 100,
+      midiToY: () => (options.isOutOfRange ? -100 : 50),
+      lineX0: 0,
+      lineX1: 100,
+      dotX: 50,
+      isHighLane: options.isHighLane,
+      colorForCents: options.colorForCents,
+    })
+
+    return recorded
+  }
+
+  test('colours an in-range line, dot and label by its cents offset', () => {
+    const colorForCents = vi.fn(
+      (cents: number, opacity: number) => `cents ${cents} @ ${opacity}`,
+    )
+
+    expect(drawColors({ colorForCents })).toEqual({
+      line: 'cents 30 @ 0.25',
+      dot: 'cents 30 @ 0.7',
+      label: 'cents 30 @ 1',
+    })
+  })
+
+  test('keeps the orange palette without a cents colourer', () => {
+    expect(drawColors({})).toEqual({
+      line: 'rgba(251, 146, 60, 0.25)',
+      dot: 'rgba(251, 146, 60, 0.7)',
+      label: 'rgba(251, 146, 60, 0.8)',
+    })
+  })
+
+  test('keeps the high lane blue', () => {
+    const colorForCents = vi.fn(() => 'cents-colour')
+
+    expect(drawColors({ isHighLane: true, colorForCents }).dot).toBe(
+      'rgba(96, 165, 250, 0.7)',
+    )
+    expect(colorForCents).not.toHaveBeenCalled()
+  })
+
+  test('keeps an out-of-range line red', () => {
+    const colorForCents = vi.fn(() => 'cents-colour')
+
+    expect(drawColors({ isOutOfRange: true, colorForCents }).dot).toBe(
+      'rgba(239, 68, 68, 0.7)',
+    )
+    expect(colorForCents).not.toHaveBeenCalled()
   })
 })

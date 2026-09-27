@@ -9,6 +9,7 @@ import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
 import type { NoteName } from '@/utils/noteUtils'
 import { midiToNoteLabel, noteToFrequency } from '@/utils/noteUtils'
+import { cleanTextColor } from '@/utils/pitchColors'
 import { drawPitchLine } from '@/utils/pitchLineRenderer'
 
 type Props = {
@@ -25,12 +26,16 @@ type Props = {
   isSingingCorrectNote: boolean
   holdProgress: number
   highlightedMidi?: number | null
+  /* True while the line shows the idle preview (no game running). Only then is
+   * it cents-coloured — during a game green must keep meaning "on target". */
+  isIdlePreview?: boolean
   onTonePlayed?: () => void
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentFrequency: null,
   highlightedMidi: null,
+  isIdlePreview: false,
   onTonePlayed: undefined,
 })
 
@@ -54,6 +59,8 @@ const LABEL_WIDTH = 40
 const PADDING_RIGHT = 16
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
+
+const { isDark } = useDarkMode()
 const containerRef = ref<HTMLElement | null>(null)
 const containerHeight = ref(0)
 
@@ -245,6 +252,11 @@ function drawChart() {
       isCorrect: props.isSingingCorrectNote,
       hideLabelWhenCorrect: true,
       centsThreshold: 30,
+      /* Same cents colouring as the pitch detector's idle preview. */
+      colorForCents: props.isIdlePreview
+        ? (cents, opacity) =>
+            withAlpha(cleanTextColor(cents, isDark.value), opacity)
+        : null,
     })
   }
 

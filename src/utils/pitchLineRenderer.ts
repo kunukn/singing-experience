@@ -60,6 +60,11 @@ const COLORS = {
   },
 } as const
 
+/* Line and dot keep the in-range palette's alphas so a cents-coloured line
+ * stays as faint as the orange one; the label is opaque so small text in the
+ * lighter shades stays legible. */
+const CENTS_COLOR_OPACITY = { line: 0.25, dot: 0.7, label: 1 } as const
+
 /**
  * Fractional MIDI from Hz for sub-semitone Y positioning; integer-MIDI
  * fallback when no usable frequency. Same math as frequencyToMidi
@@ -144,6 +149,11 @@ type DrawPitchLineOptions = {
   /* Optional pre-resolved label string. Defaults to midiToNoteLabel(midi).
    * PitchHistory passes its own previewNoteLabel to preserve exact behavior. */
   noteLabel?: string | null
+  /* Colour line, dot and label by how far the pitch sits from `midi` instead
+   * of the flat palette colour. PitchHistory passes cleanTextColor so its idle
+   * preview matches the trail. Ignored for out-of-range, on-target and
+   * high-lane lines — those colours say something the cents colour would hide. */
+  colorForCents?: ((cents: number, opacity: number) => string) | null
   paddingTop?: number
   paddingBottom?: number
 }
@@ -173,6 +183,7 @@ export function drawPitchLine(
     centsThreshold = null,
     isRtl = false,
     noteLabel = null,
+    colorForCents = null,
     paddingTop,
     paddingBottom,
   } = options
@@ -185,7 +196,17 @@ export function drawPitchLine(
     paddingTop,
     paddingBottom,
   )
-  const colors = pitchLineColors({ isOutOfRange, isCorrect, isHighLane })
+  /* 100 = cents per semitone; explains why the line sits off the named
+   * note's integer-MIDI row. */
+  const cents = Math.round(100 * (effectiveMidi - midi))
+  const colors =
+    colorForCents && !isOutOfRange && !isCorrect && !isHighLane
+      ? {
+          line: colorForCents(cents, CENTS_COLOR_OPACITY.line),
+          dot: colorForCents(cents, CENTS_COLOR_OPACITY.dot),
+          label: colorForCents(cents, CENTS_COLOR_OPACITY.label),
+        }
+      : pitchLineColors({ isOutOfRange, isCorrect, isHighLane })
 
   ctx.save()
 
@@ -211,9 +232,6 @@ export function drawPitchLine(
   if (showLabel && !(hideLabelWhenCorrect && isCorrect)) {
     let displayLabel = noteLabel ?? midiToNoteLabel(midi).label
     if (centsThreshold != null && !isOutOfRange && frequency != null) {
-      /* 100 = cents per semitone; explains why the line sits off the named
-       * note's integer-MIDI row. */
-      const cents = Math.round(100 * (effectiveMidi - midi))
       displayLabel = formatNoteLabelWithCents(
         displayLabel,
         cents,

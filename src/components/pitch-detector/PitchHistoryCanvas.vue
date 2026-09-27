@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { CHART_LABEL_GUTTER_WIDTH } from '@/constants/chartStyles'
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
-import { cleanColor, cleanColorRgb } from '@/utils/pitchColors'
+import { cleanColor, cleanColorRgb, cleanTextColor } from '@/utils/pitchColors'
 import { drawPitchLine } from '@/utils/pitchLineRenderer'
 
 import {
@@ -65,6 +65,8 @@ const LABEL_OFFSET_Y = 13
 const LABEL_COLLISION_Y = 26
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
+
+const { isDark } = useDarkMode()
 
 /*
  * One recorder per voice. Both are created up front and simply stay empty in
@@ -179,6 +181,11 @@ function drawPreviewIndicators(
       centsThreshold: 20,
       isRtl: props.isRtl ?? false,
       noteLabel: lane.previewNoteLabel,
+      /* Same green → yellow → red as the trail, in the theme-aware text shades
+       * — the trail's neon green is unreadable as text on a light chart. One
+       * shade for line, dot and label so the three read as one indicator. */
+      colorForCents: (cents, opacity) =>
+        withAlpha(cleanTextColor(cents, isDark.value), opacity),
       isHighLane: lane.laneId === 'high',
       /* While listening, keep only the dashed reference line: the center dot and
        * label are redundant with the live head dot, which carries the label instead. */
