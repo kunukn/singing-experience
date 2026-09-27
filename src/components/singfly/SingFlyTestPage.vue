@@ -8,7 +8,8 @@ import {
 import SingFlyDisplay from './SingFlyDisplay.vue'
 import { useSingFlySettings } from './useSingFlySettings'
 
-const { rangeIndex, gameDurationSec, difficulty } = useSingFlySettings()
+const { rangeIndex, gameDurationSec, difficulty, isPitchSnapEnabled } =
+  useSingFlySettings()
 
 /* Start the simulated singer at the dead center of the selected voice range so
  * the bird begins mid-screen — not pinned against (and crashing into) the
@@ -265,6 +266,7 @@ watch(scrubSeconds, (seconds) => {
       v-model:rangeIndex="rangeIndex"
       v-model:gameDurationSec="gameDurationSec"
       v-model:difficulty="difficulty"
+      v-model:isPitchSnapEnabled="isPitchSnapEnabled"
     />
   </div>
 </template>

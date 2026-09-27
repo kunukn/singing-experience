@@ -264,4 +264,21 @@ describe('useStablePitch — voice-range gate', () => {
     await feedSteady(C2, 15, 16)
     expect(stableNoteInfo.value?.midiNote).toBe(C2)
   })
+
+  test('should emit the nearest semitone while snap is on', async () => {
+    const isSnapped = ref(false)
+    const { stableNoteInfo } = useStablePitch({ noteInfo, isClean, isSnapped })
+
+    await lockE3(stableNoteInfo)
+
+    /* E3 +30¢ is micro-drift, so it is adopted on the next frames. */
+    await feedSteady(E3 + 0.3, 10, 16)
+    expect(stableNoteInfo.value?.cents).toBe(30)
+
+    isSnapped.value = true
+    await feed(E3 + 0.3, 16)
+    expect(stableNoteInfo.value?.midiNote).toBe(E3)
+    expect(stableNoteInfo.value?.cents).toBe(0)
+    expect(stableNoteInfo.value?.frequency).toBeCloseTo(midiToFrequency(E3), 6)
+  })
 })

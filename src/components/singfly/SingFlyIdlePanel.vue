@@ -21,6 +21,9 @@ const gameDurationSec = defineModel<number>('gameDurationSec', {
   required: true,
 })
 const difficulty = defineModel<Difficulty>('difficulty', { required: true })
+const isPitchSnapEnabled = defineModel<boolean>('isPitchSnapEnabled', {
+  required: true,
+})
 
 const { t } = useI18n()
 </script>
@@ -43,6 +46,13 @@ const { t } = useI18n()
       >
         {{ t('generic.start') }}
       </PrimeButton>
+
+      <ToggleIconButton
+        v-model="isPitchSnapEnabled"
+        iconOn="pi pi-bullseye"
+        iconOff="pi pi-bullseye"
+        :label="t('generic.pitchSnap')"
+      />
 
       <PreviewToggle
         v-model="isPreviewEnabled"

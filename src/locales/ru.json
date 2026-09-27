@@ -45,6 +45,7 @@
     "tempo": "Темп",
     "toneLabels": "Ноты",
     "melodyGuide": "Подсказка",
+    "pitchSnap": "Магнит",
     "scoreCorrect": "{percent}% правильно",
     "beat": "Ритм",
     "sing": "Пой"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = хорошее начало",
     "preview": "Прослушать",
     "beatLights": "Огни",
-    "pitchSnap": "Магнит",
     "scrollSong": "Листай песню",
     "songs": {
       "twinkle": "Ты мерцай, звезда ночная",

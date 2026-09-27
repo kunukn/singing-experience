@@ -45,6 +45,7 @@
     "tempo": "Tempo",
     "toneLabels": "Tones",
     "melodyGuide": "Guide",
+    "pitchSnap": "Snap",
     "scoreCorrect": "{percent}% correct",
     "beat": "Beat",
     "sing": "Sing"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = a good place to start",
     "preview": "Preview",
     "beatLights": "Lights",
-    "pitchSnap": "Snap",
     "scrollSong": "Scroll through the song",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",

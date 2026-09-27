@@ -57,6 +57,11 @@ const gameDurationSec = defineModel<number>('gameDurationSec', {
   required: true,
 })
 const difficulty = defineModel<Difficulty>('difficulty', { required: true })
+/* Snap: the bird flies on the nearest semitone. Applied in the stabiliser, so
+ * the drawn bird, collision and scoring all read the same snapped pitch. */
+const isPitchSnapEnabled = defineModel<boolean>('isPitchSnapEnabled', {
+  required: true,
+})
 
 const { t } = useI18n()
 const isRtl = useIsRtl()
@@ -111,6 +116,7 @@ const { stableNoteInfo } = useStablePitch({
   midiMin: gameMidiMin,
   midiMax: gameMidiMax,
   gapHalfSemitones,
+  isSnapped: isPitchSnapEnabled,
 })
 
 const { fireConfetti } = useConfettiStore()
@@ -274,6 +280,7 @@ const { stableNoteInfo: stableIdleNoteInfo } = useStablePitch({
   midiMin: gameMidiMin,
   midiMax: gameMidiMax,
   gapHalfSemitones,
+  isSnapped: isPitchSnapEnabled,
 })
 
 const panelMicPermission = computed<PermissionState | null>(() =>
@@ -432,6 +439,7 @@ defineExpose({
         v-if="gameState === 'idle'"
         v-model:rangeIndex="rangeIndex"
         v-model:isPreviewEnabled="isPreviewEnabled"
+        v-model:isPitchSnapEnabled="isPitchSnapEnabled"
         v-model:gameDurationSec="gameDurationSec"
         v-model:difficulty="difficulty"
         :micPermission="panelMicPermission"
@@ -456,6 +464,7 @@ defineExpose({
         :summary="summary"
         :elapsedSeconds="elapsedSeconds"
         v-model:isPreviewEnabled="isPreviewEnabled"
+        v-model:isPitchSnapEnabled="isPitchSnapEnabled"
         :micPermission="panelMicPermission"
         @reset="handleReset"
       />

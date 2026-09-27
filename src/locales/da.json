@@ -45,6 +45,7 @@
     "tempo": "Tempo",
     "toneLabels": "Toner",
     "melodyGuide": "Guide",
+    "pitchSnap": "Magnet",
     "scoreCorrect": "{percent}% rigtigt",
     "beat": "Takt",
     "sing": "Syng"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = et godt sted at starte",
     "preview": "Forhåndsvis",
     "beatLights": "Lys",
-    "pitchSnap": "Magnet",
     "scrollSong": "Rul gennem sangen",
     "songs": {
       "twinkle": "Blinke, blinke, lille stjerne",

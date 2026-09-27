@@ -45,6 +45,7 @@
     "tempo": "Tempo ",
     "toneLabels": "Notes",
     "melodyGuide": "Guide",
+    "pitchSnap": "Aimant",
     "scoreCorrect": "{percent}% correct",
     "beat": "Rythme",
     "sing": "Chante"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = un bon point de départ",
     "preview": "Aperçu",
     "beatLights": "Lumières",
-    "pitchSnap": "Aimant",
     "scrollSong": "Fais défiler la chanson",
     "songs": {
       "twinkle": "Ah ! vous dirai-je, maman",

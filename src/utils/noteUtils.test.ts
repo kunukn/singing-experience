@@ -13,6 +13,7 @@ import {
   SCALE_MODE_GROUP_ORDER,
   SCALE_MODE_OPTIONS,
   SCALE_MODE_SEMITONES,
+  snapFrequencyToSemitone,
 } from './noteUtils'
 import type { ScaleMode } from './noteUtils'
 
@@ -117,6 +118,28 @@ describe('midiToFrequency', () => {
 
   test('returns ~130.81 for MIDI 48 (C3)', () => {
     expect(midiToFrequency(48)).toBeCloseTo(130.81, 1)
+  })
+})
+
+describe('snapFrequencyToSemitone', () => {
+  test.each([
+    { cents: 30, label: 'sharp' },
+    { cents: -30, label: 'flat' },
+    { cents: 0, label: 'in tune' },
+  ])('snaps G3 sung $label to exactly G3', ({ cents }) => {
+    const g3 = noteToFrequency('G', 3)
+    const sung = g3 * Math.pow(2, cents / 1200)
+
+    expect(snapFrequencyToSemitone(sung)).toBeCloseTo(g3, 6)
+  })
+
+  test('snaps to the next semitone past the midpoint', () => {
+    const sung = noteToFrequency('G', 3) * Math.pow(2, 60 / 1200) // G3 +60¢
+
+    expect(snapFrequencyToSemitone(sung)).toBeCloseTo(
+      noteToFrequency('G#', 3),
+      6,
+    )
   })
 })
 

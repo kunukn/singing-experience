@@ -5,6 +5,7 @@ import type { NoteInfo } from '@/utils/noteUtils'
 import {
   frequencyToMidi,
   midiToFrequency,
+  snapFrequencyToSemitone,
   toAccidentalGlyph,
 } from '@/utils/noteUtils'
 import { isOnPitch } from '@/utils/pitchMatch'
@@ -269,7 +270,7 @@ const liveFrequency = computed(() => {
   const hz = rawLiveFrequency.value
   if (hz === null || !isPitchSnapEnabled.value) return hz
 
-  return midiToFrequency(Math.round(frequencyToMidi(hz)))
+  return snapFrequencyToSemitone(hz)
 })
 const liveNoteInfo = computed(() =>
   isIdleSource.value ? idleNoteInfo.value : noteInfo.value,
@@ -495,7 +496,7 @@ onUnmounted(() => {
         v-model="isPitchSnapEnabled"
         iconOn="pi pi-bullseye"
         iconOff="pi pi-bullseye"
-        :label="t('singTheKeys.pitchSnap')"
+        :label="t('generic.pitchSnap')"
       />
 
       <PreviewToggle

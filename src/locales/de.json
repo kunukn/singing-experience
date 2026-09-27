@@ -45,6 +45,7 @@
     "tempo": "Tempo",
     "toneLabels": "Töne",
     "melodyGuide": "Hilfe",
+    "pitchSnap": "Magnet",
     "scoreCorrect": "{percent}% richtig",
     "beat": "Takt",
     "sing": "Sing"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = ein guter Anfang",
     "preview": "Vorschau",
     "beatLights": "Lichter",
-    "pitchSnap": "Magnet",
     "scrollSong": "Scroll durch das Lied",
     "songs": {
       "twinkle": "Funkel, funkel, kleiner Stern",

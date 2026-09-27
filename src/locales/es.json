@@ -45,6 +45,7 @@
     "tempo": "Tempo",
     "toneLabels": "Tonos",
     "melodyGuide": "Guía",
+    "pitchSnap": "Imán",
     "scoreCorrect": "{percent}% correcto",
     "beat": "Ritmo",
     "sing": "Canta"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = un buen punto de partida",
     "preview": "Vista previa",
     "beatLights": "Luces",
-    "pitchSnap": "Imán",
     "scrollSong": "Desplázate por la canción",
     "songs": {
       "twinkle": "Estrellita, ¿dónde estás?",

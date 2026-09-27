@@ -45,6 +45,7 @@
     "tempo": "गति",
     "toneLabels": "स्वर",
     "melodyGuide": "मदद",
+    "pitchSnap": "चुंबक",
     "scoreCorrect": "{percent}% सही",
     "beat": "ताल",
     "sing": "गाओ"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = शुरू करने के लिए बढ़िया",
     "preview": "झलक",
     "beatLights": "रोशनी",
-    "pitchSnap": "चुंबक",
     "scrollSong": "गाना स्क्रॉल करो",
     "songs": {
       "twinkle": "ट्विंकल ट्विंकल लिटिल स्टार",

@@ -45,6 +45,7 @@
     "tempo": "Tempo",
     "toneLabels": "Noti",
     "melodyGuide": "Mwongozo",
+    "pitchSnap": "Sumaku",
     "scoreCorrect": "{percent}% sahihi",
     "beat": "Mdundo",
     "sing": "Imba"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = mahali pazuri pa kuanzia",
     "preview": "Hakiki",
     "beatLights": "Taa",
-    "pitchSnap": "Sumaku",
     "scrollSong": "Sogeza wimbo",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",

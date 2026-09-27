@@ -16,6 +16,9 @@ const emit = defineEmits<{
 const isPreviewEnabled = defineModel<boolean>('isPreviewEnabled', {
   required: true,
 })
+const isPitchSnapEnabled = defineModel<boolean>('isPitchSnapEnabled', {
+  required: true,
+})
 </script>
 
 <template>
@@ -63,6 +66,13 @@ const isPreviewEnabled = defineModel<boolean>('isPreviewEnabled', {
       >
         {{ $t('generic.playAgain') }}
       </PrimeButton>
+
+      <ToggleIconButton
+        v-model="isPitchSnapEnabled"
+        iconOn="pi pi-bullseye"
+        iconOff="pi pi-bullseye"
+        :label="$t('generic.pitchSnap')"
+      />
 
       <PreviewToggle
         v-model="isPreviewEnabled"

@@ -4,6 +4,7 @@ import {
   frequencyToMidi,
   frequencyToNote,
   midiToFrequency,
+  snapFrequencyToSemitone,
 } from '@/utils/noteUtils'
 
 import {
@@ -31,6 +32,10 @@ type UseStablePitchOptions = {
   midiMin?: Ref<number>
   midiMax?: Ref<number>
   gapHalfSemitones?: Ref<number>
+  /* Child-friendly snap: emit the nearest semitone instead of the exact
+   * pitch. The median and holds still run on the continuous pitch, so the
+   * fluke gating is unchanged — only the output is rounded. */
+  isSnapped?: Ref<boolean>
 }
 
 type Sample = { time: number; midi: number }
@@ -88,8 +93,15 @@ export function useStablePitch(options: UseStablePitchOptions) {
   }
 
   function emit() {
-    stableNoteInfo.value =
-      stableMidi === null ? null : frequencyToNote(midiToFrequency(stableMidi))
+    if (stableMidi === null) {
+      stableNoteInfo.value = null
+      return
+    }
+
+    const frequency = midiToFrequency(stableMidi)
+    stableNoteInfo.value = frequencyToNote(
+      options.isSnapped?.value ? snapFrequencyToSemitone(frequency) : frequency,
+    )
   }
 
   watch(

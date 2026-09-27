@@ -45,6 +45,7 @@
     "tempo": "テンポ",
     "toneLabels": "音名",
     "melodyGuide": "ガイド",
+    "pitchSnap": "スナップ",
     "scoreCorrect": "{percent}% 正解",
     "beat": "ビート",
     "sing": "歌おう"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = おすすめ",
     "preview": "プレビュー",
     "beatLights": "ライト",
-    "pitchSnap": "スナップ",
     "scrollSong": "曲をスクロール",
     "songs": {
       "twinkle": "きらきら星",

@@ -45,6 +45,7 @@
     "tempo": "Tempo",
     "toneLabels": "Nada",
     "melodyGuide": "Bantuan",
+    "pitchSnap": "Magnet",
     "scoreCorrect": "{percent}% benar",
     "beat": "Ketukan",
     "sing": "Nyanyi"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = awal yang bagus",
     "preview": "Pratinjau",
     "beatLights": "Lampu",
-    "pitchSnap": "Magnet",
     "scrollSong": "Gulir lagunya",
     "songs": {
       "twinkle": "Twinkle Twinkle Little Star",

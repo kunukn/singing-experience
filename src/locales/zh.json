@@ -45,6 +45,7 @@
     "tempo": "速度",
     "toneLabels": "音名",
     "melodyGuide": "引导",
+    "pitchSnap": "吸附",
     "scoreCorrect": "{percent}% 正确",
     "beat": "节拍",
     "sing": "唱"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = 推荐",
     "preview": "预览",
     "beatLights": "灯光",
-    "pitchSnap": "吸附",
     "scrollSong": "滚动浏览歌曲",
     "songs": {
       "twinkle": "小星星",

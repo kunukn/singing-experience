@@ -45,6 +45,7 @@
     "tempo": "Tempo",
     "toneLabels": "Tons",
     "melodyGuide": "Guia",
+    "pitchSnap": "Ímã",
     "scoreCorrect": "{percent}% correto",
     "beat": "Ritmo",
     "sing": "Canta"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = um bom começo",
     "preview": "Prévia",
     "beatLights": "Luzes",
-    "pitchSnap": "Ímã",
     "scrollSong": "Role pela música",
     "songs": {
       "twinkle": "Brilha, brilha, estrelinha",

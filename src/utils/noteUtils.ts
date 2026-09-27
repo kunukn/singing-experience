@@ -151,6 +151,14 @@ export function midiToFrequency(midi: number): number {
 }
 
 /**
+ * Snap a frequency to the perfect pitch of its nearest semitone, so G3 sung
+ * 30 cents sharp becomes exactly G3. Backs the child-friendly "Snap" toggles.
+ */
+export function snapFrequencyToSemitone(hz: number): number {
+  return midiToFrequency(Math.round(frequencyToMidi(hz)))
+}
+
+/**
  * Convert a frequency in Hz to a note name string like "C4" or "F#3".
  * Returns null if frequency is invalid.
  */

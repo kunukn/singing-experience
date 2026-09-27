@@ -45,6 +45,7 @@
     "tempo": "السرعة",
     "toneLabels": "النغمات",
     "melodyGuide": "مساعدة",
+    "pitchSnap": "مغناطيس",
     "scoreCorrect": "{percent}% صحيح",
     "beat": "إيقاع",
     "sing": "غنِّ"
@@ -323,7 +324,6 @@
     "pickRangeFooter": "⭐ = بداية جيدة",
     "preview": "معاينة",
     "beatLights": "أضواء",
-    "pitchSnap": "مغناطيس",
     "scrollSong": "تصفّح الأغنية",
     "songs": {
       "twinkle": "تلألئي يا نجمة",

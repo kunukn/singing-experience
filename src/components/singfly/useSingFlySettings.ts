@@ -34,5 +34,9 @@ export function useSingFlySettings() {
     difficulty.value = DEFAULT_DIFFICULTY
   }
 
-  return { rangeIndex, gameDurationSec, difficulty }
+  /* Off by default: snapping widens the effective gap by up to half a
+   * semitone, so it is an opt-in easier mode rather than the standard game. */
+  const isPitchSnapEnabled = useLocalStorage('syng.singFlyPitchSnap', false)
+
+  return { rangeIndex, gameDurationSec, difficulty, isPitchSnapEnabled }
 }

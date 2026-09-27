@@ -3,7 +3,8 @@ import { SINGFLY_CLARITY_THRESHOLD } from './singFlyConstants'
 import SingFlyDisplay from './SingFlyDisplay.vue'
 import { useSingFlySettings } from './useSingFlySettings'
 
-const { rangeIndex, gameDurationSec, difficulty } = useSingFlySettings()
+const { rangeIndex, gameDurationSec, difficulty, isPitchSnapEnabled } =
+  useSingFlySettings()
 
 /* A far more forgiving clarity gate than the 0.9 scoring-game default —
  * SingFly is a continuous tone→height game, so soft/breathy singing should
@@ -32,5 +33,6 @@ const cheatButtons = computed(() => route.query.debug === '1')
     v-model:rangeIndex="rangeIndex"
     v-model:gameDurationSec="gameDurationSec"
     v-model:difficulty="difficulty"
+    v-model:isPitchSnapEnabled="isPitchSnapEnabled"
   />
 </template>
