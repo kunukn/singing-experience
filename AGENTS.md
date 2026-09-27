@@ -80,6 +80,26 @@ PrimeVue components are **auto-imported** via `PrimeVueResolver({ prefix: 'Prime
 - Feature-specific components grouped by feature
 - Generic components in the generic directory
 
+### Native First
+
+Before building custom interaction or UI behaviour, check whether the browser already does it. Native behaviour comes with the platform's own physics, accessibility, and support for touch, pen, mouse, keyboard and screen readers. A JS re-implementation has to earn each of those back, and it rarely matches on every device.
+
+**Order of preference:**
+
+1. Native HTML / CSS / browser API
+2. PrimeVue or VueUse (thin wrappers over native)
+3. A small library
+4. Custom code — and then comment _why_ native wasn't enough
+
+**Examples:**
+
+- **Scrolling, momentum, overscroll** — use a real `overflow: auto` scroller, not wheel or pointer maths. It can be invisible and drive state from `scrollTop`: see the scroller in [SingTheKeysLane.vue](src/components/sing-the-keys/SingTheKeysLane.vue), which replaced a custom drag handler that felt laggy on iPad.
+- **Touch gestures** — let the browser decide who owns a gesture (nested scrollers, `touch-action`). A custom pointer handler loses to iOS's gesture arbitration: the browser fires `pointercancel` and the drag dies.
+- **CSS before JS** — `position: sticky`, `scroll-snap`, transitions and animations, `:focus-visible`, `prefers-reduced-motion`.
+- **Formatting** — `Intl.*` for numbers, dates and lists before hand-rolled formatting.
+
+**Changing touch or scroll behaviour?** Verify on a real touch device. Desktop emulation doesn't reproduce iOS momentum or gesture arbitration.
+
 ### Test Pages
 
 Pages named `*Test*` / routes ending in `-test` exist for developer debugging — they let a developer drive a feature with synthetic inputs.
@@ -423,6 +443,7 @@ If `.temp/` does not exist, create it first.
 
 - ✅ Use PrimeVue components (`<PrimeButton>`, `<PrimeSelect>`, etc.) — prefer them over raw HTML elements
 - ✅ Check PrimeVue docs before adding a new component to `/src/components/generic/`
+- ✅ Native first — reach for browser behaviour (scrolling, focus, CSS) before custom JS; comment why when custom wins (see "Native First")
 - ✅ Use `type` not `interface`
 - ✅ Use Pinia for global state
 - ✅ Use Tailwind CSS for styling as the default choice
