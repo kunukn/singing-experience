@@ -34,6 +34,9 @@ export type GuitarPreviewLaneView = {
   text: string
   /* Empty when the pitch is outside every string's fret window — the chip still shows. */
   segments: GuitarPreviewSegment[]
+  /* Signed cents off the named note; null without a measured frequency. Drives
+   * the idle preview's cents colouring. */
+  cents: number | null
 }
 
 export type GuitarPreviewInput = {
@@ -107,6 +110,7 @@ export function buildGuitarPreviewLane(
     laneId,
     text: formatNoteLabelWithCents(noteLabel, cents, PREVIEW_CENTS_THRESHOLD),
     segments,
+    cents: previewFrequency !== null ? cents : null,
   }
 }
 

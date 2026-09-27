@@ -45,6 +45,20 @@ type Props = {
 
 const props = defineProps<Props>()
 
+const { colorForCents } = usePitchPreviewColor()
+
+/* This sheet has no game, so its preview is always cents-coloured like every
+ * idle preview; null (no cents yet) keeps the orange classes. Line alpha
+ * matches /50. */
+const pitchLineCentsStyle = computed(() => {
+  if (props.sungToneCents == null) return null
+
+  return {
+    line: { borderColor: colorForCents(props.sungToneCents, 0.5) },
+    chip: { color: colorForCents(props.sungToneCents) },
+  }
+})
+
 /* Natural width (px) of the rendered abcjs SVG, so the parent can take the max
  * across sibling sheets and feed it back via `minCardWidth`. */
 const emit = defineEmits<{ naturalWidth: [width: number] }>()
@@ -447,14 +461,14 @@ watch(() => props.showNoteNumbers, updateToneLabels)
     Live preview pitch line(s) — pinned to the root (not the scroll box) so
     horizontal auto-scroll of the staff never shifts them sideways; only the
     vertical position tracks the singer's pitch. One line per staff containing
-    the pitch (so C4 draws on both treble and bass). Orange dashed, matching the
-    NotesSheet preview line. Each line carries its own note-name chip, centered
+    the pitch (so C4 draws on both treble and bass). Dashed and cents-coloured,
+    matching the NotesSheet preview line. Each line carries its own note-name chip, centered
     horizontally, so the shared-boundary dual-line case labels both.
     -->
     <template v-for="(line, index) in pitchLines" :key="index">
       <div
         class="pointer-events-none absolute inset-x-2 h-0 border-t-3 border-dashed border-(--p-orange-400)/50"
-        :style="{ top: `${line.top - 2}px` }"
+        :style="{ top: `${line.top - 2}px`, ...pitchLineCentsStyle?.line }"
       />
       <div
         v-if="sungToneText"
@@ -463,6 +477,7 @@ watch(() => props.showNoteNumbers, updateToneLabels)
       >
         <span
           class="rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-orange-400) tabular-nums"
+          :style="pitchLineCentsStyle?.chip"
         >
           {{ sungToneText }}
         </span>

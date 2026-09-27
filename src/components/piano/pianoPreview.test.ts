@@ -253,3 +253,45 @@ describe('buildPianoPreviewLines', () => {
     })
   })
 })
+
+describe('buildPianoPreviewLine - cents colouring inputs', () => {
+  it('reports signed cents off the named note', () => {
+    const sharp = lineFor({
+      previewMidi: 60,
+      previewFrequency: midiToFrequency(60.3),
+      previewNoteLabel: 'C4',
+    })
+    const flat = lineFor({
+      previewMidi: 60,
+      previewFrequency: midiToFrequency(59.8),
+      previewNoteLabel: 'C4',
+    })
+
+    expect(sharp!.cents).toBe(30)
+    expect(flat!.cents).toBe(-20)
+  })
+
+  it('reports null cents without a measured frequency', () => {
+    const line = lineFor({
+      previewMidi: 60,
+      previewFrequency: null,
+      previewNoteLabel: 'C4',
+    })
+
+    expect(line!.cents).toBeNull()
+  })
+
+  it('flags a pitch outside the range as out of range, the edges as in range', () => {
+    const flagFor = (midi: number) =>
+      lineFor({
+        previewMidi: midi,
+        previewFrequency: midiToFrequency(midi),
+        previewNoteLabel: 'X',
+      })!.isOutOfRange
+
+    expect(flagFor(FULL.midiMin - 1)).toBe(true)
+    expect(flagFor(FULL.midiMin)).toBe(false)
+    expect(flagFor(FULL.midiMax)).toBe(false)
+    expect(flagFor(FULL.midiMax + 1)).toBe(true)
+  })
+})

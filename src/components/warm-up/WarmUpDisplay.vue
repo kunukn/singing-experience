@@ -441,7 +441,7 @@ onUnmounted(() => {
       :isSingingCorrectNote="isSingingCorrectNote"
       :holdProgress="holdProgress"
       :highlightedMidi="highlightedMidi"
-      :isIdlePreview="!isListening"
+      :shouldColorByCents="!isListening"
       :onTonePlayed="handleTonePlayed"
     />
   </div>

@@ -32,6 +32,7 @@ import {
   PREVIEW_EDGE_GUTTER_PX,
   buildPianoPreviewLines,
   type PianoPreviewLaneId,
+  type PianoPreviewLineView,
 } from './pianoPreview'
 import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import { usePianoKeyPlayback } from './usePianoKeyPlayback'
@@ -46,6 +47,11 @@ type Props = {
   previewLanes?: Array<DuetLane & { laneId: PianoPreviewLaneId }>
   /* When true, draws the grey dead-center hint line on every key. */
   isPreviewEnabled?: boolean
+  /* Cents-colour the low/only lane's line and chip, like every program's idle
+   * preview. The parent owns when: idle, and Snap off (a snapped pitch is
+   * always 0¢). The duet high lane stays blue, and a line pinned at the edge
+   * stays orange so it never reads as in tune. */
+  shouldColorByCents?: boolean
   /* Note-name labels on the key face: 'off' (C-key octave markers only), 'simple'
    * (bare names, e.g. C♯), or 'advanced' (names with octave, e.g. C♯2). */
   toneLabelMode?: ToneLabelMode
@@ -415,6 +421,23 @@ const LANE_COLOUR_CLASS: Record<
   high: { line: 'border-(--p-blue-400)/50', chip: 'text-(--p-blue-400)' },
 }
 
+const { colorForCents } = usePitchPreviewColor()
+
+/* Inline colours that override LANE_COLOUR_CLASS when the line is
+ * cents-coloured; null keeps the class colours. Line alpha matches the /50. */
+function previewCentsStyle(
+  line: PianoPreviewLineView,
+): { line: { borderColor: string }; chip: { color: string } } | null {
+  if (!props.shouldColorByCents) return null
+  if (line.laneId !== 'low' || line.isOutOfRange || line.cents === null)
+    return null
+
+  return {
+    line: { borderColor: colorForCents(line.cents, 0.5) },
+    chip: { color: colorForCents(line.cents) },
+  }
+}
+
 /* px — vertical step between the two chip rows. The label band is 28px and a
  * chip is ~12px tall, so row 1 sits just clear of the key tops. */
 const PREVIEW_LABEL_ROW_HEIGHT = 12
@@ -765,7 +788,10 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             <div
               class="pointer-events-none absolute inset-y-0 z-20 w-0 -translate-x-[1.5px] border-l-3 border-dashed"
               :class="LANE_COLOUR_CLASS[line.laneId].line"
-              :style="{ insetInlineStart: `${line.x}px` }"
+              :style="{
+                insetInlineStart: `${line.x}px`,
+                ...previewCentsStyle(line)?.line,
+              }"
               data-testid="piano-preview-line"
               :data-lane="line.laneId"
             />
@@ -781,6 +807,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               :style="{
                 insetInlineStart: `${line.labelX}px`,
                 top: `${4 + line.labelRow * PREVIEW_LABEL_ROW_HEIGHT}px`,
+                ...previewCentsStyle(line)?.chip,
               }"
               data-testid="piano-preview-label"
               :data-lane="line.laneId"

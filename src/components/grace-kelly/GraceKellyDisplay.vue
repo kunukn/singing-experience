@@ -222,6 +222,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
         :sungMidi="sungMidi"
         :sungToneLabel="stableSungLabel"
         :sungToneCents="stableSungCents"
+        shouldColorByCents
         :showToneLabels="areToneLabelsShown"
         :showBarHighlight="isBarHighlightEnabled"
       />

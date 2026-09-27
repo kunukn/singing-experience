@@ -171,6 +171,24 @@ describe('drawPitchLine - cents colour', () => {
     })
   })
 
+  test('keeps the orange palette without a measured frequency', () => {
+    const { ctx, recorded } = createColorRecordingContext()
+    const colorForCents = vi.fn(() => 'cents-colour')
+    drawPitchLine(ctx, {
+      midi: 69,
+      frequency: null,
+      height: 100,
+      midiToY: () => 50,
+      lineX0: 0,
+      lineX1: 100,
+      dotX: 50,
+      colorForCents,
+    })
+
+    expect(recorded.dot).toBe('rgba(251, 146, 60, 0.7)')
+    expect(colorForCents).not.toHaveBeenCalled()
+  })
+
   test('keeps the orange palette without a cents colourer', () => {
     expect(drawColors({})).toEqual({
       line: 'rgba(251, 146, 60, 0.25)',
@@ -195,5 +213,41 @@ describe('drawPitchLine - cents colour', () => {
       'rgba(239, 68, 68, 0.7)',
     )
     expect(colorForCents).not.toHaveBeenCalled()
+  })
+})
+
+describe('pitchLineColors - cents colour', () => {
+  const colorForCents = (cents: number, opacity: number) =>
+    `cents ${cents} @ ${opacity}`
+
+  test('uses the cents colour for a plain in-range line', () => {
+    expect(
+      pitchLineColors({ isOutOfRange: false, cents: -12, colorForCents }),
+    ).toEqual({
+      line: 'cents -12 @ 0.25',
+      dot: 'cents -12 @ 0.7',
+      label: 'cents -12 @ 1',
+    })
+  })
+
+  test.each([
+    { state: { isCorrect: true }, dot: 'rgba(74, 222, 128, 0.8)' },
+    { state: { isOutOfRange: true }, dot: 'rgba(239, 68, 68, 0.7)' },
+    { state: { isHighLane: true }, dot: 'rgba(96, 165, 250, 0.7)' },
+  ])('ranks below $state', ({ state, dot }) => {
+    const colors = pitchLineColors({
+      isOutOfRange: false,
+      ...state,
+      cents: 0,
+      colorForCents,
+    })
+
+    expect(colors.dot).toBe(dot)
+  })
+
+  test('falls back to orange without cents', () => {
+    expect(pitchLineColors({ isOutOfRange: false, colorForCents }).dot).toBe(
+      'rgba(251, 146, 60, 0.7)',
+    )
   })
 })

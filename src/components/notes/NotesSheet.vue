@@ -55,6 +55,20 @@ type Props = {
  * would silently hide the tempo whenever a parent omits it. */
 const props = withDefaults(defineProps<Props>(), { showTempo: true })
 
+const { colorForCents } = usePitchPreviewColor()
+
+/* The live line only shows while idle (the preview stands down during
+ * playback), so it takes the cents colouring every idle preview uses. Solid
+ * green isOnPitch wins; null keeps the orange classes. Line alpha matches /50. */
+const pitchLineCentsStyle = computed(() => {
+  if (props.isOnPitch || props.sungToneCents == null) return null
+
+  return {
+    line: { borderColor: colorForCents(props.sungToneCents, 0.5) },
+    chip: { color: colorForCents(props.sungToneCents) },
+  }
+})
+
 /* Green only when the singer's note label reads the same as the target's, so
  * the color always agrees with the two stacked labels on screen. */
 const isSungMatch = computed(
@@ -414,8 +428,8 @@ watch(
     <!--
       Live pitch line — pinned to the root (not the scroll box) so horizontal
       auto-scroll of the staff never shifts it sideways; only its vertical
-      position tracks the singer's pitch. Solid green on the target note, orange
-      dashed otherwise.
+      position tracks the singer's pitch. Solid green on the target note, otherwise
+      dashed and cents-coloured (orange until the cents are known).
     -->
     <div
       v-if="pitchLineTop !== null"
@@ -425,7 +439,7 @@ watch(
           ? 'border-solid border-(--p-green-400)'
           : 'border-dashed border-(--p-orange-400)/50'
       "
-      :style="{ top: `${pitchLineTop}px` }"
+      :style="{ top: `${pitchLineTop}px`, ...pitchLineCentsStyle?.line }"
     />
 
     <!--
@@ -440,6 +454,7 @@ watch(
       <span
         class="rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold tabular-nums transition-colors duration-100"
         :class="isOnPitch ? 'text-(--p-green-400)' : 'text-(--p-orange-400)'"
+        :style="pitchLineCentsStyle?.chip"
       >
         {{ sungToneText }}
       </span>

@@ -275,3 +275,33 @@ describe('at a resized row height', () => {
     )
   })
 })
+
+describe('buildGuitarPreviewLane - cents colouring inputs', () => {
+  it('reports signed cents off the named note', () => {
+    expect(
+      buildGuitarPreviewLane(laneAt(C3_MIDI, 'C3', 30), STANDARD)!.cents,
+    ).toBe(30)
+    expect(
+      buildGuitarPreviewLane(laneAt(C3_MIDI, 'C3', -20), STANDARD)!.cents,
+    ).toBe(-20)
+  })
+
+  it('keeps the cents when the pitch is off the board', () => {
+    const lane = buildGuitarPreviewLane(
+      laneAt(E2_MIDI - 3, 'C♯2', 15),
+      STANDARD,
+    )
+
+    expect(lane!.segments).toHaveLength(0)
+    expect(lane!.cents).toBe(15)
+  })
+
+  it('reports null cents without a measured frequency', () => {
+    const lane = buildGuitarPreviewLane(
+      { ...laneAt(C3_MIDI, 'C3'), previewFrequency: null },
+      STANDARD,
+    )
+
+    expect(lane!.cents).toBeNull()
+  })
+})

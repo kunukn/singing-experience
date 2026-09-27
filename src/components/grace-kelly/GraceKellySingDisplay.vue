@@ -452,6 +452,7 @@ const vozLabel = computed(() =>
         :sungToneCents="stableSungCents"
         :sungMidi="sungMidi"
         :isOnPitch="isOnPitch"
+        :shouldColorByCents="!isRunning"
         :showToneLabels="areToneLabelsShown"
         :showBarHighlight="isBarHighlightEnabled"
       />

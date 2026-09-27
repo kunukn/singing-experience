@@ -16,15 +16,34 @@ type Props = {
   previewOffsetPercent?: number | string | null
   previewNoteLabel?: string | null
   previewIsOutOfRange?: boolean
+  /* Cents off the previewed note, for the idle preview's cents colouring.
+   * Null keeps the neutral orange (game running, Snap on, or no frequency). */
+  previewCents?: number | null
   excluded?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   excluded: false,
   previewIsOutOfRange: false,
+  previewCents: null,
   isNewlyActive: false,
 })
 const emit = defineEmits<{ click: [] }>()
+
+const { colorForCents } = usePitchPreviewColor()
+
+/* Inline colours override the orange classes below when the preview is
+ * cents-coloured. Alphas match the classes they replace (/25, /70), with an
+ * opaque label so the lighter shades stay legible. */
+const previewCentsStyle = computed(() => {
+  if (props.previewCents === null || props.previewIsOutOfRange) return null
+
+  return {
+    line: { borderColor: colorForCents(props.previewCents, 0.25) },
+    dot: { backgroundColor: colorForCents(props.previewCents, 0.7) },
+    label: { color: colorForCents(props.previewCents) },
+  }
+})
 
 const progressWidth = computed(() => {
   if (props.excluded) return '0%'
@@ -188,6 +207,8 @@ const isCompletedOrDone = computed(
             ? 'border-(--p-red-400)/25'
             : 'border-(--p-orange-400)/25'
         "
+        :style="previewCentsStyle?.line"
+        data-testid="preview-line"
       >
         <div
           class="absolute start-1/2 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5"
@@ -199,6 +220,7 @@ const isCompletedOrDone = computed(
                 ? 'bg-(--p-red-400)/70'
                 : 'bg-(--p-orange-400)/70'
             "
+            :style="previewCentsStyle?.dot"
           />
           <span
             v-if="previewNoteLabel"
@@ -208,6 +230,7 @@ const isCompletedOrDone = computed(
                 ? 'text-(--p-red-400)/80'
                 : 'text-(--p-orange-400)/80'
             "
+            :style="previewCentsStyle?.label"
             >{{ previewNoteLabel }}</span
           >
         </div>

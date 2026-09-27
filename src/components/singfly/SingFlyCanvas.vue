@@ -48,6 +48,10 @@ type Props = {
    * delay (normally it's idle / delayed-crashed only), so the pitch-true
    * line can be eyeballed against the bird/hitboxes while playing/scrubbing. */
   alwaysShowPreviewLine?: boolean
+  /* Cents-colour the preview line like every program's idle preview — the
+   * idle screen with Snap off. After a crash it stays orange: drawn against
+   * the pipe that killed the bird, green would read as "you'd have made it". */
+  shouldColorByCents?: boolean
   /* Where the bird perches when there is no pitch (idle screen with preview
    * off): the bird is drawn here instead of being hidden, so it is never
    * invisible. Also the Y for the idle perch board. */
@@ -88,9 +92,12 @@ const props = withDefaults(defineProps<Props>(), {
   previewLineMidi: null,
   previewLineFrequency: null,
   alwaysShowPreviewLine: false,
+  shouldColorByCents: false,
   cheatButtons: false,
   crashCause: null,
 })
+
+const { colorForCents } = usePitchPreviewColor()
 
 /* Derived boundary side for the wall recolor, replacing the old boundaryCrash
  * prop. buildPlayfield still takes a 'floor'|'ceiling'|null, so this is a thin
@@ -826,7 +833,14 @@ function drawPreviewLine(
 
   const rounded = Math.round(midi)
   const outOfRange = rounded < props.midiMin || rounded > props.midiMax
-  const color = outOfRange ? CRASHED_FILL : PREVIEW_LINE_COLOR
+  /* Opacity 1 — the per-element globalAlpha below still applies. 100 = cents
+   * per semitone, measured from the note the label names. */
+  let color = PREVIEW_LINE_COLOR
+  if (outOfRange) {
+    color = CRASHED_FILL
+  } else if (props.shouldColorByCents && props.previewLineFrequency != null) {
+    color = colorForCents(Math.round(100 * (midi - rounded)))
+  }
 
   const rawY = midiToY(
     midi,

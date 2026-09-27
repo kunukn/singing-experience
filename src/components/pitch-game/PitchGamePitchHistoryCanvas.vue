@@ -78,6 +78,8 @@ const SUSTAINED_THRESHOLD_MS = 200
 /* Shorter threshold after a quick note transition — feels more responsive during runs */
 const SUSTAINED_PASSING_THRESHOLD_MS = 150
 
+const { colorForCents } = usePitchPreviewColor()
+
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
 let samples: PitchSample[] = []
@@ -285,8 +287,18 @@ function drawPreviewIndicator(
   )
   /* Shared orange/red palette for the approach line, label, and the
    * non-game-active dot; the blue pickup segment and the brighter
-   * green/orange game-active dot stay local (game-specific cues). */
-  const baseColors = pitchLineColors({ isOutOfRange })
+   * green/orange game-active dot stay local (game-specific cues). The idle
+   * preview is cents-coloured like every other program's; in a game green
+   * must keep meaning "hit", so it stays orange there. */
+  const baseColors = pitchLineColors({
+    isOutOfRange,
+    /* 100 = cents per semitone, measured from the named note */
+    cents:
+      props.previewFrequency != null
+        ? Math.round(100 * (effectiveMidi - props.previewMidi))
+        : undefined,
+    colorForCents: isGameActive ? null : colorForCents,
+  })
   const approachLineColor = baseColors.line
   const pickupLineColor = isOutOfRange
     ? 'rgba(239, 68, 68, 0.45)'

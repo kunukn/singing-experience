@@ -35,6 +35,9 @@ type Props = {
    * aim at the incoming block. Null while nothing clean is detected. */
   sungMidi: number | null
   sungFrequency: number | null
+  /* Cents-colour the sung line, matching the key track's line below it —
+   * idle with Snap off. During a run green must keep meaning "hit". */
+  shouldColorByCents?: boolean
   /* False in practice mode (melody guide on): passed blocks go neutral rather
    * than red, since nothing was being judged. */
   isScored: boolean
@@ -290,6 +293,18 @@ const sungLine = computed(() => {
     layout: props.layout,
   })
 })
+
+const { colorForCents } = usePitchPreviewColor()
+
+/* Same rule as PianoDisplay's line: an edge-pinned line stays orange. Alpha
+ * matches the /50 class it overrides. */
+const sungLineColorStyle = computed(() => {
+  const line = sungLine.value
+  if (!props.shouldColorByCents || !line) return null
+  if (line.isOutOfRange || line.cents === null) return null
+
+  return { borderColor: colorForCents(line.cents, 0.5) }
+})
 </script>
 
 <template>
@@ -430,6 +445,7 @@ const sungLine = computed(() => {
       :style="{
         insetInlineStart: `${sungLine.x}px`,
         height: `${laneHeight}px`,
+        ...sungLineColorStyle,
       }"
       data-testid="sing-the-keys-sung-line"
     />

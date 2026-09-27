@@ -116,6 +116,7 @@ declare global {
   const useModel: typeof import('vue').useModel
   const useMultiToneDetection: typeof import('./composables/useMultiToneDetection').useMultiToneDetection
   const usePitchDetection: typeof import('./composables/usePitchDetection').usePitchDetection
+  const usePitchPreviewColor: typeof import('./composables/usePitchPreviewColor').usePitchPreviewColor
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter
   const useScaleModeGroups: typeof import('./composables/useScaleModeGroups').useScaleModeGroups
@@ -268,6 +269,7 @@ declare module 'vue' {
     readonly useMicrophonePermission: UnwrapRef<typeof import('./composables/useMicrophonePermission')['useMicrophonePermission']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly usePitchDetection: UnwrapRef<typeof import('./composables/usePitchDetection')['usePitchDetection']>
+    readonly usePitchPreviewColor: UnwrapRef<typeof import('./composables/usePitchPreviewColor')['usePitchPreviewColor']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useScaleModeGroups: UnwrapRef<typeof import('./composables/useScaleModeGroups')['useScaleModeGroups']>

@@ -76,6 +76,7 @@ const { visibleSingers, previewLanes, armDeafPeriod } = useSimulatedSingers({
         :midiMax="selectedRange.midiMax"
         :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
+        shouldColorByCents
         :toneLabelMode="toneLabelMode"
         :accidentalStyle="accidentalStyle"
         :areKeyboardHintsVisible="areKeyboardHintsVisible"

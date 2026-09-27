@@ -228,6 +228,18 @@ describe('SingTheKeysLane', () => {
     ).toBe(true)
   })
 
+  test('should cents-colour the sung line only when asked to', () => {
+    /* D4 sung 20¢ sharp — 1200 cents per octave */
+    const sung = { sungMidi: 62.2, sungFrequency: 293.66 * 2 ** (20 / 1200) }
+    const styleOf = (shouldColorByCents: boolean) =>
+      mountLane({ ...sung, shouldColorByCents })
+        .get('[data-testid="sing-the-keys-sung-line"]')
+        .attributes('style')
+
+    expect(styleOf(true)).toContain('border-color')
+    expect(styleOf(false)).not.toContain('border-color')
+  })
+
   test('should draw a beat line per pulse, marking bar starts', () => {
     const wrapper = mountLane({
       beatLines: [

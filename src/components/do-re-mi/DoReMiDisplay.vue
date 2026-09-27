@@ -368,6 +368,7 @@ onUnmounted(() => {
       :previewMidi="previewMidi"
       :previewFrequency="previewFrequency"
       :previewNoteLabel="previewNoteLabel"
+      :shouldColorPreviewByCents="!isGameActive && !isPitchSnapEnabled"
       :onTonePlayed="handleTonePlayed"
       :scaleMode="scaleMode"
       :showDoReMiTarget="showDoReMiTarget"

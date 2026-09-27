@@ -453,6 +453,7 @@ onUnmounted(() => {
       :holdProgress="holdProgress"
       :highlightedMidi="highlightedMidi"
       :onTonePlayed="handleTonePlayed"
+      :shouldColorByCents="gameState === 'idle' && !isPitchSnapEnabled"
       :showOverlay="
         gameState === 'playing' && showSingToneTarget && !!targetNoteLabel
       "

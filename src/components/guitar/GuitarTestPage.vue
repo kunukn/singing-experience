@@ -104,6 +104,7 @@ const extraVerticalChrome = computed(() =>
         :tuningMidi="tuningMidi"
         :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
+        shouldColorByCents
         :toneLabelMode="toneLabelMode"
         :accidentalStyle="accidentalStyle"
         :scaleRoot="scaleRoot"

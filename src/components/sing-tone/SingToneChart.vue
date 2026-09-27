@@ -23,6 +23,10 @@ type Props = {
   holdProgress: number
   highlightedMidi?: number | null
   onTonePlayed?: () => void
+  /* Cents-colour the singer's line — the idle preview with Snap off. During a
+   * game green must keep meaning "on target", and a snapped pitch is always
+   * 0¢, so both keep the neutral orange. */
+  shouldColorByCents?: boolean
   /* Note-target overlay props (only used while game is playing) */
   showOverlay?: boolean
   overlayTargetNoteLabel?: MidiNoteLabel | null
@@ -37,6 +41,7 @@ const props = withDefaults(defineProps<Props>(), {
   currentFrequency: null,
   highlightedMidi: null,
   onTonePlayed: undefined,
+  shouldColorByCents: false,
   showOverlay: false,
   overlayTargetNoteLabel: null,
   overlayCentsFromTarget: null,
@@ -79,6 +84,8 @@ const DOT_X_FRACTION_DEFAULT = 0.5
 const OVERLAY_DOT_GAP_PX = 28
 /* Keep the overlay slightly inset from the chart's vertical edges. */
 const OVERLAY_EDGE_INSET_PX = 4
+
+const { colorForCents } = usePitchPreviewColor()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const containerRef = ref<HTMLElement | null>(null)
@@ -315,6 +322,7 @@ function drawChart() {
       isCorrect: props.isSingingCorrectNote,
       hideLabelWhenCorrect: true,
       centsThreshold: null,
+      colorForCents: props.shouldColorByCents ? colorForCents : null,
     })
   } else {
     wasSingerLineDrawn = false

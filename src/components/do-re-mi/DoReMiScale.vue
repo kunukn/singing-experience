@@ -4,6 +4,7 @@ import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
 import type { ScaleMode } from '@/utils/noteUtils'
 import {
   buildChromaticDisplayScale,
+  frequencyToMidi,
   NOTE_NAMES,
   noteToFrequency,
   SCALE_MODE_SEMITONES,
@@ -23,6 +24,9 @@ type Props = {
   previewMidi?: number | null
   previewFrequency?: number | null
   previewNoteLabel?: string | null
+  /* Cents-colour the preview line — idle with Snap off. The same indicator
+   * also shows mid-game, where green must keep meaning "on target". */
+  shouldColorPreviewByCents?: boolean
   onTonePlayed?: () => void
   scaleMode?: ScaleMode
   /* Note-target overlay props (only used while game is active) */
@@ -42,6 +46,7 @@ const props = withDefaults(defineProps<Props>(), {
   previewMidi: null,
   previewFrequency: null,
   previewNoteLabel: null,
+  shouldColorPreviewByCents: false,
   onTonePlayed: undefined,
   scaleMode: 'ionian',
   showDoReMiTarget: false,
@@ -168,11 +173,13 @@ function frequencyToOffsetPercent(hz: number, targetMidi: number): number {
 }
 
 /* Preview indicator positioned inside a specific item.
- * Out-of-range pitches clamp to edge items with outOfRange flag (label suppressed). */
+ * Out-of-range pitches clamp to edge items with outOfRange flag (label suppressed).
+ * cents is null whenever it can't be measured — out of range or no frequency. */
 const previewIndicator = computed<{
   chromaticIndex: number
   offsetPercent: number | string
   outOfRange: boolean
+  cents: number | null
 } | null>(() => {
   if (props.previewMidi === null) return null
 
@@ -191,6 +198,7 @@ const previewIndicator = computed<{
       chromaticIndex: 0,
       offsetPercent: `calc(100% + ${OUT_OF_RANGE_OVERFLOW_PX}px)`,
       outOfRange: true,
+      cents: null,
     }
   }
 
@@ -200,6 +208,7 @@ const previewIndicator = computed<{
       chromaticIndex: items.length - 1,
       offsetPercent: `-${OUT_OF_RANGE_OVERFLOW_PX}px`,
       outOfRange: true,
+      cents: null,
     }
   }
 
@@ -211,6 +220,8 @@ const previewIndicator = computed<{
       chromaticIndex: chromaticOffset,
       offsetPercent: frequencyToOffsetPercent(hz, midi),
       outOfRange: false,
+      /* 100 = cents per semitone */
+      cents: Math.round(100 * (frequencyToMidi(hz) - midi)),
     }
   }
 
@@ -219,6 +230,7 @@ const previewIndicator = computed<{
     chromaticIndex: chromaticOffset,
     offsetPercent: 50,
     outOfRange: false,
+    cents: null,
   }
 })
 
@@ -460,6 +472,12 @@ function isItemHighlighted(chromaticIndex: number): boolean {
         previewIndicator?.chromaticIndex === chromaticIndex
           ? previewIndicator.outOfRange
           : false
+      "
+      :previewCents="
+        shouldColorPreviewByCents &&
+        previewIndicator?.chromaticIndex === chromaticIndex
+          ? previewIndicator.cents
+          : null
       "
       @click="handleItemClick(chromaticIndex, item)"
     />

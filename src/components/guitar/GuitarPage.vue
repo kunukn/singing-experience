@@ -175,6 +175,7 @@ function handleTonePlayed() {
         :tuningMidi="tuningMidi"
         :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
+        shouldColorByCents
         :toneLabelMode="toneLabelMode"
         :accidentalStyle="accidentalStyle"
         :scaleRoot="scaleRoot"

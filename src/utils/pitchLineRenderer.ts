@@ -99,22 +99,40 @@ export function clampPitchY(
   return { clampedY, isOutOfRange }
 }
 
+/* Maps cents off the nearest note to a colour at the given opacity — in
+ * practice usePitchPreviewColor's colorForCents. */
+export type ColorForCents = (cents: number, opacity: number) => string
+
 /**
  * The shared line/dot/label color triple. `isCorrect` (singer on target) wins
  * over `isOutOfRange`, matching the existing Tier-A ternaries.
  *
- * `isHighLane` is checked last, so it only replaces the ordinary in-range
- * orange: on target or off the chart still reads green or red whichever singer
- * produced it — those two say something about the pitch, not about who sang it.
+ * `isHighLane` only replaces the ordinary in-range orange: on target or off
+ * the chart still reads green or red whichever singer produced it — those two
+ * say something about the pitch, not about who sang it.
+ *
+ * `colorForCents` (with `cents`) is the idle preview's cents colouring and
+ * ranks just above the plain orange, so it never hides any of the above.
+ * Callers leave `cents` undefined when there is no measured frequency — a
+ * made-up 0¢ would read as a perfect green.
  */
 export function pitchLineColors(state: {
   isOutOfRange: boolean
   isCorrect?: boolean
   isHighLane?: boolean
+  cents?: number
+  colorForCents?: ColorForCents | null
 }): { line: string; dot: string; label: string } {
   if (state.isCorrect) return COLORS.correct
   if (state.isOutOfRange) return COLORS.outOfRange
   if (state.isHighLane) return COLORS.highLane
+  if (state.colorForCents && state.cents !== undefined) {
+    return {
+      line: state.colorForCents(state.cents, CENTS_COLOR_OPACITY.line),
+      dot: state.colorForCents(state.cents, CENTS_COLOR_OPACITY.dot),
+      label: state.colorForCents(state.cents, CENTS_COLOR_OPACITY.label),
+    }
+  }
 
   return COLORS.inRange
 }
@@ -150,10 +168,10 @@ type DrawPitchLineOptions = {
    * PitchHistory passes its own previewNoteLabel to preserve exact behavior. */
   noteLabel?: string | null
   /* Colour line, dot and label by how far the pitch sits from `midi` instead
-   * of the flat palette colour. PitchHistory passes cleanTextColor so its idle
-   * preview matches the trail. Ignored for out-of-range, on-target and
-   * high-lane lines — those colours say something the cents colour would hide. */
-  colorForCents?: ((cents: number, opacity: number) => string) | null
+   * of the flat orange — the idle preview's cents colouring. Ignored without a
+   * frequency, and for out-of-range, on-target and high-lane lines. See
+   * pitchLineColors. */
+  colorForCents?: ColorForCents | null
   paddingTop?: number
   paddingBottom?: number
 }
@@ -199,14 +217,13 @@ export function drawPitchLine(
   /* 100 = cents per semitone; explains why the line sits off the named
    * note's integer-MIDI row. */
   const cents = Math.round(100 * (effectiveMidi - midi))
-  const colors =
-    colorForCents && !isOutOfRange && !isCorrect && !isHighLane
-      ? {
-          line: colorForCents(cents, CENTS_COLOR_OPACITY.line),
-          dot: colorForCents(cents, CENTS_COLOR_OPACITY.dot),
-          label: colorForCents(cents, CENTS_COLOR_OPACITY.label),
-        }
-      : pitchLineColors({ isOutOfRange, isCorrect, isHighLane })
+  const colors = pitchLineColors({
+    isOutOfRange,
+    isCorrect,
+    isHighLane,
+    cents: frequency != null ? cents : undefined,
+    colorForCents,
+  })
 
   ctx.save()
 

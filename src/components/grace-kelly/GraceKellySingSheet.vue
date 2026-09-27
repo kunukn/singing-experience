@@ -48,6 +48,9 @@ type Props = {
   /* True when the sung pitch is within tolerance of the active note — turns the
    * pitch line green. */
   isOnPitch?: boolean
+  /* Cents-colour the preview line while idle, like every program's idle
+   * preview. During a run green must keep meaning "on target". */
+  shouldColorByCents?: boolean
   /* When true, draws a muted note-name label above every note (the green active
    * chip overlays its note during playback). Defaults to off. */
   showToneLabels?: boolean
@@ -56,6 +59,20 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+
+const { colorForCents } = usePitchPreviewColor()
+
+/* Cents-colour the idle preview like every program's; solid green isOnPitch
+ * wins, and null keeps the orange classes. Line alpha matches /50. */
+const pitchLineCentsStyle = computed(() => {
+  if (!props.shouldColorByCents || props.isOnPitch) return null
+  if (props.sungToneCents == null) return null
+
+  return {
+    line: { borderColor: colorForCents(props.sungToneCents, 0.5) },
+    chip: { color: colorForCents(props.sungToneCents) },
+  }
+})
 
 /* Green only when the singer's note label reads the same as the target's, so
  * the color always agrees with the two stacked labels on screen. */
@@ -574,7 +591,7 @@ defineExpose({ scrollToSyllable })
     <!--
       Live pitch line — pinned to the root (not the scroll box) so horizontal
       position tracks the singer's pitch. Solid green when on the target note,
-      orange dashed otherwise (matching the DoReMi / PitchDetector preview line).
+      otherwise dashed: cents-coloured while idle, orange during a run.
     -->
     <div
       v-if="pitchLineTop !== null"
@@ -584,13 +601,13 @@ defineExpose({ scrollToSyllable })
           ? 'border-solid border-(--p-green-400)'
           : 'border-dashed border-(--p-orange-400)/50'
       "
-      :style="{ top: `${pitchLineTop}px` }"
+      :style="{ top: `${pitchLineTop}px`, ...pitchLineCentsStyle?.line }"
     />
 
     <!--
-      Note-name label riding the orange preview line: centered horizontally on the
+      Note-name label riding the preview line: centered horizontally on the
       line, vertically centered on it so it tracks the singer's pitch. Color matches
-      the line it rides — green on-pitch, else orange.
+      the line it rides.
     -->
     <div
       v-if="pitchLineTop !== null && sungToneText"
@@ -600,6 +617,7 @@ defineExpose({ scrollToSyllable })
       <span
         class="rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold tabular-nums transition-colors duration-100"
         :class="isOnPitch ? 'text-(--p-green-400)' : 'text-(--p-orange-400)'"
+        :style="pitchLineCentsStyle?.chip"
       >
         {{ sungToneText }}
       </span>

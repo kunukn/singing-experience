@@ -477,6 +477,7 @@ defineExpose({
       :previewLineMidi="previewLinePitch.midi"
       :previewLineFrequency="previewLinePitch.frequency"
       :alwaysShowPreviewLine="forcePreviewLine"
+      :shouldColorByCents="phase === 'idle' && !isPitchSnapEnabled"
       :perchMidi="perchMidi"
       :isListening="isListening"
       :midiMin="selectedRange.midiMin"

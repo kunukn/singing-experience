@@ -149,6 +149,13 @@ const isOnPitchForScore = computed(() => {
 const isScored = computed(() => !isMelodyGuideEnabled.value)
 const isScoring = computed(() => isPlaying.value && isScored.value)
 
+/* The idle preview is cents-coloured like every program's. During a run green
+ * must keep meaning "hit", and a snapped pitch is always 0¢ — both keep the
+ * neutral orange. */
+const isPreviewColoredByCents = computed(
+  () => !isPlaying.value && !isPitchSnapEnabled.value,
+)
+
 /* Guide on means the next run is unscored practice, so the button says so —
  * even over a finished scored run's Play Again — and turns blue, leaving green
  * for the scored run. */
@@ -518,6 +525,7 @@ onUnmounted(() => {
         :midiMax="range.midiMax"
         :previewLanes="previewLanes"
         :isPreviewEnabled="true"
+        :shouldColorByCents="isPreviewColoredByCents"
         toneLabelMode="simple"
         :isOctaveShownOnC="true"
         :accidentalStyle="accidentalStyle"
@@ -541,6 +549,7 @@ onUnmounted(() => {
             :accidentalStyle="accidentalStyle"
             :sungMidi="sungMidi"
             :sungFrequency="liveFrequency"
+            :shouldColorByCents="isPreviewColoredByCents"
             :isScored="isRunScored"
             :beatLines="isBeatLinesEnabled ? timeline.beatLines : []"
             :beatFlash="beatFlash"

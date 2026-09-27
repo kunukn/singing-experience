@@ -104,4 +104,26 @@ describe('DoReMiScaleItem', () => {
       wrapper.get('[data-testid="progress-bar"]').attributes('style'),
     ).toContain('width: 0%')
   })
+
+  test('should cents-colour the preview line only when given cents', () => {
+    const lineStyleOf = (previewCents: number | null) =>
+      mountItem({ previewOffsetPercent: 50, previewCents })
+        .get('[data-testid="preview-line"]')
+        .attributes('style')
+
+    expect(lineStyleOf(12)).toContain('border-color')
+    expect(lineStyleOf(null) ?? '').not.toContain('border-color')
+  })
+
+  test('should keep an out-of-range preview red despite cents', () => {
+    const wrapper = mountItem({
+      previewOffsetPercent: 50,
+      previewCents: 12,
+      previewIsOutOfRange: true,
+    })
+
+    expect(
+      wrapper.get('[data-testid="preview-line"]').attributes('style') ?? '',
+    ).not.toContain('border-color')
+  })
 })

@@ -12,7 +12,15 @@ export const PREVIEW_CENTS_THRESHOLD = 20
  * (pitch-detector parity). */
 export const PREVIEW_RANGE_TOLERANCE = 12
 
-export type PianoPreviewLine = { x: number; text: string }
+export type PianoPreviewLine = {
+  x: number
+  text: string
+  /* Signed cents off the named note; null without a measured frequency. Drives
+   * the idle preview's cents colouring. */
+  cents: number | null
+  /* Pinned to a keyboard edge — the pitch is outside the selected range. */
+  isOutOfRange: boolean
+}
 
 /* Which band a line came from in duet mode. Single-voice preview uses 'low'. */
 export type PianoPreviewLaneId = 'low' | 'high'
@@ -105,6 +113,7 @@ export function buildPianoPreviewLine(
   /* Out-of-range pitches pin to the keyboard edge (parity with DoReMiScale's edge
    * clamp): a too-low note sits at the far left, a too-high note at the far right —
    * never on the first/last key's hint line, which would read as in-tune. */
+  const isOutOfRange = previewMidi < midiMin || previewMidi > midiMax
   let x: number
   if (previewMidi < midiMin) {
     x = 0
@@ -139,7 +148,12 @@ export function buildPianoPreviewLine(
     PREVIEW_CENTS_THRESHOLD,
   )
 
-  return { x, text }
+  return {
+    x,
+    text,
+    cents: previewFrequency !== null ? cents : null,
+    isOutOfRange,
+  }
 }
 
 /*

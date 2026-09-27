@@ -51,6 +51,7 @@ import {
 import {
   buildGuitarPreviewLanes,
   type GuitarPreviewLaneId,
+  type GuitarPreviewLaneView,
 } from './guitarPreview'
 import { useGuitarFretPlayback } from './useGuitarFretPlayback'
 
@@ -67,6 +68,9 @@ type Props = {
   /* Reserved for the preview overlay; the board itself draws the same either
    * way, since the fret cells already mark every pitch position. */
   isPreviewEnabled?: boolean
+  /* Cents-colour the low/only lane's segments and chip, like every program's
+   * idle preview. The duet high lane stays blue. */
+  shouldColorByCents?: boolean
   /* Note names in the cells: 'off' (open strings only), 'simple' (bare names,
    * e.g. C♯), or 'advanced' (names with octave, e.g. C♯3). */
   toneLabelMode?: ToneLabelMode
@@ -409,6 +413,24 @@ const LANE_COLOUR_CLASS: Record<
   high: { line: 'border-(--p-blue-400)/50', chip: 'text-(--p-blue-400)' },
 }
 
+const { colorForCents } = usePitchPreviewColor()
+
+/* Inline colours that override LANE_COLOUR_CLASS when the lane is
+ * cents-coloured; null keeps the class colours. Line alpha matches the /50.
+ * No out-of-range case: off the board there are no segments, and the chip's
+ * cents are still true. */
+function previewCentsStyle(
+  lane: GuitarPreviewLaneView,
+): { line: { borderColor: string }; chip: { color: string } } | null {
+  if (!props.shouldColorByCents) return null
+  if (lane.laneId !== 'low' || lane.cents === null) return null
+
+  return {
+    line: { borderColor: colorForCents(lane.cents, 0.5) },
+    chip: { color: colorForCents(lane.cents) },
+  }
+}
+
 /*
  * Tap versus scroll. The board is at least 690px tall and its box on a phone is
  * shorter than that, so a finger dragged across it pans the neck — and
@@ -443,6 +465,7 @@ function handleClick(cell: GuitarCell) {
         v-for="lane in previewLanes"
         :key="lane.laneId"
         :class="LANE_COLOUR_CLASS[lane.laneId].chip"
+        :style="previewCentsStyle(lane)?.chip"
         data-testid="guitar-preview-label"
         :data-lane="lane.laneId"
       >
@@ -744,6 +767,7 @@ function handleClick(cell: GuitarCell) {
                     insetInlineStart: `${segment.stringIndex * layout.stringWidth}px`,
                     top: `${segment.y}px`,
                     width: `${layout.stringWidth}px`,
+                    ...previewCentsStyle(lane)?.line,
                   }"
                   data-testid="guitar-preview-line"
                   :data-lane="lane.laneId"

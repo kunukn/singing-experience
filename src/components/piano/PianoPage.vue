@@ -155,6 +155,7 @@ function handleTonePlayed() {
         :midiMax="selectedRange.midiMax"
         :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
+        shouldColorByCents
         :toneLabelMode="toneLabelMode"
         :accidentalStyle="accidentalStyle"
         :areKeyboardHintsVisible="areKeyboardHintsVisible"
