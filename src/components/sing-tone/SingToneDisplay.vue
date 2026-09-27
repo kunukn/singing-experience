@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { useDoReMiPlaySequence } from '@/components/do-re-mi/useDoReMiPlaySequence'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
-import { NOTE_NAMES } from '@/utils/noteUtils'
+import {
+  NOTE_NAMES,
+  frequencyToCents,
+  midiToFrequency,
+} from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import SingToneChart from './SingToneChart.vue'
 import SingToneSettingsRow from './SingToneSettingsRow.vue'
@@ -64,6 +68,10 @@ const { isPlayingSequence, currentPlayingIndex, playSequence, stopSequence } =
 
 const { isPreviewEnabled } = useSettings()
 const showSingToneTarget = useLocalStorage('syng.showSingToneTarget', true)
+/* Snap: the sung pitch is shown on its note, cents hidden — child friendly.
+ * Display only: scoring's ±50¢ window already is the nearest-note rule, so
+ * the snapped view reads on-target/0¢ exactly when the note counts. */
+const isPitchSnapEnabled = useLocalStorage('syng.singTonePitchSnap', false)
 
 /* Force-disable idle preview (and the mic it would open) in simulated test pages */
 const effectivePreviewEnabled = computed(
@@ -105,6 +113,12 @@ const chartCurrentMidi = computed(() => {
 })
 
 const chartCurrentFrequency = computed(() => {
+  /* Snap to the labelled note rather than Math.round: the label's note has
+   * the detector's hysteresis, so line and label never disagree. */
+  if (isPitchSnapEnabled.value && chartCurrentMidi.value !== null) {
+    return midiToFrequency(chartCurrentMidi.value)
+  }
+
   if (isListening.value) {
     if (isDeaf.value) return null
 
@@ -112,6 +126,32 @@ const chartCurrentFrequency = computed(() => {
   }
 
   return props.overridePreviewFrequency ?? previewFrequency.value
+})
+
+/* The overlay's Hz and cents, snapped to the detected note when Snap is on —
+ * cents then read 0 on the right note and ±100·n off it. The too-low /
+ * too-high arrows keep the raw pitch. */
+const displayedFrequency = computed(() => {
+  if (
+    !isPitchSnapEnabled.value ||
+    currentFrequency.value === null ||
+    currentMidi.value === null
+  )
+    return currentFrequency.value
+
+  return midiToFrequency(currentMidi.value)
+})
+
+const displayedCentsFromTarget = computed(() => {
+  if (
+    !isPitchSnapEnabled.value ||
+    centsFromTarget.value === null ||
+    displayedFrequency.value === null ||
+    targetFrequency.value === null
+  )
+    return centsFromTarget.value
+
+  return frequencyToCents(displayedFrequency.value, targetFrequency.value)
 })
 
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
@@ -320,6 +360,13 @@ onUnmounted(() => {
           iconOff="pi pi-eye-slash"
           :label="t('generic.showNoteTarget')"
         />
+
+        <ToggleIconButton
+          v-model="isPitchSnapEnabled"
+          iconOn="pi pi-bullseye"
+          iconOff="pi pi-bullseye"
+          :label="t('generic.pitchSnap')"
+        />
       </div>
 
       <p v-if="error" class="text-sm text-(--p-red-400)">{{ error }}</p>
@@ -410,9 +457,9 @@ onUnmounted(() => {
         gameState === 'playing' && showSingToneTarget && !!targetNoteLabel
       "
       :overlayTargetNoteLabel="targetNoteLabel"
-      :overlayCentsFromTarget="centsFromTarget"
+      :overlayCentsFromTarget="displayedCentsFromTarget"
       :overlayTargetFrequency="targetFrequency"
-      :overlayCurrentFrequency="currentFrequency"
+      :overlayCurrentFrequency="displayedFrequency"
       :overlayShowSingHigherArrow="showSingHigherArrow"
       :overlayShowSingLowerArrow="showSingLowerArrow"
     />
