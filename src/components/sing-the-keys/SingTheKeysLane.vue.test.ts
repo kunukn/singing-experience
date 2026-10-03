@@ -150,6 +150,38 @@ describe('SingTheKeysLane', () => {
     ).toBe('correct')
   })
 
+  test('should put a check mark on a collected block', () => {
+    const wrapper = mountLane({ correctNoteIndices: [0] })
+
+    expect(
+      wrapper
+        .get('[data-testid="lane-note-0"]')
+        .get('[data-testid="lane-note-check"]')
+        .text(),
+    ).toBe('✓')
+  })
+
+  test.each([
+    { name: 'aimed', props: { aimedNoteIndices: [0] } },
+    { name: 'upcoming', props: {} },
+  ])('should leave a block that is only $name unmarked', ({ props }) => {
+    const wrapper = mountLane(props)
+
+    expect(wrapper.find('[data-testid="lane-note-check"]').exists()).toBe(false)
+  })
+
+  test('should leave the mark off a collected block too short to hold it', () => {
+    /* Note 1 lasts 300 ms: 28px tall here, under the 30px a mark needs. */
+    const wrapper = mountLane({ correctNoteIndices: [1] })
+
+    expect(
+      wrapper
+        .get('[data-testid="lane-note-1"]')
+        .find('[data-testid="lane-note-check"]')
+        .exists(),
+    ).toBe(false)
+  })
+
   test('should mark a passed note that was never hit as missed', () => {
     const wrapper = mountLane({
       elapsedMs: 1300,

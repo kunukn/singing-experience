@@ -28,6 +28,7 @@ const notes: TimelineNote[] = [
 
 const BURST = '[data-testid="sing-the-keys-hit-burst"]'
 const SPARK = '[data-testid="sing-the-keys-hit-spark"]'
+const RING = '[data-testid="sing-the-keys-hit-ring"]'
 const SUSTAIN = '[data-testid="sing-the-keys-hit-sustain"]'
 const STREAM_SPARK = '[data-testid="sing-the-keys-hit-stream-spark"]'
 
@@ -77,6 +78,14 @@ describe('SingTheKeysHitGlow - bursts', () => {
     const bursts = wrapper.findAll(BURST)
     expect(bursts).toHaveLength(1)
     expect(bursts[0]?.attributes('data-note-index')).toBe('0')
+  })
+
+  test('should send one ring out with each burst', async () => {
+    const wrapper = mountGlow()
+
+    await wrapper.setProps({ correctNoteIndices: [0] })
+
+    expect(wrapper.get(BURST).findAll(RING)).toHaveLength(1)
   })
 
   test('should place the burst on the hit line at the note key', async () => {

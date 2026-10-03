@@ -23,8 +23,8 @@ import type { TimelineNote } from './singTheKeysTimeline'
  * the hit line. Two layers over the lane, both anchored on the line at the
  * note's key:
  *
- * - a burst, once, the moment a note is collected: the flare pops and sparks
- *   fly from it, bigger the longer the run of hits;
+ * - a burst, once, the moment a note is collected: the flare pops, a ring
+ *   widens off the line and sparks fly, bigger the longer the run of hits;
  * - for the rest of that note, a flare that keeps flickering and a lighter
  *   stream of sparks, lit only while the singer stays on pitch.
  *
@@ -81,6 +81,11 @@ const STREAK_HEIGHT_PX = 3
 
 const SPARK_SIZE_PX = 5
 
+/* px — the ring sent out at collection: it starts the size of the flare and a
+ * line this thick, the thinnest that still reads on the light lane surface. */
+const RING_SIZE_PX = FLARE_SIZE_PX
+const RING_WIDTH_PX = 3
+
 /* ms — the two ray layers turn against each other at unrelated speeds, so the
  * spikes cross and shimmer instead of spinning like a wheel. The core and
  * streak flicker faster, on periods that share no common beat with each other
@@ -101,6 +106,8 @@ const coreWidth = `${CORE_WIDTH_PX}px`
 const coreHeight = `${CORE_HEIGHT_PX}px`
 const streakHeight = `${STREAK_HEIGHT_PX}px`
 const sparkSize = `${SPARK_SIZE_PX}px`
+const ringSize = `${RING_SIZE_PX}px`
+const ringWidth = `${RING_WIDTH_PX}px`
 const raysTurn = `${RAYS_TURN_MS}ms`
 const raysCounterTurn = `${RAYS_COUNTER_TURN_MS}ms`
 const corePulse = `${CORE_PULSE_MS}ms`
@@ -265,6 +272,7 @@ onUnmounted(() => {
       :data-note-index="burst.noteIndex"
       :data-tier="burst.tier"
     >
+      <div class="hit-ring" data-testid="sing-the-keys-hit-ring" />
       <div class="hit-flare hit-pop">
         <div class="hit-halo" />
         <div class="hit-rays" />
@@ -470,6 +478,35 @@ onUnmounted(() => {
   animation: hit-pop v-bind(flashDuration) ease-out both;
 }
 
+/* A shockwave off the hit line at the moment of collection: a ring that widens
+ * from a third of its size to nearly double while it fades. Only its upper
+ * half is drawn, so it rises into the lane and nothing spreads down over the
+ * keys. Green, not white: white light does not show on the light lane. */
+.hit-ring {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: v-bind(ringSize);
+  height: v-bind(ringSize);
+  margin-block-start: calc(v-bind(ringSize) / -2);
+  margin-inline-start: calc(v-bind(ringSize) / -2);
+  border: v-bind(ringWidth) solid var(--hit-halo);
+  border-radius: 50%;
+  clip-path: inset(0 0 50% 0);
+  animation: hit-ring v-bind(flashDuration) ease-out both;
+}
+
+@keyframes hit-ring {
+  0% {
+    transform: scale(calc(var(--hit-scale) * 0.3));
+    opacity: var(--hit-peak);
+  }
+  100% {
+    transform: scale(calc(var(--hit-scale) * 1.8));
+    opacity: 0;
+  }
+}
+
 /* One keyframe for every spark; each element's own custom properties say where
  * it starts, where it ends, how long it flies and how long it waits. */
 @keyframes hit-spark {
@@ -507,6 +544,7 @@ onUnmounted(() => {
  * switches on and off without a fade. */
 @media (prefers-reduced-motion: reduce) {
   .hit-pop,
+  .hit-ring,
   .hit-spark {
     display: none;
   }

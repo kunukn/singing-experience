@@ -11,7 +11,7 @@ export const STREAK_TIER_THRESHOLDS = [3, 6, 10]
 /* Per tier (0–3). A bigger run throws more sparks, further, off a larger and
  * brighter flare. The stream is the lighter trickle that keeps going while the
  * note is held. */
-export const SPARKS_PER_TIER = [4, 6, 8, 10]
+export const SPARKS_PER_TIER = [8, 10, 12, 14]
 export const STREAM_SPARKS_PER_TIER = [3, 4, 5, 6]
 export const FLARE_SCALE_PER_TIER = [1, 1.1, 1.2, 1.3]
 export const FLASH_PEAK_OPACITY_PER_TIER = [0.75, 0.85, 0.95, 1]

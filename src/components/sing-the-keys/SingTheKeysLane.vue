@@ -33,8 +33,8 @@ type Props = {
   activeNoteIndex: number | null
   correctNoteIndices: number[]
   /* Blocks the singer is on the pitch of right now, collected or not: the due
-   * one and the next one coming. They show a paler green, so being on pitch is
-   * confirmed before the point is. Defaults to none. */
+   * one and the next one coming. They show a lighter blue, so being on pitch
+   * is confirmed before the point is. Defaults to none. */
   aimedNoteIndices?: number[]
   accidentalStyle: AccidentalStyle
   /* The singer's live pitch, drawn as a line up through the lane so they can
@@ -102,6 +102,11 @@ const pxPerMs = computed(() => props.laneHeight / LOOKAHEAD_MS)
  * as separate hits rather than one long bar. */
 const BLOCK_GAP_PX = 2
 
+/* px — the shortest block that can stack a ✓ over its note name: a 12px mark
+ * on a 14px label, plus the bottom padding. A shorter block shows its
+ * collection by colour and pop alone, rather than a mark spilling out of it. */
+const CHECK_MIN_BLOCK_HEIGHT_PX = 30
+
 const correctSet = computed(() => new Set(props.correctNoteIndices))
 
 function statusOf(note: TimelineNote): NoteStatus {
@@ -126,13 +131,14 @@ function statusOf(note: TimelineNote): NoteStatus {
  * when the singer has simply not locked on yet. The key wash and hit line show
  * what is due. Passed blocks in a ♪ preview go neutral: nothing was judged.
  *
- * The one colour before the verdict is a paler green, on a block the singer is
- * on the pitch of. It is praise only, never "wrong", and it stays a shade off
- * the hit green so that full green still means a point in the bank. */
+ * The one colour before the verdict is a lighter blue, on a block the singer
+ * is on the pitch of: lit up, never "wrong". It stays in the blue family on
+ * purpose. A paler green there left collection as a mere change of shade;
+ * with green held back for the point, collecting is a change of hue. */
 const STATUS_CLASS: Record<NoteStatus, string> = {
   upcoming: 'bg-(--p-blue-400) text-(--p-surface-0)',
   active: 'bg-(--p-blue-400) text-(--p-surface-0)',
-  aimed: 'bg-(--p-green-300) text-(--p-surface-900)',
+  aimed: 'bg-(--p-blue-200) text-(--p-surface-900)',
   correct: 'bg-(--p-green-400) text-(--p-surface-900)',
   missed: 'bg-(--p-red-400) text-(--p-surface-0)',
   passed: 'bg-(--p-surface-400)/60 text-(--p-surface-0)',
@@ -162,6 +168,7 @@ const blocks = computed(() =>
 
     return {
       note,
+      hasRoomForCheck: height >= CHECK_MIN_BLOCK_HEIGHT_PX,
       label: midiToNoteLabel(note.midi, {
         showOctave: false,
         preferFlats: props.accidentalStyle === 'flat',
@@ -434,9 +441,10 @@ const sungLineColorStyle = computed(() => {
       <div
         v-for="block in blocks"
         :key="block.note.index"
-        class="absolute flex items-end justify-center rounded-md pb-0.5 text-sm leading-none font-semibold select-none"
+        class="absolute flex flex-col items-center justify-end rounded-md pb-0.5 text-sm leading-none font-semibold select-none"
         :class="[
           STATUS_CLASS[statusOf(block.note)],
+          isPlaying && statusOf(block.note) === 'correct' && 'lane-block-pop',
           areBlocksPressable &&
             'pointer-events-auto cursor-pointer touch-manipulation hover:brightness-110',
         ]"
@@ -445,6 +453,14 @@ const sungLineColorStyle = computed(() => {
         :data-status="statusOf(block.note)"
         :data-midi="block.note.midi"
       >
+        <span
+          v-if="block.hasRoomForCheck && statusOf(block.note) === 'correct'"
+          class="text-xs leading-none"
+          aria-hidden="true"
+          data-testid="lane-note-check"
+        >
+          ✓
+        </span>
         {{ block.label }}
         <SingTheKeysHitBeam
           v-if="hitBeam?.noteIndex === block.note.index"
@@ -519,3 +535,33 @@ const sungLineColorStyle = computed(() => {
     />
   </div>
 </template>
+
+<style scoped>
+/* A collected block swells a little and settles, so the moment a point is
+ * banked shows on the block itself, Sparkles on or off. Scale only: a flash
+ * here would strobe on a fast passage, where several notes land a second.
+ * 12% is enough to catch the eye without the block bumping its neighbours,
+ * and 220 ms is about the shortest note, so one pop settles as the next
+ * begins. */
+@keyframes lane-block-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.12);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.lane-block-pop {
+  animation: lane-block-pop 220ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lane-block-pop {
+    animation: none;
+  }
+}
+</style>

@@ -227,7 +227,7 @@ const missCount = computed(() => {
   ).length
 })
 
-/* Early praise: the due block and the next one coming turn pale green while
+/* Early praise: the due block and the next one coming turn a lighter blue while
  * the singer is on their pitch, before any point is collected. Scored runs
  * only — a ♪ preview has no mic. Same pitch and tolerance as the scorer, so a
  * lit block is one that would score. */
