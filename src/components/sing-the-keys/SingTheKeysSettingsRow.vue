@@ -2,8 +2,8 @@
 import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import type { ToneMode } from '@/composables/toneEngine'
 import SongRangeSelect from './SongRangeSelect.vue'
+import SongSelect from './SongSelect.vue'
 import {
-  SONG_IDS,
   SPEED_OPTIONS,
   type Song,
   type SongId,
@@ -25,15 +25,7 @@ const songId = defineModel<SongId>('songId', { required: true })
 const rangeOffset = defineModel<number>('rangeOffset', { required: true })
 const speed = defineModel<SpeedOption>('speed', { required: true })
 
-const { t, locale } = useI18n()
-
-/* A to Z by translated title, so the order follows the active language. */
-const songOptions = computed(() =>
-  SONG_IDS.map((id) => ({
-    label: t(`singTheKeys.songs.${id}`),
-    value: id,
-  })).toSorted((a, b) => a.label.localeCompare(b.label, locale.value)),
-)
+const { t } = useI18n()
 
 /* SPEED_OPTIONS is already largest first ("Vertical Ordering" in AGENTS.md).
  * The × labels are numeric, so they stay untranslated. */
@@ -70,15 +62,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('singTheKeys.song')
       }}</label>
-      <PrimeSelect
-        v-model="songId"
-        :options="songOptions"
-        optionLabel="label"
-        optionValue="value"
-        size="small"
-        :disabled="props.isRunning"
-        :ariaLabel="t('singTheKeys.song')"
-      />
+      <SongSelect v-model:songId="songId" :disabled="props.isRunning" />
     </div>
 
     <div class="settings-item">

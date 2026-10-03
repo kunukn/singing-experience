@@ -134,6 +134,7 @@ declare module 'vue' {
     SingToneTargetFeedback: typeof import('./components/sing-tone/SingToneTargetFeedback.vue')['default']
     SingToneTestPage: typeof import('./components/sing-tone/SingToneTestPage.vue')['default']
     SongRangeSelect: typeof import('./components/sing-the-keys/SongRangeSelect.vue')['default']
+    SongSelect: typeof import('./components/sing-the-keys/SongSelect.vue')['default']
     StartToneSelect: typeof import('./components/generic/StartToneSelect.vue')['default']
     ToggleIconButton: typeof import('./components/generic/ToggleIconButton.vue')['default']
     ToneDetectorDisplay: typeof import('./components/tone-detector/ToneDetectorDisplay.vue')['default']

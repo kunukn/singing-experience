@@ -53,8 +53,17 @@ export type SongMeter = {
   pickupBeats: number
 }
 
+/* How hard a song is to sing, judged by ear from its span, rhythm and
+ * out-of-key notes together. The values match the generic.difficulty_* keys,
+ * and keep the conventional easy-first order of a named scale ("Vertical
+ * Ordering" in AGENTS.md). */
+export const SONG_DIFFICULTIES = ['easy', 'normal', 'hard'] as const
+
+export type SongDifficulty = (typeof SONG_DIFFICULTIES)[number]
+
 export type Song = {
   id: SongId
+  difficulty: SongDifficulty
   /* Quarter notes per minute at 1× speed. */
   bpm: number
   meter: SongMeter
@@ -157,6 +166,7 @@ const TWINKLE_PHRASE_B: SongNote[] = [
 ]
 const TWINKLE: Song = {
   id: 'twinkle',
+  difficulty: 'easy',
   bpm: 100,
   meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
   notes: [
@@ -186,6 +196,7 @@ const ODE_TO_JOY_OPENING: SongNote[] = [
 ]
 const ODE_TO_JOY: Song = {
   id: 'odeToJoy',
+  difficulty: 'easy',
   bpm: 100,
   meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
   notes: [
@@ -206,6 +217,7 @@ const ODE_TO_JOY: Song = {
  * (C C) D C F | E (C C) D C G | F (C C) C' A F E D | (B♭ B♭) A F G F */
 const HAPPY_BIRTHDAY: Song = {
   id: 'happyBirthday',
+  difficulty: 'normal',
   bpm: 100,
   // 3/4; the two-eighth pickup fills one beat before "birth" lands on 1
   meter: { pulseBeats: 1, pulsesPerBar: 3, pickupBeats: 1 },
@@ -262,6 +274,7 @@ const FUR_ELISE_ANSWER: SongNote[] = [
 ]
 const FUR_ELISE: Song = {
   id: 'furElise',
+  difficulty: 'hard',
   bpm: 50,
   /* 3/8, felt on the eighth (a quarter pulse would not line up with the
    * 1.5-beat bar); the E–D♯ sixteenth pickup is half a beat. */
@@ -287,6 +300,7 @@ const FUR_ELISE: Song = {
  * E D C D | E E E– | D D D– | E G G– | E D C D | E E E E | D D E D | C––– */
 const MARY_LAMB: Song = {
   id: 'maryLamb',
+  difficulty: 'easy',
   bpm: 100,
   meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
   notes: [
@@ -340,6 +354,7 @@ const FRERE_JACQUES_BELLS: SongNote[] = [
 const FRERE_JACQUES_DING: SongNote[] = [note(0, 1), note(-5, 1), note(0, 2)]
 const FRERE_JACQUES: Song = {
   id: 'frereJacques',
+  difficulty: 'easy',
   bpm: 100,
   meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
   notes: [
@@ -367,6 +382,7 @@ const LONDON_BRIDGE_OPENING: SongNote[] = [
 ]
 const LONDON_BRIDGE: Song = {
   id: 'londonBridge',
+  difficulty: 'easy',
   bpm: 100,
   meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
   notes: [
@@ -412,6 +428,7 @@ const JINGLE_BELLS_OPENING: SongNote[] = [
 ]
 const JINGLE_BELLS: Song = {
   id: 'jingleBells',
+  difficulty: 'easy',
   bpm: 132,
   /* 4/4 felt in two: at this tempo a quarter pulse would flash faster than
    * the beat lines allow, so the lane marks the half note. */
@@ -439,6 +456,7 @@ const JINGLE_BELLS: Song = {
  * G (F) E (D) | C.. */
 const ROW_YOUR_BOAT: Song = {
   id: 'rowYourBoat',
+  difficulty: 'normal',
   bpm: 100,
   // 6/8: two dotted-quarter pulses (1.5 beats each) per bar
   meter: { pulseBeats: 1.5, pulsesPerBar: 2, pickupBeats: 0 },
@@ -479,6 +497,7 @@ const ROW_YOUR_BOAT: Song = {
 const WHEN_THE_SAINTS_CALL: SongNote[] = [note(0, 1), note(4, 1), note(5, 1)]
 const WHEN_THE_SAINTS: Song = {
   id: 'whenTheSaints',
+  difficulty: 'normal',
   bpm: 150,
   // 4/4 felt in two (half-note pulse), entered on a three-quarter pickup
   meter: { pulseBeats: 2, pulsesPerBar: 2, pickupBeats: 3 },
@@ -525,6 +544,7 @@ const AMAZING_GRACE_OPENING: SongNote[] = [
 ]
 const AMAZING_GRACE: Song = {
   id: 'amazingGrace',
+  difficulty: 'normal',
   bpm: 100,
   meter: { pulseBeats: 1, pulsesPerBar: 3, pickupBeats: 1 }, // 3/4
   notes: [
@@ -575,6 +595,7 @@ const OH_SUSANNA_LINE: SongNote[] = [
 ]
 const OH_SUSANNA: Song = {
   id: 'ohSusanna',
+  difficulty: 'normal',
   bpm: 100,
   meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 1 }, // 4/4
   notes: [
@@ -607,6 +628,7 @@ const GREENSLEEVES_OPENING: SongNote[] = [
 ]
 const GREENSLEEVES: Song = {
   id: 'greensleeves',
+  difficulty: 'hard',
   bpm: 60,
   // 6/8: two dotted-quarter pulses per bar, after an eighth pickup
   meter: { pulseBeats: 1.5, pulsesPerBar: 2, pickupBeats: 0.5 },
@@ -665,6 +687,7 @@ const MOUNTAIN_KING_THEME: SongNote[] = [
 ]
 const MOUNTAIN_KING: Song = {
   id: 'mountainKing',
+  difficulty: 'hard',
   bpm: 100,
   meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
   notes: [...MOUNTAIN_KING_THEME, ...MOUNTAIN_KING_THEME],
@@ -693,6 +716,7 @@ const HABANERA_SLIDE: SongNote[] = [
 ]
 const HABANERA: Song = {
   id: 'habanera',
+  difficulty: 'hard',
   bpm: 66,
   meter: { pulseBeats: 1, pulsesPerBar: 2, pickupBeats: 1 }, // 2/4
   notes: [
@@ -735,6 +759,7 @@ const ENTERTAINER_RIFF: SongNote[] = [
 ]
 const ENTERTAINER: Song = {
   id: 'entertainer',
+  difficulty: 'hard',
   bpm: 50,
   // 2/4 felt on the eighth, as Für Elise; the D–D♯ pickup is half a beat
   meter: { pulseBeats: 0.5, pulsesPerBar: 4, pickupBeats: 0.5 },
@@ -783,4 +808,17 @@ export const SONGS: Record<SongId, Song> = {
   mountainKing: MOUNTAIN_KING,
   habanera: HABANERA,
   entertainer: ENTERTAINER,
+}
+
+export type SongDifficultyGroup = {
+  difficulty: SongDifficulty
+  songIds: SongId[]
+}
+
+/* The songs under each difficulty, easy first — the Song picker's groups. */
+export function groupSongIdsByDifficulty(): SongDifficultyGroup[] {
+  return SONG_DIFFICULTIES.map((difficulty) => ({
+    difficulty,
+    songIds: SONG_IDS.filter((id) => SONGS[id].difficulty === difficulty),
+  }))
 }

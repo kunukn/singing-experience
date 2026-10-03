@@ -18,6 +18,7 @@ const C4 = 60
 
 const song: Song = {
   id: 'twinkle',
+  difficulty: 'easy',
   bpm: 100,
   meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 },
   notes: [
