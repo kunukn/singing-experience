@@ -70,7 +70,7 @@ const ROUTE_META: Record<string, DocumentMeta> = {
   '/sing-the-keys': {
     title: 'Sing the Keys Game',
     description:
-      'Notes fall onto a piano keyboard like a piano tutorial — sing each one as it lands. Twinkle Twinkle, Ode to Joy, Happy Birthday, Für Elise, in any key.',
+      'Notes fall onto a piano keyboard like a piano tutorial — sing each one as it lands. Twinkle Twinkle, Happy Birthday, Amazing Grace, Für Elise and more, in any key.',
   },
 }
 
