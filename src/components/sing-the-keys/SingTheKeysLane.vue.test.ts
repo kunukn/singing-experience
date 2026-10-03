@@ -120,6 +120,36 @@ describe('SingTheKeysLane', () => {
     ).toBe('upcoming')
   })
 
+  test('should show a block the singer is on the pitch of as aimed', () => {
+    const wrapper = mountLane({
+      elapsedMs: 700,
+      activeNoteIndex: 1,
+      aimedNoteIndices: [1, 2],
+      isPlaying: true,
+    })
+
+    expect(
+      wrapper.get('[data-testid="lane-note-1"]').attributes('data-status'),
+    ).toBe('aimed')
+    expect(
+      wrapper.get('[data-testid="lane-note-2"]').attributes('data-status'),
+    ).toBe('aimed')
+  })
+
+  test('should keep a collected block correct while it is still aimed', () => {
+    const wrapper = mountLane({
+      elapsedMs: 700,
+      activeNoteIndex: 1,
+      correctNoteIndices: [1],
+      aimedNoteIndices: [1],
+      isPlaying: true,
+    })
+
+    expect(
+      wrapper.get('[data-testid="lane-note-1"]').attributes('data-status'),
+    ).toBe('correct')
+  })
+
   test('should mark a passed note that was never hit as missed', () => {
     const wrapper = mountLane({
       elapsedMs: 1300,

@@ -19,6 +19,7 @@ import {
   type SpeedOption,
 } from './singTheKeysSongs'
 import {
+  aimedNoteIndicesAt,
   beatFlashAt,
   KEYBOARD_MIN_SEMITONE_UNIT,
   SCORE_LAG_MS,
@@ -225,6 +226,21 @@ const missCount = computed(() => {
       note.startMs + note.durationMs + SCORE_LAG_MS <= elapsedMs.value,
   ).length
 })
+
+/* Early praise: the due block and the next one coming turn pale green while
+ * the singer is on their pitch, before any point is collected. Scored runs
+ * only — a ♪ preview has no mic. Same pitch and tolerance as the scorer, so a
+ * lit block is one that would score. */
+const aimedNoteIndices = computed(() =>
+  isScoring.value
+    ? aimedNoteIndicesAt(
+        timeline.value.notes,
+        elapsedMs.value,
+        frequency.value,
+        SCORE_TOLERANCE_CENTS,
+      )
+    : [],
+)
 
 /* Green blocks live while singing and on the result screen; none while idle
  * so a stale map never sits over a re-laid tune. */
@@ -584,6 +600,7 @@ onUnmounted(() => {
             :areBlocksPressable="!isPlaying"
             :activeNoteIndex="activeNoteIndex"
             :correctNoteIndices="resultNoteIndices"
+            :aimedNoteIndices="aimedNoteIndices"
             :accidentalStyle="accidentalStyle"
             :sungMidi="sungMidi"
             :sungFrequency="liveFrequency"

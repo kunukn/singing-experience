@@ -1,4 +1,6 @@
 import { isNaturalMidi } from '@/components/notes/notesScales'
+import { midiToFrequency } from '@/utils/noteUtils'
+import { isOnPitch } from '@/utils/pitchMatch'
 import type { Song } from './singTheKeysSongs'
 
 /* How long a block takes to fall from the top of the lane to the hit line, and
@@ -171,6 +173,32 @@ export function activeNoteIndexAt(
   }
 
   return null
+}
+
+/* The blocks the singer is aiming at right now: the due note and the next one
+ * coming, whichever of them `sungHz` is within `toleranceCents` of. The lane
+ * lights these before any point is collected, so being on pitch shows at once
+ * — even while the block is still falling. Only those two: a later block of
+ * the same pitch is not what the singer is about to sing. */
+export function aimedNoteIndicesAt(
+  notes: TimelineNote[],
+  elapsedMs: number,
+  sungHz: number | null,
+  toleranceCents: number,
+): number[] {
+  if (sungHz === null) return []
+
+  const dueIndex = activeNoteIndexAt(notes, elapsedMs)
+  const candidates = [
+    notes.find((note) => note.index === dueIndex),
+    notes.find((note) => note.startMs > elapsedMs),
+  ]
+
+  return candidates.flatMap((note) =>
+    note && isOnPitch(sungHz, midiToFrequency(note.midi), toleranceCents)
+      ? [note.index]
+      : [],
+  )
 }
 
 /* ms — how long the lane takes to ease back up to the ending view once the

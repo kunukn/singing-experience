@@ -1,11 +1,12 @@
 import { describe, expect, test } from 'vitest'
 import { pianoSpanUnits } from '@/components/piano/pianoLayout'
 import { PREVIEW_EDGE_GUTTER_PX } from '@/components/piano/pianoPreview'
-import { START_TONE_OPTIONS } from '@/utils/noteUtils'
+import { midiToFrequency, START_TONE_OPTIONS } from '@/utils/noteUtils'
 import type { Song } from './singTheKeysSongs'
 import { SONG_IDS, SONGS, tonicMidiForRange } from './singTheKeysSongs'
 import {
   activeNoteIndexAt,
+  aimedNoteIndicesAt,
   BEAT_FLASH_MS,
   beatFlashAt,
   beatPulseAt,
@@ -16,6 +17,7 @@ import {
   laneEndViewMs,
   LOOKAHEAD_MS,
   songMidiRange,
+  type TimelineNote,
 } from './singTheKeysTimeline'
 
 const C4 = 60
@@ -192,6 +194,54 @@ describe('activeNoteIndexAt', () => {
     { elapsedMs: 2400, expected: null },
   ])('returns $expected at $elapsedMs ms', ({ elapsedMs, expected }) => {
     expect(activeNoteIndexAt(notes, elapsedMs)).toBe(expected)
+  })
+})
+
+describe('aimedNoteIndicesAt', () => {
+  /* C4, then C4 again, a rest, G4, and much later one more C4. */
+  const notes: TimelineNote[] = [
+    { index: 0, midi: 60, startMs: 0, durationMs: 600 },
+    { index: 1, midi: 60, startMs: 600, durationMs: 600 },
+    { index: 2, midi: 67, startMs: 1800, durationMs: 600 },
+    { index: 3, midi: 60, startMs: 2400, durationMs: 600 },
+  ]
+  const C4_HZ = midiToFrequency(60)
+  const G4_HZ = midiToFrequency(67)
+  const TOLERANCE_CENTS = 50
+
+  test('lights the first block while it is still falling in the lead-in', () => {
+    expect(aimedNoteIndicesAt(notes, -2000, C4_HZ, TOLERANCE_CENTS)).toEqual([
+      0,
+    ])
+  })
+
+  test('lights the due block and the next one when they share a pitch', () => {
+    expect(aimedNoteIndicesAt(notes, 100, C4_HZ, TOLERANCE_CENTS)).toEqual([
+      0, 1,
+    ])
+  })
+
+  test('lights only the next block when the singer is already on its pitch', () => {
+    expect(aimedNoteIndicesAt(notes, 700, G4_HZ, TOLERANCE_CENTS)).toEqual([2])
+  })
+
+  test('lights the next block during a rest', () => {
+    expect(aimedNoteIndicesAt(notes, 1500, G4_HZ, TOLERANCE_CENTS)).toEqual([2])
+  })
+
+  test('leaves a later block of the same pitch alone', () => {
+    /* Note 1 is due and note 2 is next; note 3 is also a C4 but two away. */
+    expect(aimedNoteIndicesAt(notes, 700, C4_HZ, TOLERANCE_CENTS)).toEqual([1])
+  })
+
+  test('lights nothing more than half a semitone off', () => {
+    const sharpHz = C4_HZ * 2 ** (60 / 1200)
+
+    expect(aimedNoteIndicesAt(notes, 100, sharpHz, TOLERANCE_CENTS)).toEqual([])
+  })
+
+  test('lights nothing when no pitch is detected', () => {
+    expect(aimedNoteIndicesAt(notes, 100, null, TOLERANCE_CENTS)).toEqual([])
   })
 })
 

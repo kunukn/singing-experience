@@ -32,6 +32,10 @@ type Props = {
   elapsedMs: number
   activeNoteIndex: number | null
   correctNoteIndices: number[]
+  /* Blocks the singer is on the pitch of right now, collected or not: the due
+   * one and the next one coming. They show a paler green, so being on pitch is
+   * confirmed before the point is. Defaults to none. */
+  aimedNoteIndices?: number[]
   accidentalStyle: AccidentalStyle
   /* The singer's live pitch, drawn as a line up through the lane so they can
    * aim at the incoming block. Null while nothing clean is detected. */
@@ -89,7 +93,8 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-type NoteStatus = 'upcoming' | 'active' | 'correct' | 'missed' | 'passed'
+type NoteStatus =
+  'upcoming' | 'active' | 'aimed' | 'correct' | 'missed' | 'passed'
 
 const pxPerMs = computed(() => props.laneHeight / LOOKAHEAD_MS)
 
@@ -101,6 +106,7 @@ const correctSet = computed(() => new Set(props.correctNoteIndices))
 
 function statusOf(note: TimelineNote): NoteStatus {
   if (correctSet.value.has(note.index)) return 'correct'
+  if (props.aimedNoteIndices?.includes(note.index)) return 'aimed'
   if (note.index === props.activeNoteIndex) return 'active'
   if (
     props.isShowingEnding ||
@@ -118,10 +124,15 @@ function statusOf(note: TimelineNote): NoteStatus {
  * decided, then green (hit) or red (passed unsung). A due block keeps the blue
  * on purpose — a third colour there read as "wrong, then right" on every note,
  * when the singer has simply not locked on yet. The key wash and hit line show
- * what is due. Passed blocks in a ♪ preview go neutral: nothing was judged. */
+ * what is due. Passed blocks in a ♪ preview go neutral: nothing was judged.
+ *
+ * The one colour before the verdict is a paler green, on a block the singer is
+ * on the pitch of. It is praise only, never "wrong", and it stays a shade off
+ * the hit green so that full green still means a point in the bank. */
 const STATUS_CLASS: Record<NoteStatus, string> = {
   upcoming: 'bg-(--p-blue-400) text-(--p-surface-0)',
   active: 'bg-(--p-blue-400) text-(--p-surface-0)',
+  aimed: 'bg-(--p-green-300) text-(--p-surface-900)',
   correct: 'bg-(--p-green-400) text-(--p-surface-900)',
   missed: 'bg-(--p-red-400) text-(--p-surface-0)',
   passed: 'bg-(--p-surface-400)/60 text-(--p-surface-0)',
