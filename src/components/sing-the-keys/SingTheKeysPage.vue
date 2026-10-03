@@ -69,14 +69,18 @@ const range = computed(() =>
  *
  * The mic only opens for a scored run, and a scored run plays no melody — that
  * is the ♪ preview's, with the mic closed. So the fully raw stream (echo
- * cancellation off) is safe, and it detects sustained tones best. The one
- * sound a scored run can make is the metronome: a 30 ms thud landing on C1,
- * an octave under the detector's 60 Hz floor. Through a loudspeaker the mic
- * can still catch it, so the display masks it out — see useMetronomeMask. */
+ * cancellation off) is safe, and it detects sustained tones best.
+ *
+ * The one sound a scored run can make is the metronome: a 15 ms tick at
+ * 4186 Hz. The low-pass at the detector's own 1500 Hz ceiling takes it out of
+ * the mic before detection and leaves the voice alone. A deep metronome could
+ * not be filtered this way — what a speaker reproduces of it lies in the
+ * singing range. The display masks any residue too — see useMetronomeMask. */
 const detection = usePitchDetection({
   onsetDebounceMs: 0,
   clarityThreshold: 0.6,
   rawAudio: true,
+  lowPassHz: 1500,
   bandMinFrequency: () => midiToFrequency(range.value.midiMin),
   bandMaxFrequency: () => midiToFrequency(range.value.midiMax),
 })

@@ -7,21 +7,23 @@ type PitchSource = {
 }
 
 /*
- * The detected pitch with the metronome's own thud taken out. The mic runs raw
- * during a scored run, so through loudspeakers it hears each thud, and the
- * detector reports it as a pitch far below the keyboard: the sung line would
- * jump to the left edge on every beat.
+ * The detected pitch with the metronome's own tick taken out. The mic runs raw
+ * during a scored run, so through loudspeakers it hears each tick. The mic's
+ * low-pass removes nearly all of it; this is the second line of defence, for
+ * whatever a speaker or room leaves behind.
  *
- * While `isMasking` (a thud may be in the mic), a frame only counts when it is
- * clearly a voice: clean and at or above `minFrequency`, the keyboard's lowest
- * key. Any other frame is skipped and the last pitch held, so the line neither
- * jumps nor flickers and the scorer keeps its state. Notes start on beats, so
- * a voice frame must still get through — hence a filter, not a deaf period.
+ * While `isMasking` (a tick may be in the mic), a frame only counts when it is
+ * clearly a voice: clean and on the keyboard, between `minFrequency` and
+ * `maxFrequency`. Any other frame is skipped and the last pitch held, so the
+ * line neither jumps nor flickers and the scorer keeps its state. Notes start
+ * on beats, so a voice frame must still get through — hence a filter, not a
+ * deaf period.
  */
 export function useMetronomeMask(
   source: PitchSource,
   isMasking: Readonly<Ref<boolean>>,
   minFrequency: () => number,
+  maxFrequency: () => number,
 ) {
   const frequency = ref(source.frequency.value)
   const noteInfo = shallowRef(source.noteInfo.value)
@@ -33,7 +35,10 @@ export function useMetronomeMask(
     () => {
       const hz = source.frequency.value
       const isVoice =
-        source.isClean.value && hz !== null && hz >= minFrequency()
+        source.isClean.value &&
+        hz !== null &&
+        hz >= minFrequency() &&
+        hz <= maxFrequency()
       if (isMasking.value && !isVoice) return
 
       frequency.value = hz

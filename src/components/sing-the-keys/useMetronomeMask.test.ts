@@ -4,11 +4,14 @@ import type { NoteInfo } from '@/utils/noteUtils'
 import { frequencyToNote } from '@/utils/noteUtils'
 import { useMetronomeMask } from './useMetronomeMask'
 
-/* The keyboard's lowest key in these tests: B2. */
+/* The keyboard in these tests: B2 to D4. */
 const MIN_HZ = 123.5
+const MAX_HZ = 293.7
 const C3_HZ = 130.8
-/* What the detector makes of the thud through a loudspeaker. */
-const THUD_HZ = 67
+/* What a detector can make of the metronome through a loudspeaker: a stray
+ * pitch off either end of the keyboard. */
+const STRAY_LOW_HZ = 67
+const STRAY_HIGH_HZ = 1395
 
 function createMask() {
   const frequency = ref<number | null>(null)
@@ -19,6 +22,7 @@ function createMask() {
     { frequency, noteInfo, isClean },
     isMasking,
     () => MIN_HZ,
+    () => MAX_HZ,
   )
 
   /* The same three writes, in the same order, as usePitchDetection. */
@@ -32,27 +36,33 @@ function createMask() {
 }
 
 describe('useMetronomeMask', () => {
-  test('should pass every frame through while no thud sounds', () => {
+  test('should pass every frame through while no tick sounds', () => {
     const { masked, detect } = createMask()
 
-    detect(THUD_HZ)
+    detect(STRAY_LOW_HZ)
 
-    expect(masked.frequency.value).toBe(THUD_HZ)
+    expect(masked.frequency.value).toBe(STRAY_LOW_HZ)
     expect(masked.noteInfo.value?.note).toBe('C')
     expect(masked.isClean.value).toBe(true)
   })
 
-  test('should hold the sung pitch through a frame below the keyboard', () => {
-    const { masked, isMasking, detect } = createMask()
-    detect(C3_HZ)
+  test.each([
+    { name: 'below', strayHz: STRAY_LOW_HZ },
+    { name: 'above', strayHz: STRAY_HIGH_HZ },
+  ])(
+    'should hold the sung pitch through a frame $name the keyboard',
+    ({ strayHz }) => {
+      const { masked, isMasking, detect } = createMask()
+      detect(C3_HZ)
 
-    isMasking.value = true
-    detect(THUD_HZ)
+      isMasking.value = true
+      detect(strayHz)
 
-    expect(masked.frequency.value).toBe(C3_HZ)
-    expect(masked.noteInfo.value?.octave).toBe(3)
-    expect(masked.isClean.value).toBe(true)
-  })
+      expect(masked.frequency.value).toBe(C3_HZ)
+      expect(masked.noteInfo.value?.octave).toBe(3)
+      expect(masked.isClean.value).toBe(true)
+    },
+  )
 
   test('should hold the sung pitch through a frame with no pitch', () => {
     const { masked, isMasking, detect } = createMask()
@@ -65,11 +75,11 @@ describe('useMetronomeMask', () => {
     expect(masked.isClean.value).toBe(true)
   })
 
-  test('should stay empty when the singer was silent before the thud', () => {
+  test('should stay empty when the singer was silent before the tick', () => {
     const { masked, isMasking, detect } = createMask()
 
     isMasking.value = true
-    detect(THUD_HZ)
+    detect(STRAY_HIGH_HZ)
 
     expect(masked.frequency.value).toBeNull()
     expect(masked.noteInfo.value).toBeNull()
@@ -87,7 +97,7 @@ describe('useMetronomeMask', () => {
     expect(masked.isClean.value).toBe(true)
   })
 
-  test('should catch up with the mic when the thud has died away', () => {
+  test('should catch up with the mic when the tick has died away', () => {
     const { masked, isMasking, detect } = createMask()
     detect(C3_HZ)
     isMasking.value = true

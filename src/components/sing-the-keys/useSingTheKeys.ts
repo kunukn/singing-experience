@@ -30,14 +30,14 @@ const SCHEDULE_AHEAD_S = 0.05
  * heard within a beat. */
 const METRONOME_LOOKAHEAD_S = 0.1
 
-/* How long after a thud starts the mic may still hear it: 30 ms of thud, 43 ms
- * more for it to leave the detector's 2048-sample window, and the rest for
- * speaker and mic latency and the room's ring. */
-const THUD_MASK_S = 0.22
+/* How long after a metronome tick starts the mic may still hear it: 15 ms of
+ * tick, 43 ms more for it to leave the detector's 2048-sample window, and the
+ * rest for speaker and mic latency and the room's ring. */
+const METRONOME_MASK_S = 0.15
 
-/* The mask opens a little early, so no detector frame falls between the thud
+/* The mask opens a little early, so no detector frame falls between the tick
  * sounding and the next animation frame noticing. */
-const THUD_MASK_LEAD_S = 0.03
+const METRONOME_MASK_LEAD_S = 0.03
 
 const EMPTY_TIMELINE: Timeline = {
   notes: [],
@@ -62,7 +62,7 @@ export type SingTheKeysResult = ReturnType<typeof useSingTheKeys>
 type Options = {
   /* Injectable for tests; defaults to the app's shared Tone.js engine. */
   toneEngine?: ToneEngine
-  /* Sound a thud on every beat line, in a scored run and a preview alike. A
+  /* Sound a tick on every beat line, in a scored run and a preview alike. A
    * ref, not a start param, so it can be flipped mid-run. */
   isMetronomeEnabled?: Readonly<Ref<boolean>>
 }
@@ -135,7 +135,7 @@ export function useSingTheKeys(options: Options = {}) {
 
   /* On the immediate clock, the one the speaker is on. getNow() runs Tone's
    * 100 ms look-ahead early: read from it, every block and beat line reached
-   * the hit line 100 ms before its tone or thud sounded. */
+   * the hit line 100 ms before its tone or tick sounded. */
   function readElapsedMs() {
     return (engine.getImmediate() - songStartS) * 1000
   }
@@ -143,28 +143,31 @@ export function useSingTheKeys(options: Options = {}) {
   /* The first beat line the metronome has not yet looked at. */
   let nextMetronomeLineIndex = 0
 
-  /* True while a thud may be in the mic's signal (see THUD_MASK_S), so the
-   * display can keep it out of the sung pitch — see useMetronomeMask. */
+  /* True while a metronome tick may be in the mic's signal (see
+   * METRONOME_MASK_S), so the display can keep it out of the sung pitch — see
+   * useMetronomeMask. */
   const isMetronomeSounding = ref(false)
-  /* Audio-clock times of the thuds queued and not yet died away. */
-  let thudTimesS: number[] = []
+  /* Audio-clock times of the ticks queued and not yet died away. */
+  let metronomeTimesS: number[] = []
 
   /* On the immediate clock: getNow() runs Tone's look-ahead early, and the
    * mask has to follow what the speaker is actually playing. */
   function updateMetronomeSounding() {
     const immediateS = engine.getImmediate()
-    thudTimesS = thudTimesS.filter((whenS) => immediateS <= whenS + THUD_MASK_S)
-    isMetronomeSounding.value = thudTimesS.some(
-      (whenS) => immediateS >= whenS - THUD_MASK_LEAD_S,
+    metronomeTimesS = metronomeTimesS.filter(
+      (whenS) => immediateS <= whenS + METRONOME_MASK_S,
+    )
+    isMetronomeSounding.value = metronomeTimesS.some(
+      (whenS) => immediateS >= whenS - METRONOME_MASK_LEAD_S,
     )
   }
 
   function clearMetronomeMask() {
-    thudTimesS = []
+    metronomeTimesS = []
     isMetronomeSounding.value = false
   }
 
-  /* Queues the thud for every beat line coming due within the look-ahead. Run
+  /* Queues the tick for every beat line coming due within the look-ahead. Run
    * each frame instead of once for the whole song, so the toggle works mid-run:
    * off, nothing more is queued; on, it joins at the next line. Two kinds of
    * line stay silent: those already behind the clock (the lead-in lines of a
@@ -186,8 +189,8 @@ export function useSingTheKeys(options: Options = {}) {
        * rounding can leave it a hair short of totalMs. */
       const isDue = whenS >= nowS && line.ms < totalMs - 1
       if (isDue && options.isMetronomeEnabled?.value) {
-        engine.playThudAt(whenS)
-        thudTimesS.push(whenS)
+        engine.playTickAt(whenS)
+        metronomeTimesS.push(whenS)
       }
     }
   }

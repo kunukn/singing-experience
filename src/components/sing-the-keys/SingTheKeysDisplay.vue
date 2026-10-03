@@ -59,7 +59,7 @@ const speed = defineModel<SpeedOption>('speed', { required: true })
 const isBeatLinesEnabled = defineModel<boolean>('isBeatLinesEnabled', {
   required: true,
 })
-/* A deep thud on every beat line, in a scored run and a preview alike. Queued
+/* A short tick on every beat line, in a scored run and a preview alike. Queued
  * a frame at a time (see useSingTheKeys), so it too can be flipped mid-run. */
 const isMetronomeEnabled = defineModel<boolean>('isMetronomeEnabled', {
   required: true,
@@ -121,12 +121,13 @@ const {
   isMetronomeSounding,
 } = game
 
-/* The run's pitch, with the metronome's thud kept out of it: anything the mic
- * reports below the keyboard while a thud sounds is the thud, not the singer. */
+/* The run's pitch, with the metronome's tick kept out of it: anything the mic
+ * reports off the keyboard while a tick sounds is the tick, not the singer. */
 const { frequency, noteInfo, isClean } = useMetronomeMask(
   props.detection,
   isMetronomeSounding,
   () => midiToFrequency(range.value.midiMin),
+  () => midiToFrequency(range.value.midiMax),
 )
 
 /* Drives the result panel + the green blocks. Set when the song finishes on its

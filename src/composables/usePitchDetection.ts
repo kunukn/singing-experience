@@ -52,7 +52,17 @@ type UsePitchDetectionOptions = {
    * between runs. Omit for no band (every clean frame is smoothed). */
   bandMinFrequency?: MaybeRefOrGetter<number>
   bandMaxFrequency?: MaybeRefOrGetter<number>
+  /* Low-pass the mic at this frequency (Hz) before detection. For a game that
+   * plays a sound above the voice band while listening (Sing the Keys'
+   * metronome tick): the filter takes that sound out of the signal, while the
+   * voice — whose pitch is carried by its fundamental and lower harmonics —
+   * passes untouched. Omit for no filter. */
+  lowPassHz?: number
 }
+
+/* Linear Q of the two stages of a 4th-order Butterworth low-pass: flat below
+ * the cutoff, 24 dB per octave above it. */
+const LOW_PASS_STAGE_QS = [0.5412, 1.3066]
 
 /* Practical singing range: ~B1 (60 Hz) to ~F#6 (1500 Hz), covering bass to soprano. */
 const MIN_FREQUENCY = 60
@@ -201,8 +211,19 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
       // 2048-sample FFT: ~23 ms window at 44.1 kHz — good pitch resolution with low latency
       analyserNode.fftSize = 2048
 
-      const source = audioContext.createMediaStreamSource(mediaStream)
-      source.connect(analyserNode)
+      let micNode: AudioNode = audioContext.createMediaStreamSource(mediaStream)
+      if (options.lowPassHz !== undefined) {
+        for (const stageQ of LOW_PASS_STAGE_QS) {
+          const filter = audioContext.createBiquadFilter()
+          filter.type = 'lowpass'
+          filter.frequency.value = options.lowPassHz
+          // A low-pass biquad takes its Q in decibels, not as a linear value
+          filter.Q.value = 20 * Math.log10(stageQ)
+          micNode.connect(filter)
+          micNode = filter
+        }
+      }
+      micNode.connect(analyserNode)
 
       const detector = PitchDetector.forFloat32Array(analyserNode.fftSize)
       const input = new Float32Array(analyserNode.fftSize)
