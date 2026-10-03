@@ -49,7 +49,7 @@ const isMelodyGuideEnabled = useLocalStorage(
 )
 
 const isBeatLinesEnabled = useLocalStorage('syng.singTheKeysBeatLines', true)
-const isPitchSnapEnabled = useLocalStorage('syng.singTheKeysPitchSnap', true)
+const isPitchSnapEnabled = useLocalStorage('syng.singTheKeysPitchSnap', false)
 const isHitEffectsEnabled = useLocalStorage('syng.singTheKeysHitEffects', true)
 
 const range = computed(() =>

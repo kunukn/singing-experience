@@ -19,7 +19,7 @@ const rangeOffset = ref(DEFAULT_RANGE_OFFSET)
 const speed = ref<SpeedOption>(DEFAULT_SPEED)
 const isMelodyGuideEnabled = ref(true)
 const isBeatLinesEnabled = ref(true)
-const isPitchSnapEnabled = ref(true)
+const isPitchSnapEnabled = ref(false)
 const isHitEffectsEnabled = ref(true)
 
 const selectedNote = ref<NoteName>('G')
