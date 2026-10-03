@@ -2,9 +2,10 @@
 import { useConfettiStore } from '@/stores/useConfettiStore'
 
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)
-const { fireConfetti } = useConfetti(confettiCanvas)
+const { fireConfetti, fireFireworks } = useConfetti(confettiCanvas)
 
 useConfettiStore().registerFireConfetti(fireConfetti)
+useConfettiStore().registerFireFireworks(fireFireworks)
 useDocumentDirection()
 useDocumentMeta()
 useFaviconPermissionColor()

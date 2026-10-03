@@ -422,15 +422,17 @@ watch(
   { immediate: true },
 )
 
-const { fireConfetti } = useConfettiStore()
+const { fireConfetti, fireFireworks } = useConfettiStore()
 
 /* Reveal the result on a natural finish (never a manual stop) and celebrate
- * when enough notes were correct. */
+ * when enough notes were correct: confetti from the threshold up, fireworks
+ * for every note. */
 watch(isDone, (done) => {
   if (!done || !isRunScored.value) return
 
   showResult.value = true
-  if (reachedThreshold.value) fireConfetti()
+  if (onPitchRatio.value === 1) fireFireworks()
+  else if (reachedThreshold.value) fireConfetti()
 })
 
 onUnmounted(() => {
