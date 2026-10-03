@@ -17,7 +17,6 @@ import {
 const songId = ref<SongId>(DEFAULT_SONG_ID)
 const rangeOffset = ref(DEFAULT_RANGE_OFFSET)
 const speed = ref<SpeedOption>(DEFAULT_SPEED)
-const isMelodyGuideEnabled = ref(true)
 const isBeatLinesEnabled = ref(true)
 const isPitchSnapEnabled = ref(false)
 const isHitEffectsEnabled = ref(true)
@@ -58,7 +57,6 @@ function followTarget(midi: number | null) {
     v-model:songId="songId"
     v-model:rangeOffset="rangeOffset"
     v-model:speed="speed"
-    v-model:isMelodyGuideEnabled="isMelodyGuideEnabled"
     v-model:isBeatLinesEnabled="isBeatLinesEnabled"
     v-model:isPitchSnapEnabled="isPitchSnapEnabled"
     v-model:isHitEffectsEnabled="isHitEffectsEnabled"

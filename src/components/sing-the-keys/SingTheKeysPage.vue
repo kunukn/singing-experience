@@ -43,11 +43,6 @@ const speed = useLocalStorage<SpeedOption>(
 )
 if (!isSpeedOption(speed.value)) speed.value = DEFAULT_SPEED
 
-const isMelodyGuideEnabled = useLocalStorage(
-  'syng.singTheKeysMelodyGuide',
-  true,
-)
-
 const isBeatLinesEnabled = useLocalStorage('syng.singTheKeysBeatLines', true)
 const isPitchSnapEnabled = useLocalStorage('syng.singTheKeysPitchSnap', false)
 const isHitEffectsEnabled = useLocalStorage('syng.singTheKeysHitEffects', true)
@@ -71,19 +66,13 @@ const range = computed(() =>
  * notes still register, and a band around the keyboard span so a stray octave
  * or harmonic bypasses the smoothing instead of dragging the line.
  *
- * The mic profile follows the guide toggle. With the guide off nothing plays
- * while listening, so the fully raw stream (echo cancellation off) is safe and
- * detects sustained tones best. With the guide on, the speaker plays the exact
- * target pitch inside the exact scoring window, so echo cancellation has to
- * stay on or the guide scores itself — the self-test in
- * docs/research/grace-kelly-sing-detection-debug-2026-06-09.md hit 91% that
- * way. softRawAudio keeps EC on while still dropping noise suppression and AGC.
- * Read on each start(), so flipping the toggle takes effect on the next run. */
+ * The mic only opens for a scored run, and a scored run plays nothing — the
+ * melody is the ♪ preview's, with the mic closed. So the fully raw stream
+ * (echo cancellation off) is safe, and it detects sustained tones best. */
 const detection = usePitchDetection({
   onsetDebounceMs: 0,
   clarityThreshold: 0.6,
-  rawAudio: () => !isMelodyGuideEnabled.value,
-  softRawAudio: true,
+  rawAudio: true,
   bandMinFrequency: () => midiToFrequency(range.value.midiMin),
   bandMaxFrequency: () => midiToFrequency(range.value.midiMax),
 })
@@ -95,7 +84,6 @@ const detection = usePitchDetection({
     v-model:songId="songId"
     v-model:rangeOffset="rangeOffset"
     v-model:speed="speed"
-    v-model:isMelodyGuideEnabled="isMelodyGuideEnabled"
     v-model:isBeatLinesEnabled="isBeatLinesEnabled"
     v-model:isPitchSnapEnabled="isPitchSnapEnabled"
     v-model:isHitEffectsEnabled="isHitEffectsEnabled"

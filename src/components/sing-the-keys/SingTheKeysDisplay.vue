@@ -52,9 +52,6 @@ const props = defineProps<Props>()
 const songId = defineModel<SongId>('songId', { required: true })
 const rangeOffset = defineModel<number>('rangeOffset', { required: true })
 const speed = defineModel<SpeedOption>('speed', { required: true })
-const isMelodyGuideEnabled = defineModel<boolean>('isMelodyGuideEnabled', {
-  required: true,
-})
 /* Pulse lines falling with the blocks, so the beat is visible without a
  * metronome. Visual only, so it can be flipped mid-run. */
 const isBeatLinesEnabled = defineModel<boolean>('isBeatLinesEnabled', {
@@ -154,14 +151,16 @@ const isOnPitchForScore = computed(() => {
   )
 })
 
-/* Scoring is off while the melody guide plays. The guide tone is the exact
- * target pitch inside the exact scoring window: with echo cancellation off it
- * scores itself, and with echo cancellation on the canceller damps the
- * singer's own sustained tone as well, so neither mic profile gives an honest
- * number. Guide on is practice — the lane, key wash and sung line still work,
- * but no tally, result or confetti. */
-const isScored = computed(() => !isMelodyGuideEnabled.value)
-const isScoring = computed(() => isPlaying.value && isScored.value)
+/* Whether the current (or last) run is scored, fixed when it starts: Start is
+ * a scored run, ♪ a preview that plays the melody. The two never mix — the
+ * melody is the exact target pitch inside the exact scoring window: with echo
+ * cancellation off it scores itself, and with echo cancellation on the
+ * canceller damps the singer's own sustained tone as well, so neither mic
+ * profile gives an honest number. A preview keeps the lane and key wash, but
+ * has no tally, result or confetti, and the lane paints passed blocks from
+ * this so its unsung notes never turn red. */
+const isRunScored = ref(true)
+const isScoring = computed(() => isPlaying.value && isRunScored.value)
 
 /* The idle preview is cents-coloured like every program's. During a run green
  * must keep meaning "hit", and a snapped pitch is always 0¢ — both keep the
@@ -170,19 +169,9 @@ const isPreviewColoredByCents = computed(
   () => !isPlaying.value && !isPitchSnapEnabled.value,
 )
 
-/* Guide on means the next run is unscored practice, so the button says so —
- * even over a finished scored run's Play Again — and turns blue, leaving green
- * for the scored run. */
-const startLabel = computed(() => {
-  if (!isScored.value) return t('singTheKeys.preview')
-
-  return showResult.value ? t('generic.playAgain') : t('generic.start')
-})
-
-/* Whether the last run was scored, fixed at Start. The lane paints passed
- * blocks from this rather than the live toggle, so flipping Guide after a
- * practice run ends does not turn its unsung notes red. */
-const isRunScored = ref(isScored.value)
+const startLabel = computed(() =>
+  showResult.value ? t('generic.playAgain') : t('generic.start'),
+)
 
 const {
   reachedThreshold,
@@ -236,7 +225,7 @@ const { isPreviewEnabled } = useSettings()
 /* "See your voice" — the live pitch while idle, so the singer can find the
  * first key before pressing Start. Listens only while no run is playing, the
  * same split as Grace Kelly "Sing live": during a run the scoring mic draws the
- * line, and in practice mode nothing does. The setter keeps the shared setting
+ * line, and in a ♪ preview nothing does. The setter keeps the shared setting
  * writable, so useIdlePreview can flip it off when permission is denied; the
  * getter is always false on a simulated page, so the real mic never opens. */
 const isRealIdlePreviewEnabled = computed({
@@ -332,17 +321,17 @@ const laneHeight = computed(() =>
   ),
 )
 
-/* Open the mic first so a permission prompt never eats the lead-in, then
- * launch the timeline. In practice mode (guide on) the mic stays closed: with
- * the speaker playing the melody, the detected line whips between the guide
- * tone, the voice and their echo and only confuses — and nothing is scored.
- * Practice also skips the lead-in: it is get-ready time for a singer, and a
- * listener wants the melody at once. */
-async function startSinging() {
+/* A scored run opens the mic first, so a permission prompt never eats the
+ * lead-in, then launches the timeline in silence. A preview plays the melody
+ * and keeps the mic closed: with the speaker playing, the detected line whips
+ * between the melody, the voice and their echo and only confuses — and
+ * nothing is scored. It also skips the lead-in: that is get-ready time for a
+ * singer, and a listener wants the melody at once. */
+async function startRun(isScored: boolean) {
   showResult.value = false
   resetScore()
-  isRunScored.value = isScored.value
-  if (isScored.value) {
+  isRunScored.value = isScored
+  if (isScored) {
     await start()
     if (!isListening.value) return
   }
@@ -351,9 +340,17 @@ async function startSinging() {
     song: song.value,
     tonicMidi: tonicMidi.value,
     speed: speed.value,
-    isMelodyGuideEnabled: isMelodyGuideEnabled.value,
-    hasLeadIn: isScored.value,
+    isMelodyGuideEnabled: !isScored,
+    hasLeadIn: isScored,
   })
+}
+
+function startSinging() {
+  return startRun(true)
+}
+
+function startPreview() {
+  return startRun(false)
 }
 
 function stopSinging() {
@@ -368,7 +365,7 @@ watch(isPlaying, (playing) => {
 
 /* Simulated idle preview: the one detector runs between runs while the toggle
  * is on. Declared after the watcher above so a run ending stops, then restarts
- * it. A scored run keeps the detector it just started; practice mode closes it
+ * it. A scored run keeps the detector it just started; a preview closes it
  * like the real mic. */
 const isSimulatedIdlePreviewOn = computed(
   () =>
@@ -388,7 +385,7 @@ const { fireConfetti } = useConfettiStore()
 /* Reveal the result on a natural finish (never a manual stop) and celebrate
  * when enough notes were correct. */
 watch(isDone, (done) => {
-  if (!done || !isScored.value) return
+  if (!done || !isRunScored.value) return
 
   showResult.value = true
   if (reachedThreshold.value) fireConfetti()
@@ -439,7 +436,7 @@ onUnmounted(() => {
          and a focus ring on the toggle would otherwise lose its top edge. The
          Start/Stop buttons take the toggle's 35px height so the row is even. -->
     <EdgeFadeScroller
-      class="flex min-w-50 items-center justify-center-safe gap-2 pt-1 pb-2"
+      class="flex max-w-full min-w-50 items-center justify-center-safe gap-2 pt-1 pb-2"
     >
       <PrimeButton
         v-if="isPlaying"
@@ -467,7 +464,7 @@ onUnmounted(() => {
       <PrimeButton
         v-if="!isPlaying"
         class="min-h-8.75 min-w-20"
-        :severity="isScored ? 'success' : 'info'"
+        severity="success"
         size="small"
         rounded
         @click="startSinging"
@@ -475,13 +472,18 @@ onUnmounted(() => {
         {{ startLabel }}
       </PrimeButton>
 
-      <ToggleIconButton
-        v-model="isMelodyGuideEnabled"
-        iconOn="pi pi-volume-up"
-        iconOff="pi pi-volume-off"
-        :label="t('generic.melodyGuide')"
-        :disabled="isPlaying"
-      />
+      <PrimeButton
+        v-if="!isPlaying"
+        class="toggle-sequence-idle min-h-8.75 min-w-20"
+        severity="secondary"
+        size="small"
+        rounded
+        :aria-label="t('singTheKeys.preview')"
+        :title="t('singTheKeys.preview')"
+        @click="startPreview"
+      >
+        {{ t('generic.previewButton') }}
+      </PrimeButton>
 
       <PreviewToggle
         v-model="isPreviewEnabled"
@@ -569,3 +571,10 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped lang="css">
+.toggle-sequence-idle {
+  padding-block: 0;
+  font-size: 1.2rem;
+}
+</style>

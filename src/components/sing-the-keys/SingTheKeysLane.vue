@@ -40,7 +40,7 @@ type Props = {
   /* Cents-colour the sung line, matching the key track's line below it —
    * idle with Snap off. During a run green must keep meaning "hit". */
   shouldColorByCents?: boolean
-  /* False in practice mode (melody guide on): passed blocks go neutral rather
+  /* False in a ♪ preview (the melody plays): passed blocks go neutral rather
    * than red, since nothing was being judged. */
   isScored: boolean
   /* The lane is parked on the song's ending after a natural finish: every note
@@ -112,7 +112,7 @@ function statusOf(note: TimelineNote): NoteStatus {
  * decided, then green (hit) or red (passed unsung). A due block keeps the blue
  * on purpose — a third colour there read as "wrong, then right" on every note,
  * when the singer has simply not locked on yet. The key wash and hit line show
- * what is due. Passed blocks in practice mode go neutral: nothing was judged. */
+ * what is due. Passed blocks in a ♪ preview go neutral: nothing was judged. */
 const STATUS_CLASS: Record<NoteStatus, string> = {
   upcoming: 'bg-(--p-blue-400) text-(--p-surface-0)',
   active: 'bg-(--p-blue-400) text-(--p-surface-0)',
