@@ -24,7 +24,7 @@ vi.mock('@/composables/useTonePlayer', async (importOriginal) => {
       ...actual.useTonePlayer(),
       warmUp: vi.fn().mockResolvedValue(undefined),
       playToneAt: vi.fn(),
-      getNow: () => 0,
+      getImmediate: () => 0,
     }),
   }
 })

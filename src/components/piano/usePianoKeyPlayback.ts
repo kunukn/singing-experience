@@ -16,7 +16,7 @@ export function usePianoKeyPlayback(options: PianoKeyPlaybackOptions = {}) {
   /* playToneAt is polyphonic — it reuses the current mode's PolySynth and does
    * not cut the previous note, so several keys ring together (a chord). Bass
    * mode is a MonoSynth, so it stays monophonic there. */
-  const { playToneAt, warmUp, getNow } = useTonePlayer()
+  const { playToneAt, warmUp, getImmediate } = useTonePlayer()
 
   /* Press count per key — one entry per key ever pressed, so multiple keys can
    * be lit at once (multi-touch chords). The view keys its fade element on this
@@ -33,7 +33,9 @@ export function usePianoKeyPlayback(options: PianoKeyPlaybackOptions = {}) {
     /* warmUp resolves the AudioContext within the press gesture (cached after
      * the first press); playToneAt needs it running and doesn't self-start. */
     await warmUp()
-    playToneAt(midiToFrequency(midi), TONE_PLAY_DURATION_S, getNow())
+    /* getImmediate, not getNow: a press should sound at once, and getNow would
+     * add Tone's 100 ms look-ahead on top of the device's output latency. */
+    playToneAt(midiToFrequency(midi), TONE_PLAY_DURATION_S, getImmediate())
     options.onTonePlayed?.()
   }
 

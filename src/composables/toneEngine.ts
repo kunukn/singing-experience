@@ -17,6 +17,10 @@ export type ToneEngine = {
   playBellFeedback: (frequencyHz: number, durationS: number) => Promise<void>
   setToneMode: (mode: ToneMode) => void
   getNow: () => number
+  /* Audio-clock time without Tone's look-ahead. For live input (a pressed key),
+   * where nothing needs aligning and the look-ahead is pure latency; sequences
+   * should keep scheduling from getNow(). */
+  getImmediate: () => number
   scheduleDraw: (callback: () => void, whenS: number) => void
   cancelScheduled: (afterS?: number) => void
   /* (Re)builds a pool of `count` standalone monophonic voices for the current
@@ -514,6 +518,11 @@ export function createTonejsAdapter(): ToneEngine {
     return _tone ? _tone.now() : 0
   }
 
+  /** Returns the raw audio-clock time in seconds, skipping Tone's 100 ms look-ahead. */
+  function getImmediate(): number {
+    return _tone ? _tone.immediate() : 0
+  }
+
   /** Schedules a callback to fire at `whenS` (audio-clock seconds) inside Tone's draw loop. */
   function scheduleDraw(callback: () => void, whenS: number): void {
     if (!_tone) return
@@ -615,6 +624,7 @@ export function createTonejsAdapter(): ToneEngine {
     playBellFeedback,
     setToneMode,
     getNow,
+    getImmediate,
     scheduleDraw,
     cancelScheduled,
     setHarmonyVoiceCount,
