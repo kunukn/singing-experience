@@ -338,7 +338,6 @@
       "rowYourBoat": "Row, Row, Row Your Boat",
       "whenTheSaints": "When the Saints",
       "amazingGrace": "Amazing Grace",
-      "ohSusanna": "¡Oh, Susana!",
       "greensleeves": "Greensleeves",
       "mountainKing": "En la gruta del rey de la montaña",
       "habanera": "Habanera",
@@ -349,7 +348,13 @@
       "silentNight": "Noche de paz",
       "canCan": "Cancán",
       "williamTell": "Obertura de Guillermo Tell",
-      "swanLake": "El lago de los cisnes"
+      "swanLake": "El lago de los cisnes",
+      "pachelbelCanon": "Canon de Pachelbel",
+      "sakura": "Sakura Sakura",
+      "moLiHua": "Mo Li Hua",
+      "laCucaracha": "La cucaracha",
+      "korobeiniki": "Korobeiniki",
+      "lammaBada": "Lamma Bada Yatathanna"
     }
   },
   "notes": {

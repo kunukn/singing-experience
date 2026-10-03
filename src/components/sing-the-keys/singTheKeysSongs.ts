@@ -33,7 +33,6 @@ export const SONG_IDS = [
   'rowYourBoat',
   'whenTheSaints',
   'amazingGrace',
-  'ohSusanna',
   'greensleeves',
   'mountainKing',
   'habanera',
@@ -45,6 +44,12 @@ export const SONG_IDS = [
   'canCan',
   'williamTell',
   'swanLake',
+  'pachelbelCanon',
+  'sakura',
+  'moLiHua',
+  'laCucaracha',
+  'korobeiniki',
+  'lammaBada',
 ] as const
 
 export type SongId = (typeof SONG_IDS)[number]
@@ -581,40 +586,6 @@ const AMAZING_GRACE: Song = {
   ],
 }
 
-/* Oh! Susanna (Foster), verse — C major pentatonic, range a sixth, with a
- * two-eighth pickup into each line.
- * (C D) | E G G. (A) | G E C. (D) | E E D C | D–– (C D) |
- *         E G G. (A) | G E C. (D) | E E D D | C––– */
-const OH_SUSANNA_LINE: SongNote[] = [
-  note(0, 0.5),
-  note(2, 0.5),
-  note(4, 1),
-  note(7, 1),
-  note(7, 1.5),
-  note(9, 0.5),
-  note(7, 1),
-  note(4, 1),
-  note(0, 1.5),
-  note(2, 0.5),
-  note(4, 1),
-  note(4, 1),
-  note(2, 1),
-]
-const OH_SUSANNA: Song = {
-  id: 'ohSusanna',
-  difficulty: 'normal',
-  bpm: 100,
-  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 1 }, // 4/4
-  notes: [
-    ...OH_SUSANNA_LINE,
-    note(0, 1),
-    note(2, 3),
-    ...OH_SUSANNA_LINE,
-    note(2, 1),
-    note(0, 4),
-  ],
-}
-
 /* Greensleeves, first half — A minor in 6/8 with the lilting dotted figure.
  * The Dorian F♯ (+9) colours the opening and the cadence borrows G♯ and F♯
  * below the tonic. Offsets from A: E below = −5, F♯ below = −3, G = −2,
@@ -1112,6 +1083,272 @@ const SWAN_LAKE: Song = {
   ],
 }
 
+/* Pachelbel's Canon, the first two violin phrases — D major, all half notes
+ * stepping down from the third, then a closing low tonic that the canon itself
+ * never stops on. The tonic is the upper D, so most of the tune lies below it.
+ * Offsets from D: F♯ = 4, E = 2, C♯ = −1, B = −3, A = −5, G = −7, F♯, = −8,
+ * E, = −10, D, = −12.
+ * F♯ E | D C♯ | B A | B C♯ | D C♯ | B A | G F♯, | G E, | D,––– */
+const PACHELBEL_CANON: Song = {
+  id: 'pachelbelCanon',
+  difficulty: 'easy',
+  bpm: 100,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
+  notes: [
+    note(4, 2),
+    note(2, 2),
+    note(0, 2),
+    note(-1, 2),
+    note(-3, 2),
+    note(-5, 2),
+    note(-3, 2),
+    note(-1, 2),
+    note(0, 2),
+    note(-1, 2),
+    note(-3, 2),
+    note(-5, 2),
+    note(-7, 2),
+    note(-8, 2),
+    note(-7, 2),
+    note(-10, 2),
+    note(-12, 4),
+  ],
+}
+
+/* Sakura Sakura (Japan) — the in scale on E (E F A B C), which has no third
+ * and leans on its two semitones. The middle lines repeat the second and
+ * third, so they are left out to keep the tune under 30 s.
+ * Offsets from E: B below = −5, C below = −4, F = 1, A = 5, B = 7, C' = 8.
+ * A A B– | A A B– | A B C' B | A (B A) F– | E C, E F | E (E C,) B,– |
+ * A A B– | A A B– | E F (B A) F | E––– */
+const SAKURA_CALL: SongNote[] = [note(5, 1), note(5, 1), note(7, 2)]
+const SAKURA: Song = {
+  id: 'sakura',
+  difficulty: 'normal',
+  bpm: 84,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
+  notes: [
+    ...SAKURA_CALL,
+    ...SAKURA_CALL,
+    note(5, 1),
+    note(7, 1),
+    note(8, 1),
+    note(7, 1),
+    note(5, 1),
+    note(7, 0.5),
+    note(5, 0.5),
+    note(1, 2),
+    note(0, 1),
+    note(-4, 1),
+    note(0, 1),
+    note(1, 1),
+    note(0, 1),
+    note(0, 0.5),
+    note(-4, 0.5),
+    note(-5, 2),
+    ...SAKURA_CALL,
+    ...SAKURA_CALL,
+    note(0, 1),
+    note(1, 1),
+    note(7, 0.5),
+    note(5, 0.5),
+    note(1, 1),
+    note(0, 4),
+  ],
+}
+
+/* Mo Li Hua (Jasmine Flower, China), first four lines — C major pentatonic in
+ * 2/4, range an octave; the fourth line comes to rest on the tonic.
+ * Offsets from C: D = 2, E = 4, G = 7, A = 9, C' = 12.
+ * E (E G) | (A C')(C' A) | G (G A) | G– | and again |
+ * G G | G (E G) | A A | G– | E (D E) | G (E D) | C (C D) | C– */
+const MO_LI_HUA_OPENING: SongNote[] = [
+  note(4, 1),
+  note(4, 0.5),
+  note(7, 0.5),
+  note(9, 0.5),
+  note(12, 0.5),
+  note(12, 0.5),
+  note(9, 0.5),
+  note(7, 1),
+  note(7, 0.5),
+  note(9, 0.5),
+  note(7, 2),
+]
+const MO_LI_HUA: Song = {
+  id: 'moLiHua',
+  difficulty: 'normal',
+  bpm: 84,
+  meter: { pulseBeats: 1, pulsesPerBar: 2, pickupBeats: 0 }, // 2/4
+  notes: [
+    ...MO_LI_HUA_OPENING,
+    ...MO_LI_HUA_OPENING,
+    note(7, 1),
+    note(7, 1),
+    note(7, 1),
+    note(4, 0.5),
+    note(7, 0.5),
+    note(9, 1),
+    note(9, 1),
+    note(7, 2),
+    note(4, 1),
+    note(2, 0.5),
+    note(4, 0.5),
+    note(7, 1),
+    note(4, 0.5),
+    note(2, 0.5),
+    note(0, 1),
+    note(0, 0.5),
+    note(2, 0.5),
+    note(0, 2),
+  ],
+}
+
+/* La Cucaracha (Mexico), refrain — D major, a three-eighth pickup into every
+ * line and a 3 + 2 + 3 eighth bar: "ra" is a dotted quarter, "cha" a quarter.
+ * Offsets from D: A below = −5, B below = −3, C♯ below = −1, E = 2, F♯ = 4,
+ * G = 5, A = 7, B = 9.
+ * (A, A, A,) | D. F♯ (A, A, A,) | D. F♯–– | · D (D)(C♯ C♯)(B, B,) |
+ * A,– · (A, A, A,) | C♯. E (A, A, A,) | C♯. E–– | · A (B)(A G)(F♯ E) | D–– */
+const LA_CUCARACHA_PICKUP: SongNote[] = [
+  note(-5, 0.5),
+  note(-5, 0.5),
+  note(-5, 0.5),
+]
+const LA_CUCARACHA: Song = {
+  id: 'laCucaracha',
+  difficulty: 'normal',
+  bpm: 100,
+  // 4/4; the three-eighth pickup is a beat and a half
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 1.5 },
+  notes: [
+    ...LA_CUCARACHA_PICKUP,
+    note(0, 1.5),
+    note(4, 1),
+    ...LA_CUCARACHA_PICKUP,
+    note(0, 1.5),
+    note(4, 2.5, 0.5),
+    note(0, 1),
+    note(0, 0.5),
+    note(-1, 0.5),
+    note(-1, 0.5),
+    note(-3, 0.5),
+    note(-3, 0.5),
+    note(-5, 2, 0.5),
+    ...LA_CUCARACHA_PICKUP,
+    note(-1, 1.5),
+    note(2, 1),
+    ...LA_CUCARACHA_PICKUP,
+    note(-1, 1.5),
+    note(2, 2.5, 0.5),
+    note(7, 1),
+    note(9, 0.5),
+    note(7, 0.5),
+    note(5, 0.5),
+    note(4, 0.5),
+    note(2, 0.5),
+    note(0, 2.5),
+  ],
+}
+
+/* Korobeiniki (Russia), first strain — A minor, a brisk dance tune that
+ * falls from the fifth and then leaps to the upper tonic.
+ * Offsets from A: B = 2, C = 3, D = 5, E = 7, F = 8, G = 10, A' = 12.
+ * E (B C) D (C B) | A (A C) E (D C) | B. (C) D E | C A A– |
+ * D. (F) A' (G F) | E. (C) E (D C) | B (B C) D E | C A A– */
+const KOROBEINIKI_CADENCE: SongNote[] = [note(3, 1), note(0, 1), note(0, 2)]
+const KOROBEINIKI: Song = {
+  id: 'korobeiniki',
+  difficulty: 'hard',
+  bpm: 120,
+  // 4/4 felt in two, as Jingle Bells: a quarter pulse would flash too fast
+  meter: { pulseBeats: 2, pulsesPerBar: 2, pickupBeats: 0 },
+  notes: [
+    note(7, 1),
+    note(2, 0.5),
+    note(3, 0.5),
+    note(5, 1),
+    note(3, 0.5),
+    note(2, 0.5),
+    note(0, 1),
+    note(0, 0.5),
+    note(3, 0.5),
+    note(7, 1),
+    note(5, 0.5),
+    note(3, 0.5),
+    note(2, 1.5),
+    note(3, 0.5),
+    note(5, 1),
+    note(7, 1),
+    ...KOROBEINIKI_CADENCE,
+    note(5, 1.5),
+    note(8, 0.5),
+    note(12, 1),
+    note(10, 0.5),
+    note(8, 0.5),
+    note(7, 1.5),
+    note(3, 0.5),
+    note(7, 1),
+    note(5, 0.5),
+    note(3, 0.5),
+    note(2, 1),
+    note(2, 0.5),
+    note(3, 0.5),
+    note(5, 1),
+    note(7, 1),
+    ...KOROBEINIKI_CADENCE,
+  ],
+}
+
+/* Lamma Bada Yatathanna (Arabic muwashshah), first three bars — maqam
+ * Nahawand on G, which is G minor with a raised leading tone (F♯), in the
+ * 10/8 samai rhythm. The next bars fall an octave lower, a span of 20
+ * semitones and wider than the keyboard fits on a phone
+ * (KEYBOARD_MIN_SEMITONE_UNIT), so the excerpt closes on the third bar's
+ * tonic instead. Offsets from G: D below = −5, F♯ below = −1, A = 2, B♭ = 3,
+ * C = 5, D = 7.
+ * (D,) | G– (A B♭)(C B♭ B♭ A)(A G G F♯) G– D, | G– (A B♭)(C B♭ B♭ A)
+ * (A G G F♯) G– (A B♭) | C– D B♭. (A)(A G G F♯) G–– */
+const LAMMA_BADA_OPENING: SongNote[] = [
+  note(0, 1),
+  note(2, 0.25),
+  note(3, 0.25),
+  note(5, 0.25),
+  note(3, 0.25),
+  note(3, 0.25),
+  note(2, 0.25),
+  note(2, 0.25),
+  note(0, 0.25),
+  note(0, 0.25),
+  note(-1, 0.25),
+  note(0, 1),
+]
+const LAMMA_BADA: Song = {
+  id: 'lammaBada',
+  difficulty: 'hard',
+  bpm: 50,
+  /* 10/8 felt on the eighth, as Für Elise: the samai's 3 + 2 + 2 + 3 grouping
+   * has no even pulse a bar could be split into. The pickup is one eighth. */
+  meter: { pulseBeats: 0.5, pulsesPerBar: 10, pickupBeats: 0.5 },
+  notes: [
+    note(-5, 0.5),
+    ...LAMMA_BADA_OPENING,
+    note(-5, 0.5),
+    ...LAMMA_BADA_OPENING,
+    note(2, 0.25),
+    note(3, 0.25),
+    note(5, 1),
+    note(7, 0.5),
+    note(3, 0.75),
+    note(2, 0.25),
+    note(2, 0.25),
+    note(0, 0.25),
+    note(0, 0.25),
+    note(-1, 0.25),
+    note(0, 1.5),
+  ],
+}
+
 export const SONGS: Record<SongId, Song> = {
   twinkle: TWINKLE,
   odeToJoy: ODE_TO_JOY,
@@ -1124,7 +1361,6 @@ export const SONGS: Record<SongId, Song> = {
   rowYourBoat: ROW_YOUR_BOAT,
   whenTheSaints: WHEN_THE_SAINTS,
   amazingGrace: AMAZING_GRACE,
-  ohSusanna: OH_SUSANNA,
   greensleeves: GREENSLEEVES,
   mountainKing: MOUNTAIN_KING,
   habanera: HABANERA,
@@ -1136,6 +1372,12 @@ export const SONGS: Record<SongId, Song> = {
   canCan: CAN_CAN,
   williamTell: WILLIAM_TELL,
   swanLake: SWAN_LAKE,
+  pachelbelCanon: PACHELBEL_CANON,
+  sakura: SAKURA,
+  moLiHua: MO_LI_HUA,
+  laCucaracha: LA_CUCARACHA,
+  korobeiniki: KOROBEINIKI,
+  lammaBada: LAMMA_BADA,
 }
 
 export type SongDifficultyGroup = {
