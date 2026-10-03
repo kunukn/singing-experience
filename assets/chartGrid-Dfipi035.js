@@ -1,0 +1,1 @@
+function e(e){return e>=550?12:e>=400?8:4}function t(t,n,r){let i=Math.max(1,Math.round((n-t)/e(r))),a=[];for(let e=t;e<=n;e+=i)a.push(e);let o=a[a.length-1];return o===n||(a.length>1&&n-o<i*.6?a[a.length-1]=n:a.push(n)),a}function n(e,t){return 16+(t.height-16-16)*(1-(e-t.midiMin)/(t.midiMax-t.midiMin))}export{n,t};

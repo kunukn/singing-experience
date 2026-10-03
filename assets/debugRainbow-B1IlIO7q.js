@@ -1,0 +1,1 @@
+function e(){setTimeout(()=>{if(!document.getElementById(`rainbow-debugger`)){let e=document.createElement(`script`);e.id=`rainbow-debugger`,e.src=`/singing-experience/rainbow.js`,e.addEventListener(`load`,()=>{console.debug(`*** Rainbow CSS debugging loaded`)}),document.body.appendChild(e)}},0)}export{e as initDebugRainbow};
