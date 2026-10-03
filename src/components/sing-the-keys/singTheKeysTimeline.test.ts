@@ -1,6 +1,9 @@
 import { describe, expect, test } from 'vitest'
+import { pianoSpanUnits } from '@/components/piano/pianoLayout'
+import { PREVIEW_EDGE_GUTTER_PX } from '@/components/piano/pianoPreview'
+import { START_TONE_OPTIONS } from '@/utils/noteUtils'
 import type { Song } from './singTheKeysSongs'
-import { SONGS } from './singTheKeysSongs'
+import { SONG_IDS, SONGS, tonicMidiForRange } from './singTheKeysSongs'
 import {
   activeNoteIndexAt,
   BEAT_FLASH_MS,
@@ -9,6 +12,7 @@ import {
   buildTimeline,
   ENDING_GLIDE_MS,
   endingLaneMsAt,
+  KEYBOARD_MIN_SEMITONE_UNIT,
   laneEndViewMs,
   LOOKAHEAD_MS,
   songMidiRange,
@@ -238,6 +242,31 @@ describe('songMidiRange', () => {
       midiMax: 62,
     })
   })
+})
+
+describe('KEYBOARD_MIN_SEMITONE_UNIT', () => {
+  /* px — the narrowest iPhone (SE, mini), less the page's 16px padding and
+   * the keyboard's line gutter on each side. */
+  const NARROWEST_IPHONE_KEYBOARD_WIDTH =
+    375 - 2 * 16 - 2 * PREVIEW_EDGE_GUTTER_PX
+
+  /* The rule rather than today's numbers: a wider song has to lower the floor
+   * or it scrolls on a phone. */
+  test.each(SONG_IDS)(
+    'lets the %s keyboard fit the narrowest iPhone in every range',
+    (id) => {
+      for (const { offset } of START_TONE_OPTIONS) {
+        const { midiMin, midiMax } = songMidiRange(
+          SONGS[id],
+          tonicMidiForRange(SONGS[id], offset),
+        )
+
+        expect(
+          pianoSpanUnits(midiMin, midiMax) * KEYBOARD_MIN_SEMITONE_UNIT,
+        ).toBeLessThanOrEqual(NARROWEST_IPHONE_KEYBOARD_WIDTH)
+      }
+    },
+  )
 })
 
 describe('laneEndViewMs', () => {

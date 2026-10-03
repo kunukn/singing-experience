@@ -19,7 +19,11 @@ import {
   type SongId,
   type SpeedOption,
 } from './singTheKeysSongs'
-import { beatFlashAt, songMidiRange } from './singTheKeysTimeline'
+import {
+  beatFlashAt,
+  KEYBOARD_MIN_SEMITONE_UNIT,
+  songMidiRange,
+} from './singTheKeysTimeline'
 import { useSingTheKeys } from './useSingTheKeys'
 
 type PitchDetectionInput = {
@@ -530,6 +534,7 @@ onUnmounted(() => {
         :targetMidi="targetMidi"
         :isTargetCorrect="isTargetCorrect"
         :isPressGlowBlockShaped="true"
+        :minSemitoneUnit="KEYBOARD_MIN_SEMITONE_UNIT"
       >
         <template #lane="{ layout, playKey }">
           <SingTheKeysLane

@@ -203,6 +203,16 @@ export function endingLaneMsAt(
   }
 }
 
+/*
+ * px per semitone the keyboard may shrink to, on touch as well (it replaces
+ * PianoDisplay's tap-target floor): here the keys are a target to aim at, and
+ * tapping one only plays a reference tone, so the whole board on screen beats
+ * a full tap target. Sized for the narrowest iPhone: 375px leaves 335px for
+ * the keys, and the widest keyboard (Für Elise, 21 semitone units) fits at
+ * 335 / 21 = 15.95. Narrower screens scroll.
+ */
+export const KEYBOARD_MIN_SEMITONE_UNIT = 15
+
 /* Keyboard span for a transposed song: one semitone of margin on each side so
  * the end notes have a neighbouring hint line, then widened outward to a
  * natural note so the keyboard starts and ends on a white key. */

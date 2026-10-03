@@ -1,9 +1,15 @@
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import { createPinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
 import PianoDisplay from './PianoDisplay.vue'
+import {
+  MIN_SEMITONE_UNIT_POINTER,
+  buildPianoLayout,
+  pianoNoteBlockSpan,
+} from './pianoLayout'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
 
@@ -31,6 +37,21 @@ function pxOf(style: string | undefined, property: string): number {
 
 /* C4–G4 — a short board; enough keys to tell the target from its neighbours. */
 const RANGE = { midiMin: 60, midiMax: 67 }
+
+/* The board the display draws for RANGE here: happy-dom never measures the
+ * container and reports a fine pointer, so the keys sit at that floor.
+ * Expected positions are read from this layout rather than written out in px,
+ * so they follow the floor and the key proportions if either changes. */
+const LAYOUT = buildPianoLayout(
+  RANGE.midiMin,
+  RANGE.midiMax,
+  MIN_SEMITONE_UNIT_POINTER,
+)
+const E4 = 64
+const F4 = 65
+const E4_BLOCK = pianoNoteBlockSpan(LAYOUT, E4)
+/* px — where the E4 and F4 key faces meet. */
+const E_F_EDGE = LAYOUT.whites.find((key) => key.midi === F4)!.leftPx
 
 function mountDisplay(
   props: Partial<InstanceType<typeof PianoDisplay>['$props']> = {},
@@ -91,18 +112,17 @@ describe('PianoDisplay - target key', () => {
     ).toBe('correct')
   })
 
-  /* Unit 24 (no container width in happy-dom). E4's pitch sits 4.5 units in
-   * from the C4 key's outer edge (C4 − ½), so the 1.24-unit (black-key wide)
-   * block is centred on 108px: 93.12px → 122.88px, past the E key's own right
-   * edge at 120px. */
+  /* The block is centred on E4's pitch, not on its key face, so it runs past
+   * the key's right edge. */
   test('should wash a white target in the falling block shape', () => {
-    const wrapper = mountDisplay({ targetMidi: 64 })
+    const wrapper = mountDisplay({ targetMidi: E4 })
 
     const style = wrapper
       .get('[data-testid="piano-target-wash"]')
       .attributes('style')
-    expect(style).toContain('inset-inline-start: 93.12px')
-    expect(style).toContain('width: 29.76px')
+    expect(pxOf(style, 'inset-inline-start')).toBeCloseTo(E4_BLOCK.leftPx, 5)
+    expect(pxOf(style, 'width')).toBeCloseTo(E4_BLOCK.widthPx, 5)
+    expect(E4_BLOCK.leftPx + E4_BLOCK.widthPx).toBeGreaterThan(E_F_EDGE)
   })
 
   /* Same E4 block as the target wash above — the full block, overhang past
@@ -115,12 +135,12 @@ describe('PianoDisplay - target key', () => {
     const style = wrapper
       .get('[data-testid="piano-key-glow"][data-midi="64"]')
       .attributes('style')
-    expect(pxOf(style, 'inset-inline-start')).toBeCloseTo(93.12, 5)
-    expect(pxOf(style, 'width')).toBeCloseTo(29.76, 5)
+    expect(pxOf(style, 'inset-inline-start')).toBeCloseTo(E4_BLOCK.leftPx, 5)
+    expect(pxOf(style, 'width')).toBeCloseTo(E4_BLOCK.widthPx, 5)
   })
 
   /* E4 and F4 blocks overhang their shared edge by the same amount, so the
-   * two glows mirror each other around it (E/F edge at 120px). */
+   * two glows mirror each other around it. */
   test('should overhang the E/F edge equally from both sides', async () => {
     const wrapper = mountDisplay({ isPressGlowBlockShaped: true })
 
@@ -134,8 +154,9 @@ describe('PianoDisplay - target key', () => {
       .get('[data-testid="piano-key-glow"][data-midi="65"]')
       .attributes('style')
     const eOverhang =
-      pxOf(eStyle, 'inset-inline-start') + pxOf(eStyle, 'width') - 120
-    const fOverhang = 120 - pxOf(fStyle, 'inset-inline-start')
+      pxOf(eStyle, 'inset-inline-start') + pxOf(eStyle, 'width') - E_F_EDGE
+    const fOverhang = E_F_EDGE - pxOf(fStyle, 'inset-inline-start')
+    expect(eOverhang).toBeGreaterThan(0)
     expect(eOverhang).toBeCloseTo(fOverhang, 5)
   })
 
@@ -158,5 +179,103 @@ describe('PianoDisplay - target key', () => {
     expect(wrapper.find('[data-testid="piano-target-wash"]').exists()).toBe(
       false,
     )
+  })
+})
+
+/* A2–C4, the board Sing the Keys draws for Row, Row, Row Your Boat: 17 semitone
+ * units wide. */
+const WIDE_RANGE = { midiMin: 45, midiMax: 60 }
+
+/* px — an iPhone 16's 393px, less the page padding and the line gutters. */
+const PHONE_CONTAINER_WIDTH = 353
+
+const SIZE_PROBE = `<template #lane="{ layout }">
+  <div data-testid="lane-probe" :data-unit="layout.unit" :data-total-width="layout.totalWidth" />
+</template>`
+
+describe('PianoDisplay - key sizing', () => {
+  /* happy-dom never lays anything out, so the container width is fed in
+   * through the observer the display fits its keys from. */
+  let reportContainerWidth: (width: number) => Promise<void>
+
+  beforeEach(() => {
+    const callbacks: ResizeObserverCallback[] = []
+
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: ResizeObserverCallback) {
+          callbacks.push(callback)
+        }
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+      },
+    )
+
+    reportContainerWidth = async (width) => {
+      for (const callback of callbacks) {
+        callback(
+          [{ contentRect: { width } } as ResizeObserverEntry],
+          {} as ResizeObserver,
+        )
+      }
+      await nextTick()
+    }
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+  })
+
+  function mountSized(
+    props: Partial<InstanceType<typeof PianoDisplay>['$props']> = {},
+  ) {
+    const wrapper = mountDisplay(
+      { ...WIDE_RANGE, ...props },
+      { lane: SIZE_PROBE },
+    )
+
+    return {
+      unit: () =>
+        Number(
+          wrapper.get('[data-testid="lane-probe"]').attributes('data-unit'),
+        ),
+      totalWidth: () =>
+        Number(
+          wrapper
+            .get('[data-testid="lane-probe"]')
+            .attributes('data-total-width'),
+        ),
+    }
+  }
+
+  test('should start at the pointer floor before the container is measured', () => {
+    expect(mountSized().unit()).toBe(MIN_SEMITONE_UNIT_POINTER)
+  })
+
+  test('should start at the given floor before the container is measured', () => {
+    expect(mountSized({ minSemitoneUnit: 14 }).unit()).toBe(14)
+  })
+
+  /* 353 / 17 units = 20.76, floored to 20: a 340px board. */
+  test('should shrink the keys to fit a narrow container when given a lower floor', async () => {
+    const board = mountSized({ minSemitoneUnit: 14 })
+
+    await reportContainerWidth(PHONE_CONTAINER_WIDTH)
+
+    expect(board.unit()).toBe(20)
+    expect(board.totalWidth()).toBeLessThanOrEqual(PHONE_CONTAINER_WIDTH)
+  })
+
+  /* Held at the floor: a board wider than the screen, which scrolls as on
+   * the piano page. */
+  test('should stop at the pointer floor in a narrow container by default', async () => {
+    const board = mountSized()
+
+    await reportContainerWidth(PHONE_CONTAINER_WIDTH)
+
+    expect(board.unit()).toBe(MIN_SEMITONE_UNIT_POINTER)
+    expect(board.totalWidth()).toBeGreaterThan(PHONE_CONTAINER_WIDTH)
   })
 })

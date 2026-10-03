@@ -82,6 +82,10 @@ type Props = {
   /* In 'simple' mode, keep the octave on the C keys (C3, D, E… C4) so the
    * other bare names can be placed by counting from the nearest C. */
   isOctaveShownOnC?: boolean
+  /* px per semitone the keys may shrink to, replacing the pointer-type floor
+   * (see semitoneUnit). For a board that is looked at more than played — Sing
+   * the Keys, where fitting the screen matters more than a full tap target. */
+  minSemitoneUnit?: number
 }
 const props = defineProps<Props>()
 
@@ -285,11 +289,13 @@ useResizeObserver(scrollBox, ([entry]) => {
 const isCoarsePointer = useMediaQuery('(pointer: coarse)')
 
 /* Grow the keys to fill the container, bounded by a tap-target floor (larger on
- * touch) and a life-size ceiling. Wide ranges hit the floor and scroll. */
+ * touch, unless the parent sets its own) and a life-size ceiling. Wide ranges
+ * hit the floor and scroll. */
 const semitoneUnit = computed(() => {
-  const minUnit = isCoarsePointer.value
+  const pointerMinUnit = isCoarsePointer.value
     ? MIN_SEMITONE_UNIT_TOUCH
     : MIN_SEMITONE_UNIT_POINTER
+  const minUnit = props.minSemitoneUnit ?? pointerMinUnit
   /* Before the first ResizeObserver callback there is nothing to fit to. */
   if (!containerWidth.value) return minUnit
 
