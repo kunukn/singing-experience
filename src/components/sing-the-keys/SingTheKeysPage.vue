@@ -44,6 +44,7 @@ const speed = useLocalStorage<SpeedOption>(
 if (!isSpeedOption(speed.value)) speed.value = DEFAULT_SPEED
 
 const isBeatLinesEnabled = useLocalStorage('syng.singTheKeysBeatLines', true)
+const isMetronomeEnabled = useLocalStorage('syng.singTheKeysMetronome', false)
 const isPitchSnapEnabled = useLocalStorage('syng.singTheKeysPitchSnap', false)
 const isHitEffectsEnabled = useLocalStorage('syng.singTheKeysHitEffects', true)
 /* Its own key, not the piano's syng.pianoKeyboardHints: here the chips share
@@ -66,9 +67,12 @@ const range = computed(() =>
  * notes still register, and a band around the keyboard span so a stray octave
  * or harmonic bypasses the smoothing instead of dragging the line.
  *
- * The mic only opens for a scored run, and a scored run plays nothing — the
- * melody is the ♪ preview's, with the mic closed. So the fully raw stream
- * (echo cancellation off) is safe, and it detects sustained tones best. */
+ * The mic only opens for a scored run, and a scored run plays no melody — that
+ * is the ♪ preview's, with the mic closed. So the fully raw stream (echo
+ * cancellation off) is safe, and it detects sustained tones best. The one
+ * sound a scored run can make is the metronome: a 30 ms thud landing on C1,
+ * an octave under the detector's 60 Hz floor. Through a loudspeaker the mic
+ * can still catch it, so the display masks it out — see useMetronomeMask. */
 const detection = usePitchDetection({
   onsetDebounceMs: 0,
   clarityThreshold: 0.6,
@@ -85,6 +89,7 @@ const detection = usePitchDetection({
     v-model:rangeOffset="rangeOffset"
     v-model:speed="speed"
     v-model:isBeatLinesEnabled="isBeatLinesEnabled"
+    v-model:isMetronomeEnabled="isMetronomeEnabled"
     v-model:isPitchSnapEnabled="isPitchSnapEnabled"
     v-model:isHitEffectsEnabled="isHitEffectsEnabled"
     v-model:areKeyboardHintsVisible="areKeyboardHintsVisible"

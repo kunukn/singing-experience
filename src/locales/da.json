@@ -49,6 +49,7 @@
     "sparkles": "Gnister",
     "scoreCorrect": "{percent}% rigtigt",
     "beat": "Takt",
+    "metronome": "Metronom",
     "sing": "Syng"
   },
   "errors": {

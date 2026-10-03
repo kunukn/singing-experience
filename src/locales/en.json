@@ -49,6 +49,7 @@
     "sparkles": "Sparkles",
     "scoreCorrect": "{percent}% correct",
     "beat": "Beat",
+    "metronome": "Metronome",
     "sing": "Sing"
   },
   "errors": {

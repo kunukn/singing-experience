@@ -8,7 +8,7 @@ import {
   type Mock,
 } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { defineComponent, nextTick } from 'vue'
+import { defineComponent, nextTick, ref } from 'vue'
 import { createMockToneEngine } from '@/composables/toneEngine.mock'
 import { midiToFrequency } from '@/utils/noteUtils'
 import type { Song } from './singTheKeysSongs'
@@ -37,20 +37,24 @@ const SONG_START_S = TONE_START_S + LOOKAHEAD_MS / 1000
 
 /* useMachine starts its actor in onMounted, so the composable has to live in a
  * mounted component for the phase to move. */
-function createGame(nowS = { value: 0 }) {
-  const engine = createMockToneEngine({ getNow: vi.fn(() => nowS.value) })
+function createGame(nowS = { value: 0 }, isMetronomeEnabled = ref(false)) {
+  /* One clock for both: the mock has no look-ahead between them. */
+  const engine = createMockToneEngine({
+    getNow: vi.fn(() => nowS.value),
+    getImmediate: vi.fn(() => nowS.value),
+  })
   let game!: ReturnType<typeof useSingTheKeys>
   mount(
     defineComponent({
       setup() {
-        game = useSingTheKeys({ toneEngine: engine })
+        game = useSingTheKeys({ toneEngine: engine, isMetronomeEnabled })
 
         return () => null
       },
     }),
   )
 
-  return { engine, game, nowS }
+  return { engine, game, nowS, isMetronomeEnabled }
 }
 
 function startParams(isMelodyGuideEnabled = true) {
@@ -98,14 +102,6 @@ describe('useSingTheKeys', () => {
     await game.start(startParams(false))
 
     expect(engine.playToneAt).not.toHaveBeenCalled()
-  })
-
-  test('should play no metronome clicks', async () => {
-    const { engine, game } = createGame()
-
-    await game.start(startParams(false))
-
-    expect(engine.playClickAt).not.toHaveBeenCalled()
   })
 
   test('should start in the lead-in and track the audio clock each frame', async () => {
@@ -276,6 +272,144 @@ describe('useSingTheKeys', () => {
 
     expect(game.noteDurationsMs.value).toEqual([600, 300, 1200])
     expect(game.isIdle.value).toBe(true)
+  })
+})
+
+/* The song has a beat line every 600 ms, from −3000 (the lead-in) to 2400 (its
+ * end). Each is queued once the clock is within 100 ms of it; one animation
+ * frame (20 ms of fake time) runs the check. */
+describe('useSingTheKeys - metronome', () => {
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  test('should play no thuds when the metronome is off', async () => {
+    const { engine, game, nowS } = createGame()
+
+    await game.start(startParams(false))
+    nowS.value = SONG_START_S + 0.55
+    vi.advanceTimersByTime(20)
+
+    expect(engine.playThudAt).not.toHaveBeenCalled()
+  })
+
+  test('should thud on each lead-in beat line as the clock reaches it', async () => {
+    const { engine, game, nowS } = createGame({ value: 0 }, ref(true))
+
+    await game.start(startParams(false))
+
+    /* The lead-in's first line is due at once. */
+    expect(engine.playThudAt).toHaveBeenCalledTimes(1)
+    expect(engine.playThudAt).toHaveBeenNthCalledWith(
+      1,
+      expect.closeTo(TONE_START_S, 5),
+    )
+
+    nowS.value = TONE_START_S + 0.55
+    vi.advanceTimersByTime(20)
+
+    expect(engine.playThudAt).toHaveBeenCalledTimes(2)
+    expect(engine.playThudAt).toHaveBeenNthCalledWith(
+      2,
+      expect.closeTo(TONE_START_S + 0.6, 5),
+    )
+  })
+
+  test('should skip the beat lines before the start in a run without lead-in', async () => {
+    const { engine, game } = createGame({ value: 0 }, ref(true))
+
+    await game.start({ ...startParams(true), hasLeadIn: false })
+
+    /* Only the line under the first note; the five lead-in lines are past. */
+    expect(engine.playThudAt).toHaveBeenCalledTimes(1)
+    expect(engine.playThudAt).toHaveBeenCalledWith(
+      expect.closeTo(TONE_START_S, 5),
+    )
+  })
+
+  test('should start and stop thudding when toggled mid-run', async () => {
+    const { engine, game, nowS, isMetronomeEnabled } = createGame()
+
+    await game.start(startParams(false))
+    nowS.value = TONE_START_S + 0.55
+    vi.advanceTimersByTime(20)
+    expect(engine.playThudAt).not.toHaveBeenCalled()
+
+    isMetronomeEnabled.value = true
+    nowS.value = TONE_START_S + 1.15
+    vi.advanceTimersByTime(20)
+
+    /* It joins at the next line, not at the ones that passed while off. */
+    expect(engine.playThudAt).toHaveBeenCalledTimes(1)
+    expect(engine.playThudAt).toHaveBeenCalledWith(
+      expect.closeTo(TONE_START_S + 1.2, 5),
+    )
+
+    isMetronomeEnabled.value = false
+    nowS.value = TONE_START_S + 1.75
+    vi.advanceTimersByTime(20)
+
+    expect(engine.playThudAt).toHaveBeenCalledTimes(1)
+  })
+
+  test('should flag the thud as sounding for 220 ms from when it starts', async () => {
+    const { game, nowS } = createGame({ value: 0 }, ref(true))
+
+    await game.start(startParams(false))
+    expect(game.isMetronomeSounding.value).toBe(false)
+
+    /* The first thud is at TONE_START_S. */
+    nowS.value = TONE_START_S + 0.1
+    vi.advanceTimersByTime(20)
+    expect(game.isMetronomeSounding.value).toBe(true)
+
+    nowS.value = TONE_START_S + 0.3
+    vi.advanceTimersByTime(20)
+    expect(game.isMetronomeSounding.value).toBe(false)
+  })
+
+  test('should never flag a thud while the metronome is off', async () => {
+    const { game, nowS } = createGame()
+
+    await game.start(startParams(false))
+    nowS.value = TONE_START_S + 0.1
+    vi.advanceTimersByTime(20)
+
+    expect(game.isMetronomeSounding.value).toBe(false)
+  })
+
+  test('should drop the flag on stop', async () => {
+    const { game, nowS } = createGame({ value: 0 }, ref(true))
+
+    await game.start(startParams(false))
+    nowS.value = TONE_START_S + 0.1
+    vi.advanceTimersByTime(20)
+    game.stop()
+
+    expect(game.isMetronomeSounding.value).toBe(false)
+  })
+
+  test('should not thud on the closing line at the end of the song', async () => {
+    const { engine, game, nowS } = createGame({ value: 0 }, ref(true))
+
+    await game.start({ ...startParams(false), hasLeadIn: false })
+    nowS.value = TONE_START_S + 1.75
+    vi.advanceTimersByTime(20)
+
+    /* The last line inside the song, at 1800 ms, still sounds. */
+    expect(engine.playThudAt).toHaveBeenLastCalledWith(
+      expect.closeTo(TONE_START_S + 1.8, 5),
+    )
+    const callsBeforeEnd = (engine.playThudAt as Mock).mock.calls.length
+
+    nowS.value = TONE_START_S + 2.35
+    vi.advanceTimersByTime(20)
+
+    expect(engine.playThudAt).toHaveBeenCalledTimes(callsBeforeEnd)
   })
 })
 

@@ -14,6 +14,9 @@ export type ToneEngine = {
   /* Schedules a short metronome click at a precise audio-clock time. `accent`
    * marks a bar downbeat (octave-higher, louder). Tone-mode independent. */
   playClickAt: (whenS: number, accent: boolean) => void
+  /* Schedules a short, deep metronome thud at a precise audio-clock time. Always
+   * the same sound: no accent, tone-mode independent. */
+  playThudAt: (whenS: number) => void
   playBellFeedback: (frequencyHz: number, durationS: number) => Promise<void>
   setToneMode: (mode: ToneMode) => void
   getNow: () => number
@@ -150,6 +153,8 @@ export function createTonejsAdapter(): ToneEngine {
   /* Dedicated metronome click voice — independent of the selected tone mode so
    * the beat sounds the same whatever instrument is chosen. */
   let clickSynth: ToneType.Synth | null = null
+  /* Dedicated deep metronome voice — a kick-style thud, see getThudSynth. */
+  let thudSynth: ToneType.MembraneSynth | null = null
   /* Harmony voice pool — one standalone monophonic synth per melodic line,
    * routed through a shared limiter. Built on demand by setHarmonyVoiceCount()
    * and disposed by cancelScheduled(). Keeps polyphony bounded to the number of
@@ -454,6 +459,48 @@ export function createTonejsAdapter(): ToneEngine {
     if (endS > scheduledUntilS) scheduledUntilS = endS
   }
 
+  /** Returns the dedicated deep metronome synth (lazy init). */
+  function getThudSynth(): ToneType.MembraneSynth {
+    if (!thudSynth) {
+      /*
+       * A kick-style thud rather than a plain low tone: the pitch starts
+       * `octaves` times above the note (a frequency multiplier in Tone, so
+       * 8 × C1 = C4) and drops to it within pitchDecay. Small speakers cannot
+       * reproduce C1 (33 Hz) itself; the drop is what makes the beat audible
+       * on a phone or tablet while still reading as deep.
+       *
+       * It sounds while a mic may be listening (Sing the Keys), so two things
+       * keep the pitch detector off it. C1 lies an octave under the detector's
+       * floor (MIN_FREQUENCY, 60 Hz, in usePitchDetection). And it is over in
+       * 30 ms: at Tone's default 0.4 s decay the detector locks onto the tail.
+       * Neither is a guarantee through a loudspeaker — a room can make it ring
+       * — so a caller with an open mic should mask it too (useMetronomeMask).
+       */
+      thudSynth = new _tone!.MembraneSynth({
+        pitchDecay: 0.01, // s — the drop is over before the thud has faded
+        octaves: 8, // the most Tone allows
+        oscillator: { type: 'sine' },
+        /* Percussive: near-instant attack, gone within 30 ms, no sustain. The
+         * decay is exponential, so most of it is over in the first 10 ms. */
+        envelope: { attack: 0.001, decay: 0.03, sustain: 0, release: 0.01 },
+        volume: -3, // dB — low tones sound quieter, so louder than the click
+      }).toDestination()
+    }
+
+    return thudSynth
+  }
+
+  /** Schedules a short, deep metronome thud at a precise audio-clock time. */
+  function playThudAt(whenS: number): void {
+    if (!_tone) return
+
+    const durationS = 0.03 // 30 ms — matches the envelope decay
+    getThudSynth().triggerAttackRelease('C1', durationS, whenS)
+
+    const endS = whenS + durationS
+    if (endS > scheduledUntilS) scheduledUntilS = endS
+  }
+
   /** Disposes every harmony voice and the shared limiter, resetting the pool. */
   function disposeHarmonyVoices(): void {
     for (const voice of harmonyVoices) {
@@ -555,7 +602,12 @@ export function createTonejsAdapter(): ToneEngine {
      * on the next playback.
      */
     const disposeAndClear = (
-      synth: ToneType.PolySynth | ToneType.MonoSynth | ToneType.Synth | null,
+      synth:
+        | ToneType.PolySynth
+        | ToneType.MonoSynth
+        | ToneType.Synth
+        | ToneType.MembraneSynth
+        | null,
     ) => {
       if (!synth) return
 
@@ -573,6 +625,7 @@ export function createTonejsAdapter(): ToneEngine {
     disposeAndClear(tuningSynth2)
     disposeAndClear(bassSynth)
     disposeAndClear(clickSynth)
+    disposeAndClear(thudSynth)
     bellSynth = null
     keyboardSynth = null
     squareSynth = null
@@ -580,6 +633,7 @@ export function createTonejsAdapter(): ToneEngine {
     tuningSynth2 = null
     bassSynth = null
     clickSynth = null
+    thudSynth = null
     lastTriggeredSynth = null
     isPlaying.value = false
   }
@@ -621,6 +675,7 @@ export function createTonejsAdapter(): ToneEngine {
     playTone,
     playToneAt,
     playClickAt,
+    playThudAt,
     playBellFeedback,
     setToneMode,
     getNow,

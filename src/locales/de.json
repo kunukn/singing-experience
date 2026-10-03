@@ -49,6 +49,7 @@
     "sparkles": "Funken",
     "scoreCorrect": "{percent}% richtig",
     "beat": "Takt",
+    "metronome": "Metronom",
     "sing": "Sing"
   },
   "errors": {

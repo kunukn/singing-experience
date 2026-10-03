@@ -23,6 +23,7 @@ import {
   KEYBOARD_MIN_SEMITONE_UNIT,
   songMidiRange,
 } from './singTheKeysTimeline'
+import { useMetronomeMask } from './useMetronomeMask'
 import { useSingTheKeys } from './useSingTheKeys'
 
 type PitchDetectionInput = {
@@ -52,9 +53,14 @@ const props = defineProps<Props>()
 const songId = defineModel<SongId>('songId', { required: true })
 const rangeOffset = defineModel<number>('rangeOffset', { required: true })
 const speed = defineModel<SpeedOption>('speed', { required: true })
-/* Pulse lines falling with the blocks, so the beat is visible without a
- * metronome. Visual only, so it can be flipped mid-run. */
+/* Pulse lines falling with the blocks, so the beat is visible with the
+ * metronome off. Visual only, so it can be flipped mid-run. */
 const isBeatLinesEnabled = defineModel<boolean>('isBeatLinesEnabled', {
+  required: true,
+})
+/* A deep thud on every beat line, in a scored run and a preview alike. Queued
+ * a frame at a time (see useSingTheKeys), so it too can be flipped mid-run. */
+const isMetronomeEnabled = defineModel<boolean>('isMetronomeEnabled', {
   required: true,
 })
 /* Snap: the sung line and note chip sit on the nearest key instead of drifting
@@ -84,8 +90,7 @@ const emit = defineEmits<{ targetChange: [midi: number | null] }>()
 
 const { t } = useI18n()
 
-const { frequency, noteInfo, isListening, isClean, error, start, stop } =
-  props.detection
+const { isListening, error, start, stop } = props.detection
 
 const song = computed(() => SONGS[songId.value])
 const tonicMidi = computed(() =>
@@ -98,7 +103,7 @@ const range = computed(() => songMidiRange(song.value, tonicMidi.value))
  * on the blocks here too. */
 const accidentalStyle = useAccidentalStyle('syng.pianoAccidentals', 'sharp')
 
-const game = useSingTheKeys()
+const game = useSingTheKeys({ isMetronomeEnabled })
 const {
   isPlaying,
   isDone,
@@ -111,7 +116,16 @@ const {
   noteDurationsMs,
   laneScrollMaxMs,
   canScrollLane,
+  isMetronomeSounding,
 } = game
+
+/* The run's pitch, with the metronome's thud kept out of it: anything the mic
+ * reports below the keyboard while a thud sounds is the thud, not the singer. */
+const { frequency, noteInfo, isClean } = useMetronomeMask(
+  props.detection,
+  isMetronomeSounding,
+  () => midiToFrequency(range.value.midiMin),
+)
 
 /* Drives the result panel + the green blocks. Set when the song finishes on its
  * own; cleared on a fresh start and when the singer changes song/key/speed at
@@ -322,7 +336,7 @@ const laneHeight = computed(() =>
 )
 
 /* A scored run opens the mic first, so a permission prompt never eats the
- * lead-in, then launches the timeline in silence. A preview plays the melody
+ * lead-in, then launches the timeline without the melody. A preview plays it
  * and keeps the mic closed: with the speaker playing, the detected line whips
  * between the melody, the voice and their echo and only confuses — and
  * nothing is scored. It also skips the lead-in: that is get-ready time for a
@@ -497,6 +511,13 @@ onUnmounted(() => {
         iconOn="pi pi-bars"
         iconOff="pi pi-bars"
         :label="t('generic.beat')"
+      />
+
+      <ToggleIconButton
+        v-model="isMetronomeEnabled"
+        iconOn="pi pi-stopwatch"
+        iconOff="pi pi-stopwatch"
+        :label="t('generic.metronome')"
       />
 
       <ToggleIconButton

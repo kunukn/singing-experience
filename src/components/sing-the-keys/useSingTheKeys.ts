@@ -24,6 +24,20 @@ const ARTICULATION = 0.92
  * latency so the first scheduled guide note is not clipped. */
 const SCHEDULE_AHEAD_S = 0.05
 
+/* How far ahead of the audio clock the metronome is queued each frame: far
+ * enough to ride out a few slow frames, short enough that switching it off is
+ * heard within a beat. */
+const METRONOME_LOOKAHEAD_S = 0.1
+
+/* How long after a thud starts the mic may still hear it: 30 ms of thud, 43 ms
+ * more for it to leave the detector's 2048-sample window, and the rest for
+ * speaker and mic latency and the room's ring. */
+const THUD_MASK_S = 0.22
+
+/* The mask opens a little early, so no detector frame falls between the thud
+ * sounding and the next animation frame noticing. */
+const THUD_MASK_LEAD_S = 0.03
+
 const EMPTY_TIMELINE: Timeline = {
   notes: [],
   totalMs: 0,
@@ -47,11 +61,14 @@ export type SingTheKeysResult = ReturnType<typeof useSingTheKeys>
 type Options = {
   /* Injectable for tests; defaults to the app's shared Tone.js engine. */
   toneEngine?: ToneEngine
+  /* Sound a thud on every beat line, in a scored run and a preview alike. A
+   * ref, not a start param, so it can be flipped mid-run. */
+  isMetronomeEnabled?: Readonly<Ref<boolean>>
 }
 
 /*
  * Drives one Sing the Keys run. The Tone.js audio clock is the single time
- * source: the guide notes are scheduled on it, and the lane's
+ * source: the guide notes and the metronome are scheduled on it, and the lane's
  * `elapsedMs` is read back from it every animation frame, so the falling
  * blocks and the sound cannot drift apart. `activeNoteIndex` is derived from
  * the same `elapsedMs`, so the key highlight, the lane and the scorer always
@@ -109,7 +126,61 @@ export function useSingTheKeys(options: Options = {}) {
     return (engine.getNow() - songStartS) * 1000
   }
 
+  /* The first beat line the metronome has not yet looked at. */
+  let nextMetronomeLineIndex = 0
+
+  /* True while a thud may be in the mic's signal (see THUD_MASK_S), so the
+   * display can keep it out of the sung pitch — see useMetronomeMask. */
+  const isMetronomeSounding = ref(false)
+  /* Audio-clock times of the thuds queued and not yet died away. */
+  let thudTimesS: number[] = []
+
+  /* On the immediate clock: getNow() runs Tone's look-ahead early, and the
+   * mask has to follow what the speaker is actually playing. */
+  function updateMetronomeSounding() {
+    const immediateS = engine.getImmediate()
+    thudTimesS = thudTimesS.filter((whenS) => immediateS <= whenS + THUD_MASK_S)
+    isMetronomeSounding.value = thudTimesS.some(
+      (whenS) => immediateS >= whenS - THUD_MASK_LEAD_S,
+    )
+  }
+
+  function clearMetronomeMask() {
+    thudTimesS = []
+    isMetronomeSounding.value = false
+  }
+
+  /* Queues the thud for every beat line coming due within the look-ahead. Run
+   * each frame instead of once for the whole song, so the toggle works mid-run:
+   * off, nothing more is queued; on, it joins at the next line. Two kinds of
+   * line stay silent: those already behind the clock (the lead-in lines of a
+   * run started without one) and the closing line at totalMs, where the song
+   * is over. */
+  function scheduleDueMetronome() {
+    const { beatLines, totalMs } = timeline.value
+    const nowS = engine.getNow()
+
+    while (nextMetronomeLineIndex < beatLines.length) {
+      const line = beatLines[nextMetronomeLineIndex]
+      if (!line) break
+
+      const whenS = songStartS + line.ms / 1000
+      if (whenS > nowS + METRONOME_LOOKAHEAD_S) break
+
+      nextMetronomeLineIndex++
+      /* 1 ms of slack: the closing line is built from pulse lengths, so
+       * rounding can leave it a hair short of totalMs. */
+      const isDue = whenS >= nowS && line.ms < totalMs - 1
+      if (isDue && options.isMetronomeEnabled?.value) {
+        engine.playThudAt(whenS)
+        thudTimesS.push(whenS)
+      }
+    }
+  }
+
   function tick() {
+    scheduleDueMetronome()
+    updateMetronomeSounding()
     elapsedMs.value = readElapsedMs()
     laneElapsedMs.value = elapsedMs.value
     rafId = requestAnimationFrame(tick)
@@ -178,8 +249,6 @@ export function useSingTheKeys(options: Options = {}) {
     const leadInMs = params.hasLeadIn ? LOOKAHEAD_MS : 0
     songStartS = engine.getNow() + SCHEDULE_AHEAD_S + leadInMs / 1000
 
-    /* No count-in clicks: the beat lines and lights carry the beat. */
-
     if (params.isMelodyGuideEnabled) {
       for (const note of built.notes) {
         engine.playToneAt(
@@ -190,9 +259,16 @@ export function useSingTheKeys(options: Options = {}) {
       }
     }
 
+    /* Here as well as in tick, so a line due at once (the first beat of a run
+     * without lead-in) is not left waiting for the first frame. */
+    nextMetronomeLineIndex = 0
+    clearMetronomeMask()
+    scheduleDueMetronome()
+
     engine.scheduleDraw(
       () => {
         stopTicking()
+        clearMetronomeMask()
         elapsedMs.value = readElapsedMs()
         isShowingEnding.value = true
         send({ type: 'DONE' })
@@ -232,6 +308,7 @@ export function useSingTheKeys(options: Options = {}) {
   function stop() {
     engine.cancelScheduled()
     stopTicking()
+    clearMetronomeMask()
     elapsedMs.value = 0
     laneElapsedMs.value = 0
     isShowingEnding.value = false
@@ -258,6 +335,7 @@ export function useSingTheKeys(options: Options = {}) {
     noteDurationsMs,
     laneScrollMaxMs,
     canScrollLane,
+    isMetronomeSounding,
     preview,
     start,
     stop,
