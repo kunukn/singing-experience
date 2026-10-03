@@ -52,6 +52,7 @@ const STORAGE_KEYS = [
   'syng.singFlyGameDurationSec',
   'syng.singFlyPitchSnap',
   'syng.singTheKeysBeatLines',
+  'syng.singTheKeysHitEffects',
   'syng.singTheKeysMelodyGuide',
   'syng.singTheKeysPitchSnap',
   'syng.singTheKeysSongId',
