@@ -97,9 +97,6 @@ describe('singTheKeysSongs', () => {
     { id: 'frereJacques', lowest: -5, highest: 9 },
     { id: 'londonBridge', lowest: 0, highest: 9 },
     { id: 'jingleBells', lowest: 0, highest: 7 },
-    { id: 'rowYourBoat', lowest: 0, highest: 12 },
-    { id: 'whenTheSaints', lowest: 0, highest: 7 },
-    { id: 'amazingGrace', lowest: -5, highest: 7 },
     { id: 'greensleeves', lowest: -5, highest: 9 },
     { id: 'mountainKing', lowest: 0, highest: 12 },
     { id: 'habanera', lowest: 0, highest: 12 },
@@ -117,6 +114,10 @@ describe('singTheKeysSongs', () => {
     { id: 'laCucaracha', lowest: -5, highest: 9 },
     { id: 'korobeiniki', lowest: 0, highest: 12 },
     { id: 'lammaBada', lowest: -5, highest: 7 },
+    { id: 'burungKakatua', lowest: 0, highest: 12 },
+    { id: 'shosholoza', lowest: 0, highest: 5 },
+    { id: 'arirang', lowest: -5, highest: 4 },
+    { id: 'eineKleineNachtmusik', lowest: -5, highest: 7 },
   ] as const)('$id spans $lowest to $highest', ({ id, lowest, highest }) => {
     const offsets = SONGS[id].notes.map((note) => note.midiOffset)
 

@@ -30,9 +30,6 @@ export const SONG_IDS = [
   'frereJacques',
   'londonBridge',
   'jingleBells',
-  'rowYourBoat',
-  'whenTheSaints',
-  'amazingGrace',
   'greensleeves',
   'mountainKing',
   'habanera',
@@ -50,6 +47,10 @@ export const SONG_IDS = [
   'laCucaracha',
   'korobeiniki',
   'lammaBada',
+  'burungKakatua',
+  'shosholoza',
+  'arirang',
+  'eineKleineNachtmusik',
 ] as const
 
 export type SongId = (typeof SONG_IDS)[number]
@@ -459,130 +460,6 @@ const JINGLE_BELLS: Song = {
     note(5, 1),
     note(2, 1),
     note(0, 4),
-  ],
-}
-
-/* Row, Row, Row Your Boat — C major, 6/8, range an octave. The "merrily"
- * line walks down the tonic chord from the top.
- * C. C. | C (D) E. | E (D) E (F) | G.. | (C' C' C')(G G G)(E E E)(C C C) |
- * G (F) E (D) | C.. */
-const ROW_YOUR_BOAT: Song = {
-  id: 'rowYourBoat',
-  difficulty: 'normal',
-  bpm: 100,
-  // 6/8: two dotted-quarter pulses (1.5 beats each) per bar
-  meter: { pulseBeats: 1.5, pulsesPerBar: 2, pickupBeats: 0 },
-  notes: [
-    note(0, 1.5),
-    note(0, 1.5),
-    note(0, 1),
-    note(2, 0.5),
-    note(4, 1.5),
-    note(4, 1),
-    note(2, 0.5),
-    note(4, 1),
-    note(5, 0.5),
-    note(7, 3),
-    note(12, 0.5),
-    note(12, 0.5),
-    note(12, 0.5),
-    note(7, 0.5),
-    note(7, 0.5),
-    note(7, 0.5),
-    note(4, 0.5),
-    note(4, 0.5),
-    note(4, 0.5),
-    note(0, 0.5),
-    note(0, 0.5),
-    note(0, 0.5),
-    note(7, 1),
-    note(5, 0.5),
-    note(4, 1),
-    note(2, 0.5),
-    note(0, 3),
-  ],
-}
-
-/* When the Saints Go Marching In — C major, range a fifth, long held notes.
- * (C E F) | G––– | · C E F | G––– | · C E F | G– E– | C– E– | D––– |
- * · E E D | C––– | E– G– | G F–– | · · E F | G– E– | C– D– | C––– */
-const WHEN_THE_SAINTS_CALL: SongNote[] = [note(0, 1), note(4, 1), note(5, 1)]
-const WHEN_THE_SAINTS: Song = {
-  id: 'whenTheSaints',
-  difficulty: 'normal',
-  bpm: 150,
-  // 4/4 felt in two (half-note pulse), entered on a three-quarter pickup
-  meter: { pulseBeats: 2, pulsesPerBar: 2, pickupBeats: 3 },
-  notes: [
-    ...WHEN_THE_SAINTS_CALL,
-    note(7, 4, 1),
-    ...WHEN_THE_SAINTS_CALL,
-    note(7, 4, 1),
-    ...WHEN_THE_SAINTS_CALL,
-    note(7, 2),
-    note(4, 2),
-    note(0, 2),
-    note(4, 2),
-    note(2, 4, 1),
-    note(4, 1),
-    note(4, 1),
-    note(2, 1),
-    note(0, 4),
-    note(4, 2),
-    note(7, 2),
-    note(7, 1),
-    note(5, 3, 2),
-    note(4, 1),
-    note(5, 1),
-    note(7, 2),
-    note(4, 2),
-    note(0, 2),
-    note(2, 2),
-    note(0, 4),
-  ],
-}
-
-/* Amazing Grace (New Britain) — G major pentatonic, 3/4 with a one-beat
- * pickup, range an octave from the fifth below the tonic to the fifth above.
- * Offsets from G: D below = −5, E below = −3, A = 2, B = 4, D' = 7.
- * (D,) | G– (B G) | B– A | G– E, | D,– D, | G– (B G) | B– A | D'––|–– B |
- * D'. (B)(D' B) | G– D, | E,. (G)(G E,) | D,– D, | G– (B G) | B– A | G–– */
-const AMAZING_GRACE_OPENING: SongNote[] = [
-  note(0, 2),
-  note(4, 0.5),
-  note(0, 0.5),
-  note(4, 2),
-  note(2, 1),
-]
-const AMAZING_GRACE: Song = {
-  id: 'amazingGrace',
-  difficulty: 'normal',
-  bpm: 100,
-  meter: { pulseBeats: 1, pulsesPerBar: 3, pickupBeats: 1 }, // 3/4
-  notes: [
-    note(-5, 1),
-    ...AMAZING_GRACE_OPENING,
-    note(0, 2),
-    note(-3, 1),
-    note(-5, 2),
-    note(-5, 1),
-    ...AMAZING_GRACE_OPENING,
-    note(7, 5), // "me": a full bar tied into the next
-    note(4, 1),
-    note(7, 1.5),
-    note(4, 0.5),
-    note(7, 0.5),
-    note(4, 0.5),
-    note(0, 2),
-    note(-5, 1),
-    note(-3, 1.5),
-    note(0, 0.5),
-    note(0, 0.5),
-    note(-3, 0.5),
-    note(-5, 2),
-    note(-5, 1),
-    ...AMAZING_GRACE_OPENING,
-    note(0, 3),
   ],
 }
 
@@ -1349,6 +1226,174 @@ const LAMMA_BADA: Song = {
   ],
 }
 
+/* Burung Kakatua (Indonesia, Maluku), verse — C major waltz, range an octave,
+ * with a one-beat pickup into each line and a leap of a sixth up to the high
+ * tonic on "kak". Offsets from C: D = 2, E = 4, F = 5, G = 7, A = 9, B = 11,
+ * C' = 12.
+ * (G) | G– E | C'– E | D–– | D · (E) | F– A | G– F | E–– | E · (G) |
+ *       G– E | C'– E | D–– | D · (B A) | G– F | E– D | C–– | C · */
+const BURUNG_KAKATUA_CALL: SongNote[] = [
+  note(7, 1),
+  note(7, 2),
+  note(4, 1),
+  note(12, 2),
+  note(4, 1),
+  note(2, 4, 1), // "a": a full bar tied into the next, then a beat of rest
+]
+const BURUNG_KAKATUA: Song = {
+  id: 'burungKakatua',
+  difficulty: 'easy',
+  bpm: 100,
+  meter: { pulseBeats: 1, pulsesPerBar: 3, pickupBeats: 1 }, // 3/4
+  notes: [
+    ...BURUNG_KAKATUA_CALL,
+    note(4, 1),
+    note(5, 2),
+    note(9, 1),
+    note(7, 2),
+    note(5, 1),
+    note(4, 4, 1),
+    ...BURUNG_KAKATUA_CALL,
+    note(11, 0.5),
+    note(9, 0.5),
+    note(7, 2),
+    note(5, 1),
+    note(4, 2),
+    note(2, 1),
+    note(0, 4, 1),
+  ],
+}
+
+/* Shosholoza (Southern Africa), call sung twice — G major, range a fourth,
+ * with the answering lines entering off the beat. The score's dotted-eighth +
+ * 16th figures are plain eighths here: rounder blocks, like the Happy Birthday
+ * pickup. Offsets from G: A = 2, B = 4, C = 5.
+ * G. (A)(B A) G | · (C C)(G C) B (A | A)(A A)(A B)(B A) B~ | ~(A) G · · |
+ * (G G)(G A)(B A)(G) · | · (C C)(G C) B (A | A)(A A)(A B)(B A) B~ | ~(A) G–– */
+const SHOSHOLOZA_ANSWER: SongNote[] = [
+  note(5, 0.5),
+  note(5, 0.5),
+  note(0, 0.5),
+  note(5, 0.5),
+  note(4, 1),
+  note(2, 0.5),
+  note(2, 0.5),
+  note(2, 0.5),
+  note(2, 0.5),
+  note(2, 0.5),
+  note(4, 0.5),
+  note(4, 0.5),
+  note(2, 0.5),
+  note(4, 1), // tied across the bar line
+  note(2, 0.5),
+]
+const SHOSHOLOZA: Song = {
+  id: 'shosholoza',
+  difficulty: 'normal',
+  bpm: 100,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
+  notes: [
+    note(0, 1.5),
+    note(2, 0.5),
+    note(4, 0.5),
+    note(2, 0.5),
+    note(0, 1, 0.5),
+    ...SHOSHOLOZA_ANSWER,
+    note(0, 1, 2),
+    note(0, 0.5),
+    note(0, 0.5),
+    note(0, 0.5),
+    note(2, 0.5),
+    note(4, 0.5),
+    note(2, 0.5),
+    note(0, 0.5, 1),
+    ...SHOSHOLOZA_ANSWER,
+    note(0, 3),
+  ],
+}
+
+/* Arirang (Korea), refrain — F major pentatonic in 9/8, range a sixth from
+ * the fifth below the tonic. Each bar leans on a long first note and turns
+ * through its upper neighbour.
+ * Offsets from F: C below = −5, D below = −3, G = 2, A = 4.
+ * C,–. (D,) C, (D,) | F–. (G) F (G) | A. (G A G) F (D,) | C,–. (D, C, D,) · |
+ * F–. (G) F (G) | A (G) F (D,) C, (D,) | F–. (G) F. | F–– · */
+const ARIRANG_RISE: SongNote[] = [
+  note(0, 2.5),
+  note(2, 0.5),
+  note(0, 1),
+  note(2, 0.5),
+]
+const ARIRANG: Song = {
+  id: 'arirang',
+  difficulty: 'normal',
+  bpm: 108,
+  // 9/8: three dotted-quarter pulses (1.5 beats each) per bar
+  meter: { pulseBeats: 1.5, pulsesPerBar: 3, pickupBeats: 0 },
+  notes: [
+    note(-5, 2.5),
+    note(-3, 0.5),
+    note(-5, 1),
+    note(-3, 0.5),
+    ...ARIRANG_RISE,
+    note(4, 1.5),
+    note(2, 0.5),
+    note(4, 0.5),
+    note(2, 0.5),
+    note(0, 1),
+    note(-3, 0.5),
+    note(-5, 2.5),
+    note(-3, 0.5),
+    note(-5, 0.5),
+    note(-3, 0.5, 0.5),
+    ...ARIRANG_RISE,
+    note(4, 1),
+    note(2, 0.5),
+    note(0, 1),
+    note(-3, 0.5),
+    note(-5, 1),
+    note(-3, 0.5),
+    note(0, 2.5),
+    note(2, 0.5),
+    note(0, 1.5),
+    note(0, 3, 1.5),
+  ],
+}
+
+/* Eine kleine Nachtmusik (Mozart, K. 525), opening theme sung twice — G major,
+ * a fanfare up and down the tonic and dominant chords that ends, as the score
+ * does, on the low fifth. Offsets from G: D below = −5, F♯ below = −1, A = 2,
+ * B = 4, C = 5, D = 7.
+ * G · (D,) G · (D,) | (G D,)(G B) D' · | C · (A) C · (A) | (C A)(F♯ A) D, · */
+const EINE_KLEINE_NACHTMUSIK_THEME: SongNote[] = [
+  note(0, 1, 0.5),
+  note(-5, 0.5),
+  note(0, 1, 0.5),
+  note(-5, 0.5),
+  note(0, 0.5),
+  note(-5, 0.5),
+  note(0, 0.5),
+  note(4, 0.5),
+  note(7, 1, 1),
+  note(5, 1, 0.5),
+  note(2, 0.5),
+  note(5, 1, 0.5),
+  note(2, 0.5),
+  note(5, 0.5),
+  note(2, 0.5),
+  note(-1, 0.5),
+  note(2, 0.5),
+  note(-5, 1, 1),
+]
+const EINE_KLEINE_NACHTMUSIK: Song = {
+  id: 'eineKleineNachtmusik',
+  difficulty: 'hard',
+  bpm: 120,
+  // 4/4 felt in two, as Jingle Bells: a quarter pulse would flash too fast
+  meter: { pulseBeats: 2, pulsesPerBar: 2, pickupBeats: 0 },
+  notes: [...EINE_KLEINE_NACHTMUSIK_THEME, ...EINE_KLEINE_NACHTMUSIK_THEME],
+}
+
 export const SONGS: Record<SongId, Song> = {
   twinkle: TWINKLE,
   odeToJoy: ODE_TO_JOY,
@@ -1358,9 +1403,6 @@ export const SONGS: Record<SongId, Song> = {
   frereJacques: FRERE_JACQUES,
   londonBridge: LONDON_BRIDGE,
   jingleBells: JINGLE_BELLS,
-  rowYourBoat: ROW_YOUR_BOAT,
-  whenTheSaints: WHEN_THE_SAINTS,
-  amazingGrace: AMAZING_GRACE,
   greensleeves: GREENSLEEVES,
   mountainKing: MOUNTAIN_KING,
   habanera: HABANERA,
@@ -1378,6 +1420,10 @@ export const SONGS: Record<SongId, Song> = {
   laCucaracha: LA_CUCARACHA,
   korobeiniki: KOROBEINIKI,
   lammaBada: LAMMA_BADA,
+  burungKakatua: BURUNG_KAKATUA,
+  shosholoza: SHOSHOLOZA,
+  arirang: ARIRANG,
+  eineKleineNachtmusik: EINE_KLEINE_NACHTMUSIK,
 }
 
 export type SongDifficultyGroup = {
