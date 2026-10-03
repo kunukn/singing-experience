@@ -44,6 +44,8 @@ function mountLane(
       beatLines: [],
       beatFlash: null,
       isPlaying: false,
+      isOnPitch: false,
+      isHitEffectsEnabled: true,
       isScrollable: false,
       scrollMaxMs: 0,
       ...props,
@@ -279,6 +281,113 @@ describe('SingTheKeysLane', () => {
       expect(opacity).toBeCloseTo(expected)
     },
   )
+
+  test('should burst on the hit line when a note is collected mid-run', async () => {
+    const wrapper = mountLane({ isPlaying: true, activeNoteIndex: 0 })
+
+    await wrapper.setProps({ correctNoteIndices: [0] })
+
+    expect(
+      wrapper
+        .get('[data-testid="sing-the-keys-hit-burst"]')
+        .attributes('data-note-index'),
+    ).toBe('0')
+  })
+
+  test('should hold the hit glow only while the singer is on pitch', async () => {
+    const wrapper = mountLane({
+      isPlaying: true,
+      activeNoteIndex: 0,
+      correctNoteIndices: [0],
+      isOnPitch: true,
+    })
+    const sustain = wrapper.get('[data-testid="sing-the-keys-hit-sustain"]')
+
+    expect(sustain.attributes('data-held')).toBe('true')
+
+    await wrapper.setProps({ isOnPitch: false })
+
+    expect(sustain.attributes('data-held')).toBe('false')
+  })
+
+  test('should light the collected block from the hit line', () => {
+    /* Note 0 runs 0–600ms; at 200ms, 400ms of it (40px) is still above the
+     * line. The beam is 120px tall with its foot on the line: 40 − 120. */
+    const wrapper = mountLane({
+      isPlaying: true,
+      elapsedMs: 200,
+      activeNoteIndex: 0,
+      correctNoteIndices: [0],
+      isOnPitch: true,
+    })
+    const beams = wrapper.findAll('[data-testid="sing-the-keys-hit-beam"]')
+
+    expect(beams).toHaveLength(1)
+    expect(
+      wrapper
+        .get('[data-testid="lane-note-0"]')
+        .find('[data-testid="sing-the-keys-hit-beam"]')
+        .exists(),
+    ).toBe(true)
+    expect(beams[0]?.attributes('data-held')).toBe('true')
+    expect(beams[0]?.html()).toContain('translateY(-80px)')
+  })
+
+  test('should dim the block light when the singer leaves the pitch', () => {
+    const wrapper = mountLane({
+      isPlaying: true,
+      activeNoteIndex: 0,
+      correctNoteIndices: [0],
+      isOnPitch: false,
+    })
+
+    expect(
+      wrapper
+        .get('[data-testid="sing-the-keys-hit-beam"]')
+        .attributes('data-held'),
+    ).toBe('false')
+  })
+
+  test.each([
+    { name: 'the due note is not collected yet', props: {} },
+    {
+      name: 'the collected note is no longer due',
+      props: { correctNoteIndices: [0], activeNoteIndex: 1 },
+    },
+    {
+      name: 'no run is under way',
+      props: { correctNoteIndices: [0], isPlaying: false },
+    },
+  ])('should not light a block when $name', ({ props }) => {
+    const wrapper = mountLane({
+      isPlaying: true,
+      activeNoteIndex: 0,
+      isOnPitch: true,
+      ...props,
+    })
+
+    expect(
+      wrapper.find('[data-testid="sing-the-keys-hit-beam"]').exists(),
+    ).toBe(false)
+  })
+
+  test('should render no hit effects when they are turned off', async () => {
+    const wrapper = mountLane({
+      isHitEffectsEnabled: false,
+      isPlaying: true,
+      activeNoteIndex: 0,
+      isOnPitch: true,
+    })
+
+    await wrapper.setProps({ correctNoteIndices: [0] })
+
+    expect(wrapper.find('[data-testid^="sing-the-keys-hit-"]').exists()).toBe(
+      false,
+    )
+    expect(
+      wrapper.get('[data-testid="lane-note-0"]').attributes('data-status'),
+    ).toBe('correct')
+  })
 })
 
 /* 300px lane over a 3000ms lookahead: 1px of wheel or drag = 10ms of song. */

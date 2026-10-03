@@ -90,6 +90,13 @@ export default defineConfig(({ command, mode }) => {
 
   return {
     /*
+     * Pinned to this file's folder. The default is the working directory, so
+     * running vitest from inside a feature folder made the plugins below write
+     * their generated typed-router.d.ts, auto-imports.d.ts and components.d.ts
+     * into that folder.
+     */
+    root: import.meta.dirname,
+    /*
      * Local dev, local preview, and Vercel all use base `/` with history routing.
      * The github.io deploy is the only target that needs hash routing under
      * `/singing-experience/`; the deploy workflow sets VITE_BASE_PATH and
@@ -116,7 +123,9 @@ export default defineConfig(({ command, mode }) => {
       injectBuildTime(env),
       emitSitemap(env),
       tailwindcss(),
-      VueRouter(),
+      /* This plugin resolves against the working directory rather than Vite's
+       * root, so it is pinned separately. */
+      VueRouter({ root: import.meta.dirname }),
       AutoImport({
         imports: [
           'vue',

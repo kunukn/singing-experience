@@ -121,6 +121,8 @@ declare module 'vue' {
     SingFlySettingsRow: typeof import('./components/singfly/SingFlySettingsRow.vue')['default']
     SingFlyTestPage: typeof import('./components/singfly/SingFlyTestPage.vue')['default']
     SingTheKeysDisplay: typeof import('./components/sing-the-keys/SingTheKeysDisplay.vue')['default']
+    SingTheKeysHitBeam: typeof import('./components/sing-the-keys/SingTheKeysHitBeam.vue')['default']
+    SingTheKeysHitGlow: typeof import('./components/sing-the-keys/SingTheKeysHitGlow.vue')['default']
     SingTheKeysLane: typeof import('./components/sing-the-keys/SingTheKeysLane.vue')['default']
     SingTheKeysPage: typeof import('./components/sing-the-keys/SingTheKeysPage.vue')['default']
     SingTheKeysSettingsRow: typeof import('./components/sing-the-keys/SingTheKeysSettingsRow.vue')['default']

@@ -62,6 +62,11 @@ const isBeatLinesEnabled = defineModel<boolean>('isBeatLinesEnabled', {
 const isPitchSnapEnabled = defineModel<boolean>('isPitchSnapEnabled', {
   required: true,
 })
+/* Light and sparks on the hit line when a note is collected. Visual only, so
+ * it can be flipped mid-run; off, the lane behaves as if it had none. */
+const isHitEffectsEnabled = defineModel<boolean>('isHitEffectsEnabled', {
+  required: true,
+})
 
 /* The note currently due, for a test page that wants to sing along by itself. */
 const emit = defineEmits<{ targetChange: [midi: number | null] }>()
@@ -475,6 +480,13 @@ onUnmounted(() => {
         :label="t('generic.pitchSnap')"
       />
 
+      <ToggleIconButton
+        v-model="isHitEffectsEnabled"
+        iconOn="pi pi-sparkles"
+        iconOff="pi pi-sparkles"
+        :label="t('generic.sparkles')"
+      />
+
       <PreviewToggle
         v-model="isPreviewEnabled"
         :disabled="
@@ -522,6 +534,8 @@ onUnmounted(() => {
             :beatLines="isBeatLinesEnabled ? timeline.beatLines : []"
             :beatFlash="beatFlash"
             :isPlaying="isPlaying"
+            :isOnPitch="isOnPitchForScore"
+            :isHitEffectsEnabled="isHitEffectsEnabled"
             :isScrollable="canScrollLane"
             :scrollMaxMs="laneScrollMaxMs"
             @blockPress="playKey"

@@ -13,6 +13,8 @@ import {
   type BeatLine,
   type TimelineNote,
 } from './singTheKeysTimeline'
+import SingTheKeysHitBeam from './SingTheKeysHitBeam.vue'
+import SingTheKeysHitGlow from './SingTheKeysHitGlow.vue'
 import { useLaneScroll } from './useLaneScroll'
 
 /*
@@ -58,6 +60,12 @@ type Props = {
   /* A run is under way: a block the lane has moved past was due and is judged.
    * Outside a run the lane is only being browsed, so nothing is. */
   isPlaying: boolean
+  /* The singer is within scoring tolerance of the due note. Keeps the light of
+   * a collected note on for as long as they hold it. */
+  isOnPitch: boolean
+  /* Light and sparks where a collected note meets the keys. Off, the lane
+   * renders none of it: a hit only turns its block green. */
+  isHitEffectsEnabled: boolean
   /* The singer can scroll through the song natively (touch, wheel, keys, plus
    * mouse drag) — while not playing, once any ending glide has landed. */
   isScrollable: boolean
@@ -178,6 +186,26 @@ const beatFlashOpacity = computed(() => {
 const stripStyle = computed(() => ({
   transform: `translateY(${props.elapsedMs * pxPerMs.value}px)`,
 }))
+
+/* The block that is lit from the hit line: the due note, once collected. Its
+ * offset is what is left of the note above the line, since a block's top edge
+ * reaches the hit line exactly when its note ends. */
+const hitBeam = computed(() => {
+  const noteIndex = props.activeNoteIndex
+  if (!props.isHitEffectsEnabled || !props.isPlaying || noteIndex === null)
+    return null
+
+  if (!correctSet.value.has(noteIndex)) return null
+
+  const note = props.notes.find((candidate) => candidate.index === noteIndex)
+  if (!note) return null
+
+  return {
+    noteIndex,
+    hitLineOffsetPx:
+      (note.startMs + note.durationMs - props.elapsedMs) * pxPerMs.value,
+  }
+})
 
 const laneRef = ref<HTMLElement | null>(null)
 const scrollerRef = ref<HTMLElement | null>(null)
@@ -401,6 +429,11 @@ const sungLineColorStyle = computed(() => {
         :data-midi="block.note.midi"
       >
         {{ block.label }}
+        <SingTheKeysHitBeam
+          v-if="hitBeam?.noteIndex === block.note.index"
+          :hitLineOffsetPx="hitBeam.hitLineOffsetPx"
+          :isHeld="isOnPitch"
+        />
       </div>
     </div>
 
@@ -455,6 +488,17 @@ const sungLineColorStyle = computed(() => {
       class="absolute inset-x-0 z-20 h-0.5 bg-(--p-orange-400)"
       :style="{ top: `${laneHeight - 2}px` }"
       aria-hidden="true"
+    />
+
+    <SingTheKeysHitGlow
+      v-if="isHitEffectsEnabled"
+      :notes="notes"
+      :layout="layout"
+      :laneHeight="laneHeight"
+      :activeNoteIndex="activeNoteIndex"
+      :correctNoteIndices="correctNoteIndices"
+      :isPlaying="isPlaying"
+      :isOnPitch="isOnPitch"
     />
   </div>
 </template>
