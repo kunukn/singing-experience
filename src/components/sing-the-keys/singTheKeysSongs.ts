@@ -38,6 +38,13 @@ export const SONG_IDS = [
   'mountainKing',
   'habanera',
   'entertainer',
+  'oldMacDonald',
+  'brahmsLullaby',
+  'auldLangSyne',
+  'silentNight',
+  'canCan',
+  'williamTell',
+  'swanLake',
 ] as const
 
 export type SongId = (typeof SONG_IDS)[number]
@@ -791,6 +798,320 @@ const ENTERTAINER: Song = {
   ],
 }
 
+/* Old MacDonald Had a Farm, first two lines — G major, dipping to the fifth
+ * below the tonic. Offsets from G: D below = −5, E below = −3, A = 2, B = 4.
+ * G G G D, | E, E, D,– | B B A A | G–– D, | G G G D, | E, E, D,– | B B A A |
+ * G––– */
+const OLD_MACDONALD_OPENING: SongNote[] = [
+  note(0, 1),
+  note(0, 1),
+  note(0, 1),
+  note(-5, 1),
+  note(-3, 1),
+  note(-3, 1),
+  note(-5, 2),
+  note(4, 1),
+  note(4, 1),
+  note(2, 1),
+  note(2, 1),
+]
+const OLD_MACDONALD: Song = {
+  id: 'oldMacDonald',
+  difficulty: 'easy',
+  bpm: 100,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
+  notes: [
+    ...OLD_MACDONALD_OPENING,
+    note(0, 3),
+    note(-5, 1), // "And": the pickup into the second line
+    ...OLD_MACDONALD_OPENING,
+    note(0, 4),
+  ],
+}
+
+/* Brahms' Lullaby (Wiegenlied, Op. 49 No. 4) — C major, 3/4 with a two-eighth
+ * pickup, range an octave. Offsets from C: D = 2, E = 4, F = 5, G = 7, A = 9,
+ * B = 11, C' = 12.
+ * (E E) | G. (E) E | G– (E G) | C' B. (A) | A G (D E) | F D (D E) |
+ * F– (D F) | (B A) G B | C'– (C C) | C'– (A F) | G– (E C) | F G A |
+ * G– (C C) | C'– (A F) | G– (E C) | F E D | C– */
+const BRAHMS_LULLABY_REST: SongNote[] = [
+  note(12, 2),
+  note(9, 0.5),
+  note(5, 0.5),
+  note(7, 2),
+  note(4, 0.5),
+  note(0, 0.5),
+]
+const BRAHMS_LULLABY: Song = {
+  id: 'brahmsLullaby',
+  difficulty: 'normal',
+  bpm: 96,
+  meter: { pulseBeats: 1, pulsesPerBar: 3, pickupBeats: 1 }, // 3/4
+  notes: [
+    note(4, 0.5),
+    note(4, 0.5),
+    note(7, 1.5),
+    note(4, 0.5),
+    note(4, 1),
+    note(7, 2),
+    note(4, 0.5),
+    note(7, 0.5),
+    note(12, 1),
+    note(11, 1.5),
+    note(9, 0.5),
+    note(9, 1),
+    note(7, 1),
+    note(2, 0.5),
+    note(4, 0.5),
+    note(5, 1),
+    note(2, 1),
+    note(2, 0.5),
+    note(4, 0.5),
+    note(5, 2),
+    note(2, 0.5),
+    note(5, 0.5),
+    note(11, 0.5),
+    note(9, 0.5),
+    note(7, 1),
+    note(11, 1),
+    note(12, 2),
+    note(0, 0.5),
+    note(0, 0.5),
+    ...BRAHMS_LULLABY_REST,
+    note(5, 1),
+    note(7, 1),
+    note(9, 1),
+    note(7, 2),
+    note(0, 0.5),
+    note(0, 0.5),
+    ...BRAHMS_LULLABY_REST,
+    note(5, 1),
+    note(4, 1),
+    note(2, 1),
+    note(0, 2),
+  ],
+}
+
+/* Auld Lang Syne, verse — F major pentatonic, 4/4 with a one-beat pickup and
+ * a dotted figure opening every bar. Offsets from F: C below = −5,
+ * D below = −3, G = 2, A = 4, C' = 7, D' = 9.
+ * (C,) | F. (F) F A | G. (F) G A | F. (F) A C' | D'–– D' |
+ *        C'. (A) A F | G. (F) G A | F. (D,) D, C, | F–– */
+const AULD_LANG_SYNE_TURN: SongNote[] = [
+  note(2, 1.5),
+  note(0, 0.5),
+  note(2, 1),
+  note(4, 1),
+]
+const AULD_LANG_SYNE: Song = {
+  id: 'auldLangSyne',
+  difficulty: 'normal',
+  bpm: 100,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 1 }, // 4/4
+  notes: [
+    note(-5, 1),
+    note(0, 1.5),
+    note(0, 0.5),
+    note(0, 1),
+    note(4, 1),
+    ...AULD_LANG_SYNE_TURN,
+    note(0, 1.5),
+    note(0, 0.5),
+    note(4, 1),
+    note(7, 1),
+    note(9, 3),
+    note(9, 1),
+    note(7, 1.5),
+    note(4, 0.5),
+    note(4, 1),
+    note(0, 1),
+    ...AULD_LANG_SYNE_TURN,
+    note(0, 1.5),
+    note(-3, 0.5),
+    note(-3, 1),
+    note(-5, 1),
+    note(0, 3),
+  ],
+}
+
+/* Silent Night (Gruber) — C major in 6/8, range a ninth. The first "sleep in
+ * heavenly peace" climbs to F', an eleventh above the tonic and wider than
+ * the keyboard fits on a phone (KEYBOARD_MIN_SEMITONE_UNIT), so those two
+ * bars are left out and the tune goes straight to the closing one.
+ * Offsets from C: D = 2, E = 4, F = 5, G = 7, A = 9, B = 11, C' = 12,
+ * D' = 14.
+ * G. (A) G E.. | G. (A) G E.. | D'– D' B.. | C'– C' G.. |
+ * A– A C'. (B) A | G. (A) G E.. | A– A C'. (B) A | G. (A) G E.. |
+ * C' G E G. (F) D | C..... */
+const SILENT_NIGHT_OPENING: SongNote[] = [
+  note(7, 0.75),
+  note(9, 0.25),
+  note(7, 0.5),
+  note(4, 1.5),
+]
+const SILENT_NIGHT_ROUND: SongNote[] = [
+  note(9, 1),
+  note(9, 0.5),
+  note(12, 0.75),
+  note(11, 0.25),
+  note(9, 0.5),
+]
+const SILENT_NIGHT: Song = {
+  id: 'silentNight',
+  difficulty: 'normal',
+  bpm: 72,
+  // 6/8: two dotted-quarter pulses per bar
+  meter: { pulseBeats: 1.5, pulsesPerBar: 2, pickupBeats: 0 },
+  notes: [
+    ...SILENT_NIGHT_OPENING,
+    ...SILENT_NIGHT_OPENING,
+    note(14, 1),
+    note(14, 0.5),
+    note(11, 1.5),
+    note(12, 1),
+    note(12, 0.5),
+    note(7, 1.5),
+    ...SILENT_NIGHT_ROUND,
+    ...SILENT_NIGHT_OPENING,
+    ...SILENT_NIGHT_ROUND,
+    ...SILENT_NIGHT_OPENING,
+    note(12, 0.5),
+    note(7, 0.5),
+    note(4, 0.5),
+    note(7, 0.75),
+    note(5, 0.25),
+    note(2, 0.5),
+    note(0, 3),
+  ],
+}
+
+/* Can-Can (Offenbach, Orpheus in the Underworld), galop theme sung twice —
+ * C major in running eighths, range an octave.
+ * C– | (D F E D) | G G | (G A E F) | D D | (D F E D) | (C C' B A) |
+ * (G F E D) | and again, closing on C. */
+const CAN_CAN_RUN: SongNote[] = [
+  note(2, 0.5),
+  note(5, 0.5),
+  note(4, 0.5),
+  note(2, 0.5),
+]
+const CAN_CAN_THEME: SongNote[] = [
+  note(0, 2),
+  ...CAN_CAN_RUN,
+  note(7, 1),
+  note(7, 1),
+  note(7, 0.5),
+  note(9, 0.5),
+  note(4, 0.5),
+  note(5, 0.5),
+  note(2, 1),
+  note(2, 1),
+  ...CAN_CAN_RUN,
+  note(0, 0.5),
+  note(12, 0.5),
+  note(11, 0.5),
+  note(9, 0.5),
+  note(7, 0.5),
+  note(5, 0.5),
+  note(4, 0.5),
+  note(2, 0.5),
+]
+const CAN_CAN: Song = {
+  id: 'canCan',
+  difficulty: 'hard',
+  bpm: 120,
+  /* 2/4 felt in one, as a galop is: a quarter pulse would flash faster than
+   * the beat lines allow, so the lane marks each bar and bolds every other. */
+  meter: { pulseBeats: 2, pulsesPerBar: 2, pickupBeats: 0 },
+  notes: [...CAN_CAN_THEME, ...CAN_CAN_THEME, note(0, 4)],
+}
+
+/* William Tell Overture (Rossini), finale theme sung twice — E major in 16ths
+ * at a slow quarter, a galloping "ti-ti-TUM" on the fifth below the tonic.
+ * Offsets from E: B below = −5, D♯ below = −1, F♯ = 2, G♯ = 4, A = 5, B = 7.
+ * (B, B,) | B, (B, B,) B, (B, B,) | E F♯ G♯ (B, B,) | B, (B, B,) E (G♯ G♯) |
+ * F♯ D♯, B, (B, B,) | B, (B, B,) B, (B, B,) | E F♯ G♯ (E G♯) |
+ * B~ (A G♯ F♯) | E G♯ E */
+const WILLIAM_TELL_GALLOP: SongNote[] = [
+  note(-5, 0.25),
+  note(-5, 0.25),
+  note(-5, 0.5),
+]
+const WILLIAM_TELL_CALL: SongNote[] = [
+  ...WILLIAM_TELL_GALLOP,
+  ...WILLIAM_TELL_GALLOP,
+  note(-5, 0.25),
+  note(-5, 0.25),
+  note(0, 0.5),
+  note(2, 0.5),
+  note(4, 0.5),
+]
+const WILLIAM_TELL_THEME: SongNote[] = [
+  ...WILLIAM_TELL_CALL,
+  ...WILLIAM_TELL_GALLOP,
+  note(-5, 0.25),
+  note(-5, 0.25),
+  note(0, 0.5),
+  note(4, 0.25),
+  note(4, 0.25),
+  note(2, 0.5),
+  note(-1, 0.5),
+  note(-5, 0.5),
+  ...WILLIAM_TELL_CALL,
+  note(0, 0.25),
+  note(4, 0.25),
+  note(7, 1.25), // a quarter tied to the first 16th of the run down
+  note(5, 0.25),
+  note(4, 0.25),
+  note(2, 0.25),
+  note(0, 0.5),
+  note(4, 0.5),
+  note(0, 0.5),
+]
+const WILLIAM_TELL: Song = {
+  id: 'williamTell',
+  difficulty: 'hard',
+  bpm: 72,
+  // 2/4; the two-16th pickup is half a beat
+  meter: { pulseBeats: 1, pulsesPerBar: 2, pickupBeats: 0.5 },
+  notes: [...WILLIAM_TELL_THEME, ...WILLIAM_TELL_THEME],
+}
+
+/* Swan Lake (Tchaikovsky), swan theme sung twice — B minor, falling a fifth
+ * from the held F♯ and then leaping through the G below the tonic.
+ * Offsets from B: G below = −4, C♯ = 2, D = 3, E = 5, F♯ = 7.
+ * F♯– (B C♯ D E) | F♯. (D) F♯. (D) | F♯. (B)(D B)(G, D) | B––– */
+const SWAN_LAKE_PHRASE: SongNote[] = [
+  note(7, 2),
+  note(0, 0.5),
+  note(2, 0.5),
+  note(3, 0.5),
+  note(5, 0.5),
+  note(7, 1.5),
+  note(3, 0.5),
+  note(7, 1.5),
+  note(3, 0.5),
+  note(7, 1.5),
+  note(0, 0.5),
+  note(3, 0.5),
+  note(0, 0.5),
+  note(-4, 0.5),
+  note(3, 0.5),
+]
+const SWAN_LAKE: Song = {
+  id: 'swanLake',
+  difficulty: 'hard',
+  bpm: 80,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
+  notes: [
+    ...SWAN_LAKE_PHRASE,
+    note(0, 3, 1), // a beat to breathe before the repeat
+    ...SWAN_LAKE_PHRASE,
+    note(0, 4),
+  ],
+}
+
 export const SONGS: Record<SongId, Song> = {
   twinkle: TWINKLE,
   odeToJoy: ODE_TO_JOY,
@@ -808,6 +1129,13 @@ export const SONGS: Record<SongId, Song> = {
   mountainKing: MOUNTAIN_KING,
   habanera: HABANERA,
   entertainer: ENTERTAINER,
+  oldMacDonald: OLD_MACDONALD,
+  brahmsLullaby: BRAHMS_LULLABY,
+  auldLangSyne: AULD_LANG_SYNE,
+  silentNight: SILENT_NIGHT,
+  canCan: CAN_CAN,
+  williamTell: WILLIAM_TELL,
+  swanLake: SWAN_LAKE,
 }
 
 export type SongDifficultyGroup = {
