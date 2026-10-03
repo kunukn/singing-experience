@@ -54,7 +54,6 @@ const STORAGE_KEYS = [
   'syng.singTheKeysBeatLines',
   'syng.singTheKeysHitEffects',
   'syng.singTheKeysKeyboardHints',
-  'syng.singTheKeysMelodyGuide',
   'syng.singTheKeysPitchSnap',
   'syng.singTheKeysSongId',
   'syng.singTheKeysSpeed',

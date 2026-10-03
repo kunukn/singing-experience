@@ -33,6 +33,10 @@ export const STORAGE_MIGRATIONS: readonly StorageMigration[] = [
 
   /* Sing the Keys' beat lights toggle was removed. */
   { retire: 'syng.singTheKeysBeatLights' },
+
+  /* Sing the Keys' Guide toggle became the ♪ preview button — an action, not
+   * a setting, so there is nothing to carry over. */
+  { retire: 'syng.singTheKeysMelodyGuide' },
 ]
 
 /*
