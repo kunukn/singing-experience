@@ -10,7 +10,6 @@ import {
 } from '@/utils/noteUtils'
 import { isOnPitch } from '@/utils/pitchMatch'
 import { useMediaQuery, useWindowSize } from '@vueuse/core'
-import { defineEmits, defineModel, defineProps } from 'vue'
 import SingTheKeysLane from './SingTheKeysLane.vue'
 import SingTheKeysSettingsRow from './SingTheKeysSettingsRow.vue'
 import {
