@@ -51,6 +51,13 @@ const isMelodyGuideEnabled = useLocalStorage(
 const isBeatLinesEnabled = useLocalStorage('syng.singTheKeysBeatLines', true)
 const isPitchSnapEnabled = useLocalStorage('syng.singTheKeysPitchSnap', false)
 const isHitEffectsEnabled = useLocalStorage('syng.singTheKeysHitEffects', true)
+/* Its own key, not the piano's syng.pianoKeyboardHints: here the chips share
+ * the screen with falling blocks, so a singer may want them off in the game
+ * and on at the piano. */
+const areKeyboardHintsVisible = useLocalStorage(
+  'syng.singTheKeysKeyboardHints',
+  true,
+)
 
 const range = computed(() =>
   songMidiRange(
@@ -92,5 +99,6 @@ const detection = usePitchDetection({
     v-model:isBeatLinesEnabled="isBeatLinesEnabled"
     v-model:isPitchSnapEnabled="isPitchSnapEnabled"
     v-model:isHitEffectsEnabled="isHitEffectsEnabled"
+    v-model:areKeyboardHintsVisible="areKeyboardHintsVisible"
   />
 </template>

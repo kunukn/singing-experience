@@ -9,7 +9,8 @@ import {
   toAccidentalGlyph,
 } from '@/utils/noteUtils'
 import { isOnPitch } from '@/utils/pitchMatch'
-import { useWindowSize } from '@vueuse/core'
+import { useMediaQuery, useWindowSize } from '@vueuse/core'
+import { defineEmits, defineModel, defineProps } from 'vue'
 import SingTheKeysLane from './SingTheKeysLane.vue'
 import SingTheKeysSettingsRow from './SingTheKeysSettingsRow.vue'
 import {
@@ -67,6 +68,16 @@ const isPitchSnapEnabled = defineModel<boolean>('isPitchSnapEnabled', {
 const isHitEffectsEnabled = defineModel<boolean>('isHitEffectsEnabled', {
   required: true,
 })
+/* The computer-key chips on the piano keys. Display only, like on the piano
+ * page: the keys play from the keyboard whether or not the chips are drawn. */
+const areKeyboardHintsVisible = defineModel<boolean>(
+  'areKeyboardHintsVisible',
+  { required: true },
+)
+
+/* The chips are only drawn where a physical keyboard exists (see keyChar in
+ * PianoDisplay), so on touch the toggle would be a no-op control. */
+const isCoarsePointer = useMediaQuery('(pointer: coarse)')
 
 /* The note currently due, for a test page that wants to sing along by itself. */
 const emit = defineEmits<{ targetChange: [midi: number | null] }>()
@@ -466,6 +477,13 @@ onUnmounted(() => {
         :disabled="isPlaying"
       />
 
+      <PreviewToggle
+        v-model="isPreviewEnabled"
+        :disabled="
+          isPlaying || (!simulateIdlePreview && micPermission === 'denied')
+        "
+      />
+
       <ToggleIconButton
         v-model="isBeatLinesEnabled"
         iconOn="pi pi-bars"
@@ -487,11 +505,9 @@ onUnmounted(() => {
         :label="t('generic.sparkles')"
       />
 
-      <PreviewToggle
-        v-model="isPreviewEnabled"
-        :disabled="
-          isPlaying || (!simulateIdlePreview && micPermission === 'denied')
-        "
+      <KeyboardHintsToggle
+        v-if="!isCoarsePointer"
+        v-model="areKeyboardHintsVisible"
       />
     </EdgeFadeScroller>
 
@@ -510,7 +526,7 @@ onUnmounted(() => {
         toneLabelMode="simple"
         :isOctaveShownOnC="true"
         :accidentalStyle="accidentalStyle"
-        :areKeyboardHintsVisible="false"
+        :areKeyboardHintsVisible="areKeyboardHintsVisible"
         :targetMidi="targetMidi"
         :isTargetCorrect="isTargetCorrect"
         :isPressGlowBlockShaped="true"

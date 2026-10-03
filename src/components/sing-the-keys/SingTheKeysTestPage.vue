@@ -21,6 +21,7 @@ const isMelodyGuideEnabled = ref(true)
 const isBeatLinesEnabled = ref(true)
 const isPitchSnapEnabled = ref(false)
 const isHitEffectsEnabled = ref(true)
+const areKeyboardHintsVisible = ref(true)
 
 const selectedNote = ref<NoteName>('G')
 const selectedOctave = ref(3)
@@ -61,6 +62,7 @@ function followTarget(midi: number | null) {
     v-model:isBeatLinesEnabled="isBeatLinesEnabled"
     v-model:isPitchSnapEnabled="isPitchSnapEnabled"
     v-model:isHitEffectsEnabled="isHitEffectsEnabled"
+    v-model:areKeyboardHintsVisible="areKeyboardHintsVisible"
     @targetChange="followTarget"
   >
     <div
