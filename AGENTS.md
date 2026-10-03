@@ -373,11 +373,28 @@ const filter = { Q: 2, type: 'lowpass', rolloff: -12 }
 
 ### Bug Discovery Logging
 
-**CRITICAL**: Don't silently ignore bugs and don't silently fix them either. If you notice a bug that is **out of scope** for the current task — UI glitch, logic error, perf issue, a11y defect, broken type, stale doc, anything — append an entry to [BUGS.md](BUGS.md) at the repo root instead of expanding the diff.
+Don't silently fix out-of-scope bugs, and don't log every oddity either. If you notice a bug that is **out of scope** for the current task and it clears the bar below, append an entry to [BUGS.md](BUGS.md) at the repo root instead of expanding the diff.
 
 In-scope bugs (the thing you were asked to fix or are clearly inside the change you're making) are still fixed normally.
 
-**Rule of thumb**: if fixing it would touch a file outside what the user asked for, log it; do not fix it.
+**The bar: an entry names a concrete cost.** Log it when one sentence can say what goes wrong and for whom:
+
+- **A user sees, hears or loses something wrong** — a silent string, a button showing when it shouldn't, a setting that resets, a layout that overflows.
+- **A latent hazard with a named trigger** — code that works today and breaks on a specific, plausible change, such as sorting a shared constant in place.
+- **Dead code** — unused translation keys, props passed but never declared, unreachable branches.
+- **Tooling friction every developer pays** — `check:fix` rewriting untouched files, a flaky test.
+
+**Below the bar — one line in the end-of-turn summary, no entry:**
+
+- **Accessibility polish** — a missing `aria-*` attribute, a small tap target. If it stops someone using the feature, it is a user-facing bug and gets an entry.
+- **Known tradeoffs** — behaviour that exists because the alternative costs more, especially when a comment or workaround already says so.
+- **Cosmetics and style** — differences you have to measure to see, naming, "could be cleaner".
+- **Speculation** — "might", "could", "in theory", with no repro and no named trigger.
+- **Harmless warnings** — install, build and lint still pass.
+
+**When unsure, don't log.** `BUGS.md` is a to-do list: every entry asks someone to spend time on it. A summary line costs nothing, and the user can promote it to an entry.
+
+**Rule of thumb**: if fixing it would touch a file outside what the user asked for, do not fix it — log it if it clears the bar.
 
 **Entry format** (append to the bottom of `BUGS.md`, newest at the bottom):
 
