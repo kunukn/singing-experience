@@ -23,6 +23,11 @@ const tasks = [
     args: ['--project', 'tsconfig.app.json'],
   },
   {
+    name: 'TS config',
+    cmd: localBin('tsc'),
+    args: ['--project', 'tsconfig.node.json'],
+  },
+  {
     name: 'Lint',
     cmd: localBin('oxlint'),
     args: ['src'],
