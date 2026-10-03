@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite --port 5555",
-    "build": "vue-tsgo && vite build",
+    "build": "vue-tsgo --project tsconfig.app.json && vite build",
     "build:preview": "npm run build && npm run preview",
     "build:validate": "npm run build && node scripts/validate-build.js",
     "preview": "vite preview",
