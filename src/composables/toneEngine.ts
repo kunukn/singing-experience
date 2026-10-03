@@ -11,12 +11,9 @@ export type ToneEngine = {
   warmUp: () => Promise<void>
   playTone: (frequencyHz: number, durationS?: number) => Promise<void>
   playToneAt: (frequencyHz: number, durationS: number, whenS: number) => void
-  /* Schedules a short metronome click at a precise audio-clock time. `accent`
-   * marks a bar downbeat (octave-higher, louder). Tone-mode independent. */
-  playClickAt: (whenS: number, accent: boolean) => void
   /* Schedules a short, high metronome tick at a precise audio-clock time. Always
-   * the same sound: no accent, tone-mode independent. Unlike playClickAt it
-   * lies above the pitch detector's range, for use while a mic is listening. */
+   * the same sound: no accent, tone-mode independent. It lies above the pitch
+   * detector's range, so it can sound while a mic is listening. */
   playTickAt: (whenS: number) => void
   playBellFeedback: (frequencyHz: number, durationS: number) => Promise<void>
   setToneMode: (mode: ToneMode) => void
@@ -151,11 +148,9 @@ export function createTonejsAdapter(): ToneEngine {
   let squareSynth: ToneType.PolySynth | null = null
   let tuningSynth: ToneType.PolySynth | null = null
   let tuningSynth2: ToneType.PolySynth | null = null
-  /* Dedicated metronome click voice — independent of the selected tone mode so
-   * the beat sounds the same whatever instrument is chosen. */
-  let clickSynth: ToneType.Synth | null = null
-  /* Dedicated metronome voice above the pitch detector's range — see
-   * getTickSynth. */
+  /* Dedicated metronome voice — independent of the selected tone mode so the
+   * beat sounds the same whatever instrument is chosen, and above the pitch
+   * detector's range. See getTickSynth. */
   let tickSynth: ToneType.Synth | null = null
   /* Harmony voice pool — one standalone monophonic synth per melodic line,
    * routed through a shared limiter. Built on demand by setHarmonyVoiceCount()
@@ -432,35 +427,6 @@ export function createTonejsAdapter(): ToneEngine {
     if (endS > scheduledUntilS) scheduledUntilS = endS
   }
 
-  /** Returns the dedicated metronome click synth (lazy init). */
-  function getClickSynth(): ToneType.Synth {
-    if (!clickSynth) {
-      clickSynth = new _tone!.Synth({
-        oscillator: { type: 'triangle' },
-        /* Percussive tick: near-instant attack, fast decay, no sustain. */
-        envelope: { attack: 0.001, decay: 0.03, sustain: 0, release: 0.01 },
-        volume: -6, // dB — sits under the singer without masking it
-      }).toDestination()
-    }
-
-    return clickSynth
-  }
-
-  /** Schedules a short metronome click at a precise audio-clock time. */
-  function playClickAt(whenS: number, accent: boolean): void {
-    if (!_tone) return
-
-    const synth = getClickSynth()
-    /* Accent (bar downbeat) rings an octave higher and louder than a plain beat. */
-    const note = accent ? 'C7' : 'C6'
-    const velocity = accent ? 1 : 0.6
-    const durationS = 0.03 // 30 ms — a crisp tick, well under the shortest beat
-    synth.triggerAttackRelease(note, durationS, whenS, velocity)
-
-    const endS = whenS + durationS
-    if (endS > scheduledUntilS) scheduledUntilS = endS
-  }
-
   /** Returns the dedicated metronome tick synth (lazy init). */
   function getTickSynth(): ToneType.Synth {
     if (!tickSynth) {
@@ -616,7 +582,6 @@ export function createTonejsAdapter(): ToneEngine {
     disposeAndClear(tuningSynth)
     disposeAndClear(tuningSynth2)
     disposeAndClear(bassSynth)
-    disposeAndClear(clickSynth)
     disposeAndClear(tickSynth)
     bellSynth = null
     keyboardSynth = null
@@ -624,7 +589,6 @@ export function createTonejsAdapter(): ToneEngine {
     tuningSynth = null
     tuningSynth2 = null
     bassSynth = null
-    clickSynth = null
     tickSynth = null
     lastTriggeredSynth = null
     isPlaying.value = false
@@ -666,7 +630,6 @@ export function createTonejsAdapter(): ToneEngine {
     warmUp,
     playTone,
     playToneAt,
-    playClickAt,
     playTickAt,
     playBellFeedback,
     setToneMode,

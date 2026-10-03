@@ -37,7 +37,7 @@ export function useGraceKelly(options: Options = {}) {
   const {
     warmUp,
     playToneAt,
-    playClickAt,
+    playTickAt,
     getNow,
     scheduleDraw,
     cancelScheduled,
@@ -141,7 +141,7 @@ export function useGraceKelly(options: Options = {}) {
   }
 
   /* Schedules the metronome for the remaining timeline: a one-beat count-in (on a
-   * fresh start) then a single click per bar, on each downbeat. Beat times are
+   * fresh start) then a single tick per bar, on each downbeat. Beat times are
    * derived from the song's eighth grid so they line up with the notes
    * regardless of where a resume begins. */
   function scheduleMetronome(
@@ -172,11 +172,11 @@ export function useGraceKelly(options: Options = {}) {
       for (let beat = 0; beat < COUNT_IN_BEATS; beat++) {
         const whenS =
           songStartS - (COUNT_IN_BEATS - beat) * BEAT_EIGHTHS * eighthSeconds
-        playClickAt(whenS, beat === 0) // accent the first count-in beat
+        playTickAt(whenS)
       }
     }
 
-    /* One click per bar on the downbeat. Downbeats fall `anacrusisEighths` into
+    /* One tick per bar on the downbeat. Downbeats fall `anacrusisEighths` into
      * the grid, then every full bar; find the first one at or after the resume
      * point and step a bar at a time. */
     const downbeatPhase =
@@ -185,7 +185,7 @@ export function useGraceKelly(options: Options = {}) {
       startEighth +
       ((((downbeatPhase - startEighth) % barEighths) + barEighths) % barEighths)
     for (let e = firstDownbeat; e < totalEighths; e += barEighths) {
-      playClickAt(songStartS + e * eighthSeconds, true) // every kept click is a bar downbeat
+      playTickAt(songStartS + e * eighthSeconds)
     }
   }
 

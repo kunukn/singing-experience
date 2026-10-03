@@ -522,14 +522,14 @@ onUnmounted(() => {
         v-model="isBeatLinesEnabled"
         iconOn="pi pi-bars"
         iconOff="pi pi-bars"
-        :label="t('generic.beat')"
+        :label="t('generic.lines')"
       />
 
       <ToggleIconButton
         v-model="isMetronomeEnabled"
         iconOn="pi pi-stopwatch"
         iconOff="pi pi-stopwatch"
-        :label="t('generic.metronome')"
+        :label="t('generic.beat')"
       />
 
       <ToggleIconButton

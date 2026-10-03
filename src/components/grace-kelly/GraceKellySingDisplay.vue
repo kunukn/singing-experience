@@ -118,8 +118,13 @@ const {
    * so they still register during the fast melody; tunable. */
   clarityThreshold: 0.6,
   /* Raw stream — the browser's default noise suppression / AGC gate sustained
-   * sung tones; the "Sing live" timeline is silent so there's no echo to cancel. */
+   * sung tones; the "Sing live" timeline plays no melody, so there's no echo
+   * of one to cancel. */
   rawAudio: true,
+  /* The metronome does sound while the mic listens: a tick at 4186 Hz. The
+   * low-pass at the detector's own 1500 Hz ceiling takes it out of the signal
+   * before detection and leaves the voice alone. */
+  lowPassHz: 1500,
   bandMinFrequency: () => melodyBandFrequencies.value.min,
   bandMaxFrequency: () => melodyBandFrequencies.value.max,
 })
