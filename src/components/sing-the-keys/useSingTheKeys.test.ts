@@ -54,7 +54,13 @@ function createGame(nowS = { value: 0 }) {
 }
 
 function startParams(isMelodyGuideEnabled = true) {
-  return { song, tonicMidi: C4, speed: 1, isMelodyGuideEnabled }
+  return {
+    song,
+    tonicMidi: C4,
+    speed: 1,
+    isMelodyGuideEnabled,
+    hasLeadIn: true,
+  }
 }
 
 describe('useSingTheKeys', () => {
@@ -115,6 +121,28 @@ describe('useSingTheKeys', () => {
     expect(game.activeNoteIndex.value).toBeNull()
 
     nowS.value = SONG_START_S + 0.7
+    vi.advanceTimersByTime(20)
+    await nextTick()
+
+    expect(game.elapsedMs.value).toBeCloseTo(700, 5)
+    expect(game.activeNoteIndex.value).toBe(1)
+  })
+
+  test('should play the first note at once when there is no lead-in', async () => {
+    const { engine, game, nowS } = createGame()
+
+    await game.start({ ...startParams(true), hasLeadIn: false })
+
+    /* Only SCHEDULE_AHEAD_S stands between Start and the first tone. */
+    expect(engine.playToneAt).toHaveBeenNthCalledWith(
+      1,
+      midiToFrequency(60),
+      expect.closeTo(0.6 * 0.92, 5),
+      expect.closeTo(TONE_START_S, 5),
+    )
+    expect(game.elapsedMs.value).toBeCloseTo(-TONE_START_S * 1000, 5)
+
+    nowS.value = TONE_START_S + 0.7
     vi.advanceTimersByTime(20)
     await nextTick()
 

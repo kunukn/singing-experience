@@ -335,7 +335,9 @@ const laneHeight = computed(() =>
 /* Open the mic first so a permission prompt never eats the lead-in, then
  * launch the timeline. In practice mode (guide on) the mic stays closed: with
  * the speaker playing the melody, the detected line whips between the guide
- * tone, the voice and their echo and only confuses — and nothing is scored. */
+ * tone, the voice and their echo and only confuses — and nothing is scored.
+ * Practice also skips the lead-in: it is get-ready time for a singer, and a
+ * listener wants the melody at once. */
 async function startSinging() {
   showResult.value = false
   resetScore()
@@ -350,6 +352,7 @@ async function startSinging() {
     tonicMidi: tonicMidi.value,
     speed: speed.value,
     isMelodyGuideEnabled: isMelodyGuideEnabled.value,
+    hasLeadIn: isScored.value,
   })
 }
 

@@ -37,6 +37,9 @@ export type SingTheKeysStartParams = {
   speed: number
   /* Play each note out loud as it reaches the hit line. */
   isMelodyGuideEnabled: boolean
+  /* Let the first blocks fall in for LOOKAHEAD_MS before note 0, so a singer
+   * can get ready. Off, the song starts at once from the idle preview's view. */
+  hasLeadIn: boolean
 }
 
 export type SingTheKeysResult = ReturnType<typeof useSingTheKeys>
@@ -55,8 +58,9 @@ type Options = {
  * agree on which note is due.
  *
  * `elapsedMs` counts from the song's first note: it is negative during the
- * LOOKAHEAD_MS lead-in while the first blocks fall in, and sits at 0 while
- * idle so the lane shows the opening of the tune as a still preview.
+ * LOOKAHEAD_MS lead-in while the first blocks fall in (a run started without
+ * one begins at 0), and sits at 0 while idle so the lane shows the opening of
+ * the tune as a still preview.
  * `laneElapsedMs` is what the lane draws: the same clock while playing. After a
  * natural finish it keeps falling while the last note still sounds, then
  * glides back to the song's last stretch so the ending (and its hits and
@@ -96,13 +100,13 @@ export function useSingTheKeys(options: Options = {}) {
     timeline.value.notes.map((note) => note.durationMs),
   )
 
-  /* Audio-clock second at which elapsedMs would read −LOOKAHEAD_MS. */
-  let toneStartS = 0
+  /* Audio-clock second at which elapsedMs reads 0: the song's first note. */
+  let songStartS = 0
   let rafId: number | null = null
   let endingPath = { fallEndMs: 0, endingViewMs: 0 }
 
   function readElapsedMs() {
-    return (engine.getNow() - toneStartS) * 1000 - LOOKAHEAD_MS
+    return (engine.getNow() - songStartS) * 1000
   }
 
   function tick() {
@@ -171,8 +175,8 @@ export function useSingTheKeys(options: Options = {}) {
       endingViewMs: laneEndViewMs(built.totalMs),
     }
 
-    toneStartS = engine.getNow() + SCHEDULE_AHEAD_S
-    const songStartS = toneStartS + LOOKAHEAD_MS / 1000
+    const leadInMs = params.hasLeadIn ? LOOKAHEAD_MS : 0
+    songStartS = engine.getNow() + SCHEDULE_AHEAD_S + leadInMs / 1000
 
     /* No count-in clicks: the beat lines and lights carry the beat. */
 
@@ -197,9 +201,9 @@ export function useSingTheKeys(options: Options = {}) {
       songStartS + built.totalMs / 1000,
     )
 
-    /* From the clock, not a flat −LOOKAHEAD_MS: the clock starts
-     * SCHEDULE_AHEAD_S in the future, so the flat value would sit on the first
-     * count-in beat line and the first frame would jump back off it. */
+    /* From the clock, not a flat −leadInMs: the clock starts SCHEDULE_AHEAD_S
+     * in the future, so the flat value would sit on the first count-in beat
+     * line and the first frame would jump back off it. */
     elapsedMs.value = readElapsedMs()
     laneElapsedMs.value = elapsedMs.value
     send({ type: 'START' })
