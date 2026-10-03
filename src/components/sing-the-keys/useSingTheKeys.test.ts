@@ -124,6 +124,25 @@ describe('useSingTheKeys', () => {
     expect(game.activeNoteIndex.value).toBe(1)
   })
 
+  test('should score each note 80 ms later than it is shown', async () => {
+    const { game, nowS } = createGame()
+
+    await game.start(startParams())
+    /* 50 ms into the second note: the pitch arriving now was sung to the first. */
+    nowS.value = SONG_START_S + 0.65
+    vi.advanceTimersByTime(20)
+    await nextTick()
+
+    expect(game.activeNoteIndex.value).toBe(1)
+    expect(game.scoredNoteIndex.value).toBe(0)
+
+    nowS.value = SONG_START_S + 0.7
+    vi.advanceTimersByTime(20)
+    await nextTick()
+
+    expect(game.scoredNoteIndex.value).toBe(1)
+  })
+
   test('should play the first note at once when there is no lead-in', async () => {
     const { engine, game, nowS } = createGame()
 

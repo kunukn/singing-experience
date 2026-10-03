@@ -132,6 +132,25 @@ describe('SingTheKeysLane', () => {
     ).toBe('missed')
   })
 
+  test.each([
+    { elapsedMs: 950, expected: 'upcoming' },
+    { elapsedMs: 980, expected: 'missed' },
+  ])(
+    'should show a note that ended at 900 ms as $expected at $elapsedMs ms with an 80 ms score lag',
+    ({ elapsedMs, expected }) => {
+      const wrapper = mountLane({
+        elapsedMs,
+        activeNoteIndex: null,
+        isPlaying: true,
+        scoreLagMs: 80,
+      })
+
+      expect(
+        wrapper.get('[data-testid="lane-note-1"]').attributes('data-status'),
+      ).toBe(expected)
+    },
+  )
+
   test('should emit the block midi when a block is tapped', async () => {
     const wrapper = await mountLaneForInput()
     const block = wrapper.get('[data-testid="lane-note-1"]')

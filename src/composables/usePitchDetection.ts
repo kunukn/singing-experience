@@ -1,6 +1,7 @@
 import type { NoteInfo } from '@/utils/noteUtils'
 import { frequencyToNote } from '@/utils/noteUtils'
 import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
+import { smoothPitch } from '@/utils/pitchSmoothing'
 import { PitchDetector } from 'pitchy'
 
 /*
@@ -57,8 +58,6 @@ type UsePitchDetectionOptions = {
 const MIN_FREQUENCY = 60
 const MAX_FREQUENCY = 1500
 
-/* EMA weight — 0.3 blends 30% new pitch + 70% previous, smoothing jitter without lagging */
-const SMOOTHING_FACTOR = 0.3
 /* ms to hold a clean signal before reporting onset — avoids transient flicker on note attacks */
 const ONSET_DEBOUNCE_MS = 40
 
@@ -135,11 +134,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
 
       let reportedFrequency = pitch
       if (isInBand) {
-        smoothedFrequency =
-          smoothedFrequency === null
-            ? pitch
-            : SMOOTHING_FACTOR * pitch +
-              (1 - SMOOTHING_FACTOR) * smoothedFrequency
+        smoothedFrequency = smoothPitch(smoothedFrequency, pitch)
         reportedFrequency = smoothedFrequency
       }
 

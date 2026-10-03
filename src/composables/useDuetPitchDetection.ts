@@ -5,6 +5,7 @@ import {
   toAccidentalGlyph,
 } from '@/utils/noteUtils'
 import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
+import { smoothPitch } from '@/utils/pitchSmoothing'
 import { PitchDetector } from 'pitchy'
 import {
   BAND_FILTER_STAGES,
@@ -33,9 +34,6 @@ import {
 /* Mirrors usePitchDetection.ts — practical singing range, ~B1 to ~F#6. */
 const MIN_FREQUENCY = 60
 const MAX_FREQUENCY = 1500
-
-/* Mirrors usePitchDetection.ts — EMA weight, 30% new pitch + 70% previous. */
-const SMOOTHING_FACTOR = 0.3
 
 /* Mirrors usePitchDetection.ts — ms a clean signal must hold before it counts,
  * so note attacks don't flicker. */
@@ -251,11 +249,7 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
       return { frequency: null, noteInfo: null, clarity: detectedClarity, rms }
     }
 
-    tracker.smoothedFrequency =
-      tracker.smoothedFrequency === null
-        ? pitch
-        : SMOOTHING_FACTOR * pitch +
-          (1 - SMOOTHING_FACTOR) * tracker.smoothedFrequency
+    tracker.smoothedFrequency = smoothPitch(tracker.smoothedFrequency, pitch)
 
     const now = performance.now()
     if (tracker.cleanSinceTimestamp === null) {

@@ -21,6 +21,7 @@ import {
 import {
   beatFlashAt,
   KEYBOARD_MIN_SEMITONE_UNIT,
+  SCORE_LAG_MS,
   songMidiRange,
 } from './singTheKeysTimeline'
 import { useMetronomeMask } from './useMetronomeMask'
@@ -113,6 +114,7 @@ const {
   isEndingSettled,
   laneElapsedMs,
   activeNoteIndex,
+  scoredNoteIndex,
   noteDurationsMs,
   laneScrollMaxMs,
   canScrollLane,
@@ -151,16 +153,23 @@ const targetMidi = computed(() => {
 
 watch(targetMidi, (midi) => emit('targetChange', midi))
 
-const targetFrequency = computed(() =>
-  targetMidi.value === null ? null : midiToFrequency(targetMidi.value),
-)
+/* The pitch the scorer wants right now. Not targetMidi's: the detected pitch
+ * runs SCORE_LAG_MS behind the voice, so it is held against the note that was
+ * due then, while the keys and lane show the one due now. */
+const scoredFrequency = computed(() => {
+  if (scoredNoteIndex.value === null) return null
+
+  const midi = timeline.value.notes[scoredNoteIndex.value]?.midi
+
+  return midi === undefined ? null : midiToFrequency(midi)
+})
 
 const isOnPitchForScore = computed(() => {
-  if (frequency.value === null || targetFrequency.value === null) return false
+  if (frequency.value === null || scoredFrequency.value === null) return false
 
   return isOnPitch(
     frequency.value,
-    targetFrequency.value,
+    scoredFrequency.value,
     SCORE_TOLERANCE_CENTS,
   )
 })
@@ -195,22 +204,24 @@ const {
 } = useDwellSingScore({
   isPlaying: isScoring,
   isOnPitch: isOnPitchForScore,
-  activeNoteIndex,
+  activeNoteIndex: scoredNoteIndex,
   noteDurationsMs,
 })
 
 const scorePercent = computed(() => Math.round(onPitchRatio.value * 100))
 
 /* Live tally beside the Stop button, so the end score is never a surprise.
- * A note is missed once it has fully passed the hit line without being hit —
- * the same rule the lane uses to paint a block red. */
+ * A note is missed once its scoring window has closed without a hit — that is
+ * SCORE_LAG_MS after it passed the hit line, the same rule the lane uses to
+ * paint a block red. */
 const hitCount = computed(() => correctNoteIndices.value.length)
 const missCount = computed(() => {
   const hit = new Set(correctNoteIndices.value)
 
   return timeline.value.notes.filter(
     (note) =>
-      !hit.has(note.index) && note.startMs + note.durationMs <= elapsedMs.value,
+      !hit.has(note.index) &&
+      note.startMs + note.durationMs + SCORE_LAG_MS <= elapsedMs.value,
   ).length
 })
 
@@ -577,6 +588,7 @@ onUnmounted(() => {
             :sungFrequency="liveFrequency"
             :shouldColorByCents="isPreviewColoredByCents"
             :isScored="isRunScored"
+            :scoreLagMs="SCORE_LAG_MS"
             :beatLines="isBeatLinesEnabled ? timeline.beatLines : []"
             :beatFlash="beatFlash"
             :isPlaying="isPlaying"

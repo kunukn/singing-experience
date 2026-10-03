@@ -43,6 +43,10 @@ type Props = {
   /* False in a ♪ preview (the melody plays): passed blocks go neutral rather
    * than red, since nothing was being judged. */
   isScored: boolean
+  /* Ms a note can still be hit after it has passed the hit line — the scorer
+   * runs this far behind the lane. A passed block waits it out before turning
+   * red, so one hit in that tail never flashes red first. Defaults to 0. */
+  scoreLagMs?: number
   /* The lane is parked on the song's ending after a natural finish: every note
    * has been sung, so an unhit one is missed even though it still sits above
    * the hit line. */
@@ -100,7 +104,9 @@ function statusOf(note: TimelineNote): NoteStatus {
   if (note.index === props.activeNoteIndex) return 'active'
   if (
     props.isShowingEnding ||
-    (props.isPlaying && note.startMs + note.durationMs <= props.elapsedMs)
+    (props.isPlaying &&
+      note.startMs + note.durationMs + (props.scoreLagMs ?? 0) <=
+        props.elapsedMs)
   )
     return props.isScored ? 'missed' : 'passed'
 

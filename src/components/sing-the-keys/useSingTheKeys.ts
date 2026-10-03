@@ -13,6 +13,7 @@ import {
   endingLaneMsAt,
   laneEndViewMs,
   LOOKAHEAD_MS,
+  SCORE_LAG_MS,
   type Timeline,
 } from './singTheKeysTimeline'
 
@@ -111,6 +112,16 @@ export function useSingTheKeys(options: Options = {}) {
       : null,
   )
 
+  /* The note the pitch arriving now belongs to: the one that was due
+   * SCORE_LAG_MS ago. The scorer keys on this, the lane and keys on
+   * activeNoteIndex. The run ends with the song, so the last note alone is
+   * judged on a window that much shorter. */
+  const scoredNoteIndex = computed(() =>
+    isPlaying.value
+      ? activeNoteIndexAt(timeline.value.notes, elapsedMs.value - SCORE_LAG_MS)
+      : null,
+  )
+
   /* Sounding duration of each note in ms — the scorer's dwell thresholds and
    * its denominator come from this. */
   const noteDurationsMs = computed(() =>
@@ -122,8 +133,11 @@ export function useSingTheKeys(options: Options = {}) {
   let rafId: number | null = null
   let endingPath = { fallEndMs: 0, endingViewMs: 0 }
 
+  /* On the immediate clock, the one the speaker is on. getNow() runs Tone's
+   * 100 ms look-ahead early: read from it, every block and beat line reached
+   * the hit line 100 ms before its tone or thud sounded. */
   function readElapsedMs() {
-    return (engine.getNow() - songStartS) * 1000
+    return (engine.getImmediate() - songStartS) * 1000
   }
 
   /* The first beat line the metronome has not yet looked at. */
@@ -332,6 +346,7 @@ export function useSingTheKeys(options: Options = {}) {
     isEndingSettled,
     laneElapsedMs,
     activeNoteIndex,
+    scoredNoteIndex,
     noteDurationsMs,
     laneScrollMaxMs,
     canScrollLane,

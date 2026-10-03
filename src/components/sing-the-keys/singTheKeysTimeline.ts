@@ -5,6 +5,13 @@ import type { Song } from './singTheKeysSongs'
  * therefore how far ahead the singer sees. Also the lead-in before note 0. */
 export const LOOKAHEAD_MS = 3000
 
+/* ms the detected pitch runs behind the voice: mic and browser input, the
+ * detector's window filling with the new note, and the wait for the next
+ * frame. A note is scored this much later than it is drawn, so a singer who
+ * starts as the block lands is judged on the whole note — without it the lag
+ * came off the front of every note and had to be won back by singing early. */
+export const SCORE_LAG_MS = 80
+
 export type TimelineNote = {
   /* Index into the song's `notes` — the score composable keys on it. */
   index: number
