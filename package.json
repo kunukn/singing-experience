@@ -9,7 +9,7 @@
   },
   "scripts": {
     "dev": "vite --port 5555",
-    "build": "vue-tsc && vite build",
+    "build": "vue-tsgo && vite build",
     "build:preview": "npm run build && npm run preview",
     "build:validate": "npm run build && node scripts/validate-build.js",
     "preview": "vite preview",
@@ -61,14 +61,14 @@
     "playwright": "^1.63.0",
     "prettier": "^3.9.8",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "typescript": "^6.0.3",
+    "typescript": "7.0.2",
     "unplugin-auto-import": "^21.1.0",
     "unplugin-vue-components": "^32.1.0",
     "vite": "^8.3.0",
     "vite-plugin-pwa": "^1.3.0",
     "vite-plugin-vue-devtools": "^8.2.1",
     "vitest": "^4.1.11",
-    "vue-tsc": "3.3.11"
+    "vue-tsgo": "0.3.0"
   },
   "repository": {
     "type": "git",

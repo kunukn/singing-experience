@@ -15,8 +15,8 @@ const localBin = (name) => {
 const startTime = performance.now()
 
 const tsc = spawn(
-  localBin('vue-tsc'),
-  ['--project', 'tsconfig.app.json', '--noEmit'],
+  localBin('vue-tsgo'),
+  ['--project', 'tsconfig.app.json'],
   {
     stdio: ['inherit', 'pipe', 'pipe'],
     shell: isWin,

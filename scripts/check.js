@@ -19,8 +19,8 @@ const localBin = (name) => {
 const tasks = [
   {
     name: 'TS check',
-    cmd: localBin('vue-tsc'),
-    args: ['--project', 'tsconfig.app.json', '--noEmit'],
+    cmd: localBin('vue-tsgo'),
+    args: ['--project', 'tsconfig.app.json'],
   },
   {
     name: 'Lint',

@@ -27,7 +27,7 @@ jobs:
         run: npm audit --audit-level=high
 
       - name: Type check
-        run: npx --no-install vue-tsc --project tsconfig.app.json --noEmit
+        run: npx --no-install vue-tsgo --project tsconfig.app.json
 
       - name: Lint
         run: npx --no-install oxlint src
