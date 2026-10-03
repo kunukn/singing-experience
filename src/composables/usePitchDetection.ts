@@ -1,6 +1,6 @@
 import type { NoteInfo } from '@/utils/noteUtils'
 import { frequencyToNote } from '@/utils/noteUtils'
-import { acquireMicStream } from '@/utils/microphoneStream'
+import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
 import { PitchDetector } from 'pitchy'
 
 /*
@@ -232,7 +232,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
     }
 
     if (mediaStream) {
-      mediaStream.getTracks().forEach((track) => track.stop())
+      releaseMicStream(mediaStream)
       mediaStream = null
     }
 

@@ -4,7 +4,7 @@ import {
   midiToFrequency,
   toAccidentalGlyph,
 } from '@/utils/noteUtils'
-import { acquireMicStream } from '@/utils/microphoneStream'
+import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
 import { PitchDetector } from 'pitchy'
 import {
   BAND_FILTER_STAGES,
@@ -347,7 +347,7 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
     }
 
     if (mediaStream) {
-      mediaStream.getTracks().forEach((track) => track.stop())
+      releaseMicStream(mediaStream)
       mediaStream = null
     }
 

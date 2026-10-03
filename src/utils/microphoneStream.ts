@@ -57,11 +57,39 @@ export async function hasActiveMicGrant(): Promise<boolean> {
   }
 }
 
+/* Streams handed out and not yet released. The audio session may only leave
+ * play-and-record once this is empty: 'playback' cuts any capture still live. */
+const liveMicStreams = new Set<MediaStream>()
+
+type AudioSessionType = 'auto' | 'playback' | 'play-and-record'
+
+/*
+ * Audio Session API — WebKit only (Safari 16.4+), a no-op elsewhere.
+ *
+ * iOS has one audio session per page. Opening the mic moves it to
+ * play-and-record, which plays the synths at quiet call level, and under the
+ * default 'auto' WebKit leaves it there after the mic closes while Tone's
+ * context is still running — so the piano stayed quiet until a reload. Setting
+ * the type explicitly makes iOS re-pick the category at once.
+ */
+function setAudioSessionType(type: AudioSessionType) {
+  const session = (navigator as Navigator & { audioSession?: { type: string } })
+    .audioSession
+  if (!session) return
+
+  try {
+    session.type = type
+  } catch {
+    /* rejected type — keep whatever the browser chose */
+  }
+}
+
 /**
  * Acquire a microphone stream, first exiting fullscreen on iOS/iPadOS when a
  * permission prompt is genuinely pending (so the prompt can actually render).
  * All app code that needs the mic must go through this — never call
- * navigator.mediaDevices.getUserMedia directly.
+ * navigator.mediaDevices.getUserMedia directly. Hand the stream back through
+ * releaseMicStream when done.
  */
 export async function acquireMicStream(
   constraints: MediaStreamConstraints,
@@ -85,8 +113,33 @@ export async function acquireMicStream(
     }
   }
 
-  const stream = await navigator.mediaDevices.getUserMedia(constraints)
+  /* Back to a capture-capable session: a previous release left it on 'playback',
+   * which does not allow recording. */
+  setAudioSessionType('play-and-record')
+
+  let stream: MediaStream
+  try {
+    stream = await navigator.mediaDevices.getUserMedia(constraints)
+  } catch (error) {
+    if (liveMicStreams.size === 0) setAudioSessionType('playback')
+
+    throw error
+  }
+
   hasAcquiredMicStreamThisPageInstance = true
+  liveMicStreams.add(stream)
 
   return stream
+}
+
+/**
+ * Stop a stream from acquireMicStream and, once no stream is left, return the
+ * audio session to playback so the synths play at full media volume again.
+ * Never stop the tracks by hand — the session would stay in call mode.
+ */
+export function releaseMicStream(stream: MediaStream) {
+  stream.getTracks().forEach((track) => track.stop())
+  liveMicStreams.delete(stream)
+
+  if (liveMicStreams.size === 0) setAudioSessionType('playback')
 }

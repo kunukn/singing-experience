@@ -1,6 +1,6 @@
 import type { DetectedTone } from '@/components/tone-detector/toneDetectionTypes'
 import { frequencyToNote } from '@/utils/noteUtils'
-import { acquireMicStream } from '@/utils/microphoneStream'
+import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
 import {
   MAX_TONES,
   estimateNoiseFloorDb,
@@ -157,7 +157,7 @@ export function useMultiToneDetection(config?: ToneDetectionConfig) {
     }
 
     if (mediaStream) {
-      mediaStream.getTracks().forEach((track) => track.stop())
+      releaseMicStream(mediaStream)
       mediaStream = null
     }
 

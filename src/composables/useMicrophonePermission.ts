@@ -1,4 +1,8 @@
-import { acquireMicStream, hasActiveMicGrant } from '@/utils/microphoneStream'
+import {
+  acquireMicStream,
+  hasActiveMicGrant,
+  releaseMicStream,
+} from '@/utils/microphoneStream'
 
 type MicPermissionState = PermissionState | null
 
@@ -65,7 +69,7 @@ export function useMicrophonePermission() {
 
     try {
       const stream = await acquireMicStream({ audio: true })
-      stream.getTracks().forEach((track) => track.stop())
+      releaseMicStream(stream)
       state.value = 'granted'
     } catch {
       state.value = 'denied'
