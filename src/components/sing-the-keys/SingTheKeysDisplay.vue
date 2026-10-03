@@ -18,7 +18,7 @@ import {
   type SongId,
   type SpeedOption,
 } from './singTheKeysSongs'
-import { beatFlashAt, beatPulseAt, songMidiRange } from './singTheKeysTimeline'
+import { beatFlashAt, songMidiRange } from './singTheKeysTimeline'
 import { useSingTheKeys } from './useSingTheKeys'
 
 type PitchDetectionInput = {
@@ -54,11 +54,6 @@ const isMelodyGuideEnabled = defineModel<boolean>('isMelodyGuideEnabled', {
 /* Pulse lines falling with the blocks, so the beat is visible without a
  * metronome. Visual only, so it can be flipped mid-run. */
 const isBeatLinesEnabled = defineModel<boolean>('isBeatLinesEnabled', {
-  required: true,
-})
-/* Beat lights: the hit line thickens and glows on each beat, where the singer
- * is already looking. Visual only, like the lines. */
-const areBeatLightsEnabled = defineModel<boolean>('areBeatLightsEnabled', {
   required: true,
 })
 /* Snap: the sung line and note chip sit on the nearest key instead of drifting
@@ -204,31 +199,12 @@ const resultNoteIndices = computed(() =>
 )
 
 /* Only while playing: idle sits at elapsedMs 0, where a song without a pickup
- * has a line, and the hit line would glow on the still preview. Independent of
- * the beat lights, which glow on the lane edges rather than the hit line. */
+ * has a line, and the hit line would glow on the still preview. */
 const beatFlash = computed(() =>
   isPlaying.value && isBeatLinesEnabled.value
     ? beatFlashAt(timeline.value.beatLines, laneElapsedMs.value)
     : null,
 )
-
-/* Other beats pulse the key softer than the bar's "1", so the downbeat stands out. */
-const OFFBEAT_PULSE_STRENGTH = 0.5
-
-/* Beat lights: the key being sung brightens on each beat and fades by the
- * next, right where the singer is aiming. Dark while no note is due (lead-in,
- * rests), as there is no key to light. */
-const targetPulse = computed(() => {
-  if (!isPlaying.value || !areBeatLightsEnabled.value) return null
-  if (targetMidi.value === null) return null
-
-  const pulse = beatPulseAt(timeline.value.beatLines, laneElapsedMs.value)
-  if (!pulse) return null
-
-  const strength = pulse.isBarStart ? 1 : OFFBEAT_PULSE_STRENGTH
-
-  return (1 - pulse.progress) * strength
-})
 
 const isTargetCorrect = computed(
   () =>
@@ -493,13 +469,6 @@ onUnmounted(() => {
       />
 
       <ToggleIconButton
-        v-model="areBeatLightsEnabled"
-        iconOn="pi pi-sun"
-        iconOff="pi pi-sun"
-        :label="t('singTheKeys.beatLights')"
-      />
-
-      <ToggleIconButton
         v-model="isPitchSnapEnabled"
         iconOn="pi pi-bullseye"
         iconOff="pi pi-bullseye"
@@ -532,7 +501,6 @@ onUnmounted(() => {
         :areKeyboardHintsVisible="false"
         :targetMidi="targetMidi"
         :isTargetCorrect="isTargetCorrect"
-        :targetPulse="targetPulse"
         :isPressGlowBlockShaped="true"
       >
         <template #lane="{ layout, playKey }">

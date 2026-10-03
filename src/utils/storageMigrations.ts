@@ -30,6 +30,9 @@ export const STORAGE_MIGRATIONS: readonly StorageMigration[] = [
    * non-arbitrary way to pick which one wins the shared slot. */
   { retire: 'syng.singToneRangeIndex' },
   { retire: 'syng.warmup.rangeIndex' },
+
+  /* Sing the Keys' beat lights toggle was removed. */
+  { retire: 'syng.singTheKeysBeatLights' },
 ]
 
 /*

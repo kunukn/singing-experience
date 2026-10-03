@@ -49,7 +49,6 @@ const isMelodyGuideEnabled = useLocalStorage(
 )
 
 const isBeatLinesEnabled = useLocalStorage('syng.singTheKeysBeatLines', true)
-const areBeatLightsEnabled = useLocalStorage('syng.singTheKeysBeatLights', true)
 const isPitchSnapEnabled = useLocalStorage('syng.singTheKeysPitchSnap', true)
 
 const range = computed(() =>
@@ -90,7 +89,6 @@ const detection = usePitchDetection({
     v-model:speed="speed"
     v-model:isMelodyGuideEnabled="isMelodyGuideEnabled"
     v-model:isBeatLinesEnabled="isBeatLinesEnabled"
-    v-model:areBeatLightsEnabled="areBeatLightsEnabled"
     v-model:isPitchSnapEnabled="isPitchSnapEnabled"
   />
 </template>

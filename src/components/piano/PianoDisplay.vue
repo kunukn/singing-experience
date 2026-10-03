@@ -75,9 +75,6 @@ type Props = {
   targetMidi?: number | null
   /* Turns the target wash green once the singer has hit the note. */
   isTargetCorrect?: boolean
-  /* 0–1 extra brightness on the target wash, e.g. Sing the Keys' beat lights.
-   * Null or undefined leaves the wash steady. */
-  targetPulse?: number | null
   /* Draw a white key's press glow in the falling block's shape (like the target
    * wash) instead of across the whole key. Sing the Keys turns this on so a
    * played key and a landing block share one shape. */
@@ -116,21 +113,6 @@ const TARGET_WASH_CLASS: Record<'active' | 'correct', string> = {
   active: 'bg-(--p-blue-400)/40',
   correct: 'bg-(--p-green-400)/60',
 }
-
-/* The pulse is the wash's own hue at full strength, faded in over it, so a
- * beat brightens the key rather than tinting it a new colour. */
-const TARGET_PULSE_CLASS: Record<'active' | 'correct', string> = {
-  active: 'bg-(--p-blue-400)',
-  correct: 'bg-(--p-green-400)',
-}
-
-/* Cap on the pulse layer's opacity: enough to read as a flash over the wash
- * while the key's label stays legible under it. */
-const TARGET_PULSE_MAX_OPACITY = 0.7
-
-const targetPulseOpacity = computed(() =>
-  props.targetPulse ? props.targetPulse * TARGET_PULSE_MAX_OPACITY : 0,
-)
 
 /* The same switch the pitch detector's chart ribbon reads, so one toggle drives
  * the bars on every board. */
@@ -605,16 +587,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             }"
             aria-hidden="true"
             data-testid="piano-target-wash"
-          >
-            <span
-              v-if="targetPulseOpacity > 0"
-              class="absolute inset-0 rounded-b-md"
-              :class="TARGET_PULSE_CLASS[whiteTargetWash.state]"
-              :style="{ opacity: targetPulseOpacity }"
-              data-testid="piano-target-pulse"
-              :data-intensity="targetPulse?.toFixed(2)"
-            />
-          </div>
+          />
 
           <button
             v-for="key in layout.blacks"
@@ -658,16 +631,6 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               class="pointer-events-none absolute inset-0 rounded-b-md"
               :class="TARGET_WASH_CLASS[targetState(key)!]"
               aria-hidden="true"
-            />
-
-            <span
-              v-if="targetState(key) && targetPulseOpacity > 0"
-              class="pointer-events-none absolute inset-0 rounded-b-md"
-              :class="TARGET_PULSE_CLASS[targetState(key)!]"
-              :style="{ opacity: targetPulseOpacity }"
-              aria-hidden="true"
-              data-testid="piano-target-pulse"
-              :data-intensity="targetPulse?.toFixed(2)"
             />
 
             <!-- Stacked bottom-up: the computer key sits above the note label.

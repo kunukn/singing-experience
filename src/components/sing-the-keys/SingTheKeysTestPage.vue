@@ -19,7 +19,6 @@ const rangeOffset = ref(DEFAULT_RANGE_OFFSET)
 const speed = ref<SpeedOption>(DEFAULT_SPEED)
 const isMelodyGuideEnabled = ref(true)
 const isBeatLinesEnabled = ref(true)
-const areBeatLightsEnabled = ref(true)
 const isPitchSnapEnabled = ref(true)
 
 const selectedNote = ref<NoteName>('G')
@@ -59,7 +58,6 @@ function followTarget(midi: number | null) {
     v-model:speed="speed"
     v-model:isMelodyGuideEnabled="isMelodyGuideEnabled"
     v-model:isBeatLinesEnabled="isBeatLinesEnabled"
-    v-model:areBeatLightsEnabled="areBeatLightsEnabled"
     v-model:isPitchSnapEnabled="isPitchSnapEnabled"
     @targetChange="followTarget"
   >
