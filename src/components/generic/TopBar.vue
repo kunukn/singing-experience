@@ -7,9 +7,8 @@ const betaPages = new Set([
   '/piano',
   '/guitar',
   '/sing-the-keys',
-  '/song-recorder',
 ])
-const alphaPages = new Set(['/tone-detector'])
+const alphaPages = new Set(['/tone-detector', '/song-recorder'])
 const route = useRoute()
 const router = useRouter()
 const isHome = computed(() => route.path === '/')
