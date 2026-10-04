@@ -47,16 +47,6 @@ function splitIntoWritable(units: number, lengths: number[]): number[] {
   return parts
 }
 
-/* Treble when the melody's median pitch is middle C or above, else bass. */
-export function chooseClef(midis: readonly number[]): ClefKey {
-  if (midis.length === 0) return 'treble'
-
-  const sorted = [...midis].sort((a, b) => a - b)
-  const MIDDLE_C = 60
-
-  return sorted[Math.floor(sorted.length / 2)] >= MIDDLE_C ? 'treble' : 'bass'
-}
-
 /*
  * Builds an ABC tune from quantized notes: L:1/<grid> so a grid step is the
  * unit length, notes split at bar lines and into writable lengths (tied with

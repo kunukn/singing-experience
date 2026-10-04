@@ -3,7 +3,8 @@ import { useRafFn } from '@vueuse/core'
 import { frequencyToMidi, midiToFrequency } from '@/utils/noteUtils'
 import { createNoteSegmenter, type NoteEvent } from './noteSegmenter'
 import { gridUnitMs, quantizeNotes } from './quantizeNotes'
-import { buildRecordingAbc, chooseClef } from './songRecorderAbc'
+import type { ClefKey } from '@/components/notes/notesConstants'
+import { buildRecordingAbc } from './songRecorderAbc'
 import {
   BEATS_PER_BAR,
   COUNT_IN_BARS,
@@ -24,6 +25,7 @@ type Options = {
   detection: PitchDetectionInput
   bpm: Ref<number>
   grid: Ref<Grid>
+  clef: Ref<ClefKey>
   /* Click on every beat while recording. The count-in always clicks. */
   isClickEnabled: Ref<boolean>
 }
@@ -45,7 +47,7 @@ export type SongRecorderResult = ReturnType<typeof useSongRecorder>
  * active sheet element highlighted.
  */
 export function useSongRecorder(options: Options) {
-  const { detection, bpm, grid, isClickEnabled } = options
+  const { detection, bpm, grid, clef, isClickEnabled } = options
   const { snapshot, send } = useMachine(songRecorderMachine)
   const {
     warmUp,
@@ -106,12 +108,6 @@ export function useSongRecorder(options: Options) {
       }
     },
     { immediate: false },
-  )
-
-  /* Draws trail the live singer (notes appear once closed); the clef follows
-   * the melody's median pitch. */
-  const clef = computed(() =>
-    chooseClef(events.value.map((event) => event.midi)),
   )
 
   const quantized = computed(() =>
@@ -330,7 +326,6 @@ export function useSongRecorder(options: Options) {
     limitMs,
     events,
     hasNotes,
-    clef,
     sheet,
     activePieceIndex,
     hasPlayedToEnd,

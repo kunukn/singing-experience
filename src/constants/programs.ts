@@ -49,9 +49,9 @@ export const tools: Program[] = [
     route: '/warm-up',
   },
   {
-    key: 'notes',
-    icon: '🎵',
-    route: '/notes',
+    key: 'songRecorder',
+    icon: '📝',
+    route: '/song-recorder',
   },
   {
     key: 'piano',
@@ -64,9 +64,9 @@ export const tools: Program[] = [
     route: '/guitar',
   },
   {
-    key: 'songRecorder',
-    icon: '📝',
-    route: '/song-recorder',
+    key: 'notes',
+    icon: '🎵',
+    route: '/notes',
   },
   {
     key: 'tuner',

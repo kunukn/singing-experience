@@ -1,10 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import type { QuantizedNote } from './quantizeNotes'
-import {
-  buildRecordingAbc,
-  chooseClef,
-  writableLengths,
-} from './songRecorderAbc'
+import { buildRecordingAbc, writableLengths } from './songRecorderAbc'
 
 const OPTIONS = { bpm: 90, grid: 8, beatsPerBar: 4, clef: 'treble' } as const
 
@@ -108,13 +104,5 @@ describe('songRecorderAbc', () => {
       { noteIndex: 0, startUnit: 6, units: 1, isRest: false },
       { noteIndex: 1, startUnit: 7, units: 1, isRest: true },
     ])
-  })
-
-  test.each([
-    { midis: [60, 64, 67], expected: 'treble' },
-    { midis: [43, 48, 52], expected: 'bass' },
-    { midis: [], expected: 'treble' },
-  ])('chooses $expected clef for $midis', ({ midis, expected }) => {
-    expect(chooseClef(midis)).toBe(expected)
   })
 })

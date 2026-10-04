@@ -5,7 +5,13 @@ import {
   type NoteName,
 } from '@/utils/noteUtils'
 import SongRecorderDisplay from './SongRecorderDisplay.vue'
-import { DEFAULT_BPM, DEFAULT_GRID, type Grid } from './songRecorderConstants'
+import type { ClefKey } from '@/components/notes/notesConstants'
+import {
+  DEFAULT_BPM,
+  DEFAULT_CLEF,
+  DEFAULT_GRID,
+  type Grid,
+} from './songRecorderConstants'
 
 /* Simulated voice only — test pages never open the microphone (AGENTS.md). */
 
@@ -28,6 +34,7 @@ const detection = useSimulatedPitchDetection({
 
 const bpm = ref(DEFAULT_BPM)
 const grid = ref<Grid>(DEFAULT_GRID)
+const clef = ref<ClefKey>(DEFAULT_CLEF)
 const isClickEnabled = ref(true)
 
 const isVoiceOn = computed({
@@ -132,6 +139,7 @@ onUnmounted(clearDemo)
     :simulateIdlePreview="true"
     v-model:bpm="bpm"
     v-model:grid="grid"
+    v-model:clef="clef"
     v-model:isClickEnabled="isClickEnabled"
   >
     <div

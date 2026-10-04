@@ -1,3 +1,5 @@
+import type { ClefKey } from '@/components/notes/notesConstants'
+
 /* Tempo list for the song recorder. BPM = quarter note (the 4/4 beat unit).
  * Starts lower than /notes (50) so slow ballads fit. "BPM" kept untranslated. */
 export const ALLOWED_BPMS = [
@@ -15,6 +17,9 @@ export const COUNT_IN_BARS = 1
 /* 4/4 only for now; every pure helper takes beatsPerBar so 3/4 and 5/4 are a
  * config change later. */
 export const BEATS_PER_BAR = 4
+
+/* The singer picks the clef; treble suits most voices and children. */
+export const DEFAULT_CLEF: ClefKey = 'treble'
 
 /* Rhythm grid as the note-value denominator: 8 = eighth notes, 16 = sixteenths.
  * Eighths absorb normal sung timing jitter (~±80 ms); sixteenths are for

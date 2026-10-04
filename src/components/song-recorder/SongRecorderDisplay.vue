@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useStableSungLabel } from '@/components/grace-kelly/useStableSungLabel'
+import type { ClefKey } from '@/components/notes/notesConstants'
 import {
   frequencyToMidi,
   midiToNoteLabel,
@@ -25,6 +26,7 @@ const props = defineProps<Props>()
 
 const bpm = defineModel<number>('bpm', { required: true })
 const grid = defineModel<Grid>('grid', { required: true })
+const clef = defineModel<ClefKey>('clef', { required: true })
 const isClickEnabled = defineModel<boolean>('isClickEnabled', {
   required: true,
 })
@@ -35,6 +37,7 @@ const recorder = useSongRecorder({
   detection: props.detection,
   bpm,
   grid,
+  clef,
   isClickEnabled,
 })
 const {
@@ -49,7 +52,6 @@ const {
   elapsedMs,
   limitMs,
   hasNotes,
-  clef,
   sheet,
   activePieceIndex,
   hasPlayedToEnd,
@@ -174,6 +176,7 @@ defineExpose({ recorder })
     <SongRecorderSettingsRow
       v-model:bpm="bpm"
       v-model:grid="grid"
+      v-model:clef="clef"
       v-model:isClickEnabled="isClickEnabled"
       :isTempoLocked="!isIdle"
       :isGridLocked="isTaking || isPlaybackRunning"

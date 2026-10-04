@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import {
+  CLEF_LABEL_KEYS,
+  type ClefKey,
+} from '@/components/notes/notesConstants'
 import { useLocalStorage } from '@vueuse/core'
 import SongRecorderDisplay from './SongRecorderDisplay.vue'
 import {
   ALLOWED_BPMS,
   DEFAULT_BPM,
+  DEFAULT_CLEF,
   DEFAULT_GRID,
   GRID_OPTIONS,
   type Grid,
@@ -21,6 +26,11 @@ if (!(GRID_OPTIONS as readonly number[]).includes(grid.value)) {
   grid.value = DEFAULT_GRID
 }
 
+const clef = useLocalStorage<ClefKey>('syng.songRecorderClef', DEFAULT_CLEF)
+if (!(CLEF_LABEL_KEYS as readonly string[]).includes(clef.value)) {
+  clef.value = DEFAULT_CLEF
+}
+
 const isClickEnabled = useLocalStorage('syng.songRecorderClick', true)
 </script>
 
@@ -29,6 +39,7 @@ const isClickEnabled = useLocalStorage('syng.songRecorderClick', true)
     :detection="detection"
     v-model:bpm="bpm"
     v-model:grid="grid"
+    v-model:clef="clef"
     v-model:isClickEnabled="isClickEnabled"
   />
 </template>

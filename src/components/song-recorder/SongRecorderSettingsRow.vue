@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import {
+  CLEF_LABEL_KEYS,
+  type ClefKey,
+} from '@/components/notes/notesConstants'
 import { ALLOWED_BPMS, GRID_OPTIONS, type Grid } from './songRecorderConstants'
 
 type Props = {
@@ -12,11 +16,21 @@ const props = defineProps<Props>()
 
 const bpm = defineModel<number>('bpm', { required: true })
 const grid = defineModel<Grid>('grid', { required: true })
+/* Display only — redraws the same take, so it stays unlocked throughout. */
+const clef = defineModel<ClefKey>('clef', { required: true })
 const isClickEnabled = defineModel<boolean>('isClickEnabled', {
   required: true,
 })
 
 const { t } = useI18n()
+
+/* Same treble/bass switch and labels as the /notes settings row. */
+const clefOptions = computed(() =>
+  CLEF_LABEL_KEYS.map((key) => ({
+    label: t(`notes.clefLabels.${key}`),
+    value: key,
+  })),
+)
 
 const bpmOptions = [...ALLOWED_BPMS]
   .sort((a, b) => b - a)
@@ -41,6 +55,19 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       'mask-end': canScrollEnd,
     }"
   >
+    <div class="settings-item">
+      <div />
+      <PrimeSelectButton
+        v-model="clef"
+        :options="clefOptions"
+        optionLabel="label"
+        optionValue="value"
+        :allowEmpty="false"
+        size="small"
+        data-testid="song-recorder-clef"
+      />
+    </div>
+
     <div class="settings-item">
       <label class="text-sm text-(--p-text-muted-color) md:block">{{
         t('generic.tempo')
@@ -79,6 +106,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         iconOff="pi pi-stopwatch"
         :label="t('generic.beat')"
         :disabled="props.isTempoLocked"
+        class="justify-self-start"
       />
     </div>
   </div>
@@ -87,8 +115,8 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 <style scoped>
 @reference '@/style.css';
 
-/* One row from md up: three items side by side. */
+/* One row from md up: four items (each col-span-2) side by side. */
 .settings-row {
-  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr];
+  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr];
 }
 </style>
