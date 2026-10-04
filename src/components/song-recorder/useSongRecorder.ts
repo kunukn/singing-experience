@@ -330,6 +330,7 @@ export function useSongRecorder(options: Options) {
     limitMs,
     events,
     hasNotes,
+    clef,
     sheet,
     activePieceIndex,
     hasPlayedToEnd,

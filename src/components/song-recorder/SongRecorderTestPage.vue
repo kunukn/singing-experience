@@ -129,6 +129,7 @@ onUnmounted(clearDemo)
   <SongRecorderDisplay
     ref="displayRef"
     :detection="detection"
+    :simulateIdlePreview="true"
     v-model:bpm="bpm"
     v-model:grid="grid"
     v-model:isClickEnabled="isClickEnabled"

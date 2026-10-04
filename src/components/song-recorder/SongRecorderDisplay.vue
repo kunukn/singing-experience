@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import { midiToNoteLabel, type NoteInfo } from '@/utils/noteUtils'
+import { useStableSungLabel } from '@/components/grace-kelly/useStableSungLabel'
+import {
+  frequencyToMidi,
+  midiToNoteLabel,
+  type NoteInfo,
+} from '@/utils/noteUtils'
 import SongRecorderAbcExport from './SongRecorderAbcExport.vue'
 import SongRecorderSettingsRow from './SongRecorderSettingsRow.vue'
 import SongRecorderSheet from './SongRecorderSheet.vue'
@@ -9,7 +14,11 @@ import { useSongRecorder, type PitchDetectionInput } from './useSongRecorder'
 type Props = {
   detection: PitchDetectionInput & {
     noteInfo: Readonly<Ref<NoteInfo | null>>
+    isListening: Readonly<Ref<boolean>>
   }
+  /* Test pages: draw "See your voice" from the simulated `detection` instead
+   * of opening the real mic via useIdlePreview. */
+  simulateIdlePreview?: boolean
 }
 
 const props = defineProps<Props>()
@@ -40,6 +49,7 @@ const {
   elapsedMs,
   limitMs,
   hasNotes,
+  clef,
   sheet,
   activePieceIndex,
   hasPlayedToEnd,
@@ -54,6 +64,75 @@ const {
 
 const isTaking = computed(() => isCountingIn.value || isRecording.value)
 const isPlaybackRunning = computed(() => isPlaying.value || isPaused.value)
+
+const { isPreviewEnabled } = useSettings()
+
+/* "See your voice" — the live pitch as a line on the staff. Between takes the
+ * idle preview listens (silent during playback, so the speaker isn't drawn);
+ * during a take the recording mic draws it. The setter keeps the shared setting
+ * writable so useIdlePreview can switch it off when permission is denied; the
+ * getter is false on a simulated page, so the real mic never opens there. */
+const isRealIdlePreviewEnabled = computed({
+  get: () => isPreviewEnabled.value && !props.simulateIdlePreview,
+  set: (enabled: boolean) => {
+    isPreviewEnabled.value = enabled
+  },
+})
+
+const {
+  rawFrequency: idleFrequency,
+  rawIsClean: idleIsClean,
+  isPreviewListening: isIdleListening,
+  micPermission,
+} = useIdlePreview({
+  isGameActive: computed(() => isTaking.value || isPlaybackRunning.value),
+  isEnabled: isRealIdlePreviewEnabled,
+})
+
+const isIdleSource = computed(
+  () => !isTaking.value && !props.simulateIdlePreview,
+)
+
+/* Continuous MIDI of the live pitch; null hides the line. */
+const sungMidi = computed(() => {
+  if (!isPreviewEnabled.value || isPlaybackRunning.value) return null
+
+  const frequency = isIdleSource.value
+    ? idleFrequency.value
+    : props.detection.frequency.value
+  const isClean = isIdleSource.value
+    ? idleIsClean.value
+    : props.detection.isClean.value
+  const isListening = isIdleSource.value
+    ? isIdleListening.value
+    : props.detection.isListening.value
+  if (!isListening || !isClean || frequency === null) return null
+
+  return frequencyToMidi(frequency)
+})
+
+const { stableSungLabel, stableSungCents } = useStableSungLabel({
+  sungMidi,
+  showOctave: ref(true),
+})
+
+/* Simulated page: the one detector doubles as the idle preview while the
+ * toggle is on. A take keeps it running; leaving a take restarts it. */
+const isSimulatedIdlePreviewOn = computed(
+  () =>
+    !!props.simulateIdlePreview &&
+    isPreviewEnabled.value &&
+    !isTaking.value &&
+    !isPlaybackRunning.value,
+)
+watch(
+  isSimulatedIdlePreviewOn,
+  (isOn) => {
+    if (isOn) void props.detection.start()
+    else if (!isTaking.value) props.detection.stop()
+  },
+  { immediate: true },
+)
 
 const liveNoteLabel = computed(() => {
   const noteInfo = props.detection.noteInfo.value
@@ -108,9 +187,16 @@ defineExpose({ recorder })
         rounded
         icon="pi pi-circle-fill"
         :label="t('songRecorder.record')"
-        class="min-w-24"
+        class="min-h-8.75 min-w-24"
         data-testid="song-recorder-record"
         @click="record"
+      />
+      <PreviewToggle
+        v-model="isPreviewEnabled"
+        :disabled="
+          isPlaybackRunning ||
+          (!simulateIdlePreview && micPermission === 'denied')
+        "
       />
       <PrimeButton
         v-if="isTaking"
@@ -119,7 +205,7 @@ defineExpose({ recorder })
         rounded
         icon="pi pi-stop"
         :label="t('generic.stop')"
-        class="min-w-24"
+        class="min-h-8.75 min-w-24"
         data-testid="song-recorder-stop"
         @click="stop"
       />
@@ -133,7 +219,7 @@ defineExpose({ recorder })
           icon="pi pi-play"
           :label="t('generic.play')"
           :disabled="!hasNotes"
-          class="min-w-20"
+          class="min-h-8.75 min-w-20"
           data-testid="song-recorder-play"
           @click="play"
         />
@@ -144,7 +230,7 @@ defineExpose({ recorder })
           rounded
           icon="pi pi-pause"
           :label="t('generic.pause')"
-          class="min-w-20"
+          class="min-h-8.75 min-w-20"
           data-testid="song-recorder-pause"
           @click="pause"
         />
@@ -155,7 +241,7 @@ defineExpose({ recorder })
           rounded
           icon="pi pi-play"
           :label="t('generic.resume')"
-          class="min-w-20"
+          class="min-h-8.75 min-w-20"
           data-testid="song-recorder-resume"
           @click="resume"
         />
@@ -166,7 +252,7 @@ defineExpose({ recorder })
           rounded
           icon="pi pi-stop"
           :label="t('generic.stop')"
-          class="min-w-20"
+          class="min-h-8.75 min-w-20"
           data-testid="song-recorder-stop-playback"
           @click="stopPlayback"
         />
@@ -175,6 +261,7 @@ defineExpose({ recorder })
           size="small"
           rounded
           icon="pi pi-refresh"
+          class="min-h-8.75"
           :label="t('songRecorder.newRecording')"
           data-testid="song-recorder-reset"
           @click="reset"
@@ -235,6 +322,10 @@ defineExpose({ recorder })
         :activePieceIndex="activePieceIndex"
         :isDone="hasPlayedToEnd"
         :followEnd="isRecording"
+        :clef="clef"
+        :sungMidi="sungMidi"
+        :sungToneLabel="stableSungLabel"
+        :sungToneCents="stableSungCents"
       />
     </div>
 
