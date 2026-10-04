@@ -264,7 +264,6 @@ defineExpose({ recorder })
         severity="danger"
         size="small"
         rounded
-        icon="pi pi-stop"
         :label="t('generic.stop')"
         class="min-h-8.75 min-w-24"
         data-testid="song-recorder-stop"
@@ -277,7 +276,6 @@ defineExpose({ recorder })
           severity="success"
           size="small"
           rounded
-          icon="pi pi-play"
           :label="t('generic.play')"
           :disabled="!hasNotes"
           class="min-h-8.75 min-w-20"
@@ -289,7 +287,6 @@ defineExpose({ recorder })
           severity="warn"
           size="small"
           rounded
-          icon="pi pi-pause"
           :label="t('generic.pause')"
           class="min-h-8.75 min-w-20"
           data-testid="song-recorder-pause"
@@ -300,7 +297,6 @@ defineExpose({ recorder })
           severity="success"
           size="small"
           rounded
-          icon="pi pi-play"
           :label="t('generic.resume')"
           class="min-h-8.75 min-w-20"
           data-testid="song-recorder-resume"
@@ -311,7 +307,6 @@ defineExpose({ recorder })
           severity="danger"
           size="small"
           rounded
-          icon="pi pi-stop"
           :label="t('generic.stop')"
           class="min-h-8.75 min-w-20"
           data-testid="song-recorder-stop-playback"

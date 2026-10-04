@@ -139,7 +139,6 @@ declare module 'vue' {
     SingToneTestPage: typeof import('./components/sing-tone/SingToneTestPage.vue')['default']
     SongRangeSelect: typeof import('./components/sing-the-keys/SongRangeSelect.vue')['default']
     SongRecorderAbcEditor: typeof import('./components/song-recorder/SongRecorderAbcEditor.vue')['default']
-    SongRecorderAbcExport: typeof import('./components/song-recorder/SongRecorderAbcExport.vue')['default']
     SongRecorderDisplay: typeof import('./components/song-recorder/SongRecorderDisplay.vue')['default']
     SongRecorderPage: typeof import('./components/song-recorder/SongRecorderPage.vue')['default']
     SongRecorderSettingsRow: typeof import('./components/song-recorder/SongRecorderSettingsRow.vue')['default']
