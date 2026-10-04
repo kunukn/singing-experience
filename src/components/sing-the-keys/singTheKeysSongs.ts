@@ -1005,7 +1005,7 @@ const PACHELBEL_CANON: Song = {
  * A (F♯ G) A (F♯ G)(A A, B C♯)(D E F♯ G) |
  * F♯ (D E) F♯ (F♯, G,)(A, B A, G,)(A, F♯, G, A,) |
  * B (D C♯) B (A, G,)(A, G, F♯, G,)(A, B C♯ D) |
- * B (D C♯) D (C♯ B)(C♯ D E D)(C♯ D B C♯) | D––– */
+ * B (D C♯) D (C♯ B)(C♯ D E D)(C♯ D B C♯) | D– · · */
 function canonFigure(midiOffsets: number[]): SongNote[] {
   return midiOffsets.map((midiOffset, index) =>
     // An eighth on the 1st and 4th note; the other twelve are 16ths
@@ -1022,7 +1022,7 @@ const PACHELBEL_CANON_VARIATION: Song = {
     ...canonFigure([4, 0, 2, 4, -8, -7, -5, -3, -5, -7, -5, -8, -7, -5]),
     ...canonFigure([-3, 0, -1, -3, -5, -7, -5, -7, -8, -7, -5, -3, -1, 0]),
     ...canonFigure([-3, 0, -1, 0, -1, -3, -1, 0, 2, 0, -1, 0, -3, -1]),
-    note(0, 4),
+    note(0, 2, 2), // a half note, then a half rest to close the bar
   ],
 }
 
