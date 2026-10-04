@@ -2,7 +2,16 @@
   "showThinkingSummaries": true,
   "permissions": {
     "defaultMode": "default",
-    "ask": ["Bash(git *)"],
+    "ask": [
+      "Bash(git commit *)",
+      "Bash(git reset *)",
+      "Bash(git checkout *)",
+      "Bash(git restore *)",
+      "Bash(git rebase *)",
+      "Bash(git clean *)",
+      "Bash(git stash *)",
+      "Bash(git push *)"
+    ],
     "allow": [
       "WebFetch",
       "Bash(cd *)",
