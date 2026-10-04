@@ -386,7 +386,22 @@
     "grid": "最短音符",
     "hint": "选好速度，点“录音”。听到 4 下咔哒声后开始唱。最多可以唱 {seconds} 秒。戴耳机效果更好。",
     "noNotes": "没听到音符。大声一点再试一次吧。",
-    "abcLabel": "ABC 记谱 — 复制到其他音乐应用"
+    "abcLabel": "ABC 记谱 — 粘贴即可导入，复制即可分享",
+    "import": "导入",
+    "abcPlaceholder": "在这里粘贴 ABC 记谱，然后点“导入”",
+    "importErrors": {
+      "invalid": "无法读取这段 ABC。{detail}",
+      "meter": "目前只支持 4/4 拍。",
+      "empty": "这段 ABC 里没有找到音符。"
+    },
+    "importNotices": {
+      "chords": "和弦已变成其最高音。",
+      "voices": "只导入了第一个声部。",
+      "tempo": "速度已取整到最接近的选项。",
+      "rhythm": "部分快速节奏已取整到 1/16。"
+    },
+    "fromSheet": "从乐谱获取",
+    "fromSheetHint": "把上面乐谱的记谱放回框里"
   },
   "scale": {
     "highlightScale": "高亮",

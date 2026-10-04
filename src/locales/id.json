@@ -386,7 +386,22 @@
     "grid": "Not terpendek",
     "hint": "Pilih tempo lalu tekan Rekam. Mulai bernyanyi setelah 4 klik. Kamu bisa bernyanyi sampai {seconds} detik. Headphone membantu.",
     "noNotes": "Tidak ada nada yang terdengar. Coba lagi sedikit lebih keras.",
-    "abcLabel": "Notasi ABC — salin ke aplikasi musik lain"
+    "abcLabel": "Notasi ABC — tempel untuk impor, salin untuk berbagi",
+    "import": "Impor",
+    "abcPlaceholder": "Tempel notasi ABC di sini, lalu tekan Impor",
+    "importErrors": {
+      "invalid": "ABC ini tidak bisa dibaca. {detail}",
+      "meter": "Untuk sekarang hanya birama 4/4 yang bisa.",
+      "empty": "Tidak ada nada di ABC ini."
+    },
+    "importNotices": {
+      "chords": "Akor diubah jadi nada tertingginya.",
+      "voices": "Hanya suara pertama yang diimpor.",
+      "tempo": "Tempo dibulatkan ke pilihan terdekat.",
+      "rhythm": "Beberapa ritme cepat dibulatkan ke 1/16."
+    },
+    "fromSheet": "Dari not balok",
+    "fromSheetHint": "Masukkan lagi notasi dari not balok ke kotak"
   },
   "scale": {
     "highlightScale": "Sorot",

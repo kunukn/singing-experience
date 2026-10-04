@@ -386,7 +386,22 @@
     "grid": "Noti fupi zaidi",
     "hint": "Chagua kasi kisha bonyeza Rekodi. Anza kuimba baada ya mibofyo 4. Unaweza kuimba hadi sekunde {seconds}. Vipokea sauti vya masikioni husaidia.",
     "noNotes": "Hakuna noti zilizosikika. Jaribu tena kwa sauti kubwa kidogo.",
-    "abcLabel": "Nukuu ya ABC — inakili kwenye programu nyingine za muziki"
+    "abcLabel": "Nukuu ya ABC — bandika ili kuleta, nakili ili kushiriki",
+    "import": "Leta",
+    "abcPlaceholder": "Bandika nukuu ya ABC hapa, kisha bonyeza Leta",
+    "importErrors": {
+      "invalid": "Imeshindwa kusoma ABC hii. {detail}",
+      "meter": "Kwa sasa ni mapigo ya 4/4 tu yanayofanya kazi.",
+      "empty": "Hakuna noti zilizopatikana kwenye ABC hii."
+    },
+    "importNotices": {
+      "chords": "Kodi zimekuwa noti yao ya juu zaidi.",
+      "voices": "Sauti ya kwanza tu ndiyo imeletwa.",
+      "tempo": "Kasi imezungushwa hadi chaguo lililo karibu zaidi.",
+      "rhythm": "Baadhi ya midundo ya haraka imezungushwa hadi 1/16."
+    },
+    "fromSheet": "Kutoka kwenye noti",
+    "fromSheetHint": "Rudisha nukuu ya noti kwenye kisanduku"
   },
   "scale": {
     "highlightScale": "Angazia",

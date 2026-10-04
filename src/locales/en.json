@@ -386,7 +386,22 @@
     "grid": "Shortest note",
     "hint": "Pick a tempo and press Record. Start singing after 4 clicks. You can sing for up to {seconds} seconds. Headphones help.",
     "noNotes": "No notes heard. Try again a bit louder.",
-    "abcLabel": "ABC notation — copy it into other music apps"
+    "abcLabel": "ABC notation — paste to import, copy to share",
+    "import": "Import",
+    "abcPlaceholder": "Paste ABC notation here, then press Import",
+    "importErrors": {
+      "invalid": "Couldn't read this ABC. {detail}",
+      "meter": "Only 4/4 time works for now.",
+      "empty": "No notes found in this ABC."
+    },
+    "importNotices": {
+      "chords": "Chords became their top note.",
+      "voices": "Only the first voice was imported.",
+      "tempo": "Tempo rounded to the nearest choice.",
+      "rhythm": "Some fast rhythms were rounded to 1/16."
+    },
+    "fromSheet": "From sheet",
+    "fromSheetHint": "Put the notation of the sheet above back in the box"
   },
   "scale": {
     "highlightScale": "Highlight",

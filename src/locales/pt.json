@@ -386,7 +386,22 @@
     "grid": "Nota mais curta",
     "hint": "Escolha um andamento e toque em Gravar. Comece a cantar depois de 4 cliques. Você pode cantar por até {seconds} segundos. Fones de ouvido ajudam.",
     "noNotes": "Nenhuma nota ouvida. Tente de novo um pouco mais alto.",
-    "abcLabel": "Notação ABC — copie para outros apps de música"
+    "abcLabel": "Notação ABC — cole para importar, copie para compartilhar",
+    "import": "Importar",
+    "abcPlaceholder": "Cole a notação ABC aqui e toque em Importar",
+    "importErrors": {
+      "invalid": "Não deu para ler este ABC. {detail}",
+      "meter": "Por enquanto só funciona o compasso 4/4.",
+      "empty": "Nenhuma nota encontrada neste ABC."
+    },
+    "importNotices": {
+      "chords": "Os acordes viraram a nota mais alta.",
+      "voices": "Só a primeira voz foi importada.",
+      "tempo": "O andamento foi arredondado para a opção mais próxima.",
+      "rhythm": "Alguns ritmos rápidos foram arredondados para 1/16."
+    },
+    "fromSheet": "Da partitura",
+    "fromSheetHint": "Coloca de volta na caixa a notação da partitura"
   },
   "scale": {
     "highlightScale": "Destacar",

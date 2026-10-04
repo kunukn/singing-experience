@@ -18,6 +18,7 @@ type SongRecorderEvent =
   | { type: 'STOP_PLAYBACK' }
   | { type: 'PLAYBACK_DONE' }
   | { type: 'RESET' }
+  | { type: 'IMPORT' }
 
 /* Lifecycle for /song-recorder. Pure state chart — mic, metronome and playback
  * scheduling live in useSongRecorder.
@@ -25,7 +26,9 @@ type SongRecorderEvent =
  * idle → countIn (one bar of clicks) → recording → review. STOP during the
  * count-in abandons the take; STOP or LIMIT_REACHED while recording keeps it.
  * review owns the playback transport (stopped ⇄ playing ⇄ paused); RESET
- * throws the take away for a new one. ERROR (mic refused) returns to idle. */
+ * throws the take away for a new one. ERROR (mic refused) returns to idle.
+ * IMPORT (ABC pasted in) replaces the take: from idle, or from review where it
+ * lands on a stopped transport. Never mid-take. */
 export const songRecorderMachine = setup({
   types: {
     events: {} as SongRecorderEvent,
@@ -35,7 +38,7 @@ export const songRecorderMachine = setup({
   initial: 'idle',
   states: {
     idle: {
-      on: { RECORD: 'countIn' },
+      on: { RECORD: 'countIn', IMPORT: 'review' },
     },
     countIn: {
       on: {
@@ -53,7 +56,7 @@ export const songRecorderMachine = setup({
     },
     review: {
       initial: 'stopped',
-      on: { RESET: 'idle' },
+      on: { RESET: 'idle', IMPORT: '.stopped' },
       states: {
         stopped: {
           on: { PLAY: 'playing' },

@@ -296,6 +296,20 @@ export function useSongRecorder(options: Options) {
     send({ type: 'RESET' })
   }
 
+  /* Replaces the take with notes from elsewhere (ABC import). Mid-take the
+   * machine ignores IMPORT, so the caller only offers it outside a take. */
+  function importEvents(imported: NoteEvent[]) {
+    if (isCountingIn.value || isRecording.value) return
+
+    cancelScheduled()
+    activePieceIndex.value = null
+    hasPlayedToEnd.value = false
+    segmenter = createNoteSegmenter()
+    events.value = imported
+    elapsedMs.value = 0
+    send({ type: 'IMPORT' })
+  }
+
   /* Mic refused or lost mid-take. */
   watch(detection.error, (error) => {
     if (!error || !(isCountingIn.value || isRecording.value)) return
@@ -336,5 +350,6 @@ export function useSongRecorder(options: Options) {
     resume,
     stopPlayback,
     reset,
+    importEvents,
   }
 }

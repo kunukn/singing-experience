@@ -386,7 +386,22 @@
     "grid": "Kürzeste Note",
     "hint": "Wähl ein Tempo und drück Aufnehmen. Fang nach 4 Klicks an zu singen. Du kannst bis zu {seconds} Sekunden singen. Kopfhörer helfen.",
     "noNotes": "Keine Töne gehört. Versuch es noch mal etwas lauter.",
-    "abcLabel": "ABC-Notation — kopier sie in andere Musik-Apps"
+    "abcLabel": "ABC-Notation — einfügen zum Importieren, kopieren zum Teilen",
+    "import": "Importieren",
+    "abcPlaceholder": "Füg hier ABC-Notation ein und drück Importieren",
+    "importErrors": {
+      "invalid": "Diese ABC konnte nicht gelesen werden. {detail}",
+      "meter": "Bisher klappt nur der 4/4-Takt.",
+      "empty": "In dieser ABC wurden keine Noten gefunden."
+    },
+    "importNotices": {
+      "chords": "Akkorde wurden zu ihrem höchsten Ton.",
+      "voices": "Nur die erste Stimme wurde importiert.",
+      "tempo": "Das Tempo wurde auf die nächste Auswahl gerundet.",
+      "rhythm": "Einige schnelle Rhythmen wurden auf 1/16 gerundet."
+    },
+    "fromSheet": "Aus den Noten",
+    "fromSheetHint": "Setzt die Noten von oben wieder ins Feld"
   },
   "scale": {
     "highlightScale": "Hervorheben",

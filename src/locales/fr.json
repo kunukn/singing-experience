@@ -386,7 +386,22 @@
     "grid": "Note la plus courte",
     "hint": "Choisis un tempo et appuie sur Enregistrer. Commence à chanter après 4 clics. Tu peux chanter jusqu'à {seconds} secondes. Un casque aide.",
     "noNotes": "Aucune note entendue. Réessaie un peu plus fort.",
-    "abcLabel": "Notation ABC — copie-la dans d'autres applis de musique"
+    "abcLabel": "Notation ABC — colle-la pour importer, copie-la pour partager",
+    "import": "Importer",
+    "abcPlaceholder": "Colle ici la notation ABC, puis appuie sur Importer",
+    "importErrors": {
+      "invalid": "Impossible de lire cet ABC. {detail}",
+      "meter": "Seule la mesure à 4/4 marche pour l'instant.",
+      "empty": "Aucune note trouvée dans cet ABC."
+    },
+    "importNotices": {
+      "chords": "Les accords sont devenus leur note la plus haute.",
+      "voices": "Seule la première voix a été importée.",
+      "tempo": "Le tempo a été arrondi au choix le plus proche.",
+      "rhythm": "Certains rythmes rapides ont été arrondis à 1/16."
+    },
+    "fromSheet": "Depuis la partition",
+    "fromSheetHint": "Remet la notation de la partition dans la zone"
   },
   "scale": {
     "highlightScale": "Surligner",

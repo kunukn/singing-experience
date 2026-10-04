@@ -87,6 +87,30 @@ describe('songRecorderMachine', () => {
     expect(actor.getSnapshot().value).toEqual({ review: 'stopped' })
   })
 
+  test('goes idle → review on IMPORT', () => {
+    const actor = startActor()
+    actor.send({ type: 'IMPORT' })
+    expect(actor.getSnapshot().value).toEqual({ review: 'stopped' })
+  })
+
+  test('IMPORT during playback lands on a stopped transport', () => {
+    const actor = toReview()
+    actor.send({ type: 'PLAY' })
+    actor.send({ type: 'IMPORT' })
+    expect(actor.getSnapshot().value).toEqual({ review: 'stopped' })
+  })
+
+  test('ignores IMPORT mid-take', () => {
+    const actor = startActor()
+    actor.send({ type: 'RECORD' })
+    actor.send({ type: 'IMPORT' })
+    expect(actor.getSnapshot().value).toBe('countIn')
+
+    actor.send({ type: 'COUNT_IN_DONE' })
+    actor.send({ type: 'IMPORT' })
+    expect(actor.getSnapshot().value).toBe('recording')
+  })
+
   test('RESET from any review state returns to idle', () => {
     const actor = toReview()
     actor.send({ type: 'PLAY' })

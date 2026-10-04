@@ -386,7 +386,22 @@
     "grid": "Korteste node",
     "hint": "Vælg et tempo og tryk Optag. Begynd at synge efter 4 klik. Du kan synge i op til {seconds} sekunder. Høretelefoner hjælper.",
     "noNotes": "Ingen toner hørt. Prøv igen lidt højere.",
-    "abcLabel": "ABC-notation — kopiér den over i andre musikapps"
+    "abcLabel": "ABC-notation — indsæt for at importere, kopiér for at dele",
+    "import": "Importér",
+    "abcPlaceholder": "Indsæt ABC-notation her, og tryk Importér",
+    "importErrors": {
+      "invalid": "Kunne ikke læse denne ABC. {detail}",
+      "meter": "Kun 4/4-takt virker indtil videre.",
+      "empty": "Ingen toner fundet i denne ABC."
+    },
+    "importNotices": {
+      "chords": "Akkorder blev til deres øverste tone.",
+      "voices": "Kun den første stemme blev importeret.",
+      "tempo": "Tempoet blev rundet til nærmeste valg.",
+      "rhythm": "Nogle hurtige rytmer blev rundet til 1/16."
+    },
+    "fromSheet": "Fra noderne",
+    "fromSheetHint": "Sæt noderne ovenfor tilbage i feltet"
   },
   "scale": {
     "highlightScale": "Fremhæv",

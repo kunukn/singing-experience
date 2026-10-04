@@ -6,9 +6,12 @@ import {
   midiToNoteLabel,
   type NoteInfo,
 } from '@/utils/noteUtils'
-import SongRecorderAbcExport from './SongRecorderAbcExport.vue'
+import SongRecorderAbcEditor, {
+  type AbcEditorMessage,
+} from './SongRecorderAbcEditor.vue'
 import SongRecorderSettingsRow from './SongRecorderSettingsRow.vue'
 import SongRecorderSheet from './SongRecorderSheet.vue'
+import { parseAbcImport } from './songRecorderAbcImport'
 import { BEATS_PER_BAR, type Grid } from './songRecorderConstants'
 import { useSongRecorder, type PitchDetectionInput } from './useSongRecorder'
 
@@ -62,6 +65,7 @@ const {
   resume,
   stopPlayback,
   reset,
+  importEvents,
 } = recorder
 
 const isTaking = computed(() => isCountingIn.value || isRecording.value)
@@ -154,6 +158,60 @@ function formatSeconds(ms: number) {
 }
 
 const beatDots = Array.from({ length: BEATS_PER_BAR }, (_, index) => index + 1)
+
+/* The ABC box: shows the take's notation in review (refreshed when the grid or
+ * clef redraws it), doubles as the paste box for an import, and empties on a
+ * new recording. */
+const abcText = ref('')
+const abcMessage = ref<AbcEditorMessage | null>(null)
+
+watch(
+  () => (isReview.value ? sheet.value.abc : null),
+  (abc) => {
+    if (abc !== null) abcText.value = abc
+  },
+)
+
+watch(isIdle, (idle) => {
+  if (!idle) return
+
+  abcText.value = ''
+  abcMessage.value = null
+})
+
+function importAbc() {
+  const result = parseAbcImport(abcText.value, {
+    bpm: bpm.value,
+    grid: grid.value,
+  })
+  if (!result.ok) {
+    abcMessage.value = {
+      severity: 'error',
+      text: t(`songRecorder.importErrors.${result.error}`, {
+        detail: result.detail ?? '',
+      }),
+    }
+
+    return
+  }
+
+  bpm.value = result.bpm
+  grid.value = result.grid
+  clef.value = result.clef
+  importEvents(result.events)
+  /* Show the notation as the recorder understood it, even when it matches the
+   * previous take's (the review watcher wouldn't fire then). */
+  abcText.value = sheet.value.abc
+  abcMessage.value =
+    result.notices.length > 0
+      ? {
+          severity: 'warn',
+          text: result.notices
+            .map((notice) => t(`songRecorder.importNotices.${notice}`))
+            .join(' '),
+        }
+      : null
+}
 
 /* Exposed for the test page's scripted demo melody. */
 defineExpose({ recorder })
@@ -332,10 +390,14 @@ defineExpose({ recorder })
       />
     </div>
 
-    <SongRecorderAbcExport
-      v-if="isReview && hasNotes"
-      :abc="sheet.abc"
+    <SongRecorderAbcEditor
+      v-model="abcText"
+      :isImportDisabled="isTaking || isPlaybackRunning"
+      :message="abcMessage"
+      :sheetAbc="isReview ? sheet.abc : null"
       class="max-w-180"
+      @import="importAbc"
+      @edit="abcMessage = null"
     />
 
     <slot />
