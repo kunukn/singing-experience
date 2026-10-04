@@ -401,7 +401,14 @@
       "rhythm": "Nogle hurtige rytmer blev rundet til 1/16."
     },
     "fromSheet": "Fra noderne",
-    "fromSheetHint": "Sæt noderne ovenfor tilbage i feltet"
+    "fromSheetHint": "Sæt noderne ovenfor tilbage i feltet",
+    "inputLabel": "Optag fra",
+    "inputVoice": "Stemme",
+    "inputPiano": "Klaver",
+    "pianoLabel": "Klaver",
+    "pianoRange": "Klaverets toneomfang",
+    "hintPiano": "Vælg et tempo og tryk Optag. Begynd at spille efter 4 klik. Du kan spille i op til {seconds} sekunder.",
+    "noNotesPiano": "Ingen tangenter spillet. Prøv igen, og tryk på tangenterne efter de 4 klik."
   },
   "scale": {
     "highlightScale": "Fremhæv",

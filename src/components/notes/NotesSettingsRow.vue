@@ -105,6 +105,6 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 
 /* One row from md up: 6 columns so all three items (each col-span-2) sit side by side. */
 .settings-row {
-  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr];
+  @apply md:grid-cols-[repeat(6,auto)];
 }
 </style>

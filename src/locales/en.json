@@ -401,7 +401,14 @@
       "rhythm": "Some fast rhythms were rounded to 1/16."
     },
     "fromSheet": "From sheet",
-    "fromSheetHint": "Put the notation of the sheet above back in the box"
+    "fromSheetHint": "Put the notation of the sheet above back in the box",
+    "inputLabel": "Record from",
+    "inputVoice": "Voice",
+    "inputPiano": "Piano",
+    "pianoLabel": "Piano",
+    "pianoRange": "Piano range",
+    "hintPiano": "Pick a tempo and press Record. Start playing after 4 clicks. You can play for up to {seconds} seconds.",
+    "noNotesPiano": "No keys played. Try again and press the keys after the 4 clicks."
   },
   "scale": {
     "highlightScale": "Highlight",

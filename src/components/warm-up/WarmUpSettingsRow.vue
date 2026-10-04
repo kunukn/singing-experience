@@ -205,9 +205,10 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 @reference '@/style.css';
 
 /* 3 (label, select) column-pairs → 6 items wrap into a 3 × 2 layout that
- * fits the parent's max-w-3xl shell and gives long translations room. */
+ * fits the parent's max-w-3xl shell. Auto columns still line the two rows up,
+ * each sized to its widest control instead of stretching to fill. */
 .settings-row {
-  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr] md:gap-x-4 md:gap-y-3;
+  @apply md:grid-cols-[repeat(6,auto)] md:gap-x-4 md:gap-y-3;
 }
 
 .select-warm-up-pattern-option-group {

@@ -2,14 +2,18 @@ import { useMachine } from '@xstate/vue'
 import { useRafFn } from '@vueuse/core'
 import { frequencyToMidi, midiToFrequency } from '@/utils/noteUtils'
 import { createNoteSegmenter, type NoteEvent } from './noteSegmenter'
+import { createPianoNoteCapture } from './pianoNoteCapture'
 import { gridUnitMs, quantizeNotes } from './quantizeNotes'
 import type { ClefKey } from '@/components/notes/notesConstants'
 import { buildRecordingAbc } from './songRecorderAbc'
 import {
   BEATS_PER_BAR,
   COUNT_IN_BARS,
+  GRID_OPTIONS,
   MAX_RECORDING_SECONDS,
+  PIANO_EARLY_PRESS_MS,
   type Grid,
+  type SongRecorderInput,
 } from './songRecorderConstants'
 import { songRecorderMachine } from './songRecorderMachine'
 
@@ -28,6 +32,8 @@ type Options = {
   clef: Ref<ClefKey>
   /* Click on every beat while recording. The count-in always clicks. */
   isClickEnabled: Ref<boolean>
+  /* Voice records the mic; piano records pressPianoKey / releasePianoKey. */
+  input: Ref<SongRecorderInput>
 }
 
 /* Lead time before the first count-in click so the scheduler isn't late. */
@@ -47,7 +53,7 @@ export type SongRecorderResult = ReturnType<typeof useSongRecorder>
  * active sheet element highlighted.
  */
 export function useSongRecorder(options: Options) {
-  const { detection, bpm, grid, clef, isClickEnabled } = options
+  const { detection, bpm, grid, clef, isClickEnabled, input } = options
   const { snapshot, send } = useMachine(songRecorderMachine)
   const {
     warmUp,
@@ -87,6 +93,9 @@ export function useSongRecorder(options: Options) {
   )
 
   let segmenter = createNoteSegmenter()
+  let pianoCapture = createPianoNoteCapture({ minNoteMs: 0 })
+  /* Fixed for the whole take, so switching the input mid-take can't mix them. */
+  let takeInput: SongRecorderInput = 'voice'
   /* performance.now() at beat 1 of bar 1. */
   let originPerfMs = 0
 
@@ -96,6 +105,8 @@ export function useSongRecorder(options: Options) {
       if (timeMs < 0) return
 
       elapsedMs.value = timeMs
+      if (takeInput === 'piano') return
+
       const frequency = detection.frequency.value
       const midi =
         detection.isClean.value && frequency !== null
@@ -173,10 +184,19 @@ export function useSongRecorder(options: Options) {
     if (!isIdle.value) return
 
     await warmUp()
-    await detection.start()
-    if (detection.error.value) return
+    takeInput = input.value
+    if (takeInput === 'voice') {
+      await detection.start()
+      if (detection.error.value) return
+    }
 
     segmenter = createNoteSegmenter()
+    /* Half the coarsest grid step: a tap then still rounds to a note on any
+     * grid, including one picked after the take. */
+    pianoCapture = createPianoNoteCapture({
+      minNoteMs: gridUnitMs(bpm.value, Math.min(...GRID_OPTIONS)) / 2,
+      earlyPressToleranceMs: PIANO_EARLY_PRESS_MS,
+    })
     events.value = []
     elapsedMs.value = 0
     cancelScheduled()
@@ -187,16 +207,24 @@ export function useSongRecorder(options: Options) {
   function finishTake(type: 'STOP' | 'LIMIT_REACHED') {
     sampler.pause()
     cancelScheduled()
-    detection.stop()
     beatInBar.value = null
-    events.value = [...segmenter.flush()]
+    if (takeInput === 'voice') {
+      detection.stop()
+      events.value = [...segmenter.flush()]
+    } else {
+      const stopMs =
+        type === 'LIMIT_REACHED'
+          ? limitMs.value
+          : Math.min(performance.now() - originPerfMs, limitMs.value)
+      events.value = [...pianoCapture.flush(stopMs)]
+    }
     send({ type })
   }
 
   function stop() {
     if (isCountingIn.value) {
       cancelScheduled()
-      detection.stop()
+      if (takeInput === 'voice') detection.stop()
       countInBeat.value = null
       send({ type: 'STOP' })
 
@@ -296,6 +324,31 @@ export function useSongRecorder(options: Options) {
     send({ type: 'RESET' })
   }
 
+  /* Piano input --------------------------------------------------------- */
+
+  /* atPerfMs is the event's timeStamp (same clock as performance.now()), so a
+   * slow sheet redraw delaying the handler doesn't shift the note. */
+  function pressPianoKey(midi: number, atPerfMs = performance.now()) {
+    if (takeInput !== 'piano' || !(isCountingIn.value || isRecording.value))
+      return
+
+    const timeMs = atPerfMs - originPerfMs
+    if (timeMs >= limitMs.value) return
+
+    if (pianoCapture.press(midi, timeMs))
+      events.value = [...pianoCapture.events]
+  }
+
+  function releasePianoKey(midi: number, atPerfMs = performance.now()) {
+    if (takeInput !== 'piano' || !(isCountingIn.value || isRecording.value))
+      return
+
+    const timeMs = Math.min(atPerfMs - originPerfMs, limitMs.value)
+    if (pianoCapture.release(midi, timeMs)) {
+      events.value = [...pianoCapture.events]
+    }
+  }
+
   /* Replaces the take with notes from elsewhere (ABC import). Mid-take the
    * machine ignores IMPORT, so the caller only offers it outside a take. */
   function importEvents(imported: NoteEvent[]) {
@@ -312,6 +365,8 @@ export function useSongRecorder(options: Options) {
 
   /* Mic refused or lost mid-take. */
   watch(detection.error, (error) => {
+    if (takeInput !== 'voice') return
+
     if (!error || !(isCountingIn.value || isRecording.value)) return
 
     sampler.pause()
@@ -324,7 +379,9 @@ export function useSongRecorder(options: Options) {
   onUnmounted(() => {
     sampler.pause()
     cancelScheduled()
-    if (isCountingIn.value || isRecording.value) detection.stop()
+    if (takeInput === 'voice' && (isCountingIn.value || isRecording.value)) {
+      detection.stop()
+    }
   })
 
   return {
@@ -351,5 +408,7 @@ export function useSongRecorder(options: Options) {
     stopPlayback,
     reset,
     importEvents,
+    pressPianoKey,
+    releasePianoKey,
   }
 }

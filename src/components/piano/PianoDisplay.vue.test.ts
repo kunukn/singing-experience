@@ -279,3 +279,53 @@ describe('PianoDisplay - key sizing', () => {
     expect(board.totalWidth()).toBeGreaterThan(PHONE_CONTAINER_WIDTH)
   })
 })
+
+describe('PianoDisplay - press and release', () => {
+  test('should emit a press on pointerdown and a release on pointerup', async () => {
+    const wrapper = mountDisplay()
+
+    await wrapper
+      .get(`[data-testid="piano-key-${E4}"]`)
+      .trigger('pointerdown', { pointerId: 7 })
+    window.dispatchEvent(new PointerEvent('pointerup', { pointerId: 7 }))
+
+    expect(wrapper.emitted('notePressed')?.map(([midi]) => midi)).toEqual([E4])
+    expect(wrapper.emitted('noteReleased')?.map(([midi]) => midi)).toEqual([E4])
+    wrapper.unmount()
+  })
+
+  test('should release a touch the browser takes over for panning', async () => {
+    const wrapper = mountDisplay()
+
+    await wrapper
+      .get(`[data-testid="piano-key-${E4}"]`)
+      .trigger('pointerdown', { pointerId: 3 })
+    window.dispatchEvent(new PointerEvent('pointercancel', { pointerId: 3 }))
+
+    expect(wrapper.emitted('noteReleased')?.map(([midi]) => midi)).toEqual([E4])
+    wrapper.unmount()
+  })
+
+  /* Q plays C4 in the printed computer-keyboard map. */
+  test('should emit a press and release for a computer key', () => {
+    const wrapper = mountDisplay()
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyQ' }))
+    window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyQ' }))
+
+    expect(wrapper.emitted('notePressed')?.map(([midi]) => midi)).toEqual([60])
+    expect(wrapper.emitted('noteReleased')?.map(([midi]) => midi)).toEqual([60])
+    wrapper.unmount()
+  })
+
+  test('should release a held key when the keyboard unmounts', () => {
+    const wrapper = mountDisplay()
+
+    window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyQ' }))
+    const pressed = wrapper.emitted('notePressed')
+    wrapper.unmount()
+
+    expect(pressed?.map(([midi]) => midi)).toEqual([60])
+    expect(wrapper.emitted('noteReleased')?.map(([midi]) => midi)).toEqual([60])
+  })
+})

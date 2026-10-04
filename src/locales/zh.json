@@ -401,7 +401,14 @@
       "rhythm": "部分快速节奏已取整到 1/16。"
     },
     "fromSheet": "从乐谱获取",
-    "fromSheetHint": "把上面乐谱的记谱放回框里"
+    "fromSheetHint": "把上面乐谱的记谱放回框里",
+    "inputLabel": "录制来源",
+    "inputVoice": "声音",
+    "inputPiano": "钢琴",
+    "pianoLabel": "钢琴",
+    "pianoRange": "钢琴音域",
+    "hintPiano": "选好速度，点“录音”。听到 4 下咔哒声后开始弹。最多可以弹 {seconds} 秒。",
+    "noNotesPiano": "没有按下琴键。再试一次，在 4 下咔哒声之后按琴键吧。"
   },
   "scale": {
     "highlightScale": "高亮",

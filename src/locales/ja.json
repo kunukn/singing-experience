@@ -401,7 +401,14 @@
       "rhythm": "速いリズムの一部を1/16にそろえたよ。"
     },
     "fromSheet": "楽譜から",
-    "fromSheetHint": "上の楽譜の記譜をボックスに戻すよ"
+    "fromSheetHint": "上の楽譜の記譜をボックスに戻すよ",
+    "inputLabel": "録音する音",
+    "inputVoice": "声",
+    "inputPiano": "ピアノ",
+    "pianoLabel": "ピアノ",
+    "pianoRange": "ピアノの音域",
+    "hintPiano": "テンポを選んで「録音」を押そう。4回クリックが鳴ったら弾き始めてね。最大{seconds}秒まで弾けるよ。",
+    "noNotesPiano": "鍵盤が押されなかったよ。4回のクリックのあとに鍵盤を押して、もう一度やってみよう。"
   },
   "scale": {
     "highlightScale": "ハイライト",

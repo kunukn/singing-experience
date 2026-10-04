@@ -25,6 +25,8 @@ const LEGACY_RANGE_ORDER = [
 type VoiceRangeIndexOptions = {
   /* Restricts what can be selected — warm-up hides the full range. */
   allowedIndices?: readonly number[]
+  /* labelKey picked when nothing valid is stored; the app default otherwise. */
+  defaultLabelKey?: string
 }
 
 /*
@@ -36,8 +38,15 @@ export function useVoiceRangeIndex(
   storageKey: string,
   options: VoiceRangeIndexOptions = {},
 ) {
-  const defaultLabelKey = VOICE_RANGES[DEFAULT_RANGE_INDEX].labelKey
-  const storedLabelKey = useLocalStorage(storageKey, defaultLabelKey)
+  const requestedDefaultIndex = VOICE_RANGES.findIndex(
+    (range) => range.labelKey === options.defaultLabelKey,
+  )
+  const defaultIndex =
+    requestedDefaultIndex === -1 ? DEFAULT_RANGE_INDEX : requestedDefaultIndex
+  const storedLabelKey = useLocalStorage(
+    storageKey,
+    VOICE_RANGES[defaultIndex].labelKey,
+  )
 
   const resolveStoredIndex = (stored: unknown): number => {
     const labelKey =
@@ -45,7 +54,7 @@ export function useVoiceRangeIndex(
         ? LEGACY_RANGE_ORDER[Number(stored)]
         : stored
     const index = VOICE_RANGES.findIndex((range) => range.labelKey === labelKey)
-    return index === -1 ? DEFAULT_RANGE_INDEX : index
+    return index === -1 ? defaultIndex : index
   }
 
   /*
@@ -61,10 +70,10 @@ export function useVoiceRangeIndex(
    * select renders blank while the game runs on an unlisted range. */
   const resolveFallbackIndex = (): number => {
     const { allowedIndices } = options
-    if (!allowedIndices || allowedIndices.includes(DEFAULT_RANGE_INDEX))
-      return DEFAULT_RANGE_INDEX
+    if (!allowedIndices || allowedIndices.includes(defaultIndex))
+      return defaultIndex
 
-    return allowedIndices[0] ?? DEFAULT_RANGE_INDEX
+    return allowedIndices[0] ?? defaultIndex
   }
 
   const resolveIndex = (stored: unknown): number => {
@@ -79,7 +88,7 @@ export function useVoiceRangeIndex(
     get: () => resolveIndex(storedLabelKey.value),
     set: (index) => {
       storedLabelKey.value = (
-        VOICE_RANGES[index] ?? VOICE_RANGES[DEFAULT_RANGE_INDEX]
+        VOICE_RANGES[index] ?? VOICE_RANGES[defaultIndex]
       ).labelKey
     },
   })

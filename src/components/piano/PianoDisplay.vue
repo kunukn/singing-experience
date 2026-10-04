@@ -237,10 +237,23 @@ const blackLabelClass = computed(() =>
 
 /* Emitted whenever a key plays, so the parent can arm the preview deaf period
  * (stops the piano's own tone registering as sung pitch) and log the note. */
-const emit = defineEmits<{ tonePlayed: [midi: number] }>()
+const emit = defineEmits<{
+  tonePlayed: [midi: number]
+  /* Key down / up with the event's timeStamp, for recording note lengths. */
+  notePressed: [midi: number, timeStamp: number]
+  noteReleased: [midi: number, timeStamp: number]
+}>()
 
-const { pressCountFor, playKey, handleKeyDown } = usePianoKeyPlayback({
+const {
+  pressCountFor,
+  playKey,
+  handlePointerDown,
+  handleKeyDown,
+  handleKeyUp,
+} = usePianoKeyPlayback({
   onTonePlayed: (midi) => emit('tonePlayed', midi),
+  onNotePressed: (midi, timeStamp) => emit('notePressed', midi, timeStamp),
+  onNoteReleased: (midi, timeStamp) => emit('noteReleased', midi, timeStamp),
 })
 
 function playLaneKey(midi: number) {
@@ -272,7 +285,11 @@ const {
 } = usePianoKeyboardInput({
   midiMin: () => props.midiMin,
   midiMax: () => props.midiMax,
-  onPlay: (midi) => void playKey(midi),
+  onPlay: (midi, timeStamp) => {
+    emit('notePressed', midi, timeStamp)
+    void playKey(midi)
+  },
+  onRelease: (midi, timeStamp) => emit('noteReleased', midi, timeStamp),
 })
 
 /*
@@ -502,8 +519,9 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             :data-target="targetState(key)"
             :aria-label="keyAriaLabel(key)"
             :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
-            @pointerdown="playKey(key.midi)"
+            @pointerdown="handlePointerDown($event, key.midi)"
             @keydown="handleKeyDown($event, key.midi)"
+            @keyup="handleKeyUp($event, key.midi)"
           >
             <!-- Scale highlight. Decorative reinforcement of a filter the user
              set themselves, so it stays out of the key's aria-label — narrating
@@ -614,8 +632,9 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             :data-target="targetState(key)"
             :aria-label="keyAriaLabel(key)"
             :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
-            @pointerdown="playKey(key.midi)"
+            @pointerdown="handlePointerDown($event, key.midi)"
             @keydown="handleKeyDown($event, key.midi)"
+            @keyup="handleKeyUp($event, key.midi)"
           >
             <span
               v-if="scaleBarClass(key)"

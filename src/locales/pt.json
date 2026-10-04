@@ -401,7 +401,14 @@
       "rhythm": "Alguns ritmos rápidos foram arredondados para 1/16."
     },
     "fromSheet": "Da partitura",
-    "fromSheetHint": "Coloca de volta na caixa a notação da partitura"
+    "fromSheetHint": "Coloca de volta na caixa a notação da partitura",
+    "inputLabel": "Gravar de",
+    "inputVoice": "Voz",
+    "inputPiano": "Piano",
+    "pianoLabel": "Piano",
+    "pianoRange": "Extensão do piano",
+    "hintPiano": "Escolha um andamento e toque em Gravar. Comece a tocar depois de 4 cliques. Você pode tocar por até {seconds} segundos.",
+    "noNotesPiano": "Nenhuma tecla tocada. Tente de novo e toque as teclas depois dos 4 cliques."
   },
   "scale": {
     "highlightScale": "Destacar",

@@ -10,8 +10,11 @@ import {
   DEFAULT_BPM,
   DEFAULT_CLEF,
   DEFAULT_GRID,
+  DEFAULT_INPUT,
   GRID_OPTIONS,
+  INPUT_OPTIONS,
   type Grid,
+  type SongRecorderInput,
 } from './songRecorderConstants'
 
 const detection = usePitchDetection({ softRawAudio: true })
@@ -32,6 +35,14 @@ if (!(CLEF_LABEL_KEYS as readonly string[]).includes(clef.value)) {
 }
 
 const isClickEnabled = useLocalStorage('syng.songRecorderClick', true)
+
+const input = useLocalStorage<SongRecorderInput>(
+  'syng.songRecorderInput',
+  DEFAULT_INPUT,
+)
+if (!(INPUT_OPTIONS as readonly string[]).includes(input.value)) {
+  input.value = DEFAULT_INPUT
+}
 </script>
 
 <template>
@@ -41,5 +52,6 @@ const isClickEnabled = useLocalStorage('syng.songRecorderClick', true)
     v-model:grid="grid"
     v-model:clef="clef"
     v-model:isClickEnabled="isClickEnabled"
+    v-model:input="input"
   />
 </template>

@@ -10,7 +10,9 @@ import {
   DEFAULT_BPM,
   DEFAULT_CLEF,
   DEFAULT_GRID,
+  DEFAULT_INPUT,
   type Grid,
+  type SongRecorderInput,
 } from './songRecorderConstants'
 
 /* Simulated voice only — test pages never open the microphone (AGENTS.md). */
@@ -36,6 +38,7 @@ const bpm = ref(DEFAULT_BPM)
 const grid = ref<Grid>(DEFAULT_GRID)
 const clef = ref<ClefKey>(DEFAULT_CLEF)
 const isClickEnabled = ref(true)
+const input = ref<SongRecorderInput>(DEFAULT_INPUT)
 
 const isVoiceOn = computed({
   get: () => selectedClarity.value >= VOICE_ON_CLARITY,
@@ -78,14 +81,17 @@ function setSimulatedMidi(midi: number) {
   selectedOctave.value = Math.floor(midi / 12) - 1
 }
 
-/* Starts a take and, once recording begins after the count-in, sings the demo
- * melody on the beat, then stops. */
-async function recordDemo() {
+/* Starts a take and, once recording begins after the count-in, sings (or
+ * plays, on the piano input) the demo melody on the beat, then stops. */
+async function recordDemo(demoInput: SongRecorderInput) {
   const recorder = displayRef.value?.recorder
   if (!recorder) return
 
   clearDemo()
   isVoiceOn.value = false
+  input.value = demoInput
+  /* Let the display's input model pick up the change before the take reads it. */
+  await nextTick()
   await recorder.record()
 
   const stopWatching = watch(
@@ -101,11 +107,18 @@ async function recordDemo() {
         const offMs = startMs + beats * beatMs * DEMO_VOICED_FRACTION
         demoTimers.push(
           setTimeout(() => {
+            if (demoInput === 'piano') {
+              recorder.pressPianoKey(midi)
+
+              return
+            }
+
             setSimulatedMidi(midi)
             isVoiceOn.value = true
           }, startMs),
           setTimeout(() => {
-            isVoiceOn.value = false
+            if (demoInput === 'piano') recorder.releasePianoKey(midi)
+            else isVoiceOn.value = false
           }, offMs),
         )
         cursorMs += beats * beatMs
@@ -141,6 +154,7 @@ onUnmounted(clearDemo)
     v-model:grid="grid"
     v-model:clef="clef"
     v-model:isClickEnabled="isClickEnabled"
+    v-model:input="input"
   >
     <div
       class="flex w-full flex-wrap items-end gap-4 rounded-lg bg-(--p-content-background) p-4"
@@ -150,7 +164,15 @@ onUnmounted(clearDemo)
         severity="secondary"
         label="Record demo melody"
         data-testid="song-recorder-demo"
-        @click="recordDemo"
+        @click="recordDemo('voice')"
+      />
+
+      <PrimeButton
+        size="small"
+        severity="secondary"
+        label="Record demo melody (piano)"
+        data-testid="song-recorder-demo-piano"
+        @click="recordDemo('piano')"
       />
 
       <div class="flex items-center gap-2">

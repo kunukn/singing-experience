@@ -13,7 +13,9 @@ type PianoKeyboardInputOptions = {
   midiMin: MaybeRefOrGetter<number>
   midiMax: MaybeRefOrGetter<number>
   /* Called with the pitch to sound when a mapped key goes down. */
-  onPlay: (midi: number) => void
+  onPlay: (midi: number, timeStamp: number) => void
+  /* Called when that key comes back up, with the pitch it played. */
+  onRelease?: (midi: number, timeStamp: number) => void
 }
 
 /*
@@ -138,6 +140,16 @@ export function usePianoKeyboardInput(options: PianoKeyboardInputOptions) {
       octaveShiftIndex.value < octaveShiftOptions.value.length - 1,
   )
 
+  /* The pitch each held key played, so its release reports the same pitch even
+   * if the octave shifted in between. */
+  const pressedMidiByCode = new Map<string, number>()
+
+  function releaseAll(timeStamp = performance.now()) {
+    const held = [...pressedMidiByCode.values()]
+    pressedMidiByCode.clear()
+    held.forEach((midi) => options.onRelease?.(midi, timeStamp))
+  }
+
   useEventListener(window, 'keydown', (event: KeyboardEvent) => {
     /* A held key must not machine-gun the synth. */
     if (event.repeat) return
@@ -163,8 +175,29 @@ export function usePianoKeyboardInput(options: PianoKeyboardInputOptions) {
       return
 
     event.preventDefault()
-    options.onPlay(midi)
+    pressedMidiByCode.set(event.code, midi)
+    options.onPlay(midi, event.timeStamp)
   })
+
+  /* No typing-target check: focus may have moved into a text box while the key
+   * was held, and the note must still end. */
+  useEventListener(window, 'keyup', (event: KeyboardEvent) => {
+    /* macOS sends no keyup for letters released while ⌘ is held. */
+    if (event.key === 'Meta') {
+      releaseAll(event.timeStamp)
+
+      return
+    }
+
+    const midi = pressedMidiByCode.get(event.code)
+    if (midi === undefined) return
+
+    pressedMidiByCode.delete(event.code)
+    options.onRelease?.(midi, event.timeStamp)
+  })
+
+  useEventListener(window, 'blur', (event) => releaseAll(event.timeStamp))
+  onBeforeUnmount(() => releaseAll())
 
   return {
     keyboardCharForMidi,

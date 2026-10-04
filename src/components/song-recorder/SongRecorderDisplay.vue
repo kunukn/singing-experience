@@ -9,10 +9,15 @@ import {
 import SongRecorderAbcEditor, {
   type AbcEditorMessage,
 } from './SongRecorderAbcEditor.vue'
+import SongRecorderPianoPanel from './SongRecorderPianoPanel.vue'
 import SongRecorderSettingsRow from './SongRecorderSettingsRow.vue'
 import SongRecorderSheet from './SongRecorderSheet.vue'
 import { parseAbcImport } from './songRecorderAbcImport'
-import { BEATS_PER_BAR, type Grid } from './songRecorderConstants'
+import {
+  BEATS_PER_BAR,
+  type Grid,
+  type SongRecorderInput,
+} from './songRecorderConstants'
 import { useSongRecorder, type PitchDetectionInput } from './useSongRecorder'
 
 type Props = {
@@ -33,6 +38,7 @@ const clef = defineModel<ClefKey>('clef', { required: true })
 const isClickEnabled = defineModel<boolean>('isClickEnabled', {
   required: true,
 })
+const input = defineModel<SongRecorderInput>('input', { required: true })
 
 const { t } = useI18n()
 
@@ -42,6 +48,7 @@ const recorder = useSongRecorder({
   grid,
   clef,
   isClickEnabled,
+  input,
 })
 const {
   isIdle,
@@ -66,10 +73,13 @@ const {
   stopPlayback,
   reset,
   importEvents,
+  pressPianoKey,
+  releasePianoKey,
 } = recorder
 
 const isTaking = computed(() => isCountingIn.value || isRecording.value)
 const isPlaybackRunning = computed(() => isPlaying.value || isPaused.value)
+const isPianoInput = computed(() => input.value === 'piano')
 
 const { isPreviewEnabled } = useSettings()
 
@@ -79,7 +89,8 @@ const { isPreviewEnabled } = useSettings()
  * writable so useIdlePreview can switch it off when permission is denied; the
  * getter is false on a simulated page, so the real mic never opens there. */
 const isRealIdlePreviewEnabled = computed({
-  get: () => isPreviewEnabled.value && !props.simulateIdlePreview,
+  get: () =>
+    isPreviewEnabled.value && !props.simulateIdlePreview && !isPianoInput.value,
   set: (enabled: boolean) => {
     isPreviewEnabled.value = enabled
   },
@@ -90,6 +101,7 @@ const {
   rawIsClean: idleIsClean,
   isPreviewListening: isIdleListening,
   micPermission,
+  triggerDeafPeriod,
 } = useIdlePreview({
   isGameActive: computed(() => isTaking.value || isPlaybackRunning.value),
   isEnabled: isRealIdlePreviewEnabled,
@@ -99,8 +111,32 @@ const isIdleSource = computed(
   () => !isTaking.value && !props.simulateIdlePreview,
 )
 
+/* The piano key held right now. Piano input draws it on the staff the way
+ * the voice preview draws the sung pitch. */
+const heldPianoMidi = ref<number | null>(null)
+
+function handlePianoPressed(midi: number, timeStamp: number) {
+  heldPianoMidi.value = midi
+  pressPianoKey(midi, timeStamp)
+}
+
+function handlePianoReleased(midi: number, timeStamp: number) {
+  if (heldPianoMidi.value === midi) heldPianoMidi.value = null
+  releasePianoKey(midi, timeStamp)
+}
+
+/* Voice input: the piano is only for finding a note, so keep its sound from
+ * being drawn as sung pitch. */
+function handlePianoTonePlayed() {
+  if (!isPianoInput.value) triggerDeafPeriod()
+}
+
 /* Continuous MIDI of the live pitch; null hides the line. */
 const sungMidi = computed(() => {
+  if (isPianoInput.value) {
+    return isPlaybackRunning.value ? null : heldPianoMidi.value
+  }
+
   if (!isPreviewEnabled.value || isPlaybackRunning.value) return null
 
   const frequency = isIdleSource.value
@@ -127,6 +163,7 @@ const { stableSungLabel, stableSungCents } = useStableSungLabel({
 const isSimulatedIdlePreviewOn = computed(
   () =>
     !!props.simulateIdlePreview &&
+    !isPianoInput.value &&
     isPreviewEnabled.value &&
     !isTaking.value &&
     !isPlaybackRunning.value,
@@ -141,6 +178,12 @@ watch(
 )
 
 const liveNoteLabel = computed(() => {
+  if (isPianoInput.value) {
+    if (!isRecording.value || heldPianoMidi.value === null) return null
+
+    return midiToNoteLabel(heldPianoMidi.value, { showOctave: true }).label
+  }
+
   const noteInfo = props.detection.noteInfo.value
   if (!isRecording.value || !props.detection.isClean.value || !noteInfo) {
     return null
@@ -221,6 +264,7 @@ defineExpose({ recorder })
   <div
     class="mx-auto flex w-full max-w-400 flex-1 flex-col items-center gap-4 px-2 pb-4"
     data-testid="song-recorder-display"
+    :data-input="input"
     :data-phase="
       isIdle
         ? 'idle'
@@ -236,6 +280,8 @@ defineExpose({ recorder })
       v-model:grid="grid"
       v-model:clef="clef"
       v-model:isClickEnabled="isClickEnabled"
+      v-model:input="input"
+      :isInputLocked="isTaking"
       :isTempoLocked="!isIdle"
       :isGridLocked="isTaking || isPlaybackRunning"
     />
@@ -319,6 +365,7 @@ defineExpose({ recorder })
       </template>
 
       <PreviewToggle
+        v-if="!isPianoInput"
         v-model="isPreviewEnabled"
         :disabled="
           isPlaybackRunning ||
@@ -331,7 +378,11 @@ defineExpose({ recorder })
       v-if="isIdle"
       class="max-w-prose text-center text-sm text-(--p-text-muted-color)"
     >
-      {{ t('songRecorder.hint', { seconds: Math.round(limitMs / 1000) }) }}
+      {{
+        t(isPianoInput ? 'songRecorder.hintPiano' : 'songRecorder.hint', {
+          seconds: Math.round(limitMs / 1000),
+        })
+      }}
     </p>
 
     <div
@@ -371,7 +422,9 @@ defineExpose({ recorder })
     </div>
 
     <p v-if="isReview && !hasNotes" class="text-sm text-(--p-text-muted-color)">
-      {{ t('songRecorder.noNotes') }}
+      {{
+        t(isPianoInput ? 'songRecorder.noNotesPiano' : 'songRecorder.noNotes')
+      }}
     </p>
 
     <div class="w-full max-w-full">
@@ -386,6 +439,13 @@ defineExpose({ recorder })
         :sungToneCents="stableSungCents"
       />
     </div>
+
+    <SongRecorderPianoPanel
+      :isPianoInput="isPianoInput"
+      @notePressed="handlePianoPressed"
+      @noteReleased="handlePianoReleased"
+      @tonePlayed="handlePianoTonePlayed"
+    />
 
     <SongRecorderAbcEditor
       v-model="abcText"

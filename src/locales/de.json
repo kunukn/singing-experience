@@ -401,7 +401,14 @@
       "rhythm": "Einige schnelle Rhythmen wurden auf 1/16 gerundet."
     },
     "fromSheet": "Aus den Noten",
-    "fromSheetHint": "Setzt die Noten von oben wieder ins Feld"
+    "fromSheetHint": "Setzt die Noten von oben wieder ins Feld",
+    "inputLabel": "Aufnehmen von",
+    "inputVoice": "Stimme",
+    "inputPiano": "Klavier",
+    "pianoLabel": "Klavier",
+    "pianoRange": "Klavier-Tonumfang",
+    "hintPiano": "Wähl ein Tempo und drück Aufnehmen. Fang nach 4 Klicks an zu spielen. Du kannst bis zu {seconds} Sekunden spielen.",
+    "noNotesPiano": "Keine Tasten gespielt. Versuch es noch mal und drück die Tasten nach den 4 Klicks."
   },
   "scale": {
     "highlightScale": "Hervorheben",

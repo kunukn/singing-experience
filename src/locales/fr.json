@@ -401,7 +401,14 @@
       "rhythm": "Certains rythmes rapides ont été arrondis à 1/16."
     },
     "fromSheet": "Depuis la partition",
-    "fromSheetHint": "Remet la notation de la partition dans la zone"
+    "fromSheetHint": "Remet la notation de la partition dans la zone",
+    "inputLabel": "Enregistrer depuis",
+    "inputVoice": "Voix",
+    "inputPiano": "Piano",
+    "pianoLabel": "Piano",
+    "pianoRange": "Étendue du piano",
+    "hintPiano": "Choisis un tempo et appuie sur Enregistrer. Commence à jouer après 4 clics. Tu peux jouer jusqu'à {seconds} secondes.",
+    "noNotesPiano": "Aucune touche jouée. Réessaie et appuie sur les touches après les 4 clics."
   },
   "scale": {
     "highlightScale": "Surligner",

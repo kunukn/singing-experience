@@ -99,6 +99,6 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 @reference '@/style.css';
 
 .settings-row {
-  @apply md:grid-cols-[auto_1fr_auto_1fr];
+  @apply md:grid-cols-[repeat(4,auto)];
 }
 </style>

@@ -184,7 +184,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 
 /* One row from md up: 8 columns so all four items (each col-span-2) sit side by side. */
 .settings-row {
-  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr];
+  @apply md:grid-cols-[repeat(8,auto)];
 }
 
 /* Harmony tab hides the Voz select, the Sing-live tab hides the tone-sound
@@ -192,17 +192,17 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
  * without two phantom trailing columns pulling them off-center. */
 .settings-row.no-voz,
 .settings-row.no-tone {
-  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr];
+  @apply md:grid-cols-[repeat(6,auto)];
 }
 
 /* The note-names toggle adds a fifth item → 10 columns ("Sing along"). */
 .settings-row.has-toggle {
-  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr_auto_1fr];
+  @apply md:grid-cols-[repeat(10,auto)];
 }
 
 /* "Sing live" hides the tone-sound select but keeps the toggle → four items, so
  * 8 columns. More specific than the .no-tone 6-col rule above, so it wins. */
 .settings-row.has-toggle.no-tone {
-  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr];
+  @apply md:grid-cols-[repeat(8,auto)];
 }
 </style>

@@ -3,9 +3,17 @@ import {
   CLEF_LABEL_KEYS,
   type ClefKey,
 } from '@/components/notes/notesConstants'
-import { ALLOWED_BPMS, GRID_OPTIONS, type Grid } from './songRecorderConstants'
+import {
+  ALLOWED_BPMS,
+  GRID_OPTIONS,
+  INPUT_OPTIONS,
+  type Grid,
+  type SongRecorderInput,
+} from './songRecorderConstants'
 
 type Props = {
+  /* What the take records — fixed from count-in until the take stops. */
+  isInputLocked: boolean
   /* Tempo and click are baked into a take — locked from count-in onwards. */
   isTempoLocked: boolean
   /* Grid re-quantizes the kept take, but not under running playback. */
@@ -14,6 +22,7 @@ type Props = {
 
 const props = defineProps<Props>()
 
+const input = defineModel<SongRecorderInput>('input', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
 const grid = defineModel<Grid>('grid', { required: true })
 /* Display only — redraws the same take, so it stays unlocked throughout. */
@@ -23,6 +32,15 @@ const isClickEnabled = defineModel<boolean>('isClickEnabled', {
 })
 
 const { t } = useI18n()
+
+const inputLabelKeys: Record<SongRecorderInput, string> = {
+  voice: 'songRecorder.inputVoice',
+  piano: 'songRecorder.inputPiano',
+}
+
+const inputOptions = computed(() =>
+  INPUT_OPTIONS.map((value) => ({ label: t(inputLabelKeys[value]), value })),
+)
 
 /* Same treble/bass switch and labels as the /notes settings row. */
 const clefOptions = computed(() =>
@@ -55,6 +73,21 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       'mask-end': canScrollEnd,
     }"
   >
+    <div class="settings-item">
+      <div />
+      <PrimeSelectButton
+        v-model="input"
+        :options="inputOptions"
+        optionLabel="label"
+        optionValue="value"
+        :allowEmpty="false"
+        size="small"
+        :disabled="props.isInputLocked"
+        :aria-label="t('songRecorder.inputLabel')"
+        data-testid="song-recorder-input"
+      />
+    </div>
+
     <div class="settings-item">
       <div />
       <PrimeSelectButton
@@ -115,8 +148,10 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 <style scoped>
 @reference '@/style.css';
 
-/* One row from md up: four items (each col-span-2) side by side. */
+/* One row from md up: five items (each col-span-2) side by side. All auto,
+ * not 1fr: in this content-sized grid, 1fr tracks all grow to the widest
+ * one, which stretched short selects like Shortest note to Tempo's width. */
 .settings-row {
-  @apply md:grid-cols-[auto_1fr_auto_1fr_auto_1fr_auto_1fr];
+  @apply md:grid-cols-[repeat(10,auto)];
 }
 </style>

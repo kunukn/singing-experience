@@ -401,7 +401,14 @@
       "rhythm": "Beberapa ritme cepat dibulatkan ke 1/16."
     },
     "fromSheet": "Dari not balok",
-    "fromSheetHint": "Masukkan lagi notasi dari not balok ke kotak"
+    "fromSheetHint": "Masukkan lagi notasi dari not balok ke kotak",
+    "inputLabel": "Rekam dari",
+    "inputVoice": "Suara",
+    "inputPiano": "Piano",
+    "pianoLabel": "Piano",
+    "pianoRange": "Rentang piano",
+    "hintPiano": "Pilih tempo lalu tekan Rekam. Mulai bermain setelah 4 klik. Kamu bisa bermain sampai {seconds} detik.",
+    "noNotesPiano": "Tidak ada tuts yang dimainkan. Coba lagi dan tekan tutsnya setelah 4 klik."
   },
   "scale": {
     "highlightScale": "Sorot",

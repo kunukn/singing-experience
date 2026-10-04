@@ -87,4 +87,30 @@ describe('useVoiceRangeIndex', () => {
 
     expect(allowedIndices).toContain(rangeIndex.value)
   })
+
+  test('uses defaultLabelKey when nothing is stored', () => {
+    const rangeIndex = useVoiceRangeIndex(STORAGE_KEY, {
+      defaultLabelKey: 'voiceRanges.full',
+    })
+
+    expect(rangeIndex.value).toBe(indexOfLabelKey('voiceRanges.full'))
+  })
+
+  test('uses defaultLabelKey for an unknown stored value', () => {
+    localStorage.setItem(STORAGE_KEY, 'voiceRanges.removedLongAgo')
+
+    const rangeIndex = useVoiceRangeIndex(STORAGE_KEY, {
+      defaultLabelKey: 'voiceRanges.full',
+    })
+
+    expect(rangeIndex.value).toBe(indexOfLabelKey('voiceRanges.full'))
+  })
+
+  test('falls back to the app default for an unknown defaultLabelKey', () => {
+    const rangeIndex = useVoiceRangeIndex(STORAGE_KEY, {
+      defaultLabelKey: 'voiceRanges.removedLongAgo',
+    })
+
+    expect(rangeIndex.value).toBe(DEFAULT_RANGE_INDEX)
+  })
 })

@@ -141,6 +141,7 @@ declare module 'vue' {
     SongRecorderAbcEditor: typeof import('./components/song-recorder/SongRecorderAbcEditor.vue')['default']
     SongRecorderDisplay: typeof import('./components/song-recorder/SongRecorderDisplay.vue')['default']
     SongRecorderPage: typeof import('./components/song-recorder/SongRecorderPage.vue')['default']
+    SongRecorderPianoPanel: typeof import('./components/song-recorder/SongRecorderPianoPanel.vue')['default']
     SongRecorderSettingsRow: typeof import('./components/song-recorder/SongRecorderSettingsRow.vue')['default']
     SongRecorderSheet: typeof import('./components/song-recorder/SongRecorderSheet.vue')['default']
     SongRecorderTestPage: typeof import('./components/song-recorder/SongRecorderTestPage.vue')['default']
