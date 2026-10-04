@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notas",
         "description": "Vê cada nota na pauta e aprende o seu nome."
+      },
+      "songRecorder": {
+        "name": "Gravador de músicas",
+        "description": "Cante uma melodia e veja ela virar partitura."
       }
     },
     "privacy": "Sua privacidade está segura — este aplicativo funciona 100% no seu navegador. Nenhum áudio é gravado ou enviado."
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notas fora das linhas"
     }
+  },
+  "songRecorder": {
+    "record": "Gravar",
+    "newRecording": "Nova gravação",
+    "grid": "Nota mais curta",
+    "hint": "Escolha um andamento e toque em Gravar. Comece a cantar depois de 4 cliques. Você pode cantar por até {seconds} segundos. Fones de ouvido ajudam.",
+    "noNotes": "Nenhuma nota ouvida. Tente de novo um pouco mais alto.",
+    "abcLabel": "Notação ABC — copie para outros apps de música"
   },
   "scale": {
     "highlightScale": "Destacar",

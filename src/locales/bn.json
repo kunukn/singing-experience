@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
+      },
+      "songRecorder": {
+        "name": "গান রেকর্ডার",
+        "description": "একটা সুর গাও আর দেখো সেটা স্বরলিপি হয়ে যায়।"
       }
     },
     "privacy": "আপনার গোপনীয়তা সুরক্ষিত — এই অ্যাপ ১০০% আপনার ব্রাউজারে চলে। কোনো অডিও রেকর্ড বা কোথাও পাঠানো হয় না।"
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "songRecorder": {
+    "record": "রেকর্ড",
+    "newRecording": "নতুন রেকর্ডিং",
+    "grid": "সবচেয়ে ছোট নোট",
+    "hint": "একটা গতি বেছে নাও আর রেকর্ড চাপো। ৪টা ক্লিকের পরে গাওয়া শুরু করো। তুমি {seconds} সেকেন্ড পর্যন্ত গাইতে পারো। হেডফোন কাজে দেয়।",
+    "noNotes": "কোনো নোট শোনা যায়নি। আর একটু জোরে আবার চেষ্টা করো।",
+    "abcLabel": "ABC নোটেশন — অন্য মিউজিক অ্যাপে কপি করো"
   },
   "scale": {
     "highlightScale": "হাইলাইট",

@@ -62,6 +62,7 @@ function emitSitemap(env: Record<string, string>) {
     '/piano',
     '/guitar',
     '/sing-the-keys',
+    '/song-recorder',
   ]
   const ORIGIN = 'https://www.syng.fun'
 

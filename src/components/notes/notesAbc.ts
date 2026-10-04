@@ -38,7 +38,7 @@ function abcOctaveToken(letter: string, octave: number): string {
 }
 
 /* ABC token for an absolute MIDI note, spelled with sharps. */
-function midiToAbcToken(midi: number): string {
+export function midiToAbcToken(midi: number): string {
   const pitchClass = ((midi % 12) + 12) % 12
   const { accidental, letter } = PITCHCLASS_TO_ABC[pitchClass]
   /* MIDI octave: C-1 = MIDI 0, so the scientific octave is floor(midi/12) - 1. */

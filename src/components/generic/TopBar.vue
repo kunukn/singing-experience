@@ -7,6 +7,7 @@ const betaPages = new Set([
   '/piano',
   '/guitar',
   '/sing-the-keys',
+  '/song-recorder',
 ])
 const alphaPages = new Set(['/tone-detector'])
 const route = useRoute()

@@ -185,6 +185,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/song-recorder': RouteRecordInfo<
+      '/song-recorder',
+      '/song-recorder',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/song-recorder-test': RouteRecordInfo<
+      '/song-recorder-test',
+      '/song-recorder-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/tone-detector': RouteRecordInfo<
       '/tone-detector',
       '/tone-detector',
@@ -425,6 +439,22 @@ declare module 'vue-router/auto-routes' {
     'src/pages/singfly-test.vue': {
       routes:
         | '/singfly-test'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/song-recorder.vue': {
+      routes:
+        | '/song-recorder'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/song-recorder-test.vue': {
+      routes:
+        | '/song-recorder-test'
       views:
         | never
       pathParamNames:

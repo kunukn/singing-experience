@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
+      },
+      "songRecorder": {
+        "name": "歌曲录音机",
+        "description": "唱一段旋律，看它变成乐谱。"
       }
     },
     "privacy": "你的隐私是安全的 — 此应用完全在浏览器中运行。不会录制或发送任何音频。"
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "songRecorder": {
+    "record": "录音",
+    "newRecording": "重新录音",
+    "grid": "最短音符",
+    "hint": "选好速度，点“录音”。听到 4 下咔哒声后开始唱。最多可以唱 {seconds} 秒。戴耳机效果更好。",
+    "noNotes": "没听到音符。大声一点再试一次吧。",
+    "abcLabel": "ABC 记谱 — 复制到其他音乐应用"
   },
   "scale": {
     "highlightScale": "高亮",

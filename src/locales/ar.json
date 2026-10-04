@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
+      },
+      "songRecorder": {
+        "name": "مسجّل الأغاني",
+        "description": "غنِّ لحنًا وشاهده يتحول إلى نوتة موسيقية."
       }
     },
     "privacy": "خصوصيتك آمنة — يعمل هذا التطبيق بالكامل في متصفحك. لا يتم تسجيل أي صوت أو إرساله."
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "songRecorder": {
+    "record": "تسجيل",
+    "newRecording": "تسجيل جديد",
+    "grid": "أقصر نغمة",
+    "hint": "اختر سرعة واضغط تسجيل. ابدأ الغناء بعد 4 نقرات. يمكنك الغناء حتى {seconds} ثانية. السماعات تساعد.",
+    "noNotes": "لم تُسمع أي نغمات. حاول مرة أخرى بصوت أعلى قليلًا.",
+    "abcLabel": "تدوين ABC — انسخه إلى تطبيقات موسيقى أخرى"
   },
   "scale": {
     "highlightScale": "تمييز",

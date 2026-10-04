@@ -57,6 +57,11 @@ const ROUTE_META: Record<string, DocumentMeta> = {
     description:
       'Detect multiple simultaneous tones in real time across C2–C7. Sing a harmony or play a chord and see each note displayed live.',
   },
+  '/song-recorder': {
+    title: 'Song Recorder — Sing to Sheet Music',
+    description:
+      'Sing a melody to a metronome and see it written as sheet music. Play it back and copy the ABC notation.',
+  },
   '/piano': {
     title: 'Playable Piano Keyboard',
     description:

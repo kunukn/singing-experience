@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
+      },
+      "songRecorder": {
+        "name": "गीत रिकॉर्डर",
+        "description": "कोई धुन गाओ और देखो कि वह शीट म्यूज़िक में बदल जाती है।"
       }
     },
     "privacy": "आपकी गोपनीयता सुरक्षित है — यह ऐप 100% आपके ब्राउज़र में चलता है। कोई ऑडियो रिकॉर्ड या कहीं भेजा नहीं जाता।"
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "songRecorder": {
+    "record": "रिकॉर्ड",
+    "newRecording": "नई रिकॉर्डिंग",
+    "grid": "सबसे छोटा सुर",
+    "hint": "एक गति चुनो और रिकॉर्ड दबाओ। 4 क्लिक के बाद गाना शुरू करो। तुम {seconds} सेकंड तक गा सकते हो। हेडफ़ोन से मदद मिलती है।",
+    "noNotes": "कोई सुर सुनाई नहीं दिया। थोड़ा ज़ोर से फिर कोशिश करो।",
+    "abcLabel": "ABC संकेतन — इसे दूसरे संगीत ऐप्स में कॉपी करो"
   },
   "scale": {
     "highlightScale": "हाइलाइट",

@@ -146,6 +146,10 @@
       "notes": {
         "name": "Noder",
         "description": "Se hver node på nodelinjen og lær dens navn."
+      },
+      "songRecorder": {
+        "name": "Sangoptager",
+        "description": "Syng en melodi og se den blive til noder."
       }
     },
     "privacy": "Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Toner uden for linjerne"
     }
+  },
+  "songRecorder": {
+    "record": "Optag",
+    "newRecording": "Ny optagelse",
+    "grid": "Korteste node",
+    "hint": "Vælg et tempo og tryk Optag. Begynd at synge efter 4 klik. Du kan synge i op til {seconds} sekunder. Høretelefoner hjælper.",
+    "noNotes": "Ingen toner hørt. Prøv igen lidt højere.",
+    "abcLabel": "ABC-notation — kopiér den over i andre musikapps"
   },
   "scale": {
     "highlightScale": "Fremhæv",

@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notes",
         "description": "Vois chaque note sur la portée et apprends son nom."
+      },
+      "songRecorder": {
+        "name": "Enregistreur de chansons",
+        "description": "Chante un air et regarde-le devenir une partition."
       }
     },
     "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Aucun son n'est enregistré ni envoyé."
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notes au-delà des lignes"
     }
+  },
+  "songRecorder": {
+    "record": "Enregistrer",
+    "newRecording": "Nouvel enregistrement",
+    "grid": "Note la plus courte",
+    "hint": "Choisis un tempo et appuie sur Enregistrer. Commence à chanter après 4 clics. Tu peux chanter jusqu'à {seconds} secondes. Un casque aide.",
+    "noNotes": "Aucune note entendue. Réessaie un peu plus fort.",
+    "abcLabel": "Notation ABC — copie-la dans d'autres applis de musique"
   },
   "scale": {
     "highlightScale": "Surligner",

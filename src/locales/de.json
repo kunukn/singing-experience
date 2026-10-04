@@ -146,6 +146,10 @@
       "notes": {
         "name": "Noten",
         "description": "Sieh jede Note im Notensystem und lerne ihren Namen."
+      },
+      "songRecorder": {
+        "name": "Song-Rekorder",
+        "description": "Sing eine Melodie und sieh, wie sie zu Noten wird."
       }
     },
     "privacy": "Deine Privatsphäre ist geschützt – diese App läuft vollständig im Browser. Kein Audio wird aufgezeichnet oder übertragen."
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Töne außerhalb der Linien"
     }
+  },
+  "songRecorder": {
+    "record": "Aufnehmen",
+    "newRecording": "Neue Aufnahme",
+    "grid": "Kürzeste Note",
+    "hint": "Wähl ein Tempo und drück Aufnehmen. Fang nach 4 Klicks an zu singen. Du kannst bis zu {seconds} Sekunden singen. Kopfhörer helfen.",
+    "noNotes": "Keine Töne gehört. Versuch es noch mal etwas lauter.",
+    "abcLabel": "ABC-Notation — kopier sie in andere Musik-Apps"
   },
   "scale": {
     "highlightScale": "Hervorheben",

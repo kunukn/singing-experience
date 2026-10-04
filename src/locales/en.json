@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
+      },
+      "songRecorder": {
+        "name": "Song Recorder",
+        "description": "Sing a tune and see it turn into sheet music."
       }
     },
     "privacy": "Your privacy is safe — this app runs 100% in your browser. No audio is recorded or sent anywhere."
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "songRecorder": {
+    "record": "Record",
+    "newRecording": "New recording",
+    "grid": "Shortest note",
+    "hint": "Pick a tempo and press Record. Start singing after 4 clicks. You can sing for up to {seconds} seconds. Headphones help.",
+    "noNotes": "No notes heard. Try again a bit louder.",
+    "abcLabel": "ABC notation — copy it into other music apps"
   },
   "scale": {
     "highlightScale": "Highlight",

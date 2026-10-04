@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
+      },
+      "songRecorder": {
+        "name": "Perekam Lagu",
+        "description": "Nyanyikan sebuah lagu dan lihat jadi not balok."
       }
     },
     "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Tidak ada audio yang direkam atau dikirim ke mana pun."
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "songRecorder": {
+    "record": "Rekam",
+    "newRecording": "Rekaman baru",
+    "grid": "Not terpendek",
+    "hint": "Pilih tempo lalu tekan Rekam. Mulai bernyanyi setelah 4 klik. Kamu bisa bernyanyi sampai {seconds} detik. Headphone membantu.",
+    "noNotes": "Tidak ada nada yang terdengar. Coba lagi sedikit lebih keras.",
+    "abcLabel": "Notasi ABC — salin ke aplikasi musik lain"
   },
   "scale": {
     "highlightScale": "Sorot",

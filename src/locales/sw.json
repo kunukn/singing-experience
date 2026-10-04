@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
+      },
+      "songRecorder": {
+        "name": "Kinasa Nyimbo",
+        "description": "Imba wimbo na uone ukigeuka kuwa noti za muziki."
       }
     },
     "privacy": "Faragha yako ni salama — programu hii inafanya kazi 100% kwenye kivinjari chako. Hakuna sauti inayorekodiwa au kutumwa popote."
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "songRecorder": {
+    "record": "Rekodi",
+    "newRecording": "Rekodi mpya",
+    "grid": "Noti fupi zaidi",
+    "hint": "Chagua kasi kisha bonyeza Rekodi. Anza kuimba baada ya mibofyo 4. Unaweza kuimba hadi sekunde {seconds}. Vipokea sauti vya masikioni husaidia.",
+    "noNotes": "Hakuna noti zilizosikika. Jaribu tena kwa sauti kubwa kidogo.",
+    "abcLabel": "Nukuu ya ABC — inakili kwenye programu nyingine za muziki"
   },
   "scale": {
     "highlightScale": "Angazia",

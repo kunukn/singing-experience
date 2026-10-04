@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notas",
         "description": "Ve cada nota en el pentagrama y aprende su nombre."
+      },
+      "songRecorder": {
+        "name": "Grabadora de canciones",
+        "description": "Canta una melodía y mírala convertirse en partitura."
       }
     },
     "privacy": "Tu privacidad está segura — esta aplicación funciona 100% en tu navegador. No se graba ni envía ningún audio."
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notas fuera de las líneas"
     }
+  },
+  "songRecorder": {
+    "record": "Grabar",
+    "newRecording": "Nueva grabación",
+    "grid": "Nota más corta",
+    "hint": "Elige un tempo y pulsa Grabar. Empieza a cantar después de 4 clics. Puedes cantar hasta {seconds} segundos. Los auriculares ayudan.",
+    "noNotes": "No se oyeron notas. Inténtalo otra vez un poco más fuerte.",
+    "abcLabel": "Notación ABC: cópiala en otras apps de música"
   },
   "scale": {
     "highlightScale": "Resaltar",

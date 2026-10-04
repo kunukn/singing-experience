@@ -146,6 +146,10 @@
       "notes": {
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
+      },
+      "songRecorder": {
+        "name": "うたレコーダー",
+        "description": "メロディを歌うと、楽譜になるよ。"
       }
     },
     "privacy": "プライバシーは守られます。このアプリは100%ブラウザ内で動作します。音声が録音されたり送信されたりすることはありません。"
@@ -375,6 +379,14 @@
     "outliers": {
       "heading": "Notes beyond the lines"
     }
+  },
+  "songRecorder": {
+    "record": "録音",
+    "newRecording": "新しく録音",
+    "grid": "いちばん短い音符",
+    "hint": "テンポを選んで「録音」を押そう。4回クリックが鳴ったら歌い始めてね。最大{seconds}秒まで歌えるよ。ヘッドホンがあると便利。",
+    "noNotes": "音が聞こえなかったよ。もう少し大きな声でもう一度やってみよう。",
+    "abcLabel": "ABC記譜 — ほかの音楽アプリにコピーできるよ"
   },
   "scale": {
     "highlightScale": "ハイライト",
