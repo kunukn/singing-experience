@@ -7,6 +7,7 @@ import {
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
 import { useLocalStorage } from '@vueuse/core'
+import { appendNoteLogToken, formatNoteLogToken } from './pianoNoteLog'
 import type { PianoPreviewLaneId } from './pianoPreview'
 
 /* Voice-range selector. The index lives here, not in the settings row, because
@@ -26,6 +27,13 @@ const accidentalStyle = useAccidentalStyle('syng.pianoAccidentals', 'sharp')
  * touches the bindings, since usePianoKeyboardInput listens on window and
  * resolves by event.code, independent of anything drawn. */
 const areKeyboardHintsVisible = useLocalStorage('syng.pianoKeyboardHints', true)
+
+/* Played-notes log — a text box under the keyboard that collects each pressed
+ * note. Only the switch persists; the text is scratch and starts empty on every
+ * visit. It lives here rather than in PianoNoteLog so hiding the panel doesn't
+ * drop what was logged. */
+const isNoteLogVisible = useLocalStorage('syng.pianoNoteLog', false)
+const noteLogText = ref('')
 
 /* Scale highlight — tints the keys of one musical key/mode so the singer sees
  * the shape on the board. Off by default: no root picked, nothing tinted.
@@ -117,9 +125,18 @@ const previewLanes = computed<Array<DuetLane & { laneId: PianoPreviewLaneId }>>(
 )
 
 /* Fired on every key press. The inactive detector's deaf timer is harmless. */
-function handleTonePlayed() {
+function handleTonePlayed(midi: number) {
   triggerDeafPeriod()
   triggerDuetDeafPeriod()
+
+  if (!isNoteLogVisible.value) return
+
+  /* Spelled with the label settings as they are right now and never rewritten,
+   * so changing Tones mid-log leaves the earlier notes as they were typed. */
+  noteLogText.value = appendNoteLogToken(
+    noteLogText.value,
+    formatNoteLogToken(midi, toneLabelMode.value, accidentalStyle.value),
+  )
 }
 </script>
 
@@ -135,6 +152,7 @@ function handleTonePlayed() {
       v-model:isPreviewEnabled="isPreviewEnabled"
       v-model:isDuetEnabled="isDuetEnabled"
       v-model:areKeyboardHintsVisible="areKeyboardHintsVisible"
+      v-model:isNoteLogVisible="isNoteLogVisible"
       :micPermission="micPermission"
     />
 
@@ -163,6 +181,10 @@ function handleTonePlayed() {
         :scaleMode="scaleMode"
         @tonePlayed="handleTonePlayed"
       />
+    </div>
+
+    <div v-if="isNoteLogVisible" class="w-full max-w-3xl">
+      <PianoNoteLog v-model="noteLogText" />
     </div>
   </div>
 </template>

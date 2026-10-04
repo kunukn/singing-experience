@@ -236,11 +236,11 @@ const blackLabelClass = computed(() =>
 )
 
 /* Emitted whenever a key plays, so the parent can arm the preview deaf period
- * (stops the piano's own tone registering as sung pitch). */
-const emit = defineEmits<{ tonePlayed: [] }>()
+ * (stops the piano's own tone registering as sung pitch) and log the note. */
+const emit = defineEmits<{ tonePlayed: [midi: number] }>()
 
 const { pressCountFor, playKey, handleKeyDown } = usePianoKeyPlayback({
-  onTonePlayed: () => emit('tonePlayed'),
+  onTonePlayed: (midi) => emit('tonePlayed', midi),
 })
 
 function playLaneKey(midi: number) {

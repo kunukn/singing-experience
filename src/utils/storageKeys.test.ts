@@ -36,6 +36,7 @@ const STORAGE_KEYS = [
   'syng.pianoAccidentals',
   'syng.pianoDuetEnabled',
   'syng.pianoKeyboardHints',
+  'syng.pianoNoteLog',
   'syng.pianoScaleMode',
   'syng.pianoScaleRoot',
   'syng.pianoToneLabelMode',

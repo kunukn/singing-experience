@@ -29,6 +29,9 @@ const areKeyboardHintsVisible = defineModel<boolean>(
     required: true,
   },
 )
+const isNoteLogVisible = defineModel<boolean>('isNoteLogVisible', {
+  required: true,
+})
 
 /* The chips are only ever drawn where a physical keyboard exists (see keyChar
  * in PianoDisplay), so on touch the toggle would be a no-op control. */
@@ -89,7 +92,8 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
          placeholder div keeps the subgrid pairs aligned with the other items.
 
          At md the item spans the whole grid. Three labelled toggles (plus the
-         icon-only voice-types one) are the widest thing in the row, and
+         icon-only voice-types and note-log ones) are the widest thing in the
+         row, and
          because every item shares the subgrid's
          columns, letting them sit in column 2 pins that column for the voice
          range and tone-label rows too — in the kl locale that pushed the row
@@ -116,6 +120,8 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         />
 
         <VoiceTypeRibbonToggle v-model="isVoiceTypeRibbonVisible" />
+
+        <PianoNoteLogToggle v-model="isNoteLogVisible" />
       </div>
     </div>
 

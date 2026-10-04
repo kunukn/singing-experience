@@ -3,8 +3,9 @@ import { midiToFrequency } from '@/utils/noteUtils'
 
 type PianoKeyPlaybackOptions = {
   /* Called right after a tone starts, so the caller can arm the preview deaf
-   * period (stops the piano's own tone registering as sung pitch). */
-  onTonePlayed?: () => void
+   * period (stops the piano's own tone registering as sung pitch) or log the
+   * note that played. */
+  onTonePlayed?: (midi: number) => void
 }
 
 /*
@@ -36,7 +37,7 @@ export function usePianoKeyPlayback(options: PianoKeyPlaybackOptions = {}) {
     /* getImmediate, not getNow: a press should sound at once, and getNow would
      * add Tone's 100 ms look-ahead on top of the device's output latency. */
     playToneAt(midiToFrequency(midi), TONE_PLAY_DURATION_S, getImmediate())
-    options.onTonePlayed?.()
+    options.onTonePlayed?.(midi)
   }
 
   /* Keyboard access: a <button> fires no pointerdown for Enter/Space, so play on
