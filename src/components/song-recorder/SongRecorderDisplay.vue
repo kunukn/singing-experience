@@ -6,6 +6,7 @@ import {
   midiToNoteLabel,
   type NoteInfo,
 } from '@/utils/noteUtils'
+import { defineExpose, defineModel, defineProps } from 'vue'
 import SongRecorderAbcEditor, {
   type AbcEditorMessage,
 } from './SongRecorderAbcEditor.vue'
@@ -252,13 +253,7 @@ defineExpose({ recorder })
         data-testid="song-recorder-record"
         @click="record"
       />
-      <PreviewToggle
-        v-model="isPreviewEnabled"
-        :disabled="
-          isPlaybackRunning ||
-          (!simulateIdlePreview && micPermission === 'denied')
-        "
-      />
+
       <PrimeButton
         v-if="isTaking"
         severity="danger"
@@ -323,6 +318,14 @@ defineExpose({ recorder })
           @click="reset"
         />
       </template>
+
+      <PreviewToggle
+        v-model="isPreviewEnabled"
+        :disabled="
+          isPlaybackRunning ||
+          (!simulateIdlePreview && micPermission === 'denied')
+        "
+      />
     </div>
 
     <p

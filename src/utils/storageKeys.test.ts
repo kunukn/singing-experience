@@ -63,6 +63,7 @@ const STORAGE_KEYS = [
   'syng.singToneDurationSec',
   'syng.singTonePitchSnap',
   'syng.singToneRounds',
+  'syng.songRecorderAbcExpanded',
   'syng.songRecorderBpm',
   'syng.songRecorderClef',
   'syng.songRecorderClick',
