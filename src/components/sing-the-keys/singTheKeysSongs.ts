@@ -42,6 +42,7 @@ export const SONG_IDS = [
   'williamTell',
   'swanLake',
   'pachelbelCanon',
+  'pachelbelCanonVariation',
   'sakura',
   'moLiHua',
   'laCucaracha',
@@ -992,6 +993,39 @@ const PACHELBEL_CANON: Song = {
   ],
 }
 
+/* Pachelbel's Canon, the running variation — D major, on the same upper-D
+ * tonic as the theme above. Pachelbel wrote it in 16ths and 32nds; the values
+ * are doubled here, as the theme's half notes are. The variation's own second
+ * bar dips to the low D, a span of 19 semitones and wider than the keyboard
+ * fits on a phone (KEYBOARD_MIN_SEMITONE_UNIT), so the second bar is borrowed
+ * from the next variation, which runs over the same bass, and the excerpt
+ * closes on the tonic that bar leads into.
+ * Offsets from D: F♯, = −8, G, = −7, A, = −5, B = −3, C♯ = −1, E = 2, F♯ = 4,
+ * G = 5, A = 7.
+ * A (F♯ G) A (F♯ G)(A A, B C♯)(D E F♯ G) |
+ * F♯ (D E) F♯ (F♯, G,)(A, B A, G,)(A, F♯, G, A,) |
+ * B (D C♯) B (A, G,)(A, G, F♯, G,)(A, B C♯ D) |
+ * B (D C♯) D (C♯ B)(C♯ D E D)(C♯ D B C♯) | D––– */
+function canonFigure(midiOffsets: number[]): SongNote[] {
+  return midiOffsets.map((midiOffset, index) =>
+    // An eighth on the 1st and 4th note; the other twelve are 16ths
+    note(midiOffset, index === 0 || index === 3 ? 0.5 : 0.25),
+  )
+}
+const PACHELBEL_CANON_VARIATION: Song = {
+  id: 'pachelbelCanonVariation',
+  difficulty: 'hard',
+  bpm: 60,
+  meter: { pulseBeats: 1, pulsesPerBar: 4, pickupBeats: 0 }, // 4/4
+  notes: [
+    ...canonFigure([7, 4, 5, 7, 4, 5, 7, -5, -3, -1, 0, 2, 4, 5]),
+    ...canonFigure([4, 0, 2, 4, -8, -7, -5, -3, -5, -7, -5, -8, -7, -5]),
+    ...canonFigure([-3, 0, -1, -3, -5, -7, -5, -7, -8, -7, -5, -3, -1, 0]),
+    ...canonFigure([-3, 0, -1, 0, -1, -3, -1, 0, 2, 0, -1, 0, -3, -1]),
+    note(0, 4),
+  ],
+}
+
 /* Sakura Sakura (Japan) — the in scale on E (E F A B C), which has no third
  * and leans on its two semitones. The middle lines repeat the second and
  * third, so they are left out to keep the tune under 30 s.
@@ -1415,6 +1449,7 @@ export const SONGS: Record<SongId, Song> = {
   williamTell: WILLIAM_TELL,
   swanLake: SWAN_LAKE,
   pachelbelCanon: PACHELBEL_CANON,
+  pachelbelCanonVariation: PACHELBEL_CANON_VARIATION,
   sakura: SAKURA,
   moLiHua: MO_LI_HUA,
   laCucaracha: LA_CUCARACHA,

@@ -6,6 +6,11 @@ export type Program = {
 
 export const games: Program[] = [
   {
+    key: 'singTheKeys',
+    icon: '🎹',
+    route: '/sing-the-keys',
+  },
+  {
     key: 'singTone',
     icon: '🎯',
     route: '/sing-tone',
@@ -14,11 +19,6 @@ export const games: Program[] = [
     key: 'doReMi',
     icon: '🎶',
     route: '/do-re-mi',
-  },
-  {
-    key: 'singTheKeys',
-    icon: '🎹',
-    route: '/sing-the-keys',
   },
   {
     key: 'graceKelly',

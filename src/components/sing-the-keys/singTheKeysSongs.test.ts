@@ -109,6 +109,7 @@ describe('singTheKeysSongs', () => {
     { id: 'williamTell', lowest: -5, highest: 7 },
     { id: 'swanLake', lowest: -4, highest: 7 },
     { id: 'pachelbelCanon', lowest: -12, highest: 4 },
+    { id: 'pachelbelCanonVariation', lowest: -8, highest: 7 },
     { id: 'sakura', lowest: -5, highest: 8 },
     { id: 'moLiHua', lowest: 0, highest: 12 },
     { id: 'laCucaracha', lowest: -5, highest: 9 },
