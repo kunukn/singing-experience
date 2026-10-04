@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLocalStorage } from '@vueuse/core'
+import { useLocalStorage, useMediaQuery } from '@vueuse/core'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { PIANO_DEFAULT_RANGE_LABEL_KEY } from './songRecorderConstants'
 
@@ -32,6 +32,16 @@ const rangeIndex = useVoiceRangeIndex('syng.songRecorderPianoRange', {
   defaultLabelKey: PIANO_DEFAULT_RANGE_LABEL_KEY,
 })
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
+
+/* On by default: here the piano is an input device, so which letter plays which
+ * key is the first thing a typist needs. Own key, like the range above. */
+const areKeyboardHintsVisible = useLocalStorage(
+  'syng.songRecorderPianoKeyboardHints',
+  true,
+)
+
+/* PianoDisplay never draws the chips on touch, so the toggle would be a no-op. */
+const isCoarsePointer = useMediaQuery('(pointer: coarse)')
 </script>
 
 <template>
@@ -57,12 +67,17 @@ const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
       id="song-recorder-piano-body"
       class="flex w-full flex-col gap-2"
     >
-      <VoiceRangeSelect
-        v-model:rangeIndex="rangeIndex"
-        :headerLabel="t('songRecorder.pianoRange')"
-        class="self-center"
-        data-testid="song-recorder-piano-range"
-      />
+      <div class="flex items-center justify-center gap-2">
+        <VoiceRangeSelect
+          v-model:rangeIndex="rangeIndex"
+          :headerLabel="t('songRecorder.pianoRange')"
+          data-testid="song-recorder-piano-range"
+        />
+        <KeyboardHintsToggle
+          v-if="!isCoarsePointer"
+          v-model="areKeyboardHintsVisible"
+        />
+      </div>
       <!-- v-if, not v-show: unmounting removes the keyboard's window key
        listener, so a folded-away piano can't be played (or recorded) by typing. -->
       <div v-if="isExpanded" class="mx-auto w-full max-w-400">
@@ -73,6 +88,7 @@ const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
           :midiMax="selectedRange.midiMax"
           toneLabelMode="simple"
           :isOctaveShownOnC="true"
+          :areKeyboardHintsVisible="areKeyboardHintsVisible"
           @notePressed="
             (midi, timeStamp) => emit('notePressed', midi, timeStamp)
           "
