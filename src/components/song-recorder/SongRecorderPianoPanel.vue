@@ -1,11 +1,16 @@
 <script setup lang="ts">
-import { useLocalStorage, useMediaQuery } from '@vueuse/core'
+import type { PianoPreviewLaneId } from '@/components/piano/pianoPreview'
+import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
+import { useLocalStorage, useMediaQuery } from '@vueuse/core'
 import { PIANO_DEFAULT_RANGE_LABEL_KEY } from './songRecorderConstants'
 
 type Props = {
   /* Piano is the take's input — opening the panel is then the obvious next step. */
   isPianoInput: boolean
+  /* The idle "See your voice" line, forwarded to PianoDisplay. */
+  previewLanes?: Array<DuetLane & { laneId: PianoPreviewLaneId }>
+  isPreviewEnabled?: boolean
 }
 
 const props = defineProps<Props>()
@@ -84,6 +89,9 @@ const isCoarsePointer = useMediaQuery('(pointer: coarse)')
           toneLabelMode="simple"
           :isOctaveShownOnC="true"
           :areKeyboardHintsVisible="areKeyboardHintsVisible"
+          :previewLanes="previewLanes"
+          :isPreviewEnabled="isPreviewEnabled"
+          shouldColorByCents
           @notePressed="
             (midi, timeStamp) => emit('notePressed', midi, timeStamp)
           "

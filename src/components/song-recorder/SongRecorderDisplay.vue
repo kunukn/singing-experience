@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useStableSungLabel } from '@/components/grace-kelly/useStableSungLabel'
 import type { ClefKey } from '@/components/notes/notesConstants'
+import type { PianoPreviewLaneId } from '@/components/piano/pianoPreview'
+import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import {
   frequencyToMidi,
   midiToNoteLabel,
@@ -83,20 +85,23 @@ const isPianoInput = computed(() => input.value === 'piano')
 
 const { isPreviewEnabled } = useSettings()
 
-/* "See your voice" — the live pitch as a line on the staff. Between takes the
- * idle preview listens (silent during playback, so the speaker isn't drawn);
- * during a take the recording mic draws it. The setter keeps the shared setting
- * writable so useIdlePreview can switch it off when permission is denied; the
- * getter is false on a simulated page, so the real mic never opens there. */
+/* "See your voice" — the live pitch as a line on the staff and the piano.
+ * Between takes the idle preview listens, whichever the input (silent during
+ * playback, so the speaker isn't drawn); during a voice take the recording mic
+ * draws it on the staff. The setter keeps the shared setting writable so
+ * useIdlePreview can switch it off when permission is denied; the getter is
+ * false on a simulated page, so the real mic never opens there. */
 const isRealIdlePreviewEnabled = computed({
-  get: () =>
-    isPreviewEnabled.value && !props.simulateIdlePreview && !isPianoInput.value,
+  get: () => isPreviewEnabled.value && !props.simulateIdlePreview,
   set: (enabled: boolean) => {
     isPreviewEnabled.value = enabled
   },
 })
 
 const {
+  previewMidi: idlePreviewMidi,
+  previewFrequency: idlePreviewFrequency,
+  previewNoteLabel: idlePreviewNoteLabel,
   rawFrequency: idleFrequency,
   rawIsClean: idleIsClean,
   isPreviewListening: isIdleListening,
@@ -125,10 +130,10 @@ function handlePianoReleased(midi: number, timeStamp: number) {
   releasePianoKey(midi, timeStamp)
 }
 
-/* Voice input: the piano is only for finding a note, so keep its sound from
- * being drawn as sung pitch. */
+/* Keep the piano's own sound from being drawn as sung pitch — the idle mic
+ * listens in both input modes. */
 function handlePianoTonePlayed() {
-  if (!isPianoInput.value) triggerDeafPeriod()
+  triggerDeafPeriod()
 }
 
 /* Continuous MIDI of the live pitch; null hides the line. */
@@ -153,17 +158,58 @@ const sungMidi = computed(() => {
   return frequencyToMidi(frequency)
 })
 
+const EMPTY_PIANO_LANE: DuetLane & { laneId: PianoPreviewLaneId } = {
+  previewMidi: null,
+  previewFrequency: null,
+  previewNoteLabel: null,
+  laneId: 'low',
+}
+
+/* The idle "See your voice" line on the piano, as on /piano. Idle only: a take
+ * or playback empties it. A simulated page reads its one detector instead of
+ * the real mic. */
+const pianoPreviewLanes = computed<
+  Array<DuetLane & { laneId: PianoPreviewLaneId }>
+>(() => {
+  if (!isPreviewEnabled.value || isTaking.value || isPlaybackRunning.value) {
+    return [EMPTY_PIANO_LANE]
+  }
+
+  if (!props.simulateIdlePreview) {
+    return [
+      {
+        previewMidi: idlePreviewMidi.value,
+        previewFrequency: idlePreviewFrequency.value,
+        previewNoteLabel: idlePreviewNoteLabel.value,
+        laneId: 'low',
+      },
+    ]
+  }
+
+  const noteInfo = props.detection.noteInfo.value
+  if (!noteInfo || !props.detection.isClean.value) return [EMPTY_PIANO_LANE]
+
+  return [
+    {
+      previewMidi: noteInfo.midiNote,
+      previewFrequency: props.detection.frequency.value,
+      previewNoteLabel: midiToNoteLabel(noteInfo.midiNote).label,
+      laneId: 'low',
+    },
+  ]
+})
+
 const { stableSungLabel, stableSungCents } = useStableSungLabel({
   sungMidi,
   showOctave: ref(true),
 })
 
 /* Simulated page: the one detector doubles as the idle preview while the
- * toggle is on. A take keeps it running; leaving a take restarts it. */
+ * toggle is on. A voice take keeps it running; a piano take never reads it,
+ * so it stops. Leaving a take restarts it. */
 const isSimulatedIdlePreviewOn = computed(
   () =>
     !!props.simulateIdlePreview &&
-    !isPianoInput.value &&
     isPreviewEnabled.value &&
     !isTaking.value &&
     !isPlaybackRunning.value,
@@ -172,7 +218,7 @@ watch(
   isSimulatedIdlePreviewOn,
   (isOn) => {
     if (isOn) void props.detection.start()
-    else if (!isTaking.value) props.detection.stop()
+    else if (!isTaking.value || isPianoInput.value) props.detection.stop()
   },
   { immediate: true },
 )
@@ -365,10 +411,10 @@ defineExpose({ recorder })
       </template>
 
       <PreviewToggle
-        v-if="!isPianoInput"
         v-model="isPreviewEnabled"
         :disabled="
           isPlaybackRunning ||
+          (isTaking && isPianoInput) ||
           (!simulateIdlePreview && micPermission === 'denied')
         "
       />
@@ -442,6 +488,8 @@ defineExpose({ recorder })
 
     <SongRecorderPianoPanel
       :isPianoInput="isPianoInput"
+      :previewLanes="pianoPreviewLanes"
+      :isPreviewEnabled="isPreviewEnabled"
       @notePressed="handlePianoPressed"
       @noteReleased="handlePianoReleased"
       @tonePlayed="handlePianoTonePlayed"
