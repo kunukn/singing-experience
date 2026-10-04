@@ -59,8 +59,8 @@ type Props = {
    * unlike the guitar, where a fret row only has height for one — so this picks
    * which one goes on top and carries the octave digit. */
   accidentalStyle?: AccidentalStyle
-  /* Draws the computer-key chip on each key. Display only — the bindings in
-   * usePianoKeyboardInput are unaffected either way. */
+  /* Draws the computer-key chip on each key; defaults to shown. Display only —
+   * the bindings in usePianoKeyboardInput are unaffected either way. */
   areKeyboardHintsVisible?: boolean
   /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
   scaleRoot?: number | null
@@ -87,7 +87,12 @@ type Props = {
    * the Keys, where fitting the screen matters more than a full tap target. */
   minSemitoneUnit?: number
 }
-const props = defineProps<Props>()
+/* areKeyboardHintsVisible defaults true ("defaults to shown" above). Without an
+ * explicit default, Vue's Boolean-prop casting resolves an absent prop to
+ * `false`, which would silently hide the chips whenever a parent omits it. */
+const props = withDefaults(defineProps<Props>(), {
+  areKeyboardHintsVisible: true,
+})
 
 /* Slot for a game to draw in the space above the keys — inside the scroll box
  * and the same width as the key track, so whatever it draws stays on its keys
@@ -329,7 +334,7 @@ const semitoneUnit = computed(() => {
  * keys still play, and aria-keyshortcuts still announces the shortcut. */
 function keyChar(key: PianoKey): string | null {
   if (isCoarsePointer.value) return null
-  if (props.areKeyboardHintsVisible === false) return null
+  if (!props.areKeyboardHintsVisible) return null
 
   return keyboardCharForMidi(key.midi)
 }
@@ -569,6 +574,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
              already announces it, hence aria-hidden here. -->
             <span
               v-if="keyChar(key)"
+              data-testid="piano-key-hint"
               class="absolute z-[2] -translate-x-1/2 rounded border border-(--p-content-border-color) px-1 text-[10px] leading-4 text-(--p-text-muted-color)"
               :style="{
                 insetInlineStart: `${key.pitchX - key.leftPx}px`,
@@ -662,6 +668,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
              relative keeps both labels painted above the glow overlay. -->
             <span
               v-if="keyChar(key)"
+              data-testid="piano-key-hint"
               class="relative rounded border border-(--p-surface-600) px-1 text-[10px] leading-4 text-(--p-surface-300)"
               aria-hidden="true"
             >

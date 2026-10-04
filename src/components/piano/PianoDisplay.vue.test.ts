@@ -280,6 +280,32 @@ describe('PianoDisplay - key sizing', () => {
   })
 })
 
+describe('PianoDisplay - keyboard hints', () => {
+  /* Vue casts an absent Boolean prop to false, so "omitted" must be its own
+   * case — it once hid every chip on a page that never passed the prop. */
+  test('should show the computer-key chips when the prop is omitted', () => {
+    const wrapper = mountDisplay()
+
+    expect(
+      wrapper.findAll('[data-testid="piano-key-hint"]').length,
+    ).toBeGreaterThan(0)
+    /* Q plays C4 in the printed computer-keyboard map. */
+    expect(
+      wrapper
+        .get('[data-testid="piano-key-60"] [data-testid="piano-key-hint"]')
+        .text(),
+    ).toBe('Q')
+    wrapper.unmount()
+  })
+
+  test('should hide the chips when hints are turned off', () => {
+    const wrapper = mountDisplay({ areKeyboardHintsVisible: false })
+
+    expect(wrapper.findAll('[data-testid="piano-key-hint"]')).toHaveLength(0)
+    wrapper.unmount()
+  })
+})
+
 describe('PianoDisplay - press and release', () => {
   test('should emit a press on pointerdown and a release on pointerup', async () => {
     const wrapper = mountDisplay()
