@@ -6,6 +6,7 @@ import {
   DEFAULT_SCALE_HIGHLIGHT_MODE,
   type ScaleHighlightMode,
 } from '@/utils/scaleHighlight'
+import { appendNoteLogToken, formatNoteLogToken } from './pianoNoteLog'
 
 /* Developer harness for PianoPage: same settings row, scale select and keyboard,
  * but the preview lanes are fed by simulated singers instead of the microphone —
@@ -21,6 +22,8 @@ const areKeyboardHintsVisible = ref(true)
 const scaleRoot = ref<number | null>(null)
 const scaleMode = ref<ScaleHighlightMode>(DEFAULT_SCALE_HIGHLIGHT_MODE)
 const isDuetEnabled = ref(false)
+const isNoteLogVisible = ref(false)
+const noteLogText = ref('')
 
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
@@ -36,6 +39,19 @@ const { visibleSingers, previewLanes, armDeafPeriod } = useSimulatedSingers({
   low: { label: 'Singer A (low)', note: 'G', octave: 3 },
   high: { label: 'Singer B (high)', note: 'D', octave: 5 },
 })
+
+/* Same as PianoPage: every key press arms the deaf period and, while the log is
+ * showing, appends the note spelled with the current label settings. */
+function handleTonePlayed(midi: number) {
+  armDeafPeriod()
+
+  if (!isNoteLogVisible.value) return
+
+  noteLogText.value = appendNoteLogToken(
+    noteLogText.value,
+    formatNoteLogToken(midi, toneLabelMode.value, accidentalStyle.value),
+  )
+}
 </script>
 
 <template>
@@ -50,6 +66,7 @@ const { visibleSingers, previewLanes, armDeafPeriod } = useSimulatedSingers({
       v-model:isPreviewEnabled="isPreviewEnabled"
       v-model:isDuetEnabled="isDuetEnabled"
       v-model:areKeyboardHintsVisible="areKeyboardHintsVisible"
+      v-model:isNoteLogVisible="isNoteLogVisible"
       :micPermission="null"
     />
 
@@ -82,8 +99,12 @@ const { visibleSingers, previewLanes, armDeafPeriod } = useSimulatedSingers({
         :areKeyboardHintsVisible="areKeyboardHintsVisible"
         :scaleRoot="scaleRoot"
         :scaleMode="scaleMode"
-        @tonePlayed="armDeafPeriod"
+        @tonePlayed="handleTonePlayed"
       />
+    </div>
+
+    <div v-if="isNoteLogVisible" class="w-full max-w-3xl">
+      <PianoNoteLog v-model="noteLogText" />
     </div>
   </div>
 </template>
