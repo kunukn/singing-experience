@@ -64,12 +64,8 @@ const effectivePreviewEnabled = computed(
   () => !props.disableIdlePreview && isPreviewEnabled.value,
 )
 
-/*
- * "Two singers" — splits the mic into a low and a high band so a man and a
- * woman singing together each get their own line, readout and recorded trail.
- * Persisted per page, like the piano's and guitar's own duet flags.
- */
-const isDuetEnabled = useLocalStorage('syng.pitchDetectorDuetEnabled', false)
+/* Each singer also gets their own readout and recorded trail here. */
+const { isDuetEnabled } = useDuetMode()
 
 const { isVoiceTypeRibbonVisible } = useVoiceTypeRibbon()
 const isDuetAvailable = computed(() => !props.disableIdlePreview)

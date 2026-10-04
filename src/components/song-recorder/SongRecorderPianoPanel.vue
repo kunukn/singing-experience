@@ -33,12 +33,7 @@ const rangeIndex = useVoiceRangeIndex('syng.songRecorderPianoRange', {
 })
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
-/* On by default: here the piano is an input device, so which letter plays which
- * key is the first thing a typist needs. Own key, like the range above. */
-const areKeyboardHintsVisible = useLocalStorage(
-  'syng.songRecorderPianoKeyboardHints',
-  true,
-)
+const { areKeyboardHintsVisible } = useKeyboardHints()
 
 /* PianoDisplay never draws the chips on touch, so the toggle would be a no-op. */
 const isCoarsePointer = useMediaQuery('(pointer: coarse)')

@@ -100,6 +100,7 @@ declare global {
   const useDoReMiPlaySequence: typeof import('./composables/useDoReMiPlaySequence').useDoReMiPlaySequence
   const useDocumentDirection: typeof import('./composables/useDocumentDirection').useDocumentDirection
   const useDocumentMeta: typeof import('./composables/useDocumentMeta').useDocumentMeta
+  const useDuetMode: typeof import('./composables/useDuetMode').useDuetMode
   const useDuetPitchDetection: typeof import('./composables/useDuetPitchDetection').useDuetPitchDetection
   const useDwellSingScore: typeof import('./composables/useDwellSingScore').useDwellSingScore
   const useErrorToastStore: typeof import('./stores/useErrorToastStore').useErrorToastStore
@@ -111,12 +112,14 @@ declare global {
   const useIdlePreview: typeof import('./composables/useIdlePreview').useIdlePreview
   const useIsInstalledPwa: typeof import('./composables/useIsInstalledPwa').useIsInstalledPwa
   const useIsRtl: typeof import('./composables/useDocumentDirection').useIsRtl
+  const useKeyboardHints: typeof import('./composables/useKeyboardHints').useKeyboardHints
   const useLink: typeof import('vue-router').useLink
   const useMicrophonePermission: typeof import('./composables/useMicrophonePermission').useMicrophonePermission
   const useModel: typeof import('vue').useModel
   const useMultiToneDetection: typeof import('./composables/useMultiToneDetection').useMultiToneDetection
   const usePitchDetection: typeof import('./composables/usePitchDetection').usePitchDetection
   const usePitchPreviewColor: typeof import('./composables/usePitchPreviewColor').usePitchPreviewColor
+  const usePitchSnap: typeof import('./composables/usePitchSnap').usePitchSnap
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter
   const useScaleModeGroups: typeof import('./composables/useScaleModeGroups').useScaleModeGroups
@@ -255,6 +258,7 @@ declare module 'vue' {
     readonly useDarkMode: UnwrapRef<typeof import('./composables/useDarkMode')['useDarkMode']>
     readonly useDocumentDirection: UnwrapRef<typeof import('./composables/useDocumentDirection')['useDocumentDirection']>
     readonly useDocumentMeta: UnwrapRef<typeof import('./composables/useDocumentMeta')['useDocumentMeta']>
+    readonly useDuetMode: UnwrapRef<typeof import('./composables/useDuetMode')['useDuetMode']>
     readonly useDuetPitchDetection: UnwrapRef<typeof import('./composables/useDuetPitchDetection')['useDuetPitchDetection']>
     readonly useDwellSingScore: UnwrapRef<typeof import('./composables/useDwellSingScore')['useDwellSingScore']>
     readonly useErrorToastStore: UnwrapRef<typeof import('./stores/useErrorToastStore')['useErrorToastStore']>
@@ -265,11 +269,13 @@ declare module 'vue' {
     readonly useIdlePreview: UnwrapRef<typeof import('./composables/useIdlePreview')['useIdlePreview']>
     readonly useIsInstalledPwa: UnwrapRef<typeof import('./composables/useIsInstalledPwa')['useIsInstalledPwa']>
     readonly useIsRtl: UnwrapRef<typeof import('./composables/useDocumentDirection')['useIsRtl']>
+    readonly useKeyboardHints: UnwrapRef<typeof import('./composables/useKeyboardHints')['useKeyboardHints']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useMicrophonePermission: UnwrapRef<typeof import('./composables/useMicrophonePermission')['useMicrophonePermission']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly usePitchDetection: UnwrapRef<typeof import('./composables/usePitchDetection')['usePitchDetection']>
     readonly usePitchPreviewColor: UnwrapRef<typeof import('./composables/usePitchPreviewColor')['usePitchPreviewColor']>
+    readonly usePitchSnap: UnwrapRef<typeof import('./composables/usePitchSnap')['usePitchSnap']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useScaleModeGroups: UnwrapRef<typeof import('./composables/useScaleModeGroups')['useScaleModeGroups']>

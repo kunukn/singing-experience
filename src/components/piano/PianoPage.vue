@@ -23,10 +23,8 @@ const toneLabelMode = useToneLabelMode('syng.pianoToneLabelMode', 'off')
  * per-page board setting. */
 const accidentalStyle = useAccidentalStyle('syng.pianoAccidentals', 'sharp')
 
-/* The computer-key chips printed on each key. Display only — hiding them never
- * touches the bindings, since usePianoKeyboardInput listens on window and
- * resolves by event.code, independent of anything drawn. */
-const areKeyboardHintsVisible = useLocalStorage('syng.pianoKeyboardHints', true)
+/* Shared across every program that draws the piano — see useKeyboardHints. */
+const { areKeyboardHintsVisible } = useKeyboardHints()
 
 /* Played-notes log — a text box under the keyboard that collects each pressed
  * note. Only the switch persists; the text is scratch and starts empty on every
@@ -66,10 +64,7 @@ const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
  * period we arm whenever a key plays. */
 const { isPreviewEnabled } = useSettings()
 
-/* "Two singers" — splits the mic into a low and a high band so a man and a
- * woman singing together each get their own line. Piano-only, so it persists
- * here rather than in the shared settings. */
-const isDuetEnabled = useLocalStorage('syng.pianoDuetEnabled', false)
+const { isDuetEnabled } = useDuetMode()
 
 /* Exactly one detector ever opens the microphone: both composables watch their
  * own isEnabled, and these two are mutually exclusive. */

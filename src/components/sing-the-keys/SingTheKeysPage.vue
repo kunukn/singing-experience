@@ -45,15 +45,9 @@ if (!isSpeedOption(speed.value)) speed.value = DEFAULT_SPEED
 
 const isBeatLinesEnabled = useLocalStorage('syng.singTheKeysBeatLines', true)
 const isMetronomeEnabled = useLocalStorage('syng.singTheKeysMetronome', false)
-const isPitchSnapEnabled = useLocalStorage('syng.singTheKeysPitchSnap', false)
+const { isPitchSnapEnabled } = usePitchSnap()
 const isHitEffectsEnabled = useLocalStorage('syng.singTheKeysHitEffects', true)
-/* Its own key, not the piano's syng.pianoKeyboardHints: here the chips share
- * the screen with falling blocks, so a singer may want them off in the game
- * and on at the piano. */
-const areKeyboardHintsVisible = useLocalStorage(
-  'syng.singTheKeysKeyboardHints',
-  true,
-)
+const { areKeyboardHintsVisible } = useKeyboardHints()
 
 const range = computed(() =>
   songMidiRange(

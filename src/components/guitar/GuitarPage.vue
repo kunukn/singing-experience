@@ -69,10 +69,7 @@ if (!isScaleHighlightMode(scaleMode.value)) {
  * period we arm whenever a string sounds. */
 const { isPreviewEnabled } = useSettings()
 
-/* "Two singers" — splits the mic into a low and a high band so a man and a
- * woman singing together each get their own line. Persisted separately from the
- * piano's toggle so the two pages keep their own setting. */
-const isDuetEnabled = useLocalStorage('syng.guitarDuetEnabled', false)
+const { isDuetEnabled } = useDuetMode()
 
 /* Exactly one detector ever opens the microphone: both composables watch their
  * own isEnabled, and these two are mutually exclusive. */

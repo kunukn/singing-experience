@@ -37,6 +37,25 @@ export const STORAGE_MIGRATIONS: readonly StorageMigration[] = [
   /* Sing the Keys' Guide toggle became the ♪ preview button — an action, not
    * a setting, so there is nothing to carry over. */
   { retire: 'syng.singTheKeysMelodyGuide' },
+
+  /* The three per-program key-hint toggles merged into one shared key. The
+   * piano's comes first so its value wins; the migration never overwrites, so
+   * the other two are then only removed. */
+  { from: 'syng.pianoKeyboardHints', to: 'syng.keyboardHints' },
+  { from: 'syng.singTheKeysKeyboardHints', to: 'syng.keyboardHints' },
+  { from: 'syng.songRecorderPianoKeyboardHints', to: 'syng.keyboardHints' },
+
+  /* Per-program pitch-snap and two-singers toggles merged into the shared
+   * syng.pitchSnap and syng.duetEnabled. Retired rather than copied: each page
+   * wrote its own default, so a stored false on one would arbitrarily beat a
+   * true on another. Both shared keys start off, the old per-page default. */
+  { retire: 'syng.doReMiPitchSnap' },
+  { retire: 'syng.singFlyPitchSnap' },
+  { retire: 'syng.singTheKeysPitchSnap' },
+  { retire: 'syng.singTonePitchSnap' },
+  { retire: 'syng.pianoDuetEnabled' },
+  { retire: 'syng.guitarDuetEnabled' },
+  { retire: 'syng.pitchDetectorDuetEnabled' },
 ]
 
 /*

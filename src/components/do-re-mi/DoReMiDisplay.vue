@@ -60,10 +60,9 @@ const { isPlayingSequence, currentPlayingIndex, playSequence, stopSequence } =
 
 const { isPreviewEnabled } = useSettings()
 const showDoReMiTarget = useLocalStorage('syng.showDoReMiTarget', true)
-/* Snap: the sung pitch is shown on its note, cents hidden — child friendly.
- * Display only: scoring's ±50¢ window already is the nearest-note rule, so
+/* Display only: scoring's ±50¢ window already is the nearest-note rule, so
  * the snapped view reads green/0¢ exactly when the note counts. */
-const isPitchSnapEnabled = useLocalStorage('syng.doReMiPitchSnap', false)
+const { isPitchSnapEnabled } = usePitchSnap()
 
 /* Force-disable idle preview (and the mic it would open) in simulated test pages */
 const effectivePreviewEnabled = computed(
