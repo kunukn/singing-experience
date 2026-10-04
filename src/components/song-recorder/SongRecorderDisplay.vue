@@ -6,7 +6,6 @@ import {
   midiToNoteLabel,
   type NoteInfo,
 } from '@/utils/noteUtils'
-import { defineExpose, defineModel, defineProps } from 'vue'
 import SongRecorderAbcEditor, {
   type AbcEditorMessage,
 } from './SongRecorderAbcEditor.vue'
