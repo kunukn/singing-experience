@@ -15,15 +15,15 @@ export const games: Program[] = [
     route: '/sing-tone',
   },
   {
+    key: 'doReMi',
+    icon: '🎶',
+    route: '/do-re-mi',
+  },
+  {
     key: 'singTheKeys',
     icon: '🎹',
     route: '/sing-the-keys',
     stage: 'beta',
-  },
-  {
-    key: 'doReMi',
-    icon: '🎶',
-    route: '/do-re-mi',
   },
   {
     key: 'graceKelly',
@@ -57,6 +57,16 @@ export const tools: Program[] = [
     route: '/warm-up',
   },
   {
+    key: 'notes',
+    icon: '🎵',
+    route: '/notes',
+  },
+  {
+    key: 'tuner',
+    icon: '🪕',
+    route: '/tuner',
+  },
+  {
     key: 'piano',
     icon: '🎹',
     route: '/piano',
@@ -67,16 +77,6 @@ export const tools: Program[] = [
     icon: '🎸',
     route: '/guitar',
     stage: 'beta',
-  },
-  {
-    key: 'notes',
-    icon: '🎵',
-    route: '/notes',
-  },
-  {
-    key: 'tuner',
-    icon: '🪕',
-    route: '/tuner',
   },
   {
     key: 'scaleDetector',
