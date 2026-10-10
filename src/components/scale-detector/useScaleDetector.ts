@@ -42,8 +42,8 @@ export type ScaleSelection = Pick<ScaleCandidate, 'root' | 'mode'>
 export type ScaleDetectorResult = ReturnType<typeof useScaleDetector>
 
 /*
- * Collects sung notes (from the mic while listening) and played notes (from
- * the piano, always) into one ordered list and ranks the scales they fit.
+ * Collects sung notes (from the mic) and played notes (from the piano) while
+ * listening into one ordered list and ranks the scales they fit.
  * Notes count once they've ended, so the ranking settles between notes
  * rather than flickering while one is held.
  */
@@ -137,6 +137,10 @@ export function useScaleDetector({ detection }: Options) {
     sampler.pause()
     segmenter.flush()
     syncVoiceEvents()
+    /* A key still held at Stop ends here; its later release is ignored. */
+    if (pianoCapture.heldMidi() !== null) {
+      pianoEvents.value = [...pianoCapture.flush(nowMs())]
+    }
     detection.stop()
   }
 
@@ -146,6 +150,8 @@ export function useScaleDetector({ detection }: Options) {
   }
 
   function pressPianoKey(midi: number) {
+    if (!isListening.value) return
+
     /* Pressing a new key while one is held ends the held one. */
     if (pianoCapture.press(midi, nowMs())) {
       pianoEvents.value = [...pianoCapture.events]
