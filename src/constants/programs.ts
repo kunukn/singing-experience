@@ -82,7 +82,7 @@ export const tools: Program[] = [
     key: 'scaleDetector',
     icon: '🔑',
     route: '/scale-detector',
-    stage: 'alpha',
+    stage: 'beta',
   },
   {
     key: 'songRecorder',
