@@ -1,0 +1,1 @@
+var e=[`easy`,`normal`,`hard`];export{e as t};

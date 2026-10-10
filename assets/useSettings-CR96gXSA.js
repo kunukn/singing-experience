@@ -1,0 +1,1 @@
+import{a as e}from"./dist-D1cZv6ba.js";var t=.9,n=.4,r=.01,i=e(`syng.clarityThreshold`,t),a=e(`syng.previewEnabled`,!1);(i.value<.4||i.value>1)&&(i.value=t);function o(){return{clarityThreshold:i,isPreviewEnabled:a}}export{n,o as r,r as t};

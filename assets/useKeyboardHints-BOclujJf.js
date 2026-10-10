@@ -1,0 +1,1 @@
+import{a as e}from"./dist-D1cZv6ba.js";var t=e(`syng.keyboardHints`,!0);function n(){return{areKeyboardHintsVisible:t}}export{n as t};
