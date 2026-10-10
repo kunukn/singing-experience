@@ -41,6 +41,12 @@ const isClickEnabled = defineModel<boolean>('isClickEnabled', {
   required: true,
 })
 const input = defineModel<SongRecorderInput>('input', { required: true })
+/* Optional so the test page can leave it local. */
+const toneLabelMode = defineModel<ToneLabelMode>('toneLabelMode', {
+  default: 'simple',
+})
+const toneLabelModeOptions = useToneLabelModeOptions()
+const labelFlags = computed(() => toneLabelModeToFlags(toneLabelMode.value))
 
 const { t } = useI18n()
 
@@ -67,6 +73,7 @@ const {
   sheet,
   displaySheet,
   pieceKinds,
+  labelMidis,
   nowPieceIndex,
   activePieceIndex,
   hasPlayedToEnd,
@@ -421,6 +428,22 @@ defineExpose({ recorder })
           (!simulateIdlePreview && micPermission === 'denied')
         "
       />
+
+      <div class="flex items-center gap-2">
+        <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+          t('generic.toneLabels')
+        }}</label>
+        <PrimeSelectButton
+          v-model="toneLabelMode"
+          :options="toneLabelModeOptions"
+          optionLabel="label"
+          optionValue="value"
+          :allowEmpty="false"
+          size="small"
+          :aria-label="t('generic.toneLabels')"
+          data-testid="song-recorder-tone-labels"
+        />
+      </div>
     </div>
 
     <p
@@ -482,6 +505,9 @@ defineExpose({ recorder })
         :activePieceIndex="activePieceIndex"
         :pieceKinds="pieceKinds"
         :nowPieceIndex="nowPieceIndex"
+        :labelMidis="labelMidis"
+        :showToneLabels="labelFlags.showLabels"
+        :showNoteNumbers="labelFlags.showOctave"
         :isDone="hasPlayedToEnd"
         :isLive="isCountingIn || isRecording"
         :clef="clef"

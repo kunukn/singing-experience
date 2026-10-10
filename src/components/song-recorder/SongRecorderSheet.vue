@@ -5,7 +5,11 @@ import {
   STAFF_LYRIC_FONT,
 } from '@/components/grace-kelly/graceKellyStaffRender'
 import type { ClefKey } from '@/components/notes/notesConstants'
-import { formatNoteLabelWithCents } from '@/utils/noteUtils'
+import {
+  formatNoteLabelWithCents,
+  midiToFlatLabel,
+  midiToNoteLabel,
+} from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
 import type { LiveNoteKind } from './liveRecordingNotes'
@@ -24,6 +28,11 @@ type Props = {
    * note are faded) and the piece under the playhead. */
   pieceKinds?: LiveNoteKind[] | null
   nowPieceIndex?: number | null
+  /* Pitch to name above each drawn piece (SheetPiece order); null = no label. */
+  labelMidis?: (number | null)[]
+  showToneLabels?: boolean
+  /* Add the octave digit to the labels (C4 vs C). */
+  showNoteNumbers?: boolean
   clef: ClefKey
   /* "See your voice": continuous MIDI of the live pitch; null hides the line. */
   sungMidi?: number | null
@@ -141,6 +150,64 @@ function applyPieceClasses() {
   })
 }
 
+/* Same chip placement as NotesSheet: just above the notehead, with the flat
+ * spelling of an accidental one compact row higher. */
+const TONE_LABEL_OFFSET_Y = -6 // px — lift above the note
+const FLAT_LABEL_STACK_LIFT = -13 // px — one compact row above the sharp label
+
+type ToneLabel = {
+  left: number
+  top: number
+  text: string
+  flatText: string | null
+}
+
+const allToneLabels = ref<ToneLabel[]>([])
+
+const visibleToneLabels = computed(() =>
+  props.showToneLabels ? allToneLabels.value : [],
+)
+
+function toneLabelStyle(label: ToneLabel, stackLift = 0) {
+  return {
+    left: `${label.left}px`,
+    top: `${label.top + TONE_LABEL_OFFSET_Y + stackLift}px`,
+  }
+}
+
+function updateToneLabels() {
+  const container = containerRef.value
+  if (!container) {
+    allToneLabels.value = []
+
+    return
+  }
+
+  const containerRect = container.getBoundingClientRect()
+  allToneLabels.value = pieceElements.value.flatMap((element, index) => {
+    const midi = props.labelMidis?.[index]
+    if (midi == null) return []
+
+    /* Anchor on the notehead, not the note group — the group includes the
+     * accidental left of the head, which would pull the label off centre. */
+    const head = element.querySelector('.abcjs-notehead') ?? element
+    const headRect = head.getBoundingClientRect()
+
+    return [
+      {
+        left: headRect.left - containerRect.left + headRect.width / 2,
+        top: headRect.top - containerRect.top,
+        text: midiToNoteLabel(midi, {
+          showOctave: props.showNoteNumbers ?? false,
+        }).label,
+        flatText: midiToFlatLabel(midi),
+      },
+    ]
+  })
+}
+
+watch(() => props.showNoteNumbers, updateToneLabels)
+
 /* Where the playhead slot sits in the visible box while recording: a third in
  * from the start, so the template bars ahead stay in view. */
 const PLAYHEAD_VIEW_RATIO = 1 / 3
@@ -193,6 +260,7 @@ async function drawSheet() {
     ...container.querySelectorAll('.abcjs-note, .abcjs-rest'),
   ]
   applyPieceClasses()
+  updateToneLabels()
   measureStaff()
 
   if (props.isLive) followPlayhead()
@@ -285,7 +353,29 @@ watch(
       :data-piece-count="pieceElements.length"
       :data-active-piece="activePieceIndex ?? ''"
     >
-      <div ref="containerRef" class="min-w-max py-0.5" />
+      <div class="relative min-w-max">
+        <div ref="containerRef" class="relative z-10 py-0.5" />
+
+        <span
+          v-for="(label, index) in visibleToneLabels"
+          :key="index"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
+          :style="toneLabelStyle(label)"
+          data-testid="song-recorder-tone-label"
+        >
+          {{ label.text }}
+        </span>
+
+        <span
+          v-for="(label, index) in visibleToneLabels"
+          v-show="label.flatText"
+          :key="`flat-${index}`"
+          class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-[10px] leading-none font-semibold text-(--p-text-muted-color)/70 tabular-nums"
+          :style="toneLabelStyle(label, FLAT_LABEL_STACK_LIFT)"
+        >
+          {{ label.flatText }}
+        </span>
+      </div>
     </div>
 
     <!--

@@ -65,6 +65,7 @@ const STORAGE_KEYS = [
   'syng.songRecorderInput',
   'syng.songRecorderPianoExpanded',
   'syng.songRecorderPianoRange',
+  'syng.songRecorderToneLabelMode',
   'syng.startOffset',
   'syng.toneMode',
   'syng.voiceTypeRibbon',

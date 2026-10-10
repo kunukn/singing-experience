@@ -3,11 +3,17 @@ import { useRafFn } from '@vueuse/core'
 import { frequencyToMidi, midiToFrequency } from '@/utils/noteUtils'
 import { createNoteSegmenter, type NoteEvent } from './noteSegmenter'
 import { createPianoNoteCapture } from './pianoNoteCapture'
-import { gridUnitMs, quantizeNotes, unitsPerBar } from './quantizeNotes'
+import {
+  gridUnitMs,
+  quantizeNotes,
+  unitsPerBar,
+  type QuantizedNote,
+} from './quantizeNotes'
 import type { ClefKey } from '@/components/notes/notesConstants'
 import {
   buildLiveRecordingNotes,
   findPieceAtUnit,
+  type LiveNoteKind,
   type OpenNote,
 } from './liveRecordingNotes'
 import { buildRecordingAbc } from './songRecorderAbc'
@@ -208,6 +214,23 @@ export function useSongRecorder(options: Options) {
         )
       : null,
   )
+
+  /* Pitch to label above each drawn piece; null for rests, template slots and
+   * the continuation heads of a tied note, so a note is named once. */
+  const labelMidis = computed(() => {
+    const notes: readonly (QuantizedNote & { kind?: LiveNoteKind })[] =
+      isTakeRunning.value ? liveNotes.value : quantized.value
+    const { pieces } = displaySheet.value
+
+    return pieces.map((piece, index) => {
+      const note = notes[piece.noteIndex]
+      const isTieContinuation = pieces[index - 1]?.noteIndex === piece.noteIndex
+      if (piece.isRest || note.kind === 'template' || isTieContinuation)
+        return null
+
+      return note.midi
+    })
+  })
 
   const nowPieceIndex = computed(() =>
     isTakeRunning.value
@@ -481,6 +504,7 @@ export function useSongRecorder(options: Options) {
     sheet,
     displaySheet,
     pieceKinds,
+    labelMidis,
     nowPieceIndex,
     activePieceIndex,
     hasPlayedToEnd,

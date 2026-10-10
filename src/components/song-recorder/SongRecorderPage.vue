@@ -43,6 +43,11 @@ const input = useLocalStorage<SongRecorderInput>(
 if (!(INPUT_OPTIONS as readonly string[]).includes(input.value)) {
   input.value = DEFAULT_INPUT
 }
+
+const toneLabelMode = useToneLabelMode(
+  'syng.songRecorderToneLabelMode',
+  'simple',
+)
 </script>
 
 <template>
@@ -53,5 +58,6 @@ if (!(INPUT_OPTIONS as readonly string[]).includes(input.value)) {
     v-model:clef="clef"
     v-model:isClickEnabled="isClickEnabled"
     v-model:input="input"
+    v-model:toneLabelMode="toneLabelMode"
   />
 </template>
