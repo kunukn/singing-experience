@@ -94,7 +94,7 @@
         "description": "Gundua kiwango cha sauti yako ya kuimba moja kwa moja. Angalia noti, oktavi, na jinsi unavyoimba kwa usahihi."
       },
       "doReMi": {
-        "name": "Mchezo wa DO RE MI",
+        "name": "DO RE MI",
         "description": "Imba kupitia mizani — DO RE MI FA SO LA TI DO. Shikilia kila noti kwa sekunde chache ili kuendelea."
       },
       "tuner": {
@@ -118,11 +118,11 @@
         "description": "Piga nyuzi za gitaa kucheza noti, na uone sauti yako ikitokea kwenye ubao wa nyuzi."
       },
       "singTone": {
-        "name": "Mchezo wa Kuimba Toni",
+        "name": "Kuimba Toni",
         "description": "Toni ya nasibu inachezwa — iimbe tena! Linganisha toni tofauti mfululizo ili kushinda."
       },
       "pitchGame": {
-        "name": "Mchezo wa Pitch",
+        "name": "Mbio za Noti",
         "description": "Noti za lengo zinaingia zikiteleza — imba kila moja na uishikilie kupata pointi. Kimbiza muda na piga nyingi kadri uwezavyo."
       },
       "warmUp": {

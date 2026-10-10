@@ -94,7 +94,7 @@
         "description": "Détecte la hauteur de ta voix en temps réel. Vois la note, l'octave et si tu chantes juste."
       },
       "doReMi": {
-        "name": "Jeu DO RÉ MI",
+        "name": "DO RÉ MI",
         "description": "Chante la gamme — DO RÉ MI FA SOL LA SI DO. Tiens chaque note quelques secondes pour continuer."
       },
       "tuner": {
@@ -118,11 +118,11 @@
         "description": "Joue sur les cordes de la guitare et regarde ta voix se poser sur le manche."
       },
       "singTone": {
-        "name": "Jeu Chante le Ton",
+        "name": "Chante le ton",
         "description": "Un ton aléatoire est joué — chante-le ! Reproduis différents tons d'affilée pour gagner."
       },
       "pitchGame": {
-        "name": "Jeu de Pitch",
+        "name": "Course aux notes",
         "description": "Des notes cibles défilent — chante chacune et tiens-la pour marquer. Cours contre la montre et touches-en un maximum."
       },
       "warmUp": {

@@ -10,7 +10,7 @@ Singing Experience is a free web app for exploring your voice: practice singing,
 
 ## 🌐 Try It
 
-<a href="https://www.syng.fun"><img src="docs/doremi-demo.png" alt="DO RE MI Game — sing through the scale and see how close you are to each note" width="600" /></a>
+<a href="https://www.syng.fun"><img src="docs/doremi-demo.png" alt="DO RE MI — sing through the scale and see how close you are to each note" width="600" /></a>
 
 **[www.syng.fun](https://www.syng.fun)** · [kunukn.github.io/singing-experience](https://kunukn.github.io/singing-experience)
 
@@ -40,14 +40,14 @@ The tools all listen to your voice in real time and show you where it lands — 
 
 | Game                            | What you do                                                                                          |
 | ------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| 🎯 Sing Tone Game               | A random tone plays — sing it back. Match a row of them to win                                       |
-| 🎶 DO RE MI Game                | Sing up the scale, holding each note steady to advance                                               |
+| 🎯 Sing Tone                    | A random tone plays — sing it back. Match a row of them to win                                       |
+| 🎶 DO RE MI                     | Sing up the scale, holding each note steady to advance                                               |
 | 🎹 Sing the Keys `beta`         | Notes fall onto a piano — sing each one as it lands. Twinkle Twinkle, Für Elise and more, in any key |
 | 👑 Grace Kelly Challenge `beta` | Sing along to MIKA's "Grace Kelly" with real sheet music and harmonies                               |
 | 🐦 Singfly `beta`               | Your pitch flies the bird through the gaps                                                           |
-| 🎼 Pitch Game `beta`            | Hit as many scrolling target notes as you can before the clock runs out                              |
+| 🎼 Note Rush `beta`             | Hit as many scrolling target notes as you can before the clock runs out                              |
 
-Each program has its own settings — voice range, difficulty, tempo, hold time, and more. The DO RE MI Game offers difficulty levels and 40+ scale modes spanning classical, jazz, and world music.
+Each program has its own settings — voice range, difficulty, tempo, hold time, and more. DO RE MI offers difficulty levels and 40+ scale modes spanning classical, jazz, and world music.
 
 Programs tagged `beta` or `alpha` work but are still changing.
 

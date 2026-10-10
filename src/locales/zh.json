@@ -94,7 +94,7 @@
         "description": "实时检测你的歌唱音高。查看音符、八度以及你的音准程度。"
       },
       "doReMi": {
-        "name": "DO RE MI 游戏",
+        "name": "DO RE MI",
         "description": "唱完音阶 — DO RE MI FA SO LA TI DO。每个音符保持几秒钟即可前进。"
       },
       "tuner": {
@@ -118,11 +118,11 @@
         "description": "拨动吉他琴弦，看看你的声音落在指板的哪个位置。"
       },
       "singTone": {
-        "name": "唱音游戏",
+        "name": "唱音",
         "description": "播放一个随机音调 — 唱出来匹配！连续匹配不同的音调即可获胜。"
       },
       "pitchGame": {
-        "name": "音高游戏",
+        "name": "音符冲刺",
         "description": "目标音符滑动进入 — 唱出每一个并保持以得分。和时间赛跑，尽量多打中。"
       },
       "warmUp": {

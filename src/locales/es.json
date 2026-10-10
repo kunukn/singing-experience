@@ -94,7 +94,7 @@
         "description": "Detecta tu tono de canto en tiempo real. Mira la nota, la octava y qué tan afinado estás."
       },
       "doReMi": {
-        "name": "Juego DO RE MI",
+        "name": "DO RE MI",
         "description": "Canta la escala — DO RE MI FA SO LA TI DO. Mantén cada nota durante unos segundos para avanzar."
       },
       "tuner": {
@@ -118,11 +118,11 @@
         "description": "Toca las cuerdas de la guitarra y mira cómo tu voz aparece en el mástil."
       },
       "singTone": {
-        "name": "Juego Canta el Tono",
+        "name": "Canta el tono",
         "description": "Se reproduce un tono aleatorio — ¡cántalo de vuelta! Acierta tonos diferentes seguidos para ganar."
       },
       "pitchGame": {
-        "name": "Juego de Tono",
+        "name": "Carrera de notas",
         "description": "Notas objetivo aparecen deslizándose — canta cada una y mantenla para puntuar. Corre contra el reloj y acierta todas las que puedas."
       },
       "warmUp": {

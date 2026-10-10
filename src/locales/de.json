@@ -94,7 +94,7 @@
         "description": "Erkenne deine Gesangstonhöhe in Echtzeit. Sieh die Note, Oktave und wie sauber du singst."
       },
       "doReMi": {
-        "name": "DO RE MI Spiel",
+        "name": "DO RE MI",
         "description": "Singe die Tonleiter — DO RE MI FA SO LA TI DO. Halte jede Note einige Sekunden, um weiterzukommen."
       },
       "tuner": {
@@ -118,11 +118,11 @@
         "description": "Spiel auf den Gitarrensaiten und sieh, wie deine Stimme auf dem Griffbrett landet."
       },
       "singTone": {
-        "name": "Ton-Sing-Spiel",
+        "name": "Ton singen",
         "description": "Ein zufälliger Ton wird gespielt – singe ihn nach! Treffe verschiedene Töne in Folge, um zu gewinnen."
       },
       "pitchGame": {
-        "name": "Pitch-Spiel",
+        "name": "Notenjagd",
         "description": "Zielnoten gleiten herein — singe jede und halte sie, um zu punkten. Lauf gegen die Uhr und triff so viele wie du kannst."
       },
       "warmUp": {

@@ -94,7 +94,7 @@
         "description": "Deteksi nada nyanyianmu secara langsung. Lihat not, oktaf, dan seberapa tepat nadamu."
       },
       "doReMi": {
-        "name": "Permainan DO RE MI",
+        "name": "DO RE MI",
         "description": "Nyanyikan tangga nada — DO RE MI FA SO LA TI DO. Tahan setiap not selama beberapa detik untuk melanjutkan."
       },
       "tuner": {
@@ -118,11 +118,11 @@
         "description": "Petik senar gitar untuk memainkan nada, dan lihat suaramu muncul di fretboard."
       },
       "singTone": {
-        "name": "Permainan Tebak Nada",
+        "name": "Tebak Nada",
         "description": "Sebuah nada acak dimainkan — nyanyikan kembali! Cocokkan nada berbeda berturut-turut untuk menang."
       },
       "pitchGame": {
-        "name": "Permainan Pitch",
+        "name": "Kejar Nada",
         "description": "Nada-nada target meluncur masuk — nyanyikan tiap satu dan tahan untuk mencetak skor. Kejar waktu dan kena sebanyak mungkin."
       },
       "warmUp": {

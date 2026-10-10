@@ -94,7 +94,7 @@
         "description": "Detect your singing pitch in real time. See the note, octave, and how in-tune you are."
       },
       "doReMi": {
-        "name": "DO RE MI Game",
+        "name": "DO RE MI",
         "description": "Sing through the scale — DO RE MI FA SO LA TI DO. Hold each note for a few seconds to advance."
       },
       "tuner": {
@@ -118,11 +118,11 @@
         "description": "Play the guitar strings and watch your voice land on the fretboard."
       },
       "singTone": {
-        "name": "Sing Tone Game",
+        "name": "Sing Tone",
         "description": "A random tone is played — sing it back! Match different tones in a row to win."
       },
       "pitchGame": {
-        "name": "Pitch Game",
+        "name": "Note Rush",
         "description": "Target notes scroll in — sing each one and hold it to score. Race the clock and hit as many as you can."
       },
       "warmUp": {

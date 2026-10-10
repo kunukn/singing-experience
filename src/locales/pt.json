@@ -94,7 +94,7 @@
         "description": "Detecte a afinação da sua voz em tempo real. Veja a nota, a oitava e quão afinado você está."
       },
       "doReMi": {
-        "name": "Jogo DÓ RÉ MI",
+        "name": "DÓ RÉ MI",
         "description": "Cante a escala — DÓ RÉ MI FÁ SOL LÁ SI DÓ. Segure cada nota por alguns segundos para avançar."
       },
       "tuner": {
@@ -118,11 +118,11 @@
         "description": "Toque as cordas da guitarra e veja sua voz aparecer no braço."
       },
       "singTone": {
-        "name": "Jogo Cante o Tom",
+        "name": "Cante o tom",
         "description": "Um tom aleatório é tocado — cante de volta! Acerte tons diferentes seguidos para vencer."
       },
       "pitchGame": {
-        "name": "Jogo de Tom",
+        "name": "Corrida de notas",
         "description": "Notas-alvo aparecem rolando — cante cada uma e segure para pontuar. Corra contra o tempo e acerte o máximo que puder."
       },
       "warmUp": {

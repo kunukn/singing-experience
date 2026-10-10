@@ -32,7 +32,7 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
   '/games': {
     title: 'Singing Games',
     description:
-      'Singing games that train your ear and voice — Sing Tone, DO RE MI, Sing the Keys, the Grace Kelly Challenge, Singfly and the Pitch Game. Free, runs in your browser.',
+      'Singing games that train your ear and voice — Sing Tone, DO RE MI, Sing the Keys, the Grace Kelly Challenge, Singfly and Note Rush. Free, runs in your browser.',
   },
   '/pitch-detector': {
     title: 'Real-Time Vocal Pitch Detector',
@@ -105,7 +105,7 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
       'Your voice is the controller: sing higher or lower to fly the bird through the gaps. A playful pitch-control game in your browser.',
   },
   '/pitch-game': {
-    title: 'Pitch Game — Sing the Target Notes',
+    title: 'Note Rush — Sing the Target Notes',
     description:
       'Target notes scroll in — sing each one and hold it to score. Race the clock and hit as many as you can.',
   },

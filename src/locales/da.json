@@ -94,7 +94,7 @@
         "description": "Registrer din sangtone i realtid. Se noden, oktaven og hvor godt du synger i stemning."
       },
       "doReMi": {
-        "name": "DO RE MI Spil",
+        "name": "DO RE MI",
         "description": "Syng gennem skalaen — DO RE MI FA SO LA TI DO. Hold hver tone i nogle sekunder for at gå videre."
       },
       "tuner": {
@@ -118,11 +118,11 @@
         "description": "Spil på guitarens strenge, og se din stemme lande på gribebrættet."
       },
       "singTone": {
-        "name": "Syng Tone Spil",
+        "name": "Syng tonen",
         "description": "En tilfældig tone afspilles — syng den efter! Match forskellige toner i træk for at vinde."
       },
       "pitchGame": {
-        "name": "Pitch-spil",
+        "name": "Nodejagt",
         "description": "Mål-toner glider ind — syng hver enkelt og hold den for at score. Kap tiden og ram så mange du kan."
       },
       "warmUp": {
