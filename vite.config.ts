@@ -14,6 +14,7 @@ import { defineConfig, loadEnv } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import VueRouter from 'vue-router/vite'
+import { ROUTE_META } from './src/constants/routeMeta.ts'
 import { allSampleUrls } from './src/constants/sampleManifest.ts'
 
 dayjs.extend(utc)
@@ -50,21 +51,9 @@ function injectBuildTime(env: Record<string, string>) {
  * deploy is noindex'd and uses hash routing under a sub-path.
  */
 function emitSitemap(env: Record<string, string>) {
-  /* Routes match src/composables/useDocumentMeta.ts ROUTE_META. Test pages
-   * and the [...pathMatch] 404 are intentionally excluded. */
-  const ROUTES = [
-    '/',
-    '/pitch-detector',
-    '/do-re-mi',
-    '/sing-tone',
-    '/tuner',
-    '/tone-detector',
-    '/piano',
-    '/guitar',
-    '/sing-the-keys',
-    '/song-recorder',
-    '/scale-detector',
-  ]
+  /* Every route with SEO metadata. Test pages and the [...pathMatch] 404
+   * have no entry, so they stay out of the sitemap. */
+  const ROUTES = Object.keys(ROUTE_META)
   const ORIGIN = 'https://www.syng.fun'
 
   return {
@@ -170,7 +159,7 @@ export default defineConfig(({ command, mode }) => {
           name: 'Singing Experience',
           short_name: 'Syng',
           description:
-            'Real-time vocal pitch detector and DO RE MI singing game. Practice singing, train your ear, detect notes — free, private, works offline.',
+            'Pitch detector, vocal warm-up, tuner and singing games. Practice singing and train your ear — free, private, works offline.',
           theme_color: '#4f46e5',
           background_color: '#ffffff',
           display: 'fullscreen',

@@ -12,9 +12,7 @@ If you've found a bug — broken behavior, a crash, incorrect pitch detection, U
 
 We accept PRs that improve the features already in the app:
 
-- **Pitch Detector** — accuracy, performance, UI/UX polish, voice range presets, pitch history chart
-- **DO RE MI Game** — gameplay flow, visual feedback, note detection, scale options
-- **Tone Detector** — multi-tone detection accuracy, UI/UX polish, settings controls, tone visualization
+- **Music Tools and Singing Games** — any existing tool or game (see the [README](README.md#-whats-inside)): detection accuracy, performance, gameplay flow, visual feedback, settings, UI/UX polish
 - **PWA / Offline** — service worker reliability, install experience, caching behavior
 - **General** — accessibility, responsiveness, internationalization, documentation
 

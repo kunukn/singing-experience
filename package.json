@@ -16,7 +16,7 @@
     "typecheck": "node scripts/tscheck-with-timing.js",
     "lint": "node scripts/lint-with-timing.js",
     "lint:fix": "oxlint --fix",
-    "format": "prettier --write ./src",
+    "format": "prettier --write .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
@@ -97,6 +97,6 @@
   },
   "homepage": "https://github.com/kunukn/singing-experience#readme",
   "lint-staged": {
-    "src/**/*.{ts,vue,css,js}": "prettier --write"
+    "*": "prettier --write --ignore-unknown"
   }
 }

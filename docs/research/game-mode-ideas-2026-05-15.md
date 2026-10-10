@@ -19,7 +19,7 @@ The strongest building blocks for new game modes:
 
 ## 1. Flappy Notes
 
-A bird flies left→right at a fixed X. Y-position = the MIDI you're singing, mapped through the active [VOICE_RANGE](../src/constants/voiceRanges.ts). Gaps in vertical pipes scroll toward the bird; each gap's center is a target MIDI. Survive = continuously matching the gap's pitch (±50 cents, reusing `HIT_TOLERANCE_CENTS`). `isClean` gate ensures noise/breath doesn't count. Reuse [PitchHistoryCanvas](../src/components/pitch-game/PitchHistoryCanvas.vue) — the pickup line *is* the bird, the targets become pipe gaps.
+A bird flies left→right at a fixed X. Y-position = the MIDI you're singing, mapped through the active [VOICE_RANGE](../src/constants/voiceRanges.ts). Gaps in vertical pipes scroll toward the bird; each gap's center is a target MIDI. Survive = continuously matching the gap's pitch (±50 cents, reusing `HIT_TOLERANCE_CENTS`). `isClean` gate ensures noise/breath doesn't count. Reuse [PitchHistoryCanvas](../src/components/pitch-game/PitchHistoryCanvas.vue) — the pickup line _is_ the bird, the targets become pipe gaps.
 
 Why it fits: literally `usePitchGame` with hit-zone = "any time pickup-line crosses pipe", failure = miss instead of zero score. ~150 lines of new logic.
 
@@ -33,11 +33,11 @@ Scrolling obstacles (red dots) at random MIDIs you must **avoid** instead of hit
 
 ## 4. Pitch Surfer / Wave Rider
 
-A continuous target *curve* (sinusoid, melody contour) scrolls past the pickup line. Score = % of frames within tolerance of the curve. No discrete targets — `useGame` becomes a tolerance-band integrator. Visually: a thick ribbon to ride. Great for legato practice.
+A continuous target _curve_ (sinusoid, melody contour) scrolls past the pickup line. Score = % of frames within tolerance of the curve. No discrete targets — `useGame` becomes a tolerance-band integrator. Visually: a thick ribbon to ride. Great for legato practice.
 
 ## 5. Echo / Call & Response
 
-Use [useDoReMiPlaySequence](../src/components/do-re-mi/useDoReMiPlaySequence.ts) to *play* a short phrase, then the canvas scrolls those same notes as targets the player must sing back. Each round adds one note (Simon-style). Reuses everything; only adds a state machine: `listening → recall → playing`.
+Use [useDoReMiPlaySequence](../src/components/do-re-mi/useDoReMiPlaySequence.ts) to _play_ a short phrase, then the canvas scrolls those same notes as targets the player must sing back. Each round adds one note (Simon-style). Reuses everything; only adds a state machine: `listening → recall → playing`.
 
 ## 6. Glide / Portamento Trainer
 

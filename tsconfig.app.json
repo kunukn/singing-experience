@@ -28,8 +28,6 @@
     "./src/auto-imports.d.ts"
   ],
   "vueCompilerOptions": {
-    "plugins": [
-      "vue-router/volar/sfc-route-blocks"
-    ]
+    "plugins": ["vue-router/volar/sfc-route-blocks"]
   }
 }

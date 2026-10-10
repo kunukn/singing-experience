@@ -7,10 +7,9 @@ const PORT = Number(process.argv[2]) || 5555
 function findPidOnPort(port) {
   try {
     if (isWin) {
-      const out = execSync(
-        `netstat -ano -p TCP | findstr ":${port} "`,
-        { encoding: 'utf8' },
-      )
+      const out = execSync(`netstat -ano -p TCP | findstr ":${port} "`, {
+        encoding: 'utf8',
+      })
       const match = out.match(/LISTENING\s+(\d+)/)
       return match ? Number(match[1]) : null
     }
