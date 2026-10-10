@@ -23,6 +23,15 @@ type Options = {
  * tap still carries tonic weight. */
 const PIANO_MIN_NOTE_MS = 300
 
+/*
+ * A sung note must last this long to count. Matching is strict — one stray
+ * note removes the right scale — so the segmenter's 80 ms floor (tuned for
+ * Song Recorder, where every note is written down) lets through too many
+ * blips: a scoop or wobble that settles a semitone off for ~100 ms. A sung
+ * note meant as a note is ~300 ms or more.
+ */
+const VOICE_MIN_NOTE_MS = 200
+
 /* The mic ignores the voice this long after a key is released, so the
  * piano's own decay isn't heard back as a sung note (and its overtones as
  * wrong ones). */
@@ -75,7 +84,12 @@ export function useScaleDetector({ detection }: Options) {
   )
 
   const notes = computed<SungNote[]>(() =>
-    [...voiceEvents.value, ...pianoEvents.value]
+    [
+      ...voiceEvents.value.filter(
+        (event) => event.endMs - event.startMs >= VOICE_MIN_NOTE_MS,
+      ),
+      ...pianoEvents.value,
+    ]
       .toSorted((a, b) => a.startMs - b.startMs)
       .map((event) => ({
         midi: event.midi,
