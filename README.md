@@ -6,7 +6,7 @@
 
 **Sing into your microphone and see what note you're singing — in real time, in your browser.**
 
-Singing Experience is a free web app for exploring your voice: practice singing, train your ear, tune an instrument, find the key you're singing in, turn a tune into sheet music, or play a singing game. No musical training needed, no account, no server — everything runs on your device.
+Singing Experience is a free web app for exploring your voice: practice singing, train your ear, tune an instrument, name the chord or find the key you're singing in, turn a tune into sheet music, or play a singing game. No musical training needed, no account, no server — everything runs on your device.
 
 ## 🌐 Try It
 
