@@ -7,7 +7,7 @@ import { chordAccidentalStyle, chordPitchClasses } from '@/utils/chordDetection'
 import { midiToNoteLabel, type NoteInfo } from '@/utils/noteUtils'
 import { keyAccidentalStyle, pitchClassLabel } from '@/utils/scaleDetection'
 import { pitchClassOf } from '@/utils/scaleHighlight'
-import { useMediaQuery } from '@vueuse/core'
+import { useLocalStorage, useMediaQuery } from '@vueuse/core'
 import ChordDetectorResults from './ChordDetectorResults.vue'
 import ScaleDetectorResults from './ScaleDetectorResults.vue'
 import { useScaleDetector } from './useScaleDetector'
@@ -48,7 +48,31 @@ const activeTab = computed<DetectorTab>({
 })
 const isChordTab = computed(() => activeTab.value === 'chords')
 
-const detector = useScaleDetector({ detection: props.detection })
+const INPUT_MODES = ['voiceAndPiano', 'pianoOnly'] as const
+type InputMode = (typeof INPUT_MODES)[number]
+const DEFAULT_INPUT_MODE: InputMode = 'voiceAndPiano'
+
+/* Piano only keeps background noise out: the mic never opens, for the
+ * detector or for "See your voice". */
+const inputMode = useLocalStorage<InputMode>(
+  'syng.scaleDetectorInputMode',
+  DEFAULT_INPUT_MODE,
+)
+if (!INPUT_MODES.includes(inputMode.value)) {
+  inputMode.value = DEFAULT_INPUT_MODE
+}
+const isVoiceEnabled = computed(() => inputMode.value === 'voiceAndPiano')
+const inputModeOptions = computed(() =>
+  INPUT_MODES.map((mode) => ({
+    value: mode,
+    label: t(`scaleDetector.inputMode.${mode}`),
+  })),
+)
+
+const detector = useScaleDetector({
+  detection: props.detection,
+  isVoiceEnabled,
+})
 const {
   isListening,
   notes,
@@ -129,7 +153,10 @@ const { isPreviewEnabled } = useSettings()
  * denied; the getter is false on a simulated page, so the real mic never
  * opens there. */
 const isRealIdlePreviewEnabled = computed({
-  get: () => isPreviewEnabled.value && !props.simulateIdlePreview,
+  get: () =>
+    isPreviewEnabled.value &&
+    isVoiceEnabled.value &&
+    !props.simulateIdlePreview,
   set: (enabled: boolean) => {
     isPreviewEnabled.value = enabled
   },
@@ -151,7 +178,10 @@ const {
  * only stopped here when nobody is listening. */
 const isSimulatedIdlePreviewOn = computed(
   () =>
-    !!props.simulateIdlePreview && isPreviewEnabled.value && !isListening.value,
+    !!props.simulateIdlePreview &&
+    isPreviewEnabled.value &&
+    isVoiceEnabled.value &&
+    !isListening.value,
 )
 watch(
   isSimulatedIdlePreviewOn,
@@ -173,7 +203,9 @@ const EMPTY_PIANO_LANE: DuetLane & { laneId: PianoPreviewLaneId } = {
  * (or on a simulated page), from the idle preview mic otherwise. */
 const previewLanes = computed<Array<DuetLane & { laneId: PianoPreviewLaneId }>>(
   () => {
-    if (!isPreviewEnabled.value) return [EMPTY_PIANO_LANE]
+    if (!isPreviewEnabled.value || !isVoiceEnabled.value) {
+      return [EMPTY_PIANO_LANE]
+    }
 
     if (!isListening.value && !props.simulateIdlePreview) {
       return [
@@ -257,9 +289,22 @@ defineExpose({ detector })
         />
         <PreviewToggle
           v-model="isPreviewEnabled"
-          :disabled="!simulateIdlePreview && micPermission === 'denied'"
+          :disabled="
+            !isVoiceEnabled ||
+            (!simulateIdlePreview && micPermission === 'denied')
+          "
         />
       </div>
+
+      <PrimeSelectButton
+        v-model="inputMode"
+        :options="inputModeOptions"
+        optionLabel="label"
+        optionValue="value"
+        :allowEmpty="false"
+        size="small"
+        data-testid="scale-detector-input-mode"
+      />
 
       <div
         class="flex min-h-8 flex-wrap items-center justify-center gap-2"
@@ -278,7 +323,11 @@ defineExpose({ detector })
         </template>
         <span v-else class="text-sm text-(--p-text-muted-color)">
           {{
-            isListening ? t('generic.listening') : t('scaleDetector.noNotesYet')
+            isListening
+              ? t('generic.listening')
+              : isVoiceEnabled
+                ? t('scaleDetector.noNotesYet')
+                : t('scaleDetector.noNotesYetPianoOnly')
           }}
         </span>
       </div>

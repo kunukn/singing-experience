@@ -320,6 +320,11 @@
         "major9": "Nona maior",
         "minor9": "Menor com nona"
       }
+    },
+    "noNotesYetPianoOnly": "Aperte Iniciar e toque o piano",
+    "inputMode": {
+      "voiceAndPiano": "Voz + piano",
+      "pianoOnly": "Só piano"
     }
   },
   "singTone": {

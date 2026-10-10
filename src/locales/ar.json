@@ -320,6 +320,11 @@
         "major9": "تاسعة ماجور",
         "minor9": "تاسعة مينور"
       }
+    },
+    "noNotesYetPianoOnly": "اضغط ابدأ، ثم اعزف على البيانو",
+    "inputMode": {
+      "voiceAndPiano": "الصوت + البيانو",
+      "pianoOnly": "البيانو فقط"
     }
   },
   "singTone": {

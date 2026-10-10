@@ -320,6 +320,11 @@
         "major9": "Meja ya tisa",
         "minor9": "Maina ya tisa"
       }
+    },
+    "noNotesYetPianoOnly": "Bonyeza Anza, kisha piga piano",
+    "inputMode": {
+      "voiceAndPiano": "Sauti + piano",
+      "pianoOnly": "Piano tu"
     }
   },
   "singTone": {

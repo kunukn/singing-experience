@@ -44,6 +44,7 @@ const STORAGE_KEYS = [
   'syng.pitchSnap',
   'syng.previewEnabled',
   'syng.rangeIndex',
+  'syng.scaleDetectorInputMode',
   'syng.scaleMode',
   'syng.sensitivity',
   'syng.showDoReMiTarget',

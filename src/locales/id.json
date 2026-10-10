@@ -320,6 +320,11 @@
         "major9": "Mayor non",
         "minor9": "Minor non"
       }
+    },
+    "noNotesYetPianoOnly": "Tekan Mulai, lalu main piano",
+    "inputMode": {
+      "voiceAndPiano": "Suara + piano",
+      "pianoOnly": "Piano saja"
     }
   },
   "singTone": {

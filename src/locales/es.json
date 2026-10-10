@@ -320,6 +320,11 @@
         "major9": "Novena mayor",
         "minor9": "Menor novena"
       }
+    },
+    "noNotesYetPianoOnly": "Pulsa Iniciar y toca el piano",
+    "inputMode": {
+      "voiceAndPiano": "Voz + piano",
+      "pianoOnly": "Solo piano"
     }
   },
   "singTone": {

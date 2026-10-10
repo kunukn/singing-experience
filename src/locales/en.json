@@ -320,6 +320,11 @@
         "major9": "Major 9th",
         "minor9": "Minor 9th"
       }
+    },
+    "noNotesYetPianoOnly": "Press Start, then play the piano",
+    "inputMode": {
+      "voiceAndPiano": "Voice + piano",
+      "pianoOnly": "Piano only"
     }
   },
   "singTone": {

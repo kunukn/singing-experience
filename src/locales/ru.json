@@ -320,6 +320,11 @@
         "major9": "Большой нонаккорд",
         "minor9": "Минорный нонаккорд"
       }
+    },
+    "noNotesYetPianoOnly": "Нажми Старт, потом играй на пианино",
+    "inputMode": {
+      "voiceAndPiano": "Голос + пианино",
+      "pianoOnly": "Только пианино"
     }
   },
   "singTone": {

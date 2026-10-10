@@ -320,6 +320,11 @@
         "major9": "Stor non",
         "minor9": "Mol-non"
       }
+    },
+    "noNotesYetPianoOnly": "Tryk på Start, og spil på klaveret",
+    "inputMode": {
+      "voiceAndPiano": "Stemme + klaver",
+      "pianoOnly": "Kun klaver"
     }
   },
   "singTone": {

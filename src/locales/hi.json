@@ -320,6 +320,11 @@
         "major9": "मेजर नाइंथ",
         "minor9": "माइनर नाइंथ"
       }
+    },
+    "noNotesYetPianoOnly": "शुरू दबाओ, फिर पियानो बजाओ",
+    "inputMode": {
+      "voiceAndPiano": "आवाज़ + पियानो",
+      "pianoOnly": "सिर्फ़ पियानो"
     }
   },
   "singTone": {

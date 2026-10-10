@@ -320,6 +320,11 @@
         "major9": "大九和弦",
         "minor9": "小九和弦"
       }
+    },
+    "noNotesYetPianoOnly": "按开始，然后弹钢琴",
+    "inputMode": {
+      "voiceAndPiano": "声音 + 钢琴",
+      "pianoOnly": "只用钢琴"
     }
   },
   "singTone": {

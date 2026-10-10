@@ -320,6 +320,11 @@
         "major9": "Große None",
         "minor9": "Moll-None"
       }
+    },
+    "noNotesYetPianoOnly": "Drück auf Start und spiel Klavier",
+    "inputMode": {
+      "voiceAndPiano": "Stimme + Klavier",
+      "pianoOnly": "Nur Klavier"
     }
   },
   "singTone": {

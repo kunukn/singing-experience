@@ -320,6 +320,11 @@
         "major9": "Neuvième majeure",
         "minor9": "Mineur neuvième"
       }
+    },
+    "noNotesYetPianoOnly": "Appuie sur Démarrer, puis joue du piano",
+    "inputMode": {
+      "voiceAndPiano": "Voix + piano",
+      "pianoOnly": "Piano seul"
     }
   },
   "singTone": {

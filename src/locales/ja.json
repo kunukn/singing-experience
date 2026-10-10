@@ -320,6 +320,11 @@
         "major9": "メジャーナインス",
         "minor9": "マイナーナインス"
       }
+    },
+    "noNotesYetPianoOnly": "開始を押して、ピアノを弾こう",
+    "inputMode": {
+      "voiceAndPiano": "声 + ピアノ",
+      "pianoOnly": "ピアノだけ"
     }
   },
   "singTone": {

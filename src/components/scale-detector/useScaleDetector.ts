@@ -18,6 +18,9 @@ type Options = {
     PitchDetectionInput,
     'frequency' | 'isClean' | 'start' | 'stop'
   >
+  /* False = piano only: Start begins a session without opening the mic, for
+   * rooms too noisy to sing in. Defaults to on. */
+  isVoiceEnabled?: Readonly<Ref<boolean>>
 }
 
 /* A tapped key counts as a held note of at least this length, so a quick
@@ -51,7 +54,10 @@ export type ScaleDetectorResult = ReturnType<typeof useScaleDetector>
  * Notes count once they've ended, so the ranking settles between notes
  * rather than flickering while one is held.
  */
-export function useScaleDetector({ detection }: Options) {
+export function useScaleDetector({
+  detection,
+  isVoiceEnabled = ref(true),
+}: Options) {
   const isListening = ref(false)
   const voiceEvents = shallowRef<NoteEvent[]>([])
   const pianoEvents = shallowRef<NoteEvent[]>([])
@@ -152,28 +158,54 @@ export function useScaleDetector({ detection }: Options) {
     chordSelection.value = { root: candidate.root, type: candidate.type }
   }
 
+  let isVoiceRunning = false
+
+  async function startVoice() {
+    if (isVoiceRunning) return
+
+    isVoiceRunning = true
+    await detection.start()
+    /* Voice may have been switched off while the mic was opening. */
+    if (isVoiceRunning) sampler.resume()
+  }
+
+  function stopVoice() {
+    if (!isVoiceRunning) return
+
+    isVoiceRunning = false
+    sampler.pause()
+    segmenter.flush()
+    syncVoiceEvents()
+    detection.stop()
+  }
+
   async function startListening() {
     if (isListening.value) return
 
     isListening.value = true
-    await detection.start()
-    sampler.resume()
+    if (isVoiceEnabled.value) await startVoice()
   }
 
   function stopListening() {
     if (!isListening.value) return
 
     isListening.value = false
-    sampler.pause()
-    segmenter.flush()
-    syncVoiceEvents()
     /* Keys still held at Stop end here; their later release is ignored. */
     if (pianoCapture.isAnyHeld()) {
       pianoCapture.flush(nowMs())
       pianoEvents.value = pianoCapture.snapshot()
     }
-    detection.stop()
+    stopVoice()
   }
+
+  /* Switching input mode mid-session opens or closes only the mic; the
+   * session and the notes caught so far carry on. */
+  watch(isVoiceEnabled, (isEnabled) => {
+    if (!isListening.value) return
+
+    if (isEnabled) void startVoice()
+    else stopVoice()
+  })
 
   function toggleListening() {
     if (isListening.value) stopListening()

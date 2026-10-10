@@ -320,6 +320,11 @@
         "major9": "মেজর নাইনথ",
         "minor9": "মাইনর নাইনথ"
       }
+    },
+    "noNotesYetPianoOnly": "শুরু চাপো, তারপর পিয়ানো বাজাও",
+    "inputMode": {
+      "voiceAndPiano": "গলা + পিয়ানো",
+      "pianoOnly": "শুধু পিয়ানো"
     }
   },
   "singTone": {
