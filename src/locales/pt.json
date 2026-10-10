@@ -217,7 +217,7 @@
     "congratulationsMessage": "Você completou a escala {mode} começando em {startTone}, segurando cada nota por {seconds} segundos!",
     "time": "⏱ Tempo",
     "singThisNote": "Cante isto",
-    "allowedRange": "Faixa permitida: ±50 cents · Alvo: {hz} Hz",
+    "allowedRange": "Faixa permitida: ±{cents} cents · Alvo: {hz} Hz",
     "playSolfege": "Tocar {solfege}",
     "scaleMode": "Modo da escala",
     "startTone": "Tom inicial",

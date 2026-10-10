@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Difficulty } from '@/constants/difficulty'
 import type { ScaleMode } from '@/utils/noteUtils'
 import {
   NOTE_NAMES,
@@ -26,6 +27,7 @@ const props = defineProps<Props>()
 const durationSec = defineModel<number>('durationSec', { required: true })
 const startOffset = defineModel<number>('startOffset', { required: true })
 const scaleMode = defineModel<ScaleMode>('scaleMode', { required: true })
+const difficulty = defineModel<Difficulty>('difficulty', { required: true })
 
 const { t } = useI18n()
 
@@ -38,6 +40,7 @@ const {
   noteInfo: gameNoteInfo,
   isClean: gameIsClean,
   centsFromTarget,
+  maxCentsDeviation,
   holdProgress,
   tooLowMs,
   tooHighMs,
@@ -51,6 +54,7 @@ const {
   stop,
   reset,
   setHoldDuration,
+  setDifficulty,
   setStartingSemitoneOffset,
   setScaleMode,
 } = props.game
@@ -60,8 +64,10 @@ const { isPlayingSequence, currentPlayingIndex, playSequence, stopSequence } =
 
 const { isPreviewEnabled } = useSettings()
 const showDoReMiTarget = useLocalStorage('syng.showDoReMiTarget', true)
-/* Display only: scoring's ±50¢ window already is the nearest-note rule, so
- * the snapped view reads green/0¢ exactly when the note counts. */
+/* Display only. On Easy, scoring's ±50¢ window is the nearest-note rule, so
+ * the snapped view reads green/0¢ exactly when the note counts. Normal and
+ * Hard are stricter than the snap, so there 0¢ on the right note can still
+ * miss — the solfège only turns green on isSingingCorrectNote. */
 const { isPitchSnapEnabled } = usePitchSnap()
 
 /* Force-disable idle preview (and the mic it would open) in simulated test pages */
@@ -219,6 +225,14 @@ watch(
 )
 
 watch(
+  difficulty,
+  (level) => {
+    setDifficulty(level)
+  },
+  { immediate: true },
+)
+
+watch(
   startOffset,
   (offset) => {
     setStartingSemitoneOffset(offset)
@@ -246,6 +260,7 @@ function handleStart() {
   debugLog('[DoReMi] game start', {
     scaleMode: scaleMode.value,
     holdDurationSec: durationSec.value,
+    difficulty: difficulty.value,
     startOffset: startOffset.value,
     startTone: startToneLabel.value,
     scaleMidiMin: scaleMidiMin.value,
@@ -327,6 +342,7 @@ onUnmounted(() => {
         v-model:startOffset="startOffset"
         v-model:scaleMode="scaleMode"
         v-model:durationSec="durationSec"
+        v-model:difficulty="difficulty"
         v-model:isPreviewEnabled="isPreviewEnabled"
         v-model:showDoReMiTarget="showDoReMiTarget"
         v-model:isPitchSnapEnabled="isPitchSnapEnabled"
@@ -375,6 +391,7 @@ onUnmounted(() => {
       :targetFrequency="targetFrequency"
       :currentFrequency="displayedFrequency"
       :centsFromTarget="displayedCentsFromTarget"
+      :maxCentsDeviation="maxCentsDeviation"
       :isSingingCorrectNote="isSingingCorrectNote"
       :tooLowMs="tooLowMs"
       :tooHighMs="tooHighMs"

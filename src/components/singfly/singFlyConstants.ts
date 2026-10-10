@@ -1,4 +1,4 @@
-import type { Difficulty } from './singFlyOptions'
+import type { Difficulty } from '@/constants/difficulty'
 
 /* Visible time width of the chart in milliseconds. */
 export const HISTORY_WINDOW_MS = 5000

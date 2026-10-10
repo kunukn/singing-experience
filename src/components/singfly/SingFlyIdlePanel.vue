@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Difficulty } from './singFlyOptions'
+import type { Difficulty } from '@/constants/difficulty'
 import SingFlySettingsRow from './SingFlySettingsRow.vue'
 
 type Props = {

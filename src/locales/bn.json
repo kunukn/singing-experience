@@ -217,7 +217,7 @@
     "congratulationsMessage": "আপনি {startTone} থেকে শুরু করে প্রতিটি নোট {seconds} সেকেন্ড ধরে রেখে {mode} স্কেল সম্পন্ন করেছেন!",
     "time": "⏱ সময়",
     "singThisNote": "এটি গান করুন",
-    "allowedRange": "অনুমোদিত পরিসর: ±৫০ সেন্ট · লক্ষ্য: {hz} Hz",
+    "allowedRange": "অনুমোদিত পরিসর: ±{cents} সেন্ট · লক্ষ্য: {hz} Hz",
     "playSolfege": "{solfege} বাজান",
     "scaleMode": "স্কেল মোড",
     "startTone": "শুরুর টোন",

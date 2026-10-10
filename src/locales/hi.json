@@ -217,7 +217,7 @@
     "congratulationsMessage": "आपने {startTone} से शुरू करके {mode} स्वर-सप्तक पूरा किया, प्रत्येक स्वर को {seconds} सेकंड तक पकड़ कर!",
     "time": "⏱ समय",
     "singThisNote": "यह गाएँ",
-    "allowedRange": "अनुमत सीमा: ±50 सेंट्स · लक्ष्य: {hz} Hz",
+    "allowedRange": "अनुमत सीमा: ±{cents} सेंट्स · लक्ष्य: {hz} Hz",
     "playSolfege": "{solfege} बजाएँ",
     "scaleMode": "स्वर-सप्तक प्रकार",
     "startTone": "आरंभिक स्वर",

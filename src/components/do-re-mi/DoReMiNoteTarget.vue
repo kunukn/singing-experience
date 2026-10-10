@@ -7,6 +7,7 @@ type Props = {
   targetFrequency: number
   currentFrequency: number | null
   centsFromTarget: number | null
+  maxCentsDeviation: number
   isSingingCorrectNote: boolean
   tooLowMs: number
   tooHighMs: number
@@ -17,6 +18,7 @@ const {
   targetFrequency,
   currentFrequency,
   centsFromTarget,
+  maxCentsDeviation,
   isSingingCorrectNote,
   tooLowMs,
   tooHighMs,
@@ -80,7 +82,7 @@ function onAnimationEnd() {
 
       <CentsDeviationBar
         :cents="centsFromTarget"
-        :threshold="50"
+        :threshold="maxCentsDeviation"
         :maxRange="150"
         :isVisible="true"
         :highLabel="t('generic.tooHigh')"
@@ -113,7 +115,7 @@ function onAnimationEnd() {
           class="flex items-center gap-1 text-xs"
           :class="[
             centsFromTarget === null ? 'invisible' : '',
-            Math.abs(centsFromTarget ?? 0) <= 50
+            Math.abs(centsFromTarget ?? 0) <= maxCentsDeviation
               ? 'text-(--p-green-400)'
               : (centsFromTarget ?? 0) > 0
                 ? 'text-(--p-orange-400)'
@@ -129,7 +131,12 @@ function onAnimationEnd() {
         </div>
 
         <p class="text-xs text-(--p-surface-500)">
-          {{ t('doReMi.allowedRange', { hz: Math.round(targetFrequency) }) }}
+          {{
+            t('doReMi.allowedRange', {
+              cents: maxCentsDeviation,
+              hz: Math.round(targetFrequency),
+            })
+          }}
         </p>
         <p
           class="text-xs tabular-nums"

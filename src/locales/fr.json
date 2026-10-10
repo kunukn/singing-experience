@@ -217,7 +217,7 @@
     "congratulationsMessage": "Tu as fait la gamme {mode} en partant de {startTone}, en tenant chaque note pendant {seconds} secondes !",
     "time": "⏱ Temps ",
     "singThisNote": "Chante ceci ",
-    "allowedRange": "Plage autorisée : ±50 cents · Cible : {hz} Hz",
+    "allowedRange": "Plage autorisée : ±{cents} cents · Cible : {hz} Hz",
     "playSolfege": "Jouer {solfege}",
     "scaleMode": "Mode de gamme ",
     "startTone": "Ton de départ ",

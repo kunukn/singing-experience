@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { DIFFICULTY_OPTIONS, type Difficulty } from '@/constants/difficulty'
 import type { ScaleMode } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import DoReMiDisplay from './DoReMiDisplay.vue'
 import {
+  DEFAULT_DIFFICULTY,
   DEFAULT_HOLD_DURATION_MS,
   DEFAULT_SCALE_MODE,
   DEFAULT_STARTING_SEMITONE_OFFSET,
@@ -43,6 +45,14 @@ if (!VALID_SCALE_MODES.includes(selectedScaleMode.value)) {
   selectedScaleMode.value = DEFAULT_SCALE_MODE
 }
 
+const selectedDifficulty = useLocalStorage<Difficulty>(
+  'syng.doReMiDifficulty',
+  DEFAULT_DIFFICULTY,
+)
+if (!DIFFICULTY_OPTIONS.includes(selectedDifficulty.value)) {
+  selectedDifficulty.value = DEFAULT_DIFFICULTY
+}
+
 const game = useDoReMiGame()
 </script>
 
@@ -52,5 +62,6 @@ const game = useDoReMiGame()
     v-model:durationSec="selectedDurationSec"
     v-model:startOffset="selectedStartOffset"
     v-model:scaleMode="selectedScaleMode"
+    v-model:difficulty="selectedDifficulty"
   />
 </template>

@@ -22,7 +22,8 @@ import {
   isOutOfRange,
   isPitchInGap,
 } from './singFlyGeometry'
-import { DEFAULT_DIFFICULTY, type Difficulty } from './singFlyOptions'
+import type { Difficulty } from '@/constants/difficulty'
+import { DEFAULT_DIFFICULTY } from './singFlyOptions'
 
 /* 'missed' = unresolved when the round ended (scrolled past, or bulk-marked
  * by stopGame) — renders green like a pending pillar. 'crashed' = the single

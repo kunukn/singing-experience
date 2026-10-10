@@ -217,7 +217,7 @@
     "congratulationsMessage": "Anda menyelesaikan tangga nada {mode} mulai dari {startTone} dengan menahan setiap not selama {seconds} detik!",
     "time": "⏱ Waktu",
     "singThisNote": "Nyanyikan ini",
-    "allowedRange": "Rentang yang diizinkan: ±50 sen · Target: {hz} Hz",
+    "allowedRange": "Rentang yang diizinkan: ±{cents} sen · Target: {hz} Hz",
     "playSolfege": "Putar {solfege}",
     "scaleMode": "Mode tangga nada",
     "startTone": "Nada awal",

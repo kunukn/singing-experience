@@ -217,7 +217,7 @@
     "congratulationsMessage": "Du hast die {mode}-Tonleiter ab {startTone} abgeschlossen und jede Note {seconds} Sekunden gehalten!",
     "time": "⏱ Zeit",
     "singThisNote": "Singe dies",
-    "allowedRange": "Erlaubter Bereich: ±50 Cent · Ziel: {hz} Hz",
+    "allowedRange": "Erlaubter Bereich: ±{cents} Cent · Ziel: {hz} Hz",
     "playSolfege": "{solfege} spielen",
     "scaleMode": "Tonleitermodus",
     "startTone": "Startton",

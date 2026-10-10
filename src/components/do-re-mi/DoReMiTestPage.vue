@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Difficulty } from '@/constants/difficulty'
 import type { NoteName, ScaleMode } from '@/utils/noteUtils'
 import {
   midiToFrequency,
@@ -8,6 +9,7 @@ import {
 import DoReMiDisplay from './DoReMiDisplay.vue'
 import type { ScaleStep } from './useDoReMiGame'
 import {
+  DEFAULT_DIFFICULTY,
   DEFAULT_HOLD_DURATION_MS,
   DEFAULT_SCALE_MODE,
   DEFAULT_STARTING_SEMITONE_OFFSET,
@@ -17,6 +19,7 @@ import {
 const selectedDurationSec = ref(DEFAULT_HOLD_DURATION_MS / 1000)
 const selectedStartOffset = ref(DEFAULT_STARTING_SEMITONE_OFFSET)
 const selectedScaleMode = ref<ScaleMode>(DEFAULT_SCALE_MODE)
+const selectedDifficulty = ref<Difficulty>(DEFAULT_DIFFICULTY)
 
 const selectedNote = ref<NoteName>('G')
 const selectedOctave = ref(3)
@@ -83,6 +86,7 @@ function matchTarget(targetStep: ScaleStep | undefined) {
     v-model:durationSec="selectedDurationSec"
     v-model:startOffset="selectedStartOffset"
     v-model:scaleMode="selectedScaleMode"
+    v-model:difficulty="selectedDifficulty"
   >
     <template #default="{ gameState, targetStep }">
       <div

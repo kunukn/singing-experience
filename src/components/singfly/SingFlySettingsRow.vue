@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import {
-  DIFFICULTY_OPTIONS,
-  GAME_DURATION_OPTIONS,
-  type Difficulty,
-} from './singFlyOptions'
+import { DIFFICULTY_OPTIONS, type Difficulty } from '@/constants/difficulty'
+import { GAME_DURATION_OPTIONS } from './singFlyOptions'
 
 const { t } = useI18n()
 

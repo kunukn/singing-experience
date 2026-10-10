@@ -9,6 +9,7 @@ import {
   noteToFrequency,
   SCALE_MODE_SEMITONES,
 } from '@/utils/noteUtils'
+import { OFF_CENTS } from '@/utils/pitchColors'
 import DoReMiNoteTarget from './DoReMiNoteTarget.vue'
 import DoReMiScaleItem from './DoReMiScaleItem.vue'
 import type { ScaleStep } from './useDoReMiGame'
@@ -35,6 +36,8 @@ type Props = {
   targetFrequency?: number
   currentFrequency?: number | null
   centsFromTarget?: number | null
+  /* Difficulty tolerance — where the target box's cents readout turns green */
+  maxCentsDeviation?: number
   isSingingCorrectNote?: boolean
   tooLowMs?: number
   tooHighMs?: number
@@ -54,6 +57,7 @@ const props = withDefaults(defineProps<Props>(), {
   targetFrequency: 0,
   currentFrequency: null,
   centsFromTarget: null,
+  maxCentsDeviation: OFF_CENTS,
   isSingingCorrectNote: false,
   tooLowMs: 0,
   tooHighMs: 0,
@@ -501,6 +505,7 @@ function isItemHighlighted(chromaticIndex: number): boolean {
           :targetFrequency="targetFrequency"
           :currentFrequency="currentFrequency"
           :centsFromTarget="centsFromTarget"
+          :maxCentsDeviation="maxCentsDeviation"
           :isSingingCorrectNote="isSingingCorrectNote"
           :tooLowMs="tooLowMs"
           :tooHighMs="tooHighMs"

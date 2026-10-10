@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MidiNoteLabel } from '@/utils/noteUtils'
+import { MAX_CENTS_DEVIATION } from './useSingTone'
 
 type Props = {
   targetNoteLabel: MidiNoteLabel
@@ -83,7 +84,12 @@ const { t } = useI18n()
       </div>
 
       <p v-if="targetFrequency" class="text-xs text-(--p-surface-500)">
-        {{ t('doReMi.allowedRange', { hz: Math.round(targetFrequency) }) }}
+        {{
+          t('doReMi.allowedRange', {
+            cents: MAX_CENTS_DEVIATION,
+            hz: Math.round(targetFrequency),
+          })
+        }}
       </p>
       <p
         class="text-xs tabular-nums"

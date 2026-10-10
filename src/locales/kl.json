@@ -204,7 +204,7 @@
     "congratulationsMessage": "{mode} nipiliuineq {startTone}-mit aallarnerlugu naammassineqarpoq, nota ataatsimik {seconds} secondsimik tigusimassutit!",
     "time": "⏱ Piffissaq",
     "singThisNote": "Una niperusillugu",
-    "allowedRange": "Atorsinnaasut: ±50 cent · Siuarsarfissaq: {hz} Hz",
+    "allowedRange": "Atorsinnaasut: ±{cents} cent · Siuarsarfissaq: {hz} Hz",
     "playSolfege": "{solfege} nipiliigiuk",
     "scaleMode": "Skalaap suussusia",
     "startTone": "Aallarkataasiutip nipia",

@@ -1,4 +1,5 @@
 import { useMachine } from '@xstate/vue'
+import type { Difficulty } from '@/constants/difficulty'
 import type { NoteInfo, NoteName, ScaleMode } from '@/utils/noteUtils'
 import {
   buildScale,
@@ -9,6 +10,7 @@ import {
   START_TONE_GROUPS,
   START_TONE_OPTIONS,
 } from '@/utils/noteUtils'
+import { CLEAN_CENTS, CLOSE_CENTS, OFF_CENTS } from '@/utils/pitchColors'
 import { doReMiMachine, type DoReMiPhase } from './doReMiMachine'
 
 type ScaleStep = {
@@ -34,25 +36,35 @@ const DEFAULT_STARTING_SEMITONE_OFFSET = 7 // G3
 const DEFAULT_SCALE_MODE: ScaleMode = 'ionian'
 
 /*
- * Maximum cents deviation from the target note to count as "correct."
- * ±50 cents is the standard threshold in beginner/educational singing apps
- * (e.g. Yousician, Smule). Tighten to ±25 or ±10 for advanced difficulty.
+ * Maximum cents deviation from the target note to count as "correct", per
+ * difficulty. Reuses the pitchColors tiers so the pass rule matches the
+ * colours: Easy accepts anything short of red (±50¢, the usual beginner
+ * threshold in Yousician/Smule), Normal needs green or yellow (±25¢), Hard
+ * needs green (±10¢).
  */
-const MAX_CENTS_DEVIATION = 50
+const DIFFICULTY_MAX_CENTS: Record<Difficulty, number> = {
+  easy: OFF_CENTS,
+  normal: CLOSE_CENTS,
+  hard: CLEAN_CENTS,
+}
+/* Easy is the pre-difficulty ±50¢ behaviour */
+const DEFAULT_DIFFICULTY: Difficulty = 'easy'
 /* Delay before showing "too low" / "too high" hint arrow — avoids flashing during brief pitch drift */
 const TOO_LOW_OR_HIGH_HINT_MS = 500
 
 type DoReMiGameOptions = {
   holdDurationMs?: number
+  difficulty?: Difficulty
   pitchDetection?: PitchDetectionProvider
 }
 
 export {
+  DEFAULT_DIFFICULTY,
   DEFAULT_HOLD_DURATION_MS,
   DEFAULT_SCALE_MODE,
   DEFAULT_STARTING_SEMITONE_OFFSET,
+  DIFFICULTY_MAX_CENTS,
   GRACE_PERIOD_MS,
-  MAX_CENTS_DEVIATION,
   SCALE_MODE_OPTIONS,
   START_TONE_GROUPS,
   START_TONE_OPTIONS,
@@ -66,6 +78,10 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
   const holdDurationMs = ref(options.holdDurationMs ?? DEFAULT_HOLD_DURATION_MS)
   const startingSemitoneOffset = ref(DEFAULT_STARTING_SEMITONE_OFFSET)
   const scaleMode = ref<ScaleMode>(DEFAULT_SCALE_MODE)
+  const difficulty = ref<Difficulty>(options.difficulty ?? DEFAULT_DIFFICULTY)
+  const maxCentsDeviation = computed(
+    () => DIFFICULTY_MAX_CENTS[difficulty.value],
+  )
 
   const scaleSteps = computed<ScaleStep[]>(() =>
     buildScale(C3_MIDI + startingSemitoneOffset.value, scaleMode.value),
@@ -135,7 +151,7 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     return (
       noteInfo.value.note === target.note &&
       noteInfo.value.octave === target.octave &&
-      Math.abs(centsFromTarget.value) <= MAX_CENTS_DEVIATION
+      Math.abs(centsFromTarget.value) <= maxCentsDeviation.value
     )
   })
 
@@ -157,10 +173,10 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
         }
 
         const cents = centsFromTarget.value
-        if (cents !== null && cents < -MAX_CENTS_DEVIATION) {
+        if (cents !== null && cents < -maxCentsDeviation.value) {
           tooLowMs.value += delta
           tooHighMs.value = 0
-        } else if (cents !== null && cents > MAX_CENTS_DEVIATION) {
+        } else if (cents !== null && cents > maxCentsDeviation.value) {
           tooHighMs.value += delta
           tooLowMs.value = 0
         } else {
@@ -270,6 +286,12 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     holdDurationMs.value = ms
   }
 
+  /* Applies live — a mid-round change only moves the tolerance, so there is
+   * no need to restart the round the way a new scale does. */
+  function setDifficulty(level: Difficulty) {
+    difficulty.value = level
+  }
+
   function setStartingSemitoneOffset(offset: number) {
     startingSemitoneOffset.value = offset
     stop()
@@ -284,6 +306,8 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     scaleSteps,
     startingSemitoneOffset: readonly(startingSemitoneOffset),
     scaleMode: readonly(scaleMode),
+    difficulty: readonly(difficulty),
+    maxCentsDeviation,
     currentStepIndex: readonly(currentStepIndex),
     targetStep,
     targetFrequency,
@@ -311,6 +335,7 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     reset,
     completeGame,
     setHoldDuration,
+    setDifficulty,
     setStartingSemitoneOffset,
     setScaleMode,
   }

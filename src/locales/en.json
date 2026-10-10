@@ -217,7 +217,7 @@
     "congratulationsMessage": "You completed the {mode} scale starting on {startTone}, holding each note for {seconds} seconds!",
     "time": "⏱ Time",
     "singThisNote": "Sing this",
-    "allowedRange": "Allowed range: ±50 cents · Target: {hz} Hz",
+    "allowedRange": "Allowed range: ±{cents} cents · Target: {hz} Hz",
     "playSolfege": "Play {solfege}",
     "scaleMode": "Scale mode",
     "startTone": "Start tone",

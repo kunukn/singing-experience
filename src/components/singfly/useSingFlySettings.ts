@@ -1,10 +1,9 @@
 import { useLocalStorage } from '@vueuse/core'
+import { DIFFICULTY_OPTIONS, type Difficulty } from '@/constants/difficulty'
 import {
   DEFAULT_DIFFICULTY,
   DEFAULT_GAME_DURATION_SEC,
-  DIFFICULTY_OPTIONS,
   GAME_DURATION_OPTIONS,
-  type Difficulty,
   type GameDurationSec,
 } from './singFlyOptions'
 

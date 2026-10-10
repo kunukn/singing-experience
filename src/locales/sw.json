@@ -217,7 +217,7 @@
     "congratulationsMessage": "Umekamilisha mizani ya {mode} ukianzia {startTone} ukishikilia kila noti kwa sekunde {seconds}!",
     "time": "⏱ Muda",
     "singThisNote": "Imba hii",
-    "allowedRange": "Kiwango kinachoruhusiwa: ±50 senti · Lengo: {hz} Hz",
+    "allowedRange": "Kiwango kinachoruhusiwa: ±{cents} senti · Lengo: {hz} Hz",
     "playSolfege": "Cheza {solfege}",
     "scaleMode": "Aina ya mizani",
     "startTone": "Toni ya kuanzia",

@@ -217,7 +217,7 @@
     "congratulationsMessage": "{startTone}から始まる{mode}スケールを各音{seconds}秒キープして最後まで歌い切りました!",
     "time": "⏱ 時間",
     "singThisNote": "この音を歌って",
-    "allowedRange": "許容範囲: ±50セント ・ 目標: {hz} Hz",
+    "allowedRange": "許容範囲: ±{cents}セント ・ 目標: {hz} Hz",
     "playSolfege": "{solfege}を再生",
     "scaleMode": "スケールモード",
     "startTone": "開始音",

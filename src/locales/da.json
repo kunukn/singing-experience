@@ -217,7 +217,7 @@
     "congratulationsMessage": "Du klarede {mode}-skalaen fra {startTone} og holdt hver tone i {seconds} sekunder!",
     "time": "⏱ Tid",
     "singThisNote": "Syng denne",
-    "allowedRange": "Tilladt interval: ±50 cents · Mål: {hz} Hz",
+    "allowedRange": "Tilladt interval: ±{cents} cents · Mål: {hz} Hz",
     "playSolfege": "Afspil {solfege}",
     "scaleMode": "Skalatype",
     "startTone": "Starttone",

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Difficulty } from '@/constants/difficulty'
 import type { ScaleMode } from '@/utils/noteUtils'
 
 type Props = {
@@ -17,6 +18,7 @@ const emit = defineEmits<{
 const startOffset = defineModel<number>('startOffset', { required: true })
 const scaleMode = defineModel<ScaleMode>('scaleMode', { required: true })
 const durationSec = defineModel<number>('durationSec', { required: true })
+const difficulty = defineModel<Difficulty>('difficulty', { required: true })
 const isPreviewEnabled = defineModel<boolean>('isPreviewEnabled', {
   required: true,
 })
@@ -36,6 +38,7 @@ const { t } = useI18n()
       v-model:startOffset="startOffset"
       v-model:scaleMode="scaleMode"
       v-model:durationSec="durationSec"
+      v-model:difficulty="difficulty"
     />
 
     <div class="flex w-full flex-wrap items-center justify-center gap-2">

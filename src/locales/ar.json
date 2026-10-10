@@ -217,7 +217,7 @@
     "congratulationsMessage": "لقد أكملت سلم {mode} بدءًا من {startTone} مع إمساك كل نوتة لمدة {seconds} ثوانٍ!",
     "time": "⏱ الوقت",
     "singThisNote": "غنِّ هذه",
-    "allowedRange": "النطاق المسموح: ±50 سنت · الهدف: {hz} Hz",
+    "allowedRange": "النطاق المسموح: ±{cents} سنت · الهدف: {hz} Hz",
     "playSolfege": "تشغيل {solfege}",
     "scaleMode": "نوع السلم",
     "startTone": "النغمة الأولى",

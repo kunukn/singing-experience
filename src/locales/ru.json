@@ -217,7 +217,7 @@
     "congratulationsMessage": "Вы прошли гамму {mode}, начав с {startTone} и удерживая каждую ноту {seconds} секунд!",
     "time": "⏱ Время",
     "singThisNote": "Спойте это",
-    "allowedRange": "Допустимый диапазон: ±50 центов · Цель: {hz} Гц",
+    "allowedRange": "Допустимый диапазон: ±{cents} центов · Цель: {hz} Гц",
     "playSolfege": "Воспроизвести {solfege}",
     "scaleMode": "Режим гаммы",
     "startTone": "Начальный тон",

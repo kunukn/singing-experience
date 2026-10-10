@@ -12,8 +12,9 @@ import type { DoReMiGameOptions, PitchDetectionProvider } from './useDoReMiGame'
 import {
   useDoReMiGame,
   GRACE_PERIOD_MS,
-  MAX_CENTS_DEVIATION,
+  DEFAULT_DIFFICULTY,
   DEFAULT_STARTING_SEMITONE_OFFSET,
+  DIFFICULTY_MAX_CENTS,
 } from './useDoReMiGame'
 
 /* useDoReMiGame owns an XState actor via @xstate/vue's useMachine, which
@@ -173,11 +174,85 @@ describe('useDoReMiGame', () => {
       mock,
       target.note,
       target.octave,
-      MAX_CENTS_DEVIATION + 10,
+      DIFFICULTY_MAX_CENTS[DEFAULT_DIFFICULTY] + 10,
     )
     await nextTick()
 
     expect(game.isSingingCorrectNote.value).toBe(false)
+  })
+
+  test('should default to the ±50 cents easy tolerance', () => {
+    const mock = createMockPitchDetection()
+    const game = mountGame({ pitchDetection: mock.provider })
+
+    expect(game.difficulty.value).toBe('easy')
+    expect(game.maxCentsDeviation.value).toBe(50)
+  })
+
+  test.each([
+    { difficulty: 'easy', maxCents: 50 },
+    { difficulty: 'normal', maxCents: 25 },
+    { difficulty: 'hard', maxCents: 10 },
+  ] as const)(
+    'should accept within ±$maxCents cents and reject beyond on $difficulty',
+    async ({ difficulty, maxCents }) => {
+      const mock = createMockPitchDetection()
+      const game = mountGame({ pitchDetection: mock.provider, difficulty })
+
+      await game.start()
+
+      const target = scaleSteps[0]
+      simulateSingingNote(mock, target.note, target.octave, maxCents - 1)
+      await nextTick()
+      expect(game.isSingingCorrectNote.value).toBe(true)
+
+      simulateSingingNote(mock, target.note, target.octave, -(maxCents - 1))
+      await nextTick()
+      expect(game.isSingingCorrectNote.value).toBe(true)
+
+      simulateSingingNote(mock, target.note, target.octave, maxCents + 1)
+      await nextTick()
+      expect(game.isSingingCorrectNote.value).toBe(false)
+    },
+  )
+
+  test('should apply a difficulty change mid-round without resetting', async () => {
+    const mock = createMockPitchDetection()
+    const game = mountGame({ pitchDetection: mock.provider })
+
+    await game.start()
+
+    const target = scaleSteps[0]
+    simulateSingingNote(mock, target.note, target.octave, 20)
+    await nextTick()
+    expect(game.isSingingCorrectNote.value).toBe(true)
+
+    game.setDifficulty('hard')
+    await nextTick()
+
+    expect(game.isSingingCorrectNote.value).toBe(false)
+    expect(game.isPlaying.value).toBe(true)
+  })
+
+  test('should count as too high past the hard tolerance', async () => {
+    const mock = createMockPitchDetection()
+    const game = mountGame({
+      pitchDetection: mock.provider,
+      difficulty: 'hard',
+    })
+
+    await game.start()
+
+    const target = scaleSteps[0]
+    /* 20¢ sharp — fine on Easy/Normal, past Hard's ±10¢ */
+    simulateSingingNote(mock, target.note, target.octave, 20)
+    await nextTick()
+
+    advanceRAF(500)
+
+    expect(game.tooHighMs.value).toBeGreaterThan(0)
+    expect(game.tooLowMs.value).toBe(0)
+    expect(game.holdTimeMs.value).toBe(0)
   })
 
   test('should compute centsFromTarget correctly', async () => {

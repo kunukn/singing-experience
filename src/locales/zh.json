@@ -217,7 +217,7 @@
     "congratulationsMessage": "你从 {startTone} 开始完成了 {mode} 音阶，每个音符保持了 {seconds} 秒！",
     "time": "⏱ 时间",
     "singThisNote": "唱这个",
-    "allowedRange": "允许范围：±50 音分 · 目标：{hz} Hz",
+    "allowedRange": "允许范围：±{cents} 音分 · 目标：{hz} Hz",
     "playSolfege": "播放 {solfege}",
     "scaleMode": "音阶模式",
     "startTone": "起始音",
