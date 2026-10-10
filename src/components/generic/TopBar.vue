@@ -1,23 +1,11 @@
 <script setup lang="ts">
+import { programStageByRoute } from '@/constants/programs'
+
 const { t } = useI18n()
-const betaPages = new Set([
-  '/singfly',
-  '/pitch-game',
-  '/grace-kelly-challenge',
-  '/piano',
-  '/guitar',
-  '/sing-the-keys',
-])
-const alphaPages = new Set([
-  '/tone-detector',
-  '/song-recorder',
-  '/scale-detector',
-])
 const route = useRoute()
 const router = useRouter()
 const isHome = computed(() => route.path === '/')
-const isAlphaPage = computed(() => alphaPages.has(route.path))
-const isBetaPage = computed(() => betaPages.has(route.path))
+const stage = computed(() => programStageByRoute.get(route.path))
 const isLandingPage = computed(() => route.meta.isLandingPage === true)
 
 function goBack() {
@@ -41,18 +29,7 @@ function goBack() {
       <span class="text-sm">{{ t('generic.back') }}</span>
     </button>
     <div v-else />
-    <PrimeTag
-      v-if="isAlphaPage"
-      severity="warn"
-      class="ms-3 me-auto"
-      value="Alpha"
-    />
-    <PrimeTag
-      v-if="isBetaPage"
-      severity="warn"
-      class="ms-3 me-auto"
-      value="Beta"
-    />
+    <ProgramStageTag v-if="stage" :stage class="ms-3 me-auto" />
     <div class="flex items-center gap-2">
       <LanguageSwitcher v-if="isLandingPage" />
       <SettingsPanel />
