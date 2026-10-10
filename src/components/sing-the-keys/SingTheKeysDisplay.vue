@@ -487,7 +487,7 @@ onUnmounted(() => {
         severity="danger"
         size="small"
         rounded
-        class="min-h-8.75 min-w-20"
+        class="min-w-20"
         @click="stopSinging"
       >
         {{ t('generic.stop') }}
@@ -507,7 +507,7 @@ onUnmounted(() => {
 
       <PrimeButton
         v-if="!isPlaying"
-        class="min-h-8.75 min-w-20"
+        class="min-w-20"
         severity="success"
         size="small"
         rounded
@@ -518,7 +518,7 @@ onUnmounted(() => {
 
       <PrimeButton
         v-if="!isPlaying"
-        class="toggle-sequence-idle min-h-8.75 min-w-20"
+        class="toggle-sequence-idle min-w-20"
         severity="secondary"
         size="small"
         rounded

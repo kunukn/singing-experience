@@ -28,7 +28,6 @@ const isLabelVisible = computed(
 <template>
   <PrimeButton
     :class="[
-      'min-h-8.75 min-w-8.75', // pin icon-only circle to 35px so it aligns with the sibling selects/Start
       // PrimeVue leaves .p-button wrappable; a short label must overflow a tight track, not break onto two lines
       'whitespace-nowrap',
       modelValue ? 'border border-(--p-green-500)!' : 'opacity-50',

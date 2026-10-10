@@ -23,7 +23,6 @@ const { t } = useI18n()
     data-testid="piano-octave-shift"
   >
     <PrimeButton
-      class="min-h-8.75 min-w-8.75"
       severity="secondary"
       rounded
       size="small"
@@ -47,7 +46,6 @@ const { t } = useI18n()
     </span>
 
     <PrimeButton
-      class="min-h-8.75 min-w-8.75"
       severity="secondary"
       rounded
       size="small"

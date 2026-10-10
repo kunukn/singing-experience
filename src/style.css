@@ -76,6 +76,38 @@
     @apply flex shrink-0 snap-start items-center gap-2;
     @apply md:col-span-2 md:grid md:shrink md:snap-align-none md:grid-cols-subgrid md:items-center;
   }
+
+  /*
+   * One height for every form control, so a button, a select and a toggle in
+   * the same row line up without each program pinning heights by hand.
+   * PrimeVue sizes controls by padding, and its variants land on different
+   * heights (small button and select 28px, select button 32px, toggles were
+   * pinned to 35px). A floor rather than a fixed height: normal-size controls
+   * (38px+) and wrapping labels still grow. Opt out with Tailwind's `min-h-0`
+   * — utilities beat this layer.
+   */
+  :root {
+    --app-control-height: 2.1875rem; /* 35px */
+  }
+
+  .p-button,
+  .p-select,
+  .p-selectbutton,
+  .p-inputtext {
+    min-height: var(--app-control-height);
+  }
+
+  /* PrimeVue doesn't centre the select's label; without this the extra
+   * height would collect below the text. */
+  .p-select {
+    align-items: center;
+  }
+
+  /* Rounded icon-only buttons set height = width, so a taller floor needs a
+   * matching width floor or the circle turns into an oval. */
+  .p-button-icon-only {
+    min-width: var(--app-control-height);
+  }
 }
 
 /* PrimeVue's blockScroll adds `.p-overflow-hidden` with a `padding-right` equal
