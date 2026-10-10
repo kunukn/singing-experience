@@ -64,6 +64,3 @@ export const DEFAULT_INPUT: SongRecorderInput = 'voice'
 /* Players anticipate beat 1 slightly; a piano press up to this early in the
  * count-in still lands on it. Earlier presses only sound. */
 export const PIANO_EARLY_PRESS_MS = 150
-
-/* The piano panel opens on C2–C7 so both clefs and their ledger lines fit. */
-export const PIANO_DEFAULT_RANGE_LABEL_KEY = 'voiceRanges.full'

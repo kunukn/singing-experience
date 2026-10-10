@@ -3,7 +3,6 @@ import type { PianoPreviewLaneId } from '@/components/piano/pianoPreview'
 import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { useLocalStorage, useMediaQuery } from '@vueuse/core'
-import { PIANO_DEFAULT_RANGE_LABEL_KEY } from './songRecorderConstants'
 
 type Props = {
   /* Piano is the take's input — opening the panel is then the obvious next step. */
@@ -32,10 +31,8 @@ watch(
   },
 )
 
-/* Own key, so the range picked here doesn't move the /piano page's range. */
-const rangeIndex = useVoiceRangeIndex('syng.songRecorderPianoRange', {
-  defaultLabelKey: PIANO_DEFAULT_RANGE_LABEL_KEY,
-})
+/* The app-wide range, shared with every other page that picks one. */
+const rangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
 const { areKeyboardHintsVisible } = useKeyboardHints()
