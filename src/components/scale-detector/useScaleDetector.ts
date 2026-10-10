@@ -3,14 +3,15 @@ import {
   createNoteSegmenter,
   type NoteEvent,
 } from '@/components/song-recorder/noteSegmenter'
-import { createPianoNoteCapture } from '@/components/song-recorder/pianoNoteCapture'
 import type { PitchDetectionInput } from '@/components/song-recorder/useSongRecorder'
+import { detectChords, type ChordCandidate } from '@/utils/chordDetection'
 import { frequencyToMidi } from '@/utils/noteUtils'
 import {
   detectScales,
   type ScaleCandidate,
   type SungNote,
 } from '@/utils/scaleDetection'
+import { createPianoChordCapture } from './pianoChordCapture'
 
 type Options = {
   detection: Pick<
@@ -39,11 +40,14 @@ const PIANO_DEAF_MS = 600
 
 export type ScaleSelection = Pick<ScaleCandidate, 'root' | 'mode'>
 
+export type ChordSelection = Pick<ChordCandidate, 'root' | 'type'>
+
 export type ScaleDetectorResult = ReturnType<typeof useScaleDetector>
 
 /*
- * Collects sung notes (from the mic) and played notes (from the piano) while
- * listening into one ordered list and ranks the scales they fit.
+ * Collects sung notes (from the mic) and played notes (from the piano, any
+ * number of keys at once) while listening into one ordered list, and ranks
+ * both the scales and the chords they fit.
  * Notes count once they've ended, so the ranking settles between notes
  * rather than flickering while one is held.
  */
@@ -52,9 +56,10 @@ export function useScaleDetector({ detection }: Options) {
   const voiceEvents = shallowRef<NoteEvent[]>([])
   const pianoEvents = shallowRef<NoteEvent[]>([])
   const selection = ref<ScaleSelection | null>(null)
+  const chordSelection = ref<ChordSelection | null>(null)
 
   let segmenter = createNoteSegmenter()
-  let pianoCapture = createPianoNoteCapture({ minNoteMs: PIANO_MIN_NOTE_MS })
+  let pianoCapture = createPianoChordCapture({ minNoteMs: PIANO_MIN_NOTE_MS })
   /* performance.now() when the current set of notes began. */
   let originMs = performance.now()
   let voiceMutedUntilMs = 0
@@ -71,7 +76,7 @@ export function useScaleDetector({ detection }: Options) {
     () => {
       const timeMs = nowMs()
       const isPianoSounding =
-        pianoCapture.heldMidi() !== null || timeMs < voiceMutedUntilMs
+        pianoCapture.isAnyHeld() || timeMs < voiceMutedUntilMs
       const frequency = detection.frequency.value
       const midi =
         !isPianoSounding && detection.isClean.value && frequency !== null
@@ -122,6 +127,31 @@ export function useScaleDetector({ detection }: Options) {
     selection.value = { root: candidate.root, mode: candidate.mode }
   }
 
+  const chordResult = computed(() => detectChords(notes.value))
+
+  /* Same rule as scales: the user's pick while it still fits, else the best. */
+  const selectedChord = computed<ChordSelection | null>(() => {
+    const candidates = chordResult.value.families.flatMap(
+      (family) => family.candidates,
+    )
+    const picked = chordSelection.value
+    const isPickedStillFitting =
+      picked !== null &&
+      candidates.some(
+        (candidate) =>
+          candidate.root === picked.root && candidate.type === picked.type,
+      )
+    if (isPickedStillFitting) return picked
+
+    const best = candidates[0]
+
+    return best ? { root: best.root, type: best.type } : null
+  })
+
+  function selectChord(candidate: ChordSelection) {
+    chordSelection.value = { root: candidate.root, type: candidate.type }
+  }
+
   async function startListening() {
     if (isListening.value) return
 
@@ -137,9 +167,10 @@ export function useScaleDetector({ detection }: Options) {
     sampler.pause()
     segmenter.flush()
     syncVoiceEvents()
-    /* A key still held at Stop ends here; its later release is ignored. */
-    if (pianoCapture.heldMidi() !== null) {
-      pianoEvents.value = [...pianoCapture.flush(nowMs())]
+    /* Keys still held at Stop end here; their later release is ignored. */
+    if (pianoCapture.isAnyHeld()) {
+      pianoCapture.flush(nowMs())
+      pianoEvents.value = pianoCapture.snapshot()
     }
     detection.stop()
   }
@@ -152,10 +183,8 @@ export function useScaleDetector({ detection }: Options) {
   function pressPianoKey(midi: number) {
     if (!isListening.value) return
 
-    /* Pressing a new key while one is held ends the held one. */
-    if (pianoCapture.press(midi, nowMs())) {
-      pianoEvents.value = [...pianoCapture.events]
-    }
+    pianoCapture.press(midi, nowMs())
+    pianoEvents.value = pianoCapture.snapshot()
   }
 
   function releasePianoKey(midi: number) {
@@ -163,17 +192,18 @@ export function useScaleDetector({ detection }: Options) {
     if (!pianoCapture.release(midi, timeMs)) return
 
     voiceMutedUntilMs = timeMs + PIANO_DEAF_MS
-    pianoEvents.value = [...pianoCapture.events]
+    pianoEvents.value = pianoCapture.snapshot()
   }
 
   function reset() {
     segmenter = createNoteSegmenter()
-    pianoCapture = createPianoNoteCapture({ minNoteMs: PIANO_MIN_NOTE_MS })
+    pianoCapture = createPianoChordCapture({ minNoteMs: PIANO_MIN_NOTE_MS })
     originMs = performance.now()
     voiceMutedUntilMs = 0
     voiceEvents.value = []
     pianoEvents.value = []
     selection.value = null
+    chordSelection.value = null
   }
 
   onUnmounted(stopListening)
@@ -184,6 +214,9 @@ export function useScaleDetector({ detection }: Options) {
     result,
     selectedCandidate,
     select,
+    chordResult,
+    selectedChord,
+    selectChord,
     toggleListening,
     pressPianoKey,
     releasePianoKey,

@@ -106,8 +106,8 @@
         "description": "Erkenne mehrere gleichzeitige Töne in Echtzeit. Singe eine Harmonie und sieh, welche Noten klingen."
       },
       "scaleDetector": {
-        "name": "Tonleiter-Detektor",
-        "description": "Sing oder spiel ein paar Töne und finde heraus, zu welcher Tonleiter sie gehören."
+        "name": "Tonleiter- & Akkord-Detektor",
+        "description": "Sing oder spiel ein paar Töne und finde heraus, welche Tonleiter oder welchen Akkord sie ergeben."
       },
       "piano": {
         "name": "Klavier",
@@ -283,14 +283,44 @@
     "pageDescription": "Sing oder spiel ein paar Töne. Du siehst, welche Tonleitern passen, und ihre Zwillinge — Tonleitern mit denselben Tönen, aber einem anderen Grundton.",
     "startOver": "Neu anfangen",
     "yourNotes": "Deine Töne:",
-    "noNotesYet": "Drück auf Start und sing, oder tipp aufs Klavier",
+    "noNotesYet": "Drück auf Start und sing oder spiel Klavier",
     "keepSinging": "Weiter so — sing mindestens {count} verschiedene Töne für einen guten Tipp",
     "noMatch": "Keine Tonleiter passt zu diesen Tönen. Fang am besten neu an.",
     "sameNotes": "Gleiche Töne:",
     "notSungYet": "Noch nicht gesungen: {notes}",
     "tieBreaker": "Sing {first} oder {second}, um sie zu unterscheiden",
     "pianoRange": "Klavier-Tonumfang",
-    "scaleName": "{root} {mode}"
+    "scaleName": "{root} {mode}",
+    "tabs": {
+      "scales": "Tonleitern",
+      "chords": "Akkorde"
+    },
+    "chords": {
+      "pageDescription": "Sing die Töne eines Akkords nacheinander oder spiel sie auf dem Klavier. Du siehst, welcher Akkord daraus wird, und seine Zwillinge — Akkorde mit denselben Tönen, aber einem anderen Grundton.",
+      "keepGoing": "Weiter so — ein Akkord braucht mindestens {count} verschiedene Töne",
+      "noMatch": "Kein Akkord passt zu diesen Tönen. Fang am besten neu an.",
+      "quality": {
+        "major": "Dur",
+        "minor": "Moll",
+        "diminished": "Vermindert",
+        "augmented": "Übermäßig",
+        "sus2": "Sus 2",
+        "sus4": "Sus 4",
+        "dominant7": "Septime",
+        "major7": "Große Septime",
+        "minor7": "Moll-Septime",
+        "halfDiminished7": "Halbvermindert",
+        "diminished7": "Verminderte Septime",
+        "minorMajor7": "Moll mit großer Septime",
+        "major6": "Sexte",
+        "minor6": "Moll-Sexte",
+        "dominant7sus4": "Septime sus 4",
+        "add9": "Add 9",
+        "dominant9": "None",
+        "major9": "Große None",
+        "minor9": "Moll-None"
+      }
+    }
   },
   "singTone": {
     "subtitle": "Ein zufälliger Ton wird gespielt – singe ihn nach!",

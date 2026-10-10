@@ -286,7 +286,19 @@ export function keyAccidentalStyle(
   root: number,
   mode: ScaleHighlightMode,
 ): AccidentalStyle {
-  const pitchClasses = [...buildScalePitchClasses(root, mode)]
+  return notesAccidentalStyle(root, [...buildScalePitchClasses(root, mode)])
+}
+
+/**
+ * The spelling rule behind keyAccidentalStyle, for any set of notes over a
+ * root — chords reuse it. `loweredDegrees` lists the semitones above the
+ * root that read as flattened degrees.
+ */
+export function notesAccidentalStyle(
+  root: number,
+  pitchClasses: readonly number[],
+  loweredDegrees: ReadonlySet<number> = LOWERED_DEGREES,
+): AccidentalStyle {
   const distinctLetters = (letters: string) =>
     new Set(pitchClasses.map((pitchClass) => letters[pitchClass])).size
   const sharpCount = distinctLetters(SHARP_LETTERS)
@@ -302,7 +314,7 @@ export function keyAccidentalStyle(
   const hasLoweredBlackKey = pitchClasses.some(
     (pitchClass) =>
       BLACK_KEYS.has(pitchClass) &&
-      LOWERED_DEGREES.has(pitchClassOf(pitchClass - rootPitchClass)),
+      loweredDegrees.has(pitchClassOf(pitchClass - rootPitchClass)),
   )
 
   return hasLoweredBlackKey ? 'flat' : 'sharp'

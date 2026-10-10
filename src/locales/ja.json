@@ -106,8 +106,8 @@
         "description": "複数の音を同時にリアルタイムで検出します。ハモって、どの音が鳴っているかを確認できます。"
       },
       "scaleDetector": {
-        "name": "スケール検出",
-        "description": "いくつか音を歌うか弾いて、どのスケールか調べよう。"
+        "name": "スケール＆コード検出",
+        "description": "いくつか音を歌うか弾いて、どのスケールやコードか調べよう。"
       },
       "piano": {
         "name": "ピアノ",
@@ -283,14 +283,44 @@
     "pageDescription": "いくつか音を歌うか弾いてみよう。合うスケールと、その「ふたご」— 同じ音で主音がちがうスケール — が表示されるよ。",
     "startOver": "やり直す",
     "yourNotes": "あなたの音：",
-    "noNotesYet": "開始を押して歌うか、ピアノをタップしよう",
+    "noNotesYet": "開始を押して、歌うかピアノを弾こう",
     "keepSinging": "その調子！ちがう音を {count} つ以上歌うと、もっと正確になるよ",
     "noMatch": "この音に合うスケールがないよ。やり直してみよう。",
     "sameNotes": "同じ音：",
     "notSungYet": "まだ歌っていない音：{notes}",
     "tieBreaker": "{first} か {second} を歌うと見分けられるよ",
     "pianoRange": "ピアノの音域",
-    "scaleName": "{root} {mode}"
+    "scaleName": "{root} {mode}",
+    "tabs": {
+      "scales": "スケール",
+      "chords": "コード"
+    },
+    "chords": {
+      "pageDescription": "コードの音を1つずつ歌うか、ピアノで弾いてね。どのコードになるかと、そのふたご（同じ音でルートがちがうコード）が見られるよ。",
+      "keepGoing": "その調子！コードには {count} つ以上のちがう音が必要だよ",
+      "noMatch": "この音に合うコードがないよ。やり直してみよう。",
+      "quality": {
+        "major": "メジャー",
+        "minor": "マイナー",
+        "diminished": "ディミニッシュ",
+        "augmented": "オーグメント",
+        "sus2": "サスツー",
+        "sus4": "サスフォー",
+        "dominant7": "セブンス",
+        "major7": "メジャーセブンス",
+        "minor7": "マイナーセブンス",
+        "halfDiminished7": "ハーフディミニッシュ",
+        "diminished7": "ディミニッシュセブンス",
+        "minorMajor7": "マイナーメジャーセブンス",
+        "major6": "シックス",
+        "minor6": "マイナーシックス",
+        "dominant7sus4": "セブンスサスフォー",
+        "add9": "アドナインス",
+        "dominant9": "ナインス",
+        "major9": "メジャーナインス",
+        "minor9": "マイナーナインス"
+      }
+    }
   },
   "singTone": {
     "subtitle": "ランダムな音が再生されます。まねして歌って一致させましょう!",

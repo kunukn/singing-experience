@@ -41,6 +41,11 @@ const DEMO_RUNS: { label: string; midis: number[] }[] = [
   { label: 'C D E G A', midis: [60, 62, 64, 67, 69] },
   { label: 'A C D E♭ E G', midis: [57, 60, 62, 63, 64, 67] },
   { label: 'G A B C D E', midis: [55, 57, 59, 60, 62, 64] },
+  /* Chord arpeggios for the Chords tab. */
+  { label: 'C E G', midis: [60, 64, 67] },
+  { label: 'C F G', midis: [60, 65, 67] },
+  { label: 'A C E G', midis: [57, 60, 64, 67] },
+  { label: 'C E G B♭ D', midis: [60, 64, 67, 70, 74] },
 ]
 const DEMO_NOTE_MS = 500
 /* Silence between notes, longer than the segmenter's MIN_GAP_MS so each

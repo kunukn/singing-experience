@@ -106,8 +106,8 @@
         "description": "实时检测多个同时发出的音调。唱和声，查看正在发声的音符。"
       },
       "scaleDetector": {
-        "name": "音阶检测器",
-        "description": "唱或弹几个音，看看它们属于哪个音阶。"
+        "name": "音阶和和弦检测器",
+        "description": "唱或弹几个音，看看它们组成哪个音阶或和弦。"
       },
       "piano": {
         "name": "钢琴",
@@ -283,14 +283,44 @@
     "pageDescription": "唱或弹几个音。你会看到哪些音阶合适，还有它们的“双胞胎”——音相同、但主音不同的音阶。",
     "startOver": "重新开始",
     "yourNotes": "你的音：",
-    "noNotesYet": "按开始然后唱，或者点钢琴",
+    "noNotesYet": "按开始，然后唱或弹钢琴",
     "keepSinging": "继续——至少唱 {count} 个不同的音，猜得更准",
     "noMatch": "没有音阶适合这些音。试试重新开始。",
     "sameNotes": "相同的音：",
     "notSungYet": "还没唱：{notes}",
     "tieBreaker": "唱 {first} 或 {second} 来分辨它们",
     "pianoRange": "钢琴音域",
-    "scaleName": "{root} {mode}"
+    "scaleName": "{root} {mode}",
+    "tabs": {
+      "scales": "音阶",
+      "chords": "和弦"
+    },
+    "chords": {
+      "pageDescription": "一个一个地唱出和弦里的音，或者在钢琴上弹。你会看到它们组成哪个和弦，还有它的双胞胎——音相同但根音不同的和弦。",
+      "keepGoing": "继续——一个和弦至少需要 {count} 个不同的音",
+      "noMatch": "没有和弦适合这些音。试试重新开始。",
+      "quality": {
+        "major": "大三和弦",
+        "minor": "小三和弦",
+        "diminished": "减三和弦",
+        "augmented": "增三和弦",
+        "sus2": "挂二和弦",
+        "sus4": "挂四和弦",
+        "dominant7": "属七和弦",
+        "major7": "大七和弦",
+        "minor7": "小七和弦",
+        "halfDiminished7": "半减七和弦",
+        "diminished7": "减七和弦",
+        "minorMajor7": "小大七和弦",
+        "major6": "大六和弦",
+        "minor6": "小六和弦",
+        "dominant7sus4": "属七挂四和弦",
+        "add9": "加九和弦",
+        "dominant9": "属九和弦",
+        "major9": "大九和弦",
+        "minor9": "小九和弦"
+      }
+    }
   },
   "singTone": {
     "subtitle": "播放一个随机音调 — 唱出来匹配！",

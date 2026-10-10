@@ -106,8 +106,8 @@
         "description": "Registrer flere samtidige toner i realtid. Syng en harmoni og se hvilke toner der lyder."
       },
       "scaleDetector": {
-        "name": "Skaladetektor",
-        "description": "Syng eller spil et par toner, og find ud af, hvilken skala de hører til."
+        "name": "Skala- og akkorddetektor",
+        "description": "Syng eller spil et par toner, og find ud af, hvilken skala eller akkord de danner."
       },
       "piano": {
         "name": "Klaver",
@@ -283,14 +283,44 @@
     "pageDescription": "Syng eller spil et par toner. Du ser, hvilke skalaer der passer, og deres tvillinger — skalaer med de samme toner, men en anden grundtone.",
     "startOver": "Start forfra",
     "yourNotes": "Dine toner:",
-    "noNotesYet": "Tryk på Start og syng, eller tryk på klaveret",
+    "noNotesYet": "Tryk på Start, og syng eller spil på klaveret",
     "keepSinging": "Fortsæt — syng mindst {count} forskellige toner for et godt gæt",
     "noMatch": "Ingen skala passer til de toner. Prøv at starte forfra.",
     "sameNotes": "Samme toner:",
     "notSungYet": "Ikke sunget endnu: {notes}",
     "tieBreaker": "Syng {first} eller {second} for at se forskel",
     "pianoRange": "Klaverets toneomfang",
-    "scaleName": "{root} {mode}"
+    "scaleName": "{root} {mode}",
+    "tabs": {
+      "scales": "Skalaer",
+      "chords": "Akkorder"
+    },
+    "chords": {
+      "pageDescription": "Syng tonerne i en akkord én ad gangen, eller spil dem på klaveret. Du ser, hvilken akkord de danner, plus dens tvillinger — akkorder med de samme toner, men en anden grundtone.",
+      "keepGoing": "Fortsæt — en akkord skal have mindst {count} forskellige toner",
+      "noMatch": "Ingen akkord passer til de toner. Prøv at starte forfra.",
+      "quality": {
+        "major": "Dur",
+        "minor": "Mol",
+        "diminished": "Formindsket",
+        "augmented": "Forstørret",
+        "sus2": "Sus 2",
+        "sus4": "Sus 4",
+        "dominant7": "Septim",
+        "major7": "Stor septim",
+        "minor7": "Mol-septim",
+        "halfDiminished7": "Halvformindsket",
+        "diminished7": "Formindsket septim",
+        "minorMajor7": "Mol med stor septim",
+        "major6": "Sekst",
+        "minor6": "Mol-sekst",
+        "dominant7sus4": "Septim sus 4",
+        "add9": "Add 9",
+        "dominant9": "Non",
+        "major9": "Stor non",
+        "minor9": "Mol-non"
+      }
+    }
   },
   "singTone": {
     "subtitle": "En tilfældig tone afspilles — syng den efter for at matche!",

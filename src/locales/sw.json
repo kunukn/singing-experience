@@ -106,8 +106,8 @@
         "description": "Gundua toni nyingi kwa wakati mmoja moja kwa moja. Imba harmoni na uone kila toni inayosikika."
       },
       "scaleDetector": {
-        "name": "Kigunduzi cha Mizani",
-        "description": "Imba au piga noti chache, ujue ni za mizani gani."
+        "name": "Kigunduzi cha Mizani na Kodi",
+        "description": "Imba au piga noti chache, ujue ni za mizani au kodi gani."
       },
       "piano": {
         "name": "Piano",
@@ -283,14 +283,44 @@
     "pageDescription": "Imba au piga noti chache. Utaona mizani inayofaa, na pacha wake — mizani yenye noti zilezile lakini noti ya msingi tofauti.",
     "startOver": "Anza upya",
     "yourNotes": "Noti zako:",
-    "noNotesYet": "Bonyeza Anza uimbe, au gusa piano",
+    "noNotesYet": "Bonyeza Anza, kisha imba au piga piano",
     "keepSinging": "Endelea — imba angalau noti {count} tofauti ili kukisia vizuri",
     "noMatch": "Hakuna mizani inayolingana na noti hizi. Jaribu kuanza upya.",
     "sameNotes": "Noti zilezile:",
     "notSungYet": "Bado hazijaimbwa: {notes}",
     "tieBreaker": "Imba {first} au {second} ili kuzitofautisha",
     "pianoRange": "Upana wa piano",
-    "scaleName": "{root} {mode}"
+    "scaleName": "{root} {mode}",
+    "tabs": {
+      "scales": "Mizani",
+      "chords": "Kodi"
+    },
+    "chords": {
+      "pageDescription": "Imba noti za kodi moja moja, au uzipige kwenye piano. Utaona zinaunda kodi gani, pamoja na pacha zake — kodi zenye noti zilezile lakini noti ya msingi tofauti.",
+      "keepGoing": "Endelea — kodi inahitaji angalau noti {count} tofauti",
+      "noMatch": "Hakuna kodi inayolingana na noti hizi. Jaribu kuanza upya.",
+      "quality": {
+        "major": "Meja",
+        "minor": "Maina",
+        "diminished": "Iliyopunguzwa",
+        "augmented": "Iliyoongezwa",
+        "sus2": "Sus 2",
+        "sus4": "Sus 4",
+        "dominant7": "Ya saba",
+        "major7": "Meja ya saba",
+        "minor7": "Maina ya saba",
+        "halfDiminished7": "Nusu-iliyopunguzwa",
+        "diminished7": "Ya saba iliyopunguzwa",
+        "minorMajor7": "Maina meja ya saba",
+        "major6": "Ya sita",
+        "minor6": "Maina ya sita",
+        "dominant7sus4": "Ya saba sus 4",
+        "add9": "Add 9",
+        "dominant9": "Ya tisa",
+        "major9": "Meja ya tisa",
+        "minor9": "Maina ya tisa"
+      }
+    }
   },
   "singTone": {
     "subtitle": "Toni ya nasibu inachezwa — iimbe tena kulinganisha!",

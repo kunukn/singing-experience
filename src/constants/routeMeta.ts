@@ -65,9 +65,9 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
       'Play a guitar fretboard in your browser and see your singing voice mapped onto the strings in real time.',
   },
   '/scale-detector': {
-    title: 'Scale Detector — Find the Key You Sing In',
+    title: 'Scale & Chord Detector — Find the Key and Chord You Sing',
     description:
-      'Sing or play a few notes and see which scales fit — major, minor, pentatonic, blues and the church modes — plus the twin scales that share the same notes.',
+      'Sing or play a few notes and see which scales fit — major, minor, pentatonic, blues and the church modes — or which chord they spell, from triads to 9th chords, plus the twins that share the same notes.',
   },
   '/song-recorder': {
     title: 'Song Recorder — Sing to Sheet Music',

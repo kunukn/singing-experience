@@ -106,8 +106,8 @@
         "description": "Detect multiple simultaneous tones in real time. Sing a harmony and see which notes are sounding."
       },
       "scaleDetector": {
-        "name": "Scale Detector",
-        "description": "Sing or play a few notes and find out which scale they belong to."
+        "name": "Scale & Chord Detector",
+        "description": "Sing or play a few notes and find out which scale or chord they make."
       },
       "piano": {
         "name": "Piano",
@@ -283,14 +283,44 @@
     "pageDescription": "Sing or play a few notes. You'll see which scales fit, plus their twins — scales with the same notes but a different home note.",
     "startOver": "Start over",
     "yourNotes": "Your notes:",
-    "noNotesYet": "Press Start and sing, or tap the piano",
+    "noNotesYet": "Press Start, then sing or play the piano",
     "keepSinging": "Keep going — sing at least {count} different notes for a good guess",
     "noMatch": "No scale fits these notes. Try starting over.",
     "sameNotes": "Same notes:",
     "notSungYet": "Not sung yet: {notes}",
     "tieBreaker": "Sing {first} or {second} to tell them apart",
     "pianoRange": "Piano range",
-    "scaleName": "{root} {mode}"
+    "scaleName": "{root} {mode}",
+    "tabs": {
+      "scales": "Scales",
+      "chords": "Chords"
+    },
+    "chords": {
+      "pageDescription": "Sing the notes of a chord one by one, or play them on the piano. You'll see which chord they make, plus its twins — chords with the same notes but a different root.",
+      "keepGoing": "Keep going — a chord needs at least {count} different notes",
+      "noMatch": "No chord fits these notes. Try starting over.",
+      "quality": {
+        "major": "Major",
+        "minor": "Minor",
+        "diminished": "Diminished",
+        "augmented": "Augmented",
+        "sus2": "Suspended 2nd",
+        "sus4": "Suspended 4th",
+        "dominant7": "Dominant 7th",
+        "major7": "Major 7th",
+        "minor7": "Minor 7th",
+        "halfDiminished7": "Half-diminished 7th",
+        "diminished7": "Diminished 7th",
+        "minorMajor7": "Minor-major 7th",
+        "major6": "Major 6th",
+        "minor6": "Minor 6th",
+        "dominant7sus4": "Dominant 7th sus 4",
+        "add9": "Add 9",
+        "dominant9": "Dominant 9th",
+        "major9": "Major 9th",
+        "minor9": "Minor 9th"
+      }
+    }
   },
   "singTone": {
     "subtitle": "A random tone is played — sing it back to match!",

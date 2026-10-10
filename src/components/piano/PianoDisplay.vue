@@ -66,6 +66,9 @@ type Props = {
   /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
   scaleRoot?: number | null
   scaleMode?: ScaleHighlightMode
+  /* Tints these pitch classes instead of scaleMode's — e.g. a chord's notes.
+   * scaleRoot still marks the root. */
+  highlightPitchClasses?: ReadonlySet<number>
   /* Pitch classes (0–11) to mark with a dot on the scale strip — the Scale
    * Detector's sung notes, so an unmarked tinted key reads as "not sung yet". */
   markedPitchClasses?: ReadonlySet<number>
@@ -166,10 +169,12 @@ function keyAriaLabel(key: PianoKey): string {
 
 /* Built once per scale change, not once per key — the keyboard can be 40+ keys. */
 const scalePitchClasses = computed(() =>
-  buildScalePitchClasses(
-    props.scaleRoot ?? null,
-    props.scaleMode ?? DEFAULT_SCALE_HIGHLIGHT_MODE,
-  ),
+  props.scaleRoot != null && props.highlightPitchClasses
+    ? props.highlightPitchClasses
+    : buildScalePitchClasses(
+        props.scaleRoot ?? null,
+        props.scaleMode ?? DEFAULT_SCALE_HIGHLIGHT_MODE,
+      ),
 )
 
 function scaleRole(key: PianoKey): ScaleRole {

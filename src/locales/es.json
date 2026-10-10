@@ -106,8 +106,8 @@
         "description": "Detecta múltiples tonos simultáneos en tiempo real. Canta una armonía y observa qué notas suenan."
       },
       "scaleDetector": {
-        "name": "Detector de escalas",
-        "description": "Canta o toca unas notas y descubre a qué escala pertenecen."
+        "name": "Detector de escalas y acordes",
+        "description": "Canta o toca unas notas y descubre qué escala o acorde forman."
       },
       "piano": {
         "name": "Piano",
@@ -283,14 +283,44 @@
     "pageDescription": "Canta o toca unas notas. Verás qué escalas encajan y sus gemelas: escalas con las mismas notas pero otra nota base.",
     "startOver": "Empezar de nuevo",
     "yourNotes": "Tus notas:",
-    "noNotesYet": "Pulsa Iniciar y canta, o toca el piano",
+    "noNotesYet": "Pulsa Iniciar y canta o toca el piano",
     "keepSinging": "¡Sigue! Canta al menos {count} notas distintas para acertar mejor",
     "noMatch": "Ninguna escala encaja con estas notas. Prueba a empezar de nuevo.",
     "sameNotes": "Mismas notas:",
     "notSungYet": "Aún sin cantar: {notes}",
     "tieBreaker": "Canta {first} o {second} para saber cuál es",
     "pianoRange": "Rango del piano",
-    "scaleName": "{root} {mode}"
+    "scaleName": "{root} {mode}",
+    "tabs": {
+      "scales": "Escalas",
+      "chords": "Acordes"
+    },
+    "chords": {
+      "pageDescription": "Canta las notas de un acorde una a una o tócalas en el piano. Verás qué acorde forman y sus gemelos: acordes con las mismas notas pero otra nota base.",
+      "keepGoing": "¡Sigue! Un acorde necesita al menos {count} notas distintas",
+      "noMatch": "Ningún acorde encaja con estas notas. Prueba a empezar de nuevo.",
+      "quality": {
+        "major": "Mayor",
+        "minor": "Menor",
+        "diminished": "Disminuido",
+        "augmented": "Aumentado",
+        "sus2": "Sus 2",
+        "sus4": "Sus 4",
+        "dominant7": "Séptima",
+        "major7": "Séptima mayor",
+        "minor7": "Menor séptima",
+        "halfDiminished7": "Semidisminuido",
+        "diminished7": "Séptima disminuida",
+        "minorMajor7": "Menor con séptima mayor",
+        "major6": "Sexta",
+        "minor6": "Menor sexta",
+        "dominant7sus4": "Séptima sus 4",
+        "add9": "Add 9",
+        "dominant9": "Novena",
+        "major9": "Novena mayor",
+        "minor9": "Menor novena"
+      }
+    }
   },
   "singTone": {
     "subtitle": "Se reproduce un tono aleatorio — ¡cántalo para igualarlo!",

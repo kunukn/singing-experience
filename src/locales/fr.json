@@ -106,8 +106,8 @@
         "description": "Détecte plusieurs tons en même temps. Chante une harmonie et vois quelles notes résonnent."
       },
       "scaleDetector": {
-        "name": "Détecteur de gammes",
-        "description": "Chante ou joue quelques notes et découvre à quelle gamme elles appartiennent."
+        "name": "Détecteur de gammes et d'accords",
+        "description": "Chante ou joue quelques notes et découvre quelle gamme ou quel accord elles forment."
       },
       "piano": {
         "name": "Piano",
@@ -283,14 +283,44 @@
     "pageDescription": "Chante ou joue quelques notes. Tu verras quelles gammes collent, et leurs jumelles : des gammes avec les mêmes notes mais une autre note de base.",
     "startOver": "Recommencer",
     "yourNotes": "Tes notes :",
-    "noNotesYet": "Appuie sur Démarrer et chante, ou touche le piano",
+    "noNotesYet": "Appuie sur Démarrer, puis chante ou joue du piano",
     "keepSinging": "Continue ! Chante au moins {count} notes différentes pour mieux deviner",
     "noMatch": "Aucune gamme ne colle à ces notes. Essaie de recommencer.",
     "sameNotes": "Mêmes notes :",
     "notSungYet": "Pas encore chantées : {notes}",
     "tieBreaker": "Chante {first} ou {second} pour les départager",
     "pianoRange": "Étendue du piano",
-    "scaleName": "{root} {mode}"
+    "scaleName": "{root} {mode}",
+    "tabs": {
+      "scales": "Gammes",
+      "chords": "Accords"
+    },
+    "chords": {
+      "pageDescription": "Chante les notes d'un accord une par une, ou joue-les au piano. Tu verras quel accord elles forment, et ses jumeaux — des accords avec les mêmes notes mais une autre fondamentale.",
+      "keepGoing": "Continue ! Un accord a besoin d'au moins {count} notes différentes",
+      "noMatch": "Aucun accord ne colle à ces notes. Essaie de recommencer.",
+      "quality": {
+        "major": "Majeur",
+        "minor": "Mineur",
+        "diminished": "Diminué",
+        "augmented": "Augmenté",
+        "sus2": "Sus 2",
+        "sus4": "Sus 4",
+        "dominant7": "Septième",
+        "major7": "Septième majeure",
+        "minor7": "Mineur septième",
+        "halfDiminished7": "Demi-diminué",
+        "diminished7": "Septième diminuée",
+        "minorMajor7": "Mineur septième majeure",
+        "major6": "Sixte",
+        "minor6": "Mineur sixte",
+        "dominant7sus4": "Septième sus 4",
+        "add9": "Add 9",
+        "dominant9": "Neuvième",
+        "major9": "Neuvième majeure",
+        "minor9": "Mineur neuvième"
+      }
+    }
   },
   "singTone": {
     "subtitle": "Un ton aléatoire est joué — chante-le pour le reproduire !",

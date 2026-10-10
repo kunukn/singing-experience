@@ -3,10 +3,12 @@ import type { PianoPreviewLaneId } from '@/components/piano/pianoPreview'
 import type { PitchDetectionInput } from '@/components/song-recorder/useSongRecorder'
 import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
+import { chordAccidentalStyle, chordPitchClasses } from '@/utils/chordDetection'
 import { midiToNoteLabel, type NoteInfo } from '@/utils/noteUtils'
 import { keyAccidentalStyle, pitchClassLabel } from '@/utils/scaleDetection'
 import { pitchClassOf } from '@/utils/scaleHighlight'
 import { useMediaQuery } from '@vueuse/core'
+import ChordDetectorResults from './ChordDetectorResults.vue'
 import ScaleDetectorResults from './ScaleDetectorResults.vue'
 import { useScaleDetector } from './useScaleDetector'
 
@@ -23,6 +25,29 @@ const props = defineProps<Props>()
 
 const { t } = useI18n()
 
+const route = useRoute()
+const router = useRouter()
+
+const TAB_VALUES = ['scales', 'chords'] as const
+type DetectorTab = (typeof TAB_VALUES)[number]
+const DEFAULT_TAB: DetectorTab = 'scales'
+
+/* Active tab lives only in the URL (?tab=scales|chords), as on /notes.
+ * replace() keeps tab switches out of the browser history. */
+const activeTab = computed<DetectorTab>({
+  get() {
+    const tab = route.query.tab
+
+    return TAB_VALUES.includes(tab as DetectorTab)
+      ? (tab as DetectorTab)
+      : DEFAULT_TAB
+  },
+  set(tab) {
+    router.replace({ query: { ...route.query, tab } })
+  },
+})
+const isChordTab = computed(() => activeTab.value === 'chords')
+
 const detector = useScaleDetector({ detection: props.detection })
 const {
   isListening,
@@ -30,6 +55,9 @@ const {
   result,
   selectedCandidate,
   select,
+  chordResult,
+  selectedChord,
+  selectChord,
   toggleListening,
   pressPianoKey,
   releasePianoKey,
@@ -37,9 +65,29 @@ const {
 } = detector
 
 const accidentalStyle = computed(() => {
+  if (isChordTab.value) {
+    const chord = selectedChord.value
+
+    return chord ? chordAccidentalStyle(chord.root, chord.type) : 'sharp'
+  }
+
   const selected = selectedCandidate.value
 
   return selected ? keyAccidentalStyle(selected.root, selected.mode) : 'sharp'
+})
+
+/* The piano tints the picked scale on one tab and the picked chord's notes
+ * on the other. */
+const highlightRoot = computed(() =>
+  isChordTab.value
+    ? (selectedChord.value?.root ?? null)
+    : (selectedCandidate.value?.root ?? null),
+)
+const chordHighlight = computed(() => {
+  const chord = selectedChord.value
+  if (!isChordTab.value || !chord) return undefined
+
+  return chordPitchClasses(chord.root, chord.type)
 })
 
 /* Each pitch class once, in the order it was first sung. */
@@ -156,13 +204,27 @@ defineExpose({ detector })
 </script>
 
 <template>
-  <div
+  <PrimeTabs
+    v-model:value="activeTab"
     class="flex flex-1 flex-col items-center gap-4 pb-4"
     data-testid="scale-detector-display"
   >
+    <PrimeTabList class="mx-auto w-full max-w-400">
+      <PrimeTab value="scales" data-testid="scale-detector-tab-scales">
+        {{ t('scaleDetector.tabs.scales') }}
+      </PrimeTab>
+      <PrimeTab value="chords" data-testid="scale-detector-tab-chords">
+        {{ t('scaleDetector.tabs.chords') }}
+      </PrimeTab>
+    </PrimeTabList>
+
     <div class="flex w-full max-w-180 flex-col items-center gap-4 px-4">
       <p class="text-center text-sm text-(--p-text-muted-color)">
-        {{ t('scaleDetector.pageDescription') }}
+        {{
+          isChordTab
+            ? t('scaleDetector.chords.pageDescription')
+            : t('scaleDetector.pageDescription')
+        }}
       </p>
 
       <p v-if="detection.error.value" class="text-sm text-(--p-red-400)">
@@ -221,19 +283,30 @@ defineExpose({ detector })
         </span>
       </div>
 
-      <ScaleDetectorResults
-        :result="result"
-        :selected="selectedCandidate"
-        @select="select"
-      />
+      <PrimeTabPanels class="w-full p-0">
+        <PrimeTabPanel value="scales" class="flex flex-col gap-4">
+          <ScaleDetectorResults
+            :result="result"
+            :selected="selectedCandidate"
+            @select="select"
+          />
 
-      <p
-        v-if="tieBreakerText"
-        class="text-center text-sm text-(--p-blue-400)"
-        data-testid="scale-detector-tie-breaker"
-      >
-        {{ tieBreakerText }}
-      </p>
+          <p
+            v-if="tieBreakerText"
+            class="text-center text-sm text-(--p-blue-400)"
+            data-testid="scale-detector-tie-breaker"
+          >
+            {{ tieBreakerText }}
+          </p>
+        </PrimeTabPanel>
+        <PrimeTabPanel value="chords">
+          <ChordDetectorResults
+            :result="chordResult"
+            :selected="selectedChord"
+            @select="selectChord"
+          />
+        </PrimeTabPanel>
+      </PrimeTabPanels>
 
       <div class="flex items-center justify-center gap-2">
         <VoiceRangeSelect
@@ -257,8 +330,9 @@ defineExpose({ detector })
         :areKeyboardHintsVisible="areKeyboardHintsVisible"
         :previewLanes="previewLanes"
         :isPreviewEnabled="isPreviewEnabled"
-        :scaleRoot="selectedCandidate?.root ?? null"
+        :scaleRoot="highlightRoot"
         :scaleMode="selectedCandidate?.mode"
+        :highlightPitchClasses="chordHighlight"
         :markedPitchClasses="result.sungPitchClasses"
         shouldColorByCents
         @notePressed="(midi) => pressPianoKey(midi)"
@@ -266,5 +340,5 @@ defineExpose({ detector })
         @tonePlayed="triggerDeafPeriod"
       />
     </div>
-  </div>
+  </PrimeTabs>
 </template>

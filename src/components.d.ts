@@ -17,6 +17,7 @@ declare module 'vue' {
     BarHighlightToggle: typeof import('./components/grace-kelly/BarHighlightToggle.vue')['default']
     CardLink: typeof import('./components/generic/CardLink.vue')['default']
     CentsDeviationBar: typeof import('./components/generic/CentsDeviationBar.vue')['default']
+    ChordDetectorResults: typeof import('./components/scale-detector/ChordDetectorResults.vue')['default']
     DarkModeToggle: typeof import('./components/generic/DarkModeToggle.vue')['default']
     DetectedToneCard: typeof import('./components/tone-detector/DetectedToneCard.vue')['default']
     DoReMiCompletePanel: typeof import('./components/do-re-mi/DoReMiCompletePanel.vue')['default']

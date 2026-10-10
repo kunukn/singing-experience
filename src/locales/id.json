@@ -106,8 +106,8 @@
         "description": "Deteksi beberapa nada sekaligus secara langsung. Nyanyikan harmoni dan lihat setiap nada yang terdengar."
       },
       "scaleDetector": {
-        "name": "Detektor Tangga Nada",
-        "description": "Nyanyikan atau mainkan beberapa nada dan cari tahu tangga nadanya."
+        "name": "Detektor Tangga Nada & Akor",
+        "description": "Nyanyikan atau mainkan beberapa nada dan cari tahu tangga nada atau akornya."
       },
       "piano": {
         "name": "Piano",
@@ -283,14 +283,44 @@
     "pageDescription": "Nyanyikan atau mainkan beberapa nada. Kamu akan melihat tangga nada yang cocok, beserta kembarannya — tangga nada dengan nada yang sama tapi nada dasar berbeda.",
     "startOver": "Mulai lagi",
     "yourNotes": "Nadamu:",
-    "noNotesYet": "Tekan Mulai lalu bernyanyi, atau ketuk piano",
+    "noNotesYet": "Tekan Mulai, lalu bernyanyi atau main piano",
     "keepSinging": "Terus — nyanyikan setidaknya {count} nada berbeda supaya tebakannya lebih tepat",
     "noMatch": "Tidak ada tangga nada yang cocok dengan nada-nada ini. Coba mulai lagi.",
     "sameNotes": "Nada sama:",
     "notSungYet": "Belum dinyanyikan: {notes}",
     "tieBreaker": "Nyanyikan {first} atau {second} untuk membedakannya",
     "pianoRange": "Rentang piano",
-    "scaleName": "{root} {mode}"
+    "scaleName": "{root} {mode}",
+    "tabs": {
+      "scales": "Tangga nada",
+      "chords": "Akor"
+    },
+    "chords": {
+      "pageDescription": "Nyanyikan nada-nada sebuah akor satu per satu, atau mainkan di piano. Kamu akan lihat akor apa yang terbentuk, plus kembarannya — akor dengan nada yang sama tapi nada dasar berbeda.",
+      "keepGoing": "Terus — akor butuh setidaknya {count} nada berbeda",
+      "noMatch": "Tidak ada akor yang cocok dengan nada-nada ini. Coba mulai lagi.",
+      "quality": {
+        "major": "Mayor",
+        "minor": "Minor",
+        "diminished": "Diminished",
+        "augmented": "Augmented",
+        "sus2": "Sus 2",
+        "sus4": "Sus 4",
+        "dominant7": "Septim",
+        "major7": "Mayor septim",
+        "minor7": "Minor septim",
+        "halfDiminished7": "Setengah diminished",
+        "diminished7": "Diminished septim",
+        "minorMajor7": "Minor mayor septim",
+        "major6": "Mayor sekst",
+        "minor6": "Minor sekst",
+        "dominant7sus4": "Septim sus 4",
+        "add9": "Add 9",
+        "dominant9": "Non",
+        "major9": "Mayor non",
+        "minor9": "Minor non"
+      }
+    }
   },
   "singTone": {
     "subtitle": "Sebuah nada acak dimainkan — nyanyikan kembali untuk mencocokkan!",

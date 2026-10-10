@@ -22,17 +22,17 @@ Everything is reachable from the home screen, split into **🎛️ Music Tools**
 
 ### 🎛️ Music Tools
 
-| Tool                      | What it does                                                                             |
-| ------------------------- | ---------------------------------------------------------------------------------------- |
-| 🎤 Pitch Detector         | Shows the note, frequency, and how sharp or flat you are — with a pitch history chart    |
-| 🎙️ Vocal Warm-Up          | Guided pitch sequences that transpose up a half step each round                          |
-| 🎵 Notes                  | Every note on the staff, with its name and sound                                         |
-| 🪕 Instrument Tuner       | Guitar and ukulele tunings with a cents bar and an in-tune chime                         |
-| 🎹 Piano `beta`           | Play the keys and watch your voice land on the keyboard                                  |
-| 🎸 Guitar `beta`          | Play the fretboard and watch your voice land on it                                       |
-| 🔑 Scale Detector `alpha` | Sing or play a few notes and see which scales fit — plus twin scales with the same notes |
-| 📝 Song Recorder `alpha`  | Sing a tune to a metronome and see it as sheet music; copy the ABC notation              |
-| 🎚️ Tone Detector `alpha`  | Picks up several notes at once — sing or play a harmony and see every tone               |
+| Tool                              | What it does                                                                                  |
+| --------------------------------- | --------------------------------------------------------------------------------------------- |
+| 🎤 Pitch Detector                 | Shows the note, frequency, and how sharp or flat you are — with a pitch history chart         |
+| 🎙️ Vocal Warm-Up                  | Guided pitch sequences that transpose up a half step each round                               |
+| 🎵 Notes                          | Every note on the staff, with its name and sound                                              |
+| 🪕 Instrument Tuner               | Guitar and ukulele tunings with a cents bar and an in-tune chime                              |
+| 🎹 Piano `beta`                   | Play the keys and watch your voice land on the keyboard                                       |
+| 🎸 Guitar `beta`                  | Play the fretboard and watch your voice land on it                                            |
+| 🔑 Scale & Chord Detector `alpha` | Sing or play a few notes and see which scales and chords fit — plus twins with the same notes |
+| 📝 Song Recorder `alpha`          | Sing a tune to a metronome and see it as sheet music; copy the ABC notation                   |
+| 🎚️ Tone Detector `alpha`          | Picks up several notes at once — sing or play a harmony and see every tone                    |
 
 The tools all listen to your voice in real time and show you where it lands — on a chart, a staff, a keyboard, or a fretboard. Tap a note to hear it, sing it back, and compare. Each tool has its own settings — voice range, reference pitch, scale highlighting, note names, tuning, and more.
 
