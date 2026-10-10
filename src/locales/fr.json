@@ -106,8 +106,8 @@
         "description": "Détecte plusieurs tons en même temps. Chante une harmonie et vois quelles notes résonnent."
       },
       "scaleDetector": {
-        "name": "Détecteur de gammes et d'accords",
-        "description": "Chante ou joue quelques notes et découvre quelle gamme ou quel accord elles forment."
+        "name": "Détecteur d'accords et de gammes",
+        "description": "Chante ou joue quelques notes et découvre quel accord ou quelle gamme elles forment."
       },
       "piano": {
         "name": "Piano",

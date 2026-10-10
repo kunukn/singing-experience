@@ -106,8 +106,8 @@
         "description": "Detecte vários tons simultaneamente em tempo real. Cante uma harmonia e veja quais notas estão soando."
       },
       "scaleDetector": {
-        "name": "Detector de escalas e acordes",
-        "description": "Cante ou toque algumas notas e descubra que escala ou acorde elas formam."
+        "name": "Detector de acordes e escalas",
+        "description": "Cante ou toque algumas notas e descubra que acorde ou escala elas formam."
       },
       "piano": {
         "name": "Piano",

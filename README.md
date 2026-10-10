@@ -30,7 +30,7 @@ Everything is reachable from the home screen, split into **🎛️ Music Tools**
 | 🪕 Instrument Tuner               | Guitar and ukulele tunings with a cents bar and an in-tune chime                              |
 | 🎹 Piano `beta`                   | Play the keys and watch your voice land on the keyboard                                       |
 | 🎸 Guitar `beta`                  | Play the fretboard and watch your voice land on it                                            |
-| 🔑 Scale & Chord Detector `alpha` | Sing or play a few notes and see which scales and chords fit — plus twins with the same notes |
+| 🔑 Chord & Scale Detector `alpha` | Sing or play a few notes and see which chords and scales fit — plus twins with the same notes |
 | 📝 Song Recorder `alpha`          | Sing a tune to a metronome and see it as sheet music; copy the ABC notation                   |
 | 🎚️ Tone Detector `alpha`          | Picks up several notes at once — sing or play a harmony and see every tone                    |
 

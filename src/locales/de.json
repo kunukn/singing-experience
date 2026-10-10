@@ -106,8 +106,8 @@
         "description": "Erkenne mehrere gleichzeitige Töne in Echtzeit. Singe eine Harmonie und sieh, welche Noten klingen."
       },
       "scaleDetector": {
-        "name": "Tonleiter- & Akkord-Detektor",
-        "description": "Sing oder spiel ein paar Töne und finde heraus, welche Tonleiter oder welchen Akkord sie ergeben."
+        "name": "Akkord- & Tonleiter-Detektor",
+        "description": "Sing oder spiel ein paar Töne und finde heraus, welchen Akkord oder welche Tonleiter sie ergeben."
       },
       "piano": {
         "name": "Klavier",

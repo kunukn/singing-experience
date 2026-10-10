@@ -106,8 +106,8 @@
         "description": "Registrer flere samtidige toner i realtid. Syng en harmoni og se hvilke toner der lyder."
       },
       "scaleDetector": {
-        "name": "Skala- og akkorddetektor",
-        "description": "Syng eller spil et par toner, og find ud af, hvilken skala eller akkord de danner."
+        "name": "Akkord- og skaladetektor",
+        "description": "Syng eller spil et par toner, og find ud af, hvilken akkord eller skala de danner."
       },
       "piano": {
         "name": "Klaver",

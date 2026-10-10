@@ -28,11 +28,11 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-const TAB_VALUES = ['scales', 'chords'] as const
+const TAB_VALUES = ['chords', 'scales'] as const
 type DetectorTab = (typeof TAB_VALUES)[number]
-const DEFAULT_TAB: DetectorTab = 'scales'
+const DEFAULT_TAB: DetectorTab = 'chords'
 
-/* Active tab lives only in the URL (?tab=scales|chords), as on /notes.
+/* Active tab lives only in the URL (?tab=chords|scales), as on /notes.
  * replace() keeps tab switches out of the browser history. */
 const activeTab = computed<DetectorTab>({
   get() {
@@ -242,11 +242,11 @@ defineExpose({ detector })
     data-testid="scale-detector-display"
   >
     <PrimeTabList class="mx-auto w-full max-w-400">
-      <PrimeTab value="scales" data-testid="scale-detector-tab-scales">
-        {{ t('scaleDetector.tabs.scales') }}
-      </PrimeTab>
       <PrimeTab value="chords" data-testid="scale-detector-tab-chords">
         {{ t('scaleDetector.tabs.chords') }}
+      </PrimeTab>
+      <PrimeTab value="scales" data-testid="scale-detector-tab-scales">
+        {{ t('scaleDetector.tabs.scales') }}
       </PrimeTab>
     </PrimeTabList>
 
@@ -333,6 +333,13 @@ defineExpose({ detector })
       </div>
 
       <PrimeTabPanels class="w-full p-0">
+        <PrimeTabPanel value="chords">
+          <ChordDetectorResults
+            :result="chordResult"
+            :selected="selectedChord"
+            @select="selectChord"
+          />
+        </PrimeTabPanel>
         <PrimeTabPanel value="scales" class="flex flex-col gap-4">
           <ScaleDetectorResults
             :result="result"
@@ -347,13 +354,6 @@ defineExpose({ detector })
           >
             {{ tieBreakerText }}
           </p>
-        </PrimeTabPanel>
-        <PrimeTabPanel value="chords">
-          <ChordDetectorResults
-            :result="chordResult"
-            :selected="selectedChord"
-            @select="selectChord"
-          />
         </PrimeTabPanel>
       </PrimeTabPanels>
 

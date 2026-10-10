@@ -106,8 +106,8 @@
         "description": "Gundua toni nyingi kwa wakati mmoja moja kwa moja. Imba harmoni na uone kila toni inayosikika."
       },
       "scaleDetector": {
-        "name": "Kigunduzi cha Mizani na Kodi",
-        "description": "Imba au piga noti chache, ujue ni za mizani au kodi gani."
+        "name": "Kigunduzi cha Kodi na Mizani",
+        "description": "Imba au piga noti chache, ujue ni za kodi au mizani gani."
       },
       "piano": {
         "name": "Piano",

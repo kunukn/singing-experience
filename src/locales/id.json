@@ -106,8 +106,8 @@
         "description": "Deteksi beberapa nada sekaligus secara langsung. Nyanyikan harmoni dan lihat setiap nada yang terdengar."
       },
       "scaleDetector": {
-        "name": "Detektor Tangga Nada & Akor",
-        "description": "Nyanyikan atau mainkan beberapa nada dan cari tahu tangga nada atau akornya."
+        "name": "Detektor Akor & Tangga Nada",
+        "description": "Nyanyikan atau mainkan beberapa nada dan cari tahu akor atau tangga nadanya."
       },
       "piano": {
         "name": "Piano",
