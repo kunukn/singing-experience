@@ -350,7 +350,7 @@ defineExpose({ recorder })
         rounded
         icon="pi pi-circle-fill"
         :label="t('songRecorder.record')"
-        class="min-h-8.75 min-w-24"
+        class="min-w-24"
         data-testid="song-recorder-record"
         @click="record"
       />
@@ -361,7 +361,7 @@ defineExpose({ recorder })
         size="small"
         rounded
         :label="t('generic.stop')"
-        class="min-h-8.75 min-w-24"
+        class="min-w-24"
         data-testid="song-recorder-stop"
         @click="stop"
       />
@@ -374,7 +374,7 @@ defineExpose({ recorder })
           rounded
           :label="t('generic.play')"
           :disabled="!hasNotes"
-          class="min-h-8.75 min-w-20"
+          class="min-w-20"
           data-testid="song-recorder-play"
           @click="play"
         />
@@ -384,7 +384,7 @@ defineExpose({ recorder })
           size="small"
           rounded
           :label="t('generic.pause')"
-          class="min-h-8.75 min-w-20"
+          class="min-w-20"
           data-testid="song-recorder-pause"
           @click="pause"
         />
@@ -394,7 +394,7 @@ defineExpose({ recorder })
           size="small"
           rounded
           :label="t('generic.resume')"
-          class="min-h-8.75 min-w-20"
+          class="min-w-20"
           data-testid="song-recorder-resume"
           @click="resume"
         />
@@ -404,7 +404,7 @@ defineExpose({ recorder })
           size="small"
           rounded
           :label="t('generic.stop')"
-          class="min-h-8.75 min-w-20"
+          class="min-w-20"
           data-testid="song-recorder-stop-playback"
           @click="stopPlayback"
         />
@@ -413,7 +413,6 @@ defineExpose({ recorder })
           size="small"
           rounded
           icon="pi pi-refresh"
-          class="min-h-8.75"
           :label="t('songRecorder.newRecording')"
           data-testid="song-recorder-reset"
           @click="reset"

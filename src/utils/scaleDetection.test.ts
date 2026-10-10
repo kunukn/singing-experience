@@ -44,6 +44,19 @@ describe('detectScales', () => {
     expect(names(top)[1]).toBe(`${C}:ionian`)
   })
 
+  test('picks C major over B Locrian for B C D E F G', () => {
+    const [top] = detectScales(sing(59, 60, 62, 64, 65, 67)).families
+
+    expect(names(top).slice(0, 2)).toEqual([`${C}:ionian`, `${A}:aeolian`])
+  })
+
+  test('lets a church mode win when the run starts and ends on its root', () => {
+    /* D E F G A B C D */
+    const [top] = detectScales(sing(62, 64, 65, 67, 69, 71, 72, 74)).families
+
+    expect(top.candidates[0]).toMatchObject({ root: 2, mode: 'dorian' })
+  })
+
   test('prefers the tightest fit — C D E G A is a whole pentatonic', () => {
     const [top] = detectScales(sing(60, 62, 64, 67, 69)).families
 

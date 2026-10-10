@@ -187,6 +187,7 @@ defineExpose({ detector })
           size="small"
           rounded
           outlined
+          icon="pi pi-refresh"
           :label="t('scaleDetector.startOver')"
           :disabled="notes.length === 0"
           data-testid="scale-detector-reset"

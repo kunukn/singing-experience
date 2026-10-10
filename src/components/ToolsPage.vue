@@ -26,9 +26,12 @@ function prewarmAudio() {
             <div class="flex items-start gap-3 sm:gap-4">
               <span class="text-4xl">{{ tool.icon }}</span>
               <div>
-                <h2 class="text-xl font-semibold">
-                  {{ t(`home.programs.${tool.key}.name`) }}
-                </h2>
+                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <h2 class="text-xl font-semibold">
+                    {{ t(`home.programs.${tool.key}.name`) }}
+                  </h2>
+                  <ProgramStageTag v-if="tool.stage" :stage="tool.stage" />
+                </div>
                 <p class="mt-1 text-sm text-(--p-text-muted-color)">
                   {{ t(`home.programs.${tool.key}.description`) }}
                 </p>

@@ -305,7 +305,6 @@ watch(
         size="small"
         rounded
         icon="pi pi-volume-up"
-        class="min-h-8.75 min-w-8.75"
         :class="{ 'string-playing': isPlayingSequence }"
         :aria-label="t('generic.previewButton')"
         @click="toggleTuningPreview"

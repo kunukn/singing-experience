@@ -1,7 +1,11 @@
+/* Maturity of an unfinished program — shown as a tag on its card and in the top bar */
+export type ProgramStage = 'alpha' | 'beta'
+
 export type Program = {
   key: string
   icon: string
   route: string
+  stage?: ProgramStage
 }
 
 export const games: Program[] = [
@@ -14,6 +18,7 @@ export const games: Program[] = [
     key: 'singTheKeys',
     icon: '🎹',
     route: '/sing-the-keys',
+    stage: 'beta',
   },
   {
     key: 'doReMi',
@@ -24,16 +29,19 @@ export const games: Program[] = [
     key: 'graceKelly',
     icon: '👑',
     route: '/grace-kelly-challenge',
+    stage: 'beta',
   },
   {
     key: 'singFly',
     icon: '🐦',
     route: '/singfly',
+    stage: 'beta',
   },
   {
     key: 'pitchGame',
     icon: '🎼',
     route: '/pitch-game',
+    stage: 'beta',
   },
 ]
 
@@ -52,11 +60,13 @@ export const tools: Program[] = [
     key: 'piano',
     icon: '🎹',
     route: '/piano',
+    stage: 'beta',
   },
   {
     key: 'guitar',
     icon: '🎸',
     route: '/guitar',
+    stage: 'beta',
   },
   {
     key: 'notes',
@@ -69,19 +79,22 @@ export const tools: Program[] = [
     route: '/tuner',
   },
   {
-    key: 'songRecorder',
-    icon: '📝',
-    route: '/song-recorder',
-  },
-  {
     key: 'scaleDetector',
     icon: '🔑',
     route: '/scale-detector',
+    stage: 'alpha',
+  },
+  {
+    key: 'songRecorder',
+    icon: '📝',
+    route: '/song-recorder',
+    stage: 'alpha',
   },
   {
     key: 'toneDetector',
     icon: '🎚️',
     route: '/tone-detector',
+    stage: 'alpha',
   },
 ]
 
@@ -97,3 +110,9 @@ export const programs: Program[] = [
     route: '/games',
   },
 ]
+
+export const programStageByRoute = new Map(
+  [...games, ...tools].flatMap((program) =>
+    program.stage ? [[program.route, program.stage] as const] : [],
+  ),
+)

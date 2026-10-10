@@ -67,6 +67,11 @@ const LONGEST_NOTE_RATIO = 1.5
  * instead of a sliver of weight share from timing noise. */
 const TONIC_SCORE_TOLERANCE = 0.25
 
+/* A less familiar mode only beats a more familiar one when its root has this
+ * much more tonic evidence — starting AND ending on it. Starting on B alone
+ * doesn't make B C D E F G Locrian; C major is far likelier. */
+const UNFAMILIAR_MODE_MARGIN = FIRST_NOTE_POINTS + LAST_NOTE_POINTS
+
 /* Lower = more familiar. Popular (Major, Minor, Pentatonic, Blues) beats the
  * church modes, which beat everything else. */
 const MODE_TIER: Record<ScaleHighlightMode, number> = Object.fromEntries(
@@ -137,10 +142,17 @@ function setKey(pitchClasses: ReadonlySet<number>): string {
 
 function compareByTonic(a: ScaleCandidate, b: ScaleCandidate): number {
   const scoreDifference = b.tonicScore - a.tonicScore
+  const tierDifference = MODE_TIER[a.mode] - MODE_TIER[b.mode]
+  if (
+    tierDifference !== 0 &&
+    Math.abs(scoreDifference) < UNFAMILIAR_MODE_MARGIN
+  ) {
+    return tierDifference
+  }
   if (Math.abs(scoreDifference) >= TONIC_SCORE_TOLERANCE) return scoreDifference
 
   return (
-    MODE_TIER[a.mode] - MODE_TIER[b.mode] ||
+    tierDifference ||
     SCALE_HIGHLIGHT_MODES.indexOf(a.mode) -
       SCALE_HIGHLIGHT_MODES.indexOf(b.mode) ||
     a.root - b.root
