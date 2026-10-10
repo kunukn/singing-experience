@@ -306,6 +306,42 @@ defineExpose({ detector })
         data-testid="scale-detector-input-mode"
       />
 
+      <div class="flex items-center justify-center gap-2">
+        <VoiceRangeSelect
+          v-model:rangeIndex="rangeIndex"
+          :headerLabel="t('scaleDetector.pianoRange')"
+        />
+        <KeyboardHintsToggle
+          v-if="!isCoarsePointer"
+          v-model="areKeyboardHintsVisible"
+        />
+      </div>
+    </div>
+
+    <!-- Above the piano: fixed-height controls only. Everything that grows
+         while playing (notes, results) sits below, so the keys never move. -->
+    <div class="mx-auto w-full max-w-400">
+      <PianoDisplay
+        :midiMin="selectedRange.midiMin"
+        :midiMax="selectedRange.midiMax"
+        toneLabelMode="simple"
+        :isOctaveShownOnC="true"
+        :accidentalStyle="accidentalStyle"
+        :areKeyboardHintsVisible="areKeyboardHintsVisible"
+        :previewLanes="previewLanes"
+        :isPreviewEnabled="isPreviewEnabled"
+        :scaleRoot="highlightRoot"
+        :scaleMode="selectedCandidate?.mode"
+        :highlightPitchClasses="chordHighlight"
+        :markedPitchClasses="result.sungPitchClasses"
+        shouldColorByCents
+        @notePressed="(midi) => pressPianoKey(midi)"
+        @noteReleased="(midi) => releasePianoKey(midi)"
+        @tonePlayed="triggerDeafPeriod"
+      />
+    </div>
+
+    <div class="flex w-full max-w-180 flex-col items-center gap-4 px-4">
       <div
         class="flex min-h-8 flex-wrap items-center justify-center gap-2"
         data-testid="scale-detector-sung-notes"
@@ -356,38 +392,6 @@ defineExpose({ detector })
           </p>
         </PrimeTabPanel>
       </PrimeTabPanels>
-
-      <div class="flex items-center justify-center gap-2">
-        <VoiceRangeSelect
-          v-model:rangeIndex="rangeIndex"
-          :headerLabel="t('scaleDetector.pianoRange')"
-        />
-        <KeyboardHintsToggle
-          v-if="!isCoarsePointer"
-          v-model="areKeyboardHintsVisible"
-        />
-      </div>
-    </div>
-
-    <div class="mx-auto w-full max-w-400">
-      <PianoDisplay
-        :midiMin="selectedRange.midiMin"
-        :midiMax="selectedRange.midiMax"
-        toneLabelMode="simple"
-        :isOctaveShownOnC="true"
-        :accidentalStyle="accidentalStyle"
-        :areKeyboardHintsVisible="areKeyboardHintsVisible"
-        :previewLanes="previewLanes"
-        :isPreviewEnabled="isPreviewEnabled"
-        :scaleRoot="highlightRoot"
-        :scaleMode="selectedCandidate?.mode"
-        :highlightPitchClasses="chordHighlight"
-        :markedPitchClasses="result.sungPitchClasses"
-        shouldColorByCents
-        @notePressed="(midi) => pressPianoKey(midi)"
-        @noteReleased="(midi) => releasePianoKey(midi)"
-        @tonePlayed="triggerDeafPeriod"
-      />
     </div>
   </PrimeTabs>
 </template>
