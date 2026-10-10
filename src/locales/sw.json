@@ -69,6 +69,8 @@
       "strict": "Kali zaidi"
     },
     "resetToDefaults": "Rejesha chaguomsingi",
+    "resetConfirm": "Rejesha mipangilio yote katika programu zote? Lugha yako itabaki ile ile.",
+    "resetCancel": "Ghairi",
     "reload": "Pakia upya programu",
     "version": "Toleo",
     "feedback": "Toa maoni au ripoti tatizo",

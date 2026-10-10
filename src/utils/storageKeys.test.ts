@@ -1,12 +1,12 @@
 import { describe, expect, test } from 'vitest'
 
 /*
- * Guards the class of bug where renaming a localStorage key silently resets
- * the setting for existing users and orphans the old entry (see BUGS.md,
- * 2026-08-15). Renaming or adding a key fails this test; the fix is to update
- * the list below and, for a rename, add an entry to STORAGE_MIGRATIONS in
- * storageMigrations.ts. Failing loudly is the whole point — do not "fix" a
- * failure by editing only the list.
+ * Registry of every localStorage key the app writes. Keys are not migrated:
+ * renaming one resets that setting, and "Reset to defaults" in the settings
+ * panel (resetStoredSettings) clears anything stale. That reset finds settings
+ * by the `syng.` prefix, so a key outside it would survive a reset — the
+ * prefix test below guards that. Renaming or adding a key fails this test;
+ * update the list below to match.
  */
 const STORAGE_KEYS = [
   'syng.clarityThreshold',

@@ -69,6 +69,8 @@
       "strict": "Stricter"
     },
     "resetToDefaults": "Reset to defaults",
+    "resetConfirm": "Reset all settings in every program? Your language stays the same.",
+    "resetCancel": "Cancel",
     "reload": "Reload app",
     "version": "Version",
     "feedback": "Give feedback or report issues",

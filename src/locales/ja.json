@@ -69,6 +69,8 @@
       "strict": "きびしめ"
     },
     "resetToDefaults": "初期設定に戻す",
+    "resetConfirm": "すべてのプログラムの設定をリセットしますか？言語はそのままです。",
+    "resetCancel": "キャンセル",
     "reload": "アプリを再読み込み",
     "version": "バージョン",
     "feedback": "感想を送るか不具合を報告",

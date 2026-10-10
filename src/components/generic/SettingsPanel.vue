@@ -4,17 +4,25 @@ import {
   MAX_CLARITY_THRESHOLD,
   MIN_CLARITY_THRESHOLD,
 } from '@/composables/useSettings'
+import { resetStoredSettings } from '@/utils/resetStoredSettings'
 /* Explicit import: the bundled PrimeVueResolver only knows the deprecated
  * `Sidebar`, not v4's `Drawer`, so `<PrimeDrawer>` won't auto-resolve. */
 import Drawer from 'primevue/drawer'
 
 const { t } = useI18n()
-const { clarityThreshold, isPreviewEnabled, resetToDefaults } = useSettings()
+const { clarityThreshold, isPreviewEnabled } = useSettings()
 const { state: micPermission } = useMicrophonePermission()
 const { isDark, toggleDark } = useDarkMode()
 const isRtl = useIsRtl()
 
 const showSettings = ref(false)
+
+/* Reset wipes every program's settings, so it asks once before doing it. */
+const isConfirmingReset = ref(false)
+
+watch(showSettings, (isOpen) => {
+  if (!isOpen) isConfirmingReset.value = false
+})
 
 /* Drawer position is physical; open from the inline-end side so it
  * mirrors correctly in RTL (Arabic). */
@@ -26,13 +34,12 @@ function reloadPage() {
   window.location.reload()
 }
 
+/* Clears every stored setting (the language stays), then reloads so nothing
+ * still held in memory writes an old value back. Dark mode falls back to the
+ * OS preference on the fresh load. */
 function onReset() {
-  resetToDefaults()
-
-  /* Restore dark mode to the OS preference (toggleDark is a plain flip, so
-   * only act when the current state differs from the preferred one). */
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  if (isDark.value !== prefersDark) toggleDark()
+  resetStoredSettings()
+  reloadPage()
 }
 
 const appVersion = import.meta.env.VITE_APP_VERSION
@@ -145,11 +152,37 @@ const appVersion = import.meta.env.VITE_APP_VERSION
               class="mb-4 border-0 border-t border-(--p-content-border-color)"
             />
 
+            <template v-if="isConfirmingReset">
+              <p class="text-sm text-(--p-text-muted-color)">
+                {{ t('settings.resetConfirm') }}
+              </p>
+              <div class="flex gap-2">
+                <PrimeButton
+                  severity="secondary"
+                  text
+                  size="small"
+                  class="flex-1"
+                  :label="t('settings.resetCancel')"
+                  @click="isConfirmingReset = false"
+                />
+                <PrimeButton
+                  severity="danger"
+                  size="small"
+                  class="flex-1"
+                  :label="t('settings.resetToDefaults')"
+                  data-testid="settings-reset-confirm"
+                  @click="onReset"
+                />
+              </div>
+            </template>
+
             <PrimeButton
+              v-else
               severity="secondary"
               outlined
               size="small"
-              @click="onReset"
+              data-testid="settings-reset"
+              @click="isConfirmingReset = true"
             >
               {{ t('settings.resetToDefaults') }}
             </PrimeButton>

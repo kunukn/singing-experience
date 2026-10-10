@@ -69,6 +69,8 @@
       "strict": "更严格"
     },
     "resetToDefaults": "恢复默认",
+    "resetConfirm": "重置所有程序的全部设置吗？语言保持不变。",
+    "resetCancel": "取消",
     "reload": "重新加载应用",
     "version": "版本",
     "feedback": "提供反馈或报告问题",

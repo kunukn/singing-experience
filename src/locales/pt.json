@@ -69,6 +69,8 @@
       "strict": "Mais rigoroso"
     },
     "resetToDefaults": "Restaurar padrões",
+    "resetConfirm": "Restaurar todas as configurações de todos os programas? Seu idioma continua o mesmo.",
+    "resetCancel": "Cancelar",
     "reload": "Recarregar o app",
     "version": "Versão",
     "feedback": "Dê sua opinião ou relate um problema",

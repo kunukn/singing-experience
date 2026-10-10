@@ -31,10 +31,5 @@ if (
 }
 
 export function useSettings() {
-  function resetToDefaults() {
-    clarityThreshold.value = DEFAULT_CLARITY_THRESHOLD
-    isPreviewEnabled.value = DEFAULT_PREVIEW_ENABLED
-  }
-
-  return { clarityThreshold, isPreviewEnabled, resetToDefaults }
+  return { clarityThreshold, isPreviewEnabled }
 }

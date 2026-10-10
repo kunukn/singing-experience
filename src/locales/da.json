@@ -69,6 +69,8 @@
       "strict": "Strengere"
     },
     "resetToDefaults": "Nulstil til standard",
+    "resetConfirm": "Nulstil alle indstillinger i alle programmer? Dit sprog bliver det samme.",
+    "resetCancel": "Annuller",
     "reload": "Genindlæs app",
     "version": "Version",
     "feedback": "Giv feedback eller meld en fejl",

@@ -69,6 +69,8 @@
       "strict": "Lebih ketat"
     },
     "resetToDefaults": "Setel ulang ke bawaan",
+    "resetConfirm": "Setel ulang semua pengaturan di semua program? Bahasamu tetap sama.",
+    "resetCancel": "Batal",
     "reload": "Muat ulang aplikasi",
     "version": "Versi",
     "feedback": "Beri masukan atau laporkan masalah",

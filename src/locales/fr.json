@@ -69,6 +69,8 @@
       "strict": "Plus strict"
     },
     "resetToDefaults": "Tout réinitialiser",
+    "resetConfirm": "Réinitialiser tous les réglages de tous les programmes ? Ta langue reste la même.",
+    "resetCancel": "Annuler",
     "reload": "Recharger l'appli",
     "version": "Version",
     "feedback": "Donne ton avis ou signale un problème",

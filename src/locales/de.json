@@ -69,6 +69,8 @@
       "strict": "Strenger"
     },
     "resetToDefaults": "Auf Standard zurücksetzen",
+    "resetConfirm": "Alle Einstellungen in allen Programmen zurücksetzen? Deine Sprache bleibt gleich.",
+    "resetCancel": "Abbrechen",
     "reload": "App neu laden",
     "version": "Version",
     "feedback": "Gib Feedback oder melde einen Fehler",
