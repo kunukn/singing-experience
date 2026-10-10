@@ -105,6 +105,10 @@
         "name": "Detektor Nada Ganda",
         "description": "Deteksi beberapa nada sekaligus secara langsung. Nyanyikan harmoni dan lihat setiap nada yang terdengar."
       },
+      "scaleDetector": {
+        "name": "Detektor Tangga Nada",
+        "description": "Nyanyikan atau mainkan beberapa nada dan cari tahu tangga nadanya."
+      },
       "piano": {
         "name": "Piano",
         "description": "Ketuk tuts piano untuk memainkan nada, dan lihat suaramu muncul di keyboard."
@@ -274,6 +278,19 @@
     "loose": "Lebih banyak nada",
     "quiet": "Lebih sedikit filter",
     "loud": "Lebih banyak filter"
+  },
+  "scaleDetector": {
+    "pageDescription": "Nyanyikan atau mainkan beberapa nada. Kamu akan melihat tangga nada yang cocok, beserta kembarannya — tangga nada dengan nada yang sama tapi nada dasar berbeda.",
+    "startOver": "Mulai lagi",
+    "yourNotes": "Nadamu:",
+    "noNotesYet": "Tekan Mulai lalu bernyanyi, atau ketuk piano",
+    "keepSinging": "Terus — nyanyikan setidaknya {count} nada berbeda supaya tebakannya lebih tepat",
+    "noMatch": "Tidak ada tangga nada yang cocok dengan nada-nada ini. Coba mulai lagi.",
+    "sameNotes": "Nada sama:",
+    "notSungYet": "Belum dinyanyikan: {notes}",
+    "tieBreaker": "Nyanyikan {first} atau {second} untuk membedakannya",
+    "pianoRange": "Rentang piano",
+    "scaleName": "{root} {mode}"
   },
   "singTone": {
     "subtitle": "Sebuah nada acak dimainkan — nyanyikan kembali untuk mencocokkan!",

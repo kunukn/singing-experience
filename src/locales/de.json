@@ -105,6 +105,10 @@
         "name": "Tondetektor",
         "description": "Erkenne mehrere gleichzeitige Töne in Echtzeit. Singe eine Harmonie und sieh, welche Noten klingen."
       },
+      "scaleDetector": {
+        "name": "Tonleiter-Detektor",
+        "description": "Sing oder spiel ein paar Töne und finde heraus, zu welcher Tonleiter sie gehören."
+      },
       "piano": {
         "name": "Klavier",
         "description": "Spiel auf den Klaviertasten und sieh, wie deine Stimme auf den Tasten landet."
@@ -274,6 +278,19 @@
     "loose": "Mehr Töne",
     "quiet": "Weniger Filterung",
     "loud": "Mehr Filterung"
+  },
+  "scaleDetector": {
+    "pageDescription": "Sing oder spiel ein paar Töne. Du siehst, welche Tonleitern passen, und ihre Zwillinge — Tonleitern mit denselben Tönen, aber einem anderen Grundton.",
+    "startOver": "Neu anfangen",
+    "yourNotes": "Deine Töne:",
+    "noNotesYet": "Drück auf Start und sing, oder tipp aufs Klavier",
+    "keepSinging": "Weiter so — sing mindestens {count} verschiedene Töne für einen guten Tipp",
+    "noMatch": "Keine Tonleiter passt zu diesen Tönen. Fang am besten neu an.",
+    "sameNotes": "Gleiche Töne:",
+    "notSungYet": "Noch nicht gesungen: {notes}",
+    "tieBreaker": "Sing {first} oder {second}, um sie zu unterscheiden",
+    "pianoRange": "Klavier-Tonumfang",
+    "scaleName": "{root} {mode}"
   },
   "singTone": {
     "subtitle": "Ein zufälliger Ton wird gespielt – singe ihn nach!",

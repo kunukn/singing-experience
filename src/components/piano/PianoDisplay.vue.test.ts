@@ -193,6 +193,24 @@ const SIZE_PROBE = `<template #lane="{ layout }">
   <div data-testid="lane-probe" :data-unit="layout.unit" :data-total-width="layout.totalWidth" />
 </template>`
 
+describe('PianoDisplay - marked pitch classes', () => {
+  test('should mark no key by default', () => {
+    const wrapper = mountDisplay()
+
+    expect(wrapper.findAll('[data-marked]')).toHaveLength(0)
+  })
+
+  test('should mark every key of a marked pitch class, white and black', () => {
+    /* C and C♯ — on RANGE that's C4 and C♯4. */
+    const wrapper = mountDisplay({ markedPitchClasses: new Set([0, 1]) })
+
+    const marked = wrapper
+      .findAll('[data-marked]')
+      .map((key) => key.attributes('data-testid'))
+    expect(marked).toEqual(['piano-key-60', 'piano-key-61'])
+  })
+})
+
 describe('PianoDisplay - key sizing', () => {
   /* happy-dom never lays anything out, so the container width is fed in
    * through the observer the display fits its keys from. */

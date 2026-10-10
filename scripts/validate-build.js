@@ -30,6 +30,10 @@ const PAGES = [
     path: '/tone-detector',
     testId: 'tone-detector-display',
   },
+  {
+    path: '/scale-detector',
+    testId: 'scale-detector-display',
+  },
 ]
 
 /*

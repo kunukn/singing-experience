@@ -105,6 +105,10 @@
         "name": "Kipimo cha Toni Nyingi",
         "description": "Gundua toni nyingi kwa wakati mmoja moja kwa moja. Imba harmoni na uone kila toni inayosikika."
       },
+      "scaleDetector": {
+        "name": "Kigunduzi cha Mizani",
+        "description": "Imba au piga noti chache, ujue ni za mizani gani."
+      },
       "piano": {
         "name": "Piano",
         "description": "Gonga vitufe vya piano kucheza noti, na uone sauti yako ikitokea kwenye kinanda."
@@ -274,6 +278,19 @@
     "loose": "Toni zaidi",
     "quiet": "Kuchuja kidogo",
     "loud": "Kuchuja zaidi"
+  },
+  "scaleDetector": {
+    "pageDescription": "Imba au piga noti chache. Utaona mizani inayofaa, na pacha wake — mizani yenye noti zilezile lakini noti ya msingi tofauti.",
+    "startOver": "Anza upya",
+    "yourNotes": "Noti zako:",
+    "noNotesYet": "Bonyeza Anza uimbe, au gusa piano",
+    "keepSinging": "Endelea — imba angalau noti {count} tofauti ili kukisia vizuri",
+    "noMatch": "Hakuna mizani inayolingana na noti hizi. Jaribu kuanza upya.",
+    "sameNotes": "Noti zilezile:",
+    "notSungYet": "Bado hazijaimbwa: {notes}",
+    "tieBreaker": "Imba {first} au {second} ili kuzitofautisha",
+    "pianoRange": "Upana wa piano",
+    "scaleName": "{root} {mode}"
   },
   "singTone": {
     "subtitle": "Toni ya nasibu inachezwa — iimbe tena kulinganisha!",

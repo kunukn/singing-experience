@@ -105,6 +105,10 @@
         "name": "Detector de tonos",
         "description": "Detecta múltiples tonos simultáneos en tiempo real. Canta una armonía y observa qué notas suenan."
       },
+      "scaleDetector": {
+        "name": "Detector de escalas",
+        "description": "Canta o toca unas notas y descubre a qué escala pertenecen."
+      },
       "piano": {
         "name": "Piano",
         "description": "Toca las teclas del piano y mira cómo tu voz aparece en el teclado."
@@ -274,6 +278,19 @@
     "loose": "Más tonos",
     "quiet": "Menos filtrado",
     "loud": "Más filtrado"
+  },
+  "scaleDetector": {
+    "pageDescription": "Canta o toca unas notas. Verás qué escalas encajan y sus gemelas: escalas con las mismas notas pero otra nota base.",
+    "startOver": "Empezar de nuevo",
+    "yourNotes": "Tus notas:",
+    "noNotesYet": "Pulsa Iniciar y canta, o toca el piano",
+    "keepSinging": "¡Sigue! Canta al menos {count} notas distintas para acertar mejor",
+    "noMatch": "Ninguna escala encaja con estas notas. Prueba a empezar de nuevo.",
+    "sameNotes": "Mismas notas:",
+    "notSungYet": "Aún sin cantar: {notes}",
+    "tieBreaker": "Canta {first} o {second} para saber cuál es",
+    "pianoRange": "Rango del piano",
+    "scaleName": "{root} {mode}"
   },
   "singTone": {
     "subtitle": "Se reproduce un tono aleatorio — ¡cántalo para igualarlo!",

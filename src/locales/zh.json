@@ -105,6 +105,10 @@
         "name": "音调检测器",
         "description": "实时检测多个同时发出的音调。唱和声，查看正在发声的音符。"
       },
+      "scaleDetector": {
+        "name": "音阶检测器",
+        "description": "唱或弹几个音，看看它们属于哪个音阶。"
+      },
       "piano": {
         "name": "钢琴",
         "description": "弹奏钢琴键，看看你的声音落在键盘的哪个位置。"
@@ -274,6 +278,19 @@
     "loose": "更多音调",
     "quiet": "更少过滤",
     "loud": "更多过滤"
+  },
+  "scaleDetector": {
+    "pageDescription": "唱或弹几个音。你会看到哪些音阶合适，还有它们的“双胞胎”——音相同、但主音不同的音阶。",
+    "startOver": "重新开始",
+    "yourNotes": "你的音：",
+    "noNotesYet": "按开始然后唱，或者点钢琴",
+    "keepSinging": "继续——至少唱 {count} 个不同的音，猜得更准",
+    "noMatch": "没有音阶适合这些音。试试重新开始。",
+    "sameNotes": "相同的音：",
+    "notSungYet": "还没唱：{notes}",
+    "tieBreaker": "唱 {first} 或 {second} 来分辨它们",
+    "pianoRange": "钢琴音域",
+    "scaleName": "{root} {mode}"
   },
   "singTone": {
     "subtitle": "播放一个随机音调 — 唱出来匹配！",

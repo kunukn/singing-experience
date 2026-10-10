@@ -5,6 +5,7 @@ import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
   DEFAULT_SCALE_HIGHLIGHT_MODE,
   buildScalePitchClasses,
+  pitchClassOf,
   scaleRoleForMidi,
   type ScaleHighlightMode,
   type ScaleRole,
@@ -65,6 +66,9 @@ type Props = {
   /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
   scaleRoot?: number | null
   scaleMode?: ScaleHighlightMode
+  /* Pitch classes (0–11) to mark with a dot on the scale strip — the Scale
+   * Detector's sung notes, so an unmarked tinted key reads as "not sung yet". */
+  markedPitchClasses?: ReadonlySet<number>
   /* Index into VOICE_RANGES — picks which voices the ribbon above the keys
    * draws, and marks the chosen one. midiMin/midiMax come from the same range,
    * but the index is what names it. */
@@ -214,6 +218,18 @@ const scaleBarStyle = {
   insetInlineStart: `${SCALE_BAR_INSET}px`,
   insetInlineEnd: `${SCALE_BAR_INSET}px`,
   bottom: `${SCALE_BAR_INSET}px`,
+  height: `${SCALE_BAR_HEIGHT}px`,
+}
+
+function isMarked(key: PianoKey): boolean {
+  return props.markedPitchClasses?.has(pitchClassOf(key.midi)) ?? false
+}
+
+/* A dot the scale strip's height, centred on it (auto inline margins). */
+const markerStyle = {
+  insetInline: '0',
+  bottom: `${SCALE_BAR_INSET}px`,
+  width: `${SCALE_BAR_HEIGHT}px`,
   height: `${SCALE_BAR_HEIGHT}px`,
 }
 
@@ -521,6 +537,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             }"
             :data-testid="`piano-key-${key.midi}`"
             :data-scale-role="scaleRole(key) ?? undefined"
+            :data-marked="isMarked(key) || undefined"
             :data-target="targetState(key)"
             :aria-label="keyAriaLabel(key)"
             :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
@@ -538,6 +555,14 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               :class="scaleBarClass(key)"
               :style="scaleBarStyle"
               aria-hidden="true"
+            />
+
+            <span
+              v-if="isMarked(key)"
+              class="pointer-events-none absolute mx-auto rounded-full bg-(--p-green-500) ring-2 ring-(--p-surface-0)"
+              :style="markerStyle"
+              aria-hidden="true"
+              data-testid="piano-key-marker"
             />
 
             <!-- Press highlight. Keyed on the press count so a fresh press
@@ -635,6 +660,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             }"
             :data-testid="`piano-key-${key.midi}`"
             :data-scale-role="scaleRole(key) ?? undefined"
+            :data-marked="isMarked(key) || undefined"
             :data-target="targetState(key)"
             :aria-label="keyAriaLabel(key)"
             :aria-keyshortcuts="keyboardCharForMidi(key.midi) ?? undefined"
@@ -648,6 +674,14 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               :class="scaleBarClass(key)"
               :style="scaleBarStyle"
               aria-hidden="true"
+            />
+
+            <span
+              v-if="isMarked(key)"
+              class="pointer-events-none absolute mx-auto rounded-full bg-(--p-green-500) ring-2 ring-(--p-surface-0)"
+              :style="markerStyle"
+              aria-hidden="true"
+              data-testid="piano-key-marker"
             />
 
             <span

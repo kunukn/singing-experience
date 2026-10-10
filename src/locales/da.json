@@ -105,6 +105,10 @@
         "name": "Tonedetektor",
         "description": "Registrer flere samtidige toner i realtid. Syng en harmoni og se hvilke toner der lyder."
       },
+      "scaleDetector": {
+        "name": "Skaladetektor",
+        "description": "Syng eller spil et par toner, og find ud af, hvilken skala de hører til."
+      },
       "piano": {
         "name": "Klaver",
         "description": "Spil på klavertangenterne, og se din stemme lande på tangenterne."
@@ -274,6 +278,19 @@
     "loose": "Flere toner",
     "quiet": "Mindre filtrering",
     "loud": "Mere filtrering"
+  },
+  "scaleDetector": {
+    "pageDescription": "Syng eller spil et par toner. Du ser, hvilke skalaer der passer, og deres tvillinger — skalaer med de samme toner, men en anden grundtone.",
+    "startOver": "Start forfra",
+    "yourNotes": "Dine toner:",
+    "noNotesYet": "Tryk på Start og syng, eller tryk på klaveret",
+    "keepSinging": "Fortsæt — syng mindst {count} forskellige toner for et godt gæt",
+    "noMatch": "Ingen skala passer til de toner. Prøv at starte forfra.",
+    "sameNotes": "Samme toner:",
+    "notSungYet": "Ikke sunget endnu: {notes}",
+    "tieBreaker": "Syng {first} eller {second} for at se forskel",
+    "pianoRange": "Klaverets toneomfang",
+    "scaleName": "{root} {mode}"
   },
   "singTone": {
     "subtitle": "En tilfældig tone afspilles — syng den efter for at matche!",

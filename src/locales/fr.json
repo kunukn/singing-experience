@@ -105,6 +105,10 @@
         "name": "Détecteur de tons",
         "description": "Détecte plusieurs tons en même temps. Chante une harmonie et vois quelles notes résonnent."
       },
+      "scaleDetector": {
+        "name": "Détecteur de gammes",
+        "description": "Chante ou joue quelques notes et découvre à quelle gamme elles appartiennent."
+      },
       "piano": {
         "name": "Piano",
         "description": "Joue sur les touches du piano et regarde ta voix se poser sur le clavier."
@@ -274,6 +278,19 @@
     "loose": "Plus de tons",
     "quiet": "Moins de filtrage",
     "loud": "Plus de filtrage"
+  },
+  "scaleDetector": {
+    "pageDescription": "Chante ou joue quelques notes. Tu verras quelles gammes collent, et leurs jumelles : des gammes avec les mêmes notes mais une autre note de base.",
+    "startOver": "Recommencer",
+    "yourNotes": "Tes notes :",
+    "noNotesYet": "Appuie sur Démarrer et chante, ou touche le piano",
+    "keepSinging": "Continue ! Chante au moins {count} notes différentes pour mieux deviner",
+    "noMatch": "Aucune gamme ne colle à ces notes. Essaie de recommencer.",
+    "sameNotes": "Mêmes notes :",
+    "notSungYet": "Pas encore chantées : {notes}",
+    "tieBreaker": "Chante {first} ou {second} pour les départager",
+    "pianoRange": "Étendue du piano",
+    "scaleName": "{root} {mode}"
   },
   "singTone": {
     "subtitle": "Un ton aléatoire est joué — chante-le pour le reproduire !",

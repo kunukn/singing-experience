@@ -143,6 +143,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/scale-detector': RouteRecordInfo<
+      '/scale-detector',
+      '/scale-detector',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/scale-detector-test': RouteRecordInfo<
+      '/scale-detector-test',
+      '/scale-detector-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/sing-the-keys': RouteRecordInfo<
       '/sing-the-keys',
       '/sing-the-keys',
@@ -391,6 +405,22 @@ declare module 'vue-router/auto-routes' {
     'src/pages/pitch-game-test.vue': {
       routes:
         | '/pitch-game-test'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/scale-detector.vue': {
+      routes:
+        | '/scale-detector'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/scale-detector-test.vue': {
+      routes:
+        | '/scale-detector-test'
       views:
         | never
       pathParamNames:

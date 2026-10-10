@@ -62,6 +62,11 @@ const ROUTE_META: Record<string, DocumentMeta> = {
     description:
       'Sing a melody to a metronome and see it written as sheet music. Play it back and copy the ABC notation.',
   },
+  '/scale-detector': {
+    title: 'Scale Detector — Find the Key You Sing In',
+    description:
+      'Sing or play a few notes and see which scales fit — major, minor, pentatonic, blues and the church modes — plus the twin scales that share the same notes.',
+  },
   '/piano': {
     title: 'Playable Piano Keyboard',
     description:

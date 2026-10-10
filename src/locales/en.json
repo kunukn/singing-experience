@@ -105,6 +105,10 @@
         "name": "Tone Detector",
         "description": "Detect multiple simultaneous tones in real time. Sing a harmony and see which notes are sounding."
       },
+      "scaleDetector": {
+        "name": "Scale Detector",
+        "description": "Sing or play a few notes and find out which scale they belong to."
+      },
       "piano": {
         "name": "Piano",
         "description": "Play the piano keys and watch your voice land on the keyboard."
@@ -274,6 +278,19 @@
     "loose": "More tones",
     "quiet": "Less filtering",
     "loud": "More filtering"
+  },
+  "scaleDetector": {
+    "pageDescription": "Sing or play a few notes. You'll see which scales fit, plus their twins — scales with the same notes but a different home note.",
+    "startOver": "Start over",
+    "yourNotes": "Your notes:",
+    "noNotesYet": "Press Start and sing, or tap the piano",
+    "keepSinging": "Keep going — sing at least {count} different notes for a good guess",
+    "noMatch": "No scale fits these notes. Try starting over.",
+    "sameNotes": "Same notes:",
+    "notSungYet": "Not sung yet: {notes}",
+    "tieBreaker": "Sing {first} or {second} to tell them apart",
+    "pianoRange": "Piano range",
+    "scaleName": "{root} {mode}"
   },
   "singTone": {
     "subtitle": "A random tone is played — sing it back to match!",

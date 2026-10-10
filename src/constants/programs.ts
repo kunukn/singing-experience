@@ -74,6 +74,11 @@ export const tools: Program[] = [
     route: '/song-recorder',
   },
   {
+    key: 'scaleDetector',
+    icon: '🔑',
+    route: '/scale-detector',
+  },
+  {
     key: 'toneDetector',
     icon: '🎚️',
     route: '/tone-detector',

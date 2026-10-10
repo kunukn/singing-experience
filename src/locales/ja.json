@@ -105,6 +105,10 @@
         "name": "音検出",
         "description": "複数の音を同時にリアルタイムで検出します。ハモって、どの音が鳴っているかを確認できます。"
       },
+      "scaleDetector": {
+        "name": "スケール検出",
+        "description": "いくつか音を歌うか弾いて、どのスケールか調べよう。"
+      },
       "piano": {
         "name": "ピアノ",
         "description": "ピアノの鍵盤をタップして音を鳴らし、自分の声が鍵盤のどこにあるか見てみよう。"
@@ -274,6 +278,19 @@
     "loose": "多め",
     "quiet": "弱め",
     "loud": "強め"
+  },
+  "scaleDetector": {
+    "pageDescription": "いくつか音を歌うか弾いてみよう。合うスケールと、その「ふたご」— 同じ音で主音がちがうスケール — が表示されるよ。",
+    "startOver": "やり直す",
+    "yourNotes": "あなたの音：",
+    "noNotesYet": "開始を押して歌うか、ピアノをタップしよう",
+    "keepSinging": "その調子！ちがう音を {count} つ以上歌うと、もっと正確になるよ",
+    "noMatch": "この音に合うスケールがないよ。やり直してみよう。",
+    "sameNotes": "同じ音：",
+    "notSungYet": "まだ歌っていない音：{notes}",
+    "tieBreaker": "{first} か {second} を歌うと見分けられるよ",
+    "pianoRange": "ピアノの音域",
+    "scaleName": "{root} {mode}"
   },
   "singTone": {
     "subtitle": "ランダムな音が再生されます。まねして歌って一致させましょう!",
