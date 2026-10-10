@@ -30,6 +30,16 @@ describe('createPianoNoteCapture', () => {
     expect(capture.heldMidi()).toBe(62)
   })
 
+  test('reports the held note with its start until released', () => {
+    const capture = createCapture()
+
+    capture.press(60, 250)
+    expect(capture.heldNote()).toEqual({ midi: 60, startMs: 250 })
+
+    capture.release(60, 600)
+    expect(capture.heldNote()).toBeNull()
+  })
+
   test('ignores the release of a key that is no longer the held note', () => {
     const capture = createCapture()
 

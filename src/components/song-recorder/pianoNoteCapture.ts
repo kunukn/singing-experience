@@ -75,11 +75,16 @@ export function createPianoNoteCapture(options: PianoNoteCaptureOptions) {
     return held?.midi ?? null
   }
 
+  function heldNote(): HeldNote | null {
+    return held ? { ...held } : null
+  }
+
   return {
     events: events as readonly NoteEvent[],
     press,
     release,
     flush,
     heldMidi,
+    heldNote,
   }
 }

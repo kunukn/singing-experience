@@ -8,6 +8,7 @@ import type { ClefKey } from '@/components/notes/notesConstants'
 import { formatNoteLabelWithCents } from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
 import { renderAbc } from 'abcjs'
+import type { LiveNoteKind } from './liveRecordingNotes'
 import { staffPitchY } from './staffPitch'
 
 type Props = {
@@ -16,8 +17,13 @@ type Props = {
   activePieceIndex: number | null
   /* Keeps the scroll at the end after playback ran out instead of resetting. */
   isDone?: boolean
-  /* While recording: follow the newest bar instead of the highlight. */
-  followEnd?: boolean
+  /* During a take (count-in and recording): follow the playhead slot instead
+   * of the playback highlight, and redraw on every change without debounce. */
+  isLive?: boolean
+  /* Live sheet only: kind of each drawn piece (template slots and the ghost
+   * note are faded) and the piece under the playhead. */
+  pieceKinds?: LiveNoteKind[] | null
+  nowPieceIndex?: number | null
   clef: ClefKey
   /* "See your voice": continuous MIDI of the live pitch; null hides the line. */
   sungMidi?: number | null
@@ -125,17 +131,37 @@ const sungToneText = computed(() => {
   )
 })
 
-function highlight(index: number | null) {
-  for (const element of pieceElements.value) {
-    element.classList.remove('piece-active')
-  }
-
-  if (index === null) return
-
-  pieceElements.value[index]?.classList.add('piece-active')
+function applyPieceClasses() {
+  pieceElements.value.forEach((element, index) => {
+    const kind = props.pieceKinds?.[index]
+    element.classList.toggle('piece-active', index === props.activePieceIndex)
+    element.classList.toggle('piece-now', index === props.nowPieceIndex)
+    element.classList.toggle('piece-template', kind === 'template')
+    element.classList.toggle('piece-ghost', kind === 'ghost')
+  })
 }
 
-async function renderSheet() {
+/* Where the playhead slot sits in the visible box while recording: a third in
+ * from the start, so the template bars ahead stay in view. */
+const PLAYHEAD_VIEW_RATIO = 1 / 3
+
+function followPlayhead() {
+  const scroller = scrollRef.value
+  const index = props.nowPieceIndex
+  const element = index == null ? null : pieceElements.value[index]
+  if (!scroller || !element) return
+
+  const elementLeft =
+    element.getBoundingClientRect().left -
+    scroller.getBoundingClientRect().left +
+    scroller.scrollLeft
+  scroller.scrollTo({
+    left: elementLeft - scroller.clientWidth * PLAYHEAD_VIEW_RATIO,
+    behavior: 'smooth',
+  })
+}
+
+async function drawSheet() {
   const container = containerRef.value
   /* Hidden (display:none) → nothing to measure; the resize observer renders
    * once it's laid out. */
@@ -166,11 +192,34 @@ async function renderSheet() {
   pieceElements.value = [
     ...container.querySelectorAll('.abcjs-note, .abcjs-rest'),
   ]
-  highlight(props.activePieceIndex)
+  applyPieceClasses()
   measureStaff()
 
-  if (props.followEnd && scrollRef.value) {
-    scrollRef.value.scrollLeft = scrollRef.value.scrollWidth
+  if (props.isLive) followPlayhead()
+}
+
+/* drawSheet awaits between its two passes; a second call meanwhile would
+ * interleave with it, so it's queued and run once the current one ends. */
+let isRendering = false
+let isRenderQueued = false
+
+async function renderSheet() {
+  if (isRendering) {
+    isRenderQueued = true
+
+    return
+  }
+
+  isRendering = true
+  try {
+    await drawSheet()
+  } finally {
+    isRendering = false
+  }
+
+  if (isRenderQueued) {
+    isRenderQueued = false
+    void renderSheet()
   }
 }
 
@@ -182,7 +231,15 @@ const rerender = useDebounceFn(() => {
   void renderSheet()
 }, 150)
 
-watch(() => [props.abc, props.clef], rerender)
+/* The live sheet changes once per grid step — under 150 ms at a fast tempo on
+ * the 1/16 grid — so a trailing debounce would never fire mid-take. */
+watch(
+  () => [props.abc, props.clef],
+  () => {
+    if (props.isLive) void renderSheet()
+    else rerender()
+  },
+)
 
 useResizeObserver(
   () => scrollRef.value?.parentElement ?? null,
@@ -192,9 +249,17 @@ useResizeObserver(
 )
 
 watch(
+  () => props.nowPieceIndex,
+  () => {
+    applyPieceClasses()
+    if (props.isLive) followPlayhead()
+  },
+)
+
+watch(
   () => props.activePieceIndex,
   (index) => {
-    highlight(index)
+    applyPieceClasses()
 
     if (index === null) {
       if (!props.isDone && scrollRef.value) scrollRef.value.scrollLeft = 0
@@ -253,6 +318,25 @@ watch(
 :deep(.piece-active path),
 :deep(.piece-active rect) {
   fill: var(--p-primary-color);
+}
+
+/* Live sheet: empty slots ahead of the singer, and the note still sounding. */
+:deep(.piece-template) {
+  opacity: 0.25;
+}
+
+:deep(.piece-ghost) {
+  opacity: 0.5;
+}
+
+:deep(.piece-ghost path),
+:deep(.piece-now path),
+:deep(.piece-now rect) {
+  fill: var(--p-primary-color);
+}
+
+:deep(.piece-now.piece-template) {
+  opacity: 1;
 }
 
 /* Lift the tempo marking (`Q:` → "♩=90") clear of the staff, as NotesSheet. */

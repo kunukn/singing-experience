@@ -14,6 +14,9 @@ export type QuantizeOptions = {
   /* Note-value denominator of one grid step: 8 = eighths, 16 = sixteenths. */
   grid: number
   beatsPerBar: number
+  /* Pad the last note's bar with a rest to the bar line (default true). The
+   * live sheet turns it off and fills the rest of the bar itself. */
+  padLastBar?: boolean
 }
 
 /* Milliseconds per grid step. A whole note spans four quarter-note beats
@@ -83,9 +86,10 @@ export function quantizeNotes(
     cursor = end
   }
 
+  const { padLastBar = true } = options
   const paddedEnd = Math.ceil(cursor / barUnits) * barUnits
 
-  if (paddedEnd > cursor) {
+  if (padLastBar && paddedEnd > cursor) {
     result.push({ midi: null, startUnit: cursor, units: paddedEnd - cursor })
   }
 

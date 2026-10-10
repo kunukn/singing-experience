@@ -176,5 +176,12 @@ export function createNoteSegmenter() {
     return events
   }
 
-  return { events, push, flush }
+  /* The note still sounding, as it would be emitted if it ended now. */
+  function openNote(): { startMs: number; midi: number } | null {
+    if (!open) return null
+
+    return { startMs: open.startMs - open.startLatencyMs, midi: open.semitone }
+  }
+
+  return { events, push, flush, openNote }
 }

@@ -3,8 +3,13 @@ import { useRafFn } from '@vueuse/core'
 import { frequencyToMidi, midiToFrequency } from '@/utils/noteUtils'
 import { createNoteSegmenter, type NoteEvent } from './noteSegmenter'
 import { createPianoNoteCapture } from './pianoNoteCapture'
-import { gridUnitMs, quantizeNotes } from './quantizeNotes'
+import { gridUnitMs, quantizeNotes, unitsPerBar } from './quantizeNotes'
 import type { ClefKey } from '@/components/notes/notesConstants'
+import {
+  buildLiveRecordingNotes,
+  findPieceAtUnit,
+  type OpenNote,
+} from './liveRecordingNotes'
 import { buildRecordingAbc } from './songRecorderAbc'
 import {
   BEATS_PER_BAR,
@@ -81,6 +86,8 @@ export function useSongRecorder(options: Options) {
 
   const elapsedMs = ref(0)
   const events = shallowRef<NoteEvent[]>([])
+  /* The note being sung or held right now — drawn as a ghost on the live sheet. */
+  const openNote = shallowRef<OpenNote | null>(null)
 
   const barSeconds = computed(() => (60 / bpm.value) * BEATS_PER_BAR)
 
@@ -117,6 +124,14 @@ export function useSongRecorder(options: Options) {
       if (segmenter.events.length !== events.value.length) {
         events.value = [...segmenter.events]
       }
+
+      const sounding = segmenter.openNote()
+      if (
+        sounding?.startMs !== openNote.value?.startMs ||
+        sounding?.midi !== openNote.value?.midi
+      ) {
+        openNote.value = sounding
+      }
     },
     { immediate: false },
   )
@@ -139,6 +154,66 @@ export function useSongRecorder(options: Options) {
   )
 
   const hasNotes = computed(() => events.value.length > 0)
+
+  /* Live sheet ---------------------------------------------------------- */
+
+  const isTakeRunning = computed(() => isCountingIn.value || isRecording.value)
+
+  /* Grid step under the playhead. A primitive, so it only changes once per
+   * step and the live sheet redraws per step rather than per frame. */
+  const nowUnit = computed(() =>
+    isRecording.value
+      ? Math.floor(elapsedMs.value / gridUnitMs(bpm.value, grid.value))
+      : -1,
+  )
+
+  const liveNotes = computed(() => {
+    const unitMs = gridUnitMs(bpm.value, grid.value)
+
+    return buildLiveRecordingNotes({
+      captured: quantizeNotes(events.value, {
+        bpm: bpm.value,
+        grid: grid.value,
+        beatsPerBar: BEATS_PER_BAR,
+        padLastBar: false,
+      }),
+      openNote: openNote.value,
+      nowUnit: nowUnit.value,
+      unitMs,
+      barUnits: unitsPerBar(grid.value, BEATS_PER_BAR),
+      totalUnits: Math.round(limitMs.value / unitMs),
+    })
+  })
+
+  const liveSheet = computed(() =>
+    buildRecordingAbc(liveNotes.value, {
+      bpm: bpm.value,
+      grid: grid.value,
+      beatsPerBar: BEATS_PER_BAR,
+      clef: clef.value,
+    }),
+  )
+
+  /* What the staff shows: the live template during a take, the final sheet
+   * otherwise. Playback and export always use `sheet`. */
+  const displaySheet = computed(() =>
+    isTakeRunning.value ? liveSheet.value : sheet.value,
+  )
+
+  /* Kind of each drawn piece on the live sheet; null outside a take. */
+  const pieceKinds = computed(() =>
+    isTakeRunning.value
+      ? liveSheet.value.pieces.map(
+          (piece) => liveNotes.value[piece.noteIndex].kind,
+        )
+      : null,
+  )
+
+  const nowPieceIndex = computed(() =>
+    isTakeRunning.value
+      ? findPieceAtUnit(liveSheet.value.pieces, nowUnit.value)
+      : null,
+  )
 
   /* Schedules the count-in clicks, the recording clicks (if enabled), the beat
    * pulse, the start of recording and the auto-stop, all on the audio clock. */
@@ -198,6 +273,7 @@ export function useSongRecorder(options: Options) {
       earlyPressToleranceMs: PIANO_EARLY_PRESS_MS,
     })
     events.value = []
+    openNote.value = null
     elapsedMs.value = 0
     cancelScheduled()
     send({ type: 'RECORD' })
@@ -208,6 +284,7 @@ export function useSongRecorder(options: Options) {
     sampler.pause()
     cancelScheduled()
     beatInBar.value = null
+    openNote.value = null
     if (takeInput === 'voice') {
       detection.stop()
       events.value = [...segmenter.flush()]
@@ -226,6 +303,7 @@ export function useSongRecorder(options: Options) {
       cancelScheduled()
       if (takeInput === 'voice') detection.stop()
       countInBeat.value = null
+      openNote.value = null
       send({ type: 'STOP' })
 
       return
@@ -337,6 +415,7 @@ export function useSongRecorder(options: Options) {
 
     if (pianoCapture.press(midi, timeMs))
       events.value = [...pianoCapture.events]
+    openNote.value = pianoCapture.heldNote()
   }
 
   function releasePianoKey(midi: number, atPerfMs = performance.now()) {
@@ -346,6 +425,7 @@ export function useSongRecorder(options: Options) {
     const timeMs = Math.min(atPerfMs - originPerfMs, limitMs.value)
     if (pianoCapture.release(midi, timeMs)) {
       events.value = [...pianoCapture.events]
+      openNote.value = null
     }
   }
 
@@ -373,6 +453,7 @@ export function useSongRecorder(options: Options) {
     cancelScheduled()
     countInBeat.value = null
     beatInBar.value = null
+    openNote.value = null
     send({ type: 'ERROR' })
   })
 
@@ -398,6 +479,9 @@ export function useSongRecorder(options: Options) {
     events,
     hasNotes,
     sheet,
+    displaySheet,
+    pieceKinds,
+    nowPieceIndex,
     activePieceIndex,
     hasPlayedToEnd,
     record,

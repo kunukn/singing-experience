@@ -115,4 +115,13 @@ describe('quantizeNotes', () => {
 
     expect(notes[0]).toEqual({ midi: 60, startUnit: 0, units: 1 })
   })
+
+  test('leaves the last bar open when padLastBar is false', () => {
+    const notes = quantizeNotes([{ startMs: 30, endMs: 1960, midi: 62 }], {
+      ...AT_60,
+      padLastBar: false,
+    })
+
+    expect(notes).toEqual([{ midi: 62, startUnit: 0, units: 4 }])
+  })
 })

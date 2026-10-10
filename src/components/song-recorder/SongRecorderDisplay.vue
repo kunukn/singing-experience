@@ -65,6 +65,9 @@ const {
   limitMs,
   hasNotes,
   sheet,
+  displaySheet,
+  pieceKinds,
+  nowPieceIndex,
   activePieceIndex,
   hasPlayedToEnd,
   record,
@@ -475,10 +478,12 @@ defineExpose({ recorder })
 
     <div class="w-full max-w-full">
       <SongRecorderSheet
-        :abc="sheet.abc"
+        :abc="displaySheet.abc"
         :activePieceIndex="activePieceIndex"
+        :pieceKinds="pieceKinds"
+        :nowPieceIndex="nowPieceIndex"
         :isDone="hasPlayedToEnd"
-        :followEnd="isRecording"
+        :isLive="isCountingIn || isRecording"
         :clef="clef"
         :sungMidi="sungMidi"
         :sungToneLabel="stableSungLabel"

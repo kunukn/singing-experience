@@ -29,6 +29,20 @@ describe('noteSegmenter', () => {
     expect(note.endMs).toBe(2984 - RELEASE_LATENCY_MS)
   })
 
+  test('reports the note still sounding, then nothing once it closes', () => {
+    const segmenter = createNoteSegmenter()
+    expect(segmenter.openNote()).toBeNull()
+
+    feed(segmenter, 1000, 1500, 64)
+    expect(segmenter.openNote()).toEqual({
+      startMs: 1000 - ONSET_LATENCY_MS,
+      midi: 64,
+    })
+
+    segmenter.flush()
+    expect(segmenter.openNote()).toBeNull()
+  })
+
   test('snaps an off-key note to the nearest semitone', () => {
     const segmenter = createNoteSegmenter()
     feed(segmenter, 0, 1000, 61.7)
