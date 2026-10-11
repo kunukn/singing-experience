@@ -91,7 +91,10 @@ const { t } = useI18n()
         :disabled="isReplaying"
         @click="emit('clearRecording')"
       >
-        <span class="block text-xs whitespace-pre-line">
+        <!-- Same trash icon as every other Clear in the app (piano note log,
+             song recorder, the focus tab); the label already names it -->
+        <i class="pi pi-trash text-sm" aria-hidden="true" />
+        <span class="mt-1 block text-xs whitespace-pre-line">
           {{ t('generic.clear') }}
         </span>
       </button>

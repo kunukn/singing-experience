@@ -73,6 +73,12 @@ export function useFocusTone({ detection, isListening }: FocusToneOptions) {
     stats.value = tracker.stats
   }
 
+  /* Fresh stats for the same tone — the Clear button's half of a reset */
+  function clearStats() {
+    tracker.resetStats()
+    stats.value = tracker.stats
+  }
+
   /* Signed cents from the focus tone; 100 cents per semitone */
   const centsFromFocus = computed(() =>
     focusMidi.value === null || liveMidi.value === null
@@ -80,5 +86,5 @@ export function useFocusTone({ detection, isListening }: FocusToneOptions) {
       : (liveMidi.value - focusMidi.value) * 100,
   )
 
-  return { focusMidi, isLocked, centsFromFocus, stats, lockTo }
+  return { focusMidi, isLocked, centsFromFocus, stats, lockTo, clearStats }
 }

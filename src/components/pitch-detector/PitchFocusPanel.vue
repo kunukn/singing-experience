@@ -28,10 +28,40 @@ const { isDark } = useDarkMode()
 
 const { playTone } = useTonePlayer()
 
-const { focusMidi, isLocked, centsFromFocus, stats, lockTo } = useFocusTone({
-  detection: () => props.laneDetection,
-  isListening: () => props.isListening,
-})
+const { focusMidi, isLocked, centsFromFocus, stats, lockTo, clearStats } =
+  useFocusTone({
+    detection: () => props.laneDetection,
+    isListening: () => props.isListening,
+  })
+
+const chartRef = ref<InstanceType<typeof PitchHistoryChart> | null>(null)
+
+/* Whether a stopped take left a trail to clear. Checked on stop rather than
+ * live: the samples sit in the canvas's own buffers, not in reactive state. */
+const hasSamples = ref(false)
+
+watch(
+  () => props.isListening,
+  (listening) => {
+    if (listening) {
+      hasSamples.value = false
+
+      return
+    }
+
+    nextTick(() => {
+      hasSamples.value = (chartRef.value?.getSamples().low.length ?? 0) > 0
+    })
+  },
+)
+
+/* Wipes the trail and the stats that describe it; the focus tone and lock
+ * stay, so the singer can go again on the same note */
+function clearTake() {
+  chartRef.value?.clearSamples()
+  clearStats()
+  hasSamples.value = false
+}
 
 /* One semitone either side of the tone — wide enough to see a neighbour
  * coming, narrow enough that a few cents of drift is plain to see */
@@ -166,10 +196,25 @@ const centsColor = computed(() =>
         </template>
       </PrimeSelect>
 
+      <!-- Hidden rather than removed while there is nothing to clear, so the
+           stats beside it don't shift as a take starts and stops -->
+      <PrimeButton
+        :class="{ invisible: isListening || !hasSamples }"
+        severity="secondary"
+        text
+        rounded
+        size="small"
+        icon="pi pi-trash"
+        :label="t('generic.clear')"
+        data-testid="focus-clear"
+        @click="clearTake"
+      />
+
       <PitchFocusStats :stats="stats" class="ms-auto" />
     </div>
 
     <PitchHistoryChart
+      ref="chartRef"
       :laneDetections="laneDetection ? [laneDetection] : []"
       :previewLanes="previewLanes"
       :isListening="isListening"
