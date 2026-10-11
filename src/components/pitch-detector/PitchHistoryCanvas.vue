@@ -83,6 +83,7 @@ const LABEL_COLLISION_Y = 26
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
 const { colorForCents } = usePitchPreviewColor()
+const { t } = useI18n()
 
 /*
  * One recorder per voice. Both are created up front and simply stay empty in
@@ -254,8 +255,16 @@ function drawFocusZone(
   /* 100 cents per semitone */
   const cleanTop = midiToY(focusMidi + CLEAN_CENTS / 100, height)
   const cleanBottom = midiToY(focusMidi - CLEAN_CENTS / 100, height)
+  const closeTop = midiToY(focusMidi + CLOSE_CENTS / 100, height)
+  const closeBottom = midiToY(focusMidi - CLOSE_CENTS / 100, height)
 
   ctx.save()
+  /* The On pitch band, half the Spot on alpha: OK ground rather than the
+   * target. Two strips around the inner band, so it doesn't stack on it. */
+  ctx.fillStyle = withAlpha(green, 0.06)
+  ctx.fillRect(geom.chartLeftX, closeTop, width, cleanTop - closeTop)
+  ctx.fillRect(geom.chartLeftX, cleanBottom, width, closeBottom - cleanBottom)
+
   ctx.fillStyle = withAlpha(green, 0.12) // faint — the trail must stay on top
   ctx.fillRect(geom.chartLeftX, cleanTop, width, cleanBottom - cleanTop)
 
@@ -288,8 +297,8 @@ function drawFocusZone(
 const ZONE_LABEL_MIN_GAP = 12
 
 /*
- * "±10¢", "±25¢" and "±50¢" on the upper edge of each zone, so the band and
- * dashes explain themselves. The lower half mirrors the upper, so it stays
+ * "Spot on ±10¢", "On pitch ±25¢" and "±50¢" on the upper edge of each zone,
+ * named like the stats, so the bands and dashes explain themselves. The lower half mirrors the upper, so it stays
  * unlabelled.
  * Sits at the gutter side, where the trail is oldest and faintest — the live
  * edge already carries the head dot and its name pill.
@@ -318,13 +327,13 @@ function drawFocusZoneLabels(
 
   const labels = [
     {
-      text: `±${CLEAN_CENTS}¢`,
+      text: `${t('pitchDetector.focus.spotOn')} ±${CLEAN_CENTS}¢`,
       y: cleanY,
       gap: cleanY - closeY,
       color: mutedColor,
     },
     {
-      text: `±${CLOSE_CENTS}¢`,
+      text: `${t('pitchDetector.focus.onPitch')} ±${CLOSE_CENTS}¢`,
       y: closeY,
       gap: closeY - offY,
       color: mutedColor,
