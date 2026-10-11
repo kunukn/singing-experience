@@ -77,7 +77,7 @@ function snapToTarget() {
 </script>
 
 <template>
-  <div class="flex flex-col gap-4">
+  <div class="flex flex-1 flex-col gap-4">
     <div
       class="flex w-full flex-wrap items-end gap-4 rounded-lg bg-(--p-content-background) p-4"
     >
