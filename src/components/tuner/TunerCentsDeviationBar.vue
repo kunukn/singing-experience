@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { cleanColor, directionalColor } from '@/utils/pitchColors'
+import { cleanColor, directionalColor, OFF_CENTS } from '@/utils/pitchColors'
 
 type Props = {
   cents: number | null
@@ -34,11 +34,22 @@ const indicatorColor = computed(() => {
     : cleanColor(props.cents)
 })
 
+function toTopPercent(cents: number) {
+  return Math.min(Math.max(50 - (cents / props.maxRange) * 50, 0), 100)
+}
+
 const indicatorTop = computed(() => {
   if (props.cents === null) return '50%'
 
-  return `${Math.min(Math.max(50 - (props.cents / props.maxRange) * 50, 0), 100)}%`
+  return `${toTopPercent(props.cents)}%`
 })
+
+/* ±OFF_CENTS = half a semitone; omitted when the bar's range can't fit them inside the track */
+const offMarkerTops = computed(() =>
+  OFF_CENTS < props.maxRange
+    ? [OFF_CENTS, -OFF_CENTS].map((cents) => `${toTopPercent(cents)}%`)
+    : [],
+)
 </script>
 
 <template>
@@ -55,6 +66,12 @@ const indicatorTop = computed(() => {
       <!-- Center marker -->
       <div
         class="absolute inset-s-0 top-1/2 z-10 h-0.5 w-full -translate-y-1/2 bg-(--p-surface-500)"
+      />
+      <div
+        v-for="top in offMarkerTops"
+        :key="top"
+        class="absolute inset-s-0 w-full border-t border-dotted border-(--p-green-500)"
+        :style="{ top }"
       />
       <!-- Deviation indicator — 50ms glide smooths detector jitter without trailing the cents readout -->
       <div
