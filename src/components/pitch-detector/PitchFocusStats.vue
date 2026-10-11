@@ -84,7 +84,13 @@ const items = computed(() => [
       class="flex flex-col items-center"
     >
       <dt class="text-xs text-(--p-text-muted-color)">{{ item.label }}</dt>
-      <dd class="text-lg tabular-nums" :data-testid="`focus-stat-${item.key}`">
+      <!-- dir="ltr": a signed value like "+20¢" would otherwise be reordered
+           to "20¢+" by the bidi algorithm in Arabic -->
+      <dd
+        class="text-lg tabular-nums"
+        dir="ltr"
+        :data-testid="`focus-stat-${item.key}`"
+      >
         {{ item.value }}
       </dd>
     </div>

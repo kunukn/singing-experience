@@ -80,6 +80,7 @@ const centsColor = computed(() =>
         <span
           v-if="focusLabel && centsLabel"
           class="min-w-14 text-xl tabular-nums"
+          dir="ltr"
           :style="{ color: centsColor }"
           data-testid="focus-cents"
         >

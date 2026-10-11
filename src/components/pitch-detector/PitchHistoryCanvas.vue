@@ -7,6 +7,7 @@ import {
   cleanColorRgb,
   CLEAN_CENTS,
   CLOSE_CENTS,
+  OFF_CENTS,
 } from '@/utils/pitchColors'
 import { drawPitchLine } from '@/utils/pitchLineRenderer'
 
@@ -223,8 +224,8 @@ function drawPreviewIndicators(
 
 /*
  * The target the singer aims for on the focus tab: a filled band for the
- * clean zone and dashed edges where "close" ends — the same CLEAN_CENTS and
- * CLOSE_CENTS tiers the trail colours by.
+ * clean zone, dashed edges where "close" ends and where "off" begins — the
+ * same CLEAN_CENTS, CLOSE_CENTS and OFF_CENTS tiers the trail colours by.
  */
 function drawFocusZone(
   ctx: CanvasRenderingContext2D,
@@ -245,14 +246,62 @@ function drawFocusZone(
   ctx.strokeStyle = withAlpha(green, 0.35)
   ctx.lineWidth = 1
   ctx.setLineDash([4, 4]) // px dash/gap — lighter than the solid grid lines
-  for (const offset of [CLOSE_CENTS, -CLOSE_CENTS]) {
+  /* ±50¢ is also where the nearest note flips to the neighbour — past it the
+   * singer starts pulling the focus over */
+  for (const offset of [CLOSE_CENTS, -CLOSE_CENTS, OFF_CENTS, -OFF_CENTS]) {
     const y = midiToY(focusMidi + offset / 100, height)
     ctx.beginPath()
     ctx.moveTo(geom.chartLeftX, y)
     ctx.lineTo(geom.chartRightX, y)
     ctx.stroke()
   }
+
+  drawFocusZoneLabels(ctx, geom, height, focusMidi)
   ctx.restore()
+}
+
+/* px — a 10px label plus a little air; a gap tighter than this would make the
+ * label overlap the line above it, so it is left out on short charts */
+const ZONE_LABEL_MIN_GAP = 12
+
+/*
+ * "±10¢", "±25¢" and "±50¢" on the upper edge of each zone, so the band and
+ * dashes explain themselves. The lower half mirrors the upper, so it stays
+ * unlabelled.
+ * Sits at the gutter side, where the trail is oldest and faintest — the live
+ * edge already carries the head dot and its name pill.
+ */
+function drawFocusZoneLabels(
+  ctx: CanvasRenderingContext2D,
+  geom: ChartGeometry,
+  height: number,
+  focusMidi: number,
+) {
+  /* 100 cents per semitone */
+  const cleanY = midiToY(focusMidi + CLEAN_CENTS / 100, height)
+  const closeY = midiToY(focusMidi + CLOSE_CENTS / 100, height)
+  const offY = midiToY(focusMidi + OFF_CENTS / 100, height)
+  const isRtl = props.isRtl ?? false
+
+  ctx.setLineDash([])
+  ctx.font = '10px monospace'
+  ctx.fillStyle = withAlpha(resolveCssColor('--p-text-muted-color'), 0.8)
+  /* Explicit left/right rather than start/end, which would follow the
+   * canvas's own direction instead of the chart's */
+  ctx.textAlign = isRtl ? 'right' : 'left'
+  ctx.textBaseline = 'bottom'
+  const x = isRtl ? geom.labelAxisX - 4 : geom.labelAxisX + 4 // px inset from the axis
+
+  const labels = [
+    { text: `±${CLEAN_CENTS}¢`, y: cleanY, gap: cleanY - closeY },
+    { text: `±${CLOSE_CENTS}¢`, y: closeY, gap: closeY - offY },
+    { text: `±${OFF_CENTS}¢`, y: offY, gap: offY - PADDING_TOP },
+  ]
+  for (const label of labels) {
+    if (label.gap < ZONE_LABEL_MIN_GAP) continue
+
+    ctx.fillText(label.text, x, label.y - 2) // 2px lift off the line
+  }
 }
 
 /* The label the head dot carries — its own lane's live preview name. */

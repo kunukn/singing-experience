@@ -369,7 +369,7 @@ onUnmounted(() => {
         class="min-w-32 flex-1"
       />
 
-      <div class="flex items-center gap-2" :class="{ 'flex-1': isFocusTab }">
+      <div class="flex items-center gap-2">
         <label
           v-if="false"
           class="hidden text-sm text-(--p-text-muted-color) lg:block"
