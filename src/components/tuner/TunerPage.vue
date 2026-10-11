@@ -38,7 +38,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center gap-2">
+  <div class="flex flex-1 flex-col items-center gap-2">
     <PrimeSelectButton
       :modelValue="selectedInstrument"
       @update:modelValue="selectedInstrument = $event"

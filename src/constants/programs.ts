@@ -61,11 +61,7 @@ export const tools: Program[] = [
     icon: '🎵',
     route: '/notes',
   },
-  {
-    key: 'tuner',
-    icon: '🪕',
-    route: '/tuner',
-  },
+
   {
     key: 'piano',
     icon: '🎹',
@@ -95,6 +91,11 @@ export const tools: Program[] = [
     icon: '🎚️',
     route: '/tone-detector',
     stage: 'alpha',
+  },
+  {
+    key: 'tuner',
+    icon: '🪕',
+    route: '/tuner',
   },
 ]
 

@@ -285,7 +285,7 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col items-center gap-4">
+  <div class="flex flex-1 flex-col items-center gap-4 pb-4">
     <div class="flex items-center gap-2">
       <label class="text-sm text-(--p-text-muted-color)">
         {{ t('tuner.tuning') }}
@@ -398,7 +398,7 @@ watch(
 
     <div
       v-if="isListening"
-      class="flex w-full items-center justify-center gap-4"
+      class="flex w-full flex-1 items-start justify-center gap-4"
     >
       <TunerCentsDeviationBar
         :cents="noteInfo && isClean ? noteInfo.cents : null"
@@ -407,7 +407,7 @@ watch(
         :isVisible="true"
         :highLabel="t('pitchDetector.sharp')"
         :lowLabel="t('pitchDetector.flat')"
-        height="h-30 sm:h-40"
+        class="self-stretch"
       />
 
       <div class="flex min-w-38 flex-col items-start justify-center">
