@@ -362,9 +362,9 @@ onUnmounted(() => {
     <div class="flex w-full flex-wrap items-center gap-2 sm:gap-4">
       <!-- Shrinks rather than wrapping the row, but not past a readable floor:
            a plain min-w-0 collapses it to a sliver once the toggles wrap.
-           The focus tab picks its tone by ear, so it has no range to choose. -->
+           Shown on the focus tab too: it sets which notes the focus tab's
+           note picker lists, so the singer must see it to change that. -->
       <VoiceRangeSelect
-        v-if="!isFocusTab"
         v-model:rangeIndex="rangeIndex"
         class="min-w-32 flex-1"
       />
@@ -386,15 +386,21 @@ onUnmounted(() => {
         :disabled="micPermission === 'denied'"
       />
 
+      <!-- The focus tab has no use for these two, but hides them with
+           `invisible` rather than v-if: they keep their space, so switching
+           tabs moves nothing in this row and the flex-1 range select keeps its
+           width. visibility: hidden also drops them from tab order and the
+           accessibility tree. -->
       <DuetToggle
-        v-if="isDuetAvailable"
+        v-if="!disableIdlePreview"
         v-model="isDuetEnabled"
+        :class="{ invisible: isFocusTab }"
         :disabled="!isPreviewEnabled || micPermission === 'denied'"
       />
 
       <VoiceTypeRibbonToggle
-        v-if="!isFocusTab"
         v-model="isVoiceTypeRibbonVisible"
+        :class="{ invisible: isFocusTab }"
       />
 
       <PrimeButton
