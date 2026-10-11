@@ -11,9 +11,9 @@ describe('pitchMatch', () => {
     expect(centsBetween(A4 * 2 ** (-30 / 1200), A4)).toBeCloseTo(-30, 5)
   })
 
-  test('isOnPitch defaults to the ±25¢ close threshold', () => {
-    expect(isOnPitch(A4 * 2 ** (24 / 1200), A4)).toBe(true)
-    expect(isOnPitch(A4 * 2 ** (26 / 1200), A4)).toBe(false)
+  test('isOnPitch defaults to the ±20¢ close threshold', () => {
+    expect(isOnPitch(A4 * 2 ** (19 / 1200), A4)).toBe(true)
+    expect(isOnPitch(A4 * 2 ** (21 / 1200), A4)).toBe(false)
   })
 
   test.each([

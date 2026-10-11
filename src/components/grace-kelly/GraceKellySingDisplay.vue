@@ -235,7 +235,7 @@ const isOnPitch = computed(() => {
   return isWithinTolerance(frequency.value, targetFrequency.value)
 })
 
-/* Scoring uses the wider SCORE_TOLERANCE_CENTS (±50¢) — distinct from the ±25¢
+/* Scoring uses the wider SCORE_TOLERANCE_CENTS (±50¢) — distinct from the ±20¢
  * `isOnPitch` that drives the visual pitch line. */
 const isOnPitchForScore = computed(() => {
   if (frequency.value === null || targetFrequency.value === null) return false

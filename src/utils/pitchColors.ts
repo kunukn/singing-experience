@@ -113,12 +113,13 @@ const OFF_TEXT_RED_LIGHT: [number, number, number] = [220, 38, 38] // red-600
  * Three-tier feedback thresholds based on psychoacoustic research and
  * industry-standard vocal training tolerances:
  *   ≤10¢  — imperceptible to most listeners (green / "clean").
- *   ≤25¢  — noticeable to trained ears but acceptable (yellow / "close").
+ *   ≤20¢  — within a trained singer's typical accuracy; untrained voices
+ *           average about 25¢ (yellow / "close").
  *   ≥50¢  — halfway to the next semitone; clearly off-pitch (red, saturation cap).
  * Smoothly interpolated between tiers so the color motion stays continuous.
  */
 export const CLEAN_CENTS = 10
-export const CLOSE_CENTS = 25
+export const CLOSE_CENTS = 20
 export const OFF_CENTS = 50
 
 type Rgb = [number, number, number]

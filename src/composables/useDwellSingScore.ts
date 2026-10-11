@@ -4,7 +4,7 @@ import type { Ref } from 'vue'
  * deliberate upper bound, as forgiving as scoring can safely go. Beyond it a
  * note sung toward the next semitone would start to count; at 50¢ a genuinely
  * wrong tone (≥ half a semitone off) still costs points. Forgiving of normal
- * vibrato/drift and child voices. Distinct from the ±25¢ CLOSE_CENTS that
+ * vibrato/drift and child voices. Distinct from the ±20¢ CLOSE_CENTS that
  * drives the visual pitch line. */
 export const SCORE_TOLERANCE_CENTS = 50
 

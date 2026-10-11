@@ -39,7 +39,7 @@ const DEFAULT_SCALE_MODE: ScaleMode = 'ionian'
  * Maximum cents deviation from the target note to count as "correct", per
  * difficulty. Reuses the pitchColors tiers so the pass rule matches the
  * colours: Easy accepts anything short of red (±50¢, the usual beginner
- * threshold in Yousician/Smule), Normal needs green or yellow (±25¢), Hard
+ * threshold in Yousician/Smule), Normal needs green or yellow (±20¢), Hard
  * needs green (±10¢).
  */
 const DIFFICULTY_MAX_CENTS: Record<Difficulty, number> = {

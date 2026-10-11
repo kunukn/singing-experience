@@ -191,7 +191,7 @@ describe('useDoReMiGame', () => {
 
   test.each([
     { difficulty: 'easy', maxCents: 50 },
-    { difficulty: 'normal', maxCents: 25 },
+    { difficulty: 'normal', maxCents: 20 },
     { difficulty: 'hard', maxCents: 10 },
   ] as const)(
     'should accept within ±$maxCents cents and reject beyond on $difficulty',

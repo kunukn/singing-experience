@@ -1,5 +1,5 @@
-import { CLEAN_CENTS, OFF_CENTS } from '@/utils/pitchColors'
-import { ON_PITCH_CENTS, PAUSE_GAP_MS } from './pitchConstants'
+import { CLEAN_CENTS, CLOSE_CENTS, OFF_CENTS } from '@/utils/pitchColors'
+import { PAUSE_GAP_MS } from './pitchConstants'
 
 /*
  * The "which tone is the singer working on" state machine behind the focus
@@ -17,7 +17,7 @@ export type FocusToneStats = {
   averageCents: number
   /* Standard deviation of the heard cents — how steady the tone is */
   wobbleCents: number
-  /* Share of samples whose heard pitch is within ON_PITCH_CENTS, 0–100 —
+  /* Share of samples whose heard pitch is within CLOSE_CENTS, 0–100 —
    * the band listeners accept as in tune */
   onPitchPercent: number
   /* Share within CLEAN_CENTS, 0–100 — the studio-tight stretch goal */
@@ -146,7 +146,7 @@ export function createFocusTracker({
     centsSum += cents
     heardCentsSum += heardCents
     heardCentsSquaredSum += heardCents * heardCents
-    if (Math.abs(heardCents) <= ON_PITCH_CENTS) onPitchCount++
+    if (Math.abs(heardCents) <= CLOSE_CENTS) onPitchCount++
     if (Math.abs(heardCents) <= CLEAN_CENTS) spotOnCount++
     voicedMs += elapsedMs
   }

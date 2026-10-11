@@ -12,7 +12,7 @@ export function centsBetween(sungHz: number, targetHz: number): number {
 /**
  * True when the sung pitch is within `toleranceCents` of the target pitch.
  * Octave-sensitive (cents grow ±1200 per octave), so an octave away never
- * counts as on-pitch. Defaults to the app's "close" threshold (25¢).
+ * counts as on-pitch. Defaults to the app's "close" threshold (20¢).
  */
 export function isOnPitch(
   sungHz: number,
