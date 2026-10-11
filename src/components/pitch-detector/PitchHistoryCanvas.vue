@@ -9,7 +9,7 @@ import {
   CLOSE_CENTS,
   OFF_CENTS,
 } from '@/utils/pitchColors'
-import { drawPitchLine } from '@/utils/pitchLineRenderer'
+import { drawPitchLine, resolveEffectiveMidi } from '@/utils/pitchLineRenderer'
 
 import {
   createPitchLaneRecorder,
@@ -140,6 +140,10 @@ function midiToY(midi: number, height: number): number {
   return PADDING_TOP + usableHeight * (1 - ratio)
 }
 
+function isMidiOnChart(midi: number): boolean {
+  return midi >= props.midiMin && midi <= props.midiMax
+}
+
 type ChartGeometry = {
   /* Vertical axis position closest to the Y-axis label gutter. In LTR this
    * is the left axis; in RTL the right axis. Oldest data lands here. */
@@ -194,11 +198,17 @@ function drawPreviewIndicators(
 
     /* In focus mode the line is named and coloured after the focus tone, so
      * "A3 +60¢" reads as drift rather than switching to "A♯3 −40¢". Needs a
-     * frequency: without one drawPitchLine would park the line on `midi`. */
+     * frequency: without one drawPitchLine would park the line on `midi`.
+     * Off the zoomed chart the line is clamped to the edge and loses its
+     * cents suffix, so it falls back to the real note name — a bare focus
+     * name there would claim the singer is on it. */
+    const isOnChart =
+      lane.previewFrequency != null &&
+      isMidiOnChart(
+        resolveEffectiveMidi(lane.previewMidi, lane.previewFrequency),
+      )
     const focusMidi =
-      props.focusMidi != null && lane.previewFrequency != null
-        ? props.focusMidi
-        : null
+      props.focusMidi != null && isOnChart ? props.focusMidi : null
 
     /* pitch-detector uses a forgiving 20¢ threshold so small wobbles don't
      * surface a distracting cents number. */
