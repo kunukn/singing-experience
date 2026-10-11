@@ -248,7 +248,9 @@
       "holdTime": "مدة الثبات",
       "average": "المتوسط",
       "wobble": "الاهتزاز",
-      "inTune": "مضبوط"
+      "inTune": "مضبوط",
+      "auto": "تلقائي",
+      "targetNote": "النغمة للتمرين"
     }
   },
   "voiceRanges": {

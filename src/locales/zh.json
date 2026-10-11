@@ -248,7 +248,9 @@
       "holdTime": "保持时间",
       "average": "平均",
       "wobble": "抖动",
-      "inTune": "音准"
+      "inTune": "音准",
+      "auto": "自动",
+      "targetNote": "要练习的音"
     }
   },
   "voiceRanges": {

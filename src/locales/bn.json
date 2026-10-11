@@ -248,7 +248,9 @@
       "holdTime": "সময়",
       "average": "গড়",
       "wobble": "কাঁপুনি",
-      "inTune": "সঠিক সুর"
+      "inTune": "সঠিক সুর",
+      "auto": "অটো",
+      "targetNote": "অনুশীলনের সুর"
     }
   },
   "voiceRanges": {

@@ -248,7 +248,9 @@
       "holdTime": "のばした時間",
       "average": "平均",
       "wobble": "ゆれ",
-      "inTune": "ぴったり"
+      "inTune": "ぴったり",
+      "auto": "自動",
+      "targetNote": "練習する音"
     }
   },
   "voiceRanges": {

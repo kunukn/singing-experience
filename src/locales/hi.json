@@ -248,7 +248,9 @@
       "holdTime": "समय",
       "average": "औसत",
       "wobble": "कंपन",
-      "inTune": "सही सुर"
+      "inTune": "सही सुर",
+      "auto": "ऑटो",
+      "targetNote": "अभ्यास का सुर"
     }
   },
   "voiceRanges": {

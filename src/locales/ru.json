@@ -248,7 +248,9 @@
       "holdTime": "Время",
       "average": "Среднее",
       "wobble": "Дрожание",
-      "inTune": "Чисто"
+      "inTune": "Чисто",
+      "auto": "Авто",
+      "targetNote": "Нота для тренировки"
     }
   },
   "voiceRanges": {

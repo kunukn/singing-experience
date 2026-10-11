@@ -434,6 +434,8 @@ onUnmounted(() => {
           :previewLanes="previewLanes"
           :isListening="isListening"
           :defaultMidi="focusDefaultMidi"
+          :rangeMidiMin="selectedRange.midiMin"
+          :rangeMidiMax="selectedRange.midiMax"
           @tonePlayed="handleTonePlayed"
         />
       </PrimeTabPanel>

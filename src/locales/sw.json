@@ -248,7 +248,9 @@
       "holdTime": "Muda",
       "average": "Wastani",
       "wobble": "Mtetemo",
-      "inTune": "Sawa"
+      "inTune": "Sawa",
+      "auto": "Otomatiki",
+      "targetNote": "Noti ya kufanyia mazoezi"
     }
   },
   "voiceRanges": {

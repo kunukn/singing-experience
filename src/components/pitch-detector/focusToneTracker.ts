@@ -28,6 +28,8 @@ export type FocusToneTracker = {
   /* Fractional MIDI from the smoothed frequency, or null for silence */
   push: (midi: number | null, timestampMs: number) => void
   setLocked: (isLocked: boolean) => void
+  /* Focus and lock a chosen tone at once — no hold needed */
+  lockTo: (midi: number) => void
   /* Fresh stats for a new take, keeping the focus tone */
   resetStats: () => void
   reset: () => void
@@ -153,6 +155,12 @@ export function createFocusTracker({
     setLocked(value) {
       isLocked = value && focusMidi !== null
       if (isLocked) resetCandidate()
+    },
+    lockTo(midi) {
+      focusMidi = midi
+      isLocked = true
+      resetCandidate()
+      resetStats()
     },
     resetStats,
     reset() {

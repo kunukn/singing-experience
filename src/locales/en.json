@@ -248,7 +248,9 @@
       "holdTime": "Hold time",
       "average": "Average",
       "wobble": "Wobble",
-      "inTune": "In tune"
+      "inTune": "In tune",
+      "auto": "Auto",
+      "targetNote": "Note to practise"
     }
   },
   "voiceRanges": {

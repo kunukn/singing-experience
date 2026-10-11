@@ -248,7 +248,9 @@
       "holdTime": "Lama tahan",
       "average": "Rata-rata",
       "wobble": "Goyang",
-      "inTune": "Pas"
+      "inTune": "Pas",
+      "auto": "Otomatis",
+      "targetNote": "Nada untuk latihan"
     }
   },
   "voiceRanges": {

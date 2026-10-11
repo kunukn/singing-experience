@@ -248,7 +248,9 @@
       "holdTime": "Holdt i",
       "average": "Gennemsnit",
       "wobble": "Vaklen",
-      "inTune": "Rent"
+      "inTune": "Rent",
+      "auto": "Auto",
+      "targetNote": "Tone at øve"
     }
   },
   "voiceRanges": {

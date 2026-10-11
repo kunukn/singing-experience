@@ -248,7 +248,9 @@
       "holdTime": "Durée",
       "average": "Moyenne",
       "wobble": "Tremblement",
-      "inTune": "Juste"
+      "inTune": "Juste",
+      "auto": "Auto",
+      "targetNote": "Note à travailler"
     }
   },
   "voiceRanges": {

@@ -64,6 +64,15 @@ export function useFocusTone({ detection, isListening }: FocusToneOptions) {
     },
   })
 
+  /* Syncs the refs at once rather than on the next frame's push, so a tone
+   * picked before Start moves the chart straight away */
+  function lockTo(midi: number) {
+    tracker.lockTo(midi)
+    focusMidi.value = tracker.focusMidi
+    isTrackerLocked.value = tracker.isLocked
+    stats.value = tracker.stats
+  }
+
   /* Signed cents from the focus tone; 100 cents per semitone */
   const centsFromFocus = computed(() =>
     focusMidi.value === null || liveMidi.value === null
@@ -71,5 +80,5 @@ export function useFocusTone({ detection, isListening }: FocusToneOptions) {
       : (liveMidi.value - focusMidi.value) * 100,
   )
 
-  return { focusMidi, isLocked, centsFromFocus, stats }
+  return { focusMidi, isLocked, centsFromFocus, stats, lockTo }
 }

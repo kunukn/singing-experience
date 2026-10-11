@@ -248,7 +248,9 @@
       "holdTime": "Duração",
       "average": "Média",
       "wobble": "Tremor",
-      "inTune": "Afinado"
+      "inTune": "Afinado",
+      "auto": "Auto",
+      "targetNote": "Nota para praticar"
     }
   },
   "voiceRanges": {

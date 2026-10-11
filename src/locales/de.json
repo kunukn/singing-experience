@@ -248,7 +248,9 @@
       "holdTime": "Gehalten",
       "average": "Durchschnitt",
       "wobble": "Wackeln",
-      "inTune": "Sauber"
+      "inTune": "Sauber",
+      "auto": "Auto",
+      "targetNote": "Ton zum Üben"
     }
   },
   "voiceRanges": {

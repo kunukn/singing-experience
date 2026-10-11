@@ -3,6 +3,7 @@ import { createFocusTracker, DEFAULT_FOCUS_HOLD_MS } from './focusToneTracker'
 
 const A3 = 57
 const G3 = 55
+const C4 = 60
 
 /* ~60 fps, the rate usePitchDetection reports at */
 const FRAME_MS = 16
@@ -109,6 +110,35 @@ describe('createFocusTracker - focus', () => {
     expect(tracker.isLocked).toBe(false)
   })
 
+  test('should focus and lock a chosen tone without a hold', () => {
+    const tracker = createFocusTracker()
+
+    tracker.lockTo(C4)
+
+    expect(tracker.focusMidi).toBe(C4)
+    expect(tracker.isLocked).toBe(true)
+  })
+
+  test('should keep a chosen tone while other notes are sung', () => {
+    const tracker = createFocusTracker({ holdMs: 100 })
+
+    tracker.lockTo(C4)
+    sing(tracker, A3, 0, 1000)
+
+    expect(tracker.focusMidi).toBe(C4)
+  })
+
+  test('should follow the voice again once a chosen tone is unlocked', () => {
+    const tracker = createFocusTracker({ holdMs: 100 })
+
+    tracker.lockTo(C4)
+    tracker.setLocked(false)
+    sing(tracker, A3, 0, 200)
+
+    expect(tracker.isLocked).toBe(false)
+    expect(tracker.focusMidi).toBe(A3)
+  })
+
   test('should clear focus and lock on reset', () => {
     const tracker = createFocusTracker({ holdMs: 100 })
     sing(tracker, A3, 0, 200)
@@ -184,6 +214,16 @@ describe('createFocusTracker - stats', () => {
     tracker.push(A3, 3100)
 
     expect(tracker.stats.holdMs).toBe(200)
+  })
+
+  test('should reset stats when a tone is chosen', () => {
+    const tracker = createFocusTracker({ holdMs: 0 })
+    sing(tracker, A3 + 0.3, 0, 200)
+
+    tracker.lockTo(C4)
+
+    expect(tracker.stats.holdMs).toBe(0)
+    expect(tracker.stats.averageCents).toBe(0)
   })
 
   test('should reset stats when the focus moves', () => {

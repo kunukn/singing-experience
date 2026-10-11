@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { midiToNoteLabel } from '@/utils/noteUtils'
+import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
 import { cleanTextColor } from '@/utils/pitchColors'
 import PitchFocusStats from './PitchFocusStats.vue'
 import PitchHistoryChart from './PitchHistoryChart.vue'
@@ -12,6 +12,9 @@ type Props = {
   isListening: boolean
   /* Where the chart sits before the singer has picked a tone */
   defaultMidi: number
+  /* The selected voice range — bounds the notes the singer can pick */
+  rangeMidiMin: number
+  rangeMidiMax: number
 }
 
 const props = defineProps<Props>()
@@ -23,7 +26,9 @@ const emit = defineEmits<{
 const { t, locale } = useI18n()
 const { isDark } = useDarkMode()
 
-const { focusMidi, isLocked, centsFromFocus, stats } = useFocusTone({
+const { playTone } = useTonePlayer()
+
+const { focusMidi, isLocked, centsFromFocus, stats, lockTo } = useFocusTone({
   detection: () => props.laneDetection,
   isListening: () => props.isListening,
 })
@@ -33,6 +38,48 @@ const { focusMidi, isLocked, centsFromFocus, stats } = useFocusTone({
 const centerMidi = computed(() => focusMidi.value ?? props.defaultMidi)
 const midiMin = computed(() => centerMidi.value - 1)
 const midiMax = computed(() => centerMidi.value + 1)
+
+/* A string sentinel, not null: PrimeSelect treats a null model as "nothing
+ * selected" and would show its placeholder instead of the Auto label */
+const AUTO_TARGET = 'auto'
+type TargetValue = number | typeof AUTO_TARGET
+
+/* High to low, with the catch-all Auto last — see "Vertical Ordering" in
+ * AGENTS.md. A focus outside the range is slotted in by pitch so the select
+ * can always show what is locked. */
+const targetOptions = computed(() => {
+  const highest = Math.max(props.rangeMidiMax, focusMidi.value ?? -Infinity)
+  const lowest = Math.min(props.rangeMidiMin, focusMidi.value ?? Infinity)
+  const options: { label: string; value: TargetValue }[] = []
+  for (let midi = highest; midi >= lowest; midi--) {
+    const isInRange = midi >= props.rangeMidiMin && midi <= props.rangeMidiMax
+    if (!isInRange && midi !== focusMidi.value) continue
+
+    options.push({ label: midiToNoteLabel(midi).label, value: midi })
+  }
+  options.push({ label: t('pitchDetector.focus.auto'), value: AUTO_TARGET })
+
+  return options
+})
+
+/* One state behind both controls: the picked note is simply the locked one */
+const targetMidi = computed<TargetValue>({
+  get: () =>
+    isLocked.value && focusMidi.value !== null ? focusMidi.value : AUTO_TARGET,
+  set: (value) => {
+    if (value === AUTO_TARGET) {
+      isLocked.value = false
+
+      return
+    }
+
+    lockTo(value)
+    playTone(midiToFrequency(value))
+    /* Lets the parent start the preview's deaf window, so the mic does not
+     * hear the reference tone as the singer */
+    emit('tonePlayed')
+  },
+})
 
 const focusLabel = computed(() =>
   focusMidi.value === null ? null : midiToNoteLabel(focusMidi.value).label,
@@ -100,6 +147,24 @@ const centsColor = computed(() =>
         :disabled="focusMidi === null"
         data-testid="focus-lock"
       />
+
+      <PrimeSelect
+        v-model="targetMidi"
+        :options="targetOptions"
+        optionLabel="label"
+        optionValue="value"
+        size="small"
+        :aria-label="t('pitchDetector.focus.targetNote')"
+        data-testid="focus-target-select"
+      >
+        <template #header>
+          <div
+            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
+          >
+            {{ t('pitchDetector.focus.targetNote') }}
+          </div>
+        </template>
+      </PrimeSelect>
 
       <PitchFocusStats :stats="stats" class="ms-auto" />
     </div>
