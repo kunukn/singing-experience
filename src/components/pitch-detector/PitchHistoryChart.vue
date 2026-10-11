@@ -12,6 +12,12 @@ import { midiToNoteLabel, noteToFrequency } from '@/utils/noteUtils'
 import { textColorAtMidi } from '@/utils/pitchColors'
 import { getRibbonWidth, getSegmentsForRange } from '@/utils/voiceRangeSegments'
 import PitchHistoryCanvas from './PitchHistoryCanvas.vue'
+import {
+  getScrollThumb,
+  offsetMsToScrollLeft,
+  scrollLeftToOffsetMs,
+  type PitchHistoryTimeScale,
+} from './pitchHistoryScroll'
 import type { PitchSample } from './pitchLaneRecorder'
 import type {
   PitchLaneDetection,
@@ -49,6 +55,7 @@ const props = withDefaults(defineProps<Props>(), {
   isVoiceRibbonAllowed: true,
 })
 
+const { t } = useI18n()
 const isRtl = useIsRtl()
 const { isDark } = useDarkMode()
 const { isVoiceTypeRibbonVisible: isVoiceTypeRibbonEnabled } =
@@ -172,6 +179,133 @@ onUnmounted(() => {
   resizeObserver = null
 })
 
+/*
+ * Scrolling back through a stopped take. The canvas shows a 5 s window but
+ * keeps 30 s, so a long take's start would otherwise be out of reach. Native
+ * scrolling, as in SingTheKeysLane: an invisible scroller over the canvas
+ * gives touch momentum, trackpad, shift-wheel and arrow keys, and its
+ * scrollLeft drives viewOffsetMs, which the canvas draws from.
+ */
+const timeScale = ref<PitchHistoryTimeScale>({ pxPerMs: 0, scrollableMs: 0 })
+const viewOffsetMs = ref(0)
+const scrollerRef = ref<HTMLElement | null>(null)
+
+const isScrollable = computed(
+  () =>
+    !props.isListening &&
+    props.replayProgress == null &&
+    timeScale.value.scrollableMs > 0 &&
+    timeScale.value.pxPerMs > 0,
+)
+
+const scrollGeometry = computed(() => ({
+  ...timeScale.value,
+  isRtl: isRtl.value,
+}))
+
+/* Wide enough that the scroll range is exactly the extra history, at the
+ * canvas's own scale, so the trail tracks the finger 1:1 */
+const scrollSpacerWidthPx = computed(
+  () =>
+    (containerRef.value?.clientWidth ?? 0) +
+    timeScale.value.scrollableMs * timeScale.value.pxPerMs,
+)
+
+const scrollThumb = computed(() =>
+  isScrollable.value
+    ? getScrollThumb(viewOffsetMs.value, timeScale.value.scrollableMs)
+    : null,
+)
+
+function handleTimeScaleChange(next: PitchHistoryTimeScale) {
+  /* A new take, or a cleared one, opens at its newest moment */
+  if (next.scrollableMs !== timeScale.value.scrollableMs) viewOffsetMs.value = 0
+  timeScale.value = next
+}
+
+function handleScroll() {
+  const element = scrollerRef.value
+  if (!element) return
+
+  viewOffsetMs.value = scrollLeftToOffsetMs(
+    element.scrollLeft,
+    scrollGeometry.value,
+  )
+}
+
+/* Puts the scroller where viewOffsetMs says — on mount (newest view after
+ * Stop), after a resize changes the scale, and after replay hands it back */
+watch([scrollerRef, scrollSpacerWidthPx, scrollGeometry], async ([element]) => {
+  if (!element) return
+
+  /* The spacer's new width must be laid out before scrollLeft can reach it */
+  await nextTick()
+  const target = offsetMsToScrollLeft(viewOffsetMs.value, scrollGeometry.value)
+  /* 1 px slack: setting scrollLeft fires a scroll event, and sub-pixel
+   * rounding would otherwise bounce the two back and forth */
+  if (Math.abs(element.scrollLeft - target) > 1) element.scrollLeft = target
+})
+
+/* px — how far a mouse may move before a press becomes a drag, so a slightly
+ * wobbly click on a marker still plays its note (same as useLaneScroll) */
+const DRAG_THRESHOLD_PX = 6
+
+/*
+ * Mouse drag-to-scroll. A native scroller pans under touch and trackpad but
+ * not under a mouse drag, and a plain wheel scrolls vertically, so a mouse
+ * user would otherwise have no obvious way to scroll. Touch and pen are left
+ * to the browser.
+ */
+let dragPointerId: number | null = null
+let dragLastX = 0
+let dragTravelPx = 0
+let wasDragged = false
+
+function handleScrollerPointerDown(event: PointerEvent) {
+  if (event.pointerType !== 'mouse' || event.button !== 0) return
+
+  dragPointerId = event.pointerId
+  dragLastX = event.clientX
+  dragTravelPx = 0
+  wasDragged = false
+}
+
+function handleScrollerPointerMove(event: PointerEvent) {
+  const element = scrollerRef.value
+  if (event.pointerId !== dragPointerId || !element) return
+
+  const deltaX = event.clientX - dragLastX
+  dragLastX = event.clientX
+  dragTravelPx += Math.abs(deltaX)
+  if (!wasDragged && dragTravelPx < DRAG_THRESHOLD_PX) return
+
+  if (!wasDragged) element.setPointerCapture?.(event.pointerId)
+  wasDragged = true
+  element.scrollLeft -= deltaX
+}
+
+function handleScrollerPointerEnd(event: PointerEvent) {
+  if (event.pointerId === dragPointerId) dragPointerId = null
+}
+
+/* The scroller covers the canvas, so marker taps arrive here and are passed
+ * on in canvas coordinates. A click that ends a mouse drag is not a tap. */
+function handleScrollerClick(event: MouseEvent) {
+  if (wasDragged) {
+    wasDragged = false
+
+    return
+  }
+
+  const rect = containerRef.value?.getBoundingClientRect()
+  if (!rect) return
+
+  canvasComponentRef.value?.handlePointerAt(
+    event.clientX - rect.left,
+    event.clientY - rect.top,
+  )
+}
+
 const gridNoteCount = computed(() => gridNotes.value.length)
 
 function getSamples(): Record<PitchLaneId, PitchSample[]> {
@@ -204,7 +338,45 @@ defineExpose({ gridNoteCount, getSamples, clearSamples })
       :isRtl="isRtl"
       :gutterWidth="gutterWidth"
       :focusMidi="focusMidi"
+      :viewOffsetMs="viewOffsetMs"
       @markerClick="handleMarkerClick"
+      @timeScaleChange="handleTimeScaleChange"
+    />
+    <!-- Native scroller over the canvas while a stopped take is longer than
+         the window (see scrollSpacerWidthPx). Invisible, and under the ribbon
+         and the note labels so those stay clickable. Always LTR: the RTL
+         mapping lives in pitchHistoryScroll. touch-manipulation, not pan-x,
+         so a vertical swipe on the chart still scrolls the page. -->
+    <div
+      v-if="isScrollable"
+      ref="scrollerRef"
+      class="absolute inset-0 cursor-grab touch-manipulation [scrollbar-width:none] overflow-x-auto overflow-y-hidden overscroll-x-contain rounded-lg focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--p-primary-color) active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+      dir="ltr"
+      role="region"
+      tabindex="0"
+      :aria-label="t('pitchDetector.scrollHistory')"
+      data-testid="pitch-history-scroller"
+      :data-view-offset-ms="Math.round(viewOffsetMs)"
+      @scroll="handleScroll"
+      @pointerdown="handleScrollerPointerDown"
+      @pointermove="handleScrollerPointerMove"
+      @pointerup="handleScrollerPointerEnd"
+      @pointercancel="handleScrollerPointerEnd"
+      @click="handleScrollerClick"
+    >
+      <div class="h-full" :style="{ width: `${scrollSpacerWidthPx}px` }" />
+    </div>
+    <!-- Where the view sits in the take — shows there is more to scroll to,
+         since the scroller itself is invisible -->
+    <div
+      v-if="scrollThumb"
+      class="pointer-events-none absolute bottom-1 h-1 rounded-full bg-(--p-surface-400)/70 dark:bg-(--p-surface-500)/70"
+      :style="{
+        insetInlineStart: `${scrollThumb.startFraction * 100}%`,
+        width: `${scrollThumb.sizeFraction * 100}%`,
+      }"
+      aria-hidden="true"
+      data-testid="pitch-history-scroll-thumb"
     />
     <VoiceRangeRibbon
       v-if="isVoiceTypeRibbonVisible"

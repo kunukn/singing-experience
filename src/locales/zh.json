@@ -238,6 +238,7 @@
     "lowVoice": "低音",
     "highVoice": "高音",
     "replaySound": "回放声音\n（最近30秒）",
+    "scrollHistory": "滚动查看你的歌声",
     "tabs": {
       "overview": "概览",
       "focus": "专注"

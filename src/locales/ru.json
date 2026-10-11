@@ -238,6 +238,7 @@
     "lowVoice": "Низкий голос",
     "highVoice": "Высокий голос",
     "replaySound": "Воспроизвести звук\n(последние 30 с)",
+    "scrollHistory": "Листай своё пение",
     "tabs": {
       "overview": "Обзор",
       "focus": "Фокус"

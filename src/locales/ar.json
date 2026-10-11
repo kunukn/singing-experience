@@ -238,6 +238,7 @@
     "lowVoice": "صوت منخفض",
     "highVoice": "صوت عالٍ",
     "replaySound": "إعادة تشغيل الصوت\n(آخر 30 ثانية)",
+    "scrollHistory": "تصفّح غناءك",
     "tabs": {
       "overview": "نظرة عامة",
       "focus": "تركيز"

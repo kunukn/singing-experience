@@ -238,6 +238,7 @@
     "lowVoice": "Low voice",
     "highVoice": "High voice",
     "replaySound": "Replay\n(last 30s)",
+    "scrollHistory": "Scroll through your singing",
     "tabs": {
       "overview": "Overview",
       "focus": "Focus"

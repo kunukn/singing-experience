@@ -238,6 +238,7 @@
     "lowVoice": "Tiefe Stimme",
     "highVoice": "Hohe Stimme",
     "replaySound": "Ton wiederholen\n(letzte 30 Sek.)",
+    "scrollHistory": "Scroll durch deinen Gesang",
     "tabs": {
       "overview": "Übersicht",
       "focus": "Fokus"

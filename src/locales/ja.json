@@ -238,6 +238,7 @@
     "lowVoice": "低い声",
     "highVoice": "高い声",
     "replaySound": "音を再生\n（直近30秒）",
+    "scrollHistory": "歌をスクロール",
     "tabs": {
       "overview": "概要",
       "focus": "集中"

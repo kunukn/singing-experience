@@ -238,6 +238,7 @@
     "lowVoice": "Voix grave",
     "highVoice": "Voix aiguë",
     "replaySound": "Rejouer le son\n(30 dernières s)",
+    "scrollHistory": "Fais défiler ton chant",
     "tabs": {
       "overview": "Vue d'ensemble",
       "focus": "Focus"

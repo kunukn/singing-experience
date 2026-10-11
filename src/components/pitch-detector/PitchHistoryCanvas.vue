@@ -24,6 +24,7 @@ import {
   type PitchPreviewLane,
 } from './pitchLanes'
 import { HISTORY_WINDOW_MS, PAUSE_GAP_MS } from './pitchConstants'
+import type { PitchHistoryTimeScale } from './pitchHistoryScroll'
 
 type Props = {
   /* One entry per singing voice — one 'low' lane in single-voice mode, both
@@ -46,6 +47,9 @@ type Props = {
    * against this note instead of the nearest semitone, and a clean-zone band
    * is drawn around it. */
   focusMidi?: number | null
+  /* ms back from the end of a stopped take that the live edge shows — set
+   * while the singer scrolls through history. Ignored during replay. */
+  viewOffsetMs?: number
 }
 
 type MarkerHitArea = {
@@ -60,6 +64,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   markerClick: [midiNote: number]
+  timeScaleChange: [timeScale: PitchHistoryTimeScale]
 }>()
 
 const PADDING_TOP = 16
@@ -471,6 +476,29 @@ function drawLaneTrail(
   }
 }
 
+let reportedTimeScale: PitchHistoryTimeScale = { pxPerMs: 0, scrollableMs: 0 }
+
+/*
+ * Tells the chart how far a stopped take can be scrolled back, and at what
+ * scale. Reported from the draw, which owns the geometry, and only on change —
+ * the render loop calls this every frame.
+ */
+function reportTimeScale(geom: ChartGeometry, firstTimestamp: number | null) {
+  const pxPerMs = Math.abs(geom.labelAxisX - geom.nowEdgeX) / HISTORY_WINDOW_MS
+  const scrollableMs =
+    pausedAt !== null && firstTimestamp !== null
+      ? Math.max(0, pausedAt - firstTimestamp - HISTORY_WINDOW_MS)
+      : 0
+  if (
+    pxPerMs === reportedTimeScale.pxPerMs &&
+    scrollableMs === reportedTimeScale.scrollableMs
+  )
+    return
+
+  reportedTimeScale = { pxPerMs, scrollableMs }
+  emit('timeScaleChange', reportedTimeScale)
+}
+
 function drawChart() {
   const canvas = canvasRef.value
   if (!canvas) return
@@ -550,12 +578,20 @@ function drawChart() {
    * instead of each running on its own clock. */
   const extent = pitchLaneExtent(PITCH_LANE_IDS.map((id) => recorders[id]))
   const isReplaying = props.replayProgress != null && extent != null
+  /* A stopped take scrolled back through: the live edge sits viewOffsetMs
+   * before the moment Stop was pressed */
+  const isScrolledBack =
+    !isReplaying && pausedAt !== null && (props.viewOffsetMs ?? 0) > 0
   const now =
     isReplaying && extent
       ? extent.firstTimestamp +
         (props.replayProgress as number) *
           (extent.lastTimestamp - extent.firstTimestamp)
-      : (pausedAt ?? performance.now())
+      : pausedAt !== null
+        ? pausedAt - (props.viewOffsetMs ?? 0)
+        : performance.now()
+
+  reportTimeScale(geom, extent?.firstTimestamp ?? null)
 
   // Scrolling vertical time markers — march away from the live edge toward the label edge
   {
@@ -640,14 +676,14 @@ function drawChart() {
   }
 
   /* Capture each voice's "live-edge" sample before restoring the clip so the
-   * head dots can be drawn unclipped. During replay, the live edge is the most
-   * recent sample with timestamp <= virtual now. */
+   * head dots can be drawn unclipped. During replay or while scrolled back, the
+   * live edge is the most recent sample with timestamp <= virtual now. */
   const heads: Array<{ laneId: PitchLaneId; sample: PitchSample }> = []
   for (const laneId of PITCH_LANE_IDS) {
     const samples = recorders[laneId].samples
     let latest: PitchSample | null = null
 
-    if (isReplaying) {
+    if (isReplaying || isScrolledBack) {
       for (let i = samples.length - 1; i >= 0; i--) {
         if (samples[i].timestamp <= now) {
           latest = samples[i]
@@ -733,10 +769,11 @@ function stopRendering() {
   }
 }
 
-function handleCanvasClick(event: MouseEvent) {
+/* A tap at canvas coordinates (x, y). Exposed so the history scroller, which
+ * sits over the canvas and takes its pointer events, can pass taps through. */
+function handlePointerAt(x: number, y: number) {
   if (props.isListening) return
 
-  const { offsetX, offsetY } = event
   /* Reverse order so the topmost pill wins where two voices overlap — the high
    * lane's markers are painted last. */
   const hit = markerHitAreas
@@ -744,14 +781,18 @@ function handleCanvasClick(event: MouseEvent) {
     .reverse()
     .find(
       (area) =>
-        offsetX >= area.x &&
-        offsetX <= area.x + area.w &&
-        offsetY >= area.y &&
-        offsetY <= area.y + area.h,
+        x >= area.x &&
+        x <= area.x + area.w &&
+        y >= area.y &&
+        y <= area.y + area.h,
     )
   if (!hit) return
 
   emit('markerClick', hit.midiNote)
+}
+
+function handleCanvasClick(event: MouseEvent) {
+  handlePointerAt(event.offsetX, event.offsetY)
 }
 
 /* Record every clean frame, one buffer per voice. Gated on isListening because
@@ -777,7 +818,7 @@ watch(
 )
 
 watch(
-  () => [props.isRtl, props.gutterWidth],
+  () => [props.isRtl, props.gutterWidth, props.viewOffsetMs],
   () => drawChart(),
 )
 
@@ -889,7 +930,7 @@ function clearSamples() {
   drawChart()
 }
 
-defineExpose({ getSamples, clearSamples })
+defineExpose({ getSamples, clearSamples, handlePointerAt })
 
 onUnmounted(() => {
   stopRendering()
