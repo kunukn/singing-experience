@@ -1,11 +1,27 @@
 import { describe, expect, test } from 'vitest'
 import {
+  CLEAN_CENTS,
+  CLOSE_CENTS,
   cleanColor,
   cleanTextColor,
   colorAtMidi,
   colorRgbAtMidi,
+  OFF_CENTS,
   textColorAtMidi,
 } from './pitchColors'
+
+/* Asserts the rule in AGENTS.md "Pitch Accuracy Thresholds" rather than
+ * pinning today's values, so a deliberate retune only fails if it breaks it */
+describe('pitch accuracy tiers', () => {
+  test('should run clean < close < off', () => {
+    expect(CLEAN_CENTS).toBeLessThan(CLOSE_CENTS)
+    expect(CLOSE_CENTS).toBeLessThan(OFF_CENTS)
+  })
+
+  test('should cap off at half a semitone, where the nearest note flips', () => {
+    expect(OFF_CENTS).toBe(50)
+  })
+})
 
 describe('cleanTextColor', () => {
   test('returns green-ish color at 0 cents in dark mode (default)', () => {

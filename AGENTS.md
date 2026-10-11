@@ -257,6 +257,22 @@ Always copy before sorting: `.sort()` mutates, and these option arrays are usual
 
 The pitch half is guarded by [voiceRanges.test.ts](src/constants/voiceRanges.test.ts), which asserts the rule rather than snapshotting today's order. Adding another ordered list? Add a case there too.
 
+### Pitch Accuracy Thresholds
+
+Three shared tiers in [pitchColors.ts](src/utils/pitchColors.ts) define "how in tune" across every program:
+
+| Constant      | Value | Meaning                                                |
+| ------------- | ----- | ------------------------------------------------------ |
+| `CLEAN_CENTS` | 10¢   | Spot on — studio-tight (green)                         |
+| `CLOSE_CENTS` | 20¢   | Clean / on pitch — a trained singer's typical accuracy |
+| `OFF_CENTS`   | 50¢   | Half a semitone — clearly off; colour saturates to red |
+
+- **Import these; never hardcode 10/20/50 or add a feature-local copy.** Colours, the Do-Re-Mi difficulty rules, `isOnPitch()` and the Focus tab bands all read them, so a change moves every program together.
+- **Comments name the constant, not the number** — write "within `CLOSE_CENTS`", not "within ±20¢", so a retune can't leave stale text behind.
+- **Scoring tolerance is a separate concept.** `SCORE_TOLERANCE_CENTS` (±50¢, [useDwellSingScore.ts](src/composables/useDwellSingScore.ts)) decides right note vs wrong note for points and stays forgiving for children. Don't reuse `CLOSE_CENTS` for it, or vice versa.
+
+The tier order is guarded by `pitchColors.test.ts`.
+
 ### Color Variables
 
 Use **PrimeVue CSS custom properties** (`--p-*`) for all colors — text, backgrounds, borders, and shadows. Do **not** use Tailwind's built-in color palette classes (`text-red-400`, `bg-green-500`, etc.). PrimeVue variables respect the active theme and automatically adapt to light/dark mode.
@@ -477,6 +493,7 @@ If `.temp/` does not exist, create it first.
 - ✅ Co-locate domain-specific composables, types, and tests with their feature folder — only shared composables stay in `src/composables/`
 - ✅ Use CSS logical properties (`ms-*`, `me-*`, `start`, `end`) — never physical `ml-*`/`mr-*`/`left`/`right` for horizontal spacing or alignment
 - ✅ Order dropdowns by magnitude, largest at the top — pitch, seconds, BPM, counts — see "Vertical Ordering"
+- ✅ Pitch thresholds come from `CLEAN_CENTS` / `CLOSE_CENTS` / `OFF_CENTS` — never hardcoded cents (see "Pitch Accuracy Thresholds")
 - ✅ Use PrimeVue CSS variables (`--p-*`) for all colors with Tailwind v4 shorthand `text-(--p-*)` — never Tailwind color palette classes (`text-red-400`, `bg-green-500`)
 - ✅ Wrap user-facing strings with `$t()` / `t()` for i18n — never hardcode display text
 - ✅ Keep translated copy informal and child-friendly — see "i18n Copy & Translations"
