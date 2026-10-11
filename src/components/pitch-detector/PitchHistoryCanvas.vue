@@ -234,6 +234,7 @@ function drawFocusZone(
   focusMidi: number,
 ) {
   const green = resolveCssColor('--p-green-400')
+  const red = resolveCssColor('--p-red-400')
   const width = geom.chartRightX - geom.chartLeftX
   /* 100 cents per semitone */
   const cleanTop = midiToY(focusMidi + CLEAN_CENTS / 100, height)
@@ -243,17 +244,24 @@ function drawFocusZone(
   ctx.fillStyle = withAlpha(green, 0.12) // faint — the trail must stay on top
   ctx.fillRect(geom.chartLeftX, cleanTop, width, cleanBottom - cleanTop)
 
-  ctx.strokeStyle = withAlpha(green, 0.35)
   ctx.lineWidth = 1
   ctx.setLineDash([4, 4]) // px dash/gap — lighter than the solid grid lines
   /* ±50¢ is also where the nearest note flips to the neighbour — past it the
-   * singer starts pulling the focus over */
-  for (const offset of [CLOSE_CENTS, -CLOSE_CENTS, OFF_CENTS, -OFF_CENTS]) {
-    const y = midiToY(focusMidi + offset / 100, height)
-    ctx.beginPath()
-    ctx.moveTo(geom.chartLeftX, y)
-    ctx.lineTo(geom.chartRightX, y)
-    ctx.stroke()
+   * singer starts pulling the focus over. Muted red: the trail's "off" hue,
+   * dimmed so a guide line never reads as an alarm. */
+  const guides = [
+    { cents: CLOSE_CENTS, color: withAlpha(green, 0.35) },
+    { cents: OFF_CENTS, color: withAlpha(red, 0.35) },
+  ]
+  for (const guide of guides) {
+    ctx.strokeStyle = guide.color
+    for (const sign of [1, -1]) {
+      const y = midiToY(focusMidi + (sign * guide.cents) / 100, height)
+      ctx.beginPath()
+      ctx.moveTo(geom.chartLeftX, y)
+      ctx.lineTo(geom.chartRightX, y)
+      ctx.stroke()
+    }
   }
 
   drawFocusZoneLabels(ctx, geom, height, focusMidi)
@@ -285,7 +293,8 @@ function drawFocusZoneLabels(
 
   ctx.setLineDash([])
   ctx.font = '10px monospace'
-  ctx.fillStyle = withAlpha(resolveCssColor('--p-text-muted-color'), 0.8)
+  const mutedColor = withAlpha(resolveCssColor('--p-text-muted-color'), 0.8)
+  const offColor = withAlpha(resolveCssColor('--p-red-400'), 0.7) // matches its dimmed guide line
   /* Explicit left/right rather than start/end, which would follow the
    * canvas's own direction instead of the chart's */
   ctx.textAlign = isRtl ? 'right' : 'left'
@@ -293,13 +302,29 @@ function drawFocusZoneLabels(
   const x = isRtl ? geom.labelAxisX - 4 : geom.labelAxisX + 4 // px inset from the axis
 
   const labels = [
-    { text: `±${CLEAN_CENTS}¢`, y: cleanY, gap: cleanY - closeY },
-    { text: `±${CLOSE_CENTS}¢`, y: closeY, gap: closeY - offY },
-    { text: `±${OFF_CENTS}¢`, y: offY, gap: offY - PADDING_TOP },
+    {
+      text: `±${CLEAN_CENTS}¢`,
+      y: cleanY,
+      gap: cleanY - closeY,
+      color: mutedColor,
+    },
+    {
+      text: `±${CLOSE_CENTS}¢`,
+      y: closeY,
+      gap: closeY - offY,
+      color: mutedColor,
+    },
+    {
+      text: `±${OFF_CENTS}¢`,
+      y: offY,
+      gap: offY - PADDING_TOP,
+      color: offColor,
+    },
   ]
   for (const label of labels) {
     if (label.gap < ZONE_LABEL_MIN_GAP) continue
 
+    ctx.fillStyle = label.color
     ctx.fillText(label.text, x, label.y - 2) // 2px lift off the line
   }
 }
