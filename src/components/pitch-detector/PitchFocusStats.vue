@@ -64,10 +64,17 @@ const items = computed(() => [
       : '-',
   },
   {
-    key: 'inTune',
-    label: t('pitchDetector.focus.inTune'),
+    key: 'onPitch',
+    label: t('pitchDetector.focus.onPitch'),
     value: hasData.value
-      ? percentFormat.value.format(props.stats.inTunePercent / 100)
+      ? percentFormat.value.format(props.stats.onPitchPercent / 100)
+      : '-',
+  },
+  {
+    key: 'spotOn',
+    label: t('pitchDetector.focus.spotOn'),
+    value: hasData.value
+      ? percentFormat.value.format(props.stats.spotOnPercent / 100)
       : '-',
   },
 ])
@@ -75,7 +82,7 @@ const items = computed(() => [
 
 <template>
   <dl
-    class="grid grid-cols-2 gap-x-6 gap-y-1 sm:grid-cols-4"
+    class="grid grid-cols-3 gap-x-6 gap-y-1 sm:grid-cols-5"
     data-testid="pitch-focus-stats"
   >
     <div

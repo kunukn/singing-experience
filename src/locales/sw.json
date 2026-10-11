@@ -249,9 +249,26 @@
       "holdTime": "Muda",
       "average": "Wastani",
       "wobble": "Mtetemo",
-      "inTune": "Sawa",
+      "onPitch": "Kwenye sauti",
+      "spotOn": "Sawasawa kabisa",
       "auto": "Otomatiki",
-      "targetNote": "Noti ya kufanyia mazoezi"
+      "targetNote": "Noti ya kufanyia mazoezi",
+      "levels": {
+        "warmingUp": "Kupasha moto",
+        "findingIt": "Unaipata",
+        "niceAndClose": "Karibu sana",
+        "stageReady": "Tayari kwa jukwaa",
+        "leadSinger": "Mwimbaji mkuu",
+        "pitchPerfect": "Sauti kamili"
+      },
+      "tips": {
+        "keepHolding": "Endelea kushikilia uone kiwango chako",
+        "sharp": "Juu kidogo. Lenga chini kidogo",
+        "flat": "Chini kidogo. Lenga juu kidogo",
+        "steady": "Vizuri! Sasa pumua polepole na kwa utulivu",
+        "almost": "Karibu kabisa. Endelea!",
+        "perfect": "Lo, imara kabisa!"
+      }
     }
   },
   "voiceRanges": {

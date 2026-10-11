@@ -1,5 +1,10 @@
 import { describe, expect, test } from 'vitest'
-import { createFocusTracker, DEFAULT_FOCUS_HOLD_MS } from './focusToneTracker'
+import { PAUSE_GAP_MS } from './pitchConstants'
+import {
+  createFocusTracker,
+  DEFAULT_FOCUS_HOLD_MS,
+  HEARD_PITCH_WINDOW_MS,
+} from './focusToneTracker'
 
 const A3 = 57
 const G3 = 55
@@ -159,36 +164,65 @@ describe('createFocusTracker - stats', () => {
       holdMs: 0,
       averageCents: 0,
       wobbleCents: 0,
-      inTunePercent: 0,
+      onPitchPercent: 0,
+      spotOnPercent: 0,
     })
   })
 
-  test('should report a steady sharp tone as sharp with no wobble', () => {
+  test('should count a steady +20 cents tone as on pitch but not spot on', () => {
     const tracker = createFocusTracker({ holdMs: 0 })
 
-    tracker.push(A3 + 0.2, 0)
-    tracker.push(A3 + 0.2, 10)
-    tracker.push(A3 + 0.2, 20)
+    sing(tracker, A3 + 0.2, 0, 400)
 
     expect(tracker.stats.averageCents).toBeCloseTo(20, 5)
     expect(tracker.stats.wobbleCents).toBeCloseTo(0, 5)
-    expect(tracker.stats.inTunePercent).toBe(0)
+    expect(tracker.stats.onPitchPercent).toBe(100)
+    expect(tracker.stats.spotOnPercent).toBe(0)
   })
 
-  test('should compute average, wobble and in-tune share', () => {
+  test('should compute average, wobble and both shares over two phrases', () => {
     const tracker = createFocusTracker({ holdMs: 0 })
+    tracker.lockTo(A3)
 
-    /* Focus lands on the first frame; then −5, +5, +30 cents.
-     * Samples: 0, −5, +5, +30 → mean 7.5, population sd √181.25 */
-    tracker.push(A3, 0)
-    tracker.push(A3 - 0.05, 10)
-    tracker.push(A3 + 0.05, 20)
-    tracker.push(A3 + 0.3, 30)
+    /* Two equal phrases split by a pause, so neither bleeds into the other:
+     * 0 cents then +30 cents → mean 15, sd 15, half on pitch, half spot on */
+    const next = sing(tracker, A3, 0, 496)
+    sing(tracker, A3 + 0.3, next + PAUSE_GAP_MS, next + PAUSE_GAP_MS + 496)
 
-    expect(tracker.stats.averageCents).toBeCloseTo(7.5, 5)
-    expect(tracker.stats.wobbleCents).toBeCloseTo(Math.sqrt(181.25), 5)
-    expect(tracker.stats.inTunePercent).toBe(75)
-    expect(tracker.stats.holdMs).toBe(30)
+    expect(tracker.stats.averageCents).toBeCloseTo(15, 5)
+    expect(tracker.stats.wobbleCents).toBeCloseTo(15, 5)
+    expect(tracker.stats.onPitchPercent).toBe(50)
+    expect(tracker.stats.spotOnPercent).toBe(50)
+  })
+
+  test('should judge a wide vibrato centred on the note as on pitch', () => {
+    const tracker = createFocusTracker({ holdMs: 0 })
+    tracker.lockTo(A3)
+
+    /* ±40 cents at 6 Hz, a typical classical vibrato. Frame by frame most of
+     * it sits beyond ±25 cents; heard over HEARD_PITCH_WINDOW_MS it is still. */
+    const vibratoHz = 6
+    for (let timestamp = 0; timestamp <= 3000; timestamp += FRAME_MS) {
+      const cents = 40 * Math.sin((2 * Math.PI * vibratoHz * timestamp) / 1000)
+      tracker.push(A3 + cents / 100, timestamp)
+    }
+
+    expect(HEARD_PITCH_WINDOW_MS).toBe(200)
+    expect(tracker.stats.onPitchPercent).toBeGreaterThan(95)
+    expect(tracker.stats.spotOnPercent).toBeGreaterThan(90)
+    expect(tracker.stats.wobbleCents).toBeLessThan(10)
+  })
+
+  test('should hear each phrase fresh after a pause', () => {
+    const tracker = createFocusTracker({ holdMs: 0 })
+    tracker.lockTo(A3)
+
+    /* +40 cents, a pause, then dead on. Were the +40 tail carried over, the
+     * first frames of the second phrase would not count as spot on. */
+    const next = sing(tracker, A3 + 0.4, 0, 496)
+    sing(tracker, A3, next + PAUSE_GAP_MS + 1, next + PAUSE_GAP_MS + 497)
+
+    expect(tracker.stats.spotOnPercent).toBe(50)
   })
 
   test('should leave out frames more than 50 cents off the focus', () => {

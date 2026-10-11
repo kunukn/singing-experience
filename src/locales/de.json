@@ -249,9 +249,26 @@
       "holdTime": "Gehalten",
       "average": "Durchschnitt",
       "wobble": "Wackeln",
-      "inTune": "Sauber",
+      "onPitch": "Im Ton",
+      "spotOn": "Genau getroffen",
       "auto": "Auto",
-      "targetNote": "Ton zum Üben"
+      "targetNote": "Ton zum Üben",
+      "levels": {
+        "warmingUp": "Aufwärmen",
+        "findingIt": "Auf dem Weg",
+        "niceAndClose": "Schon nah dran",
+        "stageReady": "Bühnenreif",
+        "leadSinger": "Leadsänger",
+        "pitchPerfect": "Perfekter Ton"
+      },
+      "tips": {
+        "keepHolding": "Halte weiter, dann siehst du dein Level",
+        "sharp": "Etwas zu hoch. Ziel ein bisschen tiefer",
+        "flat": "Etwas zu tief. Ziel ein bisschen höher",
+        "steady": "Super! Jetzt atme ruhig und gleichmäßig",
+        "almost": "Fast geschafft. Weiter so!",
+        "perfect": "Wow, total sicher!"
+      }
     }
   },
   "voiceRanges": {

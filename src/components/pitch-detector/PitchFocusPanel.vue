@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
 import { cleanTextColor } from '@/utils/pitchColors'
+import PitchFocusLevel from './PitchFocusLevel.vue'
 import PitchFocusStats from './PitchFocusStats.vue'
 import PitchHistoryChart from './PitchHistoryChart.vue'
 import type { PitchLaneDetection, PitchPreviewLane } from './pitchLanes'
@@ -212,6 +213,8 @@ const centsColor = computed(() =>
 
       <PitchFocusStats :stats="stats" class="ms-auto" />
     </div>
+
+    <PitchFocusLevel :stats="stats" class="w-full max-w-4xl" />
 
     <PitchHistoryChart
       ref="chartRef"

@@ -249,9 +249,26 @@
       "holdTime": "Duração",
       "average": "Média",
       "wobble": "Tremor",
-      "inTune": "Afinado",
+      "onPitch": "Afinado",
+      "spotOn": "Na mosca",
       "auto": "Auto",
-      "targetNote": "Nota para praticar"
+      "targetNote": "Nota para praticar",
+      "levels": {
+        "warmingUp": "Aquecendo",
+        "findingIt": "Encontrando",
+        "niceAndClose": "Bem perto",
+        "stageReady": "Pronto pro palco",
+        "leadSinger": "Vocal principal",
+        "pitchPerfect": "Afinação perfeita"
+      },
+      "tips": {
+        "keepHolding": "Continue segurando para ver seu nível",
+        "sharp": "Um pouco alto. Mire um pouquinho mais baixo",
+        "flat": "Um pouco baixo. Mire um pouquinho mais alto",
+        "steady": "Boa! Agora respire devagar e firme",
+        "almost": "Quase lá. Continue!",
+        "perfect": "Uau, firme como rocha!"
+      }
     }
   },
   "voiceRanges": {

@@ -249,9 +249,26 @@
       "holdTime": "Lama tahan",
       "average": "Rata-rata",
       "wobble": "Goyang",
-      "inTune": "Pas",
+      "onPitch": "Pas nada",
+      "spotOn": "Tepat sekali",
       "auto": "Otomatis",
-      "targetNote": "Nada untuk latihan"
+      "targetNote": "Nada untuk latihan",
+      "levels": {
+        "warmingUp": "Pemanasan",
+        "findingIt": "Mulai dapat",
+        "niceAndClose": "Hampir pas",
+        "stageReady": "Siap tampil",
+        "leadSinger": "Penyanyi utama",
+        "pitchPerfect": "Nada sempurna"
+      },
+      "tips": {
+        "keepHolding": "Terus tahan untuk lihat levelmu",
+        "sharp": "Agak tinggi. Coba sedikit lebih rendah",
+        "flat": "Agak rendah. Coba sedikit lebih tinggi",
+        "steady": "Bagus! Sekarang tarik napas pelan dan tenang",
+        "almost": "Hampir. Terus!",
+        "perfect": "Wah, mantap sekali!"
+      }
     }
   },
   "voiceRanges": {

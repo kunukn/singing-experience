@@ -1,4 +1,4 @@
-import { CLEAN_CENTS, OFF_CENTS } from '@/utils/pitchColors'
+import { CLEAN_CENTS, CLOSE_CENTS, OFF_CENTS } from '@/utils/pitchColors'
 import { PAUSE_GAP_MS } from './pitchConstants'
 
 /*
@@ -15,10 +15,13 @@ export type FocusToneStats = {
   holdMs: number
   /* Signed: positive = sharp, negative = flat */
   averageCents: number
-  /* Standard deviation of the cents — how steady the tone is */
+  /* Standard deviation of the heard cents — how steady the tone is */
   wobbleCents: number
-  /* Share of samples within CLEAN_CENTS, 0–100 */
-  inTunePercent: number
+  /* Share of samples whose heard pitch is within CLOSE_CENTS, 0–100 —
+   * the band listeners accept as in tune */
+  onPitchPercent: number
+  /* Share within CLEAN_CENTS, 0–100 — the studio-tight stretch goal */
+  spotOnPercent: number
 }
 
 export type FocusToneTracker = {
@@ -38,11 +41,19 @@ export type FocusToneTracker = {
 /* How long a new semitone must be held before the chart re-centres on it */
 export const DEFAULT_FOCUS_HOLD_MS = 400
 
+/*
+ * Pitch is judged on a rolling mean over this window rather than raw frames.
+ * Vibrato runs at 5–7 Hz, so 200 ms spans about one cycle — roughly how a
+ * listener hears it: a ±50¢ vibrato centred on the note sounds in tune.
+ */
+export const HEARD_PITCH_WINDOW_MS = 200
+
 const EMPTY_STATS: FocusToneStats = {
   holdMs: 0,
   averageCents: 0,
   wobbleCents: 0,
-  inTunePercent: 0,
+  onPitchPercent: 0,
+  spotOnPercent: 0,
 }
 
 export function createFocusTracker({
@@ -59,16 +70,41 @@ export function createFocusTracker({
   /* Running sums, so stats stay O(1) per frame over a long held tone */
   let sampleCount = 0
   let centsSum = 0
-  let centsSquaredSum = 0
-  let inTuneCount = 0
+  let heardCentsSum = 0
+  let heardCentsSquaredSum = 0
+  let onPitchCount = 0
+  let spotOnCount = 0
   let voicedMs = 0
+
+  /* The last HEARD_PITCH_WINDOW_MS of counted frames, with a running sum */
+  let heardWindow: { timestamp: number; cents: number }[] = []
+  let heardWindowSum = 0
+
+  function resetHeardWindow() {
+    heardWindow = []
+    heardWindowSum = 0
+  }
 
   function resetStats() {
     sampleCount = 0
     centsSum = 0
-    centsSquaredSum = 0
-    inTuneCount = 0
+    heardCentsSum = 0
+    heardCentsSquaredSum = 0
+    onPitchCount = 0
+    spotOnCount = 0
     voicedMs = 0
+    resetHeardWindow()
+  }
+
+  /* Adds a frame to the window and returns the window's mean */
+  function heardCentsFor(cents: number, timestampMs: number): number {
+    heardWindow.push({ timestamp: timestampMs, cents })
+    heardWindowSum += cents
+    while (heardWindow[0].timestamp <= timestampMs - HEARD_PITCH_WINDOW_MS) {
+      heardWindowSum -= heardWindow.shift()!.cents
+    }
+
+    return heardWindowSum / heardWindow.length
   }
 
   function resetCandidate() {
@@ -96,7 +132,7 @@ export function createFocusTracker({
     resetStats()
   }
 
-  function recordStats(midi: number, elapsedMs: number) {
+  function recordStats(midi: number, elapsedMs: number, timestampMs: number) {
     if (focusMidi === null) return
 
     const cents = (midi - focusMidi) * 100 // 100 cents per semitone
@@ -104,10 +140,14 @@ export function createFocusTracker({
      * tone is — only frames that are still "on" it count. */
     if (Math.abs(cents) > OFF_CENTS) return
 
+    const heardCents = heardCentsFor(cents, timestampMs)
+
     sampleCount++
     centsSum += cents
-    centsSquaredSum += cents * cents
-    if (Math.abs(cents) <= CLEAN_CENTS) inTuneCount++
+    heardCentsSum += heardCents
+    heardCentsSquaredSum += heardCents * heardCents
+    if (Math.abs(heardCents) <= CLOSE_CENTS) onPitchCount++
+    if (Math.abs(heardCents) <= CLEAN_CENTS) spotOnCount++
     voicedMs += elapsedMs
   }
 
@@ -121,19 +161,20 @@ export function createFocusTracker({
     get stats() {
       if (sampleCount === 0) return { ...EMPTY_STATS, holdMs: voicedMs }
 
-      const averageCents = centsSum / sampleCount
+      const heardAverage = heardCentsSum / sampleCount
       /* Population variance via E[x²] − E[x]²; clamped since float error can
        * dip it a hair below zero for a perfectly steady tone. */
       const variance = Math.max(
         0,
-        centsSquaredSum / sampleCount - averageCents * averageCents,
+        heardCentsSquaredSum / sampleCount - heardAverage * heardAverage,
       )
 
       return {
         holdMs: voicedMs,
-        averageCents,
+        averageCents: centsSum / sampleCount,
         wobbleCents: Math.sqrt(variance),
-        inTunePercent: (inTuneCount / sampleCount) * 100,
+        onPitchPercent: (onPitchCount / sampleCount) * 100,
+        spotOnPercent: (spotOnCount / sampleCount) * 100,
       }
     },
     push(midi, timestampMs) {
@@ -144,13 +185,17 @@ export function createFocusTracker({
 
       if (midi === null) {
         lastTimestamp = null
+        resetHeardWindow()
 
         return
       }
 
+      /* A new phrase is heard fresh — the last one's tail must not colour it */
+      if (elapsedMs > PAUSE_GAP_MS) resetHeardWindow()
+
       lastTimestamp = timestampMs
       trackCandidate(Math.round(midi), voicedElapsedMs)
-      recordStats(midi, voicedElapsedMs)
+      recordStats(midi, voicedElapsedMs, timestampMs)
     },
     setLocked(value) {
       isLocked = value && focusMidi !== null

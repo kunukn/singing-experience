@@ -249,9 +249,26 @@
       "holdTime": "Hold time",
       "average": "Average",
       "wobble": "Wobble",
-      "inTune": "In tune",
+      "onPitch": "On pitch",
+      "spotOn": "Spot on",
       "auto": "Auto",
-      "targetNote": "Note to practise"
+      "targetNote": "Note to practise",
+      "levels": {
+        "warmingUp": "Warming up",
+        "findingIt": "Finding it",
+        "niceAndClose": "Nice and close",
+        "stageReady": "Stage ready",
+        "leadSinger": "Lead singer",
+        "pitchPerfect": "Pitch perfect"
+      },
+      "tips": {
+        "keepHolding": "Keep holding to see your level",
+        "sharp": "A little sharp. Aim a touch lower",
+        "flat": "A little flat. Aim a touch higher",
+        "steady": "Nice! Now try a slow, steady breath",
+        "almost": "So close. Keep going!",
+        "perfect": "Wow, rock solid!"
+      }
     }
   },
   "voiceRanges": {

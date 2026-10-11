@@ -249,9 +249,26 @@
       "holdTime": "のばした時間",
       "average": "平均",
       "wobble": "ゆれ",
-      "inTune": "ぴったり",
+      "onPitch": "音程OK",
+      "spotOn": "ぴったり",
       "auto": "自動",
-      "targetNote": "練習する音"
+      "targetNote": "練習する音",
+      "levels": {
+        "warmingUp": "ウォームアップ",
+        "findingIt": "見つけてきた",
+        "niceAndClose": "おしい！",
+        "stageReady": "ステージOK",
+        "leadSinger": "リードシンガー",
+        "pitchPerfect": "完ぺきな音程"
+      },
+      "tips": {
+        "keepHolding": "のばし続けるとレベルが出るよ",
+        "sharp": "ちょっと高め。少し低くねらってみて",
+        "flat": "ちょっと低め。少し高くねらってみて",
+        "steady": "いいね！ゆっくり落ち着いて息をしよう",
+        "almost": "あと少し。その調子！",
+        "perfect": "すごい、ばっちり！"
+      }
     }
   },
   "voiceRanges": {

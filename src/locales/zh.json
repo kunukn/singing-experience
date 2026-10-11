@@ -249,9 +249,26 @@
       "holdTime": "保持时间",
       "average": "平均",
       "wobble": "抖动",
-      "inTune": "音准",
+      "onPitch": "音准",
+      "spotOn": "精准",
       "auto": "自动",
-      "targetNote": "要练习的音"
+      "targetNote": "要练习的音",
+      "levels": {
+        "warmingUp": "热身中",
+        "findingIt": "找到感觉",
+        "niceAndClose": "很接近了",
+        "stageReady": "可以上台",
+        "leadSinger": "主唱",
+        "pitchPerfect": "完美音准"
+      },
+      "tips": {
+        "keepHolding": "继续保持，就能看到你的等级",
+        "sharp": "有点偏高，往低一点唱",
+        "flat": "有点偏低，往高一点唱",
+        "steady": "不错！现在试着慢慢、平稳地呼吸",
+        "almost": "很接近了，继续加油！",
+        "perfect": "哇，稳稳的！"
+      }
     }
   },
   "voiceRanges": {

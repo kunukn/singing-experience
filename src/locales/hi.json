@@ -249,9 +249,26 @@
       "holdTime": "समय",
       "average": "औसत",
       "wobble": "कंपन",
-      "inTune": "सही सुर",
+      "onPitch": "सुर में",
+      "spotOn": "एकदम सही",
       "auto": "ऑटो",
-      "targetNote": "अभ्यास का सुर"
+      "targetNote": "अभ्यास का सुर",
+      "levels": {
+        "warmingUp": "वॉर्म अप",
+        "findingIt": "सुर मिल रहा है",
+        "niceAndClose": "बहुत करीब",
+        "stageReady": "स्टेज के लिए तैयार",
+        "leadSinger": "लीड सिंगर",
+        "pitchPerfect": "परफ़ेक्ट सुर"
+      },
+      "tips": {
+        "keepHolding": "अपना लेवल देखने के लिए सुर थामे रखो",
+        "sharp": "थोड़ा ऊँचा है। ज़रा नीचे गाओ",
+        "flat": "थोड़ा नीचा है। ज़रा ऊपर गाओ",
+        "steady": "बढ़िया! अब धीरे और आराम से साँस लो",
+        "almost": "बस थोड़ा और। लगे रहो!",
+        "perfect": "वाह, एकदम पक्का!"
+      }
     }
   },
   "voiceRanges": {

@@ -249,9 +249,26 @@
       "holdTime": "Holdt i",
       "average": "Gennemsnit",
       "wobble": "Vaklen",
-      "inTune": "Rent",
+      "onPitch": "Rammer tonen",
+      "spotOn": "Helt præcis",
       "auto": "Auto",
-      "targetNote": "Tone at øve"
+      "targetNote": "Tone at øve",
+      "levels": {
+        "warmingUp": "Varmer op",
+        "findingIt": "Finder den",
+        "niceAndClose": "Tæt på",
+        "stageReady": "Klar til scenen",
+        "leadSinger": "Forsanger",
+        "pitchPerfect": "Perfekt tone"
+      },
+      "tips": {
+        "keepHolding": "Bliv ved med at holde, så ser du dit niveau",
+        "sharp": "Lidt for høj. Sigt en anelse lavere",
+        "flat": "Lidt for lav. Sigt en anelse højere",
+        "steady": "Flot! Prøv nu en rolig, jævn vejrtrækning",
+        "almost": "Tæt på. Bliv ved!",
+        "perfect": "Wow, bundsolidt!"
+      }
     }
   },
   "voiceRanges": {
