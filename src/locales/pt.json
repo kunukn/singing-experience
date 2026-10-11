@@ -237,7 +237,19 @@
     "clarity": "Clareza",
     "lowVoice": "Voz grave",
     "highVoice": "Voz aguda",
-    "replaySound": "Reproduzir som\n(últimos 30 s)"
+    "replaySound": "Reproduzir som\n(últimos 30 s)",
+    "tabs": {
+      "overview": "Visão geral",
+      "focus": "Foco"
+    },
+    "focus": {
+      "hint": "Cante uma nota e segure",
+      "lock": "Travar nota",
+      "holdTime": "Duração",
+      "average": "Média",
+      "wobble": "Tremor",
+      "inTune": "Afinado"
+    }
   },
   "voiceRanges": {
     "groups": {

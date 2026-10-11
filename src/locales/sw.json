@@ -237,7 +237,19 @@
     "clarity": "Uwazi",
     "lowVoice": "Sauti ya chini",
     "highVoice": "Sauti ya juu",
-    "replaySound": "Cheza sauti tena\n(sekunde 30 za mwisho)"
+    "replaySound": "Cheza sauti tena\n(sekunde 30 za mwisho)",
+    "tabs": {
+      "overview": "Muhtasari",
+      "focus": "Lenga"
+    },
+    "focus": {
+      "hint": "Imba noti moja na uishikilie",
+      "lock": "Funga noti",
+      "holdTime": "Muda",
+      "average": "Wastani",
+      "wobble": "Mtetemo",
+      "inTune": "Sawa"
+    }
   },
   "voiceRanges": {
     "groups": {

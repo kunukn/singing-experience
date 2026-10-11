@@ -237,7 +237,19 @@
     "clarity": "स्पष्टता",
     "lowVoice": "नीची आवाज़",
     "highVoice": "ऊँची आवाज़",
-    "replaySound": "ध्वनि पुनः चलाएँ\n(पिछले ३० सेकंड)"
+    "replaySound": "ध्वनि पुनः चलाएँ\n(पिछले ३० सेकंड)",
+    "tabs": {
+      "overview": "सारांश",
+      "focus": "फ़ोकस"
+    },
+    "focus": {
+      "hint": "एक सुर गाओ और उसे थामे रखो",
+      "lock": "सुर लॉक करो",
+      "holdTime": "समय",
+      "average": "औसत",
+      "wobble": "कंपन",
+      "inTune": "सही सुर"
+    }
   },
   "voiceRanges": {
     "groups": {

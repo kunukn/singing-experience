@@ -237,7 +237,19 @@
     "clarity": "Klarheit",
     "lowVoice": "Tiefe Stimme",
     "highVoice": "Hohe Stimme",
-    "replaySound": "Ton wiederholen\n(letzte 30 Sek.)"
+    "replaySound": "Ton wiederholen\n(letzte 30 Sek.)",
+    "tabs": {
+      "overview": "Übersicht",
+      "focus": "Fokus"
+    },
+    "focus": {
+      "hint": "Sing einen Ton und halte ihn",
+      "lock": "Ton festhalten",
+      "holdTime": "Gehalten",
+      "average": "Durchschnitt",
+      "wobble": "Wackeln",
+      "inTune": "Sauber"
+    }
   },
   "voiceRanges": {
     "groups": {

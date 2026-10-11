@@ -31,6 +31,10 @@ type Props = {
   /* Index into VOICE_RANGES — picks which voices the ribbon draws, and marks
    * the chosen one when the range is itself a voice type. -1 means no range. */
   rangeIndex?: number
+  /* See PitchHistoryCanvas — measures cents against this tone, not the nearest one */
+  focusMidi?: number | null
+  /* The focus tab spans three semitones, too narrow for voice types to mean anything */
+  isVoiceRibbonAllowed?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -41,11 +45,17 @@ const props = withDefaults(defineProps<Props>(), {
   highlightedMidi: null,
   replayProgress: null,
   rangeIndex: -1,
+  focusMidi: null,
+  isVoiceRibbonAllowed: true,
 })
 
 const isRtl = useIsRtl()
 const { isDark } = useDarkMode()
-const { isVoiceTypeRibbonVisible } = useVoiceTypeRibbon()
+const { isVoiceTypeRibbonVisible: isVoiceTypeRibbonEnabled } =
+  useVoiceTypeRibbon()
+const isVoiceTypeRibbonVisible = computed(
+  () => props.isVoiceRibbonAllowed && isVoiceTypeRibbonEnabled.value,
+)
 
 type GridNote = {
   midi: number
@@ -193,6 +203,7 @@ defineExpose({ gridNoteCount, getSamples, clearSamples })
       :replayProgress="replayProgress"
       :isRtl="isRtl"
       :gutterWidth="gutterWidth"
+      :focusMidi="focusMidi"
       @markerClick="handleMarkerClick"
     />
     <VoiceRangeRibbon

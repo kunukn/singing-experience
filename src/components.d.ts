@@ -81,6 +81,8 @@ declare module 'vue' {
     PitchDetectorPage: typeof import('./components/pitch-detector/PitchDetectorPage.vue')['default']
     PitchDetectorTestPage: typeof import('./components/pitch-detector/PitchDetectorTestPage.vue')['default']
     PitchDisplay: typeof import('./components/pitch-detector/PitchDisplay.vue')['default']
+    PitchFocusPanel: typeof import('./components/pitch-detector/PitchFocusPanel.vue')['default']
+    PitchFocusStats: typeof import('./components/pitch-detector/PitchFocusStats.vue')['default']
     PitchGameCompletePanel: typeof import('./components/pitch-game/PitchGameCompletePanel.vue')['default']
     PitchGameDisplay: typeof import('./components/pitch-game/PitchGameDisplay.vue')['default']
     PitchGameIdlePanel: typeof import('./components/pitch-game/PitchGameIdlePanel.vue')['default']

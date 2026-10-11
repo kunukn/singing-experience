@@ -237,7 +237,19 @@
     "clarity": "Klarhed",
     "lowVoice": "Dyb stemme",
     "highVoice": "Lys stemme",
-    "replaySound": "Hør igen\n(seneste 30 sek.)"
+    "replaySound": "Hør igen\n(seneste 30 sek.)",
+    "tabs": {
+      "overview": "Overblik",
+      "focus": "Fokus"
+    },
+    "focus": {
+      "hint": "Syng en tone og hold den",
+      "lock": "Lås tonen",
+      "holdTime": "Holdt i",
+      "average": "Gennemsnit",
+      "wobble": "Vaklen",
+      "inTune": "Rent"
+    }
   },
   "voiceRanges": {
     "groups": {

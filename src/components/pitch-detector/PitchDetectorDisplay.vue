@@ -4,6 +4,7 @@ import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { midiToNoteLabel, type NoteInfo } from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import PitchDisplay from './PitchDisplay.vue'
+import PitchFocusPanel from './PitchFocusPanel.vue'
 import type { PitchLaneDetection, PitchPreviewLane } from './pitchLanes'
 
 type PitchDetectionInput = {
@@ -33,6 +34,29 @@ const rangeIndex = defineModel<number>('rangeIndex', { required: true })
 
 const { t } = useI18n()
 
+const route = useRoute()
+const router = useRouter()
+
+const TAB_VALUES = ['overview', 'focus'] as const
+type DetectorTab = (typeof TAB_VALUES)[number]
+const DEFAULT_TAB: DetectorTab = 'overview'
+
+/* Active tab lives only in the URL (?tab=overview|focus), as on /scale-detector.
+ * replace() keeps tab switches out of the browser history. */
+const activeTab = computed<DetectorTab>({
+  get() {
+    const tab = route.query.tab
+
+    return TAB_VALUES.includes(tab as DetectorTab)
+      ? (tab as DetectorTab)
+      : DEFAULT_TAB
+  },
+  set(tab) {
+    router.replace({ query: { ...route.query, tab } })
+  },
+})
+const isFocusTab = computed(() => activeTab.value === 'focus')
+
 const { setToneMode, warmUp } = useTonePlayer()
 
 const { toneMode: storedToneMode } = storeToRefs(useToneModeStore())
@@ -57,6 +81,12 @@ const { frequency, noteInfo, clarity, isClean, error, start, stop } =
 
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
+/* Where the focus chart sits before a tone is picked: the middle of the
+ * singer's chosen range, so their first note is likely already on screen */
+const focusDefaultMidi = computed(() =>
+  Math.round((selectedRange.value.midiMin + selectedRange.value.midiMax) / 2),
+)
+
 const { isPreviewEnabled } = useSettings()
 
 /* Force-disable idle preview (and the mic it would open) in simulated test pages */
@@ -68,7 +98,10 @@ const effectivePreviewEnabled = computed(
 const { isDuetEnabled } = useDuetMode()
 
 const { isVoiceTypeRibbonVisible } = useVoiceTypeRibbon()
-const isDuetAvailable = computed(() => !props.disableIdlePreview)
+/* The focus tab follows one voice's tone — a second singer has no place there */
+const isDuetAvailable = computed(
+  () => !props.disableIdlePreview && !isFocusTab.value,
+)
 const effectiveDuetEnabled = computed(
   () => isDuetAvailable.value && isDuetEnabled.value,
 )
@@ -309,19 +342,34 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div
+  <!-- lazy: only the visible tab's chart is mounted, so a single canvas runs
+       its draw loop and records the take -->
+  <PrimeTabs
+    v-model:value="activeTab"
+    lazy
     class="flex flex-1 flex-col items-center gap-4"
     data-testid="pitch-detector-display"
   >
+    <PrimeTabList class="w-full">
+      <PrimeTab value="overview" data-testid="pitch-detector-tab-overview">
+        {{ t('pitchDetector.tabs.overview') }}
+      </PrimeTab>
+      <PrimeTab value="focus" data-testid="pitch-detector-tab-focus">
+        {{ t('pitchDetector.tabs.focus') }}
+      </PrimeTab>
+    </PrimeTabList>
+
     <div class="flex w-full flex-wrap items-center gap-2 sm:gap-4">
       <!-- Shrinks rather than wrapping the row, but not past a readable floor:
-           a plain min-w-0 collapses it to a sliver once the toggles wrap. -->
+           a plain min-w-0 collapses it to a sliver once the toggles wrap.
+           The focus tab picks its tone by ear, so it has no range to choose. -->
       <VoiceRangeSelect
+        v-if="!isFocusTab"
         v-model:rangeIndex="rangeIndex"
         class="min-w-32 flex-1"
       />
 
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2" :class="{ 'flex-1': isFocusTab }">
         <label
           v-if="false"
           class="hidden text-sm text-(--p-text-muted-color) lg:block"
@@ -344,7 +392,10 @@ onUnmounted(() => {
         :disabled="!isPreviewEnabled || micPermission === 'denied'"
       />
 
-      <VoiceTypeRibbonToggle v-model="isVoiceTypeRibbonVisible" />
+      <VoiceTypeRibbonToggle
+        v-if="!isFocusTab"
+        v-model="isVoiceTypeRibbonVisible"
+      />
 
       <PrimeButton
         class="ms-auto min-w-20"
@@ -361,18 +412,31 @@ onUnmounted(() => {
 
     <slot />
 
-    <PitchDisplay
-      ref="pitchDisplayRef"
-      :laneDetections="laneDetections"
-      :previewLanes="previewLanes"
-      :isListening="isListening"
-      :midiMin="selectedRange.midiMin"
-      :midiMax="selectedRange.midiMax"
-      :rangeIndex="rangeIndex"
-      :isPreviewEnabled="effectivePreviewEnabled"
-      :isMicPermissionGranted="micPermission === 'granted'"
-      @tonePlayed="handleTonePlayed"
-      @selectRange="rangeIndex = $event"
-    />
-  </div>
+    <PrimeTabPanels class="flex w-full flex-1 flex-col p-0">
+      <PrimeTabPanel value="overview" class="flex flex-1 flex-col">
+        <PitchDisplay
+          ref="pitchDisplayRef"
+          :laneDetections="laneDetections"
+          :previewLanes="previewLanes"
+          :isListening="isListening"
+          :midiMin="selectedRange.midiMin"
+          :midiMax="selectedRange.midiMax"
+          :rangeIndex="rangeIndex"
+          :isPreviewEnabled="effectivePreviewEnabled"
+          :isMicPermissionGranted="micPermission === 'granted'"
+          @tonePlayed="handleTonePlayed"
+          @selectRange="rangeIndex = $event"
+        />
+      </PrimeTabPanel>
+      <PrimeTabPanel value="focus" class="flex flex-1 flex-col">
+        <PitchFocusPanel
+          :laneDetection="laneDetections[0]"
+          :previewLanes="previewLanes"
+          :isListening="isListening"
+          :defaultMidi="focusDefaultMidi"
+          @tonePlayed="handleTonePlayed"
+        />
+      </PrimeTabPanel>
+    </PrimeTabPanels>
+  </PrimeTabs>
 </template>

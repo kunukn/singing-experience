@@ -237,7 +237,19 @@
     "clarity": "Kejernihan",
     "lowVoice": "Suara rendah",
     "highVoice": "Suara tinggi",
-    "replaySound": "Putar ulang suara\n(30 detik terakhir)"
+    "replaySound": "Putar ulang suara\n(30 detik terakhir)",
+    "tabs": {
+      "overview": "Ikhtisar",
+      "focus": "Fokus"
+    },
+    "focus": {
+      "hint": "Nyanyikan satu nada dan tahan",
+      "lock": "Kunci nada",
+      "holdTime": "Lama tahan",
+      "average": "Rata-rata",
+      "wobble": "Goyang",
+      "inTune": "Pas"
+    }
   },
   "voiceRanges": {
     "groups": {

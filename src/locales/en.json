@@ -237,7 +237,19 @@
     "clarity": "Clarity",
     "lowVoice": "Low voice",
     "highVoice": "High voice",
-    "replaySound": "Replay\n(last 30s)"
+    "replaySound": "Replay\n(last 30s)",
+    "tabs": {
+      "overview": "Overview",
+      "focus": "Focus"
+    },
+    "focus": {
+      "hint": "Sing a note and hold it",
+      "lock": "Lock note",
+      "holdTime": "Hold time",
+      "average": "Average",
+      "wobble": "Wobble",
+      "inTune": "In tune"
+    }
   },
   "voiceRanges": {
     "groups": {

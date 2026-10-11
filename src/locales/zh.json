@@ -237,7 +237,19 @@
     "clarity": "清晰度",
     "lowVoice": "低音",
     "highVoice": "高音",
-    "replaySound": "回放声音\n（最近30秒）"
+    "replaySound": "回放声音\n（最近30秒）",
+    "tabs": {
+      "overview": "概览",
+      "focus": "专注"
+    },
+    "focus": {
+      "hint": "唱一个音并保持住",
+      "lock": "锁定音",
+      "holdTime": "保持时间",
+      "average": "平均",
+      "wobble": "抖动",
+      "inTune": "音准"
+    }
   },
   "voiceRanges": {
     "groups": {

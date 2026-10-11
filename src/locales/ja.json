@@ -237,7 +237,19 @@
     "clarity": "明瞭さ",
     "lowVoice": "低い声",
     "highVoice": "高い声",
-    "replaySound": "音を再生\n（直近30秒）"
+    "replaySound": "音を再生\n（直近30秒）",
+    "tabs": {
+      "overview": "概要",
+      "focus": "集中"
+    },
+    "focus": {
+      "hint": "音を歌ってのばしてね",
+      "lock": "音を固定",
+      "holdTime": "のばした時間",
+      "average": "平均",
+      "wobble": "ゆれ",
+      "inTune": "ぴったり"
+    }
   },
   "voiceRanges": {
     "groups": {

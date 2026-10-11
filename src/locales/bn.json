@@ -237,7 +237,19 @@
     "clarity": "স্পষ্টতা",
     "lowVoice": "নিচু কণ্ঠ",
     "highVoice": "উঁচু কণ্ঠ",
-    "replaySound": "শব্দ পুনরায় চালান\n(শেষ ৩০ সেকেন্ড)"
+    "replaySound": "শব্দ পুনরায় চালান\n(শেষ ৩০ সেকেন্ড)",
+    "tabs": {
+      "overview": "সারসংক্ষেপ",
+      "focus": "ফোকাস"
+    },
+    "focus": {
+      "hint": "একটা সুর গাও আর ধরে রাখো",
+      "lock": "সুর লক করো",
+      "holdTime": "সময়",
+      "average": "গড়",
+      "wobble": "কাঁপুনি",
+      "inTune": "সঠিক সুর"
+    }
   },
   "voiceRanges": {
     "groups": {

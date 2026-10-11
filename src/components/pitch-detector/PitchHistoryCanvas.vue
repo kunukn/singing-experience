@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import { CHART_LABEL_GUTTER_WIDTH } from '@/constants/chartStyles'
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
-import { cleanColor, cleanColorRgb } from '@/utils/pitchColors'
+import { midiToNoteLabel } from '@/utils/noteUtils'
+import {
+  cleanColor,
+  cleanColorRgb,
+  CLEAN_CENTS,
+  CLOSE_CENTS,
+} from '@/utils/pitchColors'
 import { drawPitchLine } from '@/utils/pitchLineRenderer'
 
 import {
@@ -35,6 +41,10 @@ type Props = {
   /* px reserved at the start edge for the axis labels, and for the voice-type
    * ribbon when a wide range puts one there. Defaults to labels only. */
   gutterWidth?: number
+  /* The focus tab's target tone. When set, every cents colour measures
+   * against this note instead of the nearest semitone, and a clean-zone band
+   * is drawn around it. */
+  focusMidi?: number | null
 }
 
 type MarkerHitArea = {
@@ -109,6 +119,14 @@ let animationFrameId: number | null = null
 
 let pausedAt: number | null = null
 
+/* Cents from the focus tone when there is one, else from the nearest
+ * semitone as recorded. 100 cents per semitone. */
+function centsFor(sample: PitchSample): number {
+  if (props.focusMidi == null) return sample.cents
+
+  return (sample.midiNote - props.focusMidi) * 100
+}
+
 function midiToY(midi: number, height: number): number {
   const usableHeight = height - PADDING_TOP - PADDING_BOTTOM
   const ratio = (midi - props.midiMin) / (props.midiMax - props.midiMin)
@@ -168,10 +186,18 @@ function drawPreviewIndicators(
   for (const lane of props.previewLanes) {
     if (lane.previewMidi == null) continue
 
+    /* In focus mode the line is named and coloured after the focus tone, so
+     * "A3 +60¢" reads as drift rather than switching to "A♯3 −40¢". Needs a
+     * frequency: without one drawPitchLine would park the line on `midi`. */
+    const focusMidi =
+      props.focusMidi != null && lane.previewFrequency != null
+        ? props.focusMidi
+        : null
+
     /* pitch-detector uses a forgiving 20¢ threshold so small wobbles don't
      * surface a distracting cents number. */
     drawPitchLine(ctx, {
-      midi: lane.previewMidi,
+      midi: focusMidi ?? lane.previewMidi,
       frequency: lane.previewFrequency ?? null,
       height,
       midiToY: (midi) => midiToY(midi, height),
@@ -180,7 +206,10 @@ function drawPreviewIndicators(
       dotX: (geom.chartLeftX + geom.chartRightX) / 2,
       centsThreshold: 20,
       isRtl: props.isRtl ?? false,
-      noteLabel: lane.previewNoteLabel,
+      noteLabel:
+        focusMidi != null && lane.previewNoteLabel
+          ? midiToNoteLabel(focusMidi).label
+          : lane.previewNoteLabel,
       /* No game here, so the line is always cents-coloured, like the trail. */
       colorForCents,
       isHighLane: lane.laneId === 'high',
@@ -190,6 +219,40 @@ function drawPreviewIndicators(
       showLabel: !props.isListening && !!lane.previewNoteLabel,
     })
   }
+}
+
+/*
+ * The target the singer aims for on the focus tab: a filled band for the
+ * clean zone and dashed edges where "close" ends — the same CLEAN_CENTS and
+ * CLOSE_CENTS tiers the trail colours by.
+ */
+function drawFocusZone(
+  ctx: CanvasRenderingContext2D,
+  geom: ChartGeometry,
+  height: number,
+  focusMidi: number,
+) {
+  const green = resolveCssColor('--p-green-400')
+  const width = geom.chartRightX - geom.chartLeftX
+  /* 100 cents per semitone */
+  const cleanTop = midiToY(focusMidi + CLEAN_CENTS / 100, height)
+  const cleanBottom = midiToY(focusMidi - CLEAN_CENTS / 100, height)
+
+  ctx.save()
+  ctx.fillStyle = withAlpha(green, 0.12) // faint — the trail must stay on top
+  ctx.fillRect(geom.chartLeftX, cleanTop, width, cleanBottom - cleanTop)
+
+  ctx.strokeStyle = withAlpha(green, 0.35)
+  ctx.lineWidth = 1
+  ctx.setLineDash([4, 4]) // px dash/gap — lighter than the solid grid lines
+  for (const offset of [CLOSE_CENTS, -CLOSE_CENTS]) {
+    const y = midiToY(focusMidi + offset / 100, height)
+    ctx.beginPath()
+    ctx.moveTo(geom.chartLeftX, y)
+    ctx.lineTo(geom.chartRightX, y)
+    ctx.stroke()
+  }
+  ctx.restore()
 }
 
 /* The label the head dot carries — its own lane's live preview name. */
@@ -272,7 +335,7 @@ function drawLaneTrail(
     currentSegment.push({
       x: timeToX(samples[i].timestamp, now, geom),
       y: midiToY(samples[i].midiNote, height),
-      cents: samples[i].cents,
+      cents: centsFor(samples[i]),
     })
   }
   if (currentSegment.length > 0) segments.push(currentSegment)
@@ -318,7 +381,7 @@ function drawLaneTrail(
     const age = now - sample.timestamp
     // Fade old samples — 0.15 minimum so the oldest dots are still faintly visible
     const opacity = Math.max(0.15, 1 - age / HISTORY_WINDOW_MS)
-    const color = cleanColor(sample.cents, opacity)
+    const color = cleanColor(centsFor(sample), opacity)
 
     ctx.beginPath()
     ctx.arc(x, y, style.dotRadius, 0, Math.PI * 2)
@@ -386,6 +449,8 @@ function drawChart() {
     ctx.lineTo(geom.chartRightX, y)
     ctx.stroke()
   }
+
+  if (props.focusMidi != null) drawFocusZone(ctx, geom, height, props.focusMidi)
 
   // Draw vertical axis lines (label-side and far-side)
   ctx.strokeStyle = gridLineColor
@@ -469,7 +534,10 @@ function drawChart() {
 
   // Draw sustained-note markers (dot + label)
   markerHitAreas.length = 0
-  for (const laneId of PITCH_LANE_IDS) {
+  /* The focus view holds one note by design, so its markers would only repeat
+   * the focus label along the row */
+  const markerLaneIds = props.focusMidi == null ? PITCH_LANE_IDS : []
+  for (const laneId of markerLaneIds) {
     for (const marker of recorders[laneId].noteMarkers) {
       const x = timeToX(marker.timestamp, now, geom)
       const y = midiToY(marker.midiNote, height)
@@ -533,7 +601,7 @@ function drawChart() {
     const style = LANE_TRAIL_STYLE[head.laneId]
     const headX = timeToX(sample.timestamp, now, geom)
     const headY = midiToY(sample.midiNote, height)
-    const headColor = cleanColor(sample.cents, 1)
+    const headColor = cleanColor(centsFor(sample), 1)
 
     // Head dot: outer glow ring (7 px) + solid color center (5 px)
     ctx.beginPath()

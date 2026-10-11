@@ -237,7 +237,19 @@
     "clarity": "الوضوح",
     "lowVoice": "صوت منخفض",
     "highVoice": "صوت عالٍ",
-    "replaySound": "إعادة تشغيل الصوت\n(آخر 30 ثانية)"
+    "replaySound": "إعادة تشغيل الصوت\n(آخر 30 ثانية)",
+    "tabs": {
+      "overview": "نظرة عامة",
+      "focus": "تركيز"
+    },
+    "focus": {
+      "hint": "غنِّ نغمة وحافظ عليها",
+      "lock": "تثبيت النغمة",
+      "holdTime": "مدة الثبات",
+      "average": "المتوسط",
+      "wobble": "الاهتزاز",
+      "inTune": "مضبوط"
+    }
   },
   "voiceRanges": {
     "groups": {
