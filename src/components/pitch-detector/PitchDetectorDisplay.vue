@@ -334,6 +334,15 @@ watch(effectiveDuetEnabled, () => {
   if (props.detection.isListening.value) stop()
 })
 
+/* The overview panel stays mounted behind the focus tab, so its replay and
+ * reference sequence would keep sounding there — stop them on the way out. */
+watch(activeTab, (tab) => {
+  if (tab === 'overview') return
+
+  pitchDisplayRef.value?.stopSequence()
+  pitchDisplayRef.value?.stopReplay()
+})
+
 onUnmounted(() => {
   pitchDisplayRef.value?.stopSequence()
   pitchDisplayRef.value?.stopReplay()
@@ -342,11 +351,11 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <!-- lazy: only the visible tab's chart is mounted, so a single canvas runs
-       its draw loop and records the take -->
+  <!-- Not lazy: both panels stay mounted (hidden with v-show), so a take
+       survives a tab switch and both charts record and show it. The hidden
+       canvas measures 0×0 and skips drawing. -->
   <PrimeTabs
     v-model:value="activeTab"
-    lazy
     class="flex flex-1 flex-col items-center gap-4"
     data-testid="pitch-detector-display"
   >

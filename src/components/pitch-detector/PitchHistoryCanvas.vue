@@ -485,6 +485,9 @@ function drawChart() {
   const rect = parent.getBoundingClientRect()
   const width = rect.width
   const height = rect.height
+  /* The inactive tab's panel is display: none — nothing to paint until the
+   * ResizeObserver reports a real size again */
+  if (width === 0 || height === 0) return
 
   canvas.width = width * dpr
   canvas.height = height * dpr
