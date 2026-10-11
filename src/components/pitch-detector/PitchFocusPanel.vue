@@ -66,7 +66,7 @@ const centsColor = computed(() =>
     :data-focus-midi="focusMidi ?? ''"
   >
     <div class="flex w-full max-w-4xl flex-wrap items-center gap-x-6 gap-y-2">
-      <div class="flex items-baseline gap-3">
+      <div class="flex items-center gap-3">
         <span
           v-if="focusLabel"
           class="text-4xl font-bold tabular-nums"
@@ -77,14 +77,18 @@ const centsColor = computed(() =>
         <span v-else class="text-(--p-text-muted-color)">
           {{ t('pitchDetector.focus.hint') }}
         </span>
+        <!-- Kept in the layout through silence (invisible, not removed) and
+             wide enough for "−120¢", so the lock button beside it holds still
+             as the singer starts and stops -->
         <span
-          v-if="focusLabel && centsLabel"
-          class="min-w-14 text-xl tabular-nums"
+          v-if="focusLabel"
+          class="min-w-18 text-xl tabular-nums"
+          :class="{ invisible: !centsLabel }"
           dir="ltr"
           :style="{ color: centsColor }"
           data-testid="focus-cents"
         >
-          {{ centsLabel }}
+          {{ centsLabel ?? '+0¢' }}
         </span>
       </div>
 
