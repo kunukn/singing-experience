@@ -43,7 +43,7 @@ const indicatorTop = computed(() => {
 
 <template>
   <div
-    class="flex flex-col items-center gap-1"
+    class="flex flex-col items-center justify-center gap-1"
     :class="{ invisible: !isVisible }"
   >
     <span class="text-xs text-(--p-text-muted-color)">{{ highLabel }}</span>

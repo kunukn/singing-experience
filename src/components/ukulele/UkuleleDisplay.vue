@@ -396,9 +396,10 @@ watch(
       {{ error }}
     </p>
 
+    <!-- max-h-70 = bar track cap (max-h-60) + Sharp/Flat labels; keeps the row snug under the instrument -->
     <div
       v-if="isListening"
-      class="flex w-full flex-1 items-start justify-center gap-4"
+      class="flex max-h-70 w-full flex-1 items-center justify-center gap-4"
     >
       <TunerCentsDeviationBar
         :cents="noteInfo && isClean ? noteInfo.cents : null"
