@@ -56,10 +56,10 @@ const indicatorTop = computed(() => {
       <div
         class="absolute inset-s-0 top-1/2 z-10 h-0.5 w-full -translate-y-1/2 bg-(--p-surface-500)"
       />
-      <!-- Deviation indicator -->
+      <!-- Deviation indicator — 50ms glide smooths detector jitter without trailing the cents readout -->
       <div
         v-if="cents !== null"
-        class="absolute inset-s-0 h-2 w-full -translate-y-1/2 rounded-full transition-all duration-100"
+        class="absolute inset-s-0 h-2 w-full -translate-y-1/2 rounded-full transition-[top,background-color] duration-50"
         :style="{ top: indicatorTop, backgroundColor: indicatorColor }"
       />
     </div>
