@@ -20,14 +20,21 @@ declare global {
   const HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').HOLD_DURATION_MS
   const MAX_CENTS_DEVIATION: typeof import('./composables/useDoReMiGame').MAX_CENTS_DEVIATION
   const MAX_CLARITY_THRESHOLD: typeof import('./composables/useSettings').MAX_CLARITY_THRESHOLD
+  const MAX_REFERENCE_PITCH: typeof import('./composables/useReferencePitch').MAX_REFERENCE_PITCH
   const MIN_CLARITY_THRESHOLD: typeof import('./composables/useSettings').MIN_CLARITY_THRESHOLD
+  const MIN_REFERENCE_PITCH: typeof import('./composables/useReferencePitch').MIN_REFERENCE_PITCH
   const NOTE_INTERVAL_MS: typeof import('./composables/useDoReMiPlaySequence').NOTE_INTERVAL_MS
+  const REFERENCE_PITCH_BUTTON_STEP: typeof import('./composables/useReferencePitch').REFERENCE_PITCH_BUTTON_STEP
+  const REFERENCE_PITCH_PRESETS: typeof import('./composables/useReferencePitch').REFERENCE_PITCH_PRESETS
+  const REFERENCE_PITCH_STEP: typeof import('./composables/useReferencePitch').REFERENCE_PITCH_STEP
   const SCALE_MODE_OPTIONS: typeof import('./composables/useDoReMiGame').SCALE_MODE_OPTIONS
   const SCALE_STEPS: typeof import('./composables/useDoReMiGame').SCALE_STEPS
   const SCORE_TOLERANCE_CENTS: typeof import('./composables/useDwellSingScore').SCORE_TOLERANCE_CENTS
   const START_TONE_OPTIONS: typeof import('./composables/useDoReMiGame').START_TONE_OPTIONS
   const TONE_MODE_RELEASE_S: typeof import('./composables/toneEngine').TONE_MODE_RELEASE_S
   const TOO_LOW_OR_HIGH_HINT_MS: typeof import('./composables/useDoReMiGame').TOO_LOW_OR_HIGH_HINT_MS
+  const centsFromConcertPitch: typeof import('./composables/useReferencePitch').centsFromConcertPitch
+  const clampReferencePitch: typeof import('./composables/useReferencePitch').clampReferencePitch
   const computed: typeof import('vue').computed
   const confettiKey: typeof import('./composables/useConfetti').confettiKey
   const createApp: typeof import('vue').createApp
@@ -40,6 +47,7 @@ declare global {
   const defineComponent: typeof import('vue').defineComponent
   const defineStore: typeof import('pinia').defineStore
   const effectScope: typeof import('vue').effectScope
+  const formatReferencePitch: typeof import('./composables/useReferencePitch').formatReferencePitch
   const getCurrentInstance: typeof import('vue').getCurrentInstance
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
@@ -120,6 +128,7 @@ declare global {
   const usePitchDetection: typeof import('./composables/usePitchDetection').usePitchDetection
   const usePitchPreviewColor: typeof import('./composables/usePitchPreviewColor').usePitchPreviewColor
   const usePitchSnap: typeof import('./composables/usePitchSnap').usePitchSnap
+  const useReferencePitch: typeof import('./composables/useReferencePitch').useReferencePitch
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter
   const useScaleModeGroups: typeof import('./composables/useScaleModeGroups').useScaleModeGroups
@@ -187,9 +196,16 @@ declare module 'vue' {
     readonly DEFAULT_PREVIEW_ENABLED: UnwrapRef<typeof import('./composables/useSettings')['DEFAULT_PREVIEW_ENABLED']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly MAX_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['MAX_CLARITY_THRESHOLD']>
+    readonly MAX_REFERENCE_PITCH: UnwrapRef<typeof import('./composables/useReferencePitch')['MAX_REFERENCE_PITCH']>
     readonly MIN_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['MIN_CLARITY_THRESHOLD']>
+    readonly MIN_REFERENCE_PITCH: UnwrapRef<typeof import('./composables/useReferencePitch')['MIN_REFERENCE_PITCH']>
+    readonly REFERENCE_PITCH_BUTTON_STEP: UnwrapRef<typeof import('./composables/useReferencePitch')['REFERENCE_PITCH_BUTTON_STEP']>
+    readonly REFERENCE_PITCH_PRESETS: UnwrapRef<typeof import('./composables/useReferencePitch')['REFERENCE_PITCH_PRESETS']>
+    readonly REFERENCE_PITCH_STEP: UnwrapRef<typeof import('./composables/useReferencePitch')['REFERENCE_PITCH_STEP']>
     readonly SCORE_TOLERANCE_CENTS: UnwrapRef<typeof import('./composables/useDwellSingScore')['SCORE_TOLERANCE_CENTS']>
     readonly TONE_MODE_RELEASE_S: UnwrapRef<typeof import('./composables/toneEngine')['TONE_MODE_RELEASE_S']>
+    readonly centsFromConcertPitch: UnwrapRef<typeof import('./composables/useReferencePitch')['centsFromConcertPitch']>
+    readonly clampReferencePitch: UnwrapRef<typeof import('./composables/useReferencePitch')['clampReferencePitch']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
     readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
     readonly createMockToneEngine: UnwrapRef<typeof import('./composables/toneEngine.mock')['createMockToneEngine']>
@@ -201,6 +217,7 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly formatReferencePitch: UnwrapRef<typeof import('./composables/useReferencePitch')['formatReferencePitch']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
@@ -276,6 +293,7 @@ declare module 'vue' {
     readonly usePitchDetection: UnwrapRef<typeof import('./composables/usePitchDetection')['usePitchDetection']>
     readonly usePitchPreviewColor: UnwrapRef<typeof import('./composables/usePitchPreviewColor')['usePitchPreviewColor']>
     readonly usePitchSnap: UnwrapRef<typeof import('./composables/usePitchSnap')['usePitchSnap']>
+    readonly useReferencePitch: UnwrapRef<typeof import('./composables/useReferencePitch')['useReferencePitch']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useScaleModeGroups: UnwrapRef<typeof import('./composables/useScaleModeGroups')['useScaleModeGroups']>

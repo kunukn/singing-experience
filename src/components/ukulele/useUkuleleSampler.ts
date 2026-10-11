@@ -1,4 +1,4 @@
-import { type NoteName } from '@/utils/noteUtils'
+import { noteToFrequency, type NoteName } from '@/utils/noteUtils'
 import type * as ToneType from 'tone'
 
 /*
@@ -76,7 +76,12 @@ function load(): Promise<void> {
   return loadPromise
 }
 
-export function useUkuleleSampler() {
+type UseUkuleleSamplerOptions = {
+  /* Frequency of A4 the samples are retuned to. Defaults to 440 (as recorded). */
+  referenceA4?: MaybeRefOrGetter<number>
+}
+
+export function useUkuleleSampler(options: UseUkuleleSamplerOptions = {}) {
   const isPlaying = ref(false)
   let stopTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -101,7 +106,11 @@ export function useUkuleleSampler() {
     if (!samplerReady) await load()
 
     getSampler().volume.value = SAMPLER_VOLUME_DB // restore after any prior stop()
-    getSampler().triggerAttackRelease(`${note}${octave}`, UKULELE_RING_S)
+    /* Hz rather than a note name, so a non-440 reference shifts the sample */
+    getSampler().triggerAttackRelease(
+      noteToFrequency(note, octave, toValue(options.referenceA4)),
+      UKULELE_RING_S,
+    )
     isPlaying.value = true
     stopTimer = setTimeout(() => {
       isPlaying.value = false

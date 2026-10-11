@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import UkuleleDisplay from './UkuleleDisplay.vue'
 
+const { referenceA4 } = useReferencePitch()
+
 const {
   frequency,
   noteInfo,
@@ -13,7 +15,7 @@ const {
   /* softRawAudio — NS/AGC fight a steady plucked-string tone, but echo
    * cancellation stays on because the ukulele sampler plays through the speaker
    * while the mic listens. */
-} = usePitchDetection({ softRawAudio: true })
+} = usePitchDetection({ softRawAudio: true, referenceA4 })
 
 onUnmounted(() => {
   stop()
@@ -30,5 +32,6 @@ onUnmounted(() => {
     :error="error"
     :start="start"
     :stop="stop"
+    v-model:referenceA4="referenceA4"
   />
 </template>

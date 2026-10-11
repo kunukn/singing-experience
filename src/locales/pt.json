@@ -382,6 +382,23 @@
       "openG": "Aberta em G",
       "openD": "Aberta em D",
       "openC": "Aberta em C"
+    },
+    "referencePitch": {
+      "title": "Nota de referência",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "Afinação padrão",
+      "versus440": "{cents}¢ em relação a 440",
+      "lower": "Mais grave",
+      "higher": "Mais agudo",
+      "match": "Igualar a uma música",
+      "matchHint": "Toque a música. Uma nota longa e firme funciona melhor.",
+      "holdSteady": "Ouvindo uma nota firme…",
+      "matchFound": "Pronto!",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "De novo",
+      "use": "Usar",
+      "reset": "Voltar para 440",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

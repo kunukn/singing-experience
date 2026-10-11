@@ -382,6 +382,23 @@
       "openG": "Открытый G",
       "openD": "Открытый D",
       "openC": "Открытый C"
+    },
+    "referencePitch": {
+      "title": "Камертон",
+      "chip": "A4 {hz} Гц",
+      "concertPitch": "Стандартный строй",
+      "versus440": "{cents}¢ от 440",
+      "lower": "Ниже",
+      "higher": "Выше",
+      "match": "Подстроить под песню",
+      "matchHint": "Включи песню. Лучше всего — долгая ровная нота.",
+      "holdSteady": "Слушаю ровную ноту…",
+      "matchFound": "Готово!",
+      "estimate": "A4 ≈ {hz} Гц",
+      "retry": "Ещё раз",
+      "use": "Выбрать",
+      "reset": "Вернуть 440",
+      "readout": "A4 = {hz} Гц"
     }
   },
   "singFly": {

@@ -382,6 +382,23 @@
       "openG": "Åben G",
       "openD": "Åben D",
       "openC": "Åben C"
+    },
+    "referencePitch": {
+      "title": "Referencetone",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "Standardstemning",
+      "versus440": "{cents}¢ fra 440",
+      "lower": "Lavere",
+      "higher": "Højere",
+      "match": "Match en sang",
+      "matchHint": "Spil sangen. En lang, rolig tone virker bedst.",
+      "holdSteady": "Lytter efter en rolig tone…",
+      "matchFound": "Fundet!",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "Prøv igen",
+      "use": "Brug den",
+      "reset": "Tilbage til 440",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

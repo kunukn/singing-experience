@@ -382,6 +382,23 @@
       "openG": "مفتوح G",
       "openD": "مفتوح D",
       "openC": "مفتوح C"
+    },
+    "referencePitch": {
+      "title": "نغمة المرجع",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "الضبط القياسي",
+      "versus440": "{cents}¢ عن 440",
+      "lower": "أخفض",
+      "higher": "أعلى",
+      "match": "طابق أغنية",
+      "matchHint": "شغّل الأغنية. النغمة الطويلة الثابتة هي الأفضل.",
+      "holdSteady": "أستمع إلى نغمة ثابتة…",
+      "matchFound": "وجدتها!",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "حاول مرة أخرى",
+      "use": "استخدمها",
+      "reset": "العودة إلى 440",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

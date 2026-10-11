@@ -1,4 +1,4 @@
-import { type NoteName } from '@/utils/noteUtils'
+import { noteToFrequency, type NoteName } from '@/utils/noteUtils'
 import type * as ToneType from 'tone'
 
 /*
@@ -217,9 +217,21 @@ export async function prewarmGuitarFretboard(): Promise<void> {
   await Promise.all([loadStandard(), loadExtra()])
 }
 
-export function useGuitarSampler() {
+type UseGuitarSamplerOptions = {
+  /* Frequency of A4 the samples are retuned to. Defaults to 440 (as recorded).
+   * Tone.Sampler repitches fractionally, so 432 plays every string 32¢ flat. */
+  referenceA4?: MaybeRefOrGetter<number>
+}
+
+export function useGuitarSampler(options: UseGuitarSamplerOptions = {}) {
   const isPlaying = ref(false)
   let stopTimer: ReturnType<typeof setTimeout> | null = null
+
+  /* Hz rather than a note name, so a non-440 reference shifts the sample. The
+   * bank is still picked by the note key — only the pitch moves. */
+  function toPitch(note: NoteName, octave: number): number {
+    return noteToFrequency(note, octave, toValue(options.referenceA4))
+  }
 
   /* Pre-load every sampler/buffer needed for `strings` so a subsequent
    * `playAt()` can run synchronously inside an audio-clock schedule. */
@@ -255,7 +267,7 @@ export function useGuitarSampler() {
     const sampler = useStandard ? getStandardSampler() : getExtraSampler()
 
     sampler.volume.value = SAMPLER_VOLUME_DB
-    sampler.triggerAttackRelease(key, duration, whenS)
+    sampler.triggerAttackRelease(toPitch(note, octave), duration, whenS)
   }
 
   function stop(): void {
@@ -290,7 +302,7 @@ export function useGuitarSampler() {
     if (!ready) await (useStandard ? loadStandard() : loadExtra())
 
     sampler.volume.value = SAMPLER_VOLUME_DB // restore after any prior stop()
-    sampler.triggerAttackRelease(key, duration)
+    sampler.triggerAttackRelease(toPitch(note, octave), duration)
     isPlaying.value = true
     stopTimer = setTimeout(() => {
       isPlaying.value = false

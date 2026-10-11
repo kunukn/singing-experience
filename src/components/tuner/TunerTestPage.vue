@@ -11,6 +11,9 @@ const selectedCents = ref(0)
 const selectedClarity = ref(0.95)
 const selectedJitter = ref(2)
 
+/* Same persisted reference as the real tuner, so the chip can be exercised here */
+const { referenceA4 } = useReferencePitch()
+
 const {
   frequency,
   noteInfo,
@@ -26,6 +29,7 @@ const {
   cents: selectedCents,
   clarity: selectedClarity,
   jitter: selectedJitter,
+  referenceA4,
 })
 </script>
 
@@ -111,6 +115,7 @@ const {
       :error="error"
       :start="start"
       :stop="stop"
+      v-model:referenceA4="referenceA4"
     />
   </div>
 </template>

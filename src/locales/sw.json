@@ -382,6 +382,23 @@
       "openG": "Wazi G",
       "openD": "Wazi D",
       "openC": "Wazi C"
+    },
+    "referencePitch": {
+      "title": "Sauti ya marejeo",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "Sauti ya kawaida",
+      "versus440": "{cents}¢ kutoka 440",
+      "lower": "Shusha",
+      "higher": "Panda",
+      "match": "Linganisha na wimbo",
+      "matchHint": "Cheza wimbo. Noti ndefu na tulivu ni bora zaidi.",
+      "holdSteady": "Nasikiliza noti tulivu…",
+      "matchFound": "Nimeipata!",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "Jaribu tena",
+      "use": "Tumia hii",
+      "reset": "Rudi kwenye 440",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

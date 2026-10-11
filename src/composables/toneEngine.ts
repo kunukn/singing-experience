@@ -603,8 +603,7 @@ export function createTonejsAdapter(): ToneEngine {
     volumeDb?: number,
   ): Promise<void> {
     const tone = await requireTone()
-    const noteName = frequencyToNoteName(frequencyHz)
-    if (!noteName) return
+    if (frequencyHz <= 0 || !isFinite(frequencyHz)) return
 
     if (!toneStarted || tone.getContext().state !== 'running') {
       await tone.start()
@@ -615,7 +614,9 @@ export function createTonejsAdapter(): ToneEngine {
     const previousVolumeDb = synth.volume.value
     if (volumeDb !== undefined) synth.volume.value = volumeDb
 
-    synth.triggerAttackRelease(noteName, durationS)
+    /* Raw Hz, not a snapped note name: the tuner's bell must ring at the
+     * reference pitch the user tuned to, which may sit off the 440 grid. */
+    synth.triggerAttackRelease(frequencyHz, durationS)
 
     if (volumeDb !== undefined) synth.volume.value = previousVolumeDb
   }

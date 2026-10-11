@@ -146,6 +146,8 @@ export default defineConfig(({ command, mode }) => {
               PrimeTab: 'primevue/tab',
               PrimeTabPanels: 'primevue/tabpanels',
               PrimeTabPanel: 'primevue/tabpanel',
+              /* PrimeVue 4 renamed OverlayPanel to Popover */
+              PrimePopover: 'primevue/popover',
             }
 
             return v4Renames[name] ? { from: v4Renames[name] } : undefined

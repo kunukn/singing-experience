@@ -382,6 +382,23 @@
       "openG": "ओपन G",
       "openD": "ओपन D",
       "openC": "ओपन C"
+    },
+    "referencePitch": {
+      "title": "संदर्भ सुर",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "मानक सुर",
+      "versus440": "440 से {cents}¢",
+      "lower": "नीचे",
+      "higher": "ऊपर",
+      "match": "गाने से मिलाओ",
+      "matchHint": "गाना चलाओ। लंबा, स्थिर सुर सबसे अच्छा रहता है।",
+      "holdSteady": "स्थिर सुर सुन रहे हैं…",
+      "matchFound": "मिल गया!",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "फिर से",
+      "use": "यही लो",
+      "reset": "440 पर वापस",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import TunerCentsDeviationBar from '@/components/tuner/TunerCentsDeviationBar.vue'
+import TunerReferencePitch from '@/components/tuner/TunerReferencePitch.vue'
 import { PREVIEW_INTERVAL_MS } from '@/components/tuner/tunerConstants'
 import {
+  A4_FREQUENCY,
   noteToFrequency,
   toAccidentalGlyph,
   type NoteInfo,
   type NoteName,
 } from '@/utils/noteUtils'
-import { cleanTextColor } from '@/utils/pitchColors'
+import { CLEAN_CENTS, cleanTextColor } from '@/utils/pitchColors'
 import { useUkuleleSampler } from './useUkuleleSampler'
 
 type Props = {
@@ -23,8 +25,15 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const { t } = useI18n()
+/* A4 in Hz the tuner measures against and the reference tones play at */
+const referenceA4 = defineModel<number>('referenceA4', { required: true })
+
+const { t, locale } = useI18n()
 const { isDark } = useDarkMode()
+
+const formattedReferenceA4 = computed(() =>
+  formatReferencePitch(referenceA4.value, locale.value),
+)
 
 const noteColor = computed(() =>
   props.noteInfo && props.isClean
@@ -87,7 +96,7 @@ const {
   play: playUkuleleSample,
   stop: stopUkuleleSample,
   isPlaying,
-} = useUkuleleSampler()
+} = useUkuleleSampler({ referenceA4 })
 
 const sortedTuningStrings = computed(() => {
   const all = [...leftStrings.value, ...rightStrings.value]
@@ -162,7 +171,7 @@ function isStringInTune(note: NoteName, octave: number): boolean {
     props.noteInfo != null &&
     props.noteInfo.note === note &&
     props.noteInfo.octave === octave &&
-    Math.abs(props.noteInfo.cents) <= 10 // ±10 cents — acceptable tuning for a ukulele player
+    Math.abs(props.noteInfo.cents) <= CLEAN_CENTS
   )
 }
 
@@ -176,7 +185,7 @@ const inTuneString = computed<UkuleleString | null>(
 /*
  * Bell feedback guards:
  * - IN_TUNE_SUSTAIN_MS: pitch must hold steady for 500 ms before the bell fires,
- *   so transient wobbles into the ±10-cent window don't trigger a ding.
+ *   so transient wobbles into the CLEAN_CENTS window don't trigger a ding.
  * - SAME_STRING_COOLDOWN_MS: suppresses repeat dings for the same string after
  *   the bell has fired; pitch detection at ~15-30×/sec would otherwise cause
  *   rapid-fire sounds as pitch drifts in/out of the window.
@@ -225,7 +234,10 @@ watch(inTuneString, (current) => {
 
     lastBellKey = key
     lastBellTime = now
-    playBellFeedback(noteToFrequency(current.note, current.octave), 0.5)
+    playBellFeedback(
+      noteToFrequency(current.note, current.octave, referenceA4.value),
+      0.5,
+    )
   }, IN_TUNE_SUSTAIN_MS)
 })
 
@@ -310,6 +322,14 @@ watch(
         @click="toggleTuningPreview"
       />
     </div>
+
+    <TunerReferencePitch
+      v-model="referenceA4"
+      :noteInfo="noteInfo"
+      :isClean="isClean"
+      :isListening="isListening"
+      :start="start"
+    />
 
     <div class="mb-4">
       <PrimeButton
@@ -403,7 +423,7 @@ watch(
     >
       <TunerCentsDeviationBar
         :cents="noteInfo && isClean ? noteInfo.cents : null"
-        :threshold="10"
+        :threshold="CLEAN_CENTS"
         :maxRange="100"
         :isVisible="true"
         :highLabel="t('pitchDetector.sharp')"
@@ -437,6 +457,14 @@ watch(
           <span class="min-w-6 text-end tabular-nums">
             {{ noteInfo.cents > 0 ? '+' : '' }}{{ noteInfo.cents }}
           </span>
+        </div>
+
+        <div
+          v-if="referenceA4 !== A4_FREQUENCY"
+          class="mt-1 text-xs text-(--p-orange-500) tabular-nums"
+          data-testid="reference-pitch-readout"
+        >
+          {{ t('tuner.referencePitch.readout', { hz: formattedReferenceA4 }) }}
         </div>
       </div>
 

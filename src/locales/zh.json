@@ -382,6 +382,23 @@
       "openG": "开放 G",
       "openD": "开放 D",
       "openC": "开放 C"
+    },
+    "referencePitch": {
+      "title": "标准音",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "标准音高",
+      "versus440": "与 440 相差 {cents}¢",
+      "lower": "降低",
+      "higher": "升高",
+      "match": "跟歌曲对音",
+      "matchHint": "播放歌曲，长而稳的音效果最好。",
+      "holdSteady": "正在听稳定的音…",
+      "matchFound": "找到了！",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "再试一次",
+      "use": "就用这个",
+      "reset": "恢复 440",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

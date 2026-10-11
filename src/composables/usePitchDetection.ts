@@ -58,6 +58,9 @@ type UsePitchDetectionOptions = {
    * voice — whose pitch is carried by its fundamental and lower harmonics —
    * passes untouched. Omit for no filter. */
   lowPassHz?: number
+  /* Frequency of A4 that note names and cents are measured against. Defaults to
+   * 440. The tuner moves it to follow recordings that sit off concert pitch. */
+  referenceA4?: MaybeRefOrGetter<number>
 }
 
 /* Linear Q of the two stages of a 4th-order Butterworth low-pass: flat below
@@ -155,7 +158,11 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
 
       if (now - cleanSinceTimestamp >= onsetDebounceMs) {
         frequency.value = Math.round(reportedFrequency * 10) / 10 // 0.1 Hz precision
-        const detected = frequencyToNote(reportedFrequency, prevMidi)
+        const detected = frequencyToNote(
+          reportedFrequency,
+          prevMidi,
+          toValue(options.referenceA4),
+        )
         noteInfo.value = detected
         prevMidi = detected?.midiNote
         isClean.value = true

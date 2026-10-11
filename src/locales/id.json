@@ -382,6 +382,23 @@
       "openG": "Terbuka G",
       "openD": "Terbuka D",
       "openC": "Terbuka C"
+    },
+    "referencePitch": {
+      "title": "Nada acuan",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "Nada standar",
+      "versus440": "{cents}¢ dari 440",
+      "lower": "Lebih rendah",
+      "higher": "Lebih tinggi",
+      "match": "Samakan dengan lagu",
+      "matchHint": "Putar lagunya. Nada panjang yang stabil paling bagus.",
+      "holdSteady": "Mendengarkan nada yang stabil…",
+      "matchFound": "Dapat!",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "Coba lagi",
+      "use": "Pakai",
+      "reset": "Kembali ke 440",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

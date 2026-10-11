@@ -382,6 +382,23 @@
       "openG": "オープン G",
       "openD": "オープン D",
       "openC": "オープン C"
+    },
+    "referencePitch": {
+      "title": "基準ピッチ",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "標準ピッチ",
+      "versus440": "440から{cents}¢",
+      "lower": "下げる",
+      "higher": "上げる",
+      "match": "曲に合わせる",
+      "matchHint": "曲を流してね。長くのびる音がいちばん合わせやすいよ。",
+      "holdSteady": "安定した音を聞いているよ…",
+      "matchFound": "できた！",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "もう一度",
+      "use": "これにする",
+      "reset": "440に戻す",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

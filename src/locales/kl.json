@@ -289,6 +289,23 @@
       "openG": "Ammasoq G",
       "openD": "Ammasoq D",
       "openC": "Ammasoq C"
+    },
+    "referencePitch": {
+      "title": "Reference pitch",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "Standard pitch",
+      "versus440": "{cents}¢ from 440",
+      "lower": "Lower",
+      "higher": "Higher",
+      "match": "Match a song",
+      "matchHint": "Play the song. A long, steady note works best.",
+      "holdSteady": "Listening for a steady note…",
+      "matchFound": "Got it!",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "Try again",
+      "use": "Use it",
+      "reset": "Back to 440",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

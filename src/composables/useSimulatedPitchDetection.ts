@@ -7,6 +7,11 @@ type SimulationConfig = {
   cents: Ref<number>
   clarity: Ref<number>
   jitter: Ref<number>
+  /* Frequency of A4 detection measures against, mirroring usePitchDetection's
+   * option. The simulated sound itself stays on the 440 grid, like a real
+   * instrument or recording — so changing the reference moves the readout, and
+   * "Match a song" can be exercised against a fixed source. Defaults to 440. */
+  referenceA4?: MaybeRefOrGetter<number>
 }
 
 export function useSimulatedPitchDetection(config: SimulationConfig) {
@@ -37,7 +42,11 @@ export function useSimulatedPitchDetection(config: SimulationConfig) {
 
     const simulatedHz = computeSimulatedFrequency()
     frequency.value = Math.round(simulatedHz * 10) / 10
-    const detected = frequencyToNote(simulatedHz, prevMidi)
+    const detected = frequencyToNote(
+      simulatedHz,
+      prevMidi,
+      toValue(config.referenceA4),
+    )
     noteInfo.value = detected
     prevMidi = detected?.midiNote
     clarity.value = Math.min(1, Math.max(0, config.clarity.value))

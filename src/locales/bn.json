@@ -382,6 +382,23 @@
       "openG": "ওপেন G",
       "openD": "ওপেন D",
       "openC": "ওপেন C"
+    },
+    "referencePitch": {
+      "title": "রেফারেন্স সুর",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "স্ট্যান্ডার্ড সুর",
+      "versus440": "440 থেকে {cents}¢",
+      "lower": "নিচে",
+      "higher": "উপরে",
+      "match": "গানের সাথে মেলাও",
+      "matchHint": "গানটা চালাও। লম্বা, স্থির সুর সবচেয়ে ভালো কাজ করে।",
+      "holdSteady": "স্থির সুর শুনছি…",
+      "matchFound": "পেয়েছি!",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "আবার চেষ্টা করো",
+      "use": "এটা নাও",
+      "reset": "440-এ ফিরে যাও",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

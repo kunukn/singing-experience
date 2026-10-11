@@ -382,6 +382,23 @@
       "openG": "Ouvert en sol",
       "openD": "Ouvert en ré",
       "openC": "Ouvert en do"
+    },
+    "referencePitch": {
+      "title": "Note de référence",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "Accordage standard",
+      "versus440": "{cents}¢ par rapport à 440",
+      "lower": "Plus grave",
+      "higher": "Plus aigu",
+      "match": "S'accorder sur une chanson",
+      "matchHint": "Lance la chanson. Une note longue et stable, c'est l'idéal.",
+      "holdSteady": "J'écoute une note stable…",
+      "matchFound": "C'est bon !",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "Réessayer",
+      "use": "Utiliser",
+      "reset": "Revenir à 440",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

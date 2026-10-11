@@ -122,6 +122,40 @@ describe('midiToFrequency', () => {
   })
 })
 
+describe('reference pitch (A4 ≠ 440)', () => {
+  test('432 Hz reads as A4 dead on when A4 = 432', () => {
+    const result = frequencyToNote(432, undefined, 432)
+    expect(result!.note).toBe('A')
+    expect(result!.octave).toBe(4)
+    expect(result!.cents).toBe(0)
+  })
+
+  test('440 Hz reads as A4 +32¢ when A4 = 432', () => {
+    const result = frequencyToNote(440, undefined, 432)
+    expect(result!.note).toBe('A')
+    expect(result!.cents).toBe(32)
+  })
+
+  test('note frequencies scale by the reference ratio', () => {
+    expect(noteToFrequency('E', 2, 432)).toBeCloseTo(
+      (noteToFrequency('E', 2) * 432) / 440,
+      6,
+    )
+    expect(midiToFrequency(69, 432)).toBe(432)
+  })
+
+  test('round-trips on a shifted grid', () => {
+    const result = frequencyToNote(
+      noteToFrequency('G', 3, 433.2),
+      undefined,
+      433.2,
+    )
+    expect(result!.note).toBe('G')
+    expect(result!.octave).toBe(3)
+    expect(result!.cents).toBe(0)
+  })
+})
+
 describe('snapFrequencyToSemitone', () => {
   test.each([
     { cents: 30, label: 'sharp' },

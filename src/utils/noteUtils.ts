@@ -61,6 +61,10 @@ const NOTE_OPTIONS_HIGH_TO_LOW: readonly { label: string; value: NoteName }[] =
     value: note,
   }))
 
+/* Concert pitch — A4 in Hz. Every pitch function takes an optional reference
+ * so the tuner can follow recordings that sit off 440 (e.g. 432). */
+export const A4_FREQUENCY = 440
+
 export type NoteInfo = {
   note: NoteName
   octave: number
@@ -71,11 +75,14 @@ export type NoteInfo = {
 
 /**
  * Convert a frequency in Hz to a raw (non-rounded) MIDI note number.
- * Uses A4 = 440 Hz as the reference pitch (MIDI 69).
+ * `referenceA4` is the frequency of A4 (MIDI 69), 440 Hz by default.
  */
-export function frequencyToMidi(hz: number): number {
+export function frequencyToMidi(
+  hz: number,
+  referenceA4: number = A4_FREQUENCY,
+): number {
   // 12 semitones/octave × log₂(hz / A4) + 69 (A4's MIDI number)
-  return 12 * Math.log2(hz / 440) + 69
+  return 12 * Math.log2(hz / referenceA4) + 69
 }
 
 /**
@@ -89,7 +96,8 @@ export function frequencyToCents(hz: number, referenceHz: number): number {
 
 /**
  * Convert a frequency in Hz to the nearest musical note with cents deviation.
- * Uses A4 = 440 Hz as the reference pitch.
+ * `referenceA4` is the frequency of A4, 440 Hz by default; cents are measured
+ * against that grid.
  *
  * When `previousMidi` is supplied, hysteresis is applied: the detected note
  * only changes when the raw MIDI value deviates *more than* 0.5 semitones
@@ -99,10 +107,11 @@ export function frequencyToCents(hz: number, referenceHz: number): number {
 export function frequencyToNote(
   hz: number,
   previousMidi?: number,
+  referenceA4: number = A4_FREQUENCY,
 ): NoteInfo | null {
   if (hz <= 0 || !isFinite(hz)) return null
 
-  const rawMidi = frequencyToMidi(hz)
+  const rawMidi = frequencyToMidi(hz, referenceA4)
 
   let midiNote: number
   if (previousMidi !== undefined) {
@@ -118,7 +127,7 @@ export function frequencyToNote(
   // MIDI octave: C-1 = MIDI 0, so octave = floor(midi/12) - 1
   const octave = Math.floor(midiNote / 12) - 1
 
-  const perfectFrequency = 440 * Math.pow(2, (midiNote - 69) / 12)
+  const perfectFrequency = midiToFrequency(midiNote, referenceA4)
   const cents = frequencyToCents(hz, perfectFrequency)
 
   return {
@@ -132,22 +141,29 @@ export function frequencyToNote(
 
 /**
  * Convert a note name and octave to its perfect frequency in Hz.
- * Uses A4 = 440 Hz as the reference pitch.
+ * `referenceA4` is the frequency of A4, 440 Hz by default.
  */
-export function noteToFrequency(note: NoteName, octave: number): number {
+export function noteToFrequency(
+  note: NoteName,
+  octave: number,
+  referenceA4: number = A4_FREQUENCY,
+): number {
   const noteIndex = NOTE_NAMES.indexOf(note)
   // Reverse MIDI formula: (octave + 1) accounts for C-1 = MIDI 0
   const midiNote = (octave + 1) * 12 + noteIndex
 
-  return 440 * Math.pow(2, (midiNote - 69) / 12)
+  return midiToFrequency(midiNote, referenceA4)
 }
 
 /**
  * Convert a MIDI note number to its frequency in Hz.
- * Uses A4 = 440 Hz as the reference pitch.
+ * `referenceA4` is the frequency of A4 (MIDI 69), 440 Hz by default.
  */
-export function midiToFrequency(midi: number): number {
-  return 440 * Math.pow(2, (midi - 69) / 12)
+export function midiToFrequency(
+  midi: number,
+  referenceA4: number = A4_FREQUENCY,
+): number {
+  return referenceA4 * Math.pow(2, (midi - 69) / 12)
 }
 
 /**

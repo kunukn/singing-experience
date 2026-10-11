@@ -382,6 +382,23 @@
       "openG": "Offen G",
       "openD": "Offen D",
       "openC": "Offen C"
+    },
+    "referencePitch": {
+      "title": "Kammerton",
+      "chip": "A4 {hz} Hz",
+      "concertPitch": "Standardstimmung",
+      "versus440": "{cents}¢ von 440",
+      "lower": "Tiefer",
+      "higher": "Höher",
+      "match": "An Song anpassen",
+      "matchHint": "Spiel den Song ab. Ein langer, ruhiger Ton klappt am besten.",
+      "holdSteady": "Warte auf einen ruhigen Ton…",
+      "matchFound": "Geschafft!",
+      "estimate": "A4 ≈ {hz} Hz",
+      "retry": "Nochmal",
+      "use": "Übernehmen",
+      "reset": "Zurück zu 440",
+      "readout": "A4 = {hz} Hz"
     }
   },
   "singFly": {

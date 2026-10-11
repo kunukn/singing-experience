@@ -14,6 +14,8 @@ const instrumentOptions = computed(() => [
   /*{ label: `🎵 ${t('tuner.custom')}`, value: 'custom' as InstrumentType },*/
 ])
 
+const { referenceA4 } = useReferencePitch()
+
 const {
   frequency,
   noteInfo,
@@ -26,7 +28,7 @@ const {
   /* softRawAudio — noise suppression / AGC fight a steady plucked-string tone,
    * but echo cancellation stays on because the guitar/uke sampler plays through
    * the speaker while the mic listens. */
-} = usePitchDetection({ softRawAudio: true })
+} = usePitchDetection({ softRawAudio: true, referenceA4 })
 
 watch(selectedInstrument, () => {
   stop()
@@ -58,6 +60,7 @@ onUnmounted(() => {
       :error="error"
       :start="start"
       :stop="stop"
+      v-model:referenceA4="referenceA4"
     />
     <UkuleleDisplay
       v-else-if="selectedInstrument === 'ukulele'"
@@ -69,6 +72,7 @@ onUnmounted(() => {
       :error="error"
       :start="start"
       :stop="stop"
+      v-model:referenceA4="referenceA4"
     />
     <div v-else-if="selectedInstrument === 'custom'">TODO</div>
     <div v-else>ERROR IN App</div>
