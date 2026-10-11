@@ -169,15 +169,23 @@ describe('createFocusTracker - stats', () => {
     })
   })
 
-  test('should count a steady +20 cents tone as on pitch but not spot on', () => {
+  test('should count a steady +15 cents tone as on pitch but not spot on', () => {
     const tracker = createFocusTracker({ holdMs: 0 })
 
-    sing(tracker, A3 + 0.2, 0, 400)
+    sing(tracker, A3 + 0.15, 0, 400)
 
-    expect(tracker.stats.averageCents).toBeCloseTo(20, 5)
+    expect(tracker.stats.averageCents).toBeCloseTo(15, 5)
     expect(tracker.stats.wobbleCents).toBeCloseTo(0, 5)
     expect(tracker.stats.onPitchPercent).toBe(100)
     expect(tracker.stats.spotOnPercent).toBe(0)
+  })
+
+  test('should not count a steady +25 cents tone as on pitch', () => {
+    const tracker = createFocusTracker({ holdMs: 0 })
+
+    sing(tracker, A3 + 0.25, 0, 400)
+
+    expect(tracker.stats.onPitchPercent).toBe(0)
   })
 
   test('should compute average, wobble and both shares over two phrases', () => {
@@ -200,7 +208,7 @@ describe('createFocusTracker - stats', () => {
     tracker.lockTo(A3)
 
     /* ±40 cents at 6 Hz, a typical classical vibrato. Frame by frame most of
-     * it sits beyond ±25 cents; heard over HEARD_PITCH_WINDOW_MS it is still. */
+     * it sits beyond ±20 cents; heard over HEARD_PITCH_WINDOW_MS it is still. */
     const vibratoHz = 6
     for (let timestamp = 0; timestamp <= 3000; timestamp += FRAME_MS) {
       const cents = 40 * Math.sin((2 * Math.PI * vibratoHz * timestamp) / 1000)

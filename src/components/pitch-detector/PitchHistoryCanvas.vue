@@ -6,7 +6,6 @@ import {
   cleanColor,
   cleanColorRgb,
   CLEAN_CENTS,
-  CLOSE_CENTS,
   OFF_CENTS,
 } from '@/utils/pitchColors'
 import { drawPitchLine, resolveEffectiveMidi } from '@/utils/pitchLineRenderer'
@@ -23,7 +22,11 @@ import {
   type PitchLaneId,
   type PitchPreviewLane,
 } from './pitchLanes'
-import { HISTORY_WINDOW_MS, PAUSE_GAP_MS } from './pitchConstants'
+import {
+  HISTORY_WINDOW_MS,
+  ON_PITCH_CENTS,
+  PAUSE_GAP_MS,
+} from './pitchConstants'
 import type { PitchHistoryTimeScale } from './pitchHistoryScroll'
 
 type Props = {
@@ -240,8 +243,8 @@ function drawPreviewIndicators(
 
 /*
  * The target the singer aims for on the focus tab: a filled band for the
- * clean zone, dashed edges where "close" ends and where "off" begins — the
- * same CLEAN_CENTS, CLOSE_CENTS and OFF_CENTS tiers the trail colours by.
+ * Spot on zone (CLEAN_CENTS), a lighter one out to ON_PITCH_CENTS, and a
+ * dashed edge where "off" begins (OFF_CENTS).
  */
 function drawFocusZone(
   ctx: CanvasRenderingContext2D,
@@ -255,8 +258,8 @@ function drawFocusZone(
   /* 100 cents per semitone */
   const cleanTop = midiToY(focusMidi + CLEAN_CENTS / 100, height)
   const cleanBottom = midiToY(focusMidi - CLEAN_CENTS / 100, height)
-  const closeTop = midiToY(focusMidi + CLOSE_CENTS / 100, height)
-  const closeBottom = midiToY(focusMidi - CLOSE_CENTS / 100, height)
+  const closeTop = midiToY(focusMidi + ON_PITCH_CENTS / 100, height)
+  const closeBottom = midiToY(focusMidi - ON_PITCH_CENTS / 100, height)
 
   ctx.save()
   /* The On pitch band, half the Spot on alpha: OK ground rather than the
@@ -274,7 +277,7 @@ function drawFocusZone(
    * singer starts pulling the focus over. Muted red: the trail's "off" hue,
    * dimmed so a guide line never reads as an alarm. */
   const guides = [
-    { cents: CLOSE_CENTS, color: withAlpha(green, 0.35) },
+    { cents: ON_PITCH_CENTS, color: withAlpha(green, 0.35) },
     { cents: OFF_CENTS, color: withAlpha(red, 0.35) },
   ]
   for (const guide of guides) {
@@ -297,9 +300,9 @@ function drawFocusZone(
 const ZONE_LABEL_MIN_GAP = 12
 
 /*
- * "Spot on ±10¢", "On pitch ±25¢" and "±50¢" on the upper edge of each zone,
- * named like the stats, so the bands and dashes explain themselves. The lower half mirrors the upper, so it stays
- * unlabelled.
+ * "Spot on ±10¢", "On pitch ±20¢" and "±50¢" on the upper edge of each zone,
+ * named like the stats, so the bands and dashes explain themselves. The
+ * lower half mirrors the upper, so it stays unlabelled.
  * Sits at the gutter side, where the trail is oldest and faintest — the live
  * edge already carries the head dot and its name pill.
  */
@@ -311,7 +314,7 @@ function drawFocusZoneLabels(
 ) {
   /* 100 cents per semitone */
   const cleanY = midiToY(focusMidi + CLEAN_CENTS / 100, height)
-  const closeY = midiToY(focusMidi + CLOSE_CENTS / 100, height)
+  const closeY = midiToY(focusMidi + ON_PITCH_CENTS / 100, height)
   const offY = midiToY(focusMidi + OFF_CENTS / 100, height)
   const isRtl = props.isRtl ?? false
 
@@ -333,7 +336,7 @@ function drawFocusZoneLabels(
       color: mutedColor,
     },
     {
-      text: `${t('pitchDetector.focus.onPitch')} ±${CLOSE_CENTS}¢`,
+      text: `${t('pitchDetector.focus.onPitch')} ±${ON_PITCH_CENTS}¢`,
       y: closeY,
       gap: closeY - offY,
       color: mutedColor,

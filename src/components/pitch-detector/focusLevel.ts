@@ -35,7 +35,7 @@ export const FOCUS_LEVEL_EMOJI: Record<FocusLevel, string> = {
 }
 
 /*
- * On pitch (±25¢) carries the ladder, because that is what listeners judge.
+ * On pitch (±20¢) carries the ladder, because that is what listeners judge.
  * The top two rungs also need Spot on (±10¢): that is where a lead singer
  * and a studio take part from a good choir voice.
  */
