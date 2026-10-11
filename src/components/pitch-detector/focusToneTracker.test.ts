@@ -34,9 +34,9 @@ describe('createFocusTracker - focus', () => {
   test('should focus A3 after holding A3 +20 cents for the hold time', () => {
     const tracker = createFocusTracker()
 
-    /* 31 frames × 16 ms = 496 ms, just short of the hold time */
-    const next = sing(tracker, A3 + 0.2, 0, 496)
-    expect(DEFAULT_FOCUS_HOLD_MS).toBe(500)
+    /* 24 frames × 16 ms = 384 ms, just short of the hold time */
+    const next = sing(tracker, A3 + 0.2, 0, 384)
+    expect(DEFAULT_FOCUS_HOLD_MS).toBe(400)
     expect(tracker.focusMidi).toBe(null)
 
     tracker.push(A3 + 0.2, next)

@@ -36,7 +36,7 @@ export type FocusToneTracker = {
 }
 
 /* How long a new semitone must be held before the chart re-centres on it */
-export const DEFAULT_FOCUS_HOLD_MS = 500
+export const DEFAULT_FOCUS_HOLD_MS = 400
 
 const EMPTY_STATS: FocusToneStats = {
   holdMs: 0,
