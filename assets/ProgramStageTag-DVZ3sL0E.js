@@ -1,0 +1,1 @@
+import{P as e,u as t,v as n}from"./runtime-core.esm-bundler-Yj51g2kL.js";import{t as r}from"./tag-BmvoYoJC.js";var i=n({__name:`ProgramStageTag`,props:{stage:{}},setup(n){let i=n,a={alpha:`Alpha`,beta:`Beta`},o={alpha:`warn`,beta:`info`};return(n,s)=>{let c=r;return e(),t(c,{severity:o[i.stage],value:a[i.stage]},null,8,[`severity`,`value`])}}});export{i as t};
