@@ -1,0 +1,18 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "tabWidth": 2,
+  "singleQuote": true,
+  "semi": false,
+  "printWidth": 80,
+  "sortPackageJson": false,
+  "sortTailwindcss": { "stylesheet": "./src/style.css" },
+  "ignorePatterns": [
+    "node_modules",
+    "dist",
+    "coverage",
+    ".temp",
+    "package-lock.json",
+    "src/auto-imports.d.ts",
+    "typed-router.d.ts"
+  ]
+}

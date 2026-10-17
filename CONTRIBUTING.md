@@ -66,7 +66,7 @@ When adding a new script to `package.json`, follow these rules so the list stays
 - `npm run typecheck` — Run TypeScript type checking with timing output
 - `npm run lint` — Run linting with timing output
 - `npm run lint:fix` — Run linting and auto-fix
-- `npm run format` — Format files using Prettier
+- `npm run format` — Format files using Oxfmt
 - `npm test` — Run tests once
 - `npm run test:watch` — Run tests in watch mode
 - `npm run test:ui` — Run tests with the Vitest UI

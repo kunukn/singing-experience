@@ -16,7 +16,7 @@
     "typecheck": "node scripts/tscheck-with-timing.js",
     "lint": "node scripts/lint-with-timing.js",
     "lint:fix": "oxlint --fix",
-    "format": "prettier --write .",
+    "format": "oxfmt",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
@@ -57,10 +57,9 @@
     "happy-dom": "^20.14.5",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.1",
+    "oxfmt": "0.73.0",
     "oxlint": "^1.83.0",
     "playwright": "^1.63.0",
-    "prettier": "^3.9.8",
-    "prettier-plugin-tailwindcss": "^0.8.1",
     "typescript": "7.0.2",
     "unplugin-auto-import": "^21.1.0",
     "unplugin-vue-components": "^32.1.0",
@@ -97,6 +96,6 @@
   },
   "homepage": "https://github.com/kunukn/singing-experience#readme",
   "lint-staged": {
-    "*": "prettier --write --ignore-unknown"
+    "*": "oxfmt --no-error-on-unmatched-pattern"
   }
 }
