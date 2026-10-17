@@ -22,6 +22,7 @@ import {
 } from './nearestString'
 import TunerCentsDeviationBar from './TunerCentsDeviationBar.vue'
 import TunerReferencePitch from './TunerReferencePitch.vue'
+import { useBellHold } from './useBellHold'
 import { PREVIEW_INTERVAL_MS, TUNER_IN_TUNE_CENTS } from './tunerConstants'
 
 type Props = {
@@ -43,19 +44,32 @@ const referenceA4 = defineModel<number>('referenceA4', { required: true })
 const { t, locale } = useI18n()
 const { isDark } = useDarkMode()
 
+/* The reading on screen: live, except while the in-tune bell drowns the string */
+const {
+  noteInfo: shownNoteInfo,
+  frequency: shownFrequency,
+  isClean: isShownClean,
+  hold: holdBellReading,
+  release: releaseBellReading,
+} = useBellHold({
+  noteInfo: () => props.noteInfo,
+  frequency: () => props.frequency,
+  isClean: () => props.isClean,
+})
+
 const formattedReferenceA4 = computed(() =>
   formatReferencePitch(referenceA4.value, locale.value),
 )
 
 const noteColor = computed(() =>
-  props.noteInfo && props.isClean
-    ? cleanTextColor(props.noteInfo.cents, isDark.value)
+  shownNoteInfo.value && isShownClean.value
+    ? cleanTextColor(shownNoteInfo.value.cents, isDark.value)
     : null,
 )
 
 const centsColor = computed(() =>
-  props.noteInfo && props.isClean
-    ? cleanTextColor(props.noteInfo.cents, isDark.value)
+  shownNoteInfo.value && isShownClean.value
+    ? cleanTextColor(shownNoteInfo.value.cents, isDark.value)
     : null,
 )
 
@@ -171,11 +185,11 @@ watch(isPlaying, (playing) => {
 function isStringInTune(note: NoteName, octave: number): boolean {
   return (
     props.isListening &&
-    props.isClean &&
-    props.noteInfo != null &&
-    props.noteInfo.note === note &&
-    props.noteInfo.octave === octave &&
-    Math.abs(props.noteInfo.cents) <= TUNER_IN_TUNE_CENTS
+    isShownClean.value &&
+    shownNoteInfo.value != null &&
+    shownNoteInfo.value.note === note &&
+    shownNoteInfo.value.octave === octave &&
+    Math.abs(shownNoteInfo.value.cents) <= TUNER_IN_TUNE_CENTS
   )
 }
 
@@ -192,11 +206,12 @@ const inTuneString = computed<GuitarTuningString | null>(
  * Within TUNER_IN_TUNE_CENTS the debounced green ring takes over instead.
  */
 const guidedString = computed(() => {
-  if (!props.isListening || !props.isClean || !props.noteInfo) return null
+  const noteInfo = shownNoteInfo.value
+  if (!props.isListening || !isShownClean.value || !noteInfo) return null
 
   const nearest = findNearestString(
     [...leftStrings.value, ...rightStrings.value],
-    props.noteInfo.frequency,
+    noteInfo.frequency,
     referenceA4.value,
   )
 
@@ -248,6 +263,7 @@ const guidedStringTextColor = computed(() =>
 const IN_TUNE_SUSTAIN_MS = 500 // pitch must hold for 500 ms before bell fires
 const HIGHLIGHT_DEBOUNCE_MS = 250 // matches Do Re Mi GRACE_PERIOD_MS — absorbs pitch jitter
 const SAME_STRING_COOLDOWN_MS = 2000
+const BELL_DURATION_S = 0.5 // bell is held this long before its release tail
 const GUITAR_BUTTON_BELL_MUTE_MS = 3000 // suppress bell after tapping a reference string
 
 let lastBellKey: string | null = null
@@ -286,9 +302,10 @@ watch(inTuneString, (current) => {
 
     lastBellKey = key
     lastBellTime = now
+    holdBellReading((BELL_DURATION_S + TONE_MODE_RELEASE_S.bell) * 1000)
     playBellFeedback(
       noteToFrequency(current.note, current.octave, referenceA4.value),
-      0.5,
+      BELL_DURATION_S,
     )
   }, IN_TUNE_SUSTAIN_MS)
 })
@@ -333,6 +350,7 @@ onUnmounted(() => {
 
 watch(selectedTuning, () => {
   stopSequence()
+  releaseBellReading()
   clearTimeout(pendingBellTimer ?? undefined)
   pendingBellTimer = null
   pendingBellKey = null
@@ -348,6 +366,7 @@ watch(
   () => props.isListening,
   (listening) => {
     if (listening) stopSequence()
+    else releaseBellReading()
   },
 )
 </script>
@@ -526,7 +545,7 @@ watch(
       class="flex max-h-70 w-full flex-1 items-center justify-center gap-4"
     >
       <TunerCentsDeviationBar
-        :cents="noteInfo && isClean ? noteInfo.cents : null"
+        :cents="shownNoteInfo && isShownClean ? shownNoteInfo.cents : null"
         :threshold="CLEAN_CENTS"
         :maxRange="100"
         :isVisible="true"
@@ -537,15 +556,15 @@ watch(
 
       <div class="flex min-w-38 flex-col items-start justify-center">
         <div
-          v-if="noteInfo && isClean"
+          v-if="shownNoteInfo && isShownClean"
           class="transition-colors duration-150"
           :style="{ color: noteColor ?? undefined }"
         >
           <span class="text-7xl font-bold tracking-tight md:text-8xl">
-            {{ toAccidentalGlyph(noteInfo.note) }}
+            {{ toAccidentalGlyph(shownNoteInfo.note) }}
           </span>
           <span class="mt-2 inline-block align-top text-4xl font-light">
-            {{ noteInfo.octave }}
+            {{ shownNoteInfo.octave }}
           </span>
         </div>
         <div v-else class="text-(--p-text-muted-color)">
@@ -553,13 +572,13 @@ watch(
         </div>
 
         <div
-          v-if="noteInfo && isClean"
+          v-if="shownNoteInfo && isShownClean"
           class="mt-1 flex items-center gap-1 text-xs tabular-nums"
           :style="{ color: centsColor ?? undefined }"
         >
           <span>{{ t('generic.cents') }}</span>
           <span class="min-w-6 text-end tabular-nums">
-            {{ noteInfo.cents > 0 ? '+' : '' }}{{ noteInfo.cents }}
+            {{ shownNoteInfo.cents > 0 ? '+' : '' }}{{ shownNoteInfo.cents }}
           </span>
         </div>
 
@@ -595,7 +614,7 @@ watch(
         class="grid grid-cols-[auto_auto] items-center gap-x-1 text-(--p-text-muted-color) tabular-nums"
       >
         <span class="min-w-12 text-end tabular-nums">{{
-          frequency != null ? Math.round(frequency) : '-'
+          shownFrequency != null ? Math.round(shownFrequency) : '-'
         }}</span>
         <span class="text-(--p-surface-500)">{{ t('generic.hz') }}</span>
 
