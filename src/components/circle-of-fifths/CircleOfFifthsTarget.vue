@@ -59,16 +59,22 @@ const sungColor = computed(() =>
 
     <!-- What the singer is on now; the hint arrow lives here, away from the
       hop arrow, so the two never read as one -->
+    <!-- 1fr | label | 1fr: the label sits on the centre line under the target,
+      with the 🎤 and the hint arrow either side, so nothing shifts as the
+      label or the arrow changes -->
     <div
-      class="mt-[0.8cqi] flex items-center gap-[0.6cqi] text-[3.6cqi] font-semibold tabular-nums transition-colors"
+      class="mt-[0.8cqi] grid w-full grid-cols-[1fr_auto_1fr] items-center gap-x-[0.6cqi] text-[3.6cqi] font-semibold tabular-nums transition-colors"
       :class="sungColor"
       data-testid="circle-target-sung"
       :data-state="sungState ?? 'none'"
       :title="t('circleOfFifths.youAreSinging')"
     >
-      <span aria-hidden="true">🎤</span>
-      <span>{{ sungLabel ?? '–' }}</span>
-      <div class="grid w-[4cqi] place-items-center">
+      <span class="justify-self-end" aria-hidden="true">🎤</span>
+      <!-- Fixed width, sized for the widest label (D♭5) -->
+      <span class="w-[2em] text-center whitespace-nowrap">{{
+        sungLabel ?? '–'
+      }}</span>
+      <div class="grid w-[4cqi] place-items-center justify-self-start">
         <span
           class="col-start-1 row-start-1"
           :class="
