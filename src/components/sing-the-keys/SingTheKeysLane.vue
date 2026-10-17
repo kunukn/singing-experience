@@ -94,7 +94,12 @@ const emit = defineEmits<{
 const { t } = useI18n()
 
 type NoteStatus =
-  'upcoming' | 'active' | 'aimed' | 'correct' | 'missed' | 'passed'
+  | 'upcoming'
+  | 'active'
+  | 'aimed'
+  | 'correct'
+  | 'missed'
+  | 'passed'
 
 const pxPerMs = computed(() => props.laneHeight / LOOKAHEAD_MS)
 

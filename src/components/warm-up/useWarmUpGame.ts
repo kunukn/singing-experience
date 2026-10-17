@@ -171,7 +171,11 @@ const START_DELAY_MS = 200
 const DEAF_PERIOD_MS = 1000
 
 export type WarmUpPhase =
-  'idle' | 'playingReference' | 'listening' | 'transitioning' | 'complete'
+  | 'idle'
+  | 'playingReference'
+  | 'listening'
+  | 'transitioning'
+  | 'complete'
 
 type PitchDetectionProvider = {
   frequency: Readonly<Ref<number | null>>

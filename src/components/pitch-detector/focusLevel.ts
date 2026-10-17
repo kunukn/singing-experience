@@ -15,7 +15,12 @@ export type FocusLevel =
   | 'pitchPerfect'
 
 export type FocusTip =
-  'keepHolding' | 'sharp' | 'flat' | 'steady' | 'almost' | 'perfect'
+  | 'keepHolding'
+  | 'sharp'
+  | 'flat'
+  | 'steady'
+  | 'almost'
+  | 'perfect'
 
 /* A 3 s hold before any level is given, so a lucky half-second can't earn
  * a title */
