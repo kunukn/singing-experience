@@ -294,6 +294,35 @@ describe('useCircleOfFifthsGame - explore', () => {
     )
   })
 
+  test('should play the DO of a key in the walk octave without selecting it', () => {
+    const { game, mock, toneEngine } = setup()
+
+    game.playKeyTone(1)
+
+    expect(game.selectedKeyIndex.value).toBeNull()
+    expect(mock.provider.start).not.toHaveBeenCalled()
+    /* G in the G3–G4 walk window is G3 (MIDI 55), the walk's own G */
+    return vi.waitFor(() => {
+      expect(toneEngine.playToneAt).toHaveBeenCalledTimes(1)
+      expect(toneEngine.playToneAt).toHaveBeenCalledWith(
+        midiToFrequency(55),
+        expect.any(Number),
+        expect.any(Number),
+      )
+    })
+  })
+
+  test('should not play a key tone during a round', async () => {
+    const { game, toneEngine } = setup()
+
+    await game.startWalk()
+    vi.mocked(toneEngine.playToneAt).mockClear()
+    game.playKeyTone(1)
+    await vi.advanceTimersByTimeAsync(50)
+
+    expect(toneEngine.playToneAt).not.toHaveBeenCalled()
+  })
+
   test('should mark a key explored after DO MI SO MI DO', async () => {
     const { game, holdCurrentTarget } = setup()
 

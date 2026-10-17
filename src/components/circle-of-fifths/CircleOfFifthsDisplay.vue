@@ -63,6 +63,7 @@ const {
   startPattern,
   stop,
   selectKey,
+  playKeyTone,
   playSelectedKey,
   playTarget,
   setDirection,
@@ -180,7 +181,12 @@ const idleSungState = computed<SungState | null>(() => {
 /* Tapped keys play through the speaker — keep the preview from hearing them */
 function handleSelect(keyIndex: number) {
   triggerDeafPeriod()
-  selectKey(keyIndex)
+  /* Walk: hear the note you'll sing. Explore: pick the key and hear its chord */
+  if (screen.value === 'walkIdle') {
+    playKeyTone(keyIndex)
+  } else {
+    selectKey(keyIndex)
+  }
 }
 
 function handlePlaySelectedKey() {
@@ -204,7 +210,8 @@ const wheelProps = computed(() => {
     /* Only the key being sung is "current" — after the walk the wheel shows
      * the lit circle on its own */
     currentKeyIndex: isSinging.value ? currentKeyIndex.value : null,
-    isInteractive: screen.value === 'exploreIdle',
+    isInteractive:
+      screen.value === 'walkIdle' || screen.value === 'exploreIdle',
     isPathClosed: screen.value === 'walkComplete',
   }
 })

@@ -427,6 +427,14 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     void playback.playTriad(keyTonic(keyIndex))
   }
 
+  /* The key's DO on its own, in the octave the walk will ask for — a preview
+   * of the reference tone the round plays */
+  function playKeyTone(keyIndex: number) {
+    if (!isIdle.value) return
+
+    void playback.playReference(keyTonic(keyIndex))
+  }
+
   function playSelectedKey() {
     if (selectedKeyIndex.value === null) return
 
@@ -517,6 +525,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     startPattern,
     stop,
     selectKey,
+    playKeyTone,
     playSelectedKey,
     playTarget,
     setDirection,
