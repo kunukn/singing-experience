@@ -97,5 +97,8 @@
   "homepage": "https://github.com/kunukn/singing-experience#readme",
   "lint-staged": {
     "*": "oxfmt --no-error-on-unmatched-pattern"
+  },
+  "allowScripts": {
+    "fsevents": false
   }
 }
