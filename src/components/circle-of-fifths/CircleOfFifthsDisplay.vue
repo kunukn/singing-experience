@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import type { Difficulty } from '@/constants/difficulty'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
-import { midiToNoteLabel } from '@/utils/noteUtils'
 import type { CircleDirection, CircleMode, CircleView } from './circleOfFifths'
-import { CIRCLE_KEYS, keyIndexOfPitchClass } from './circleOfFifths'
+import {
+  CIRCLE_KEYS,
+  keyIndexOfPitchClass,
+  wheelNoteLabel,
+} from './circleOfFifths'
 import type {
   CircleOfFifthsGameResult,
   SungState,
 } from './useCircleOfFifthsGame'
-
-/* Keys from D♭ onwards sit on the flat side of the circle */
-const FIRST_FLAT_KEY_INDEX = 7
 
 const {
   game,
@@ -100,21 +100,14 @@ const targetDisplay = computed(() => {
   return {
     keyLabel: CIRCLE_KEYS[target.keyIndex].label,
     solfege: target.solfege,
-    noteLabel: midiToNoteLabel(target.midi, {
-      preferFlats: target.keyIndex >= FIRST_FLAT_KEY_INDEX,
-    }).label,
+    noteLabel: wheelNoteLabel(target.midi),
   }
 })
 
-/* What the singer is on, spelled the same way as the target (A♭, not G♯) */
-const sungLabel = computed(() => {
-  const target = currentTarget.value
-  if (sungMidi.value === null || !target) return null
-
-  return midiToNoteLabel(sungMidi.value, {
-    preferFlats: target.keyIndex >= FIRST_FLAT_KEY_INDEX,
-  }).label
-})
+/* What the singer is on, spelled like the wedge it outlines */
+const sungLabel = computed(() =>
+  sungMidi.value === null ? null : wheelNoteLabel(sungMidi.value),
+)
 
 const sungState = computed<SungState | null>(() => {
   if (sungMidi.value === null) return null
@@ -159,9 +152,7 @@ const heardKeyIndex = computed(() => {
 const isStartNoteHit = computed(
   () => isWalkMode.value && previewMidi.value === walkStartMidi.value,
 )
-const startNoteLabel = computed(
-  () => midiToNoteLabel(walkStartMidi.value).label,
-)
+const startNoteLabel = computed(() => wheelNoteLabel(walkStartMidi.value))
 
 /* Tapped keys play through the speaker — keep the preview from hearing them */
 function handleSelect(keyIndex: number) {

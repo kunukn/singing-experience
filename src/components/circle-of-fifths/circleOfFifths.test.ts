@@ -12,6 +12,7 @@ import {
   placePattern,
   keyIndexOfPitchClass,
   placePitchClass,
+  wheelNoteLabel,
   walkKeyOrder,
   walkWindow,
 } from './circleOfFifths'
@@ -129,6 +130,22 @@ describe('circleOfFifths - navigation', () => {
     CIRCLE_KEYS.forEach((key) => {
       expect(keyIndexOfPitchClass(key.pitchClass)).toBe(key.index)
     })
+  })
+
+  test('spells every note the way its wedge is labelled', () => {
+    /* C4 = MIDI 60, one octave of pitch classes from there */
+    for (let midi = 60; midi < 72; midi++) {
+      const key = CIRCLE_KEYS[keyIndexOfPitchClass(midi)]
+      expect(wheelNoteLabel(midi)).toBe(`${key.label}4`)
+    }
+  })
+
+  test.each([
+    { midi: 56, label: 'A♭3' },
+    { midi: 61, label: 'D♭4' },
+    { midi: 66, label: 'F♯4' },
+  ])('spells MIDI $midi as $label', ({ midi, label }) => {
+    expect(wheelNoteLabel(midi)).toBe(label)
   })
 
   test.each([

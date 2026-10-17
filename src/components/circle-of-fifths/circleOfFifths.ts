@@ -1,3 +1,4 @@
+import { midiToNoteLabel } from '@/utils/noteUtils'
 import { pitchClassLabel } from '@/utils/scaleDetection'
 import { pitchClassOf } from '@/utils/scaleHighlight'
 
@@ -181,6 +182,18 @@ export function walkWindow(range: MidiWindow): MidiWindow {
  */
 export function keyIndexOfPitchClass(pitchClass: number) {
   return pitchClassOf(pitchClass * FIFTH_SEMITONES)
+}
+
+/*
+ * A note's label spelled the way the wheel spells its wedge — A♭3, not G♯3,
+ * because the wedge it lights reads A♭. Theory would spell the note by the key
+ * it sits in (G♯ is MI of E), but the singer compares the label with the wheel
+ * beside it, so one spelling per pitch keeps the two from disagreeing.
+ */
+export function wheelNoteLabel(midi: number) {
+  return midiToNoteLabel(midi, {
+    preferFlats: keyIndexOfPitchClass(midi) > ENHARMONIC_INDEX,
+  }).label
 }
 
 /* The single MIDI note with this pitch class inside a 12-note window */
