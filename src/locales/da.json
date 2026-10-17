@@ -575,6 +575,7 @@
     "noAccidentals": "Ingen ♯ eller ♭",
     "walkComplete": "Du sang hele vejen rundt om cirklen!",
     "hopUp": "Hop op",
-    "hopDown": "Hop ned"
+    "hopDown": "Hop ned",
+    "youAreSinging": "Du synger"
   }
 }

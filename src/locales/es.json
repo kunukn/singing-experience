@@ -575,6 +575,7 @@
     "noAccidentals": "Sin ♯ ni ♭",
     "walkComplete": "¡Cantaste toda la vuelta al círculo!",
     "hopUp": "Salta hacia arriba",
-    "hopDown": "Salta hacia abajo"
+    "hopDown": "Salta hacia abajo",
+    "youAreSinging": "Estás cantando"
   }
 }

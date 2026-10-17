@@ -575,6 +575,7 @@
     "noAccidentals": "Без ♯ и ♭",
     "walkComplete": "Весь круг спет!",
     "hopUp": "Прыгни вверх",
-    "hopDown": "Прыгни вниз"
+    "hopDown": "Прыгни вниз",
+    "youAreSinging": "Ты поёшь"
   }
 }

@@ -575,6 +575,7 @@
     "noAccidentals": "Tanpa ♯ atau ♭",
     "walkComplete": "Kamu sudah menyanyi keliling lingkaran!",
     "hopUp": "Lompat naik",
-    "hopDown": "Lompat turun"
+    "hopDown": "Lompat turun",
+    "youAreSinging": "Kamu sedang menyanyi"
   }
 }

@@ -575,6 +575,7 @@
     "noAccidentals": "بلا ♯ أو ♭",
     "walkComplete": "غنّيت الدائرة كلها!",
     "hopUp": "اقفز للأعلى",
-    "hopDown": "اقفز للأسفل"
+    "hopDown": "اقفز للأسفل",
+    "youAreSinging": "أنت تغني"
   }
 }

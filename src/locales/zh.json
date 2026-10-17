@@ -575,6 +575,7 @@
     "noAccidentals": "没有 ♯ 或 ♭",
     "walkComplete": "你唱完了整整一圈！",
     "hopUp": "往上跳",
-    "hopDown": "往下跳"
+    "hopDown": "往下跳",
+    "youAreSinging": "你正在唱"
   }
 }

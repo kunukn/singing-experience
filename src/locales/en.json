@@ -575,6 +575,7 @@
     "noAccidentals": "No ♯ or ♭",
     "walkComplete": "You sang all the way around the circle!",
     "hopUp": "Jump up",
-    "hopDown": "Jump down"
+    "hopDown": "Jump down",
+    "youAreSinging": "You're singing"
   }
 }

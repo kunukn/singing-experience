@@ -4,7 +4,10 @@ import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import type { CircleDirection, CircleMode, CircleView } from './circleOfFifths'
 import { CIRCLE_KEYS, keyIndexOfPitchClass } from './circleOfFifths'
-import type { CircleOfFifthsGameResult } from './useCircleOfFifthsGame'
+import type {
+  CircleOfFifthsGameResult,
+  SungState,
+} from './useCircleOfFifthsGame'
 
 /* Keys from D♭ onwards sit on the flat side of the circle */
 const FIRST_FLAT_KEY_INDEX = 7
@@ -47,6 +50,8 @@ const {
   selectedKeyIndex,
   holdProgress,
   isSingingCorrectNote,
+  sungMidi,
+  centsFromTarget,
   showTooLow,
   showTooHigh,
   elapsedMs,
@@ -101,6 +106,26 @@ const targetDisplay = computed(() => {
   }
 })
 
+/* What the singer is on, spelled the same way as the target (A♭, not G♯) */
+const sungLabel = computed(() => {
+  const target = currentTarget.value
+  if (sungMidi.value === null || !target) return null
+
+  return midiToNoteLabel(sungMidi.value, {
+    preferFlats: target.keyIndex >= FIRST_FLAT_KEY_INDEX,
+  }).label
+})
+
+const sungState = computed<SungState | null>(() => {
+  if (sungMidi.value === null) return null
+  if (isSingingCorrectNote.value) return 'correct'
+
+  const cents = centsFromTarget.value
+  if (cents === null) return null
+
+  return cents < 0 ? 'low' : 'high'
+})
+
 /* "See your voice" on the start screens: the mic listens only while idle, so
  * the singer can find DO before a walk or discover which key a note is in. */
 const { isPreviewEnabled } = useSettings()
@@ -123,10 +148,13 @@ const previewMidi = computed(() => {
   return overridePreviewMidi ?? micPreviewMidi.value
 })
 
-/* Any octave lights the key's wedge… */
-const heardKeyIndex = computed(() =>
-  previewMidi.value === null ? null : keyIndexOfPitchClass(previewMidi.value),
-)
+/* Any octave lights the key's wedge — the mic preview on the start screens,
+ * the singer's live note during a round… */
+const heardKeyIndex = computed(() => {
+  const midi = isIdle.value ? previewMidi.value : sungMidi.value
+
+  return midi === null ? null : keyIndexOfPitchClass(midi)
+})
 /* …but only the walk's exact first note earns the ✓, since the walk needs it */
 const isStartNoteHit = computed(
   () => isWalkMode.value && previewMidi.value === walkStartMidi.value,
@@ -360,11 +388,12 @@ onUnmounted(() => stop())
         :solfege="targetDisplay.solfege"
         :noteLabel="targetDisplay.noteLabel"
         :hopDirection="hopDirection"
+        :sungLabel="sungLabel"
+        :sungState="sungState"
         :isCorrect="isSingingCorrectNote"
         :showTooLow="showTooLow"
         :showTooHigh="showTooHigh"
       />
-      <span v-else-if="isWalkComplete" class="text-[10cqi]">🎉</span>
       <div
         v-else-if="isWalkMode"
         class="flex flex-col items-center gap-[1cqi] leading-tight"

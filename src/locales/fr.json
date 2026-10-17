@@ -575,6 +575,7 @@
     "noAccidentals": "Ni ♯ ni ♭",
     "walkComplete": "Tu as chanté tout le tour du cycle !",
     "hopUp": "Saute vers le haut",
-    "hopDown": "Saute vers le bas"
+    "hopDown": "Saute vers le bas",
+    "youAreSinging": "Tu chantes"
   }
 }

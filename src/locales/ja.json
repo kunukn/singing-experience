@@ -575,6 +575,7 @@
     "noAccidentals": "♯も♭もなし",
     "walkComplete": "円をぐるっと一周歌えたね！",
     "hopUp": "上へジャンプ",
-    "hopDown": "下へジャンプ"
+    "hopDown": "下へジャンプ",
+    "youAreSinging": "いま歌っている音"
   }
 }

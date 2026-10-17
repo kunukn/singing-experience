@@ -575,6 +575,7 @@
     "noAccidentals": "Kein ♯ oder ♭",
     "walkComplete": "Du hast den ganzen Kreis gesungen!",
     "hopUp": "Spring hoch",
-    "hopDown": "Spring runter"
+    "hopDown": "Spring runter",
+    "youAreSinging": "Du singst"
   }
 }

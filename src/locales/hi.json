@@ -575,6 +575,7 @@
     "noAccidentals": "कोई ♯ या ♭ नहीं",
     "walkComplete": "आपने पूरा चक्र गा लिया!",
     "hopUp": "ऊपर कूदें",
-    "hopDown": "नीचे कूदें"
+    "hopDown": "नीचे कूदें",
+    "youAreSinging": "आप गा रहे हैं"
   }
 }

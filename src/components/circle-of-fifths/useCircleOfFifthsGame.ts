@@ -23,6 +23,8 @@ import { useCircleOfFifthsPlayback } from './useCircleOfFifthsPlayback'
 export type Solfege = 'DO' | 'MI' | 'SO' | 'FA' | 'LA'
 export type PatternId = 'doMiSo' | 'doLa'
 export type HopDirection = 'up' | 'down'
+/* How the sung note compares with the target */
+export type SungState = 'correct' | 'low' | 'high'
 
 export type SingTarget = {
   midi: number
@@ -175,6 +177,14 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
   )
 
   const isDeaf = computed(() => elapsedMs.value < deafUntilMs.value)
+
+  /* The note the singer is on right now — hidden while a reference tone rings
+   * so the speaker never shows up as the singer's voice */
+  const sungMidi = computed(() => {
+    if (!isSinging.value || isDeaf.value || !isClean.value) return null
+
+    return noteInfo.value?.midiNote ?? null
+  })
 
   const isSingingCorrectNote = computed(() => {
     if (isDeaf.value || !isSinging.value) return false
@@ -498,6 +508,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     elapsedMs: readonly(elapsedMs),
     isDeaf,
     isSingingCorrectNote,
+    sungMidi,
     isListening,
     error,
     isPlayingSequence: playback.isPlayingSequence,

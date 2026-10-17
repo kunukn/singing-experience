@@ -575,6 +575,7 @@
     "noAccidentals": "Hakuna ♯ wala ♭",
     "walkComplete": "Umeimba mzunguko mzima!",
     "hopUp": "Ruka juu",
-    "hopDown": "Ruka chini"
+    "hopDown": "Ruka chini",
+    "youAreSinging": "Unaimba"
   }
 }

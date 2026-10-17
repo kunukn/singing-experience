@@ -575,6 +575,7 @@
     "noAccidentals": "কোনো ♯ বা ♭ নেই",
     "walkComplete": "তুমি পুরো চক্রটা গেয়ে ফেলেছ!",
     "hopUp": "ওপরে লাফ দাও",
-    "hopDown": "নিচে লাফ দাও"
+    "hopDown": "নিচে লাফ দাও",
+    "youAreSinging": "তুমি গাইছ"
   }
 }

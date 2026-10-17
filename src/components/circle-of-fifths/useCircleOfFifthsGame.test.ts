@@ -151,6 +151,42 @@ describe('useCircleOfFifthsGame - walk', () => {
     expect(game.holdTimeMs.value).toBe(0)
   })
 
+  test('should not report a sung note while idle', () => {
+    const { game, mock } = setup()
+
+    mock.singMidi(60)
+
+    expect(game.sungMidi.value).toBeNull()
+  })
+
+  test('should hide the sung note while the reference tone rings', async () => {
+    const { game, mock } = setup()
+
+    await game.startWalk()
+    mock.singMidi(55)
+    await vi.advanceTimersByTimeAsync(300)
+
+    expect(game.sungMidi.value).toBeNull()
+  })
+
+  test('should report the sung note once the reference has faded', async () => {
+    const { game, mock } = setup()
+
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    mock.singMidi(55)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.sungMidi.value).toBe(55)
+    expect(game.isSingingCorrectNote.value).toBe(false)
+
+    mock.singMidi(60)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.sungMidi.value).toBe(60)
+    expect(game.isSingingCorrectNote.value).toBe(true)
+  })
+
   test('should light C and move on to SO after holding DO', async () => {
     const { game, holdCurrentTarget } = setup()
 
