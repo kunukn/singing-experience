@@ -404,7 +404,6 @@ onUnmounted(() => {
       v-else-if="gameState === 'complete'"
       class="mb-4 flex w-full flex-col items-center gap-4 sm:min-h-72"
     >
-      <div class="text-6xl">🎉</div>
       <h2 class="text-3xl font-bold text-(--p-green-400)">
         {{ t('generic.congratulations') }}
       </h2>
