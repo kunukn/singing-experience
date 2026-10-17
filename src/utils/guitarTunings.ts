@@ -13,6 +13,7 @@ import { midiToNoteLabel, type NoteName } from '@/utils/noteUtils'
 export const GUITAR_TUNING_IDS = [
   'standard',
   'ebStandard',
+  'dStandard',
   'dropD',
   'dropC',
   'openG',
@@ -53,6 +54,13 @@ export const GUITAR_TUNINGS: Record<GuitarTuningId, GuitarTuning> = {
     midi: [39, 44, 49, 54, 58, 63], // D♯2 G♯2 C♯3 F♯3 A♯3 D♯4 — a semitone flat
     label: null,
     labelKey: 'tuner.tuningItems.ebStandard',
+  },
+  dStandard: {
+    id: 'dStandard',
+    group: 'standard',
+    midi: [38, 43, 48, 53, 57, 62], // D2 G2 C3 F3 A3 D4 — a whole step flat
+    label: 'DGCFAD',
+    labelKey: null,
   },
   dropD: {
     id: 'dropD',

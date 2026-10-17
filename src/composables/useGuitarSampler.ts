@@ -6,8 +6,8 @@ import type * as ToneType from 'tone'
  * fetched twice. Two samplers split by usage:
  *  - standardSampler: the 6 standard EADGBE notes; eagerly prewarmed on mount.
  *  - extraSampler: every other sample — the open strings of Drop D / Open G / Eb /
- *    Open D / DADGAD / Drop C / Open C, plus the upper register the fretboard
- *    reaches. Lazy for the tuner (loads only when a non-standard tuning plays);
+ *    Open D / DADGAD / Drop C / Open C / D standard, plus the upper register
+ *    the fretboard reaches. Lazy for the tuner (loads only when a non-standard tuning plays);
  *    the fretboard prewarms it, since any fret can be pressed first.
  */
 let _tone: typeof ToneType | null = null
@@ -45,7 +45,7 @@ const STANDARD_SAMPLE_URLS: Record<string, string> = {
  */
 const EXTRA_SAMPLE_URLS: Record<string, string> = {
   'D#2': 'Ds2.mp3', // Eb standard string 6
-  D2: 'D2.mp3',
+  D2: 'D2.mp3', // Drop D / D standard string 6
   'G#2': 'Gs2.mp3', // Eb standard string 5
   G2: 'G2.mp3', // Open G string 5
   'C#3': 'Cs3.mp3', // Eb standard string 4

@@ -52,7 +52,7 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
   '/tuner': {
     title: 'Instrument Tuner',
     description:
-      'Free online chromatic guitar tuner with Standard, Drop D, Drop C, DADGAD, Open G, Open D, Open C, and Eb Standard tunings. Real-time pitch and cents-deviation feedback in your browser.',
+      'Free online chromatic guitar tuner with Standard, Drop D, Drop C, DADGAD, Open G, Open D, Open C, Eb Standard, and D Standard tunings. Real-time pitch and cents-deviation feedback in your browser.',
   },
   '/piano': {
     title: 'Playable Piano Keyboard',

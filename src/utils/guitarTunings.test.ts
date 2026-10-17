@@ -44,6 +44,7 @@ describe('guitarTuningStrings', () => {
   const EXPECTED: Record<GuitarTuningId, string[]> = {
     standard: ['E2', 'A2', 'D3', 'G3', 'B3', 'E4'],
     ebStandard: ['D#2', 'G#2', 'C#3', 'F#3', 'A#3', 'D#4'],
+    dStandard: ['D2', 'G2', 'C3', 'F3', 'A3', 'D4'],
     dropD: ['D2', 'A2', 'D3', 'G3', 'B3', 'E4'],
     dropC: ['C2', 'G2', 'C3', 'F3', 'A3', 'D4'],
     openG: ['D2', 'G2', 'D3', 'G3', 'B3', 'D4'],
@@ -122,6 +123,7 @@ describe('buildGuitarTuningGroups', () => {
     expect(standardGroup.items).toEqual([
       { label: 'EADGBE', value: 'standard' },
       { label: 'tuner.tuningItems.ebStandard', value: 'ebStandard' },
+      { label: 'DGCFAD', value: 'dStandard' },
     ])
   })
 })
