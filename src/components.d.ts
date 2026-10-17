@@ -22,6 +22,7 @@ declare module 'vue' {
     CircleOfFifthsKeyInfo: typeof import('./components/circle-of-fifths/CircleOfFifthsKeyInfo.vue')['default']
     CircleOfFifthsPage: typeof import('./components/circle-of-fifths/CircleOfFifthsPage.vue')['default']
     CircleOfFifthsSettingsRow: typeof import('./components/circle-of-fifths/CircleOfFifthsSettingsRow.vue')['default']
+    CircleOfFifthsSungNote: typeof import('./components/circle-of-fifths/CircleOfFifthsSungNote.vue')['default']
     CircleOfFifthsTarget: typeof import('./components/circle-of-fifths/CircleOfFifthsTarget.vue')['default']
     CircleOfFifthsTestPage: typeof import('./components/circle-of-fifths/CircleOfFifthsTestPage.vue')['default']
     CircleOfFifthsWheel: typeof import('./components/circle-of-fifths/CircleOfFifthsWheel.vue')['default']

@@ -154,6 +154,25 @@ const isStartNoteHit = computed(
 )
 const startNoteLabel = computed(() => wheelNoteLabel(walkStartMidi.value))
 
+/* The 🎤 line on the start screens, shown only while the preview is on */
+const isIdleSungNoteVisible = computed(
+  () =>
+    isIdle.value &&
+    isPreviewEnabled.value &&
+    (disableIdlePreview || micPermission.value !== 'denied'),
+)
+const idleSungLabel = computed(() =>
+  previewMidi.value === null ? null : wheelNoteLabel(previewMidi.value),
+)
+/* Walk compares against its first note, so a C in the wrong octave shows
+ * which way to go; Explore has no target, so it stays neutral */
+const idleSungState = computed<SungState | null>(() => {
+  if (!isWalkMode.value || previewMidi.value === null) return null
+  if (previewMidi.value === walkStartMidi.value) return 'correct'
+
+  return previewMidi.value < walkStartMidi.value ? 'low' : 'high'
+})
+
 /* Tapped keys play through the speaker — keep the preview from hearing them */
 function handleSelect(keyIndex: number) {
   triggerDeafPeriod()
@@ -401,12 +420,27 @@ onUnmounted(() => stop())
           :data-hit="isStartNoteHit"
           >{{ isStartNoteHit ? '✓ ' : '' }}DO = {{ startNoteLabel }}</span
         >
+        <CircleOfFifthsSungNote
+          v-if="isIdleSungNoteVisible"
+          :sungLabel="idleSungLabel"
+          :sungState="idleSungState"
+          :showTooLow="idleSungState === 'low'"
+          :showTooHigh="idleSungState === 'high'"
+        />
       </div>
-      <CircleOfFifthsKeyInfo
-        v-else
-        :keyIndex="selectedKeyIndex"
-        :chordIndex="currentChordIndex"
-      />
+      <div v-else class="flex flex-col items-center gap-[1cqi]">
+        <CircleOfFifthsKeyInfo
+          :keyIndex="selectedKeyIndex"
+          :chordIndex="currentChordIndex"
+        />
+        <CircleOfFifthsSungNote
+          v-if="isIdleSungNoteVisible"
+          :sungLabel="idleSungLabel"
+          :sungState="null"
+          :showTooLow="false"
+          :showTooHigh="false"
+        />
+      </div>
     </CircleOfFifthsWheel>
   </div>
 </template>
