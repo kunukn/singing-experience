@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "うたレコーダー",
         "description": "メロディを歌うと、楽譜になるよ。"
+      },
+      "circleOfFifths": {
+        "name": "五度圏",
+        "description": "DO、つぎに SO を歌って、調から調へジャンプ。五度圏の12の調をぜんぶ光らせよう。"
       }
     },
     "privacy": "プライバシーは守られます。このアプリは100%ブラウザ内で動作します。音声が録音されたり送信されたりすることはありません。"
@@ -548,5 +552,27 @@
       "bebop": "ジャズ・ビバップ",
       "symmetric": "シンメトリック"
     }
+  },
+  "circleOfFifths": {
+    "mode": "モード",
+    "modeWalk": "ひとまわり",
+    "modeExplore": "さがす",
+    "view": "表示",
+    "viewFifths": "五度",
+    "viewChromatic": "半音",
+    "direction": "向き",
+    "directionFifths": "五度 ↻",
+    "directionFourths": "四度 ↺",
+    "walkHintFifths": "DO、つぎに SO を歌って次の調へジャンプ",
+    "walkHintFourths": "DO、つぎに FA を歌って次の調へジャンプ",
+    "exploreHint": "調をタップして聴いてから歌おう",
+    "tapAKey": "調をタップ",
+    "hearIt": "聴く",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "LA をさがそう",
+    "keyMajor": "{key} 長調",
+    "relativeMinor": "短調：{key}",
+    "noAccidentals": "♯も♭もなし",
+    "walkComplete": "円をぐるっと一周歌えたね！"
   }
 }

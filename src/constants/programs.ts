@@ -43,6 +43,12 @@ export const games: Program[] = [
     route: '/pitch-game',
     stage: 'beta',
   },
+  {
+    key: 'circleOfFifths',
+    icon: '🎡',
+    route: '/circle-of-fifths',
+    stage: 'beta',
+  },
 ]
 
 export const tools: Program[] = [

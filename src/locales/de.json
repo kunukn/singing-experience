@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "Song-Rekorder",
         "description": "Sing eine Melodie und sieh, wie sie zu Noten wird."
+      },
+      "circleOfFifths": {
+        "name": "Quintenzirkel",
+        "description": "Sing DO und dann SO, um von Tonart zu Tonart zu hüpfen. Bring alle 12 Tonarten des Quintenzirkels zum Leuchten."
       }
     },
     "privacy": "Deine Privatsphäre ist geschützt – diese App läuft vollständig im Browser. Kein Audio wird aufgezeichnet oder übertragen."
@@ -548,5 +552,27 @@
       "bebop": "Jazz und Bebop",
       "symmetric": "Symmetrisch"
     }
+  },
+  "circleOfFifths": {
+    "mode": "Modus",
+    "modeWalk": "Rundgang",
+    "modeExplore": "Entdecken",
+    "view": "Ansicht",
+    "viewFifths": "Quinten",
+    "viewChromatic": "Halbtöne",
+    "direction": "Richtung",
+    "directionFifths": "Quinten ↻",
+    "directionFourths": "Quarten ↺",
+    "walkHintFifths": "Sing DO und dann SO, um zur nächsten Tonart zu hüpfen",
+    "walkHintFourths": "Sing DO und dann FA, um zur nächsten Tonart zu hüpfen",
+    "exploreHint": "Tippe auf eine Tonart, hör sie dir an und sing sie",
+    "tapAKey": "Tippe auf eine Tonart",
+    "hearIt": "Anhören",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "Finde LA",
+    "keyMajor": "{key}-Dur",
+    "relativeMinor": "Moll: {key}",
+    "noAccidentals": "Kein ♯ oder ♭",
+    "walkComplete": "Du hast den ganzen Kreis gesungen!"
   }
 }

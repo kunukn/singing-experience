@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "Gravador de músicas",
         "description": "Cante uma melodia e veja ela virar partitura."
+      },
+      "circleOfFifths": {
+        "name": "Círculo das quintas",
+        "description": "Cante DO e depois SO para pular de tom em tom. Acenda os 12 tons do círculo das quintas."
       }
     },
     "privacy": "Sua privacidade está segura — este aplicativo funciona 100% no seu navegador. Nenhum áudio é gravado ou enviado."
@@ -548,5 +552,27 @@
       "bebop": "Jazz e bebop",
       "symmetric": "Simétricas"
     }
+  },
+  "circleOfFifths": {
+    "mode": "Modo",
+    "modeWalk": "Volta",
+    "modeExplore": "Explorar",
+    "view": "Visualização",
+    "viewFifths": "Quintas",
+    "viewChromatic": "Semitons",
+    "direction": "Direção",
+    "directionFifths": "Quintas ↻",
+    "directionFourths": "Quartas ↺",
+    "walkHintFifths": "Cante DO e depois SO para pular para o próximo tom",
+    "walkHintFourths": "Cante DO e depois FA para pular para o próximo tom",
+    "exploreHint": "Toque em um tom para ouvir e depois cante",
+    "tapAKey": "Toque em um tom",
+    "hearIt": "Ouvir",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "Ache o LA",
+    "keyMajor": "{key} maior",
+    "relativeMinor": "Menor: {key}",
+    "noAccidentals": "Sem ♯ nem ♭",
+    "walkComplete": "Você cantou a volta inteira no círculo!"
   }
 }

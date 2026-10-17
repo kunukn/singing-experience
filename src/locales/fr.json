@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "Enregistreur de chansons",
         "description": "Chante un air et regarde-le devenir une partition."
+      },
+      "circleOfFifths": {
+        "name": "Cycle des quintes",
+        "description": "Chante DO puis SO pour sauter de tonalité en tonalité. Allume les 12 tonalités du cycle des quintes."
       }
     },
     "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Aucun son n'est enregistré ni envoyé."
@@ -548,5 +552,27 @@
       "bebop": "Jazz et bebop",
       "symmetric": "Symétriques"
     }
+  },
+  "circleOfFifths": {
+    "mode": "Mode",
+    "modeWalk": "Tour",
+    "modeExplore": "Explorer",
+    "view": "Vue",
+    "viewFifths": "Quintes",
+    "viewChromatic": "Demi-tons",
+    "direction": "Sens",
+    "directionFifths": "Quintes ↻",
+    "directionFourths": "Quartes ↺",
+    "walkHintFifths": "Chante DO puis SO pour sauter à la tonalité suivante",
+    "walkHintFourths": "Chante DO puis FA pour sauter à la tonalité suivante",
+    "exploreHint": "Touche une tonalité pour l'écouter, puis chante-la",
+    "tapAKey": "Touche une tonalité",
+    "hearIt": "Écouter",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "Trouve LA",
+    "keyMajor": "{key} majeur",
+    "relativeMinor": "Mineur : {key}",
+    "noAccidentals": "Ni ♯ ni ♭",
+    "walkComplete": "Tu as chanté tout le tour du cycle !"
   }
 }

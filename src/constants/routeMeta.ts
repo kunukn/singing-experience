@@ -32,7 +32,7 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
   '/games': {
     title: 'Singing Games',
     description:
-      'Singing games that train your ear and voice — Sing Tone, DO RE MI, Sing the Keys, the Grace Kelly Challenge, Singfly and Note Rush. Free, runs in your browser.',
+      'Singing games that train your ear and voice — Sing Tone, DO RE MI, Sing the Keys, the Grace Kelly Challenge, Singfly, Note Rush and the Circle of Fifths. Free, runs in your browser.',
   },
   '/pitch-detector': {
     title: 'Real-Time Vocal Pitch Detector',
@@ -108,5 +108,10 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
     title: 'Note Rush — Sing the Target Notes',
     description:
       'Target notes scroll in — sing each one and hold it to score. Race the clock and hit as many as you can.',
+  },
+  '/circle-of-fifths': {
+    title: 'Circle of Fifths for Singers',
+    description:
+      'Learn the circle of fifths by singing it. Hop from key to key with DO and SO, light up all 12 keys, and explore key signatures and relative minors.',
   },
 }

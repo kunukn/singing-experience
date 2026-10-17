@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "Sangoptager",
         "description": "Syng en melodi og se den blive til noder."
+      },
+      "circleOfFifths": {
+        "name": "Kvintcirklen",
+        "description": "Syng DO og så SO for at hoppe fra toneart til toneart. Tænd alle 12 tonearter i kvintcirklen."
       }
     },
     "privacy": "Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
@@ -548,5 +552,27 @@
       "bebop": "Jazz og bebop",
       "symmetric": "Symmetriske"
     }
+  },
+  "circleOfFifths": {
+    "mode": "Tilstand",
+    "modeWalk": "Gå rundt",
+    "modeExplore": "Udforsk",
+    "view": "Visning",
+    "viewFifths": "Kvinter",
+    "viewChromatic": "Halvtoner",
+    "direction": "Retning",
+    "directionFifths": "Kvinter ↻",
+    "directionFourths": "Kvarter ↺",
+    "walkHintFifths": "Syng DO og så SO for at hoppe til næste toneart",
+    "walkHintFourths": "Syng DO og så FA for at hoppe til næste toneart",
+    "exploreHint": "Tryk på en toneart for at høre den, og syng den så",
+    "tapAKey": "Tryk på en toneart",
+    "hearIt": "Hør den",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "Find LA",
+    "keyMajor": "{key}-dur",
+    "relativeMinor": "Mol: {key}",
+    "noAccidentals": "Ingen ♯ eller ♭",
+    "walkComplete": "Du sang hele vejen rundt om cirklen!"
   }
 }

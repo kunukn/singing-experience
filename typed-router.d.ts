@@ -45,6 +45,20 @@ declare module 'vue-router/auto-routes' {
       { pathMatch: ParamValue<false> },
       | never
     >,
+    '/circle-of-fifths': RouteRecordInfo<
+      '/circle-of-fifths',
+      '/circle-of-fifths',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/circle-of-fifths-test': RouteRecordInfo<
+      '/circle-of-fifths-test',
+      '/circle-of-fifths-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/do-re-mi': RouteRecordInfo<
       '/do-re-mi',
       '/do-re-mi',
@@ -297,6 +311,22 @@ declare module 'vue-router/auto-routes' {
         | never
       pathParamNames:
         | 'pathMatch'
+    }
+    'src/pages/circle-of-fifths.vue': {
+      routes:
+        | '/circle-of-fifths'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/circle-of-fifths-test.vue': {
+      routes:
+        | '/circle-of-fifths-test'
+      views:
+        | never
+      pathParamNames:
+        | never
     }
     'src/pages/do-re-mi.vue': {
       routes:

@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "गीत रिकॉर्डर",
         "description": "कोई धुन गाओ और देखो कि वह शीट म्यूज़िक में बदल जाती है।"
+      },
+      "circleOfFifths": {
+        "name": "पंचम चक्र",
+        "description": "DO गाएँ, फिर SO, और एक स्केल से अगले स्केल पर कूदें। पंचम चक्र के सभी 12 स्केल जगमगाएँ।"
       }
     },
     "privacy": "आपकी गोपनीयता सुरक्षित है — यह ऐप 100% आपके ब्राउज़र में चलता है। कोई ऑडियो रिकॉर्ड या कहीं भेजा नहीं जाता।"
@@ -548,5 +552,27 @@
       "bebop": "जैज़ और बीबॉप",
       "symmetric": "सिमेट्रिक"
     }
+  },
+  "circleOfFifths": {
+    "mode": "मोड",
+    "modeWalk": "चक्कर",
+    "modeExplore": "खोजें",
+    "view": "दृश्य",
+    "viewFifths": "पंचम",
+    "viewChromatic": "सेमीटोन",
+    "direction": "दिशा",
+    "directionFifths": "पंचम ↻",
+    "directionFourths": "मध्यम ↺",
+    "walkHintFifths": "DO गाएँ, फिर SO, और अगले स्केल पर कूदें",
+    "walkHintFourths": "DO गाएँ, फिर FA, और अगले स्केल पर कूदें",
+    "exploreHint": "किसी स्केल पर टैप करके सुनें, फिर गाएँ",
+    "tapAKey": "किसी स्केल पर टैप करें",
+    "hearIt": "सुनें",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "LA खोजें",
+    "keyMajor": "{key} मेजर",
+    "relativeMinor": "माइनर: {key}",
+    "noAccidentals": "कोई ♯ या ♭ नहीं",
+    "walkComplete": "आपने पूरा चक्र गा लिया!"
   }
 }

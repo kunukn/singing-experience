@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "গান রেকর্ডার",
         "description": "একটা সুর গাও আর দেখো সেটা স্বরলিপি হয়ে যায়।"
+      },
+      "circleOfFifths": {
+        "name": "পঞ্চম চক্র",
+        "description": "DO গাও, তারপর SO, আর এক স্কেল থেকে পরের স্কেলে লাফ দাও। পঞ্চম চক্রের ১২টি স্কেলই জ্বালিয়ে দাও।"
       }
     },
     "privacy": "আপনার গোপনীয়তা সুরক্ষিত — এই অ্যাপ ১০০% আপনার ব্রাউজারে চলে। কোনো অডিও রেকর্ড বা কোথাও পাঠানো হয় না।"
@@ -548,5 +552,27 @@
       "bebop": "জ্যাজ ও বিবপ",
       "symmetric": "সিমেট্রিক"
     }
+  },
+  "circleOfFifths": {
+    "mode": "মোড",
+    "modeWalk": "ঘোরা",
+    "modeExplore": "খুঁজে দেখো",
+    "view": "দৃশ্য",
+    "viewFifths": "পঞ্চম",
+    "viewChromatic": "সেমিটোন",
+    "direction": "দিক",
+    "directionFifths": "পঞ্চম ↻",
+    "directionFourths": "মধ্যম ↺",
+    "walkHintFifths": "DO গাও, তারপর SO, পরের স্কেলে লাফ দিতে",
+    "walkHintFourths": "DO গাও, তারপর FA, পরের স্কেলে লাফ দিতে",
+    "exploreHint": "একটা স্কেলে ট্যাপ করে শোনো, তারপর গাও",
+    "tapAKey": "একটা স্কেলে ট্যাপ করো",
+    "hearIt": "শোনো",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "LA খুঁজে বের করো",
+    "keyMajor": "{key} মেজর",
+    "relativeMinor": "মাইনর: {key}",
+    "noAccidentals": "কোনো ♯ বা ♭ নেই",
+    "walkComplete": "তুমি পুরো চক্রটা গেয়ে ফেলেছ!"
   }
 }

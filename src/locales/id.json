@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "Perekam Lagu",
         "description": "Nyanyikan sebuah lagu dan lihat jadi not balok."
+      },
+      "circleOfFifths": {
+        "name": "Lingkaran Kuint",
+        "description": "Nyanyikan DO, lalu SO, untuk melompat dari nada dasar ke nada dasar. Nyalakan semua 12 nada dasar di lingkaran kuint."
       }
     },
     "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Tidak ada audio yang direkam atau dikirim ke mana pun."
@@ -548,5 +552,27 @@
       "bebop": "Jazz dan bebop",
       "symmetric": "Simetris"
     }
+  },
+  "circleOfFifths": {
+    "mode": "Mode",
+    "modeWalk": "Keliling",
+    "modeExplore": "Jelajahi",
+    "view": "Tampilan",
+    "viewFifths": "Kuint",
+    "viewChromatic": "Setengah nada",
+    "direction": "Arah",
+    "directionFifths": "Kuint ↻",
+    "directionFourths": "Kuart ↺",
+    "walkHintFifths": "Nyanyikan DO, lalu SO, untuk melompat ke nada dasar berikutnya",
+    "walkHintFourths": "Nyanyikan DO, lalu FA, untuk melompat ke nada dasar berikutnya",
+    "exploreHint": "Ketuk nada dasar untuk mendengarnya, lalu nyanyikan",
+    "tapAKey": "Ketuk nada dasar",
+    "hearIt": "Dengarkan",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "Cari LA",
+    "keyMajor": "{key} mayor",
+    "relativeMinor": "Minor: {key}",
+    "noAccidentals": "Tanpa ♯ atau ♭",
+    "walkComplete": "Kamu sudah menyanyi keliling lingkaran!"
   }
 }

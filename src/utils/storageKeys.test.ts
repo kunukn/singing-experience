@@ -9,6 +9,10 @@ import { describe, expect, test } from 'vitest'
  * update the list below to match.
  */
 const STORAGE_KEYS = [
+  'syng.circleOfFifthsDifficulty',
+  'syng.circleOfFifthsDirection',
+  'syng.circleOfFifthsMode',
+  'syng.circleOfFifthsView',
   'syng.clarityThreshold',
   'syng.darkMode',
   'syng.doReMiDifficulty',

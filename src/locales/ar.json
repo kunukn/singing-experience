@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "مسجّل الأغاني",
         "description": "غنِّ لحنًا وشاهده يتحول إلى نوتة موسيقية."
+      },
+      "circleOfFifths": {
+        "name": "دائرة الخامسات",
+        "description": "غنِّ DO ثم SO لتقفز من سلّم إلى سلّم. أضئ السلالم الـ12 كلها في دائرة الخامسات."
       }
     },
     "privacy": "خصوصيتك آمنة — يعمل هذا التطبيق بالكامل في متصفحك. لا يتم تسجيل أي صوت أو إرساله."
@@ -548,5 +552,27 @@
       "bebop": "جاز وبيبوب",
       "symmetric": "متماثلة"
     }
+  },
+  "circleOfFifths": {
+    "mode": "الوضع",
+    "modeWalk": "جولة",
+    "modeExplore": "استكشف",
+    "view": "العرض",
+    "viewFifths": "خامسات",
+    "viewChromatic": "أنصاف الدرجات",
+    "direction": "الاتجاه",
+    "directionFifths": "خامسات ↻",
+    "directionFourths": "رابعات ↺",
+    "walkHintFifths": "غنِّ DO ثم SO لتقفز إلى السلّم التالي",
+    "walkHintFourths": "غنِّ DO ثم FA لتقفز إلى السلّم التالي",
+    "exploreHint": "اضغط على سلّم لتسمعه ثم غنِّه",
+    "tapAKey": "اضغط على سلّم",
+    "hearIt": "استمع",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "جد LA",
+    "keyMajor": "سلّم {key} الكبير",
+    "relativeMinor": "الصغير: {key}",
+    "noAccidentals": "بلا ♯ أو ♭",
+    "walkComplete": "غنّيت الدائرة كلها!"
   }
 }

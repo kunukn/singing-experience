@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "Song Recorder",
         "description": "Sing a tune and see it turn into sheet music."
+      },
+      "circleOfFifths": {
+        "name": "Circle of Fifths",
+        "description": "Sing DO, then SO, to hop from key to key. Light up all 12 keys of the circle of fifths."
       }
     },
     "privacy": "Your privacy is safe — this app runs 100% in your browser. No audio is recorded or sent anywhere."
@@ -548,5 +552,27 @@
       "bebop": "Jazz & bebop",
       "symmetric": "Symmetric"
     }
+  },
+  "circleOfFifths": {
+    "mode": "Mode",
+    "modeWalk": "Walk",
+    "modeExplore": "Explore",
+    "view": "View",
+    "viewFifths": "Fifths",
+    "viewChromatic": "Half steps",
+    "direction": "Direction",
+    "directionFifths": "Fifths ↻",
+    "directionFourths": "Fourths ↺",
+    "walkHintFifths": "Sing DO, then SO, to hop to the next key",
+    "walkHintFourths": "Sing DO, then FA, to hop to the next key",
+    "exploreHint": "Tap a key to hear it, then sing it",
+    "tapAKey": "Tap a key",
+    "hearIt": "Hear it",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "Find LA",
+    "keyMajor": "{key} major",
+    "relativeMinor": "Minor: {key}",
+    "noAccidentals": "No ♯ or ♭",
+    "walkComplete": "You sang all the way around the circle!"
   }
 }

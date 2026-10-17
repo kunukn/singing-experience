@@ -156,6 +156,10 @@
       "songRecorder": {
         "name": "Kinasa Nyimbo",
         "description": "Imba wimbo na uone ukigeuka kuwa noti za muziki."
+      },
+      "circleOfFifths": {
+        "name": "Mzunguko wa Tano",
+        "description": "Imba DO, kisha SO, kuruka kutoka ufunguo mmoja hadi mwingine. Washa funguo zote 12 za mzunguko wa tano."
       }
     },
     "privacy": "Faragha yako ni salama — programu hii inafanya kazi 100% kwenye kivinjari chako. Hakuna sauti inayorekodiwa au kutumwa popote."
@@ -548,5 +552,27 @@
       "bebop": "Jazz na bebop",
       "symmetric": "Simetria"
     }
+  },
+  "circleOfFifths": {
+    "mode": "Hali",
+    "modeWalk": "Zunguka",
+    "modeExplore": "Gundua",
+    "view": "Mwonekano",
+    "viewFifths": "Tano",
+    "viewChromatic": "Nusu toni",
+    "direction": "Mwelekeo",
+    "directionFifths": "Tano ↻",
+    "directionFourths": "Nne ↺",
+    "walkHintFifths": "Imba DO, kisha SO, kuruka hadi ufunguo unaofuata",
+    "walkHintFourths": "Imba DO, kisha FA, kuruka hadi ufunguo unaofuata",
+    "exploreHint": "Gusa ufunguo uusikie, kisha uuimbe",
+    "tapAKey": "Gusa ufunguo",
+    "hearIt": "Sikiliza",
+    "singDoMiSo": "DO MI SO MI DO",
+    "findLa": "Tafuta LA",
+    "keyMajor": "{key} meja",
+    "relativeMinor": "Minor: {key}",
+    "noAccidentals": "Hakuna ♯ wala ♭",
+    "walkComplete": "Umeimba mzunguko mzima!"
   }
 }
