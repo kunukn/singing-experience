@@ -6,7 +6,10 @@ import {
   nearestStringBadge,
   nearestStringSemitones,
 } from '@/components/tuner/nearestString'
-import { PREVIEW_INTERVAL_MS } from '@/components/tuner/tunerConstants'
+import {
+  PREVIEW_INTERVAL_MS,
+  TUNER_IN_TUNE_CENTS,
+} from '@/components/tuner/tunerConstants'
 import {
   A4_FREQUENCY,
   noteToFrequency,
@@ -176,7 +179,7 @@ function isStringInTune(note: NoteName, octave: number): boolean {
     props.noteInfo != null &&
     props.noteInfo.note === note &&
     props.noteInfo.octave === octave &&
-    Math.abs(props.noteInfo.cents) <= CLEAN_CENTS
+    Math.abs(props.noteInfo.cents) <= TUNER_IN_TUNE_CENTS
   )
 }
 
@@ -190,7 +193,7 @@ const inTuneString = computed<UkuleleString | null>(
 /*
  * The string an off pitch is closest to, so the user sees which peg to turn and
  * which way even when far from any string (D4 → C4, two semitones sharp).
- * Within CLEAN_CENTS the debounced green ring takes over instead.
+ * Within TUNER_IN_TUNE_CENTS the debounced green ring takes over instead.
  */
 const guidedString = computed(() => {
   if (!props.isListening || !props.isClean || !props.noteInfo) return null
@@ -201,7 +204,9 @@ const guidedString = computed(() => {
     referenceA4.value,
   )
 
-  return nearest && Math.abs(nearest.cents) > CLEAN_CENTS ? nearest : null
+  return nearest && Math.abs(nearest.cents) > TUNER_IN_TUNE_CENTS
+    ? nearest
+    : null
 })
 
 function isGuidedString(s: UkuleleString): boolean {
@@ -211,9 +216,21 @@ function isGuidedString(s: UkuleleString): boolean {
   )
 }
 
-const guidedStringRingColor = computed(() =>
-  guidedString.value ? cleanColor(guidedString.value.cents) : undefined,
+/* Within CLEAN_CENTS but not yet TUNER_IN_TUNE_CENTS: close enough to play,
+ * one more small turn for perfect. Pale-green ring, no bell. */
+const isGuidedStringAlmost = computed(
+  () =>
+    guidedString.value != null &&
+    Math.abs(guidedString.value.cents) <= CLEAN_CENTS,
 )
+
+const guidedStringRingColor = computed(() => {
+  if (!guidedString.value) return undefined
+
+  return isGuidedStringAlmost.value
+    ? 'var(--p-green-300)'
+    : cleanColor(guidedString.value.cents)
+})
 
 const guidedStringTextColor = computed(() =>
   guidedString.value
@@ -224,7 +241,7 @@ const guidedStringTextColor = computed(() =>
 /*
  * Bell feedback guards:
  * - IN_TUNE_SUSTAIN_MS: pitch must hold steady for 500 ms before the bell fires,
- *   so transient wobbles into the CLEAN_CENTS window don't trigger a ding.
+ *   so transient wobbles into the TUNER_IN_TUNE_CENTS window don't trigger a ding.
  * - SAME_STRING_COOLDOWN_MS: suppresses repeat dings for the same string after
  *   the bell has fired; pitch detection at ~15-30×/sec would otherwise cause
  *   rapid-fire sounds as pitch drifts in/out of the window.
@@ -412,6 +429,7 @@ watch(
               activeString === `${s.note}${s.octave}` ||
               sequenceActiveString === `${s.note}${s.octave}`,
             'string-near': isGuidedString(s),
+            'string-almost': isGuidedString(s) && isGuidedStringAlmost,
           }"
           :style="
             isGuidedString(s)
@@ -458,6 +476,7 @@ watch(
               activeString === `${s.note}${s.octave}` ||
               sequenceActiveString === `${s.note}${s.octave}`,
             'string-near': isGuidedString(s),
+            'string-almost': isGuidedString(s) && isGuidedStringAlmost,
           }"
           :style="
             isGuidedString(s)
@@ -613,6 +632,11 @@ watch(
     0 0 0 3px var(--string-near-color),
     0 0 12px 4px var(--string-near-color);
   transition: box-shadow 0.15s ease;
+}
+
+/* No glow: the almost tier must not read as the solid green in-tune ring */
+.string-almost {
+  box-shadow: 0 0 0 3px var(--string-near-color);
 }
 
 .string-near-badge {
