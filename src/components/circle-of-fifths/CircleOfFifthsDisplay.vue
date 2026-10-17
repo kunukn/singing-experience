@@ -7,6 +7,7 @@ import {
   keyIndexOfPitchClass,
   wheelNoteLabel,
 } from './circleOfFifths'
+import { toCircleScreen } from './circleOfFifthsScreen'
 import type {
   CircleOfFifthsGameResult,
   SungState,
@@ -80,6 +81,8 @@ const viewOptions = computed(() => [
 ])
 
 const isWalkMode = computed(() => mode.value === 'walk')
+/* Which of the five screens is showing — the template switches on this */
+const screen = computed(() => toCircleScreen(phase.value, mode.value))
 const hopSolfege = computed(() =>
   direction.value === 'clockwise' ? 'SO' : 'FA',
 )
@@ -150,7 +153,8 @@ const heardKeyIndex = computed(() => {
 })
 /* …but only the walk's exact first note earns the ✓, since the walk needs it */
 const isStartNoteHit = computed(
-  () => isWalkMode.value && previewMidi.value === walkStartMidi.value,
+  () =>
+    screen.value === 'walkIdle' && previewMidi.value === walkStartMidi.value,
 )
 const startNoteLabel = computed(() => wheelNoteLabel(walkStartMidi.value))
 
@@ -167,7 +171,7 @@ const idleSungLabel = computed(() =>
 /* Walk compares against its first note, so a C in the wrong octave shows
  * which way to go; Explore has no target, so it stays neutral */
 const idleSungState = computed<SungState | null>(() => {
-  if (!isWalkMode.value || previewMidi.value === null) return null
+  if (screen.value !== 'walkIdle' || previewMidi.value === null) return null
   if (previewMidi.value === walkStartMidi.value) return 'correct'
 
   return previewMidi.value < walkStartMidi.value ? 'low' : 'high'
@@ -184,11 +188,26 @@ function handlePlaySelectedKey() {
   playSelectedKey()
 }
 
-/* Only the key being sung is "current" — after the walk the wheel shows the
- * lit circle on its own */
-const wheelCurrentKeyIndex = computed(() =>
-  isSinging.value ? currentKeyIndex.value : null,
-)
+/* What the wheel highlights on each screen: walk progress on the walk
+ * screens, the tapped and explored keys on the explore screens */
+const wheelProps = computed(() => {
+  const isExploreScreen =
+    screen.value === 'exploreIdle' || screen.value === 'patternSinging'
+
+  return {
+    litKeyIndices: isExploreScreen ? [] : litKeyIndices.value,
+    exploredKeyIndices: isExploreScreen ? exploredKeyIndices.value : [],
+    exploredMinorKeyIndices: isExploreScreen
+      ? exploredMinorKeyIndices.value
+      : [],
+    selectedKeyIndex: isExploreScreen ? selectedKeyIndex.value : null,
+    /* Only the key being sung is "current" — after the walk the wheel shows
+     * the lit circle on its own */
+    currentKeyIndex: isSinging.value ? currentKeyIndex.value : null,
+    isInteractive: screen.value === 'exploreIdle',
+    isPathClosed: screen.value === 'walkComplete',
+  }
+})
 
 watch(direction, (next) => setDirection(next), { immediate: true })
 watch(difficulty, (level) => setDifficulty(level), { immediate: true })
@@ -221,6 +240,7 @@ onUnmounted(() => stop())
     class="relative flex grow flex-col items-center gap-4 pb-4"
     data-testid="circle-of-fifths-display"
     :data-phase="phase"
+    :data-screen="screen"
   >
     <div class="flex min-h-17 flex-col items-center gap-2 text-center">
       <h1 class="flex items-center gap-2 text-2xl font-semibold">
@@ -282,14 +302,14 @@ onUnmounted(() => stop())
           />
         </div>
         <p
-          v-if="isWalkMode"
+          v-if="screen === 'walking'"
           class="font-mono text-lg text-(--p-text-muted-color) tabular-nums"
         >
           ⏱ {{ elapsedSeconds }}s
         </p>
       </template>
 
-      <template v-else-if="isWalkComplete">
+      <template v-else-if="screen === 'walkComplete'">
         <h2 class="text-3xl font-bold text-(--p-green-400)">
           {{ t('generic.congratulations') }}
         </h2>
@@ -320,11 +340,11 @@ onUnmounted(() => stop())
           v-model:direction="direction"
           v-model:rangeIndex="rangeIndex"
           v-model:difficulty="difficulty"
-          :showDirection="isWalkMode"
+          :showDirection="screen === 'walkIdle'"
         />
 
         <div
-          v-if="isWalkMode"
+          v-if="screen === 'walkIdle'"
           class="flex flex-wrap items-center justify-center gap-2"
         >
           <PrimeButton
@@ -379,16 +399,10 @@ onUnmounted(() => stop())
     </div>
 
     <CircleOfFifthsWheel
+      v-bind="wheelProps"
       :view="view"
-      :litKeyIndices="isWalkMode ? litKeyIndices : []"
-      :exploredKeyIndices="isWalkMode ? [] : exploredKeyIndices"
-      :exploredMinorKeyIndices="isWalkMode ? [] : exploredMinorKeyIndices"
-      :currentKeyIndex="wheelCurrentKeyIndex"
       :nextKeyIndex="nextKeyIndex"
-      :selectedKeyIndex="isWalkMode ? null : selectedKeyIndex"
       :holdProgress="holdProgress"
-      :isInteractive="!isWalkMode && isIdle"
-      :isPathClosed="isWalkComplete"
       :heardKeyIndex="heardKeyIndex"
       @select="handleSelect"
     >
@@ -405,7 +419,7 @@ onUnmounted(() => stop())
         :showTooHigh="showTooHigh"
       />
       <div
-        v-else-if="isWalkMode"
+        v-else-if="screen === 'walkIdle' || screen === 'walkComplete'"
         class="flex flex-col items-center gap-[1cqi] leading-tight"
       >
         <span class="text-[6cqi] font-bold text-(--p-text-muted-color)"
