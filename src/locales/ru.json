@@ -573,6 +573,8 @@
     "keyMajor": "{key} мажор",
     "relativeMinor": "Минор: {key}",
     "noAccidentals": "Без ♯ и ♭",
-    "walkComplete": "Весь круг спет!"
+    "walkComplete": "Весь круг спет!",
+    "hopUp": "Прыгни вверх",
+    "hopDown": "Прыгни вниз"
   }
 }

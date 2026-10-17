@@ -573,6 +573,8 @@
     "keyMajor": "{key} मेजर",
     "relativeMinor": "माइनर: {key}",
     "noAccidentals": "कोई ♯ या ♭ नहीं",
-    "walkComplete": "आपने पूरा चक्र गा लिया!"
+    "walkComplete": "आपने पूरा चक्र गा लिया!",
+    "hopUp": "ऊपर कूदें",
+    "hopDown": "नीचे कूदें"
   }
 }

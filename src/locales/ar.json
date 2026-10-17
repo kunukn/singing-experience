@@ -573,6 +573,8 @@
     "keyMajor": "سلّم {key} الكبير",
     "relativeMinor": "الصغير: {key}",
     "noAccidentals": "بلا ♯ أو ♭",
-    "walkComplete": "غنّيت الدائرة كلها!"
+    "walkComplete": "غنّيت الدائرة كلها!",
+    "hopUp": "اقفز للأعلى",
+    "hopDown": "اقفز للأسفل"
   }
 }

@@ -38,6 +38,7 @@ const {
   isWalkComplete,
   currentTarget,
   currentKeyIndex,
+  hopDirection,
   nextKeyIndex,
   walkStartMidi,
   litKeyIndices,
@@ -358,6 +359,7 @@ onUnmounted(() => stop())
         :keyLabel="targetDisplay.keyLabel"
         :solfege="targetDisplay.solfege"
         :noteLabel="targetDisplay.noteLabel"
+        :hopDirection="hopDirection"
         :isCorrect="isSingingCorrectNote"
         :showTooLow="showTooLow"
         :showTooHigh="showTooHigh"

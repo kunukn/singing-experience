@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import type { Solfege } from './useCircleOfFifthsGame'
+import type { HopDirection, Solfege } from './useCircleOfFifthsGame'
 
 defineProps<{
   keyLabel: string
   solfege: Solfege
   noteLabel: string
+  hopDirection: HopDirection | null
   isCorrect: boolean
   showTooLow: boolean
   showTooHigh: boolean
@@ -45,9 +46,21 @@ const { t } = useI18n()
           <ArrowUpIcon class="size-[3.6cqi] rotate-180" />
         </span>
       </div>
-      <span class="text-[3.6cqi] text-(--p-text-muted-color) tabular-nums">{{
-        noteLabel
-      }}</span>
+      <span class="text-[3.6cqi] text-(--p-text-muted-color) tabular-nums">
+        <span
+          v-if="hopDirection"
+          class="font-bold text-(--p-text-color)"
+          data-testid="circle-target-hop"
+          :data-direction="hopDirection"
+          :title="
+            hopDirection === 'up'
+              ? t('circleOfFifths.hopUp')
+              : t('circleOfFifths.hopDown')
+          "
+          >{{ hopDirection === 'up' ? '↑' : '↓' }}</span
+        >
+        {{ noteLabel }}
+      </span>
     </div>
   </div>
 </template>

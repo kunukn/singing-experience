@@ -446,6 +446,8 @@
     "keyMajor": "{key} major",
     "relativeMinor": "Minor: {key}",
     "noAccidentals": "No ♯ or ♭",
-    "walkComplete": "You sang all the way around the circle!"
+    "walkComplete": "You sang all the way around the circle!",
+    "hopUp": "Jump up",
+    "hopDown": "Jump down"
   }
 }

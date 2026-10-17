@@ -573,6 +573,8 @@
     "keyMajor": "{key} mayor",
     "relativeMinor": "Menor: {key}",
     "noAccidentals": "Sin ♯ ni ♭",
-    "walkComplete": "¡Cantaste toda la vuelta al círculo!"
+    "walkComplete": "¡Cantaste toda la vuelta al círculo!",
+    "hopUp": "Salta hacia arriba",
+    "hopDown": "Salta hacia abajo"
   }
 }

@@ -573,6 +573,8 @@
     "keyMajor": "{key} 長調",
     "relativeMinor": "短調：{key}",
     "noAccidentals": "♯も♭もなし",
-    "walkComplete": "円をぐるっと一周歌えたね！"
+    "walkComplete": "円をぐるっと一周歌えたね！",
+    "hopUp": "上へジャンプ",
+    "hopDown": "下へジャンプ"
   }
 }

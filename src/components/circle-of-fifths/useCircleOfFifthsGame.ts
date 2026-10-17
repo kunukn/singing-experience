@@ -22,6 +22,7 @@ import { useCircleOfFifthsPlayback } from './useCircleOfFifthsPlayback'
 
 export type Solfege = 'DO' | 'MI' | 'SO' | 'FA' | 'LA'
 export type PatternId = 'doMiSo' | 'doLa'
+export type HopDirection = 'up' | 'down'
 
 export type SingTarget = {
   midi: number
@@ -141,6 +142,16 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     () => targets.value[currentTargetIndex.value] ?? null,
   )
   const currentKeyIndex = computed(() => currentTarget.value?.keyIndex ?? null)
+  /* Which way the current note jumps from the one just held — the walk hops
+   * down a fourth instead of up a fifth whenever that keeps it in range, so
+   * the note name alone doesn't say which octave to aim for */
+  const hopDirection = computed<HopDirection | null>(() => {
+    const previous = targets.value[currentTargetIndex.value - 1]
+    if (!previous || !currentTarget.value) return null
+    if (currentTarget.value.midi === previous.midi) return null
+
+    return currentTarget.value.midi > previous.midi ? 'up' : 'down'
+  })
   /* The key the current walk target lights up — G while singing SO of C */
   const nextKeyIndex = computed(() => {
     if (!isWalking.value || currentTargetIndex.value === 0) return null
@@ -469,6 +480,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     currentTargetIndex: readonly(currentTargetIndex),
     currentTarget,
     currentKeyIndex,
+    hopDirection,
     nextKeyIndex,
     walkStartMidi,
     litKeyIndices: readonly(litKeyIndices),

@@ -573,6 +573,8 @@
     "keyMajor": "{key}-Dur",
     "relativeMinor": "Moll: {key}",
     "noAccidentals": "Kein ♯ oder ♭",
-    "walkComplete": "Du hast den ganzen Kreis gesungen!"
+    "walkComplete": "Du hast den ganzen Kreis gesungen!",
+    "hopUp": "Spring hoch",
+    "hopDown": "Spring runter"
   }
 }

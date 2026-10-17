@@ -573,6 +573,8 @@
     "keyMajor": "{key}-dur",
     "relativeMinor": "Mol: {key}",
     "noAccidentals": "Ingen ♯ eller ♭",
-    "walkComplete": "Du sang hele vejen rundt om cirklen!"
+    "walkComplete": "Du sang hele vejen rundt om cirklen!",
+    "hopUp": "Hop op",
+    "hopDown": "Hop ned"
   }
 }

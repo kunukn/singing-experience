@@ -573,6 +573,8 @@
     "keyMajor": "{key} মেজর",
     "relativeMinor": "মাইনর: {key}",
     "noAccidentals": "কোনো ♯ বা ♭ নেই",
-    "walkComplete": "তুমি পুরো চক্রটা গেয়ে ফেলেছ!"
+    "walkComplete": "তুমি পুরো চক্রটা গেয়ে ফেলেছ!",
+    "hopUp": "ওপরে লাফ দাও",
+    "hopDown": "নিচে লাফ দাও"
   }
 }

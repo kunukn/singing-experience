@@ -166,6 +166,27 @@ describe('useCircleOfFifthsGame - walk', () => {
     expect(game.nextKeyIndex.value).toBe(1)
   })
 
+  test('should have no hop direction on the first note', async () => {
+    const { game } = setup()
+
+    await game.startWalk()
+
+    expect(game.hopDirection.value).toBeNull()
+  })
+
+  test('should point down when the walk hops down a fourth', async () => {
+    const { game, holdCurrentTarget } = setup()
+
+    await game.startWalk()
+    await holdCurrentTarget()
+
+    /* C4 → G3: down a fourth stays in G3–G4, a fifth up to G4 wouldn't fit the window */
+    expect(game.currentTarget.value?.midi).toBe(55)
+    expect(game.hopDirection.value).toBe('down')
+    await holdCurrentTarget()
+    expect(game.hopDirection.value).toBe('up')
+  })
+
   test('should hop up a fourth (FA) when walking counter-clockwise', async () => {
     const { game, holdCurrentTarget } = setup()
     game.setDirection('counterClockwise')
@@ -176,6 +197,7 @@ describe('useCircleOfFifthsGame - walk', () => {
     expect(game.currentTarget.value?.solfege).toBe('FA')
     expect(game.currentTarget.value?.midi).toBe(65)
     expect(game.nextKeyIndex.value).toBe(11)
+    expect(game.hopDirection.value).toBe('up')
   })
 
   test('should light all 12 keys and finish back on C', async () => {

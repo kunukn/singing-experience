@@ -573,6 +573,8 @@
     "keyMajor": "{key} mayor",
     "relativeMinor": "Minor: {key}",
     "noAccidentals": "Tanpa ♯ atau ♭",
-    "walkComplete": "Kamu sudah menyanyi keliling lingkaran!"
+    "walkComplete": "Kamu sudah menyanyi keliling lingkaran!",
+    "hopUp": "Lompat naik",
+    "hopDown": "Lompat turun"
   }
 }

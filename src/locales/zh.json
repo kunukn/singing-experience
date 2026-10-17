@@ -573,6 +573,8 @@
     "keyMajor": "{key} 大调",
     "relativeMinor": "小调：{key}",
     "noAccidentals": "没有 ♯ 或 ♭",
-    "walkComplete": "你唱完了整整一圈！"
+    "walkComplete": "你唱完了整整一圈！",
+    "hopUp": "往上跳",
+    "hopDown": "往下跳"
   }
 }

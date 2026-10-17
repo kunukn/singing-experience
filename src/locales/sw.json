@@ -573,6 +573,8 @@
     "keyMajor": "{key} meja",
     "relativeMinor": "Minor: {key}",
     "noAccidentals": "Hakuna ♯ wala ♭",
-    "walkComplete": "Umeimba mzunguko mzima!"
+    "walkComplete": "Umeimba mzunguko mzima!",
+    "hopUp": "Ruka juu",
+    "hopDown": "Ruka chini"
   }
 }
