@@ -368,6 +368,10 @@
   },
   "tuner": {
     "tuning": "调音",
+    "nearestString": {
+      "tooHigh": "高了{count}个半音",
+      "tooLow": "低了{count}个半音"
+    },
     "guitar": "吉他",
     "ukulele": "尤克里里",
     "custom": "自定义",

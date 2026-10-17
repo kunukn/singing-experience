@@ -368,6 +368,10 @@
   },
   "tuner": {
     "tuning": "Stemning",
+    "nearestString": {
+      "tooHigh": "{count} halvtone for høj | {count} halvtoner for høj",
+      "tooLow": "{count} halvtone for lav | {count} halvtoner for lav"
+    },
     "guitar": "Guitar",
     "ukulele": "Ukulele",
     "custom": "Brugerdefineret",

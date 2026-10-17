@@ -368,6 +368,10 @@
   },
   "tuner": {
     "tuning": "Kurekebisha",
+    "nearestString": {
+      "tooHigh": "Juu zaidi kwa nusu-toni {count}",
+      "tooLow": "Chini zaidi kwa nusu-toni {count}"
+    },
     "guitar": "Gitaa",
     "ukulele": "Ukulele",
     "custom": "Maalum",

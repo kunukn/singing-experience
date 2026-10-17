@@ -368,6 +368,10 @@
   },
   "tuner": {
     "tuning": "Accord",
+    "nearestString": {
+      "tooHigh": "{count} demi-ton trop haut | {count} demi-tons trop haut",
+      "tooLow": "{count} demi-ton trop bas | {count} demi-tons trop bas"
+    },
     "guitar": "Guitare",
     "ukulele": "Ukulélé",
     "custom": "Personnalisé",

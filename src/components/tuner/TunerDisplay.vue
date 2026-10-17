@@ -14,7 +14,12 @@ import {
   type NoteInfo,
   type NoteName,
 } from '@/utils/noteUtils'
-import { CLEAN_CENTS, cleanTextColor } from '@/utils/pitchColors'
+import { CLEAN_CENTS, cleanColor, cleanTextColor } from '@/utils/pitchColors'
+import {
+  findNearestString,
+  nearestStringBadge,
+  nearestStringSemitones,
+} from './nearestString'
 import TunerCentsDeviationBar from './TunerCentsDeviationBar.vue'
 import TunerReferencePitch from './TunerReferencePitch.vue'
 import { PREVIEW_INTERVAL_MS } from './tunerConstants'
@@ -179,6 +184,40 @@ const inTuneString = computed<GuitarTuningString | null>(
     [...leftStrings.value, ...rightStrings.value].find((s) =>
       isStringInTune(s.note, s.octave),
     ) ?? null,
+)
+
+/*
+ * The string an off pitch is closest to, so the user sees which peg to turn and
+ * which way even when far from any string (E3 → D3, two semitones sharp).
+ * Within CLEAN_CENTS the debounced green ring takes over instead.
+ */
+const guidedString = computed(() => {
+  if (!props.isListening || !props.isClean || !props.noteInfo) return null
+
+  const nearest = findNearestString(
+    [...leftStrings.value, ...rightStrings.value],
+    props.noteInfo.frequency,
+    referenceA4.value,
+  )
+
+  return nearest && Math.abs(nearest.cents) > CLEAN_CENTS ? nearest : null
+})
+
+function isGuidedString(s: GuitarTuningString): boolean {
+  return (
+    guidedString.value?.string.note === s.note &&
+    guidedString.value?.string.octave === s.octave
+  )
+}
+
+const guidedStringRingColor = computed(() =>
+  guidedString.value ? cleanColor(guidedString.value.cents) : undefined,
+)
+
+const guidedStringTextColor = computed(() =>
+  guidedString.value
+    ? cleanTextColor(guidedString.value.cents, isDark.value)
+    : undefined,
 )
 
 /*
@@ -397,9 +436,22 @@ watch(
             'string-playing':
               activeString === `${s.note}${s.octave}` ||
               sequenceActiveString === `${s.note}${s.octave}`,
+            'string-near': isGuidedString(s),
           }"
+          :style="
+            isGuidedString(s)
+              ? { '--string-near-color': guidedStringRingColor }
+              : undefined
+          "
           @click="playGuitarString(s.note, s.octave)"
           >{{ toAccidentalGlyph(s.note) }}{{ s.octave }}
+          <span
+            v-if="guidedString && isGuidedString(s)"
+            class="string-near-badge"
+            :style="{ color: guidedStringTextColor }"
+            data-testid="nearest-string-badge"
+            >{{ nearestStringBadge(guidedString.cents) }}</span
+          >
         </PrimeButton>
       </div>
       <img
@@ -428,9 +480,22 @@ watch(
             'string-playing':
               activeString === `${s.note}${s.octave}` ||
               sequenceActiveString === `${s.note}${s.octave}`,
+            'string-near': isGuidedString(s),
           }"
+          :style="
+            isGuidedString(s)
+              ? { '--string-near-color': guidedStringRingColor }
+              : undefined
+          "
           @click="playGuitarString(s.note, s.octave)"
           >{{ toAccidentalGlyph(s.note) }}{{ s.octave }}
+          <span
+            v-if="guidedString && isGuidedString(s)"
+            class="string-near-badge"
+            :style="{ color: guidedStringTextColor }"
+            data-testid="nearest-string-badge"
+            >{{ nearestStringBadge(guidedString.cents) }}</span
+          >
         </PrimeButton>
       </div>
     </div>
@@ -480,6 +545,25 @@ watch(
           <span class="min-w-6 text-end tabular-nums">
             {{ noteInfo.cents > 0 ? '+' : '' }}{{ noteInfo.cents }}
           </span>
+        </div>
+
+        <div
+          v-if="guidedString && nearestStringSemitones(guidedString.cents) > 0"
+          class="mt-1 text-xs tabular-nums"
+          :style="{ color: guidedStringTextColor }"
+          data-testid="nearest-string-target"
+        >
+          →
+          {{ toAccidentalGlyph(guidedString.string.note)
+          }}{{ guidedString.string.octave }} ·
+          {{
+            t(
+              guidedString.cents > 0
+                ? 'tuner.nearestString.tooHigh'
+                : 'tuner.nearestString.tooLow',
+              nearestStringSemitones(guidedString.cents),
+            )
+          }}
         </div>
 
         <div
@@ -542,6 +626,41 @@ watch(
   > * {
     left: 4px;
   }
+}
+
+/* PrimeVue buttons clip their content; ripple is off, so let the badge overhang */
+.instruments-string-buttons > * {
+  overflow: visible;
+}
+
+/* Declared before the green and blue rings so those win when they apply */
+.string-near {
+  box-shadow:
+    0 0 0 3px var(--string-near-color),
+    0 0 12px 4px var(--string-near-color);
+  transition: box-shadow 0.15s ease;
+}
+
+.string-near-badge {
+  position: absolute;
+  inset-block-start: -0.5rem;
+  padding-inline: 0.25rem;
+  border-radius: 9999px;
+  background: var(--p-content-background);
+  box-shadow: 0 0 0 1px var(--string-near-color);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Badge sits on the outer corner, away from the headstock */
+.instrument-string-buttons-left .string-near-badge {
+  inset-inline-start: -0.75rem;
+}
+
+.instruments-string-buttons-right .string-near-badge {
+  inset-inline-end: -0.75rem;
 }
 
 .string-highlighted {

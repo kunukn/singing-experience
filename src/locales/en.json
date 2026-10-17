@@ -368,6 +368,10 @@
   },
   "tuner": {
     "tuning": "Tuning",
+    "nearestString": {
+      "tooHigh": "{count} semitone too high | {count} semitones too high",
+      "tooLow": "{count} semitone too low | {count} semitones too low"
+    },
     "guitar": "Guitar",
     "ukulele": "Ukulele",
     "custom": "Custom",

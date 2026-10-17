@@ -368,6 +368,10 @@
   },
   "tuner": {
     "tuning": "Настройка",
+    "nearestString": {
+      "tooHigh": "Высоко, полутонов: {count}",
+      "tooLow": "Низко, полутонов: {count}"
+    },
     "guitar": "Гитара",
     "ukulele": "Укулеле",
     "custom": "Пользовательский",

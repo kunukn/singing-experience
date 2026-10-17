@@ -368,6 +368,10 @@
   },
   "tuner": {
     "tuning": "টিউনিং",
+    "nearestString": {
+      "tooHigh": "{count} সেমিটোন উঁচু",
+      "tooLow": "{count} সেমিটোন নিচু"
+    },
     "guitar": "গিটার",
     "ukulele": "ইউকুলেলে",
     "custom": "কাস্টম",

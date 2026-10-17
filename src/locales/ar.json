@@ -368,6 +368,10 @@
   },
   "tuner": {
     "tuning": "التوليف",
+    "nearestString": {
+      "tooHigh": "أعلى بمقدار {count} نصف نغمة",
+      "tooLow": "أخفض بمقدار {count} نصف نغمة"
+    },
     "guitar": "غيتار",
     "ukulele": "يوكليلي",
     "custom": "مخصص",

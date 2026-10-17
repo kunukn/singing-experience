@@ -368,6 +368,10 @@
   },
   "tuner": {
     "tuning": "チューニング",
+    "nearestString": {
+      "tooHigh": "{count}半音高い",
+      "tooLow": "{count}半音低い"
+    },
     "guitar": "ギター",
     "ukulele": "ウクレレ",
     "custom": "カスタム",

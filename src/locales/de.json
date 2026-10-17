@@ -368,6 +368,10 @@
   },
   "tuner": {
     "tuning": "Stimmung",
+    "nearestString": {
+      "tooHigh": "{count} Halbton zu hoch | {count} Halbtöne zu hoch",
+      "tooLow": "{count} Halbton zu tief | {count} Halbtöne zu tief"
+    },
     "guitar": "Gitarre",
     "ukulele": "Ukulele",
     "custom": "Benutzerdefiniert",
