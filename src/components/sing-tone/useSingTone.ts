@@ -5,6 +5,7 @@ import {
   midiToFrequency,
   midiToNoteLabel,
 } from '@/utils/noteUtils'
+import { OFF_CENTS } from '@/utils/pitchColors'
 import { singToneMachine, type SingTonePhase } from './singToneMachine'
 
 type PitchDetectionProvider = {
@@ -34,14 +35,15 @@ export const SING_TONE_PREVIEW_DURATION_S = 0.5
  * release tail) as the singer's voice.
  */
 const DEAF_PERIOD_MS =
-  SING_TONE_PREVIEW_DURATION_S +
+  SING_TONE_PREVIEW_DURATION_S * 1000 +
   1000 /* buffer for release tail + scheduling inaccuracy */
 
 /*
  * Maximum cents deviation from the target note to count as "correct."
- * ±50 cents is the standard threshold in beginner/educational singing apps.
+ * OFF_CENTS (half a semitone) is the standard threshold in
+ * beginner/educational singing apps.
  */
-const MAX_CENTS_DEVIATION = 50
+const MAX_CENTS_DEVIATION = OFF_CENTS
 /* Delay before showing "too low" / "too high" hint arrow */
 const TOO_LOW_OR_HIGH_HINT_MS = 500
 

@@ -55,7 +55,7 @@ const { t } = useI18n()
 
       <CentsDeviationBar
         :cents="centsFromTarget"
-        :threshold="50"
+        :threshold="MAX_CENTS_DEVIATION"
         :maxRange="150"
         :isVisible="true"
         :highLabel="t('generic.tooHigh')"
