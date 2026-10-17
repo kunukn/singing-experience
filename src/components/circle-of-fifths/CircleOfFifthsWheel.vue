@@ -302,6 +302,19 @@ function keyAriaLabel(label: string) {
   min-height: 0;
   width: 15cqi;
   height: 13cqi;
+  /* One step from the wedge underneath instead of PrimeVue's green-tinted text
+   * hover. Tinting with the text colour darkens in light mode and lightens in
+   * dark mode, and works on any wedge colour (idle, selected, explored) */
+  --p-button-text-primary-hover-background: color-mix(
+    in srgb,
+    var(--p-text-color) 7%,
+    transparent
+  );
+  --p-button-text-primary-active-background: color-mix(
+    in srgb,
+    var(--p-text-color) 12%,
+    transparent
+  );
 }
 
 .key-chip-content {
