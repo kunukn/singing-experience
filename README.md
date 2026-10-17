@@ -97,6 +97,9 @@ The committed `.npmrc` hardens `npm install` against supply-chain attacks:
 - **Exact versions** — newly added dependencies are pinned (`save-exact=true`).
 - **Strict audits & engines** — `npm audit` fails on high/critical issues, and the
   Node 24+ / npm 11+ requirement is enforced.
+- **Install scripts blocked by default.** npm 12+ runs a dependency's install scripts only if
+  `allowScripts` in `package.json` approves it. `fsevents` is denied on purpose: it ships a
+  prebuilt binary, so its script isn't needed. Review new packages with `npm install-scripts ls`.
 
 **Urgent vetted patch** newer than the cooldown window? Override per command:
 
