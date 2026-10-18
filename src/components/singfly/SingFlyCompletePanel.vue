@@ -10,7 +10,8 @@ type Props = {
 defineProps<Props>()
 
 const emit = defineEmits<{
-  reset: []
+  playAgain: []
+  settings: []
 }>()
 
 const isPreviewEnabled = defineModel<boolean>('isPreviewEnabled', {
@@ -56,17 +57,11 @@ const isPitchSnapEnabled = defineModel<boolean>('isPitchSnapEnabled', {
       </span>
     </p>
 
-    <div class="flex w-full flex-wrap items-center justify-center gap-2">
-      <PrimeButton
-        class="min-w-20"
-        severity="success"
-        size="small"
-        rounded
-        @click="emit('reset')"
-      >
-        {{ $t('generic.playAgain') }}
-      </PrimeButton>
-
+    <GameEndActions
+      class="w-full"
+      @playAgain="emit('playAgain')"
+      @settings="emit('settings')"
+    >
       <ToggleIconButton
         v-model="isPitchSnapEnabled"
         iconOn="pi pi-bullseye"
@@ -78,6 +73,6 @@ const isPitchSnapEnabled = defineModel<boolean>('isPitchSnapEnabled', {
         v-model="isPreviewEnabled"
         :disabled="micPermission === 'denied'"
       />
-    </div>
+    </GameEndActions>
   </div>
 </template>

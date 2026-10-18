@@ -45,6 +45,7 @@ declare module 'vue' {
     EdgeFadeScroller: typeof import('./components/generic/EdgeFadeScroller.vue')['default']
     ErrorToast: typeof import('./components/generic/ErrorToast.vue')['default']
     FullscreenToggle: typeof import('./components/generic/FullscreenToggle.vue')['default']
+    GameEndActions: typeof import('./components/generic/GameEndActions.vue')['default']
     GamesPage: typeof import('./components/GamesPage.vue')['default']
     GitHubIcon: typeof import('./components/icons/GitHubIcon.vue')['default']
     GraceKellyAllSheets: typeof import('./components/grace-kelly/GraceKellyAllSheets.vue')['default']

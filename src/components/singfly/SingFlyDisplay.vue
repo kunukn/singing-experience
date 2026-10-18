@@ -379,6 +379,13 @@ const liveElapsedSeconds = computed(() =>
 
 async function handleStart() {
   resetGame()
+  await handlePlayAgain()
+}
+
+/* From the end screen, skip the up-front reset: the end panel stays up while
+ * the mic reopens, and startGame() resets and STARTs in the same tick, so idle
+ * never flashes in between. */
+async function handlePlayAgain() {
   await start()
   debugLog('[SingFly] game start', {
     difficulty: difficulty.value,
@@ -470,7 +477,8 @@ defineExpose({
         v-model:isPreviewEnabled="isPreviewEnabled"
         v-model:isPitchSnapEnabled="isPitchSnapEnabled"
         :micPermission="panelMicPermission"
-        @reset="handleReset"
+        @playAgain="handlePlayAgain"
+        @settings="handleReset"
       />
     </div>
 

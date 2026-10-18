@@ -49,6 +49,16 @@ const {
  * locked for both so the running timeline can't be changed underneath it. */
 const isRunning = computed(() => isPlaying.value || isPaused.value)
 
+/* Mirrors Sing live: once the song ends the Start button reads "Play again",
+ * until a setting change makes the next run a fresh start. */
+const hasFinished = ref(false)
+watch(isDone, (done) => {
+  hasFinished.value = done
+})
+watch([vozIndex, startToneMidi, bpm], () => {
+  hasFinished.value = false
+})
+
 const { isPreviewEnabled } = useSettings()
 
 /* "See your voice" idle preview — listens only while this tab is active AND the
@@ -189,7 +199,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
         rounded
         @click="start(startToneMidi, vozIndex, bpm)"
       >
-        {{ t('generic.start') }}
+        {{ hasFinished ? t('generic.playAgain') : t('generic.start') }}
       </PrimeButton>
 
       <PreviewToggle

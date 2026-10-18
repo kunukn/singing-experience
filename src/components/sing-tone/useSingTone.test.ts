@@ -322,6 +322,38 @@ describe('useSingTone', () => {
     expect(game.completedCount.value).toBe(DEFAULT_TOTAL_ROUNDS)
   })
 
+  test('should replay a fresh round from complete without passing through idle', async () => {
+    const mock = createMockPitchDetection()
+    const holdMs = 100
+    const game = mountGame({
+      pitchDetection: mock.provider,
+      midiMin: MIDI_MIN,
+      midiMax: MIDI_MAX,
+      holdDurationMs: holdMs,
+    })
+
+    await game.start()
+    for (let i = 0; i < DEFAULT_TOTAL_ROUNDS; i++) {
+      advanceRAF(DEAF_PERIOD_MS + 50)
+      simulateSingingMidi(mock, game.targetMidi.value!)
+      await nextTick()
+      advanceRAF(holdMs + 50)
+    }
+    expect(game.phase.value).toBe('complete')
+
+    const phases: string[] = []
+    const stopWatching = watch(game.phase, (phase) => phases.push(phase), {
+      flush: 'sync',
+    })
+    await game.start()
+    stopWatching()
+
+    expect(phases).toEqual(['playing'])
+    expect(game.completedCount.value).toBe(0)
+    expect(game.holdTimeMs.value).toBe(0)
+    expect(game.elapsedMs.value).toBe(0)
+  })
+
   test('should reset all state on stop()', async () => {
     const mock = createMockPitchDetection()
     const game = mountGame({

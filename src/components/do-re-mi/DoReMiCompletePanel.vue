@@ -9,7 +9,8 @@ type Props = {
 defineProps<Props>()
 
 const emit = defineEmits<{
-  reset: []
+  playAgain: []
+  settings: []
 }>()
 
 const { t } = useI18n()
@@ -29,22 +30,15 @@ const { t } = useI18n()
         })
       }}
     </p>
-    <div class="flex items-center gap-4">
-      <p class="text-lg text-(--p-text-muted-color)">
-        {{ t('doReMi.time') }}
-        <span class="text-(--p-text-color) tabular-nums"
-          >{{ elapsedSeconds }}s</span
-        >
-      </p>
-      <PrimeButton
-        class="min-w-20"
-        severity="success"
-        size="small"
-        rounded
-        @click="emit('reset')"
+    <p class="text-lg text-(--p-text-muted-color)">
+      {{ t('doReMi.time') }}
+      <span class="text-(--p-text-color) tabular-nums"
+        >{{ elapsedSeconds }}s</span
       >
-        {{ t('generic.playAgain') }}
-      </PrimeButton>
-    </div>
+    </p>
+    <GameEndActions
+      @playAgain="emit('playAgain')"
+      @settings="emit('settings')"
+    />
   </div>
 </template>

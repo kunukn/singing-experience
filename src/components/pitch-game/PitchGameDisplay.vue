@@ -147,7 +147,8 @@ watch(
       frozenPreviewMidi.value = lastCleanMidi.value
       frozenPreviewNoteLabel.value = lastCleanNoteLabel.value
       frozenPreviewFrequency.value = lastCleanFrequency.value
-    } else if (state === 'idle') {
+    } else {
+      /* Leaving complete — to idle, or straight to playing on Play again */
       frozenPreviewMidi.value = null
       frozenPreviewNoteLabel.value = null
       frozenPreviewFrequency.value = null
@@ -278,6 +279,13 @@ const liveElapsedSeconds = computed(() => Math.floor(elapsedMs.value / 1000))
 async function handleStart() {
   stopSequence()
   resetGame()
+  await handlePlayAgain()
+}
+
+/* From the end screen, skip the up-front reset: the end panel stays up while
+ * the mic reopens, and startGame() resets and STARTs in the same tick, so idle
+ * never flashes in between. */
+async function handlePlayAgain() {
   await start()
   startGame()
 }
@@ -338,7 +346,9 @@ onUnmounted(() => {
         :elapsedSeconds="elapsedSeconds"
         :voiceRangeLabel="t(summary.voiceRangeLabelKey)"
         :voiceRangeNoteRange="summary.voiceRangeNoteRange"
-        @reset="handleReset"
+        :endReason="summary.endReason"
+        @playAgain="handlePlayAgain"
+        @settings="handleReset"
       />
     </div>
 

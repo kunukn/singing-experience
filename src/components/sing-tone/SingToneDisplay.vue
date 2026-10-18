@@ -429,15 +429,7 @@ onUnmounted(() => {
           >{{ elapsedSeconds }}s</span
         >
       </p>
-      <PrimeButton
-        severity="success"
-        size="small"
-        rounded
-        @click="handleReset"
-        class="min-w-20"
-      >
-        {{ t('generic.playAgain') }}
-      </PrimeButton>
+      <GameEndActions @playAgain="handleStart" @settings="handleReset" />
     </div>
 
     <!-- Static target note chart -->

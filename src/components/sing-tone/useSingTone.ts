@@ -270,7 +270,13 @@ export function useSingTone(options: singToneOptions = {}) {
      * target generation below stay unconditional, matching today's behavior
      * (a tone still plays on a denied mic). Simulated detection sets
      * isListening synchronously, so the test page / unit tests still start. */
-    if (isListening.value) send({ type: 'START' })
+    if (isListening.value) {
+      /* Cleared here as well as in stop() so Play again can START straight
+       * from `complete` — skipping RESET keeps idle from flashing while the
+       * mic reopens. */
+      clearRound()
+      send({ type: 'START' })
+    }
 
     const midi = toValue(options.firstTargetMidi) ?? generateRandomMidi()
     targetMidi.value = midi
@@ -291,6 +297,10 @@ export function useSingTone(options: singToneOptions = {}) {
     }
     stopTimer()
     stopDetection()
+    clearRound()
+  }
+
+  function clearRound() {
     targetMidi.value = null
     completedCount.value = 0
     holdTimeMs.value = 0

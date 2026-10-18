@@ -234,8 +234,21 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
      * isListening synchronously, so the test page / unit tests still start. */
     if (!isListening.value) return
 
+    /* Cleared here as well as in stop() so Play again can START straight
+     * from `complete` — skipping RESET keeps idle from flashing while the
+     * mic reopens. */
+    clearRound()
     send({ type: 'START' })
     startTimer()
+  }
+
+  function clearRound() {
+    currentStepIndex.value = 0
+    holdTimeMs.value = 0
+    graceTimeMs.value = 0
+    tooLowMs.value = 0
+    tooHighMs.value = 0
+    elapsedMs.value = 0
   }
 
   function stop() {
@@ -248,12 +261,7 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     }
     stopTimer()
     stopDetection()
-    currentStepIndex.value = 0
-    holdTimeMs.value = 0
-    graceTimeMs.value = 0
-    tooLowMs.value = 0
-    tooHighMs.value = 0
-    elapsedMs.value = 0
+    clearRound()
   }
 
   function reset() {

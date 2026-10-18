@@ -369,7 +369,8 @@ onUnmounted(() => {
         :elapsedSeconds="elapsedSeconds"
         :selectedScaleModeLabel="selectedScaleModeLabel"
         :startToneLabel="startToneLabel"
-        @reset="handleReset"
+        @playAgain="handleStart"
+        @settings="handleReset"
       />
     </div>
 

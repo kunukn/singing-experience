@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { GameSummary } from './usePitchGame'
+
 type Props = {
   score: number
   totalTargets: number
@@ -6,13 +8,21 @@ type Props = {
   elapsedSeconds: string
   voiceRangeLabel: string
   voiceRangeNoteRange: string
+  endReason: GameSummary['endReason']
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  reset: []
+  playAgain: []
+  settings: []
 }>()
+
+/* Same condition as the confetti in PitchGameDisplay — the heading matches the
+ * celebration, so a manual Stop reads "Game over" even with hits. */
+const isCelebrated = computed(
+  () => props.score >= 1 && props.endReason === 'natural',
+)
 </script>
 
 <template>
@@ -21,7 +31,7 @@ const emit = defineEmits<{
       <div class="text-4xl">🎯</div>
       <h2 class="text-2xl font-bold text-(--p-green-400)">
         {{
-          score >= 1 ? $t('generic.congratulations') : $t('generic.gameOver')
+          isCelebrated ? $t('generic.congratulations') : $t('generic.gameOver')
         }}
       </h2>
     </div>
@@ -48,14 +58,9 @@ const emit = defineEmits<{
       </span>
     </p>
 
-    <PrimeButton
-      class="min-w-20"
-      severity="success"
-      size="small"
-      rounded
-      @click="emit('reset')"
-    >
-      {{ $t('generic.playAgain') }}
-    </PrimeButton>
+    <GameEndActions
+      @playAgain="emit('playAgain')"
+      @settings="emit('settings')"
+    />
   </div>
 </template>

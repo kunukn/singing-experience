@@ -346,6 +346,36 @@ describe('useDoReMiGame', () => {
     expect(game.isComplete.value).toBe(true)
   })
 
+  test('should replay a fresh round from complete without passing through idle', async () => {
+    const holdDurationMs = 100
+    const mock = createMockPitchDetection()
+    const game = mountGame({
+      pitchDetection: mock.provider,
+      holdDurationMs,
+    })
+
+    await game.start()
+    for (const step of scaleSteps) {
+      simulateSingingNote(mock, step.note, step.octave)
+      await nextTick()
+      advanceRAF(holdDurationMs + 50)
+    }
+    expect(game.phase.value).toBe('complete')
+    mock.setNoteInfo(null)
+
+    const phases: string[] = []
+    const stopWatching = watch(game.phase, (phase) => phases.push(phase), {
+      flush: 'sync',
+    })
+    await game.start()
+    stopWatching()
+
+    expect(phases).toEqual(['playing'])
+    expect(game.currentStepIndex.value).toBe(0)
+    expect(game.holdTimeMs.value).toBe(0)
+    expect(game.elapsedMs.value).toBe(0)
+  })
+
   test('should reset all state on stop()', async () => {
     const holdDurationMs = 200
     const mock = createMockPitchDetection()

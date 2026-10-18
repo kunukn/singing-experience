@@ -38,6 +38,20 @@ const {
  * stay locked so the running timeline can't be changed underneath it. */
 const isRunning = computed(() => isPlaying.value || isPaused.value)
 
+/* Mirrors Sing live: once the song ends the Start button reads "Play again",
+ * until a setting change makes the next run a fresh start. */
+const hasFinished = ref(false)
+watch(isDone, (done) => {
+  hasFinished.value = done
+})
+watch(
+  [selectedVozIndices, startToneMidi, bpm],
+  () => {
+    hasFinished.value = false
+  },
+  { deep: true },
+)
+
 /* Flat reading-order index of the syllable currently being sung — the last
  * syllable whose starting tone has been reached. -1 when idle. */
 const activeSyllableIndex = computed(() => {
@@ -128,7 +142,7 @@ const allVozLabels = computed(() =>
         :disabled="selectedVozIndices.length === 0"
         @click="start(startToneMidi, selectedVozIndices, bpm)"
       >
-        {{ t('generic.start') }}
+        {{ hasFinished ? t('generic.playAgain') : t('generic.start') }}
       </PrimeButton>
     </div>
 
