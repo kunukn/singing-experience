@@ -157,6 +157,6 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 @reference '@/style.css';
 
 .settings-row {
-  @apply md:grid-cols-[repeat(4,auto)] lg:grid-cols-[repeat(6,auto)] xl:grid-cols-[repeat(12,auto)];
+  @apply md:grid-cols-[repeat(4,auto)] lg:grid-cols-[repeat(6,auto)];
 }
 </style>
