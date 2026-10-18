@@ -94,6 +94,13 @@ const screen = computed(() => toCircleScreen(phase.value, mode.value))
 const hopSolfege = computed(() =>
   direction.value === 'clockwise' ? 'SO' : 'FA',
 )
+/* The ladder follows the key being sung — SO of C stays in C — and sits on
+ * C, where every walk starts and ends, between walks */
+const ladderKeyIndex = computed(
+  () =>
+    currentTarget.value?.keyIndex ?? keyIndexOfPitchClass(walkStartMidi.value),
+)
+const ladderActiveSolfege = computed(() => currentTarget.value?.solfege ?? null)
 const subtitle = computed(() => {
   if (!isWalkMode.value) return t('circleOfFifths.exploreHint')
 
@@ -278,6 +285,12 @@ onUnmounted(() => stop())
         </span>
       </h1>
       <p class="text-sm text-(--p-text-muted-color)">{{ subtitle }}</p>
+      <CircleOfFifthsSolfegeLadder
+        v-if="isWalkMode"
+        :keyIndex="ladderKeyIndex"
+        :hopSolfege="hopSolfege"
+        :activeSolfege="ladderActiveSolfege"
+      />
     </div>
 
     <div class="flex flex-wrap items-center justify-center gap-2">

@@ -208,6 +208,29 @@ export function keyNoteLabel(midi: number, keyIndex: number) {
   }).label
 }
 
+const NOTE_LETTERS = ['C', 'D', 'E', 'F', 'G', 'A', 'B'] as const
+
+/*
+ * A key's major scale spelled DO to DO — G A B C D E F♯ G. A major scale uses
+ * each letter once, so every degree gets the next letter, sharpened or
+ * flattened when the key signature lists it. Spelled by letter rather than
+ * through keyNoteLabel, which can't produce F♯ major's E♯.
+ */
+export function majorScaleSpelling(keyIndex: number): string[] {
+  const key = CIRCLE_KEYS[keyIndex]
+  const tonicLetterIndex = NOTE_LETTERS.findIndex((letter) =>
+    key.label.startsWith(letter),
+  )
+  const degrees = NOTE_LETTERS.map((_, degree) => {
+    const letter =
+      NOTE_LETTERS[(tonicLetterIndex + degree) % NOTE_LETTERS.length]
+
+    return key.signatureNotes.find((note) => note.startsWith(letter)) ?? letter
+  })
+
+  return [...degrees, degrees[0]]
+}
+
 /* The single MIDI note with this pitch class inside a 12-note window */
 export function placePitchClass(pitchClass: number, window: MidiWindow) {
   return window.midiMin + pitchClassOf(pitchClass - window.midiMin)

@@ -12,6 +12,7 @@ import {
   placePattern,
   keyIndexOfPitchClass,
   keyNoteLabel,
+  majorScaleSpelling,
   placePitchClass,
   wheelNoteLabel,
   walkKeyOrder,
@@ -102,6 +103,18 @@ describe('circleOfFifths - keys', () => {
     { label: 'B♭', expected: '2♭' },
   ])('labels the accidental count of $label as "$expected"', (row) => {
     expect(accidentalCountLabel(keyByLabel(row.label))).toBe(row.expected)
+  })
+
+  test.each([
+    { label: 'C', expected: 'C D E F G A B C' },
+    { label: 'G', expected: 'G A B C D E F♯ G' },
+    { label: 'F', expected: 'F G A B♭ C D E F' },
+    { label: 'F♯', expected: 'F♯ G♯ A♯ B C♯ D♯ E♯ F♯' },
+    { label: 'D♭', expected: 'D♭ E♭ F G♭ A♭ B♭ C D♭' },
+  ])('spells the $label major scale by its key signature', (row) => {
+    expect(majorScaleSpelling(keyByLabel(row.label).index).join(' ')).toBe(
+      row.expected,
+    )
   })
 })
 
