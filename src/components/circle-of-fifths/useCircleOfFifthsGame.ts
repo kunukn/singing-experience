@@ -52,6 +52,9 @@ export const TOO_LOW_OR_HIGH_HINT_MS = 500
 const DEAF_BUFFER_MS = 250
 export const DEFAULT_DIFFICULTY: Difficulty = 'easy'
 export const DEFAULT_DIRECTION: CircleDirection = 'clockwise'
+/* Whether landing back on C plays its chord like every other lit key. Off: the
+ * finish is confetti only, and the mic is released at once. */
+export const SHOULD_PLAY_CLOSING_CHORD = false
 
 /* Same tiers as Do-Re-Mi, so a pass reads the same colour in both games */
 export const DIFFICULTY_MAX_CENTS: Record<Difficulty, number> = {
@@ -316,20 +319,29 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
   }
 
   function advanceWalk(heldIndex: number, held: SingTarget, isLast: boolean) {
-    const reachedKeyIndex = walkOrder.value[heldIndex]
-    /* Each lit key plays its chord — the reward, and a reminder of where SO is */
-    const chord = playDeaf(() => playback.playTriad(held.midi))
-
     if (isLast) {
-      send({ type: 'COMPLETE' })
-      stopTimer()
-      void chord.then(releaseMicAfter)
+      completeWalk(held)
 
       return
     }
 
-    litKeyIndices.value = [...litKeyIndices.value, reachedKeyIndex]
+    /* Each lit key plays its chord — the reward, and a reminder of where SO is */
+    void playDeaf(() => playback.playTriad(held.midi))
+    litKeyIndices.value = [...litKeyIndices.value, walkOrder.value[heldIndex]]
     currentTargetIndex.value++
+  }
+
+  function completeWalk(held: SingTarget) {
+    send({ type: 'COMPLETE' })
+    stopTimer()
+
+    if (!SHOULD_PLAY_CLOSING_CHORD) {
+      stopDetection()
+
+      return
+    }
+
+    void playDeaf(() => playback.playTriad(held.midi)).then(releaseMicAfter)
   }
 
   function completePattern() {

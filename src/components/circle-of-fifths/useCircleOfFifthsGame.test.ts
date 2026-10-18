@@ -8,7 +8,10 @@ import type {
   CircleOfFifthsGameOptions,
   PitchDetectionProvider,
 } from './useCircleOfFifthsGame'
-import { useCircleOfFifthsGame } from './useCircleOfFifthsGame'
+import {
+  SHOULD_PLAY_CLOSING_CHORD,
+  useCircleOfFifthsGame,
+} from './useCircleOfFifthsGame'
 import { createMockToneEngine } from '@/composables/toneEngine.mock'
 
 /* Long enough to outlast any reference tone's deaf window plus one hold */
@@ -249,32 +252,55 @@ describe('useCircleOfFifthsGame - walk', () => {
     expect(mock.provider.stop).toHaveBeenCalled()
   })
 
-  test('should keep the mic open until the closing chord has rung out', async () => {
-    const { game, mock, holdCurrentTarget } = setup()
+  test.runIf(!SHOULD_PLAY_CLOSING_CHORD)(
+    'should finish silently and release the mic at once',
+    async () => {
+      const { game, mock, toneEngine, holdCurrentTarget } = setup()
 
-    await game.startWalk()
-    for (let hold = 0; hold < 12; hold++) await holdCurrentTarget()
-    mock.singMidi(game.currentTarget.value!.midi)
-    await vi.waitFor(() => expect(game.phase.value).toBe('walkComplete'))
+      await game.startWalk()
+      for (let hold = 0; hold < 12; hold++) await holdCurrentTarget()
+      vi.mocked(toneEngine.playToneAt).mockClear()
+      mock.singMidi(game.currentTarget.value!.midi)
+      await vi.waitFor(() => expect(game.phase.value).toBe('walkComplete'))
 
-    expect(mock.provider.stop).not.toHaveBeenCalled()
-    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
-    expect(mock.provider.stop).toHaveBeenCalledTimes(1)
-  })
+      expect(mock.provider.stop).toHaveBeenCalledTimes(1)
+      await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+      expect(toneEngine.playToneAt).not.toHaveBeenCalled()
+    },
+  )
 
-  test('should not close the mic on a replay started while the chord rings', async () => {
-    const { game, mock, holdCurrentTarget } = setup()
+  test.runIf(SHOULD_PLAY_CLOSING_CHORD)(
+    'should keep the mic open until the closing chord has rung out',
+    async () => {
+      const { game, mock, holdCurrentTarget } = setup()
 
-    await game.startWalk()
-    for (let hold = 0; hold < 12; hold++) await holdCurrentTarget()
-    mock.singMidi(game.currentTarget.value!.midi)
-    await vi.waitFor(() => expect(game.phase.value).toBe('walkComplete'))
-    await game.startWalk()
-    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+      await game.startWalk()
+      for (let hold = 0; hold < 12; hold++) await holdCurrentTarget()
+      mock.singMidi(game.currentTarget.value!.midi)
+      await vi.waitFor(() => expect(game.phase.value).toBe('walkComplete'))
 
-    expect(game.phase.value).toBe('walking')
-    expect(mock.provider.stop).not.toHaveBeenCalled()
-  })
+      expect(mock.provider.stop).not.toHaveBeenCalled()
+      await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+      expect(mock.provider.stop).toHaveBeenCalledTimes(1)
+    },
+  )
+
+  test.runIf(SHOULD_PLAY_CLOSING_CHORD)(
+    'should not close the mic on a replay started while the chord rings',
+    async () => {
+      const { game, mock, holdCurrentTarget } = setup()
+
+      await game.startWalk()
+      for (let hold = 0; hold < 12; hold++) await holdCurrentTarget()
+      mock.singMidi(game.currentTarget.value!.midi)
+      await vi.waitFor(() => expect(game.phase.value).toBe('walkComplete'))
+      await game.startWalk()
+      await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+
+      expect(game.phase.value).toBe('walking')
+      expect(mock.provider.stop).not.toHaveBeenCalled()
+    },
+  )
 
   test('should reject a note just outside CLEAN_CENTS on hard', async () => {
     const { game, mock } = setup({ difficulty: 'hard' })
