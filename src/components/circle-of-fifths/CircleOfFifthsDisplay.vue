@@ -9,6 +9,7 @@ import {
   keyNoteLabel,
   wheelNoteLabel,
 } from './circleOfFifths'
+import type { LadderHighlight } from './CircleOfFifthsSolfegeLadder.vue'
 import { toCircleScreen } from './circleOfFifthsScreen'
 import type {
   CircleOfFifthsGameResult,
@@ -95,12 +96,43 @@ const screen = computed(() => toCircleScreen(phase.value, mode.value))
 const hopSolfege = computed(() =>
   direction.value === 'clockwise' ? 'SO' : 'FA',
 )
-/* The ladder follows the key being sung — SO of C stays in C — and sits on
- * C, where every walk starts and ends, between walks */
-const ladderKeyIndex = computed(
-  () =>
-    currentTarget.value?.keyIndex ?? keyIndexOfPitchClass(walkStartMidi.value),
-)
+/* The green pattern's notes and Find LA's, coloured like their buttons */
+const EXPLORE_LADDER_HIGHLIGHTS: readonly LadderHighlight[] = [
+  { solfege: 'DO', tone: 'major' },
+  { solfege: 'MI', tone: 'major' },
+  { solfege: 'SO', tone: 'major' },
+  { solfege: 'LA', tone: 'minor' },
+]
+
+/*
+ * Walk: DO → DO, following the key being sung (SO of C stays in C), on C
+ * between walks. Explore: LA → LA, since Find LA drops below DO, on the
+ * tapped key — held invisibly on C until there is one, so the first tap
+ * doesn't push the wheel down.
+ */
+const ladder = computed(() => {
+  const homeKeyIndex = keyIndexOfPitchClass(walkStartMidi.value)
+  if (isWalkMode.value) {
+    return {
+      keyIndex: currentTarget.value?.keyIndex ?? homeKeyIndex,
+      startSolfege: 'DO' as const,
+      highlights: [
+        { solfege: 'DO', tone: 'major' },
+        { solfege: hopSolfege.value, tone: 'major' },
+      ] satisfies LadderHighlight[],
+      isPlaceholder: false,
+    }
+  }
+
+  const keyIndex = currentTarget.value?.keyIndex ?? selectedKeyIndex.value
+
+  return {
+    keyIndex: keyIndex ?? homeKeyIndex,
+    startSolfege: 'LA' as const,
+    highlights: EXPLORE_LADDER_HIGHLIGHTS,
+    isPlaceholder: keyIndex === null,
+  }
+})
 const ladderActiveSolfege = computed(() => currentTarget.value?.solfege ?? null)
 const subtitle = computed(() => {
   if (!isWalkMode.value) return t('circleOfFifths.exploreHint')
@@ -296,9 +328,10 @@ onUnmounted(() => stop())
       </h1>
       <p class="text-sm text-(--p-text-muted-color)">{{ subtitle }}</p>
       <CircleOfFifthsSolfegeLadder
-        v-if="isWalkMode"
-        :keyIndex="ladderKeyIndex"
-        :hopSolfege="hopSolfege"
+        :class="{ invisible: ladder.isPlaceholder }"
+        :keyIndex="ladder.keyIndex"
+        :startSolfege="ladder.startSolfege"
+        :highlights="ladder.highlights"
         :activeSolfege="ladderActiveSolfege"
       />
     </div>

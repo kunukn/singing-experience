@@ -3,20 +3,44 @@ import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
 import CircleOfFifthsSolfegeLadder from './CircleOfFifthsSolfegeLadder.vue'
+import type { LadderHighlight } from './CircleOfFifthsSolfegeLadder.vue'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
+
+const walkHighlights = (hop: 'SO' | 'FA'): LadderHighlight[] => [
+  { solfege: 'DO', tone: 'major' },
+  { solfege: hop, tone: 'major' },
+]
+
+const EXPLORE_HIGHLIGHTS: LadderHighlight[] = [
+  { solfege: 'DO', tone: 'major' },
+  { solfege: 'MI', tone: 'major' },
+  { solfege: 'SO', tone: 'major' },
+  { solfege: 'LA', tone: 'minor' },
+]
 
 function mountLadder(props = {}) {
   return mount(CircleOfFifthsSolfegeLadder, {
     props: {
       keyIndex: 0,
-      hopSolfege: 'SO' as const,
+      startSolfege: 'DO' as const,
+      highlights: walkHighlights('SO'),
       activeSolfege: null,
       ...props,
     },
     global: { plugins: [i18n] },
   })
 }
+
+const mountExploreLadder = (props = {}) =>
+  mountLadder({
+    startSolfege: 'LA',
+    highlights: EXPLORE_HIGHLIGHTS,
+    ...props,
+  })
+
+const stepsOf = (wrapper: ReturnType<typeof mountLadder>) =>
+  wrapper.findAll('[data-testid="circle-solfege-step"]')
 
 function stepsWhere(
   wrapper: ReturnType<typeof mountLadder>,
@@ -26,18 +50,22 @@ function stepsWhere(
     | 'data-chord-tone'
     | 'data-half-step-up',
 ) {
-  return wrapper
-    .findAll('[data-testid="circle-solfege-step"]')
+  return stepsOf(wrapper)
     .map((step, index) => ({ step, index }))
     .filter(({ step }) => step.attributes(attribute) === 'true')
     .map(({ step, index }) => `${index}:${step.attributes('data-solfege')}`)
 }
 
-describe('CircleOfFifthsSolfegeLadder', () => {
+const notesOf = (wrapper: ReturnType<typeof mountLadder>) =>
+  wrapper
+    .findAll('[data-testid="circle-solfege-note"]')
+    .map((note) => note.text())
+
+describe('CircleOfFifthsSolfegeLadder - walk', () => {
   test('should list the scale syllables from DO up to DO', () => {
-    const solfege = mountLadder()
-      .findAll('[data-testid="circle-solfege-step"]')
-      .map((step) => step.attributes('data-solfege'))
+    const solfege = stepsOf(mountLadder()).map((step) =>
+      step.attributes('data-solfege'),
+    )
 
     expect(solfege).toEqual(['DO', 'RE', 'MI', 'FA', 'SO', 'LA', 'TI', 'DO'])
   })
@@ -50,7 +78,7 @@ describe('CircleOfFifthsSolfegeLadder', () => {
   })
 
   test('should highlight the bottom DO and FA for a walk in fourths', () => {
-    const wrapper = mountLadder({ hopSolfege: 'FA' })
+    const wrapper = mountLadder({ highlights: walkHighlights('FA') })
 
     expect(stepsWhere(wrapper, 'data-highlighted')).toEqual(['0:DO', '3:FA'])
   })
@@ -84,11 +112,64 @@ describe('CircleOfFifthsSolfegeLadder', () => {
     const wrapper = mountLadder({ keyIndex: 1 })
     const ladder = wrapper.get('[data-testid="circle-solfege-ladder"]')
 
-    const notes = wrapper
-      .findAll('[data-testid="circle-solfege-note"]')
-      .map((note) => note.text())
-
     expect(ladder.attributes('aria-label')).toBe('G major')
-    expect(notes).toEqual(['G', 'A', 'B', 'C', 'D', 'E', 'F♯', 'G'])
+    expect(notesOf(wrapper)).toEqual(['G', 'A', 'B', 'C', 'D', 'E', 'F♯', 'G'])
+  })
+})
+
+describe('CircleOfFifthsSolfegeLadder - explore', () => {
+  test('should start on the LA below DO and name the key notes', () => {
+    const wrapper = mountExploreLadder()
+    const solfege = stepsOf(wrapper).map((step) =>
+      step.attributes('data-solfege'),
+    )
+
+    expect(solfege).toEqual(['LA', 'TI', 'DO', 'RE', 'MI', 'FA', 'SO', 'LA'])
+    expect(notesOf(wrapper)).toEqual(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'A'])
+    expect(notesOf(mountExploreLadder({ keyIndex: 1 }))).toEqual([
+      'E',
+      'F♯',
+      'G',
+      'A',
+      'B',
+      'C',
+      'D',
+      'E',
+    ])
+  })
+
+  test('should keep the chord dots and half steps on the same syllables', () => {
+    const wrapper = mountExploreLadder()
+
+    expect(stepsWhere(wrapper, 'data-chord-tone')).toEqual([
+      '2:DO',
+      '4:MI',
+      '6:SO',
+    ])
+    expect(stepsWhere(wrapper, 'data-half-step-up')).toEqual(['2:DO', '5:FA'])
+  })
+
+  test('should highlight DO MI SO as major and the low LA as minor', () => {
+    const wrapper = mountExploreLadder()
+    const tones = stepsOf(wrapper).map((step) => step.attributes('data-tone'))
+
+    expect(stepsWhere(wrapper, 'data-highlighted')).toEqual([
+      '0:LA',
+      '2:DO',
+      '4:MI',
+      '6:SO',
+    ])
+    expect(tones[0]).toBe('minor')
+    expect(tones[2]).toBe('major')
+    expect(tones[7]).toBeUndefined()
+  })
+
+  test('should land the sung syllable on the lowest chip with its name', () => {
+    expect(
+      stepsWhere(mountExploreLadder({ activeSolfege: 'LA' }), 'data-active'),
+    ).toEqual(['0:LA'])
+    expect(
+      stepsWhere(mountExploreLadder({ activeSolfege: 'DO' }), 'data-active'),
+    ).toEqual(['2:DO'])
   })
 })
