@@ -19,6 +19,7 @@ declare module 'vue' {
     CentsDeviationBar: typeof import('./components/generic/CentsDeviationBar.vue')['default']
     CentsLabel: typeof import('./components/generic/CentsLabel.vue')['default']
     ChordDetectorResults: typeof import('./components/scale-detector/ChordDetectorResults.vue')['default']
+    CircleOfFifthsCentsMeter: typeof import('./components/circle-of-fifths/CircleOfFifthsCentsMeter.vue')['default']
     CircleOfFifthsDisplay: typeof import('./components/circle-of-fifths/CircleOfFifthsDisplay.vue')['default']
     CircleOfFifthsKeyInfo: typeof import('./components/circle-of-fifths/CircleOfFifthsKeyInfo.vue')['default']
     CircleOfFifthsPage: typeof import('./components/circle-of-fifths/CircleOfFifthsPage.vue')['default']

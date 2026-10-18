@@ -28,7 +28,8 @@ const sungColor = computed(() =>
 
 <template>
   <!-- 1fr | label | 1fr: the label sits on the centre line, with the hint
-    arrow and 🎤 on one side and the cents on the other, so nothing shifts as
+    arrow and 🎤 on one side and the cents and their meter on the other, so
+    nothing shifts as
     the label, the cents or the arrow change. The arrow sits on the 🎤 side,
     away from the cents: it points at the target, the cents measure the
     singer's own note, and side by side the two could read as one. -->
@@ -70,11 +71,20 @@ const sungColor = computed(() =>
     <span class="w-[2em] text-center whitespace-nowrap">{{
       sungLabel ?? '–'
     }}</span>
-    <!-- Fixed width, sized for the widest reading (−70¢) -->
-    <CentsLabel
-      :cents="sungLabel === null ? null : sungCents"
-      class="min-w-[3.2em] justify-self-start"
-      data-testid="circle-target-cents"
-    />
+    <!-- Meter first, right beside the fixed-width label, so it sits near the
+      hub's centre instead of out by the ring. The cents follow it at a fixed
+      width, sized for the widest reading (−70¢). The wrapper carries the
+      alignment: CentsLabel is dir="ltr", so its own start never flips in RTL -->
+    <div class="flex items-center gap-x-[1.2cqi] justify-self-start">
+      <CircleOfFifthsCentsMeter
+        :cents="sungLabel === null ? null : sungCents"
+      />
+      <span class="min-w-[3.2em] text-start">
+        <CentsLabel
+          :cents="sungLabel === null ? null : sungCents"
+          data-testid="circle-target-cents"
+        />
+      </span>
+    </div>
   </div>
 </template>
