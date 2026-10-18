@@ -26,9 +26,7 @@ const { state: microphonePermissionState } = useMicrophonePermission()
           isFullscreen ? 'pi pi-window-minimize' : 'pi pi-window-maximize'
         "
       />
-      <span class="hidden text-sm md:inline">{{
-        t('generic.fullscreen')
-      }}</span>
+      <span class="text-sm">{{ t('generic.fullscreen') }}</span>
     </span>
   </PrimeButton>
 </template>
