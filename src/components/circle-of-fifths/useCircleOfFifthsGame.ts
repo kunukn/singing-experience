@@ -55,7 +55,9 @@ export const DEFAULT_HOLD_DURATION_MS = 750
 /* Seconds a note must be held. Floor 0.1 sits below GRACE_PERIOD_MS on purpose:
  * it lets fast singers race the walk, at the cost of a slide through a note
  * completing it; ceiling 3 keeps the 13-note walk a tour, not an endurance test. */
-export const HOLD_DURATION_OPTIONS = [0.1, 0.3, 0.5, 0.75, 1, 2, 3] as const
+export const HOLD_DURATION_OPTIONS = [
+  0.1, 0.2, 0.3, 0.5, 0.75, 1, 2, 3,
+] as const
 /* Brief pitch-loss tolerance — lets singers breathe or wobble without resetting hold progress */
 export const GRACE_PERIOD_MS = 250
 /* Delay before showing "too low" / "too high" hint arrow — avoids flashing during brief pitch drift */
