@@ -135,6 +135,30 @@ describe('CircleOfFifthsWheel', () => {
     ).toBe('true')
   })
 
+  test('should put both outlines on the minor ring while finding LA', () => {
+    const wrapper = mountWheel({
+      targetNoteKeyIndex: 1,
+      heardKeyIndex: 11,
+      outlineRing: 'minor',
+    })
+    const target = wrapper.get('[data-testid="circle-target-outline"]')
+    const heard = wrapper.get('[data-testid="circle-heard-outline"]')
+
+    expect(target.attributes('data-ring')).toBe('minor')
+    expect(target.attributes('data-angle')).toBe('30')
+    expect(heard.attributes('data-ring')).toBe('minor')
+  })
+
+  test('should keep the outlines on the major ring by default', () => {
+    const wrapper = mountWheel({ targetNoteKeyIndex: 1, heardKeyIndex: 1 })
+
+    expect(
+      wrapper
+        .get('[data-testid="circle-target-outline"]')
+        .attributes('data-ring'),
+    ).toBe('major')
+  })
+
   test('should emit the key index when a key is tapped', async () => {
     const wrapper = mountWheel({ isInteractive: true })
 

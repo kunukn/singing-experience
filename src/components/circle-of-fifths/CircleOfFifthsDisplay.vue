@@ -7,6 +7,7 @@ import {
   CIRCLE_KEYS,
   keyIndexOfPitchClass,
   keyNoteLabel,
+  minorKeyIndexOfPitchClass,
   wheelNoteLabel,
 } from './circleOfFifths'
 import type { LadderHighlight } from './CircleOfFifthsSolfegeLadder.vue'
@@ -204,18 +205,34 @@ const previewMidi = computed(() => {
   return overridePreviewMidi ?? micPreviewMidi.value
 })
 
+/* Finding LA is about the relative minor, so both outlines move to the inner
+ * ring: the slot is Em under G, and a sung note lights the minor key it's home
+ * to. Half steps hides that ring, so it keeps the pitch wedges. */
+const outlineRing = computed(() =>
+  !isIdle.value &&
+  currentTarget.value?.solfege === 'LA' &&
+  view.value === 'fifths'
+    ? 'minor'
+    : 'major',
+)
+function outlineKeyIndexOf(midi: number) {
+  return outlineRing.value === 'minor'
+    ? minorKeyIndexOfPitchClass(midi)
+    : keyIndexOfPitchClass(midi)
+}
+
 /* Any octave lights the key's wedge — the mic preview on the start screens,
  * the singer's live note during a round… */
 const heardKeyIndex = computed(() => {
   const midi = isIdle.value ? previewMidi.value : sungMidi.value
 
-  return midi === null ? null : keyIndexOfPitchClass(midi)
+  return midi === null ? null : outlineKeyIndexOf(midi)
 })
 /* The wedge of the note to sing, outlined dashed. The note's own wedge, not
  * the walk's next key: they match on every hop, but in Explore MI of C is E */
 const targetNoteKeyIndex = computed(() =>
   isSinging.value && currentTarget.value
-    ? keyIndexOfPitchClass(currentTarget.value.midi)
+    ? outlineKeyIndexOf(currentTarget.value.midi)
     : null,
 )
 /* …but only the walk's exact first note earns the ✓, since the walk needs it */
@@ -490,6 +507,7 @@ onUnmounted(() => stop())
       :heardKeyIndex="heardKeyIndex"
       :targetNoteKeyIndex="targetNoteKeyIndex"
       :isHeardCorrect="isSingingCorrectNote"
+      :outlineRing="outlineRing"
       @select="handleSelect"
     >
       <CircleOfFifthsTarget

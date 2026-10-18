@@ -26,6 +26,7 @@ const {
   heardKeyIndex = null,
   targetNoteKeyIndex = null,
   isHeardCorrect = false,
+  outlineRing = 'major',
 } = defineProps<{
   view: CircleView
   litKeyIndices?: readonly number[]
@@ -44,6 +45,9 @@ const {
   targetNoteKeyIndex?: number | null
   /* The singer is on the target note, octave included */
   isHeardCorrect?: boolean
+  /* Which ring both outlines sit on — minor while finding LA, so the slot is
+   * the relative minor (Em under G) and the singer's outline can land in it */
+  outlineRing?: 'major' | 'minor'
 }>()
 
 const emit = defineEmits<{
@@ -67,6 +71,9 @@ const CQI_PER_UNIT = 0.5
 
 const majorWedge = wedgePath(MAJOR_INNER, MAJOR_OUTER)
 const minorWedge = wedgePath(MINOR_INNER, MAJOR_INNER)
+const outlineWedge = computed(() =>
+  outlineRing === 'minor' ? minorWedge : majorWedge,
+)
 
 const MAJOR_FILL: Record<KeyStatus, string> = {
   /* Tailwind's pulse keyframes at twice the default speed — at 2s the fade
@@ -178,18 +185,19 @@ function keyAriaLabel(label: string) {
 
       <path
         v-if="targetNoteKeyIndex !== null"
-        :d="majorWedge"
+        :d="outlineWedge"
         class="wedge target-outline fill-none stroke-(--p-blue-500)"
         :style="{
           transform: `rotate(${keyAngle(targetNoteKeyIndex, view)}deg)`,
         }"
         data-testid="circle-target-outline"
         :data-angle="keyAngle(targetNoteKeyIndex, view)"
+        :data-ring="outlineRing"
       />
 
       <path
         v-if="heardKeyIndex !== null"
-        :d="majorWedge"
+        :d="outlineWedge"
         class="wedge heard-outline fill-none"
         :class="
           isHeardCorrect ? 'stroke-(--p-green-500)' : 'stroke-(--p-blue-500)'
@@ -198,6 +206,7 @@ function keyAriaLabel(label: string) {
         data-testid="circle-heard-outline"
         :data-angle="keyAngle(heardKeyIndex, view)"
         :data-correct="isHeardCorrect"
+        :data-ring="outlineRing"
       />
 
       <polyline

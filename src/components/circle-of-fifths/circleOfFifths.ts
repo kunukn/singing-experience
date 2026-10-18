@@ -185,6 +185,15 @@ export function keyIndexOfPitchClass(pitchClass: number) {
 }
 
 /*
+ * Where the minor key starting on this pitch sits — on the inner ring, under
+ * its relative major (Em under G), so it's that major key's index. Accepts a
+ * MIDI note too.
+ */
+export function minorKeyIndexOfPitchClass(pitchClass: number) {
+  return keyIndexOfPitchClass(pitchClass - RELATIVE_MINOR_SEMITONES)
+}
+
+/*
  * A note's label spelled the way the wheel spells its wedge — A♭3, not G♯3,
  * because the wedge it lights reads A♭. Theory would spell the note by the key
  * it sits in (G♯ is MI of E), but the singer compares the label with the wheel

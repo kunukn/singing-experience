@@ -13,6 +13,7 @@ import {
   keyIndexOfPitchClass,
   keyNoteLabel,
   majorScaleSpelling,
+  minorKeyIndexOfPitchClass,
   placePitchClass,
   wheelNoteLabel,
   walkKeyOrder,
@@ -144,6 +145,16 @@ describe('circleOfFifths - navigation', () => {
     CIRCLE_KEYS.forEach((key) => {
       expect(keyIndexOfPitchClass(key.pitchClass)).toBe(key.index)
     })
+  })
+
+  test.each([
+    { note: 'A', pitchClass: 9, minor: 'Am' },
+    { note: 'E', pitchClass: 4, minor: 'Em' },
+    { note: 'D', pitchClass: 2, minor: 'Dm' },
+  ])('finds the minor key starting on $note on the inner ring', (row) => {
+    const index = minorKeyIndexOfPitchClass(row.pitchClass)
+
+    expect(CIRCLE_KEYS[index].minorLabel).toBe(row.minor)
   })
 
   test('spells every note the way its wedge is labelled', () => {
