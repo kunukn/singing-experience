@@ -463,7 +463,7 @@ onUnmounted(() => stop())
         <p class="text-(--p-surface-400) dark:text-(--p-surface-300)">
           {{ t('circleOfFifths.walkComplete') }}
         </p>
-        <div class="flex items-center gap-4">
+        <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-2">
           <p class="text-lg text-(--p-text-muted-color)">
             {{ t('generic.time') }}
             <span class="text-(--p-text-color) tabular-nums"
@@ -479,6 +479,16 @@ onUnmounted(() => stop())
           >
             {{ t('generic.playAgain') }}
           </PrimeButton>
+          <PrimeButton
+            class="min-w-20"
+            severity="secondary"
+            size="small"
+            rounded
+            icon="pi pi-sliders-h"
+            :label="t('generic.settings')"
+            data-testid="circle-walk-settings"
+            @click="stop()"
+          />
         </div>
       </template>
 

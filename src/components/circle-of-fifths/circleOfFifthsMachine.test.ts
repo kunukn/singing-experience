@@ -29,6 +29,14 @@ describe('circleOfFifthsMachine', () => {
     expect(instance.getSnapshot().value).toBe('walking')
   })
 
+  test('leaves walkComplete for the settings on RESET', () => {
+    const instance = actor()
+    instance.send({ type: 'START_WALK' })
+    instance.send({ type: 'COMPLETE' })
+    instance.send({ type: 'RESET' })
+    expect(instance.getSnapshot().value).toBe('idle')
+  })
+
   test('returns to idle when a pattern completes', () => {
     const instance = actor()
     instance.send({ type: 'START_PATTERN' })
