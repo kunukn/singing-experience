@@ -191,8 +191,11 @@ function keyAriaLabel(label: string) {
         :r="CENTER_RADIUS"
         class="fill-(--p-content-background) stroke-(--p-content-border-color)"
       />
+      <!-- Only while holding: an empty ring's round linecap still draws a dot -->
       <circle
+        v-if="holdProgress > 0"
         :r="HOLD_RING_RADIUS"
+        data-testid="circle-hold-ring"
         pathLength="1"
         class="hold-ring fill-none stroke-(--p-green-400)"
         :stroke-dasharray="1"
