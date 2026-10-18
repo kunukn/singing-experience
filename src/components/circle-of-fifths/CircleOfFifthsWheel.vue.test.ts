@@ -57,6 +57,15 @@ describe('CircleOfFifthsWheel', () => {
     expect(wrapper.find('[data-testid="circle-hold-ring"]').exists()).toBe(true)
   })
 
+  test('should sweep the major ring only while beckoning', async () => {
+    const wrapper = mountWheel()
+    expect(wrapper.find('[data-testid="circle-beckon"]').exists()).toBe(false)
+
+    await wrapper.setProps({ isBeckoning: true })
+
+    expect(wrapper.find('[data-testid="circle-beckon"]').exists()).toBe(true)
+  })
+
   test('should move odd keys half a turn in the chromatic view', async () => {
     const wrapper = mountWheel()
     expect(keyAt(wrapper, 1).attributes('data-angle')).toBe('30')

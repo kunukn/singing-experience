@@ -27,6 +27,7 @@ const {
   targetNoteKeyIndex = null,
   isHeardCorrect = false,
   outlineRing = 'major',
+  isBeckoning = false,
 } = defineProps<{
   view: CircleView
   litKeyIndices?: readonly number[]
@@ -48,6 +49,9 @@ const {
   /* Which ring both outlines sit on — minor while finding LA, so the slot is
    * the relative minor (Em under G) and the singer's outline can land in it */
   outlineRing?: 'major' | 'minor'
+  /* Nothing tapped yet — sweep a tint round the major ring to show the wedges
+   * are buttons */
+  isBeckoning?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -68,6 +72,11 @@ const MINOR_LABEL_RADIUS = 52
 const STAR_RADIUS = 62
 /* 200 viewBox units span 100cqi, so one unit is half a container-inline unit */
 const CQI_PER_UNIT = 0.5
+/* Delay between neighbouring wedges in the beckon sweep — 12 wedges make a
+ * ~0.8s lap, quick enough to read as one motion round the wheel */
+const BECKON_STEP_MS = 70
+/* Degrees between neighbouring keys on either view */
+const KEY_STEP_DEG = 30
 
 const majorWedge = wedgePath(MAJOR_INNER, MAJOR_OUTER)
 const minorWedge = wedgePath(MINOR_INNER, MAJOR_INNER)
@@ -180,6 +189,22 @@ function keyAriaLabel(label: string) {
           class="wedge stroke-(--p-content-background)"
           :class="[minorFill(key.index), isChromatic ? 'opacity-0' : '']"
           :style="{ transform: `rotate(${key.angle}deg)` }"
+        />
+      </g>
+
+      <!-- An overlay rather than animating each wedge's fill: keyframes can't
+        return to a class-driven fill mid-cycle. Delays follow the angle, so
+        the sweep runs clockwise from the top in both views. -->
+      <g v-if="isBeckoning" data-testid="circle-beckon">
+        <path
+          v-for="key in keys"
+          :key="`beckon-${key.index}`"
+          :d="majorWedge"
+          class="wedge beckon fill-(--p-primary-color)"
+          :style="{
+            transform: `rotate(${key.angle}deg)`,
+            animationDelay: `${(key.angle / KEY_STEP_DEG) * BECKON_STEP_MS}ms`,
+          }"
         />
       </g>
 
@@ -344,6 +369,26 @@ function keyAriaLabel(label: string) {
   transition: none;
 }
 
+/* Each wedge glows briefly (peak at 6%, gone by 14% of the cycle), then the
+ * wheel rests for the remaining ~4s before the next lap */
+.wedge.beckon {
+  opacity: 0;
+  stroke: none;
+  pointer-events: none;
+  animation: wedge-beckon 5s ease-in-out infinite;
+}
+
+@keyframes wedge-beckon {
+  0%,
+  14%,
+  100% {
+    opacity: 0;
+  }
+  6% {
+    opacity: 0.3;
+  }
+}
+
 .hold-ring {
   stroke-width: 3;
   stroke-linecap: round;
@@ -405,6 +450,10 @@ function keyAriaLabel(label: string) {
   .star,
   .star.is-visible {
     transition: none;
+  }
+
+  .wedge.beckon {
+    animation: none;
   }
 }
 </style>

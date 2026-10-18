@@ -313,6 +313,9 @@ const wheelProps = computed(() => {
     isInteractive:
       screen.value === 'walkIdle' || screen.value === 'exploreIdle',
     isPathClosed: screen.value === 'walkComplete',
+    /* Explore's buttons wait on a key — point at the wheel until one is tapped */
+    isBeckoning:
+      screen.value === 'exploreIdle' && selectedKeyIndex.value === null,
   }
 })
 

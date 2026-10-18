@@ -17,7 +17,12 @@ const key = computed(() =>
 </script>
 
 <template>
-  <p v-if="!key" class="text-[3.6cqi] text-(--p-text-muted-color)">
+  <p
+    v-if="!key"
+    class="flex items-center gap-[1cqi] text-[4.4cqi] font-semibold text-(--p-primary-color)"
+    data-testid="circle-tap-cta"
+  >
+    <span aria-hidden="true" class="cta-hand">👆</span>
     {{ t('circleOfFifths.tapAKey') }}
   </p>
   <div
@@ -43,3 +48,27 @@ const key = computed(() =>
     }}</span>
   </div>
 </template>
+
+<style scoped>
+/* A gentle tap-tap: small enough to read as a hint, not an alarm */
+.cta-hand {
+  display: inline-block;
+  animation: cta-hand-bob 1.6s ease-in-out infinite;
+}
+
+@keyframes cta-hand-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta-hand {
+    animation: none;
+  }
+}
+</style>
