@@ -11,8 +11,9 @@ defineProps<{
   isCorrect: boolean
   showTooLow: boolean
   showTooHigh: boolean
-  /* The chord the last lit key played; isNext marks the note to sing next */
-  chordNotes: readonly { label: string; isNext: boolean }[]
+  /* The chord the last lit key played; isNext marks the note to sing next,
+   * isGuide the chord note a half step below it (MI, when going fourths) */
+  chordNotes: readonly { label: string; isNext: boolean; isGuide: boolean }[]
   isChordRinging: boolean
 }>()
 
@@ -61,9 +62,12 @@ const { t } = useI18n()
       <template v-for="(note, index) in chordNotes" :key="index">
         <span v-if="index > 0" class="mx-[0.8cqi]">·</span>
         <span
-          :class="{ 'font-bold text-(--p-text-color)': note.isNext }"
+          :class="{
+            'font-bold text-(--p-text-color)': note.isNext || note.isGuide,
+          }"
           :data-next="note.isNext"
-          >{{ note.label }}</span
+          :data-guide="note.isGuide"
+          >{{ note.label }}<template v-if="note.isGuide">↗</template></span
         >
       </template>
       <span v-if="chordNotes.length === 0">&nbsp;</span>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Difficulty } from '@/constants/difficulty'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
+import { pitchClassOf } from '@/utils/scaleHighlight'
 import type { CircleDirection, CircleMode, CircleView } from './circleOfFifths'
 import {
   CIRCLE_KEYS,
@@ -124,10 +125,12 @@ const targetDisplay = computed(() => {
     noteLabel: wheelNoteLabel(target.midi),
     /* The chord belongs to the key the target sits in (C while singing SO of
      * C), so it's spelled by that key. The next note is in it only going
-     * clockwise — SO is the chord's top note, FA isn't in it. */
+     * clockwise — SO is the chord's top note, FA isn't in it. Going
+     * counter-clockwise MI is a half step below FA, so it guides the way. */
     chordNotes: chordMidis.value.map((midi) => ({
       label: keyNoteLabel(midi, target.keyIndex),
       isNext: (midi - target.midi) % 12 === 0,
+      isGuide: pitchClassOf(target.midi - midi) === 1,
     })),
   }
 })

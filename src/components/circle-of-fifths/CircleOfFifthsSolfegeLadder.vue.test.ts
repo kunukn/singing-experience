@@ -20,7 +20,11 @@ function mountLadder(props = {}) {
 
 function stepsWhere(
   wrapper: ReturnType<typeof mountLadder>,
-  attribute: 'data-highlighted' | 'data-active',
+  attribute:
+    | 'data-highlighted'
+    | 'data-active'
+    | 'data-chord-tone'
+    | 'data-half-step-up',
 ) {
   return wrapper
     .findAll('[data-testid="circle-solfege-step"]')
@@ -59,6 +63,21 @@ describe('CircleOfFifthsSolfegeLadder', () => {
       stepsWhere(mountLadder({ activeSolfege: 'SO' }), 'data-active'),
     ).toEqual(['4:SO'])
     expect(stepsWhere(mountLadder(), 'data-active')).toEqual([])
+  })
+
+  test('should mark DO, MI and SO as the notes of the chord', () => {
+    expect(stepsWhere(mountLadder(), 'data-chord-tone')).toEqual([
+      '0:DO',
+      '2:MI',
+      '4:SO',
+    ])
+  })
+
+  test('should mark the half steps up to FA and the top DO', () => {
+    expect(stepsWhere(mountLadder(), 'data-half-step-up')).toEqual([
+      '3:FA',
+      '7:DO',
+    ])
   })
 
   test('should name the notes of the key under the syllables', () => {
