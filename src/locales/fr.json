@@ -63,7 +63,7 @@
   },
   "settings": {
     "language": "Langue",
-    "title": "Réglages",
+    "title": "Réglages de l'app",
     "micSensitivity": {
       "label": "Sensibilité du micro",
       "description": "À quel point un son doit être clair pour compter comme une note.",

@@ -63,7 +63,7 @@
   },
   "settings": {
     "language": "Sprog",
-    "title": "Indstillinger",
+    "title": "App-indstillinger",
     "micSensitivity": {
       "label": "Mikrofonfølsomhed",
       "description": "Hvor klar en lyd skal være for at tælle som en tone.",

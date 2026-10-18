@@ -63,7 +63,7 @@
   },
   "settings": {
     "language": "Bahasa",
-    "title": "Pengaturan",
+    "title": "Pengaturan aplikasi",
     "micSensitivity": {
       "label": "Sensitivitas mikrofon",
       "description": "Seberapa jernih suara harus agar dihitung sebagai nada.",

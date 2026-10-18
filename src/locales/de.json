@@ -63,7 +63,7 @@
   },
   "settings": {
     "language": "Sprache",
-    "title": "Einstellungen",
+    "title": "App-Einstellungen",
     "micSensitivity": {
       "label": "Mikrofon-Empfindlichkeit",
       "description": "Wie klar ein Ton sein muss, um als Note zu zählen.",

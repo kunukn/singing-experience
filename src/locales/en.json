@@ -63,7 +63,7 @@
   },
   "settings": {
     "language": "Language",
-    "title": "Settings",
+    "title": "App settings",
     "micSensitivity": {
       "label": "Microphone pickup",
       "description": "How clear a sound must be to count as a note.",

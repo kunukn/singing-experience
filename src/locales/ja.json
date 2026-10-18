@@ -63,7 +63,7 @@
   },
   "settings": {
     "language": "言語",
-    "title": "設定",
+    "title": "アプリ設定",
     "micSensitivity": {
       "label": "マイクの感度",
       "description": "どれだけクリアな音なら音符として数えるか。",
