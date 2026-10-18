@@ -369,8 +369,8 @@
     "subtitle": "A random tone is played — sing it back to match!",
     "play": "Play",
     "rounds": "Rounds",
-    "congratulationsMessage": "You matched all {rounds} tones in {seconds} seconds with {holdDuration}s hold duration!",
-    "settingsSummary": "Sing {rounds} tones with {holdDuration}s hold duration"
+    "congratulationsMessage": "You matched the tone in {seconds} seconds with {holdDuration}s hold duration! | You matched all {rounds} tones in {seconds} seconds with {holdDuration}s hold duration!",
+    "settingsSummary": "Sing {rounds} tone with {holdDuration}s hold duration | Sing {rounds} tones with {holdDuration}s hold duration"
   },
   "tuner": {
     "tuning": "Tuning",

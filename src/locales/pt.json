@@ -369,8 +369,8 @@
     "subtitle": "Um tom aleatório é tocado — cante de volta para acertar!",
     "play": "Tocar",
     "rounds": "Rodadas",
-    "congratulationsMessage": "Você acertou todos os {rounds} tons em {seconds} segundos com {holdDuration}s de sustentação!",
-    "settingsSummary": "Cante {rounds} tons com {holdDuration}s de sustentação"
+    "congratulationsMessage": "Você acertou o tom em {seconds} segundos com {holdDuration}s de sustentação! | Você acertou todos os {rounds} tons em {seconds} segundos com {holdDuration}s de sustentação!",
+    "settingsSummary": "Cante {rounds} tom com {holdDuration}s de sustentação | Cante {rounds} tons com {holdDuration}s de sustentação"
   },
   "tuner": {
     "tuning": "Afinação",

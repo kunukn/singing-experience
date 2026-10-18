@@ -369,8 +369,8 @@
     "subtitle": "يتم تشغيل نغمة عشوائية — غنِّها لتطابقها!",
     "play": "تشغيل",
     "rounds": "الجولات",
-    "congratulationsMessage": "لقد طابقت جميع النغمات الـ {rounds} في {seconds} ثانية بمدة إمساك {holdDuration} ثانية!",
-    "settingsSummary": "غنِّ {rounds} نغمات بمدة إمساك {holdDuration} ثانية"
+    "congratulationsMessage": "لقد طابقت النغمة في {seconds} ثانية بمدة إمساك {holdDuration} ثانية! | لقد طابقت جميع النغمات الـ {rounds} في {seconds} ثانية بمدة إمساك {holdDuration} ثانية!",
+    "settingsSummary": "غنِّ نغمة واحدة بمدة إمساك {holdDuration} ثانية | غنِّ {rounds} نغمات بمدة إمساك {holdDuration} ثانية"
   },
   "tuner": {
     "tuning": "التوليف",

@@ -369,7 +369,7 @@
     "subtitle": "Sebuah nada acak dimainkan — nyanyikan kembali untuk mencocokkan!",
     "play": "Putar",
     "rounds": "Putaran",
-    "congratulationsMessage": "Anda mencocokkan semua {rounds} nada dalam {seconds} detik dengan durasi tahan {holdDuration} detik!",
+    "congratulationsMessage": "Anda mencocokkan nada dalam {seconds} detik dengan durasi tahan {holdDuration} detik! | Anda mencocokkan semua {rounds} nada dalam {seconds} detik dengan durasi tahan {holdDuration} detik!",
     "settingsSummary": "Nyanyikan {rounds} nada dengan durasi tahan {holdDuration} detik"
   },
   "tuner": {

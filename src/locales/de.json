@@ -369,8 +369,8 @@
     "subtitle": "Ein zufälliger Ton wird gespielt – singe ihn nach!",
     "play": "Spielen",
     "rounds": "Runden",
-    "congratulationsMessage": "Du hast alle {rounds} Töne in {seconds} Sekunden mit {holdDuration}s Haltedauer getroffen!",
-    "settingsSummary": "Singe {rounds} Töne mit {holdDuration}s Haltedauer"
+    "congratulationsMessage": "Du hast den Ton in {seconds} Sekunden mit {holdDuration}s Haltedauer getroffen! | Du hast alle {rounds} Töne in {seconds} Sekunden mit {holdDuration}s Haltedauer getroffen!",
+    "settingsSummary": "Singe {rounds} Ton mit {holdDuration}s Haltedauer | Singe {rounds} Töne mit {holdDuration}s Haltedauer"
   },
   "tuner": {
     "tuning": "Stimmung",

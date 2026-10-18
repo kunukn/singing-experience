@@ -304,10 +304,11 @@ onUnmounted(() => {
       class="text-sm text-(--p-text-muted-color) md:hidden"
     >
       {{
-        t('singTone.settingsSummary', {
-          rounds: totalRounds,
-          holdDuration: durationSec,
-        })
+        t(
+          'singTone.settingsSummary',
+          { rounds: totalRounds, holdDuration: durationSec },
+          totalRounds,
+        )
       }}
     </p>
 
@@ -412,11 +413,15 @@ onUnmounted(() => {
       <div class="flex flex-col items-center gap-1">
         <p class="text-(--p-surface-400) dark:text-(--p-surface-300)">
           {{
-            t('singTone.congratulationsMessage', {
-              rounds: gameTotalRounds,
-              seconds: elapsedSeconds,
-              holdDuration: durationSec,
-            })
+            t(
+              'singTone.congratulationsMessage',
+              {
+                rounds: gameTotalRounds,
+                seconds: elapsedSeconds,
+                holdDuration: durationSec,
+              },
+              gameTotalRounds,
+            )
           }}
         </p>
         <p class="text-(--p-surface-400) dark:text-(--p-surface-300)">

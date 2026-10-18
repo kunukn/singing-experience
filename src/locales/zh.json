@@ -369,7 +369,7 @@
     "subtitle": "播放一个随机音调 — 唱出来匹配！",
     "play": "播放",
     "rounds": "回合数",
-    "congratulationsMessage": "你在 {seconds} 秒内匹配了全部 {rounds} 个音调，保持时长为 {holdDuration} 秒！",
+    "congratulationsMessage": "你在 {seconds} 秒内匹配了音调，保持时长为 {holdDuration} 秒！ | 你在 {seconds} 秒内匹配了全部 {rounds} 个音调，保持时长为 {holdDuration} 秒！",
     "settingsSummary": "唱 {rounds} 个音调，保持时长 {holdDuration} 秒"
   },
   "tuner": {

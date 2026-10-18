@@ -369,7 +369,7 @@
     "subtitle": "एक यादृच्छिक स्वर बजाया जाता है — उसे गाकर मिलाएँ!",
     "play": "बजाएँ",
     "rounds": "राउंड",
-    "congratulationsMessage": "आपने {holdDuration} सेकंड की होल्ड अवधि के साथ {seconds} सेकंड में सभी {rounds} स्वर मिलाए!",
+    "congratulationsMessage": "आपने {holdDuration} सेकंड की होल्ड अवधि के साथ {seconds} सेकंड में स्वर मिलाया! | आपने {holdDuration} सेकंड की होल्ड अवधि के साथ {seconds} सेकंड में सभी {rounds} स्वर मिलाए!",
     "settingsSummary": "{holdDuration} सेकंड की होल्ड अवधि के साथ {rounds} स्वर गाएँ"
   },
   "tuner": {

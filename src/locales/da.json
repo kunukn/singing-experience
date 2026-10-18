@@ -369,8 +369,8 @@
     "subtitle": "En tilfældig tone afspilles — syng den efter for at matche!",
     "play": "Afspil",
     "rounds": "Runder",
-    "congratulationsMessage": "Du matchede alle {rounds} toner på {seconds} sekunder med {holdDuration}s hold varighed!",
-    "settingsSummary": "Syng {rounds} toner med {holdDuration}s hold varighed"
+    "congratulationsMessage": "Du matchede tonen på {seconds} sekunder med {holdDuration}s hold varighed! | Du matchede alle {rounds} toner på {seconds} sekunder med {holdDuration}s hold varighed!",
+    "settingsSummary": "Syng {rounds} tone med {holdDuration}s hold varighed | Syng {rounds} toner med {holdDuration}s hold varighed"
   },
   "tuner": {
     "tuning": "Stemning",

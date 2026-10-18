@@ -369,7 +369,7 @@
     "subtitle": "একটি এলোমেলো টোন বাজানো হয় — সেটি গেয়ে মেলান!",
     "play": "বাজান",
     "rounds": "রাউন্ড",
-    "congratulationsMessage": "আপনি {holdDuration} সেকেন্ড ধরে রেখে {seconds} সেকেন্ডে সব {rounds}টি টোন মিলিয়েছেন!",
+    "congratulationsMessage": "আপনি {holdDuration} সেকেন্ড ধরে রেখে {seconds} সেকেন্ডে টোনটি মিলিয়েছেন! | আপনি {holdDuration} সেকেন্ড ধরে রেখে {seconds} সেকেন্ডে সব {rounds}টি টোন মিলিয়েছেন!",
     "settingsSummary": "{holdDuration} সেকেন্ড ধরে রেখে {rounds}টি টোন গান করুন"
   },
   "tuner": {

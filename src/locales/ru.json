@@ -369,8 +369,8 @@
     "subtitle": "Воспроизводится случайный тон — спойте его, чтобы повторить!",
     "play": "Воспроизвести",
     "rounds": "Раунды",
-    "congratulationsMessage": "Вы угадали все {rounds} тонов за {seconds} секунд с удержанием {holdDuration}с!",
-    "settingsSummary": "Спойте {rounds} тонов с удержанием {holdDuration}с"
+    "congratulationsMessage": "Вы угадали тон за {seconds} секунд с удержанием {holdDuration}с! | Вы угадали все {rounds} тонов за {seconds} секунд с удержанием {holdDuration}с!",
+    "settingsSummary": "Спойте {rounds} тон с удержанием {holdDuration}с | Спойте {rounds} тонов с удержанием {holdDuration}с"
   },
   "tuner": {
     "tuning": "Настройка",

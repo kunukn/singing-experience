@@ -369,7 +369,7 @@
     "subtitle": "Toni ya nasibu inachezwa — iimbe tena kulinganisha!",
     "play": "Cheza",
     "rounds": "Raundi",
-    "congratulationsMessage": "Umelinganisha toni zote {rounds} katika sekunde {seconds} na muda wa kushikilia wa sekunde {holdDuration}!",
+    "congratulationsMessage": "Umelinganisha toni katika sekunde {seconds} na muda wa kushikilia wa sekunde {holdDuration}! | Umelinganisha toni zote {rounds} katika sekunde {seconds} na muda wa kushikilia wa sekunde {holdDuration}!",
     "settingsSummary": "Imba toni {rounds} na muda wa kushikilia wa sekunde {holdDuration}"
   },
   "tuner": {

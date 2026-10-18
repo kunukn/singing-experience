@@ -369,8 +369,8 @@
     "subtitle": "Un ton aléatoire est joué — chante-le pour le reproduire !",
     "play": "Jouer",
     "rounds": "Manches ",
-    "congratulationsMessage": "Tu as reproduit les {rounds} tons en {seconds} secondes avec un maintien de {holdDuration}s !",
-    "settingsSummary": "Chante {rounds} tons avec un maintien de {holdDuration}s"
+    "congratulationsMessage": "Tu as reproduit le ton en {seconds} secondes avec un maintien de {holdDuration}s ! | Tu as reproduit les {rounds} tons en {seconds} secondes avec un maintien de {holdDuration}s !",
+    "settingsSummary": "Chante {rounds} ton avec un maintien de {holdDuration}s | Chante {rounds} tons avec un maintien de {holdDuration}s"
   },
   "tuner": {
     "tuning": "Accord",

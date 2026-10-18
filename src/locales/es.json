@@ -369,8 +369,8 @@
     "subtitle": "Se reproduce un tono aleatorio — ¡cántalo para igualarlo!",
     "play": "Reproducir",
     "rounds": "Rondas",
-    "congratulationsMessage": "¡Acertaste los {rounds} tonos en {seconds} segundos con {holdDuration}s de mantenimiento!",
-    "settingsSummary": "Canta {rounds} tonos con {holdDuration}s de mantenimiento"
+    "congratulationsMessage": "¡Acertaste el tono en {seconds} segundos con {holdDuration}s de mantenimiento! | ¡Acertaste los {rounds} tonos en {seconds} segundos con {holdDuration}s de mantenimiento!",
+    "settingsSummary": "Canta {rounds} tono con {holdDuration}s de mantenimiento | Canta {rounds} tonos con {holdDuration}s de mantenimiento"
   },
   "tuner": {
     "tuning": "Afinación",

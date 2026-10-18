@@ -369,7 +369,7 @@
     "subtitle": "ランダムな音が再生されます。まねして歌って一致させましょう!",
     "play": "再生",
     "rounds": "ラウンド数",
-    "congratulationsMessage": "{holdDuration}秒キープで全{rounds}音を{seconds}秒で一致させました!",
+    "congratulationsMessage": "{holdDuration}秒キープで音を{seconds}秒で一致させました! | {holdDuration}秒キープで全{rounds}音を{seconds}秒で一致させました!",
     "settingsSummary": "{holdDuration}秒キープで{rounds}音を歌う"
   },
   "tuner": {
