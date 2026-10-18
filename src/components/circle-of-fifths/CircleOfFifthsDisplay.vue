@@ -242,12 +242,16 @@ const heardKeyIndex = computed(() => {
   return midi === null ? null : outlineKeyIndexOf(midi)
 })
 /* The wedge of the note to sing, outlined dashed. The note's own wedge, not
- * the walk's next key: they match on every hop, but in Explore MI of C is E */
-const targetNoteKeyIndex = computed(() =>
-  isSinging.value && currentTarget.value
-    ? outlineKeyIndexOf(currentTarget.value.midi)
-    : null,
-)
+ * the walk's next key: they match on every hop, but in Explore MI of C is E.
+ * Before a walk it's the first note, while the preview listens for it. */
+const targetNoteKeyIndex = computed(() => {
+  if (isSinging.value && currentTarget.value)
+    return outlineKeyIndexOf(currentTarget.value.midi)
+  if (screen.value === 'walkIdle' && isIdleSungNoteVisible.value)
+    return outlineKeyIndexOf(walkStartMidi.value)
+
+  return null
+})
 /* …but only the walk's exact first note earns the ✓, since the walk needs it */
 const isStartNoteHit = computed(
   () =>
@@ -519,7 +523,7 @@ onUnmounted(() => stop())
       :holdProgress="holdProgress"
       :heardKeyIndex="heardKeyIndex"
       :targetNoteKeyIndex="targetNoteKeyIndex"
-      :isHeardCorrect="isSingingCorrectNote"
+      :isHeardCorrect="isIdle ? isStartNoteHit : isSingingCorrectNote"
       :outlineRing="outlineRing"
       @select="handleSelect"
     >
