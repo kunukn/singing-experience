@@ -16,7 +16,7 @@ const CHORD_S = CHORD_INTERVAL_S - 0.05
 const LEAD_IN_S = 0.05
 
 /* Major triad as semitones above DO */
-const TRIAD_OFFSETS = [0, 4, 7] as const
+export const TRIAD_OFFSETS = [0, 4, 7] as const
 /*
  * I – IV – V – I in close voicing around DO: C-E-G, C-F-A, B-D-G, C-E-G in C.
  * Each chord moves as little as possible from the last, so the cadence stays

@@ -11,6 +11,9 @@ defineProps<{
   isCorrect: boolean
   showTooLow: boolean
   showTooHigh: boolean
+  /* The chord the last lit key played; isNext marks the note to sing next */
+  chordNotes: readonly { label: string; isNext: boolean }[]
+  isChordRinging: boolean
 }>()
 
 const { t } = useI18n()
@@ -44,6 +47,26 @@ const { t } = useI18n()
         >{{ hopDirection === 'up' ? '↑' : '↓' }}</span
       >
       {{ noteLabel }}
+    </span>
+
+    <!-- Always laid out so its height is reserved: fading in and out never
+      moves the 🎤 line below -->
+    <span
+      class="text-[3.6cqi] whitespace-nowrap text-(--p-text-muted-color) transition-opacity duration-300 motion-reduce:transition-none"
+      :class="isChordRinging ? 'opacity-100' : 'opacity-0'"
+      :aria-hidden="!isChordRinging"
+      data-testid="circle-target-chord"
+      :data-visible="isChordRinging"
+    >
+      <template v-for="(note, index) in chordNotes" :key="index">
+        <span v-if="index > 0" class="mx-[0.8cqi]">·</span>
+        <span
+          :class="{ 'font-bold text-(--p-text-color)': note.isNext }"
+          :data-next="note.isNext"
+          >{{ note.label }}</span
+        >
+      </template>
+      <span v-if="chordNotes.length === 0">&nbsp;</span>
     </span>
 
     <!-- What the singer is on now; the hint arrow lives here, away from the

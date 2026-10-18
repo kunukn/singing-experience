@@ -5,6 +5,7 @@ import type { CircleDirection, CircleMode, CircleView } from './circleOfFifths'
 import {
   CIRCLE_KEYS,
   keyIndexOfPitchClass,
+  keyNoteLabel,
   wheelNoteLabel,
 } from './circleOfFifths'
 import { toCircleScreen } from './circleOfFifthsScreen'
@@ -52,6 +53,8 @@ const {
   holdProgress,
   isSingingCorrectNote,
   sungMidi,
+  chordMidis,
+  isChordRinging,
   centsFromTarget,
   showTooLow,
   showTooHigh,
@@ -105,6 +108,13 @@ const targetDisplay = computed(() => {
     keyLabel: CIRCLE_KEYS[target.keyIndex].label,
     solfege: target.solfege,
     noteLabel: wheelNoteLabel(target.midi),
+    /* The chord belongs to the key the target sits in (C while singing SO of
+     * C), so it's spelled by that key. The next note is in it only going
+     * clockwise — SO is the chord's top note, FA isn't in it. */
+    chordNotes: chordMidis.value.map((midi) => ({
+      label: keyNoteLabel(midi, target.keyIndex),
+      isNext: (midi - target.midi) % 12 === 0,
+    })),
   }
 })
 
@@ -424,6 +434,8 @@ onUnmounted(() => stop())
         :isCorrect="isSingingCorrectNote"
         :showTooLow="showTooLow"
         :showTooHigh="showTooHigh"
+        :chordNotes="targetDisplay.chordNotes"
+        :isChordRinging="isChordRinging"
       />
       <div
         v-else-if="screen === 'walkIdle' || screen === 'walkComplete'"

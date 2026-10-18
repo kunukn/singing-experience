@@ -11,6 +11,7 @@ import {
   nextKeyIndex,
   placePattern,
   keyIndexOfPitchClass,
+  keyNoteLabel,
   placePitchClass,
   wheelNoteLabel,
   walkKeyOrder,
@@ -146,6 +147,20 @@ describe('circleOfFifths - navigation', () => {
     { midi: 66, label: 'F♯4' },
   ])('spells MIDI $midi as $label', ({ midi, label }) => {
     expect(wheelNoteLabel(midi)).toBe(label)
+  })
+
+  test.each([
+    { key: 'C', tonic: 60, notes: ['C', 'E', 'G'] },
+    { key: 'B', tonic: 59, notes: ['B', 'D♯', 'F♯'] },
+    { key: 'F♯', tonic: 54, notes: ['F♯', 'A♯', 'C♯'] },
+    { key: 'D♭', tonic: 61, notes: ['D♭', 'F', 'A♭'] },
+    { key: 'A♭', tonic: 56, notes: ['A♭', 'C', 'E♭'] },
+  ])('spells the $key major chord by its key', ({ key, tonic, notes }) => {
+    const keyIndex = keyByLabel(key).index
+    /* Major triad: DO, MI (+4), SO (+7) */
+    expect(
+      [0, 4, 7].map((offset) => keyNoteLabel(tonic + offset, keyIndex)),
+    ).toEqual(notes)
   })
 
   test.each([

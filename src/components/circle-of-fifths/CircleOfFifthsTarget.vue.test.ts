@@ -18,6 +18,8 @@ function mountTarget(props = {}) {
       isCorrect: false,
       showTooLow: false,
       showTooHigh: false,
+      chordNotes: [],
+      isChordRinging: false,
       ...props,
     },
     global: { plugins: [i18n] },
@@ -25,6 +27,33 @@ function mountTarget(props = {}) {
 }
 
 describe('CircleOfFifthsTarget', () => {
+  test('should name the ringing chord and mark the note to sing next', () => {
+    const wrapper = mountTarget({
+      chordNotes: [
+        { label: 'C', isNext: false },
+        { label: 'E', isNext: false },
+        { label: 'G', isNext: true },
+      ],
+      isChordRinging: true,
+    })
+    const chord = wrapper.get('[data-testid="circle-target-chord"]')
+
+    expect(chord.attributes('data-visible')).toBe('true')
+    expect(chord.text()).toBe('C·E·G')
+    expect(chord.get('[data-next="true"]').text()).toBe('G')
+  })
+
+  test('should keep the chord row laid out but hidden once it fades', () => {
+    const wrapper = mountTarget({
+      chordNotes: [{ label: 'C', isNext: false }],
+      isChordRinging: false,
+    })
+    const chord = wrapper.get('[data-testid="circle-target-chord"]')
+
+    expect(chord.attributes('data-visible')).toBe('false')
+    expect(chord.text()).toBe('C')
+  })
+
   test('should show the target with its hop arrow', () => {
     const wrapper = mountTarget()
     const note = wrapper.get('[data-testid="circle-target-note"]')

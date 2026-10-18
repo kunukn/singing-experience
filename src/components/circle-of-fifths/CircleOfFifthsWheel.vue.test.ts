@@ -27,7 +27,7 @@ describe('CircleOfFifthsWheel', () => {
     expect(wrapper.get('[data-testid="circle-minor-0"]').text()).toBe('Am')
   })
 
-  test('should mark current, next and lit keys', () => {
+  test('should mark the key being sung into as the target and the one left as home', () => {
     const wrapper = mountWheel({
       litKeyIndices: [0, 1],
       currentKeyIndex: 1,
@@ -35,9 +35,15 @@ describe('CircleOfFifthsWheel', () => {
     })
 
     expect(keyAt(wrapper, 0).attributes('data-status')).toBe('done')
-    expect(keyAt(wrapper, 1).attributes('data-status')).toBe('current')
-    expect(keyAt(wrapper, 2).attributes('data-status')).toBe('next')
+    expect(keyAt(wrapper, 1).attributes('data-status')).toBe('home')
+    expect(keyAt(wrapper, 2).attributes('data-status')).toBe('target')
     expect(keyAt(wrapper, 3).attributes('data-status')).toBe('idle')
+  })
+
+  test('should make the current key the target when no hop is pending', () => {
+    const wrapper = mountWheel({ currentKeyIndex: 0 })
+
+    expect(keyAt(wrapper, 0).attributes('data-status')).toBe('target')
   })
 
   test('should move odd keys half a turn in the chromatic view', async () => {

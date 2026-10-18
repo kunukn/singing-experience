@@ -196,6 +196,18 @@ export function wheelNoteLabel(midi: number) {
   }).label
 }
 
+/*
+ * A note spelled by a key's signature, without the octave — B major's MI is
+ * D♯, not the wheel's E♭. For naming a chord's notes, where theory spelling
+ * matters more than matching a wedge.
+ */
+export function keyNoteLabel(midi: number, keyIndex: number) {
+  return midiToNoteLabel(midi, {
+    showOctave: false,
+    preferFlats: keyIndex > ENHARMONIC_INDEX,
+  }).label
+}
+
 /* The single MIDI note with this pitch class inside a 12-note window */
 export function placePitchClass(pitchClass: number, window: MidiWindow) {
   return window.midiMin + pitchClassOf(pitchClass - window.midiMin)

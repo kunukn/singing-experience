@@ -8,7 +8,9 @@ import {
   wedgePath,
 } from './circleOfFifths'
 
-type KeyStatus = 'current' | 'next' | 'selected' | 'done' | 'idle'
+/* target: the key whose DO is being sung — the one to look at. home: the key
+ * the walk is leaving, whose chord just played. */
+type KeyStatus = 'target' | 'home' | 'selected' | 'done' | 'idle'
 
 const {
   view,
@@ -60,8 +62,11 @@ const majorWedge = wedgePath(MAJOR_INNER, MAJOR_OUTER)
 const minorWedge = wedgePath(MINOR_INNER, MAJOR_INNER)
 
 const MAJOR_FILL: Record<KeyStatus, string> = {
-  current: 'fill-(--p-yellow-300) dark:fill-(--p-yellow-600)',
-  next: 'animate-pulse fill-(--p-yellow-100) dark:fill-(--p-yellow-900)',
+  /* Tailwind's pulse keyframes at twice the default speed — at 2s the fade
+   * was too slow to notice */
+  target:
+    'animate-[pulse_1s_cubic-bezier(0.4,0,0.6,1)_infinite] motion-reduce:animate-none fill-(--p-yellow-300) dark:fill-(--p-yellow-600)',
+  home: 'fill-(--p-yellow-100) dark:fill-(--p-yellow-900)',
   selected: 'fill-(--p-blue-300) dark:fill-(--p-blue-700)',
   done: 'fill-(--p-green-300) dark:fill-(--p-green-700)',
   idle: 'fill-(--p-surface-100) dark:fill-(--p-surface-800)',
@@ -69,9 +74,16 @@ const MAJOR_FILL: Record<KeyStatus, string> = {
 
 const isChromatic = computed(() => view === 'chromatic')
 
+/* While a hop is pending the sung note lights the next key; on the walk's
+ * first note and in Explore patterns it's the current key itself */
+const targetKeyIndex = computed(() => nextKeyIndex ?? currentKeyIndex)
+const homeKeyIndex = computed(() =>
+  nextKeyIndex === null ? null : currentKeyIndex,
+)
+
 function statusOf(index: number): KeyStatus {
-  if (index === currentKeyIndex) return 'current'
-  if (index === nextKeyIndex) return 'next'
+  if (index === targetKeyIndex.value) return 'target'
+  if (index === homeKeyIndex.value) return 'home'
   if (index === selectedKeyIndex) return 'selected'
   if (litKeyIndices.includes(index) || exploredKeyIndices.includes(index))
     return 'done'

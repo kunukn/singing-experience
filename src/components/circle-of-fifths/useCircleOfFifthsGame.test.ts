@@ -205,6 +205,28 @@ describe('useCircleOfFifthsGame - walk', () => {
     expect(game.nextKeyIndex.value).toBe(1)
   })
 
+  test('should ring no chord while the first reference note plays', async () => {
+    const { game } = setup()
+
+    await game.startWalk()
+
+    expect(game.isChordRinging.value).toBe(false)
+  })
+
+  test('should ring the C chord after DO and let it fade', async () => {
+    const { game, mock } = setup()
+
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    mock.singMidi(60)
+    await vi.waitFor(() => expect(game.isChordRinging.value).toBe(true))
+
+    expect(game.chordMidis.value).toEqual([60, 64, 67])
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    expect(game.isChordRinging.value).toBe(false)
+    expect(game.chordMidis.value).toEqual([60, 64, 67])
+  })
+
   test('should have no hop direction on the first note', async () => {
     const { game } = setup()
 

@@ -18,7 +18,10 @@ import {
   circleOfFifthsMachine,
   type CircleOfFifthsPhase,
 } from './circleOfFifthsMachine'
-import { useCircleOfFifthsPlayback } from './useCircleOfFifthsPlayback'
+import {
+  TRIAD_OFFSETS,
+  useCircleOfFifthsPlayback,
+} from './useCircleOfFifthsPlayback'
 
 export type Solfege = 'DO' | 'MI' | 'SO' | 'FA' | 'LA'
 export type PatternId = 'doMiSo' | 'doLa'
@@ -135,6 +138,10 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
   const tooHighMs = ref(0)
   /* Elapsed-time threshold below which pitch matches are ignored (deaf period) */
   const deafUntilMs = ref(0)
+  /* The chord the last lit key played, kept after it fades so the centre
+   * can fade it out with its notes still in place */
+  const chordMidis = ref<number[]>([])
+  const chordUntilMs = ref(0)
 
   let lastTimestamp: number | null = null
   let timerFrameId: number | null = null
@@ -180,6 +187,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
   )
 
   const isDeaf = computed(() => elapsedMs.value < deafUntilMs.value)
+  const isChordRinging = computed(() => elapsedMs.value < chordUntilMs.value)
 
   /* The note the singer is on right now — hidden while a reference tone rings
    * so the speaker never shows up as the singer's voice */
@@ -326,7 +334,13 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     }
 
     /* Each lit key plays its chord — the reward, and a reminder of where SO is */
-    void playDeaf(() => playback.playTriad(held.midi))
+    chordMidis.value = TRIAD_OFFSETS.map((offset) => held.midi + offset)
+    /* Shown from the moment it's triggered; the real length lands once the
+     * engine has warmed up */
+    chordUntilMs.value = Number.POSITIVE_INFINITY
+    void playDeaf(() => playback.playTriad(held.midi)).then((seconds) => {
+      chordUntilMs.value = elapsedMs.value + seconds * 1000
+    })
     litKeyIndices.value = [...litKeyIndices.value, walkOrder.value[heldIndex]]
     currentTargetIndex.value++
   }
@@ -386,6 +400,8 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     activePattern.value = null
     patternKeyIndex.value = null
     deafUntilMs.value = 0
+    chordMidis.value = []
+    chordUntilMs.value = 0
   }
 
   async function startWalk() {
@@ -481,6 +497,8 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     if (!currentTarget.value || !isSinging.value) return
 
     const midi = currentTarget.value.midi
+    /* Hear it replaces the chord with a single note */
+    chordUntilMs.value = 0
     void playDeaf(() => playback.playReference(midi))
   }
 
@@ -551,6 +569,8 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     showTooHigh,
     elapsedMs: readonly(elapsedMs),
     isDeaf,
+    chordMidis: readonly(chordMidis),
+    isChordRinging,
     isSingingCorrectNote,
     sungMidi,
     isListening,
