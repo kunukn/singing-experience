@@ -16,6 +16,7 @@ function mountTarget(props = {}) {
       hopDirection: 'up' as const,
       sungLabel: null,
       sungState: null,
+      sungCents: null,
       isCorrect: false,
       showTooLow: false,
       showTooHigh: false,

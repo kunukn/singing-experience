@@ -239,6 +239,48 @@ describe('useCircleOfFifthsGame - walk', () => {
     expect(game.sungMidi.value).toBe(60)
   })
 
+  test('should report cents from the sung note', async () => {
+    const { game, mock } = setup()
+
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+
+    expect(game.sungCents.value).toBeNull()
+
+    mock.singMidi(55, -12)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.sungMidi.value).toBe(55)
+    expect(game.sungCents.value).toBe(-12)
+  })
+
+  test('should show how far off an easy pass is from the target', async () => {
+    const { game, mock } = setup()
+
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    mock.singMidi(60, 40)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.isSingingCorrectNote.value).toBe(true)
+    expect(game.sungCents.value).toBe(40)
+  })
+
+  test('should measure cents across the dead band from the held note', async () => {
+    const { game, mock } = setup()
+
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    mock.singMidi(66, 45)
+    await vi.advanceTimersByTimeAsync(100)
+    /* 55 cents sharp of 66 — past the midpoint, still named 66 */
+    mock.singMidi(67, -45)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.sungMidi.value).toBe(66)
+    expect(game.sungCents.value).toBe(55)
+  })
+
   test('should round afresh after silence', async () => {
     const { game, mock } = setup()
 

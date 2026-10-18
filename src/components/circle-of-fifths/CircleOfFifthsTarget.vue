@@ -11,6 +11,7 @@ defineProps<{
   hopDirection: HopDirection | null
   sungLabel: string | null
   sungState: SungState | null
+  sungCents: number | null
   isCorrect: boolean
   showTooLow: boolean
   showTooHigh: boolean
@@ -92,6 +93,7 @@ const { t } = useI18n()
       class="mt-[0.8cqi]"
       :sungLabel="sungLabel"
       :sungState="sungState"
+      :sungCents="sungCents"
       :showTooLow="showTooLow"
       :showTooHigh="showTooHigh"
     />

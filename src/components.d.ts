@@ -17,6 +17,7 @@ declare module 'vue' {
     BarHighlightToggle: typeof import('./components/grace-kelly/BarHighlightToggle.vue')['default']
     CardLink: typeof import('./components/generic/CardLink.vue')['default']
     CentsDeviationBar: typeof import('./components/generic/CentsDeviationBar.vue')['default']
+    CentsLabel: typeof import('./components/generic/CentsLabel.vue')['default']
     ChordDetectorResults: typeof import('./components/scale-detector/ChordDetectorResults.vue')['default']
     CircleOfFifthsDisplay: typeof import('./components/circle-of-fifths/CircleOfFifthsDisplay.vue')['default']
     CircleOfFifthsKeyInfo: typeof import('./components/circle-of-fifths/CircleOfFifthsKeyInfo.vue')['default']

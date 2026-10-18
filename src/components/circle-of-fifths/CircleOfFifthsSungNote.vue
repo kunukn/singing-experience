@@ -5,6 +5,9 @@ const { sungState } = defineProps<{
   sungLabel: string | null
   /* null = nothing to compare against, shown in a neutral colour */
   sungState: SungState | null
+  /* From the note shown, coloured by how clean it is — the note's own colour
+   * only says right or wrong */
+  sungCents: number | null
   showTooLow: boolean
   showTooHigh: boolean
 }>()
@@ -28,7 +31,7 @@ const sungColor = computed(() =>
     the hint arrow either side, so nothing shifts as the label or the arrow
     changes -->
   <div
-    class="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-x-[0.6cqi] text-[3.6cqi] font-semibold tabular-nums transition-colors"
+    class="grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-[0.6cqi] text-[3.6cqi] font-semibold tabular-nums transition-colors"
     :class="sungColor"
     data-testid="circle-target-sung"
     :data-state="sungState ?? 'none'"
@@ -39,29 +42,37 @@ const sungColor = computed(() =>
     <span class="w-[2em] text-center whitespace-nowrap">{{
       sungLabel ?? '–'
     }}</span>
-    <div class="grid w-[4cqi] place-items-center justify-self-start">
-      <span
-        class="col-start-1 row-start-1"
-        :class="
-          showTooLow ? 'animate-bounce text-(--p-orange-400)' : 'invisible'
-        "
-        :aria-label="t('generic.tooLow')"
-        data-testid="circle-target-too-low"
-        :data-visible="showTooLow"
-      >
-        <ArrowUpIcon class="size-[3.6cqi]" />
-      </span>
-      <span
-        class="col-start-1 row-start-1"
-        :class="
-          showTooHigh ? 'animate-bounce text-(--p-blue-400)' : 'invisible'
-        "
-        :aria-label="t('generic.tooHigh')"
-        data-testid="circle-target-too-high"
-        :data-visible="showTooHigh"
-      >
-        <ArrowUpIcon class="size-[3.6cqi] rotate-180" />
-      </span>
+    <div class="flex items-center gap-x-[0.6cqi] justify-self-start">
+      <!-- Fixed width, sized for the widest reading (−70¢) -->
+      <CentsLabel
+        :cents="sungLabel === null ? null : sungCents"
+        class="min-w-[3.2em]"
+        data-testid="circle-target-cents"
+      />
+      <div class="grid w-[4cqi] place-items-center">
+        <span
+          class="col-start-1 row-start-1"
+          :class="
+            showTooLow ? 'animate-bounce text-(--p-orange-400)' : 'invisible'
+          "
+          :aria-label="t('generic.tooLow')"
+          data-testid="circle-target-too-low"
+          :data-visible="showTooLow"
+        >
+          <ArrowUpIcon class="size-[3.6cqi]" />
+        </span>
+        <span
+          class="col-start-1 row-start-1"
+          :class="
+            showTooHigh ? 'animate-bounce text-(--p-blue-400)' : 'invisible'
+          "
+          :aria-label="t('generic.tooHigh')"
+          data-testid="circle-target-too-high"
+          :data-visible="showTooHigh"
+        >
+          <ArrowUpIcon class="size-[3.6cqi] rotate-180" />
+        </span>
+      </div>
     </div>
   </div>
 </template>

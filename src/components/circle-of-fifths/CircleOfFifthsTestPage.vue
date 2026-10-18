@@ -73,6 +73,7 @@ function matchTarget(target: SingTarget | null) {
     :titleSuffix="'(Test)'"
     :disableIdlePreview="true"
     :overridePreviewMidi="overridePreviewMidi"
+    :overridePreviewCents="selectedCents"
     v-model:mode="selectedMode"
     v-model:direction="selectedDirection"
     v-model:view="selectedView"

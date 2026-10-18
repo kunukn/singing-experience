@@ -22,6 +22,7 @@ const {
   titleSuffix,
   disableIdlePreview = false,
   overridePreviewMidi = null,
+  overridePreviewCents = null,
 } = defineProps<{
   game: CircleOfFifthsGameResult
   titleSuffix?: string
@@ -29,6 +30,8 @@ const {
   disableIdlePreview?: boolean
   /* Test pages: the simulated singer's note, shown instead of the mic's */
   overridePreviewMidi?: number | null
+  /* Test pages: the simulated singer's cents from that note */
+  overridePreviewCents?: number | null
 }>()
 
 const mode = defineModel<CircleMode>('mode', { required: true })
@@ -59,6 +62,7 @@ const {
   holdProgress,
   isSingingCorrectNote,
   sungMidi,
+  sungCents,
   chordMidis,
   isChordRinging,
   centsFromTarget,
@@ -193,6 +197,7 @@ const {
   previewMidi: micPreviewMidi,
   micPermission,
   triggerDeafPeriod,
+  rawNoteInfo: micPreviewNoteInfo,
 } = useIdlePreview({
   isGameActive: computed(() => !isIdle.value),
   isPlayingSequence,
@@ -203,6 +208,14 @@ const previewMidi = computed(() => {
   if (!isIdle.value) return null
 
   return overridePreviewMidi ?? micPreviewMidi.value
+})
+
+/* Cents from the previewed note, which is always the nearest one */
+const previewCents = computed(() => {
+  if (previewMidi.value === null) return null
+  if (overridePreviewMidi !== null) return overridePreviewCents
+
+  return micPreviewNoteInfo.value?.cents ?? null
 })
 
 /* Finding LA is about the relative minor, so both outlines move to the inner
@@ -519,6 +532,7 @@ onUnmounted(() => stop())
         :hopDirection="hopDirection"
         :sungLabel="sungLabel"
         :sungState="sungState"
+        :sungCents="sungCents"
         :isCorrect="isSingingCorrectNote"
         :showTooLow="showTooLow"
         :showTooHigh="showTooHigh"
@@ -545,6 +559,7 @@ onUnmounted(() => stop())
           v-if="isIdleSungNoteVisible"
           :sungLabel="idleSungLabel"
           :sungState="idleSungState"
+          :sungCents="previewCents"
           :showTooLow="idleSungState === 'low'"
           :showTooHigh="idleSungState === 'high'"
         />
@@ -558,6 +573,7 @@ onUnmounted(() => stop())
           v-if="isIdleSungNoteVisible"
           :sungLabel="idleSungLabel"
           :sungState="null"
+          :sungCents="previewCents"
           :showTooLow="false"
           :showTooHigh="false"
         />

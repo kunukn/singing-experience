@@ -250,6 +250,16 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     )
   })
 
+  /* Cents from the note the label names — from the target once it's a pass,
+   * so an easy-mode pass still shows how clean it was. The dead band lets it
+   * reach about ±70 before the label flips. */
+  const sungCents = computed(
+    () =>
+      heardMidi.value === null || sungMidi.value === null
+        ? null
+        : Math.round((heardMidi.value - sungMidi.value) * 100), // 100 cents per semitone
+  )
+
   const showTooLow = computed(() => tooLowMs.value >= TOO_LOW_OR_HIGH_HINT_MS)
   const showTooHigh = computed(() => tooHighMs.value >= TOO_LOW_OR_HIGH_HINT_MS)
 
@@ -621,6 +631,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     isChordRinging,
     isSingingCorrectNote,
     sungMidi: readonly(sungMidi),
+    sungCents,
     isListening,
     error,
     isPlayingSequence: playback.isPlayingSequence,
