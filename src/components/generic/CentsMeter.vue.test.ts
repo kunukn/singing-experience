@@ -1,18 +1,18 @@
 import { describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { OFF_CENTS } from '@/utils/pitchColors'
-import CircleOfFifthsCentsMeter from './CircleOfFifthsCentsMeter.vue'
+import CentsMeter from './CentsMeter.vue'
 
 function indicatorTopOf(cents: number | null) {
-  const wrapper = mount(CircleOfFifthsCentsMeter, { props: { cents } })
+  const wrapper = mount(CentsMeter, { props: { cents } })
 
   return wrapper
-    .get('[data-testid="circle-cents-meter-indicator"]')
+    .get('[data-testid="cents-meter-indicator"]')
     .attributes('style')
     ?.match(/top: ([\d.]+)%/)?.[1]
 }
 
-describe('CircleOfFifthsCentsMeter', () => {
+describe('CentsMeter', () => {
   test.each([
     { cents: 0, expected: '50' },
     { cents: OFF_CENTS, expected: '0' },
@@ -31,7 +31,7 @@ describe('CircleOfFifthsCentsMeter', () => {
   })
 
   test('should keep its space but hide without a pitch', () => {
-    const wrapper = mount(CircleOfFifthsCentsMeter, { props: { cents: null } })
+    const wrapper = mount(CentsMeter, { props: { cents: null } })
 
     expect(wrapper.attributes('data-visible')).toBe('false')
   })

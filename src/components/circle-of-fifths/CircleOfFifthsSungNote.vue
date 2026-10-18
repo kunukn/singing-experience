@@ -76,9 +76,7 @@ const sungColor = computed(() =>
       width, sized for the widest reading (−70¢). The wrapper carries the
       alignment: CentsLabel is dir="ltr", so its own start never flips in RTL -->
     <div class="flex items-center gap-x-[1.2cqi] justify-self-start">
-      <CircleOfFifthsCentsMeter
-        :cents="sungLabel === null ? null : sungCents"
-      />
+      <CentsMeter :cents="sungLabel === null ? null : sungCents" />
       <span class="min-w-[3.2em] text-start">
         <CentsLabel
           :cents="sungLabel === null ? null : sungCents"
