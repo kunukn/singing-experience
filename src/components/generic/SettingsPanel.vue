@@ -53,11 +53,14 @@ const appVersion = import.meta.env.VITE_APP_VERSION
     rounded
     severity="secondary"
     size="default"
-    class="aspect-square max-h-10 text-lg md:aspect-auto"
+    class="aspect-square max-h-10 md:aspect-auto"
     @click="showSettings = true"
   >
     <span class="inline-flex items-center gap-2">
-      <i class="pi pi-cog" />
+      <!-- PrimeVue's unlayered `.pi { font-size: var(--p-icon-size) }` beats
+        Tailwind's text-* utilities, so resize via the token. Larger when the
+        cog stands alone on phones; the default beside the label from md up. -->
+      <i class="pi pi-cog max-md:[--p-icon-size:1.25rem]" />
       <span class="hidden text-sm md:inline">{{ t('settings.title') }}</span>
     </span>
   </PrimeButton>
