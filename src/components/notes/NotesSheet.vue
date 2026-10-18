@@ -14,7 +14,7 @@ import {
   midiToNoteLabel,
 } from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
-import { renderAbc } from 'abcjs'
+import { renderAbc, type ClickListener } from 'abcjs'
 import { estimateNotesStaffWidth, noteScaleToAbcString } from './notesAbc'
 import type { ClefKey } from './notesConstants'
 
@@ -54,6 +54,11 @@ type Props = {
  * default, Vue's Boolean-prop casting resolves an absent prop to `false`, which
  * would silently hide the tempo whenever a parent omits it. */
 const props = withDefaults(defineProps<Props>(), { showTempo: true })
+
+const emit = defineEmits<{
+  /* A notehead was clicked; carries that note's absolute MIDI. */
+  noteClick: [midi: number]
+}>()
 
 const { colorForCents } = usePitchPreviewColor()
 
@@ -243,6 +248,20 @@ function calibratePitchToY() {
   pitchToY.value = buildPitchToY(samples)
 }
 
+/* abcjs click handler: map the clicked SVG group back to its position in
+ * reading order (noteElements[i] ↔ midis[i]). Clef, bar and tempo clicks
+ * resolve to no `.abcjs-note` and are ignored. */
+const handleAbcClick: ClickListener = (abcElem) => {
+  const svgElement = abcElem.abselem?.elemset?.[0]
+  const noteGroup = svgElement?.closest('.abcjs-note')
+  if (!noteGroup) return
+
+  const midi = props.midis[noteElements.value.indexOf(noteGroup)]
+  if (midi === undefined) return
+
+  emit('noteClick', midi)
+}
+
 async function renderSheet() {
   if (!containerRef.value) return
 
@@ -260,14 +279,19 @@ async function renderSheet() {
     props.showTempo !== false,
   )
 
+  const baseOptions = {
+    add_classes: true,
+    paddingtop: STAFF_PADDING_TOP,
+    format: SANS_FONTS,
+    clickListener: handleAbcClick,
+  }
+
   /* Pass 1 — render at an oversized width so abcjs keeps everything on one line
    * (it wraps only when staffwidth is smaller than the music needs). */
   const probeWidth = estimateNotesStaffWidth(props.midis.length)
   renderAbc(containerRef.value, abcString, {
-    add_classes: true,
+    ...baseOptions,
     staffwidth: probeWidth,
-    paddingtop: STAFF_PADDING_TOP,
-    format: SANS_FONTS,
   })
 
   /* Pass 2 — measure the music's natural width and re-render at that width so the
@@ -277,10 +301,8 @@ async function renderSheet() {
   if (musicWidth > 0) {
     const TRAILING_MARGIN = 24
     renderAbc(containerRef.value, abcString, {
-      add_classes: true,
+      ...baseOptions,
       staffwidth: Math.ceil(musicWidth) + TRAILING_MARGIN,
-      paddingtop: STAFF_PADDING_TOP,
-      format: SANS_FONTS,
     })
     await nextTick()
   }
@@ -470,8 +492,12 @@ watch(
   display: none;
 }
 
+/* abcjs marks a clicked note with `abcjs-note_selected` plus a hardcoded red
+ * fill attribute; CSS outranks presentation attributes, so the theme wins. */
 :deep(.note-active path),
-:deep(.note-active rect) {
+:deep(.note-active rect),
+:deep(.abcjs-note_selected path),
+:deep(.abcjs-note_selected rect) {
   fill: var(--p-primary-color);
 }
 

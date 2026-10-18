@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { frequencyToMidi, midiToNoteLabel } from '@/utils/noteUtils'
+import {
+  frequencyToMidi,
+  midiToFrequency,
+  midiToNoteLabel,
+} from '@/utils/noteUtils'
 import {
   toneLabelModeToFlags,
   type ToneLabelMode,
@@ -88,6 +92,16 @@ const { stableSungLabel, stableSungCents } = useStableSungLabel({
   sungMidi,
   showOctave,
 })
+
+const { playTone } = useTonePlayer()
+
+/* Clicking a note plays it — skipped while the timeline runs so it can't clash
+ * with the scheduled sequence. */
+function playNote(midi: number) {
+  if (isRunning.value) return
+
+  void playTone(midiToFrequency(midi))
+}
 
 /* Sounding pitch of the note currently highlighted during playback. */
 const currentToneLabel = computed(() => {
@@ -196,6 +210,7 @@ const currentToneLabel = computed(() => {
         :sungToneCents="stableSungCents"
         :showToneLabels="labelFlags.showLabels"
         :showNoteNumbers="labelFlags.showOctave"
+        @noteClick="playNote"
       />
     </div>
   </div>
