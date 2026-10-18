@@ -110,11 +110,6 @@ const viewOptions = computed(() => [
 const isWalkMode = computed(() => mode.value === 'walk')
 /* Which of the five screens is showing — the template switches on this */
 const screen = computed(() => toCircleScreen(phase.value, mode.value))
-/* Fifths hops DO → SO in the key just sung; fourths hears that note as SO of
- * the next key and resolves to its DO */
-const hopLabel = computed(() =>
-  direction.value === 'clockwise' ? 'DO → SO' : 'SO → DO',
-)
 const WALK_LADDER_HIGHLIGHTS: readonly LadderHighlight[] = [
   { solfege: 'DO', tone: 'major' },
   { solfege: 'SO', tone: 'major' },
@@ -283,7 +278,6 @@ const isStartNoteHit = computed(
   () =>
     screen.value === 'walkIdle' && previewMidi.value === walkStartMidi.value,
 )
-const startNoteLabel = computed(() => wheelNoteLabel(walkStartMidi.value))
 
 /* The 🎤 line on the start screens, shown only while the preview is on */
 const isIdleSungNoteVisible = computed(
@@ -568,18 +562,6 @@ onUnmounted(() => stop())
         v-else-if="screen === 'walkIdle' || screen === 'walkComplete'"
         class="flex flex-col items-center gap-[1cqi] leading-tight"
       >
-        <span class="text-[6cqi] font-bold text-(--p-text-muted-color)">{{
-          hopLabel
-        }}</span>
-        <span
-          class="text-[4.4cqi] font-semibold tabular-nums transition-colors"
-          :class="
-            isStartNoteHit ? 'text-(--p-green-500)' : 'text-(--p-text-color)'
-          "
-          data-testid="circle-start-note"
-          :data-hit="isStartNoteHit"
-          >{{ isStartNoteHit ? '✓ ' : '' }}DO = {{ startNoteLabel }}</span
-        >
         <CircleOfFifthsSungNote
           v-if="isIdleSungNoteVisible"
           :sungLabel="idleSungLabel"
