@@ -13,6 +13,7 @@ import type { SingTarget } from './useCircleOfFifthsGame'
 import {
   DEFAULT_DIFFICULTY,
   DEFAULT_DIRECTION,
+  DEFAULT_HOLD_DURATION_MS,
   useCircleOfFifthsGame,
 } from './useCircleOfFifthsGame'
 
@@ -21,6 +22,7 @@ const selectedMode = ref<CircleMode>('walk')
 const selectedDirection = ref<CircleDirection>(DEFAULT_DIRECTION)
 const selectedView = ref<CircleView>('fifths')
 const selectedDifficulty = ref<Difficulty>(DEFAULT_DIFFICULTY)
+const selectedHoldDurationSec = ref(DEFAULT_HOLD_DURATION_MS / 1000)
 const selectedRangeIndex = ref(DEFAULT_RANGE_INDEX)
 
 const selectedNote = ref<NoteName>('C')
@@ -75,6 +77,7 @@ function matchTarget(target: SingTarget | null) {
     v-model:direction="selectedDirection"
     v-model:view="selectedView"
     v-model:difficulty="selectedDifficulty"
+    v-model:holdDurationSec="selectedHoldDurationSec"
     v-model:rangeIndex="selectedRangeIndex"
   >
     <template #default="{ phase, currentTarget }">

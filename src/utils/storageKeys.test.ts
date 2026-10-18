@@ -11,6 +11,7 @@ import { describe, expect, test } from 'vitest'
 const STORAGE_KEYS = [
   'syng.circleOfFifthsDifficulty',
   'syng.circleOfFifthsDirection',
+  'syng.circleOfFifthsHoldDurationSec',
   'syng.circleOfFifthsMode',
   'syng.circleOfFifthsView',
   'syng.clarityThreshold',

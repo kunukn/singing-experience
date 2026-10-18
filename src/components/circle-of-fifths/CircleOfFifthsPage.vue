@@ -7,6 +7,8 @@ import CircleOfFifthsDisplay from './CircleOfFifthsDisplay.vue'
 import {
   DEFAULT_DIFFICULTY,
   DEFAULT_DIRECTION,
+  DEFAULT_HOLD_DURATION_MS,
+  HOLD_DURATION_OPTIONS,
   useCircleOfFifthsGame,
 } from './useCircleOfFifthsGame'
 
@@ -38,6 +40,16 @@ if (!DIFFICULTY_OPTIONS.includes(selectedDifficulty.value)) {
   selectedDifficulty.value = DEFAULT_DIFFICULTY
 }
 
+const defaultHoldDurationSec = DEFAULT_HOLD_DURATION_MS / 1000
+
+const selectedHoldDurationSec = useLocalStorage(
+  'syng.circleOfFifthsHoldDurationSec',
+  defaultHoldDurationSec,
+)
+if (!HOLD_DURATION_OPTIONS.includes(selectedHoldDurationSec.value as never)) {
+  selectedHoldDurationSec.value = defaultHoldDurationSec
+}
+
 const selectedRangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
 const game = useCircleOfFifthsGame()
@@ -50,6 +62,7 @@ const game = useCircleOfFifthsGame()
     v-model:direction="selectedDirection"
     v-model:view="selectedView"
     v-model:difficulty="selectedDifficulty"
+    v-model:holdDurationSec="selectedHoldDurationSec"
     v-model:rangeIndex="selectedRangeIndex"
   />
 </template>

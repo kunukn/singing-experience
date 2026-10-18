@@ -51,6 +51,10 @@ export type PitchDetectionProvider = {
 }
 
 export const DEFAULT_HOLD_DURATION_MS = 750
+/* Seconds a note must be held. Floor 0.3 stays above GRACE_PERIOD_MS, so a
+ * wobble still pauses a hold instead of a slide through a note completing one;
+ * ceiling 2 keeps the 13-note walk a tour, not an endurance test. */
+export const HOLD_DURATION_OPTIONS = [0.3, 0.5, 0.75, 1, 2] as const
 /* Brief pitch-loss tolerance — lets singers breathe or wobble without resetting hold progress */
 export const GRACE_PERIOD_MS = 250
 /* Delay before showing "too low" / "too high" hint arrow — avoids flashing during brief pitch drift */
@@ -100,7 +104,7 @@ export type CircleOfFifthsGameOptions = {
 export type CircleOfFifthsGameResult = ReturnType<typeof useCircleOfFifthsGame>
 
 export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
-  const holdDurationMs = options.holdDurationMs ?? DEFAULT_HOLD_DURATION_MS
+  const holdDurationMs = ref(options.holdDurationMs ?? DEFAULT_HOLD_DURATION_MS)
   const direction = ref<CircleDirection>(DEFAULT_DIRECTION)
   const range = ref<MidiWindow>(VOICE_RANGES[DEFAULT_RANGE_INDEX])
   const difficulty = ref<Difficulty>(options.difficulty ?? DEFAULT_DIFFICULTY)
@@ -194,7 +198,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
   })
 
   const holdProgress = computed(() =>
-    Math.min(holdTimeMs.value / holdDurationMs, 1),
+    Math.min(holdTimeMs.value / holdDurationMs.value, 1),
   )
 
   const isDeaf = computed(() => elapsedMs.value < deafUntilMs.value)
@@ -286,7 +290,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
         }
       }
 
-      if (holdTimeMs.value >= holdDurationMs) {
+      if (holdTimeMs.value >= holdDurationMs.value) {
         advanceTarget()
       }
     }
@@ -563,6 +567,11 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     difficulty.value = level
   }
 
+  /* Applies live — progress already held is kept and measured against the new length */
+  function setHoldDuration(ms: number) {
+    holdDurationMs.value = ms
+  }
+
   watch(isListening, (listening) => {
     if (listening) return
 
@@ -584,6 +593,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     isSinging,
     direction: readonly(direction),
     difficulty: readonly(difficulty),
+    holdDurationMs: readonly(holdDurationMs),
     range: readonly(range),
     maxCentsDeviation,
     targets: readonly(targets),
@@ -625,5 +635,6 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     setDirection,
     setRange,
     setDifficulty,
+    setHoldDuration,
   }
 }

@@ -32,6 +32,9 @@ const mode = defineModel<CircleMode>('mode', { required: true })
 const direction = defineModel<CircleDirection>('direction', { required: true })
 const view = defineModel<CircleView>('view', { required: true })
 const difficulty = defineModel<Difficulty>('difficulty', { required: true })
+const holdDurationSec = defineModel<number>('holdDurationSec', {
+  required: true,
+})
 const rangeIndex = defineModel<number>('rangeIndex', { required: true })
 
 const { t } = useI18n()
@@ -72,6 +75,7 @@ const {
   setDirection,
   setRange,
   setDifficulty,
+  setHoldDuration,
 } = game
 
 const modeOptions = computed(() => [
@@ -231,6 +235,9 @@ const wheelProps = computed(() => {
 
 watch(direction, (next) => setDirection(next), { immediate: true })
 watch(difficulty, (level) => setDifficulty(level), { immediate: true })
+watch(holdDurationSec, (sec) => setHoldDuration(sec * 1000), {
+  immediate: true,
+})
 watch(
   rangeIndex,
   (index) => {
@@ -360,6 +367,7 @@ onUnmounted(() => stop())
           v-model:direction="direction"
           v-model:rangeIndex="rangeIndex"
           v-model:difficulty="difficulty"
+          v-model:holdDurationSec="holdDurationSec"
           :showDirection="screen === 'walkIdle'"
         />
 

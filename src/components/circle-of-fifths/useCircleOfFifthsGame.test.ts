@@ -9,6 +9,8 @@ import type {
   PitchDetectionProvider,
 } from './useCircleOfFifthsGame'
 import {
+  GRACE_PERIOD_MS,
+  HOLD_DURATION_OPTIONS,
   SHOULD_PLAY_CLOSING_CHORD,
   useCircleOfFifthsGame,
 } from './useCircleOfFifthsGame'
@@ -268,6 +270,46 @@ describe('useCircleOfFifthsGame - walk', () => {
       keyIndex: 0,
     })
     expect(game.nextKeyIndex.value).toBe(1)
+  })
+
+  test.each([
+    { holdDurationMs: 300, expected: 'SO' },
+    { holdDurationMs: 750, expected: 'DO' },
+  ])(
+    'should be on $expected after 400ms of DO with a ${holdDurationMs}ms hold',
+    async ({ holdDurationMs, expected }) => {
+      const { game, mock } = setup()
+
+      game.setHoldDuration(holdDurationMs)
+      await game.startWalk()
+      await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+      mock.singMidi(60)
+      await vi.advanceTimersByTimeAsync(400)
+
+      expect(game.currentTarget.value?.solfege).toBe(expected)
+    },
+  )
+
+  test('should keep hold progress when the hold duration changes mid-note', async () => {
+    const { game, mock } = setup()
+
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    mock.singMidi(60)
+    await vi.advanceTimersByTimeAsync(400)
+
+    expect(game.currentTarget.value?.solfege).toBe('DO')
+
+    game.setHoldDuration(500)
+    await vi.advanceTimersByTimeAsync(150)
+
+    expect(game.currentTarget.value?.solfege).toBe('SO')
+  })
+
+  test('should offer only holds longer than the grace period', () => {
+    for (const sec of HOLD_DURATION_OPTIONS) {
+      expect(sec * 1000).toBeGreaterThan(GRACE_PERIOD_MS)
+    }
   })
 
   test('should ring no chord while the first reference note plays', async () => {
