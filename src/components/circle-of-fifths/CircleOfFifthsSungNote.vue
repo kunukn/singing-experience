@@ -27,9 +27,11 @@ const sungColor = computed(() =>
 </script>
 
 <template>
-  <!-- 1fr | label | 1fr: the label sits on the centre line, with the 🎤 and
-    the hint arrow either side, so nothing shifts as the label or the arrow
-    changes -->
+  <!-- 1fr | label | 1fr: the label sits on the centre line, with the hint
+    arrow and 🎤 on one side and the cents on the other, so nothing shifts as
+    the label, the cents or the arrow change. The arrow sits on the 🎤 side,
+    away from the cents: it points at the target, the cents measure the
+    singer's own note, and side by side the two could read as one. -->
   <div
     class="grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-x-[0.6cqi] text-[3.6cqi] font-semibold tabular-nums transition-colors"
     :class="sungColor"
@@ -37,18 +39,7 @@ const sungColor = computed(() =>
     :data-state="sungState ?? 'none'"
     :title="t('circleOfFifths.youAreSinging')"
   >
-    <span class="justify-self-end" aria-hidden="true">🎤</span>
-    <!-- Fixed width, sized for the widest label (D♭5) -->
-    <span class="w-[2em] text-center whitespace-nowrap">{{
-      sungLabel ?? '–'
-    }}</span>
-    <div class="flex items-center gap-x-[0.6cqi] justify-self-start">
-      <!-- Fixed width, sized for the widest reading (−70¢) -->
-      <CentsLabel
-        :cents="sungLabel === null ? null : sungCents"
-        class="min-w-[3.2em]"
-        data-testid="circle-target-cents"
-      />
+    <div class="flex items-center gap-x-[0.6cqi] justify-self-end">
       <div class="grid w-[4cqi] place-items-center">
         <span
           class="col-start-1 row-start-1"
@@ -73,6 +64,17 @@ const sungColor = computed(() =>
           <ArrowUpIcon class="size-[3.6cqi] rotate-180" />
         </span>
       </div>
+      <span aria-hidden="true">🎤</span>
     </div>
+    <!-- Fixed width, sized for the widest label (D♭5) -->
+    <span class="w-[2em] text-center whitespace-nowrap">{{
+      sungLabel ?? '–'
+    }}</span>
+    <!-- Fixed width, sized for the widest reading (−70¢) -->
+    <CentsLabel
+      :cents="sungLabel === null ? null : sungCents"
+      class="min-w-[3.2em] justify-self-start"
+      data-testid="circle-target-cents"
+    />
   </div>
 </template>
