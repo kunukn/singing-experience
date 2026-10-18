@@ -1,6 +1,6 @@
 <script setup lang="ts">
 type Props = {
-  elapsedSeconds: string
+  elapsedSeconds: number
 }
 
 defineProps<Props>()

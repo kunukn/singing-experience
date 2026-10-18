@@ -201,6 +201,8 @@ useDoReMiTonesLog({
 })
 
 const elapsedSeconds = computed(() => (elapsedMs.value / 1000).toFixed(1))
+/* Whole seconds while playing — a ticking tenths digit is stressful to watch; the complete screen keeps the decimal */
+const liveElapsedSeconds = computed(() => Math.floor(elapsedMs.value / 1000))
 
 /* Same resolved name the select shows, so the caption never reads "Major
  * (Ionian)" while the dropdown above it says "Dur". */
@@ -356,7 +358,7 @@ onUnmounted(() => {
       <!-- State: 2 -->
       <DoReMiPlayingPanel
         v-else-if="gameState === 'playing'"
-        :elapsedSeconds="elapsedSeconds"
+        :elapsedSeconds="liveElapsedSeconds"
         @stop="handleStop"
       />
 

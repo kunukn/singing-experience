@@ -148,6 +148,8 @@ const subtitle = computed(() => {
 })
 
 const elapsedSeconds = computed(() => (elapsedMs.value / 1000).toFixed(1))
+/* Whole seconds while playing — a ticking tenths digit is stressful to watch; the complete screen keeps the decimal */
+const liveElapsedSeconds = computed(() => Math.floor(elapsedMs.value / 1000))
 
 const targetDisplay = computed(() => {
   const target = currentTarget.value
@@ -425,7 +427,7 @@ onUnmounted(() => stop())
           v-if="screen === 'walking'"
           class="font-mono text-lg text-(--p-text-muted-color) tabular-nums"
         >
-          ⏱ {{ elapsedSeconds }}s
+          ⏱ {{ liveElapsedSeconds }}s
         </p>
       </template>
 

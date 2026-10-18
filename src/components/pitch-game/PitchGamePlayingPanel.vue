@@ -2,7 +2,7 @@
 type Props = {
   score: number
   totalTargets: number
-  elapsedSeconds: string
+  elapsedSeconds: number
 }
 
 defineProps<Props>()

@@ -272,6 +272,8 @@ const previewFrequency = computed(() => {
 })
 
 const elapsedSeconds = computed(() => (elapsedMs.value / 1000).toFixed(1))
+/* Whole seconds while playing — a ticking tenths digit is stressful to watch; the complete screen keeps the decimal */
+const liveElapsedSeconds = computed(() => Math.floor(elapsedMs.value / 1000))
 
 async function handleStart() {
   stopSequence()
@@ -324,7 +326,7 @@ onUnmounted(() => {
         v-else-if="gameState === 'playing'"
         :score="score"
         :totalTargets="targets.length"
-        :elapsedSeconds="elapsedSeconds"
+        :elapsedSeconds="liveElapsedSeconds"
         @stop="handleStop"
       />
 

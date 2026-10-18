@@ -180,6 +180,8 @@ const highlightedMidi = computed(() => {
 })
 
 const elapsedSeconds = computed(() => (elapsedMs.value / 1000).toFixed(1))
+/* Whole seconds while playing — a ticking tenths digit is stressful to watch; the complete screen keeps the decimal */
+const liveElapsedSeconds = computed(() => Math.floor(elapsedMs.value / 1000))
 
 const showSingHigherArrow = computed(
   () => tooLowMs.value >= TOO_LOW_OR_HIGH_HINT_MS,
@@ -391,7 +393,7 @@ onUnmounted(() => {
         <p
           class="min-w-20 text-end font-mono text-lg text-(--p-text-muted-color) tabular-nums"
         >
-          ⏱ {{ elapsedSeconds }}s
+          ⏱ {{ liveElapsedSeconds }}s
         </p>
         <PrimeTag severity="secondary" rounded
           >{{ completedCount }}/{{ gameTotalRounds }}</PrimeTag
