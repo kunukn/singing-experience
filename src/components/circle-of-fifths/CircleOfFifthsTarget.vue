@@ -16,7 +16,8 @@ defineProps<{
   showTooLow: boolean
   showTooHigh: boolean
   /* The chord the last lit key played; isNext marks the note to sing next,
-   * isGuide the chord note a half step below it (MI, when going fourths) */
+   * isGuide the chord note a half step below it (TI, the leading tone, when
+   * going fourths) */
   chordNotes: readonly { label: string; isNext: boolean; isGuide: boolean }[]
   isChordRinging: boolean
 }>()

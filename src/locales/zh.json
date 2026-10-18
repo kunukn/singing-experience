@@ -564,7 +564,7 @@
     "directionFifths": "五度 ↻",
     "directionFourths": "四度 ↺",
     "walkHintFifths": "先唱 DO，再唱 SO，跳到下一个调",
-    "walkHintFourths": "先唱 DO，再唱 FA，跳到下一个调",
+    "walkHintFourths": "把你的 DO 听成 SO，再唱新的 DO",
     "exploreHint": "点一个调听听看，然后唱出来",
     "tapAKey": "点一个调",
     "hearIt": "听一听",

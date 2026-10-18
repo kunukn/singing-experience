@@ -17,6 +17,9 @@ const LEAD_IN_S = 0.05
 
 /* Major triad as semitones above DO */
 export const TRIAD_OFFSETS = [0, 4, 7] as const
+/* Dominant 7th as semitones above its root: it leans into the key a fourth
+ * up — its MI is the new key's TI and rises to DO, its ♭7 falls to MI */
+export const DOMINANT_SEVENTH_OFFSETS = [0, 4, 7, 10] as const
 /*
  * I – IV – V – I in close voicing around DO: C-E-G, C-F-A, B-D-G, C-E-G in C.
  * Each chord moves as little as possible from the last, so the cadence stays
@@ -66,12 +69,16 @@ export function useCircleOfFifthsPlayback(options: PlaybackOptions = {}) {
     return soundingSeconds(REFERENCE_TONE_S)
   }
 
-  async function playTriad(tonic: number) {
+  async function playChord(tonic: number, offsets: readonly number[]) {
     stopSequence()
     await engine.warmUp()
-    playChordAt(tonic, TRIAD_OFFSETS, TRIAD_S, engine.getNow() + LEAD_IN_S)
+    playChordAt(tonic, offsets, TRIAD_S, engine.getNow() + LEAD_IN_S)
 
     return soundingSeconds(TRIAD_S)
+  }
+
+  function playTriad(tonic: number) {
+    return playChord(tonic, TRIAD_OFFSETS)
   }
 
   async function playCadence(tonic: number) {
@@ -113,6 +120,7 @@ export function useCircleOfFifthsPlayback(options: PlaybackOptions = {}) {
     isPlayingSequence: readonly(isPlayingSequence),
     currentChordIndex: readonly(currentChordIndex),
     playReference,
+    playChord,
     playTriad,
     playCadence,
     stopSequence,

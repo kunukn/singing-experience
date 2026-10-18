@@ -5,6 +5,7 @@ import { pitchClassOf } from '@/utils/scaleHighlight'
 import type { CircleDirection, CircleMode, CircleView } from './circleOfFifths'
 import {
   CIRCLE_KEYS,
+  FIFTH_SEMITONES,
   keyIndexOfPitchClass,
   keyNoteLabel,
   minorKeyIndexOfPitchClass,
@@ -12,6 +13,10 @@ import {
 } from './circleOfFifths'
 import type { LadderHighlight } from './CircleOfFifthsSolfegeLadder.vue'
 import { toCircleScreen } from './circleOfFifthsScreen'
+import {
+  DOMINANT_SEVENTH_OFFSETS,
+  TRIAD_OFFSETS,
+} from './useCircleOfFifthsPlayback'
 import type {
   CircleOfFifthsGameResult,
   SungState,
@@ -98,8 +103,18 @@ const viewOptions = computed(() => [
 const isWalkMode = computed(() => mode.value === 'walk')
 /* Which of the five screens is showing — the template switches on this */
 const screen = computed(() => toCircleScreen(phase.value, mode.value))
-const hopSolfege = computed(() =>
-  direction.value === 'clockwise' ? 'SO' : 'FA',
+/* Fifths hops DO → SO in the key just sung; fourths hears that note as SO of
+ * the next key and resolves to its DO */
+const hopLabel = computed(() =>
+  direction.value === 'clockwise' ? 'DO → SO' : 'SO → DO',
+)
+const WALK_LADDER_HIGHLIGHTS: readonly LadderHighlight[] = [
+  { solfege: 'DO', tone: 'major' },
+  { solfege: 'SO', tone: 'major' },
+]
+/* The dominant 7th in the key it resolves to: built on SO, so SO TI RE FA */
+const DOMINANT_SEVENTH_IN_KEY = DOMINANT_SEVENTH_OFFSETS.map((offset) =>
+  pitchClassOf(offset + FIFTH_SEMITONES),
 )
 /* The green pattern's notes and Find LA's, coloured like their buttons */
 const EXPLORE_LADDER_HIGHLIGHTS: readonly LadderHighlight[] = [
@@ -121,10 +136,11 @@ const ladder = computed(() => {
     return {
       keyIndex: currentTarget.value?.keyIndex ?? homeKeyIndex,
       startSolfege: 'DO' as const,
-      highlights: [
-        { solfege: 'DO', tone: 'major' },
-        { solfege: hopSolfege.value, tone: 'major' },
-      ] satisfies LadderHighlight[],
+      highlights: WALK_LADDER_HIGHLIGHTS,
+      chordSemitones:
+        direction.value === 'clockwise'
+          ? TRIAD_OFFSETS
+          : DOMINANT_SEVENTH_IN_KEY,
       isPlaceholder: false,
     }
   }
@@ -135,6 +151,7 @@ const ladder = computed(() => {
     keyIndex: keyIndex ?? homeKeyIndex,
     startSolfege: 'LA' as const,
     highlights: EXPLORE_LADDER_HIGHLIGHTS,
+    chordSemitones: TRIAD_OFFSETS,
     isPlaceholder: keyIndex === null,
   }
 })
@@ -162,10 +179,10 @@ const targetDisplay = computed(() => {
     }),
     solfege: target.solfege,
     noteLabel: wheelNoteLabel(target.midi),
-    /* The chord belongs to the key the target sits in (C while singing SO of
-     * C), so it's spelled by that key. The next note is in it only going
-     * clockwise — SO is the chord's top note, FA isn't in it. Going
-     * counter-clockwise MI is a half step below FA, so it guides the way. */
+    /* Spelled by the key the target sits in: C while singing SO of C, F
+     * while singing DO of F after C7. The next note is in the chord only
+     * going clockwise — SO is its top note. Going counter-clockwise the
+     * dominant 7th's TI sits a half step below DO, so it guides the way. */
     chordNotes: chordMidis.value.map((midi) => ({
       label: keyNoteLabel(midi, target.keyIndex),
       isNext: (midi - target.midi) % 12 === 0,
@@ -371,6 +388,7 @@ onUnmounted(() => stop())
         :keyIndex="ladder.keyIndex"
         :startSolfege="ladder.startSolfege"
         :highlights="ladder.highlights"
+        :chordSemitones="ladder.chordSemitones"
         :activeSolfege="ladderActiveSolfege"
       />
     </div>
@@ -552,9 +570,9 @@ onUnmounted(() => stop())
         v-else-if="screen === 'walkIdle' || screen === 'walkComplete'"
         class="flex flex-col items-center gap-[1cqi] leading-tight"
       >
-        <span class="text-[6cqi] font-bold text-(--p-text-muted-color)"
-          >DO → {{ hopSolfege }}</span
-        >
+        <span class="text-[6cqi] font-bold text-(--p-text-muted-color)">{{
+          hopLabel
+        }}</span>
         <span
           class="text-[4.4cqi] font-semibold tabular-nums transition-colors"
           :class="

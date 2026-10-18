@@ -9,7 +9,13 @@ import { TRIAD_OFFSETS } from './useCircleOfFifthsPlayback'
 export type LadderTone = 'major' | 'minor'
 export type LadderHighlight = { solfege: Solfege; tone: LadderTone }
 
-const { keyIndex, startSolfege, highlights, activeSolfege } = defineProps<{
+const {
+  keyIndex,
+  startSolfege,
+  highlights,
+  activeSolfege,
+  chordSemitones = TRIAD_OFFSETS,
+} = defineProps<{
   keyIndex: number
   /* DO → DO for the walk, whose hops climb from DO; LA → LA for Explore,
    * where Find LA drops below DO */
@@ -17,6 +23,9 @@ const { keyIndex, startSolfege, highlights, activeSolfege } = defineProps<{
   highlights: readonly LadderHighlight[]
   /* The syllable being sung right now, or null between rounds */
   activeSolfege: Solfege | null
+  /* The ringing chord as semitones above DO, marked with a dot — DO MI SO by
+   * default; SO TI RE FA for the dominant 7th going fourths */
+  chordSemitones?: readonly number[]
 }>()
 
 const { t } = useI18n()
@@ -90,9 +99,7 @@ const steps = computed(() => {
         tone === null
           ? MUTED_CHIP_CLASS
           : CHIP_CLASS[tone][isActive ? 'active' : 'highlighted'],
-      /* DO MI SO — the chord each key plays. SO is in it; FA sits a half
-       * step above MI, which is how the singer finds it going fourths */
-      isChordTone: (TRIAD_OFFSETS as readonly number[]).includes(row.semitones),
+      isChordTone: chordSemitones.includes(row.semitones),
       /* MI→FA and TI→DO, the scale's only half steps */
       isHalfStepUp:
         index > 0 && row.semitones - rows[index - 1].semitones === 1,

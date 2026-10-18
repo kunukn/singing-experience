@@ -7,9 +7,9 @@ import type { LadderHighlight } from './CircleOfFifthsSolfegeLadder.vue'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
 
-const walkHighlights = (hop: 'SO' | 'FA'): LadderHighlight[] => [
+const WALK_HIGHLIGHTS: LadderHighlight[] = [
   { solfege: 'DO', tone: 'major' },
-  { solfege: hop, tone: 'major' },
+  { solfege: 'SO', tone: 'major' },
 ]
 
 const EXPLORE_HIGHLIGHTS: LadderHighlight[] = [
@@ -24,7 +24,7 @@ function mountLadder(props = {}) {
     props: {
       keyIndex: 0,
       startSolfege: 'DO' as const,
-      highlights: walkHighlights('SO'),
+      highlights: WALK_HIGHLIGHTS,
       activeSolfege: null,
       ...props,
     },
@@ -77,10 +77,15 @@ describe('CircleOfFifthsSolfegeLadder - walk', () => {
     ])
   })
 
-  test('should highlight the bottom DO and FA for a walk in fourths', () => {
-    const wrapper = mountLadder({ highlights: walkHighlights('FA') })
+  test('should mark SO TI RE FA when a dominant 7th rings going fourths', () => {
+    const wrapper = mountLadder({ chordSemitones: [7, 11, 2, 5] })
 
-    expect(stepsWhere(wrapper, 'data-highlighted')).toEqual(['0:DO', '3:FA'])
+    expect(stepsWhere(wrapper, 'data-chord-tone')).toEqual([
+      '1:RE',
+      '3:FA',
+      '4:SO',
+      '6:TI',
+    ])
   })
 
   test('should mark only the syllable being sung as active', () => {

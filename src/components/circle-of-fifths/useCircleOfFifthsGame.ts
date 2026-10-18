@@ -23,11 +23,12 @@ import {
   type CircleOfFifthsPhase,
 } from './circleOfFifthsMachine'
 import {
+  DOMINANT_SEVENTH_OFFSETS,
   TRIAD_OFFSETS,
   useCircleOfFifthsPlayback,
 } from './useCircleOfFifthsPlayback'
 
-export type Solfege = 'DO' | 'MI' | 'SO' | 'FA' | 'LA'
+export type Solfege = 'DO' | 'MI' | 'SO' | 'LA'
 export type PatternId = 'doMiSo' | 'doLa'
 export type HopDirection = 'up' | 'down'
 /* How the sung note compares with the target */
@@ -93,6 +94,8 @@ const PATTERNS: Record<PatternId, { offsets: number[]; solfege: Solfege[] }> = {
 }
 
 const C_KEY_INDEX = 0
+/* A perfect fourth — SO sits this far below DO */
+const FOURTH_SEMITONES = 5
 
 export type CircleOfFifthsGameOptions = {
   pitchDetection?: PitchDetectionProvider
@@ -168,7 +171,14 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
   const currentTarget = computed<SingTarget | null>(
     () => targets.value[currentTargetIndex.value] ?? null,
   )
-  const currentKeyIndex = computed(() => currentTarget.value?.keyIndex ?? null)
+  /* The key the singer stands in — C while singing SO of C, and still C while
+   * singing DO of F going fourths, whose target already belongs to F */
+  const currentKeyIndex = computed(() => {
+    if (isWalking.value && currentTargetIndex.value > 0)
+      return walkOrder.value[currentTargetIndex.value - 1] ?? null
+
+    return currentTarget.value?.keyIndex ?? null
+  })
   /* Which way the current note jumps from the one just held — the walk hops
    * down a fourth instead of up a fifth whenever that keeps it in range, so
    * the note name alone doesn't say which octave to aim for */
@@ -385,12 +395,21 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
       return
     }
 
-    /* Each lit key plays its chord — the reward, and a reminder of where SO is */
-    chordMidis.value = TRIAD_OFFSETS.map((offset) => held.midi + offset)
+    /* Each lit key plays its chord — the reward, and a pointer to the next
+     * note: SO tops the triad going fifths; going fourths the dominant 7th
+     * pulls home to the next key's DO. That chord is rooted a fourth below
+     * the next note — an octave under the held note on a downward hop — so
+     * its TI is always the half step right below the target, never an
+     * octave off */
+    const isClockwise = direction.value === 'clockwise'
+    const offsets = isClockwise ? TRIAD_OFFSETS : DOMINANT_SEVENTH_OFFSETS
+    const nextTarget = targets.value[heldIndex + 1]
+    const root = isClockwise ? held.midi : nextTarget.midi - FOURTH_SEMITONES
+    chordMidis.value = offsets.map((offset) => root + offset)
     /* Shown from the moment it's triggered; the real length lands once the
      * engine has warmed up */
     chordUntilMs.value = Number.POSITIVE_INFINITY
-    void playDeaf(() => playback.playTriad(held.midi)).then((seconds) => {
+    void playDeaf(() => playback.playChord(root, offsets)).then((seconds) => {
       chordUntilMs.value = elapsedMs.value + seconds * 1000
     })
     litKeyIndices.value = [...litKeyIndices.value, walkOrder.value[heldIndex]]
@@ -432,15 +451,17 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
 
   function buildWalkTargets(): SingTarget[] {
     const steps = buildWalkSteps(direction.value, range.value)
-    /* Clockwise hops up a fifth (SO); counter-clockwise up a fourth (FA) */
-    const hopSolfege: Solfege = direction.value === 'clockwise' ? 'SO' : 'FA'
+    /* Clockwise hops to SO of the key just sung. Counter-clockwise lands on
+     * the same pitch as FA, heard as DO of the next key instead: the held
+     * note is that key's SO, and SO → DO is the easiest resolution to hear */
+    const isClockwise = direction.value === 'clockwise'
 
     return [
       { midi: steps[0].rootMidi, solfege: 'DO', keyIndex: C_KEY_INDEX },
-      ...steps.map((step) => ({
+      ...steps.map((step, index) => ({
         midi: step.nextMidi,
-        solfege: hopSolfege,
-        keyIndex: step.keyIndex,
+        solfege: isClockwise ? ('SO' as const) : ('DO' as const),
+        keyIndex: isClockwise ? step.keyIndex : walkOrder.value[index + 1],
       })),
     ]
   }

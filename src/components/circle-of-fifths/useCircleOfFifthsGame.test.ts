@@ -397,17 +397,51 @@ describe('useCircleOfFifthsGame - walk', () => {
     expect(game.hopDirection.value).toBe('up')
   })
 
-  test('should hop up a fourth (FA) when walking counter-clockwise', async () => {
+  test('should hop up a fourth to DO of the next key when walking counter-clockwise', async () => {
     const { game, holdCurrentTarget } = setup()
     game.setDirection('counterClockwise')
 
     await game.startWalk()
     await holdCurrentTarget()
 
-    expect(game.currentTarget.value?.solfege).toBe('FA')
-    expect(game.currentTarget.value?.midi).toBe(65)
+    expect(game.currentTarget.value).toEqual({
+      midi: 65,
+      solfege: 'DO',
+      keyIndex: 11,
+    })
+    expect(game.currentKeyIndex.value).toBe(0)
     expect(game.nextKeyIndex.value).toBe(11)
     expect(game.hopDirection.value).toBe('up')
+  })
+
+  test('should ring a dominant 7th after DO when walking counter-clockwise', async () => {
+    const { game, mock } = setup()
+    game.setDirection('counterClockwise')
+
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    mock.singMidi(60)
+    await vi.waitFor(() => expect(game.isChordRinging.value).toBe(true))
+
+    expect(game.chordMidis.value).toEqual([60, 64, 67, 70])
+  })
+
+  test('should voice the dominant 7th so its TI sits a half step below the target on every hop', async () => {
+    const { game, holdCurrentTarget } = setup()
+    game.setDirection('counterClockwise')
+
+    await game.startWalk()
+    const hopDirections = new Set<string | null>()
+    for (let hold = 0; hold < 12; hold++) {
+      await holdCurrentTarget()
+      const target = game.currentTarget.value
+      if (!target) throw new Error('No current target')
+
+      hopDirections.add(game.hopDirection.value)
+      expect(game.chordMidis.value[1]).toBe(target.midi - 1)
+    }
+
+    expect(hopDirections).toEqual(new Set(['up', 'down']))
   })
 
   test('should light all 12 keys and finish back on C', async () => {

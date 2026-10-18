@@ -38,7 +38,7 @@ export const CIRCLE_MODES = [
 const KEY_COUNT = 12
 const DEGREES_PER_KEY = 360 / KEY_COUNT
 /* A perfect fifth is 7 semitones — stepping by it visits all 12 pitch classes */
-const FIFTH_SEMITONES = 7
+export const FIFTH_SEMITONES = 7
 /* The relative minor's tonic (LA) sits 9 semitones above DO */
 const RELATIVE_MINOR_SEMITONES = 9
 /* F♯ / G♭ — the one key spelled both ways at the bottom of the circle */

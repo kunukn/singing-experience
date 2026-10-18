@@ -564,7 +564,7 @@
     "directionFifths": "五度 ↻",
     "directionFourths": "四度 ↺",
     "walkHintFifths": "DO、つぎに SO を歌って次の調へジャンプ",
-    "walkHintFourths": "DO、つぎに FA を歌って次の調へジャンプ",
+    "walkHintFourths": "いまの DO を SO として聴いて、新しい DO を歌おう",
     "exploreHint": "調をタップして聴いてから歌おう",
     "tapAKey": "調をタップ",
     "hearIt": "聴く",
