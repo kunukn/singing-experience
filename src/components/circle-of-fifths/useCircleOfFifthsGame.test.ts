@@ -69,7 +69,13 @@ function createMockPitchDetection({ canListen = true } = {}) {
     isClean.value = true
   }
 
-  return { provider, singMidi }
+  function silence() {
+    frequency.value = null
+    noteInfo.value = null
+    isClean.value = false
+  }
+
+  return { provider, singMidi, silence }
 }
 
 function setup(options: Partial<CircleOfFifthsGameOptions> = {}) {
@@ -188,6 +194,65 @@ describe('useCircleOfFifthsGame - walk', () => {
 
     expect(game.sungMidi.value).toBe(60)
     expect(game.isSingingCorrectNote.value).toBe(true)
+  })
+
+  test('should keep the sung note while the pitch hovers between two semitones', async () => {
+    const { game, mock } = setup()
+
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    mock.singMidi(66, 45)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.sungMidi.value).toBe(66)
+
+    /* Just past the midpoint, still inside the dead band */
+    mock.singMidi(67, -45)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.sungMidi.value).toBe(66)
+
+    /* Clear of the dead band */
+    mock.singMidi(67, -25)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.sungMidi.value).toBe(67)
+  })
+
+  test('should name the target while a pass sits inside the dead band', async () => {
+    const { game, mock } = setup()
+
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    mock.singMidi(59, 45)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.sungMidi.value).toBe(59)
+
+    /* 45 cents flat of DO passes on easy */
+    mock.singMidi(60, -45)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.isSingingCorrectNote.value).toBe(true)
+    expect(game.sungMidi.value).toBe(60)
+  })
+
+  test('should round afresh after silence', async () => {
+    const { game, mock } = setup()
+
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    mock.singMidi(66, 45)
+    await vi.advanceTimersByTimeAsync(100)
+    mock.silence()
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.sungMidi.value).toBeNull()
+
+    mock.singMidi(67, -45)
+    await vi.advanceTimersByTimeAsync(100)
+
+    expect(game.sungMidi.value).toBe(67)
   })
 
   test('should light C and move on to SO after holding DO', async () => {

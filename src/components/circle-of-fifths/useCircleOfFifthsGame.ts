@@ -3,7 +3,11 @@ import type { ToneEngine } from '@/composables/toneEngine'
 import type { Difficulty } from '@/constants/difficulty'
 import { DEFAULT_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import type { NoteInfo } from '@/utils/noteUtils'
-import { frequencyToCents, midiToFrequency } from '@/utils/noteUtils'
+import {
+  frequencyToCents,
+  midiToFrequency,
+  snapMidiWithHysteresis,
+} from '@/utils/noteUtils'
 import { CLEAN_CENTS, CLOSE_CENTS, OFF_CENTS } from '@/utils/pitchColors'
 import type { CircleDirection, MidiWindow } from './circleOfFifths'
 import {
@@ -51,6 +55,13 @@ export const DEFAULT_HOLD_DURATION_MS = 750
 export const GRACE_PERIOD_MS = 250
 /* Delay before showing "too low" / "too high" hint arrow — avoids flashing during brief pitch drift */
 export const TOO_LOW_OR_HIGH_HINT_MS = 500
+/* The sung note keeps its name until the pitch is 70 cents away — a fifth of
+ * a semitone past the midpoint — so a slightly flat voice settles on one note.
+ * Semitone neighbours sit on opposite sides of the wheel, so every flip would
+ * throw the outline across it. Wider than SingFly's 0.6: there a median filter
+ * steadies the pitch first, here only the EMA does. Kept under 0.8 so a voice
+ * on pitch (CLOSE_CENTS) is always named by its own note. */
+export const SUNG_NOTE_HYSTERESIS_SEMITONES = 0.7
 /* Extra deaf time after a tone's release tail, for audio scheduling jitter */
 const DEAF_BUFFER_MS = 250
 export const DEFAULT_DIFFICULTY: Difficulty = 'easy'
@@ -189,12 +200,13 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
   const isDeaf = computed(() => elapsedMs.value < deafUntilMs.value)
   const isChordRinging = computed(() => elapsedMs.value < chordUntilMs.value)
 
-  /* The note the singer is on right now — hidden while a reference tone rings
-   * so the speaker never shows up as the singer's voice */
-  const sungMidi = computed(() => {
+  /* The singer's continuous pitch — hidden while a reference tone rings so the
+   * speaker never shows up as the singer's voice */
+  const heardMidi = computed(() => {
     if (!isSinging.value || isDeaf.value || !isClean.value) return null
+    if (!noteInfo.value) return null
 
-    return noteInfo.value?.midiNote ?? null
+    return noteInfo.value.midiNote + noteInfo.value.cents / 100 // 100 cents per semitone
   })
 
   const isSingingCorrectNote = computed(() => {
@@ -205,6 +217,32 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     return (
       noteInfo.value.midiNote === currentTarget.value.midi &&
       Math.abs(centsFromTarget.value) <= maxCentsDeviation.value
+    )
+  })
+
+  /* The note the singer is on, held through a hover between two semitones
+   * (SUNG_NOTE_HYSTERESIS_SEMITONES). Display only — scoring reads the raw
+   * pitch — and a pass always names the target, so the label never disagrees
+   * with the green. Silence clears it, so each new note starts fresh. */
+  const sungMidi = ref<number | null>(null)
+
+  watch([heardMidi, isSingingCorrectNote], ([midi, isCorrect]) => {
+    if (midi === null) {
+      sungMidi.value = null
+
+      return
+    }
+
+    if (isCorrect && currentTarget.value) {
+      sungMidi.value = currentTarget.value.midi
+
+      return
+    }
+
+    sungMidi.value = snapMidiWithHysteresis(
+      midi,
+      sungMidi.value,
+      SUNG_NOTE_HYSTERESIS_SEMITONES,
     )
   })
 
@@ -572,7 +610,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     chordMidis: readonly(chordMidis),
     isChordRinging,
     isSingingCorrectNote,
-    sungMidi,
+    sungMidi: readonly(sungMidi),
     isListening,
     error,
     isPlayingSequence: playback.isPlayingSequence,
