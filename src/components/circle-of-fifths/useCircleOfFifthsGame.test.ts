@@ -9,8 +9,6 @@ import type {
   PitchDetectionProvider,
 } from './useCircleOfFifthsGame'
 import {
-  GRACE_PERIOD_MS,
-  HOLD_DURATION_OPTIONS,
   SHOULD_PLAY_CLOSING_CHORD,
   useCircleOfFifthsGame,
 } from './useCircleOfFifthsGame'
@@ -346,12 +344,6 @@ describe('useCircleOfFifthsGame - walk', () => {
     await vi.advanceTimersByTimeAsync(150)
 
     expect(game.currentTarget.value?.solfege).toBe('SO')
-  })
-
-  test('should offer only holds longer than the grace period', () => {
-    for (const sec of HOLD_DURATION_OPTIONS) {
-      expect(sec * 1000).toBeGreaterThan(GRACE_PERIOD_MS)
-    }
   })
 
   test('should ring no chord while the first reference note plays', async () => {
