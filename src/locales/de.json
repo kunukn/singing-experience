@@ -37,6 +37,7 @@
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Oktave tiefer",
     "octaveUp": "Oktave höher",
+    "octave": "Oktave",
     "congratulations": "Herzlichen Glückwunsch!",
     "gameOver": "Spiel vorbei",
     "playAgain": "Nochmal spielen",

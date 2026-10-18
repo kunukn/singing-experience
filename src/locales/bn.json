@@ -37,6 +37,7 @@
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "অকটেভ নিচে",
     "octaveUp": "অকটেভ উপরে",
+    "octave": "অকটেভ",
     "congratulations": "অভিনন্দন!",
     "gameOver": "খেলা শেষ",
     "playAgain": "আবার খেলুন",

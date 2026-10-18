@@ -2,13 +2,19 @@
 import type { Difficulty } from '@/constants/difficulty'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { pitchClassOf } from '@/utils/scaleHighlight'
-import type { CircleDirection, CircleMode, CircleView } from './circleOfFifths'
+import type {
+  CircleDirection,
+  CircleMode,
+  CircleView,
+  OctaveShift,
+} from './circleOfFifths'
 import {
   CIRCLE_KEYS,
   FIFTH_SEMITONES,
   keyIndexOfPitchClass,
   keyNoteLabel,
   minorKeyIndexOfPitchClass,
+  shiftRange,
   wheelNoteLabel,
 } from './circleOfFifths'
 import type { LadderHighlight } from './CircleOfFifthsSolfegeLadder.vue'
@@ -47,6 +53,7 @@ const holdDurationSec = defineModel<number>('holdDurationSec', {
   required: true,
 })
 const rangeIndex = defineModel<number>('rangeIndex', { required: true })
+const octaveShift = defineModel<OctaveShift>('octaveShift', { required: true })
 
 const { t } = useI18n()
 
@@ -344,10 +351,10 @@ watch(holdDurationSec, (sec) => setHoldDuration(sec * 1000), {
   immediate: true,
 })
 watch(
-  rangeIndex,
-  (index) => {
+  [rangeIndex, octaveShift],
+  ([index, octaves]) => {
     const range = VOICE_RANGES[index]
-    if (range) setRange(range)
+    if (range) setRange(shiftRange(range, octaves))
   },
   { immediate: true },
 )
@@ -479,6 +486,7 @@ onUnmounted(() => stop())
         <CircleOfFifthsSettingsRow
           v-model:direction="direction"
           v-model:rangeIndex="rangeIndex"
+          v-model:octaveShift="octaveShift"
           v-model:difficulty="difficulty"
           v-model:holdDurationSec="holdDurationSec"
           :showDirection="screen === 'walkIdle'"

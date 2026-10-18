@@ -37,6 +37,7 @@
     "voiceTypeSpanCoverage": "{name}، {from}–{to}، {percent}%",
     "octaveDown": "أوكتاف لأسفل",
     "octaveUp": "أوكتاف لأعلى",
+    "octave": "أوكتاف",
     "congratulations": "تهانينا!",
     "gameOver": "انتهت اللعبة",
     "playAgain": "العب مرة أخرى",

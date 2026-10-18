@@ -37,6 +37,7 @@
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Октава вниз",
     "octaveUp": "Октава вверх",
+    "octave": "Октава",
     "congratulations": "Поздравляем!",
     "gameOver": "Игра окончена",
     "playAgain": "Играть снова",

@@ -37,6 +37,7 @@
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Oktav ned",
     "octaveUp": "Oktav op",
+    "octave": "Oktav",
     "congratulations": "Tillykke!",
     "gameOver": "Spillet er slut",
     "playAgain": "Spil igen",

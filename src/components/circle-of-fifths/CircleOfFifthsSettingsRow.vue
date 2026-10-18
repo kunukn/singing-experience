@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { ToneMode } from '@/composables/toneEngine'
 import { DIFFICULTY_OPTIONS, type Difficulty } from '@/constants/difficulty'
-import type { CircleDirection } from './circleOfFifths'
+import type { CircleDirection, OctaveShift } from './circleOfFifths'
+import { OCTAVE_SHIFTS } from './circleOfFifths'
 import { HOLD_DURATION_OPTIONS } from './useCircleOfFifthsGame'
 
 const { showDirection = true } = defineProps<{
@@ -10,12 +11,24 @@ const { showDirection = true } = defineProps<{
 
 const direction = defineModel<CircleDirection>('direction', { required: true })
 const rangeIndex = defineModel<number>('rangeIndex', { required: true })
+const octaveShift = defineModel<OctaveShift>('octaveShift', { required: true })
 const difficulty = defineModel<Difficulty>('difficulty', { required: true })
 const holdDurationSec = defineModel<number>('holdDurationSec', {
   required: true,
 })
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
+
+/* +1 at the top, like every other quantity — see "Vertical Ordering" */
+const octaveShiftOptions = computed(() => {
+  const format = new Intl.NumberFormat(locale.value, {
+    signDisplay: 'exceptZero',
+  })
+
+  return [...OCTAVE_SHIFTS]
+    .toReversed()
+    .map((octaves) => ({ label: format.format(octaves), value: octaves }))
+})
 
 const directionOptions = computed(() => [
   { label: t('circleOfFifths.directionFifths'), value: 'clockwise' },
@@ -82,6 +95,21 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     <div class="settings-item">
       <label
         class="hidden text-end text-sm text-(--p-text-muted-color) md:block"
+        >{{ t('generic.octave') }}</label
+      >
+      <PrimeSelect
+        v-model="octaveShift"
+        :options="octaveShiftOptions"
+        optionLabel="label"
+        optionValue="value"
+        size="small"
+        :aria-label="t('generic.octave')"
+      />
+    </div>
+
+    <div class="settings-item">
+      <label
+        class="hidden text-end text-sm text-(--p-text-muted-color) md:block"
         >{{ t('generic.difficulty') }}</label
       >
       <PrimeSelect
@@ -129,6 +157,6 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 @reference '@/style.css';
 
 .settings-row {
-  @apply md:grid-cols-[repeat(4,auto)] lg:grid-cols-[repeat(6,auto)] xl:grid-cols-[repeat(10,auto)];
+  @apply md:grid-cols-[repeat(4,auto)] lg:grid-cols-[repeat(6,auto)] xl:grid-cols-[repeat(12,auto)];
 }
 </style>

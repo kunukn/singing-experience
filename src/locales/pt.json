@@ -37,6 +37,7 @@
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Oitava abaixo",
     "octaveUp": "Oitava acima",
+    "octave": "Oitava",
     "congratulations": "Parabéns!",
     "gameOver": "Fim de jogo",
     "playAgain": "Jogar novamente",

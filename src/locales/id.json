@@ -37,6 +37,7 @@
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Turun satu oktaf",
     "octaveUp": "Naik satu oktaf",
+    "octave": "Oktaf",
     "congratulations": "Selamat!",
     "gameOver": "Permainan selesai",
     "playAgain": "Main Lagi",

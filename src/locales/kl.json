@@ -34,6 +34,7 @@
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Octave down",
     "octaveUp": "Octave up",
+    "octave": "Octave",
     "congratulations": "Pilluarit!",
     "gameOver": "Pinnguarneq naavoq",
     "playAgain": "Pinnguarit aqqissaaq",

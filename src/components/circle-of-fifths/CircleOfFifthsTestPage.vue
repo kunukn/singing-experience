@@ -7,7 +7,12 @@ import {
   NOTE_NAMES,
   NOTE_OPTIONS_HIGH_TO_LOW,
 } from '@/utils/noteUtils'
-import type { CircleDirection, CircleMode, CircleView } from './circleOfFifths'
+import type {
+  CircleDirection,
+  CircleMode,
+  CircleView,
+  OctaveShift,
+} from './circleOfFifths'
 import CircleOfFifthsDisplay from './CircleOfFifthsDisplay.vue'
 import type { SingTarget } from './useCircleOfFifthsGame'
 import {
@@ -24,6 +29,7 @@ const selectedView = ref<CircleView>('fifths')
 const selectedDifficulty = ref<Difficulty>(DEFAULT_DIFFICULTY)
 const selectedHoldDurationSec = ref(DEFAULT_HOLD_DURATION_MS / 1000)
 const selectedRangeIndex = ref(DEFAULT_RANGE_INDEX)
+const selectedOctaveShift = ref<OctaveShift>(0)
 
 const selectedNote = ref<NoteName>('C')
 const selectedOctave = ref(4)
@@ -80,6 +86,7 @@ function matchTarget(target: SingTarget | null) {
     v-model:difficulty="selectedDifficulty"
     v-model:holdDurationSec="selectedHoldDurationSec"
     v-model:rangeIndex="selectedRangeIndex"
+    v-model:octaveShift="selectedOctaveShift"
   >
     <template #default="{ phase, currentTarget }">
       <div

@@ -2,7 +2,13 @@
 import { DIFFICULTY_OPTIONS, type Difficulty } from '@/constants/difficulty'
 import { useLocalStorage } from '@vueuse/core'
 import type { CircleDirection, CircleMode, CircleView } from './circleOfFifths'
-import { CIRCLE_DIRECTIONS, CIRCLE_MODES, CIRCLE_VIEWS } from './circleOfFifths'
+import type { OctaveShift } from './circleOfFifths'
+import {
+  CIRCLE_DIRECTIONS,
+  CIRCLE_MODES,
+  CIRCLE_VIEWS,
+  OCTAVE_SHIFTS,
+} from './circleOfFifths'
 import CircleOfFifthsDisplay from './CircleOfFifthsDisplay.vue'
 import {
   DEFAULT_DIFFICULTY,
@@ -52,6 +58,14 @@ if (!HOLD_DURATION_OPTIONS.includes(selectedHoldDurationSec.value as never)) {
 
 const selectedRangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
+const selectedOctaveShift = useLocalStorage<OctaveShift>(
+  'syng.circleOfFifthsOctaveShift',
+  0,
+)
+if (!OCTAVE_SHIFTS.includes(selectedOctaveShift.value)) {
+  selectedOctaveShift.value = 0
+}
+
 const game = useCircleOfFifthsGame()
 </script>
 
@@ -64,5 +78,6 @@ const game = useCircleOfFifthsGame()
     v-model:difficulty="selectedDifficulty"
     v-model:holdDurationSec="selectedHoldDurationSec"
     v-model:rangeIndex="selectedRangeIndex"
+    v-model:octaveShift="selectedOctaveShift"
   />
 </template>

@@ -37,6 +37,7 @@
     "voiceTypeSpanCoverage": "{name}、{from}–{to}、{percent}%",
     "octaveDown": "1オクターブ下げる",
     "octaveUp": "1オクターブ上げる",
+    "octave": "オクターブ",
     "congratulations": "おめでとう!",
     "gameOver": "ゲーム終了",
     "playAgain": "もう一度",

@@ -13,6 +13,7 @@ const STORAGE_KEYS = [
   'syng.circleOfFifthsDirection',
   'syng.circleOfFifthsHoldDurationSec',
   'syng.circleOfFifthsMode',
+  'syng.circleOfFifthsOctaveShift',
   'syng.circleOfFifthsView',
   'syng.clarityThreshold',
   'syng.darkMode',

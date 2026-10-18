@@ -157,6 +157,26 @@ export function wedgePath(innerRadius: number, outerRadius: number) {
 }
 
 /*
+ * Octaves the singer can move every note by, on top of the voice range. Each
+ * range picks the octave that sits in its middle, which isn't always the one
+ * the singer wants — Baritone plays C as C4, though C3 fits too.
+ */
+export const OCTAVE_SHIFTS = [-1, 0, 1] as const
+export type OctaveShift = (typeof OCTAVE_SHIFTS)[number]
+
+const OCTAVE_SEMITONES = 12
+
+/* The voice range moved by whole octaves, so every placement moves with it */
+export function shiftRange(range: MidiWindow, octaves: number): MidiWindow {
+  const semitones = octaves * OCTAVE_SEMITONES
+
+  return {
+    midiMin: range.midiMin + semitones,
+    midiMax: range.midiMax + semitones,
+  }
+}
+
+/*
  * The 12 semitones in the middle of the voice range, where the walk's targets
  * live. A fifth up and a fourth down land on the same note name exactly an
  * octave apart, so exactly one of them always falls inside a 12-note window:

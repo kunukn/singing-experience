@@ -15,6 +15,7 @@ import {
   majorScaleSpelling,
   minorKeyIndexOfPitchClass,
   placePitchClass,
+  shiftRange,
   wheelNoteLabel,
   walkKeyOrder,
   walkWindow,
@@ -272,4 +273,16 @@ describe('circleOfFifths - voice range placement', () => {
       })
     },
   )
+
+  test('an octave shift moves the walk and DO MI SO by 12 semitones', () => {
+    const baritone = { midiMin: 45, midiMax: 69 }
+    const offsets = [0, 4, 7, 4, 0]
+    const placeC = (octaves: number) =>
+      placePattern(0, offsets, shiftRange(baritone, octaves))
+
+    expect([placeC(-1), placeC(0), placeC(1)]).toEqual([48, 60, 72])
+    expect(
+      buildWalkSteps('clockwise', shiftRange(baritone, -1))[0].rootMidi,
+    ).toBe(buildWalkSteps('clockwise', baritone)[0].rootMidi - 12)
+  })
 })
