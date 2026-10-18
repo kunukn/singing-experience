@@ -249,6 +249,33 @@ describe('useCircleOfFifthsGame - walk', () => {
     expect(mock.provider.stop).toHaveBeenCalled()
   })
 
+  test('should keep the mic open until the closing chord has rung out', async () => {
+    const { game, mock, holdCurrentTarget } = setup()
+
+    await game.startWalk()
+    for (let hold = 0; hold < 12; hold++) await holdCurrentTarget()
+    mock.singMidi(game.currentTarget.value!.midi)
+    await vi.waitFor(() => expect(game.phase.value).toBe('walkComplete'))
+
+    expect(mock.provider.stop).not.toHaveBeenCalled()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+    expect(mock.provider.stop).toHaveBeenCalledTimes(1)
+  })
+
+  test('should not close the mic on a replay started while the chord rings', async () => {
+    const { game, mock, holdCurrentTarget } = setup()
+
+    await game.startWalk()
+    for (let hold = 0; hold < 12; hold++) await holdCurrentTarget()
+    mock.singMidi(game.currentTarget.value!.midi)
+    await vi.waitFor(() => expect(game.phase.value).toBe('walkComplete'))
+    await game.startWalk()
+    await vi.advanceTimersByTimeAsync(HOLD_STEP_MS)
+
+    expect(game.phase.value).toBe('walking')
+    expect(mock.provider.stop).not.toHaveBeenCalled()
+  })
+
   test('should reject a note just outside CLEAN_CENTS on hard', async () => {
     const { game, mock } = setup({ difficulty: 'hard' })
 

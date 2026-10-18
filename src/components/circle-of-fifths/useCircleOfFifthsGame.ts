@@ -264,17 +264,40 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
 
   /* Plays a tone and ignores the mic until its release tail has gone. The
    * window opens before the await so nothing scores while the engine warms
-   * up. */
+   * up. Resolves to the seconds the tone sounds for (0 if it failed). */
   async function playDeaf(play: () => Promise<number>) {
     deafUntilMs.value = Number.POSITIVE_INFINITY
     try {
       const seconds = await play()
       deafUntilMs.value = elapsedMs.value + seconds * 1000 + DEAF_BUFFER_MS
+      return seconds
     } catch (playError) {
       /* No sound means nothing to mask — keep the round playable */
       deafUntilMs.value = 0
       debugLog('[CircleOfFifths] tone failed', playError)
+      return 0
     }
+  }
+
+  /* Releasing the mic switches the audio session back to playback, and that
+   * switch cuts off whatever is sounding — so the closing chord rings out
+   * first. Play Again inside the window leaves the complete phase, so the mic
+   * stays open for the new walk. */
+  let micReleaseTimeoutId: ReturnType<typeof setTimeout> | null = null
+
+  function releaseMicAfter(seconds: number) {
+    cancelMicRelease()
+    micReleaseTimeoutId = setTimeout(() => {
+      micReleaseTimeoutId = null
+      if (isWalkComplete.value) stopDetection()
+    }, seconds * 1000)
+  }
+
+  function cancelMicRelease() {
+    if (micReleaseTimeoutId === null) return
+
+    clearTimeout(micReleaseTimeoutId)
+    micReleaseTimeoutId = null
   }
 
   function advanceTarget() {
@@ -295,12 +318,12 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
   function advanceWalk(heldIndex: number, held: SingTarget, isLast: boolean) {
     const reachedKeyIndex = walkOrder.value[heldIndex]
     /* Each lit key plays its chord — the reward, and a reminder of where SO is */
-    void playDeaf(() => playback.playTriad(held.midi))
+    const chord = playDeaf(() => playback.playTriad(held.midi))
 
     if (isLast) {
       send({ type: 'COMPLETE' })
       stopTimer()
-      stopDetection()
+      void chord.then(releaseMicAfter)
 
       return
     }
@@ -404,6 +427,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     if (snapshot.value.status === 'active') {
       send({ type: 'RESET' })
     }
+    cancelMicRelease()
     stopTimer()
     stopDetection()
     playback.stopSequence()
