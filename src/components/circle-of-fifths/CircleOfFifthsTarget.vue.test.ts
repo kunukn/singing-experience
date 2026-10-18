@@ -9,7 +9,7 @@ const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
 function mountTarget(props = {}) {
   return mount(CircleOfFifthsTarget, {
     props: {
-      keyLabel: 'D♭',
+      keyLabel: 'D♭ major',
       solfege: 'SO' as const,
       noteLabel: 'A♭3',
       hopDirection: 'up' as const,

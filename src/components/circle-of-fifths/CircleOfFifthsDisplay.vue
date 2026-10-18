@@ -105,7 +105,10 @@ const targetDisplay = computed(() => {
   if (!target || !isSinging.value) return null
 
   return {
-    keyLabel: CIRCLE_KEYS[target.keyIndex].label,
+    /* "E major", not a bare "E" — alone it reads as a note to sing */
+    keyLabel: t('circleOfFifths.keyMajor', {
+      key: CIRCLE_KEYS[target.keyIndex].label,
+    }),
     solfege: target.solfege,
     noteLabel: wheelNoteLabel(target.midi),
     /* The chord belongs to the key the target sits in (C while singing SO of
