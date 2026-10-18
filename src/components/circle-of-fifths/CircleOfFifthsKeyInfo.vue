@@ -14,6 +14,16 @@ const { t } = useI18n()
 const key = computed(() =>
   keyIndex === null ? null : (CIRCLE_KEYS[keyIndex] ?? null),
 )
+
+const signatureLabel = computed(() => {
+  if (!key.value?.accidentalType) return t('circleOfFifths.noAccidentals')
+
+  const notes = key.value.signatureNotes.join(' ')
+
+  return key.value.accidentalType === 'sharp'
+    ? t('circleOfFifths.signatureSharps', { notes })
+    : t('circleOfFifths.signatureFlats', { notes })
+})
 </script>
 
 <template>
@@ -38,11 +48,11 @@ const key = computed(() =>
         >{{ CADENCE_NUMERALS[chordIndex] }}</span
       >
     </span>
-    <span class="text-[3.2cqi] text-(--p-text-muted-color)">{{
-      key.signatureNotes.length > 0
-        ? key.signatureNotes.join(' ')
-        : t('circleOfFifths.noAccidentals')
-    }}</span>
+    <!-- 30cqi keeps the 5–6 note signatures off the round edge of the 36cqi hub -->
+    <span
+      class="max-w-[30cqi] text-[3.2cqi] text-balance text-(--p-text-muted-color)"
+      >{{ signatureLabel }}</span
+    >
     <span class="text-[3.2cqi] text-(--p-purple-500)">{{
       t('circleOfFifths.relativeMinor', { key: key.minorLabel })
     }}</span>
