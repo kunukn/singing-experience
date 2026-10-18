@@ -143,11 +143,8 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
   const currentTargetIndex = ref(0)
   /* Keys lit by the walk, in the order they were reached */
   const litKeyIndices = ref<number[]>([])
-  const exploredKeyIndices = ref<number[]>([])
-  const exploredMinorKeyIndices = ref<number[]>([])
   const selectedKeyIndex = ref<number | null>(null)
   const activePattern = ref<PatternId | null>(null)
-  const patternKeyIndex = ref<number | null>(null)
 
   const holdTimeMs = ref(0)
   const graceTimeMs = ref(0)
@@ -430,17 +427,6 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
   }
 
   function completePattern() {
-    const keyIndex = patternKeyIndex.value
-    if (keyIndex !== null) {
-      const explored =
-        activePattern.value === 'doLa'
-          ? exploredMinorKeyIndices
-          : exploredKeyIndices
-      if (!explored.value.includes(keyIndex)) {
-        explored.value = [...explored.value, keyIndex]
-      }
-    }
-
     /* COMPLETE before stopDetection, so the isListening watch below sees an
      * idle phase and doesn't treat it as a lost mic. */
     send({ type: 'COMPLETE' })
@@ -471,7 +457,6 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     targets.value = []
     currentTargetIndex.value = 0
     activePattern.value = null
-    patternKeyIndex.value = null
     deafUntilMs.value = 0
     chordMidis.value = []
     chordUntilMs.value = 0
@@ -511,7 +496,6 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     elapsedMs.value = 0
     selectedKeyIndex.value = keyIndex
     activePattern.value = patternId
-    patternKeyIndex.value = keyIndex
     targets.value = pattern.offsets.map((offset, index) => ({
       midi: tonic + offset,
       solfege: pattern.solfege[index],
@@ -635,8 +619,6 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
     nextKeyIndex,
     walkStartMidi,
     litKeyIndices: readonly(litKeyIndices),
-    exploredKeyIndices: readonly(exploredKeyIndices),
-    exploredMinorKeyIndices: readonly(exploredMinorKeyIndices),
     selectedKeyIndex: readonly(selectedKeyIndex),
     activePattern: readonly(activePattern),
     centsFromTarget,

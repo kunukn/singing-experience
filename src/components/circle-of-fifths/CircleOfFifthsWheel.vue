@@ -15,8 +15,6 @@ type KeyStatus = 'target' | 'home' | 'selected' | 'done' | 'idle'
 const {
   view,
   litKeyIndices = [],
-  exploredKeyIndices = [],
-  exploredMinorKeyIndices = [],
   currentKeyIndex = null,
   nextKeyIndex = null,
   selectedKeyIndex = null,
@@ -31,8 +29,6 @@ const {
 } = defineProps<{
   view: CircleView
   litKeyIndices?: readonly number[]
-  exploredKeyIndices?: readonly number[]
-  exploredMinorKeyIndices?: readonly number[]
   currentKeyIndex?: number | null
   nextKeyIndex?: number | null
   selectedKeyIndex?: number | null
@@ -108,15 +104,12 @@ function statusOf(index: number): KeyStatus {
   if (index === targetKeyIndex.value) return 'target'
   if (index === homeKeyIndex.value) return 'home'
   if (index === selectedKeyIndex) return 'selected'
-  if (litKeyIndices.includes(index) || exploredKeyIndices.includes(index))
-    return 'done'
+  if (litKeyIndices.includes(index)) return 'done'
 
   return 'idle'
 }
 
 function minorFill(index: number) {
-  if (exploredMinorKeyIndices.includes(index))
-    return 'fill-(--p-purple-300) dark:fill-(--p-purple-700)'
   if (index === selectedKeyIndex)
     return 'fill-(--p-blue-100) dark:fill-(--p-blue-900)'
 
@@ -129,8 +122,6 @@ const keys = computed(() =>
     angle: keyAngle(key.index, view),
     status: statusOf(key.index),
     countLabel: accidentalCountLabel(key),
-    isExplored: exploredKeyIndices.includes(key.index),
-    isMinorExplored: exploredMinorKeyIndices.includes(key.index),
     isHeard: key.index === heardKeyIndex,
   })),
 )
@@ -267,7 +258,6 @@ function keyAriaLabel(label: string) {
       :data-testid="`circle-key-${key.index}`"
       :data-status="key.status"
       :data-angle="key.angle"
-      :data-explored="key.isExplored"
       :data-heard="key.isHeard"
     >
       <PrimeButton
@@ -307,7 +297,6 @@ function keyAriaLabel(label: string) {
       :class="isChromatic ? 'opacity-0' : ''"
       :style="placeAt(key.angle, MINOR_LABEL_RADIUS)"
       :data-testid="`circle-minor-${key.index}`"
-      :data-explored="key.isMinorExplored"
       aria-hidden="true"
     >
       {{ key.minorLabel }}
@@ -405,7 +394,7 @@ function keyAriaLabel(label: string) {
   height: 13cqi;
   /* One step from the wedge underneath instead of PrimeVue's green-tinted text
    * hover. Tinting with the text colour darkens in light mode and lightens in
-   * dark mode, and works on any wedge colour (idle, selected, explored) */
+   * dark mode, and works on any wedge colour (idle, selected, done) */
   --p-button-text-primary-hover-background: color-mix(
     in srgb,
     var(--p-text-color) 7%,

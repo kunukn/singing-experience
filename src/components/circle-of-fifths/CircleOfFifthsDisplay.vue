@@ -68,8 +68,6 @@ const {
   nextKeyIndex,
   walkStartMidi,
   litKeyIndices,
-  exploredKeyIndices,
-  exploredMinorKeyIndices,
   selectedKeyIndex,
   holdProgress,
   isSingingCorrectNote,
@@ -315,17 +313,13 @@ function handlePlaySelectedKey() {
 }
 
 /* What the wheel highlights on each screen: walk progress on the walk
- * screens, the tapped and explored keys on the explore screens */
+ * screens, the tapped key on the explore screens */
 const wheelProps = computed(() => {
   const isExploreScreen =
     screen.value === 'exploreIdle' || screen.value === 'patternSinging'
 
   return {
     litKeyIndices: isExploreScreen ? [] : litKeyIndices.value,
-    exploredKeyIndices: isExploreScreen ? exploredKeyIndices.value : [],
-    exploredMinorKeyIndices: isExploreScreen
-      ? exploredMinorKeyIndices.value
-      : [],
     selectedKeyIndex: isExploreScreen ? selectedKeyIndex.value : null,
     /* Only the key being sung is "current" — after the walk the wheel shows
      * the lit circle on its own */

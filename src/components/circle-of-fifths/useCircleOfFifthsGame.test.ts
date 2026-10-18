@@ -581,7 +581,7 @@ describe('useCircleOfFifthsGame - explore', () => {
     expect(toneEngine.playToneAt).not.toHaveBeenCalled()
   })
 
-  test('should mark a key explored after DO MI SO MI DO', async () => {
+  test('should return to idle after DO MI SO MI DO', async () => {
     const { game, holdCurrentTarget } = setup()
 
     await game.startPattern(1, 'doMiSo')
@@ -595,11 +595,9 @@ describe('useCircleOfFifthsGame - explore', () => {
     for (let hold = 0; hold < 5; hold++) await holdCurrentTarget()
 
     expect(game.phase.value).toBe('idle')
-    expect(game.exploredKeyIndices.value).toEqual([1])
-    expect(game.exploredMinorKeyIndices.value).toEqual([])
   })
 
-  test('should light the relative minor after DO LA', async () => {
+  test('should return to idle after DO LA', async () => {
     const { game, holdCurrentTarget } = setup()
 
     await game.startPattern(0, 'doLa')
@@ -608,6 +606,6 @@ describe('useCircleOfFifthsGame - explore', () => {
     await holdCurrentTarget()
     await holdCurrentTarget()
 
-    expect(game.exploredMinorKeyIndices.value).toEqual([0])
+    expect(game.phase.value).toBe('idle')
   })
 })
