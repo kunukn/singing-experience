@@ -179,6 +179,13 @@ const heardKeyIndex = computed(() => {
 
   return midi === null ? null : keyIndexOfPitchClass(midi)
 })
+/* The wedge of the note to sing, outlined dashed. The note's own wedge, not
+ * the walk's next key: they match on every hop, but in Explore MI of C is E */
+const targetNoteKeyIndex = computed(() =>
+  isSinging.value && currentTarget.value
+    ? keyIndexOfPitchClass(currentTarget.value.midi)
+    : null,
+)
 /* …but only the walk's exact first note earns the ✓, since the walk needs it */
 const isStartNoteHit = computed(
   () =>
@@ -448,12 +455,15 @@ onUnmounted(() => stop())
       :nextKeyIndex="nextKeyIndex"
       :holdProgress="holdProgress"
       :heardKeyIndex="heardKeyIndex"
+      :targetNoteKeyIndex="targetNoteKeyIndex"
+      :isHeardCorrect="isSingingCorrectNote"
       @select="handleSelect"
     >
       <CircleOfFifthsTarget
         v-if="targetDisplay"
         :keyLabel="targetDisplay.keyLabel"
         :solfege="targetDisplay.solfege"
+        :showSolfege="!isWalkMode"
         :noteLabel="targetDisplay.noteLabel"
         :hopDirection="hopDirection"
         :sungLabel="sungLabel"

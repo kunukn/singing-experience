@@ -24,6 +24,8 @@ const {
   isInteractive = false,
   isPathClosed = false,
   heardKeyIndex = null,
+  targetNoteKeyIndex = null,
+  isHeardCorrect = false,
 } = defineProps<{
   view: CircleView
   litKeyIndices?: readonly number[]
@@ -37,6 +39,11 @@ const {
   isPathClosed?: boolean
   /* Key whose DO the live mic preview hears, outlined on the wheel */
   heardKeyIndex?: number | null
+  /* Key whose wedge holds the note to sing, outlined dashed — the slot the
+   * heard outline should land in */
+  targetNoteKeyIndex?: number | null
+  /* The singer is on the target note, octave included */
+  isHeardCorrect?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -170,12 +177,27 @@ function keyAriaLabel(label: string) {
       </g>
 
       <path
+        v-if="targetNoteKeyIndex !== null"
+        :d="majorWedge"
+        class="wedge target-outline fill-none stroke-(--p-blue-500)"
+        :style="{
+          transform: `rotate(${keyAngle(targetNoteKeyIndex, view)}deg)`,
+        }"
+        data-testid="circle-target-outline"
+        :data-angle="keyAngle(targetNoteKeyIndex, view)"
+      />
+
+      <path
         v-if="heardKeyIndex !== null"
         :d="majorWedge"
-        class="wedge heard-outline fill-none stroke-(--p-blue-500)"
+        class="wedge heard-outline fill-none"
+        :class="
+          isHeardCorrect ? 'stroke-(--p-green-500)' : 'stroke-(--p-blue-500)'
+        "
         :style="{ transform: `rotate(${keyAngle(heardKeyIndex, view)}deg)` }"
         data-testid="circle-heard-outline"
         :data-angle="keyAngle(heardKeyIndex, view)"
+        :data-correct="isHeardCorrect"
       />
 
       <polyline
@@ -300,6 +322,16 @@ function keyAriaLabel(label: string) {
   stroke-linejoin: round;
   /* Jumps straight to the heard key — a rotation from F (330°) to C (0°)
    * would sweep the long way round the whole wheel */
+  transition: none;
+}
+
+.wedge.target-outline {
+  stroke-width: 2;
+  /* viewBox units. Same blue as the heard outline so the two read as a pair —
+   * the dashes say "land here", the solid line says "you are here" */
+  stroke-dasharray: 4 3;
+  stroke-linejoin: round;
+  /* Jumps like the heard outline, for the same long-sweep reason */
   transition: none;
 }
 

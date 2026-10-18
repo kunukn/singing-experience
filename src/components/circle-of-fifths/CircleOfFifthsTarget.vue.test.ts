@@ -11,6 +11,7 @@ function mountTarget(props = {}) {
     props: {
       keyLabel: 'D♭ major',
       solfege: 'SO' as const,
+      showSolfege: true,
       noteLabel: 'A♭3',
       hopDirection: 'up' as const,
       sungLabel: null,
@@ -76,6 +77,21 @@ describe('CircleOfFifthsTarget', () => {
 
     expect(note.text()).toContain('A♭3')
     expect(note.get('[data-testid="circle-target-hop"]').text()).toBe('↑')
+  })
+
+  test('should lead with the note instead of the solfège when it is hidden', async () => {
+    const wrapper = mountTarget({ showSolfege: false })
+    const note = () => wrapper.get('[data-testid="circle-target-note"]')
+
+    expect(wrapper.find('[data-testid="circle-target-solfege"]').exists()).toBe(
+      false,
+    )
+    expect(note().text()).toContain('A♭3')
+    expect(note().attributes('data-correct')).toBe('false')
+
+    await wrapper.setProps({ isCorrect: true })
+
+    expect(note().attributes('data-correct')).toBe('true')
   })
 
   test('should show a dash when no note is heard', () => {

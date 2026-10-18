@@ -98,6 +98,43 @@ describe('CircleOfFifthsWheel', () => {
     )
   })
 
+  test('should outline the note to sing as a dashed slot', () => {
+    const wrapper = mountWheel({ targetNoteKeyIndex: 7, heardKeyIndex: 9 })
+
+    expect(
+      wrapper
+        .get('[data-testid="circle-target-outline"]')
+        .attributes('data-angle'),
+    ).toBe('210')
+    expect(
+      wrapper
+        .get('[data-testid="circle-heard-outline"]')
+        .attributes('data-correct'),
+    ).toBe('false')
+  })
+
+  test('should not outline a target when there is no note to sing', () => {
+    const wrapper = mountWheel({ heardKeyIndex: 1 })
+
+    expect(wrapper.find('[data-testid="circle-target-outline"]').exists()).toBe(
+      false,
+    )
+  })
+
+  test('should mark the heard outline correct when the singer is on the note', () => {
+    const wrapper = mountWheel({
+      targetNoteKeyIndex: 7,
+      heardKeyIndex: 7,
+      isHeardCorrect: true,
+    })
+
+    expect(
+      wrapper
+        .get('[data-testid="circle-heard-outline"]')
+        .attributes('data-correct'),
+    ).toBe('true')
+  })
+
   test('should emit the key index when a key is tapped', async () => {
     const wrapper = mountWheel({ isInteractive: true })
 

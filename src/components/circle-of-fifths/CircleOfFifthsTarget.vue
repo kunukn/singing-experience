@@ -4,6 +4,9 @@ import type { HopDirection, Solfege, SungState } from './useCircleOfFifthsGame'
 defineProps<{
   keyLabel: string
   solfege: Solfege
+  /* Off in the walk, where it's the same syllable every hop and the ladder
+   * already shows it — the note to sing takes its place as the big line */
+  showSolfege: boolean
   noteLabel: string
   hopDirection: HopDirection | null
   sungLabel: string | null
@@ -26,14 +29,24 @@ const { t } = useI18n()
       keyLabel
     }}</span>
     <span
+      v-if="showSolfege"
       class="text-[8cqi] font-bold transition-colors"
       :class="isCorrect ? 'text-(--p-green-400)' : 'text-(--p-text-color)'"
       data-testid="circle-target-solfege"
       >{{ solfege }}</span
     >
     <span
-      class="text-[3.6cqi] text-(--p-text-muted-color) tabular-nums"
+      class="tabular-nums"
+      :class="
+        showSolfege
+          ? 'text-[3.6cqi] text-(--p-text-muted-color)'
+          : [
+              'text-[7cqi] font-bold transition-colors',
+              isCorrect ? 'text-(--p-green-400)' : 'text-(--p-text-color)',
+            ]
+      "
       data-testid="circle-target-note"
+      :data-correct="isCorrect"
     >
       <span
         v-if="hopDirection"
