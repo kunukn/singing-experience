@@ -273,6 +273,8 @@
         "flat": "Un poco bajo. Apunta un poquito más arriba",
         "steady": "¡Bien! Ahora respira lento y estable",
         "almost": "Muy cerca. ¡Sigue así!",
+        "aimMiddle": "¡Genial! Ahora apunta justo al centro de la nota",
+        "nearlyPerfect": "¡Casi perfecto! Quédate justo en el centro",
         "perfect": "¡Guau, firme como una roca!"
       }
     }

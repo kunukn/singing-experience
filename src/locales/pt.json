@@ -273,6 +273,8 @@
         "flat": "Um pouco baixo. Mire um pouquinho mais alto",
         "steady": "Boa! Agora respire devagar e firme",
         "almost": "Quase lá. Continue!",
+        "aimMiddle": "Ótimo! Agora mire bem no meio da nota",
+        "nearlyPerfect": "Quase perfeito! Fique bem no meio",
         "perfect": "Uau, firme como rocha!"
       }
     }

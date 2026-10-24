@@ -273,6 +273,8 @@
         "flat": "Etwas zu tief. Ziel ein bisschen höher",
         "steady": "Super! Jetzt atme ruhig und gleichmäßig",
         "almost": "Fast geschafft. Weiter so!",
+        "aimMiddle": "Super! Ziel jetzt genau auf die Mitte vom Ton",
+        "nearlyPerfect": "Fast perfekt! Bleib genau in der Mitte",
         "perfect": "Wow, total sicher!"
       }
     }

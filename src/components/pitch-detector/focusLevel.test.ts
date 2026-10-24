@@ -78,7 +78,20 @@ describe('focusTipFor', () => {
     ).toBe('steady')
   })
 
-  test('should encourage a centred, steady take that is not yet perfect', () => {
-    expect(focusTipFor(take({ averageCents: 3 }), 'leadSinger')).toBe('almost')
+  test.each([
+    { level: 'warmingUp', expected: 'almost' },
+    { level: 'findingIt', expected: 'almost' },
+    { level: 'niceAndClose', expected: 'almost' },
+    { level: 'stageReady', expected: 'aimMiddle' },
+    { level: 'leadSinger', expected: 'nearlyPerfect' },
+  ] as const)(
+    'should give a $level take that is centred and steady the "$expected" tip',
+    ({ level, expected }) => {
+      expect(focusTipFor(take({ averageCents: 3 }), level)).toBe(expected)
+    },
+  )
+
+  test('should name sharp before the rung tip on a lead singer take', () => {
+    expect(focusTipFor(take({ averageCents: 14 }), 'leadSinger')).toBe('sharp')
   })
 })

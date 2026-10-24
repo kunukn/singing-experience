@@ -273,6 +273,8 @@
         "flat": "A little flat. Aim a touch higher",
         "steady": "Nice! Now try a slow, steady breath",
         "almost": "So close. Keep going!",
+        "aimMiddle": "Great! Now aim for the very middle of the note",
+        "nearlyPerfect": "Nearly pitch perfect! Keep it right in the middle",
         "perfect": "Wow, rock solid!"
       }
     }

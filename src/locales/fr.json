@@ -273,6 +273,8 @@
         "flat": "Un peu trop bas. Vise un poil plus haut",
         "steady": "Bien ! Respire lentement et calmement",
         "almost": "Presque. Continue !",
+        "aimMiddle": "Super ! Vise maintenant pile le milieu de la note",
+        "nearlyPerfect": "Presque parfait ! Reste pile au milieu",
         "perfect": "Waouh, solide comme un roc !"
       }
     }

@@ -20,6 +20,8 @@ export type FocusTip =
   | 'flat'
   | 'steady'
   | 'almost'
+  | 'aimMiddle'
+  | 'nearlyPerfect'
   | 'perfect'
 
 /* A 3 s hold before any level is given, so a lucky half-second can't earn
@@ -57,8 +59,12 @@ export function focusLevelFor(stats: FocusToneStats): FocusLevel | null {
   return 'warmingUp'
 }
 
-/* The one change most likely to lift the take — the average offset first,
- * since it is the biggest single lever, then steadiness */
+/*
+ * The one change most likely to lift the take — the average offset first,
+ * since it is the biggest single lever, then steadiness. A centred, steady
+ * take gets a tip for its rung: from Stage ready up, the next step needs
+ * Spot on, so "keep going" alone would not say what to change.
+ */
 export function focusTipFor(
   stats: FocusToneStats,
   level: FocusLevel | null,
@@ -74,6 +80,10 @@ export function focusTipFor(
   if (stats.averageCents < -CLEAN_CENTS) return 'flat'
 
   if (stats.wobbleCents > STEADY_WOBBLE_CENTS) return 'steady'
+
+  if (level === 'leadSinger') return 'nearlyPerfect'
+
+  if (level === 'stageReady') return 'aimMiddle'
 
   return 'almost'
 }
