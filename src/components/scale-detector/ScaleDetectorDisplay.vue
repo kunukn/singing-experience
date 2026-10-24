@@ -10,7 +10,11 @@ import { pitchClassOf } from '@/utils/scaleHighlight'
 import { useLocalStorage, useMediaQuery } from '@vueuse/core'
 import ChordDetectorResults from './ChordDetectorResults.vue'
 import ScaleDetectorResults from './ScaleDetectorResults.vue'
-import { useScaleDetector } from './useScaleDetector'
+import {
+  useScaleDetector,
+  type ChordFix,
+  type ScaleFix,
+} from './useScaleDetector'
 
 type Props = {
   detection: PitchDetectionInput & {
@@ -82,6 +86,9 @@ const {
   chordResult,
   selectedChord,
   selectChord,
+  removePitchClass,
+  chordFixes,
+  scaleFixes,
   toggleListening,
   pressPianoKey,
   releasePianoKey,
@@ -115,11 +122,25 @@ const chordHighlight = computed(() => {
 })
 
 /* Each pitch class once, in the order it was first sung. */
-const sungLabels = computed(() =>
+const sungNotes = computed(() =>
   [...new Set(notes.value.map((note) => pitchClassOf(note.midi)))].map(
-    (pitchClass) => pitchClassLabel(pitchClass, accidentalStyle.value),
+    (pitchClass) => ({
+      pitchClass,
+      label: pitchClassLabel(pitchClass, accidentalStyle.value),
+    }),
   ),
 )
+
+/* A fix-it hint drops the wrong note and picks what the rest then fit. */
+function applyChordFix(fix: ChordFix) {
+  removePitchClass(fix.pitchClass)
+  selectChord(fix)
+}
+
+function applyScaleFix(fix: ScaleFix) {
+  removePitchClass(fix.pitchClass)
+  select(fix)
+}
 
 const tieBreakerText = computed(() => {
   const tieBreaker = result.value.tieBreaker
@@ -346,16 +367,35 @@ defineExpose({ detector })
         class="flex min-h-8 flex-wrap items-center justify-center gap-2"
         data-testid="scale-detector-sung-notes"
       >
-        <template v-if="sungLabels.length > 0">
+        <template v-if="sungNotes.length > 0">
           <span class="text-sm text-(--p-text-muted-color)">
             {{ t('scaleDetector.yourNotes') }}
           </span>
-          <PrimeTag
-            v-for="label in sungLabels"
-            :key="label"
-            :value="label"
-            severity="success"
-          />
+          <!-- The default remove icon is an unfocusable SVG; a button keeps
+               removal reachable by keyboard and screen reader. -->
+          <PrimeChip
+            v-for="note in sungNotes"
+            :key="note.pitchClass"
+            :label="note.label"
+            removable
+            class="gap-1! bg-(--p-green-100)! py-0.5! ps-2.5! pe-0.5! text-sm font-bold text-(--p-green-700)! dark:bg-(--p-green-900)! dark:text-(--p-green-300)!"
+            data-testid="scale-detector-sung-note"
+          >
+            <template #removeicon>
+              <PrimeButton
+                icon="pi pi-times"
+                text
+                rounded
+                size="small"
+                class="size-6! min-h-0 min-w-0 p-0! text-(--p-green-700) dark:text-(--p-green-300)"
+                :aria-label="
+                  t('scaleDetector.removeNote', { note: note.label })
+                "
+                data-testid="scale-detector-remove-note"
+                @click="removePitchClass(note.pitchClass)"
+              />
+            </template>
+          </PrimeChip>
         </template>
         <span v-else class="text-sm text-(--p-text-muted-color)">
           {{
@@ -373,14 +413,18 @@ defineExpose({ detector })
           <ChordDetectorResults
             :result="chordResult"
             :selected="selectedChord"
+            :fixes="chordFixes"
             @select="selectChord"
+            @applyFix="applyChordFix"
           />
         </PrimeTabPanel>
         <PrimeTabPanel value="scales" class="flex flex-col gap-4">
           <ScaleDetectorResults
             :result="result"
             :selected="selectedCandidate"
+            :fixes="scaleFixes"
             @select="select"
+            @applyFix="applyScaleFix"
           />
 
           <p

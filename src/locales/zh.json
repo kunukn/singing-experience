@@ -323,9 +323,11 @@
     "yourNotes": "你的音：",
     "noNotesYet": "按开始，然后唱或弹钢琴",
     "keepSinging": "继续——至少唱 {count} 个不同的音，猜得更准",
-    "noMatch": "没有音阶适合这些音。试试重新开始。",
+    "noMatch": "没有音阶适合这些音。去掉一个，或者重新开始。",
     "sameNotes": "相同的音：",
     "notSungYet": "还没唱：{notes}",
+    "withoutNote": "去掉 {note}：{name}",
+    "removeNote": "去掉 {note}",
     "tieBreaker": "唱 {first} 或 {second} 来分辨它们",
     "pianoRange": "钢琴音域",
     "scaleName": "{root} {mode}",
@@ -336,7 +338,7 @@
     "chords": {
       "pageDescription": "一个一个地唱出和弦里的音，或者在钢琴上弹。你会看到它们组成哪个和弦，还有它的双胞胎——音相同但根音不同的和弦。",
       "keepGoing": "继续——一个和弦至少需要 {count} 个不同的音",
-      "noMatch": "没有和弦适合这些音。试试重新开始。",
+      "noMatch": "没有和弦适合这些音。去掉一个，或者重新开始。",
       "quality": {
         "major": "大三和弦",
         "minor": "小三和弦",

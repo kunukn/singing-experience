@@ -6,18 +6,20 @@ import {
   type ScaleCandidate,
   type ScaleDetection,
 } from '@/utils/scaleDetection'
-import type { ScaleSelection } from './useScaleDetector'
+import type { ScaleFix, ScaleSelection } from './useScaleDetector'
 import { useScaleName } from './useScaleName'
 
 type Props = {
   result: ScaleDetection
   selected: ScaleSelection | null
+  fixes: ScaleFix[]
 }
 
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
   select: [candidate: ScaleSelection]
+  applyFix: [fix: ScaleFix]
 }>()
 
 const { t } = useI18n()
@@ -41,6 +43,20 @@ const families = computed(() =>
         .join(' '),
     }
   }),
+)
+
+/* The dropped note is spelled the way the scale it leads to spells it. */
+const fixLabels = computed(() =>
+  props.fixes.map((fix) => ({
+    fix,
+    label: t('scaleDetector.withoutNote', {
+      note: pitchClassLabel(
+        fix.pitchClass,
+        keyAccidentalStyle(fix.root, fix.mode),
+      ),
+      name: scaleName(fix.root, fix.mode),
+    }),
+  })),
 )
 
 function isSelected(candidate: ScaleCandidate): boolean {
@@ -72,6 +88,22 @@ const hasNotes = computed(() => props.result.sungPitchClasses.size > 0)
     >
       {{ t('scaleDetector.noMatch') }}
     </p>
+
+    <div
+      v-if="fixLabels.length > 0"
+      class="flex flex-wrap justify-center gap-2"
+    >
+      <PrimeButton
+        v-for="{ fix, label } in fixLabels"
+        :key="fix.pitchClass"
+        :label="label"
+        size="small"
+        severity="secondary"
+        outlined
+        data-testid="scale-detector-fix"
+        @click="emit('applyFix', fix)"
+      />
+    </div>
 
     <ol
       v-if="families.length > 0"

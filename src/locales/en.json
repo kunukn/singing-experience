@@ -323,9 +323,11 @@
     "yourNotes": "Your notes:",
     "noNotesYet": "Press Start, then sing or play the piano",
     "keepSinging": "Keep going — sing at least {count} different notes for a good guess",
-    "noMatch": "No scale fits these notes. Try starting over.",
+    "noMatch": "No scale fits these notes. Remove one, or start over.",
     "sameNotes": "Same notes:",
     "notSungYet": "Not sung yet: {notes}",
+    "withoutNote": "Without {note}: {name}",
+    "removeNote": "Remove {note}",
     "tieBreaker": "Sing {first} or {second} to tell them apart",
     "pianoRange": "Piano range",
     "scaleName": "{root} {mode}",
@@ -336,7 +338,7 @@
     "chords": {
       "pageDescription": "Sing the notes of a chord one by one, or play them on the piano. You'll see which chord they make, plus its twins — chords with the same notes but a different root.",
       "keepGoing": "Keep going — a chord needs at least {count} different notes",
-      "noMatch": "No chord fits these notes. Try starting over.",
+      "noMatch": "No chord fits these notes. Remove one, or start over.",
       "quality": {
         "major": "Major",
         "minor": "Minor",

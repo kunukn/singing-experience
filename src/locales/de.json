@@ -323,9 +323,11 @@
     "yourNotes": "Deine Töne:",
     "noNotesYet": "Drück auf Start und sing oder spiel Klavier",
     "keepSinging": "Weiter so — sing mindestens {count} verschiedene Töne für einen guten Tipp",
-    "noMatch": "Keine Tonleiter passt zu diesen Tönen. Fang am besten neu an.",
+    "noMatch": "Keine Tonleiter passt zu diesen Tönen. Nimm einen raus oder fang neu an.",
     "sameNotes": "Gleiche Töne:",
     "notSungYet": "Noch nicht gesungen: {notes}",
+    "withoutNote": "Ohne {note}: {name}",
+    "removeNote": "{note} entfernen",
     "tieBreaker": "Sing {first} oder {second}, um sie zu unterscheiden",
     "pianoRange": "Klavier-Tonumfang",
     "scaleName": "{root} {mode}",
@@ -336,7 +338,7 @@
     "chords": {
       "pageDescription": "Sing die Töne eines Akkords nacheinander oder spiel sie auf dem Klavier. Du siehst, welcher Akkord daraus wird, und seine Zwillinge — Akkorde mit denselben Tönen, aber einem anderen Grundton.",
       "keepGoing": "Weiter so — ein Akkord braucht mindestens {count} verschiedene Töne",
-      "noMatch": "Kein Akkord passt zu diesen Tönen. Fang am besten neu an.",
+      "noMatch": "Kein Akkord passt zu diesen Tönen. Nimm einen raus oder fang neu an.",
       "quality": {
         "major": "Dur",
         "minor": "Moll",

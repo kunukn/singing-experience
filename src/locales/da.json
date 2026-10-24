@@ -323,9 +323,11 @@
     "yourNotes": "Dine toner:",
     "noNotesYet": "Tryk på Start, og syng eller spil på klaveret",
     "keepSinging": "Fortsæt — syng mindst {count} forskellige toner for et godt gæt",
-    "noMatch": "Ingen skala passer til de toner. Prøv at starte forfra.",
+    "noMatch": "Ingen skala passer til de toner. Fjern en, eller start forfra.",
     "sameNotes": "Samme toner:",
     "notSungYet": "Ikke sunget endnu: {notes}",
+    "withoutNote": "Uden {note}: {name}",
+    "removeNote": "Fjern {note}",
     "tieBreaker": "Syng {first} eller {second} for at se forskel",
     "pianoRange": "Klaverets toneomfang",
     "scaleName": "{root} {mode}",
@@ -336,7 +338,7 @@
     "chords": {
       "pageDescription": "Syng tonerne i en akkord én ad gangen, eller spil dem på klaveret. Du ser, hvilken akkord de danner, plus dens tvillinger — akkorder med de samme toner, men en anden grundtone.",
       "keepGoing": "Fortsæt — en akkord skal have mindst {count} forskellige toner",
-      "noMatch": "Ingen akkord passer til de toner. Prøv at starte forfra.",
+      "noMatch": "Ingen akkord passer til de toner. Fjern en, eller start forfra.",
       "quality": {
         "major": "Dur",
         "minor": "Mol",

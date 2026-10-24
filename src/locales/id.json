@@ -323,9 +323,11 @@
     "yourNotes": "Nadamu:",
     "noNotesYet": "Tekan Mulai, lalu bernyanyi atau main piano",
     "keepSinging": "Terus — nyanyikan setidaknya {count} nada berbeda supaya tebakannya lebih tepat",
-    "noMatch": "Tidak ada tangga nada yang cocok dengan nada-nada ini. Coba mulai lagi.",
+    "noMatch": "Tidak ada tangga nada yang cocok dengan nada-nada ini. Hapus satu, atau mulai lagi.",
     "sameNotes": "Nada sama:",
     "notSungYet": "Belum dinyanyikan: {notes}",
+    "withoutNote": "Tanpa {note}: {name}",
+    "removeNote": "Hapus {note}",
     "tieBreaker": "Nyanyikan {first} atau {second} untuk membedakannya",
     "pianoRange": "Rentang piano",
     "scaleName": "{root} {mode}",
@@ -336,7 +338,7 @@
     "chords": {
       "pageDescription": "Nyanyikan nada-nada sebuah akor satu per satu, atau mainkan di piano. Kamu akan lihat akor apa yang terbentuk, plus kembarannya — akor dengan nada yang sama tapi nada dasar berbeda.",
       "keepGoing": "Terus — akor butuh setidaknya {count} nada berbeda",
-      "noMatch": "Tidak ada akor yang cocok dengan nada-nada ini. Coba mulai lagi.",
+      "noMatch": "Tidak ada akor yang cocok dengan nada-nada ini. Hapus satu, atau mulai lagi.",
       "quality": {
         "major": "Mayor",
         "minor": "Minor",

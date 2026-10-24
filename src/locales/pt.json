@@ -323,9 +323,11 @@
     "yourNotes": "Suas notas:",
     "noNotesYet": "Aperte Iniciar e cante ou toque o piano",
     "keepSinging": "Continue — cante pelo menos {count} notas diferentes para um bom palpite",
-    "noMatch": "Nenhuma escala combina com essas notas. Tente começar de novo.",
+    "noMatch": "Nenhuma escala combina com essas notas. Tire uma ou comece de novo.",
     "sameNotes": "Mesmas notas:",
     "notSungYet": "Ainda não cantadas: {notes}",
+    "withoutNote": "Sem {note}: {name}",
+    "removeNote": "Tirar {note}",
     "tieBreaker": "Cante {first} ou {second} para saber qual é",
     "pianoRange": "Extensão do piano",
     "scaleName": "{root} {mode}",
@@ -336,7 +338,7 @@
     "chords": {
       "pageDescription": "Cante as notas de um acorde uma de cada vez, ou toque no piano. Você vai ver que acorde elas formam e os gêmeos dele — acordes com as mesmas notas, mas outra fundamental.",
       "keepGoing": "Continue — um acorde precisa de pelo menos {count} notas diferentes",
-      "noMatch": "Nenhum acorde combina com essas notas. Tente começar de novo.",
+      "noMatch": "Nenhum acorde combina com essas notas. Tire uma ou comece de novo.",
       "quality": {
         "major": "Maior",
         "minor": "Menor",

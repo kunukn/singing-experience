@@ -323,9 +323,11 @@
     "yourNotes": "Tes notes :",
     "noNotesYet": "Appuie sur Démarrer, puis chante ou joue du piano",
     "keepSinging": "Continue ! Chante au moins {count} notes différentes pour mieux deviner",
-    "noMatch": "Aucune gamme ne colle à ces notes. Essaie de recommencer.",
+    "noMatch": "Aucune gamme ne colle à ces notes. Enlève-en une ou recommence.",
     "sameNotes": "Mêmes notes :",
     "notSungYet": "Pas encore chantées : {notes}",
+    "withoutNote": "Sans {note} : {name}",
+    "removeNote": "Enlever {note}",
     "tieBreaker": "Chante {first} ou {second} pour les départager",
     "pianoRange": "Étendue du piano",
     "scaleName": "{root} {mode}",
@@ -336,7 +338,7 @@
     "chords": {
       "pageDescription": "Chante les notes d'un accord une par une, ou joue-les au piano. Tu verras quel accord elles forment, et ses jumeaux — des accords avec les mêmes notes mais une autre fondamentale.",
       "keepGoing": "Continue ! Un accord a besoin d'au moins {count} notes différentes",
-      "noMatch": "Aucun accord ne colle à ces notes. Essaie de recommencer.",
+      "noMatch": "Aucun accord ne colle à ces notes. Enlève-en une ou recommence.",
       "quality": {
         "major": "Majeur",
         "minor": "Mineur",

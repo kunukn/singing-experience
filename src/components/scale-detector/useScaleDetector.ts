@@ -11,6 +11,7 @@ import {
   type ScaleCandidate,
   type SungNote,
 } from '@/utils/scaleDetection'
+import { pitchClassOf } from '@/utils/scaleHighlight'
 import { createPianoChordCapture } from './pianoChordCapture'
 
 type Options = {
@@ -41,9 +42,21 @@ const VOICE_MIN_NOTE_MS = 200
  * wrong ones). */
 const PIANO_DEAF_MS = 600
 
+/* "Without G: Dm9" hints shown when nothing fits — a few is plenty, since
+ * the wrong note is usually the latest one. */
+const MAX_FIXES_SHOWN = 3
+
 export type ScaleSelection = Pick<ScaleCandidate, 'root' | 'mode'>
 
 export type ChordSelection = Pick<ChordCandidate, 'root' | 'type'>
+
+/* Dropping `pitchClass` from the notes would make this chord or scale fit. */
+export type ChordFix = ChordSelection & {
+  pitchClass: number
+  bass: number | null
+}
+
+export type ScaleFix = ScaleSelection & { pitchClass: number }
 
 export type ScaleDetectorResult = ReturnType<typeof useScaleDetector>
 
@@ -63,6 +76,12 @@ export function useScaleDetector({
   const pianoEvents = shallowRef<NoteEvent[]>([])
   const selection = ref<ScaleSelection | null>(null)
   const chordSelection = ref<ChordSelection | null>(null)
+  /*
+   * pitch class → nowMs() when the user removed it. Notes of that pitch
+   * class that started before then are left out, so a wrong note goes away
+   * without touching the recorders; sung or played again later, it counts.
+   */
+  const removedAtMs = shallowRef(new Map<number, number>())
 
   let segmenter = createNoteSegmenter()
   let pianoCapture = createPianoChordCapture({ minNoteMs: PIANO_MIN_NOTE_MS })
@@ -101,6 +120,11 @@ export function useScaleDetector({
       ),
       ...pianoEvents.value,
     ]
+      .filter((event) => {
+        const removedAt = removedAtMs.value.get(pitchClassOf(event.midi))
+
+        return removedAt === undefined || event.startMs > removedAt
+      })
       .toSorted((a, b) => a.startMs - b.startMs)
       .map((event) => ({
         midi: event.midi,
@@ -157,6 +181,64 @@ export function useScaleDetector({
   function selectChord(candidate: ChordSelection) {
     chordSelection.value = { root: candidate.root, type: candidate.type }
   }
+
+  function removePitchClass(pitchClass: number) {
+    removedAtMs.value = new Map(removedAtMs.value).set(pitchClass, nowMs())
+  }
+
+  /* Each sung pitch class once, the latest newcomer first: a slip is
+   * usually the last note added. */
+  const pitchClassesLatestFirst = computed(() =>
+    [
+      ...new Set(notes.value.map((note) => pitchClassOf(note.midi))),
+    ].toReversed(),
+  )
+
+  /*
+   * When nothing fits, the single notes whose removal would make something
+   * fit — each paired with what the notes would then detect as.
+   */
+  function findFixes<
+    Detection extends { hasEnoughNotes: boolean; families: unknown[] },
+  >(detection: Detection, detect: (notes: SungNote[]) => Detection) {
+    if (!detection.hasEnoughNotes || detection.families.length > 0) return []
+
+    return pitchClassesLatestFirst.value
+      .map((pitchClass) => ({
+        pitchClass,
+        detection: detect(
+          notes.value.filter((note) => pitchClassOf(note.midi) !== pitchClass),
+        ),
+      }))
+      .filter(
+        ({ detection: without }) =>
+          without.hasEnoughNotes && without.families.length > 0,
+      )
+      .slice(0, MAX_FIXES_SHOWN)
+  }
+
+  const chordFixes = computed<ChordFix[]>(() =>
+    findFixes(chordResult.value, detectChords).map(
+      ({ pitchClass, detection }) => {
+        const [best] = detection.families[0].candidates
+
+        return {
+          pitchClass,
+          root: best.root,
+          type: best.type,
+          bass: detection.bass,
+        }
+      },
+    ),
+  )
+
+  const scaleFixes = computed<ScaleFix[]>(() =>
+    findFixes(result.value, detectScales).map(({ pitchClass, detection }) => {
+      const [best] = detection.families[0].candidates
+
+      return { pitchClass, root: best.root, mode: best.mode }
+    }),
+  )
 
   let isVoiceRunning = false
 
@@ -236,6 +318,7 @@ export function useScaleDetector({
     pianoEvents.value = []
     selection.value = null
     chordSelection.value = null
+    removedAtMs.value = new Map()
   }
 
   onUnmounted(stopListening)
@@ -249,6 +332,9 @@ export function useScaleDetector({
     chordResult,
     selectedChord,
     selectChord,
+    removePitchClass,
+    chordFixes,
+    scaleFixes,
     toggleListening,
     pressPianoKey,
     releasePianoKey,

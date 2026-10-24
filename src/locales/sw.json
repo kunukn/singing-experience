@@ -323,9 +323,11 @@
     "yourNotes": "Noti zako:",
     "noNotesYet": "Bonyeza Anza, kisha imba au piga piano",
     "keepSinging": "Endelea — imba angalau noti {count} tofauti ili kukisia vizuri",
-    "noMatch": "Hakuna mizani inayolingana na noti hizi. Jaribu kuanza upya.",
+    "noMatch": "Hakuna mizani inayolingana na noti hizi. Ondoa moja, au anza upya.",
     "sameNotes": "Noti zilezile:",
     "notSungYet": "Bado hazijaimbwa: {notes}",
+    "withoutNote": "Bila {note}: {name}",
+    "removeNote": "Ondoa {note}",
     "tieBreaker": "Imba {first} au {second} ili kuzitofautisha",
     "pianoRange": "Upana wa piano",
     "scaleName": "{root} {mode}",
@@ -336,7 +338,7 @@
     "chords": {
       "pageDescription": "Imba noti za kodi moja moja, au uzipige kwenye piano. Utaona zinaunda kodi gani, pamoja na pacha zake — kodi zenye noti zilezile lakini noti ya msingi tofauti.",
       "keepGoing": "Endelea — kodi inahitaji angalau noti {count} tofauti",
-      "noMatch": "Hakuna kodi inayolingana na noti hizi. Jaribu kuanza upya.",
+      "noMatch": "Hakuna kodi inayolingana na noti hizi. Ondoa moja, au anza upya.",
       "quality": {
         "major": "Meja",
         "minor": "Maina",

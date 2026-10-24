@@ -7,17 +7,19 @@ import {
   type ChordDetection,
 } from '@/utils/chordDetection'
 import { pitchClassLabel } from '@/utils/scaleDetection'
-import type { ChordSelection } from './useScaleDetector'
+import type { ChordFix, ChordSelection } from './useScaleDetector'
 
 type Props = {
   result: ChordDetection
   selected: ChordSelection | null
+  fixes: ChordFix[]
 }
 
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
   select: [candidate: ChordSelection]
+  applyFix: [fix: ChordFix]
 }>()
 
 const { t } = useI18n()
@@ -40,6 +42,20 @@ const families = computed(() =>
         .join(' '),
     }
   }),
+)
+
+/* The dropped note is spelled the way the chord it leads to spells it. */
+const fixLabels = computed(() =>
+  props.fixes.map((fix) => ({
+    fix,
+    label: t('scaleDetector.withoutNote', {
+      note: pitchClassLabel(
+        fix.pitchClass,
+        chordAccidentalStyle(fix.root, fix.type),
+      ),
+      name: chordSymbol(fix.root, fix.type, fix.bass),
+    }),
+  })),
 )
 
 const symbolOf = (candidate: ChordCandidate) =>
@@ -74,6 +90,22 @@ const hasNotes = computed(() => props.result.sungPitchClasses.size > 0)
     >
       {{ t('scaleDetector.chords.noMatch') }}
     </p>
+
+    <div
+      v-if="fixLabels.length > 0"
+      class="flex flex-wrap justify-center gap-2"
+    >
+      <PrimeButton
+        v-for="{ fix, label } in fixLabels"
+        :key="fix.pitchClass"
+        :label="label"
+        size="small"
+        severity="secondary"
+        outlined
+        data-testid="chord-detector-fix"
+        @click="emit('applyFix', fix)"
+      />
+    </div>
 
     <ol
       v-if="families.length > 0"

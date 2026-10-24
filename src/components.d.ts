@@ -114,6 +114,7 @@ declare module 'vue' {
     PreviewToggle: typeof import('./components/generic/PreviewToggle.vue')['default']
     PrimeButton: typeof import('primevue/button')['default']
     PrimeCard: typeof import('primevue/card')['default']
+    PrimeChip: typeof import('primevue/chip')['default']
     PrimeMessage: typeof import('primevue/message')['default']
     PrimePopover: typeof import('primevue/popover')['default']
     PrimeSelect: typeof import('primevue/select')['default']

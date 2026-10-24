@@ -1,6 +1,6 @@
-import { afterEach, describe, expect, test, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { effectScope, nextTick, ref, type EffectScope } from 'vue'
-import { useScaleDetector } from './useScaleDetector'
+import { useScaleDetector, type ScaleDetectorResult } from './useScaleDetector'
 
 function createFakeDetection() {
   return {
@@ -84,5 +84,108 @@ describe('useScaleDetector', () => {
 
     expect(detection.start).not.toHaveBeenCalled()
     expect(detection.stop).not.toHaveBeenCalled()
+  })
+})
+
+const F = 65
+const A = 69
+const C = 72
+const D = 74
+const E = 76
+const G = 79
+
+describe('useScaleDetector - removing a wrong note', () => {
+  let clockMs = 0
+
+  beforeEach(() => {
+    clockMs = 0
+    vi.spyOn(performance, 'now').mockImplementation(() => clockMs)
+  })
+
+  afterEach(() => {
+    vi.restoreAllMocks()
+  })
+
+  /* Taps each key 100 ms apart, as a user would. */
+  function tap(detector: ScaleDetectorResult, ...midis: number[]) {
+    for (const midi of midis) {
+      clockMs += 100
+      detector.pressPianoKey(midi)
+      detector.releasePianoKey(midi)
+    }
+  }
+
+  async function startPianoOnly() {
+    const { detector } = setup(ref(false))
+    detector.toggleListening()
+    await nextTick()
+
+    return detector
+  }
+
+  const pitchClassesOf = (detector: ScaleDetectorResult) =>
+    detector.notes.value.map((note) => note.midi % 12)
+
+  test('should drop every note of a removed pitch class', async () => {
+    const detector = await startPianoOnly()
+    tap(detector, C, E, G, C + 12)
+
+    detector.removePitchClass(0)
+
+    expect(pitchClassesOf(detector)).toEqual([4, 7])
+  })
+
+  test('should count a removed pitch class again once it is played later', async () => {
+    const detector = await startPianoOnly()
+    tap(detector, C, E, G)
+
+    detector.removePitchClass(0)
+    tap(detector, C)
+
+    expect(pitchClassesOf(detector)).toEqual([4, 7, 0])
+  })
+
+  test('should forget removals on reset', async () => {
+    const detector = await startPianoOnly()
+    tap(detector, C, E, G)
+    detector.removePitchClass(0)
+
+    detector.reset()
+    clockMs = 0
+    tap(detector, C)
+
+    expect(pitchClassesOf(detector)).toEqual([0])
+  })
+
+  test('should suggest which note to drop when no chord fits', async () => {
+    const detector = await startPianoOnly()
+    tap(detector, F, A, C, D, E, G)
+
+    expect(detector.chordResult.value.families).toHaveLength(0)
+    expect(detector.chordFixes.value).toEqual([
+      { pitchClass: 7, root: 2, type: 'minor9', bass: 5 },
+      { pitchClass: 2, root: 5, type: 'major9', bass: 5 },
+    ])
+  })
+
+  test('should match the suggested chord after applying its removal', async () => {
+    const detector = await startPianoOnly()
+    tap(detector, F, A, C, D, E, G)
+
+    detector.removePitchClass(7)
+
+    expect(detector.chordFixes.value).toEqual([])
+    expect(
+      detector.chordResult.value.families.flatMap(
+        (family) => family.candidates,
+      ),
+    ).toContainEqual(expect.objectContaining({ root: 2, type: 'minor9' }))
+  })
+
+  test('should not suggest removals while a chord still fits', async () => {
+    const detector = await startPianoOnly()
+    tap(detector, C, E, G)
+
+    expect(detector.chordFixes.value).toEqual([])
   })
 })
