@@ -119,3 +119,31 @@
 body.p-overflow-hidden {
   padding-right: 0;
 }
+
+/* Popovers fade in and out without PrimeVue's scale. PrimeVue places a
+ * popover's arrow from its measured left edge while the enter animation still
+ * has it at scale(0.93) around its centre, so any popover shifted to fit the
+ * screen got its arrow ~10px off. Scoped to .p-popover: selects and the other
+ * overlays sharing this transition have no arrow and keep their scale.
+ * (Two classes, unlayered, so it wins over PrimeVue's single-class rules.) */
+.p-popover.p-anchored-overlay-enter-active {
+  animation-name: app-popover-fade-in;
+}
+
+/* Its own keyframes rather than `reverse`, which would also flip PrimeVue's
+ * fast-start easing into a slow start and an abrupt end */
+.p-popover.p-anchored-overlay-leave-active {
+  animation-name: app-popover-fade-out;
+}
+
+@keyframes app-popover-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes app-popover-fade-out {
+  to {
+    opacity: 0;
+  }
+}

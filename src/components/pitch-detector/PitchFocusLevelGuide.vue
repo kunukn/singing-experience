@@ -46,20 +46,4 @@ function togglePopover(event: Event) {
 :global(.focus-level-guide-popover) {
   max-width: calc(100vw - 2rem);
 }
-
-/*
- * Fade in without PrimeVue's scale-in. PrimeVue places the arrow from the
- * popover's measured left edge while the enter animation still has it at
- * scale(0.93) around its centre; at the row's end the popover is shifted to
- * fit, so that shrunken edge put the arrow ~11px off the button's centre.
- */
-:global(.focus-level-guide-popover.p-anchored-overlay-enter-active) {
-  animation-name: focus-level-guide-fade-in;
-}
-
-@keyframes focus-level-guide-fade-in {
-  from {
-    opacity: 0;
-  }
-}
 </style>
