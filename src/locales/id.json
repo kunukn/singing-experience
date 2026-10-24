@@ -276,6 +276,15 @@
         "aimMiddle": "Bagus! Sekarang bidik tepat di tengah nada",
         "nearlyPerfect": "Hampir sempurna! Jaga tepat di tengah",
         "perfect": "Wah, mantap sekali!"
+      },
+      "guide": {
+        "title": "Level",
+        "intro": "Tahan satu nada selama {seconds} detik untuk dapat level",
+        "onPitchGoal": "{percent} pas nada",
+        "spotOnGoal": "{percent} tepat sekali",
+        "firstLevel": "Semua mulai dari sini",
+        "you": "Kamu",
+        "legend": "Pas nada: selisih paling banyak {onPitchCents} sen · Tepat sekali: selisih paling banyak {spotOnCents} sen"
       }
     }
   },

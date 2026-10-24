@@ -276,6 +276,15 @@
         "aimMiddle": "Super ! Vise maintenant pile le milieu de la note",
         "nearlyPerfect": "Presque parfait ! Reste pile au milieu",
         "perfect": "Waouh, solide comme un roc !"
+      },
+      "guide": {
+        "title": "Niveaux",
+        "intro": "Tiens une note {seconds} secondes pour avoir un niveau",
+        "onPitchGoal": "{percent} juste",
+        "spotOnGoal": "{percent} pile dessus",
+        "firstLevel": "Tout le monde commence ici",
+        "you": "Toi",
+        "legend": "Juste : à {onPitchCents} cents près · Pile dessus : à {spotOnCents} cents près"
       }
     }
   },

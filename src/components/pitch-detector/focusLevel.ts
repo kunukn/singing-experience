@@ -41,22 +41,38 @@ export const FOCUS_LEVEL_EMOJI: Record<FocusLevel, string> = {
   pitchPerfect: '💎',
 }
 
+export type FocusLevelRule = {
+  level: FocusLevel
+  minOnPitchPercent: number
+  minSpotOnPercent: number
+}
+
 /*
- * On pitch (±20¢) carries the ladder, because that is what listeners judge.
- * The top two rungs also need Spot on (±10¢): that is where a lead singer
- * and a studio take part from a good choir voice.
+ * On pitch (within CLOSE_CENTS) carries the ladder, because that is what
+ * listeners judge. The top two rungs also need Spot on (within CLEAN_CENTS):
+ * that is where a lead singer and a studio take part from a good choir voice.
+ * Highest rung first; the level guide shows this same table, so the copy
+ * can't drift from the scoring.
  */
+export const FOCUS_LEVEL_RULES: readonly FocusLevelRule[] = [
+  { level: 'pitchPerfect', minOnPitchPercent: 95, minSpotOnPercent: 80 },
+  { level: 'leadSinger', minOnPitchPercent: 90, minSpotOnPercent: 50 },
+  { level: 'stageReady', minOnPitchPercent: 75, minSpotOnPercent: 0 },
+  { level: 'niceAndClose', minOnPitchPercent: 60, minSpotOnPercent: 0 },
+  { level: 'findingIt', minOnPitchPercent: 40, minSpotOnPercent: 0 },
+  { level: 'warmingUp', minOnPitchPercent: 0, minSpotOnPercent: 0 },
+]
+
 export function focusLevelFor(stats: FocusToneStats): FocusLevel | null {
   if (stats.holdMs < LEVEL_MIN_HOLD_MS) return null
 
-  const { onPitchPercent, spotOnPercent } = stats
-  if (onPitchPercent >= 95 && spotOnPercent >= 80) return 'pitchPerfect'
-  if (onPitchPercent >= 90 && spotOnPercent >= 50) return 'leadSinger'
-  if (onPitchPercent >= 75) return 'stageReady'
-  if (onPitchPercent >= 60) return 'niceAndClose'
-  if (onPitchPercent >= 40) return 'findingIt'
+  const rule = FOCUS_LEVEL_RULES.find(
+    ({ minOnPitchPercent, minSpotOnPercent }) =>
+      stats.onPitchPercent >= minOnPitchPercent &&
+      stats.spotOnPercent >= minSpotOnPercent,
+  )
 
-  return 'warmingUp'
+  return rule?.level ?? 'warmingUp'
 }
 
 /*

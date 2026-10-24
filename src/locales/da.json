@@ -276,6 +276,15 @@
         "aimMiddle": "Flot! Sigt nu efter midten af tonen",
         "nearlyPerfect": "Næsten perfekt! Hold den lige i midten",
         "perfect": "Wow, bundsolidt!"
+      },
+      "guide": {
+        "title": "Niveauer",
+        "intro": "Hold en tone i {seconds} sekunder for at få et niveau",
+        "onPitchGoal": "{percent} rammer tonen",
+        "spotOnGoal": "{percent} helt præcis",
+        "firstLevel": "Her starter alle",
+        "you": "Dig",
+        "legend": "Rammer tonen: inden for {onPitchCents} cent · Helt præcis: inden for {spotOnCents} cent"
       }
     }
   },

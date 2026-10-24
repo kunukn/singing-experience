@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FocusToneStats } from './focusToneTracker'
 import { FOCUS_LEVEL_EMOJI, focusLevelFor, focusTipFor } from './focusLevel'
+import PitchFocusLevelGuide from './PitchFocusLevelGuide.vue'
 
 type Props = {
   stats: FocusToneStats
@@ -30,5 +31,6 @@ const tip = computed(() => focusTipFor(props.stats, level.value))
     <span v-if="tip" class="text-sm text-(--p-text-muted-color)">
       {{ t(`pitchDetector.focus.tips.${tip}`) }}
     </span>
+    <PitchFocusLevelGuide :level="level" class="ms-auto self-center" />
   </div>
 </template>

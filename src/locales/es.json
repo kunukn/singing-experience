@@ -276,6 +276,15 @@
         "aimMiddle": "¡Genial! Ahora apunta justo al centro de la nota",
         "nearlyPerfect": "¡Casi perfecto! Quédate justo en el centro",
         "perfect": "¡Guau, firme como una roca!"
+      },
+      "guide": {
+        "title": "Niveles",
+        "intro": "Mantén una nota {seconds} segundos para ver tu nivel",
+        "onPitchGoal": "{percent} afinado",
+        "spotOnGoal": "{percent} clavado",
+        "firstLevel": "Aquí empieza todo el mundo",
+        "you": "Tú",
+        "legend": "Afinado: a {onPitchCents} cents o menos · Clavado: a {spotOnCents} cents o menos"
       }
     }
   },

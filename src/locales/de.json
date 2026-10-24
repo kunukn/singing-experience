@@ -276,6 +276,15 @@
         "aimMiddle": "Super! Ziel jetzt genau auf die Mitte vom Ton",
         "nearlyPerfect": "Fast perfekt! Bleib genau in der Mitte",
         "perfect": "Wow, total sicher!"
+      },
+      "guide": {
+        "title": "Level",
+        "intro": "Halte einen Ton {seconds} Sekunden lang, dann bekommst du ein Level",
+        "onPitchGoal": "{percent} im Ton",
+        "spotOnGoal": "{percent} genau getroffen",
+        "firstLevel": "Hier fangen alle an",
+        "you": "Du",
+        "legend": "Im Ton: höchstens {onPitchCents} Cent daneben · Genau getroffen: höchstens {spotOnCents} Cent daneben"
       }
     }
   },

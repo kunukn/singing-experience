@@ -1,5 +1,10 @@
 import { describe, expect, test } from 'vitest'
-import { focusLevelFor, focusTipFor, LEVEL_MIN_HOLD_MS } from './focusLevel'
+import {
+  FOCUS_LEVEL_RULES,
+  focusLevelFor,
+  focusTipFor,
+  LEVEL_MIN_HOLD_MS,
+} from './focusLevel'
 import type { FocusToneStats } from './focusToneTracker'
 
 /* A clean, centred, long-enough take; each test bends the field it is about */
@@ -43,6 +48,25 @@ describe('focusLevelFor', () => {
     expect(focusLevelFor(take({ onPitchPercent: 99, spotOnPercent: 49 }))).toBe(
       'stageReady',
     )
+  })
+})
+
+describe('FOCUS_LEVEL_RULES', () => {
+  /* focusLevelFor takes the first rule met, so a lower rung listed above a
+   * higher one would shadow it */
+  test('should list rungs highest first, ending at a catch-all warming up', () => {
+    const onPitchThresholds = FOCUS_LEVEL_RULES.map(
+      (rule) => rule.minOnPitchPercent,
+    )
+
+    expect(onPitchThresholds).toEqual(
+      onPitchThresholds.toSorted((a, b) => b - a),
+    )
+    expect(FOCUS_LEVEL_RULES.at(-1)).toEqual({
+      level: 'warmingUp',
+      minOnPitchPercent: 0,
+      minSpotOnPercent: 0,
+    })
   })
 })
 

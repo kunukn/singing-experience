@@ -276,6 +276,15 @@
         "aimMiddle": "رائع! صوّب الآن إلى منتصف النغمة تمامًا",
         "nearlyPerfect": "مثالي تقريبًا! ابقَ في المنتصف تمامًا",
         "perfect": "واو، ثابت كالصخر!"
+      },
+      "guide": {
+        "title": "المستويات",
+        "intro": "اثبت على نغمة {seconds} ثوانٍ لتحصل على مستوى",
+        "onPitchGoal": "{percent} على النغمة",
+        "spotOnGoal": "{percent} مضبوط تمامًا",
+        "firstLevel": "الجميع يبدأ من هنا",
+        "you": "أنت",
+        "legend": "على النغمة: ضمن {onPitchCents} سنت · مضبوط تمامًا: ضمن {spotOnCents} سنت"
       }
     }
   },

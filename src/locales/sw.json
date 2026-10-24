@@ -276,6 +276,15 @@
         "aimMiddle": "Vizuri! Sasa lenga katikati kabisa ya noti",
         "nearlyPerfect": "Karibu kamili! Baki katikati kabisa",
         "perfect": "Lo, imara kabisa!"
+      },
+      "guide": {
+        "title": "Viwango",
+        "intro": "Shikilia noti kwa sekunde {seconds} upate kiwango",
+        "onPitchGoal": "{percent} kwenye sauti",
+        "spotOnGoal": "{percent} sawasawa kabisa",
+        "firstLevel": "Kila mtu anaanzia hapa",
+        "you": "Wewe",
+        "legend": "Kwenye sauti: ndani ya senti {onPitchCents} · Sawasawa kabisa: ndani ya senti {spotOnCents}"
       }
     }
   },

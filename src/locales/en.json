@@ -276,6 +276,15 @@
         "aimMiddle": "Great! Now aim for the very middle of the note",
         "nearlyPerfect": "Nearly pitch perfect! Keep it right in the middle",
         "perfect": "Wow, rock solid!"
+      },
+      "guide": {
+        "title": "Levels",
+        "intro": "Hold a note for {seconds} seconds to get a level",
+        "onPitchGoal": "{percent} on pitch",
+        "spotOnGoal": "{percent} spot on",
+        "firstLevel": "Everyone starts here",
+        "you": "You",
+        "legend": "On pitch: within {onPitchCents} cents · Spot on: within {spotOnCents} cents"
       }
     }
   },

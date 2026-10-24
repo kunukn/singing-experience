@@ -276,6 +276,15 @@
         "aimMiddle": "いいね！音のまんなかをねらってみて",
         "nearlyPerfect": "ほぼかんぺき！まんなかをキープしよう",
         "perfect": "すごい、ばっちり！"
+      },
+      "guide": {
+        "title": "レベル",
+        "intro": "音を{seconds}秒のばすとレベルが出るよ",
+        "onPitchGoal": "音程OK {percent}",
+        "spotOnGoal": "ぴったり {percent}",
+        "firstLevel": "みんなここからスタート",
+        "you": "きみ",
+        "legend": "音程OK：{onPitchCents}セント以内 · ぴったり：{spotOnCents}セント以内"
       }
     }
   },

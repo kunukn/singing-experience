@@ -276,6 +276,15 @@
         "aimMiddle": "Ótimo! Agora mire bem no meio da nota",
         "nearlyPerfect": "Quase perfeito! Fique bem no meio",
         "perfect": "Uau, firme como rocha!"
+      },
+      "guide": {
+        "title": "Níveis",
+        "intro": "Segure uma nota por {seconds} segundos para ganhar um nível",
+        "onPitchGoal": "{percent} afinado",
+        "spotOnGoal": "{percent} na mosca",
+        "firstLevel": "Todo mundo começa aqui",
+        "you": "Você",
+        "legend": "Afinado: até {onPitchCents} cents de diferença · Na mosca: até {spotOnCents} cents de diferença"
       }
     }
   },

@@ -276,6 +276,15 @@
         "aimMiddle": "很棒！现在瞄准音的正中间",
         "nearlyPerfect": "差一点就完美了！稳稳停在正中间",
         "perfect": "哇，稳稳的！"
+      },
+      "guide": {
+        "title": "等级",
+        "intro": "把一个音保持{seconds}秒，就能看到等级",
+        "onPitchGoal": "音准 {percent}",
+        "spotOnGoal": "精准 {percent}",
+        "firstLevel": "大家都从这里开始",
+        "you": "你",
+        "legend": "音准：误差在{onPitchCents}音分以内 · 精准：误差在{spotOnCents}音分以内"
       }
     }
   },

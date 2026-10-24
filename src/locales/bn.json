@@ -276,6 +276,15 @@
         "aimMiddle": "দারুণ! এবার সুরের ঠিক মাঝখানে গাও",
         "nearlyPerfect": "প্রায় নিখুঁত! ঠিক মাঝখানে ধরে রাখো",
         "perfect": "বাহ, একদম পাকা!"
+      },
+      "guide": {
+        "title": "লেভেল",
+        "intro": "লেভেল পেতে একটা সুর {seconds} সেকেন্ড ধরে রাখো",
+        "onPitchGoal": "{percent} সুরে আছে",
+        "spotOnGoal": "{percent} একদম ঠিক",
+        "firstLevel": "সবাই এখান থেকেই শুরু করে",
+        "you": "তুমি",
+        "legend": "সুরে আছে: {onPitchCents} সেন্টের মধ্যে · একদম ঠিক: {spotOnCents} সেন্টের মধ্যে"
       }
     }
   },
