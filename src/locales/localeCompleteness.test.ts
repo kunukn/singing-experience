@@ -23,8 +23,6 @@ const LOCALES_PENDING_TRANSLATION = new Set(['en', 'kl'])
 /* Symbols, number formats and proper names read the same in every language */
 const LANGUAGE_NEUTRAL_KEYS = new Set([
   'generic.previewButton',
-  'generic.darkMode',
-  'generic.lightMode',
   'generic.hz',
   'generic.voiceTypeSpan',
   'generic.voiceTypeSpanCoverage',

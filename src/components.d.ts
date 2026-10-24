@@ -29,7 +29,6 @@ declare module 'vue' {
     CircleOfFifthsTarget: typeof import('./components/circle-of-fifths/CircleOfFifthsTarget.vue')['default']
     CircleOfFifthsTestPage: typeof import('./components/circle-of-fifths/CircleOfFifthsTestPage.vue')['default']
     CircleOfFifthsWheel: typeof import('./components/circle-of-fifths/CircleOfFifthsWheel.vue')['default']
-    DarkModeToggle: typeof import('./components/generic/DarkModeToggle.vue')['default']
     DetectedToneCard: typeof import('./components/tone-detector/DetectedToneCard.vue')['default']
     DoReMiCompletePanel: typeof import('./components/do-re-mi/DoReMiCompletePanel.vue')['default']
     DoReMiDisplay: typeof import('./components/do-re-mi/DoReMiDisplay.vue')['default']
