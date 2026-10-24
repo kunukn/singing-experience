@@ -1,0 +1,11 @@
+<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <style>
+    svg { --icon-strong: #0284c7; --icon-accent: #0ea5e9; --icon-light: #ffffff; }
+    @media (prefers-color-scheme: dark) { svg { --icon-strong: #38bdf8; --icon-accent: #38bdf8; --icon-light: #f4f4f5; } }
+  </style>
+  <rect x="1" y="1" width="38" height="38" rx="10" fill="var(--icon-strong)" fill-opacity="0.16"></rect>
+  <path d="M6 12h28M6 16h28M6 20h28M6 24h28M6 28h28" stroke="var(--icon-strong)" stroke-width="1.25" opacity="0.45"></path>
+  <ellipse cx="12" cy="26" rx="3.4" ry="2.5" transform="rotate(-20 12 26)" fill="var(--icon-strong)"></ellipse>
+  <ellipse cx="20" cy="20" rx="3.4" ry="2.5" transform="rotate(-20 20 20)" fill="var(--icon-strong)"></ellipse>
+  <ellipse cx="28" cy="14" rx="3.4" ry="2.5" transform="rotate(-20 28 14)" fill="var(--icon-strong)"></ellipse>
+</svg>

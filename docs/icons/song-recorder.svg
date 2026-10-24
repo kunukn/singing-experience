@@ -1,0 +1,13 @@
+<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <style>
+    svg { --icon-strong: #e11d48; --icon-accent: #f43f5e; --icon-light: #ffffff; }
+    @media (prefers-color-scheme: dark) { svg { --icon-strong: #fb7185; --icon-accent: #fb7185; --icon-light: #f4f4f5; } }
+  </style>
+  <rect x="1" y="1" width="38" height="38" rx="10" fill="var(--icon-strong)" fill-opacity="0.16"></rect>
+  <path d="M7 17v6M10.5 12.5v15M14 15.5v9M17.5 18.5v3" stroke="var(--icon-strong)" stroke-width="2.5"></path>
+  <path d="M20 17l2.5 3-2.5 3" stroke="var(--icon-strong)" stroke-width="2" opacity="0.6"></path>
+  <ellipse cx="25" cy="27" rx="2.7" ry="2.1" transform="rotate(-20 25 27)" fill="var(--icon-strong)"></ellipse>
+  <ellipse cx="31" cy="25" rx="2.7" ry="2.1" transform="rotate(-20 31 25)" fill="var(--icon-strong)"></ellipse>
+  <path d="M27.4 26.5V14.5M33.4 24.5V12.5" stroke="var(--icon-strong)" stroke-width="1.75"></path>
+  <path d="M27.4 14.5l6-2" stroke="var(--icon-strong)" stroke-width="3" stroke-linecap="butt"></path>
+</svg>

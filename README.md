@@ -18,35 +18,35 @@ Singing Experience is a free web app for exploring your voice: practice singing,
 
 ## ✨ What's Inside
 
-Everything is reachable from the home screen, split into **🎛️ Music Tools** and **🕹️ Singing Games**.
+Everything is reachable from the home screen, split into <img src="docs/icons/tools.svg" width="20" height="20" align="absmiddle" alt="" /> **Music Tools** and <img src="docs/icons/games.svg" width="20" height="20" align="absmiddle" alt="" /> **Singing Games**.
 
-### 🎛️ Music Tools
+### <img src="docs/icons/tools.svg" width="24" height="24" align="absmiddle" alt="" /> Music Tools
 
-| Tool                             | What it does                                                                                  |
-| -------------------------------- | --------------------------------------------------------------------------------------------- |
-| 🎤 Pitch Detector                | Shows the note, frequency, and how sharp or flat you are — with a pitch history chart         |
-| 🎙️ Vocal Warm-Up                 | Guided pitch sequences that transpose up a half step each round                               |
-| 🎵 Notes                         | Every note on the staff, with its name and sound                                              |
-| 🎹 Piano `beta`                  | Play the keys and watch your voice land on the keyboard                                       |
-| 🎸 Guitar `beta`                 | Play the fretboard and watch your voice land on it                                            |
-| 🔑 Chord & Scale Detector `beta` | Sing or play a few notes and see which chords and scales fit — plus twins with the same notes |
-| 📝 Song Recorder `alpha`         | Sing a tune to a metronome and see it as sheet music; copy the ABC notation                   |
-| 🎚️ Tone Detector `alpha`         | Picks up several notes at once — sing or play a harmony and see every tone                    |
-| 🪕 Instrument Tuner              | Guitar and ukulele tunings with a cents bar and an in-tune chime                              |
+| Tool                                                                                                                      | What it does                                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| <img src="docs/icons/pitch-detector.svg" width="20" height="20" align="absmiddle" alt="" /> Pitch Detector                | Shows the note, frequency, and how sharp or flat you are — with a pitch history chart         |
+| <img src="docs/icons/warm-up.svg" width="20" height="20" align="absmiddle" alt="" /> Vocal Warm-Up                        | Guided pitch sequences that transpose up a half step each round                               |
+| <img src="docs/icons/notes.svg" width="20" height="20" align="absmiddle" alt="" /> Notes                                  | Every note on the staff, with its name and sound                                              |
+| <img src="docs/icons/piano.svg" width="20" height="20" align="absmiddle" alt="" /> Piano `beta`                           | Play the keys and watch your voice land on the keyboard                                       |
+| <img src="docs/icons/guitar.svg" width="20" height="20" align="absmiddle" alt="" /> Guitar `beta`                         | Play the fretboard and watch your voice land on it                                            |
+| <img src="docs/icons/scale-detector.svg" width="20" height="20" align="absmiddle" alt="" /> Chord & Scale Detector `beta` | Sing or play a few notes and see which chords and scales fit — plus twins with the same notes |
+| <img src="docs/icons/song-recorder.svg" width="20" height="20" align="absmiddle" alt="" /> Song Recorder `alpha`          | Sing a tune to a metronome and see it as sheet music; copy the ABC notation                   |
+| <img src="docs/icons/tone-detector.svg" width="20" height="20" align="absmiddle" alt="" /> Tone Detector `alpha`          | Picks up several notes at once — sing or play a harmony and see every tone                    |
+| <img src="docs/icons/tuner.svg" width="20" height="20" align="absmiddle" alt="" /> Instrument Tuner                       | Guitar and ukulele tunings with a cents bar and an in-tune chime                              |
 
 The tools all listen to your voice in real time and show you where it lands — on a chart, a staff, a keyboard, or a fretboard. Tap a note to hear it, sing it back, and compare. Each tool has its own settings — voice range, reference pitch, scale highlighting, note names, tuning, and more.
 
-### 🕹️ Singing Games
+### <img src="docs/icons/games.svg" width="24" height="24" align="absmiddle" alt="" /> Singing Games
 
-| Game                            | What you do                                                                                          |
-| ------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| 🎯 Sing Tone                    | A random tone plays — sing it back. Match a row of them to win                                       |
-| 🎶 DO RE MI                     | Sing up the scale, holding each note steady to advance                                               |
-| 🎹 Sing the Keys `beta`         | Notes fall onto a piano — sing each one as it lands. Twinkle Twinkle, Für Elise and more, in any key |
-| 👑 Grace Kelly Challenge `beta` | Sing along to MIKA's "Grace Kelly" with real sheet music and harmonies                               |
-| 🐦 Singfly `beta`               | Your pitch flies the bird through the gaps                                                           |
-| 🎼 Note Rush `beta`             | Hit as many scrolling target notes as you can before the clock runs out                              |
-| 🎡 Circle of Fifths `beta`      | Sing DO then SO to hop around the circle of fifths and light up all 12 keys, or explore each key     |
+| Game                                                                                                                            | What you do                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| <img src="docs/icons/sing-tone.svg" width="20" height="20" align="absmiddle" alt="" /> Sing Tone                                | A random tone plays — sing it back. Match a row of them to win                                       |
+| <img src="docs/icons/do-re-mi.svg" width="20" height="20" align="absmiddle" alt="" /> DO RE MI                                  | Sing up the scale, holding each note steady to advance                                               |
+| <img src="docs/icons/sing-the-keys.svg" width="20" height="20" align="absmiddle" alt="" /> Sing the Keys `beta`                 | Notes fall onto a piano — sing each one as it lands. Twinkle Twinkle, Für Elise and more, in any key |
+| <img src="docs/icons/grace-kelly-challenge.svg" width="20" height="20" align="absmiddle" alt="" /> Grace Kelly Challenge `beta` | Sing along to MIKA's "Grace Kelly" with real sheet music and harmonies                               |
+| <img src="docs/icons/singfly.svg" width="20" height="20" align="absmiddle" alt="" /> Singfly `beta`                             | Your pitch flies the bird through the gaps                                                           |
+| <img src="docs/icons/pitch-game.svg" width="20" height="20" align="absmiddle" alt="" /> Note Rush `beta`                        | Hit as many scrolling target notes as you can before the clock runs out                              |
+| <img src="docs/icons/circle-of-fifths.svg" width="20" height="20" align="absmiddle" alt="" /> Circle of Fifths `beta`           | Sing DO then SO to hop around the circle of fifths and light up all 12 keys, or explore each key     |
 
 Each program has its own settings — voice range, difficulty, tempo, hold time, and more. DO RE MI offers difficulty levels and 40+ scale modes spanning classical, jazz, and world music.
 

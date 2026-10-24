@@ -1,0 +1,13 @@
+<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <style>
+    svg { --icon-strong: #2563eb; --icon-accent: #3b82f6; --icon-light: #ffffff; }
+    @media (prefers-color-scheme: dark) { svg { --icon-strong: #60a5fa; --icon-accent: #60a5fa; --icon-light: #f4f4f5; } }
+  </style>
+  <rect x="1" y="1" width="38" height="38" rx="10" fill="var(--icon-strong)" fill-opacity="0.16"></rect>
+  <rect x="28.5" y="6" width="4" height="7" rx="1.5" fill="var(--icon-strong)" opacity="0.5"></rect>
+  <rect x="14.5" y="13" width="4" height="10" rx="1.5" fill="var(--icon-strong)"></rect>
+  <rect x="6" y="26" width="28" height="8" rx="2" fill="var(--icon-light)"></rect>
+  <rect x="13" y="26" width="7" height="8" fill="var(--icon-strong)"></rect>
+  <path d="M13 26v8M20 26v8M27 26v8" stroke="var(--icon-strong)" stroke-width="1.5"></path>
+  <rect x="6" y="26" width="28" height="8" rx="2" stroke="var(--icon-strong)" stroke-width="2"></rect>
+</svg>

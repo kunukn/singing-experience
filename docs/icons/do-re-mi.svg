@@ -1,0 +1,12 @@
+<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <style>
+    svg { --icon-strong: #059669; --icon-accent: #10b981; --icon-light: #ffffff; }
+    @media (prefers-color-scheme: dark) { svg { --icon-strong: #34d399; --icon-accent: #34d399; --icon-light: #f4f4f5; } }
+  </style>
+  <rect x="1" y="1" width="38" height="38" rx="10" fill="var(--icon-strong)" fill-opacity="0.16"></rect>
+  <rect x="8" y="7.5" width="24" height="4.5" rx="2.25" stroke="var(--icon-strong)" stroke-width="1.5"></rect>
+  <rect x="8" y="14.5" width="24" height="4.5" rx="2.25" stroke="var(--icon-strong)" stroke-width="1.5"></rect>
+  <rect x="8" y="14.5" width="12" height="4.5" rx="2.25" fill="var(--icon-strong)"></rect>
+  <rect x="8" y="21.5" width="24" height="4.5" rx="2.25" fill="var(--icon-strong)"></rect>
+  <rect x="8" y="28.5" width="24" height="4.5" rx="2.25" fill="var(--icon-strong)"></rect>
+</svg>

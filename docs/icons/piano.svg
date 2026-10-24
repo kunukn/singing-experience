@@ -1,0 +1,15 @@
+<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <style>
+    svg { --icon-strong: #2563eb; --icon-accent: #10b981; --icon-light: #ffffff; }
+    @media (prefers-color-scheme: dark) { svg { --icon-strong: #60a5fa; --icon-accent: #34d399; --icon-light: #f4f4f5; } }
+  </style>
+  <rect x="1" y="1" width="38" height="38" rx="10" fill="var(--icon-strong)" fill-opacity="0.16"></rect>
+  <path d="M9 9h22" stroke="var(--icon-strong)" stroke-width="2.5" opacity="0.35"></path>
+  <path d="M29.75 9v4" stroke="var(--icon-accent)" stroke-width="2"></path>
+  <circle cx="29.75" cy="9" r="3" fill="var(--icon-accent)"></circle>
+  <rect x="7" y="16" width="26" height="18" rx="3" fill="var(--icon-light)"></rect>
+  <path d="M26.5 16H30a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3h-3.5z" fill="var(--icon-strong)" opacity="0.55"></path>
+  <path d="M13.5 25v9M20 25v9M26.5 16v18" stroke="var(--icon-strong)" stroke-width="1.5"></path>
+  <path d="M11.7 16h3.6v8.5a1 1 0 0 1-1 1h-1.6a1 1 0 0 1-1-1zM18.2 16h3.6v8.5a1 1 0 0 1-1 1h-1.6a1 1 0 0 1-1-1z" fill="var(--icon-strong)"></path>
+  <rect x="7" y="16" width="26" height="18" rx="3" stroke="var(--icon-strong)" stroke-width="2.5"></rect>
+</svg>
