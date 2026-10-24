@@ -680,6 +680,16 @@
       "step1": "Tekan Mulai.",
       "step2": "Nyanyikan DO, lalu SO, untuk melompat ke nada dasar berikutnya.",
       "step3": "Nyalakan semua 12 nada dasar untuk selesai."
+    },
+    "singingTools": {
+      "step1": "Pilih alat untuk membukanya.",
+      "step2": "Kebanyakan alat mendengarkan lewat mikrofonmu. Izinkan saat browser bertanya.",
+      "step3": "Di dalam setiap alat, tekan Cara pakainya untuk melihat arti semuanya."
+    },
+    "singingGames": {
+      "step1": "Pilih permainan untuk dimainkan.",
+      "step2": "Permainan mendengarkan kamu bernyanyi, jadi izinkan mikrofon saat browser bertanya.",
+      "step3": "Di dalam setiap permainan, tekan Cara pakainya untuk melihat aturannya."
     }
   },
   "glossary": {

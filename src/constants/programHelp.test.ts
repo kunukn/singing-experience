@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { programHelpByKey } from './programHelp'
-import { games, tools } from './programs'
+import { games, programs, tools } from './programs'
 
 /* Eager-load every locale so a missing help string fails here, not on screen */
 const localeModules = import.meta.glob<{ default: Record<string, unknown> }>(
@@ -45,7 +45,9 @@ function requiredHelpKeys() {
 
 describe('program help', () => {
   test('should have a guide for every program', () => {
-    const programKeys = [...games, ...tools].map((program) => program.key)
+    const programKeys = [...programs, ...games, ...tools].map(
+      (program) => program.key,
+    )
 
     expect(Object.keys(programHelpByKey).toSorted()).toEqual(
       programKeys.toSorted(),

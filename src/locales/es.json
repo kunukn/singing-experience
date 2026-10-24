@@ -680,6 +680,16 @@
       "step1": "Pulsa Iniciar.",
       "step2": "Canta DO y luego SO para saltar a la siguiente tonalidad.",
       "step3": "Enciende las 12 tonalidades para terminar."
+    },
+    "singingTools": {
+      "step1": "Elige una herramienta para abrirla.",
+      "step2": "La mayoría de las herramientas te escuchan por el micrófono. Permítelo cuando tu navegador te lo pida.",
+      "step3": "Dentro de cada herramienta, pulsa Cómo funciona para ver qué significa cada cosa."
+    },
+    "singingGames": {
+      "step1": "Elige un juego para jugar.",
+      "step2": "Los juegos te escuchan cantar, así que permite el micrófono cuando tu navegador te lo pida.",
+      "step3": "Dentro de cada juego, pulsa Cómo funciona para ver las reglas."
     }
   },
   "glossary": {

@@ -680,6 +680,16 @@
       "step1": "Drück auf Start.",
       "step2": "Sing DO und dann SO, um zur nächsten Tonart zu hüpfen.",
       "step3": "Bring alle 12 Tonarten zum Leuchten, dann bist du fertig."
+    },
+    "singingTools": {
+      "step1": "Wähl ein Werkzeug aus, um es zu öffnen.",
+      "step2": "Die meisten Werkzeuge hören über dein Mikrofon zu. Erlaube es, wenn dein Browser fragt.",
+      "step3": "Drück in jedem Werkzeug auf „So geht's“, dann siehst du, was alles bedeutet."
+    },
+    "singingGames": {
+      "step1": "Wähl ein Spiel zum Spielen aus.",
+      "step2": "Die Spiele hören dir beim Singen zu. Erlaube also das Mikrofon, wenn dein Browser fragt.",
+      "step3": "Drück in jedem Spiel auf „So geht's“, dann siehst du die Regeln."
     }
   },
   "glossary": {

@@ -680,6 +680,16 @@
       "step1": "Aperte Iniciar.",
       "step2": "Cante DO e depois SO para pular para o próximo tom.",
       "step3": "Acenda os 12 tons para terminar."
+    },
+    "singingTools": {
+      "step1": "Escolha uma ferramenta para abrir.",
+      "step2": "A maioria das ferramentas ouve pelo seu microfone. Permita quando o navegador perguntar.",
+      "step3": "Dentro de cada ferramenta, aperte Como funciona para ver o que cada coisa significa."
+    },
+    "singingGames": {
+      "step1": "Escolha um jogo para jogar.",
+      "step2": "Os jogos ouvem você cantar, então permita o microfone quando o navegador perguntar.",
+      "step3": "Dentro de cada jogo, aperte Como funciona para ver as regras."
     }
   },
   "glossary": {

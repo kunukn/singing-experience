@@ -125,5 +125,7 @@ export const programStageByRoute = new Map(
 )
 
 export const programByRoute = new Map(
-  [...games, ...tools].map((program) => [program.route, program] as const),
+  [...programs, ...games, ...tools].map(
+    (program) => [program.route, program] as const,
+  ),
 )

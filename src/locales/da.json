@@ -680,6 +680,16 @@
       "step1": "Tryk på Start.",
       "step2": "Syng DO og så SO for at hoppe til næste toneart.",
       "step3": "Tænd alle 12 tonearter for at blive færdig."
+    },
+    "singingTools": {
+      "step1": "Vælg et værktøj for at åbne det.",
+      "step2": "De fleste værktøjer lytter gennem din mikrofon. Sig ja, når browseren spørger.",
+      "step3": "Tryk på Sådan virker det inde i hvert værktøj for at se, hvad det hele betyder."
+    },
+    "singingGames": {
+      "step1": "Vælg et spil, du vil spille.",
+      "step2": "Spillene lytter, når du synger, så sig ja til mikrofonen, når browseren spørger.",
+      "step3": "Tryk på Sådan virker det inde i hvert spil for at se reglerne."
     }
   },
   "glossary": {

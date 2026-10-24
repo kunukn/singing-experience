@@ -539,6 +539,16 @@
       "step1": "Press Aallartitsit.",
       "step2": "Sing DO, then SO, to hop to the next key.",
       "step3": "Light up all 12 keys to finish."
+    },
+    "singingTools": {
+      "step1": "Pick a tool to open it.",
+      "step2": "Most tools listen through your microphone. Allow it when your browser asks.",
+      "step3": "Inside each tool, tap How it works to see what everything means."
+    },
+    "singingGames": {
+      "step1": "Pick a game to play.",
+      "step2": "Games listen to you sing, so allow the microphone when your browser asks.",
+      "step3": "Inside each game, tap How it works for the rules."
     }
   },
   "glossary": {

@@ -680,6 +680,16 @@
       "step1": "Bonyeza “Anza”.",
       "step2": "Imba DO, kisha SO, kuruka hadi ufunguo unaofuata.",
       "step3": "Washa funguo zote 12 ili kumaliza."
+    },
+    "singingTools": {
+      "step1": "Chagua zana ili uifungue.",
+      "step2": "Zana nyingi zinakusikiliza kupitia maikrofoni yako. Ruhusu kivinjari kinapouliza.",
+      "step3": "Ndani ya kila zana, bonyeza “Jinsi inavyofanya kazi” ili uone maana ya kila kitu."
+    },
+    "singingGames": {
+      "step1": "Chagua mchezo wa kucheza.",
+      "step2": "Michezo inakusikiliza ukiimba, kwa hiyo ruhusu maikrofoni kivinjari kinapouliza.",
+      "step3": "Ndani ya kila mchezo, bonyeza “Jinsi inavyofanya kazi” ili uone sheria."
     }
   },
   "glossary": {
