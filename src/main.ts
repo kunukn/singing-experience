@@ -62,7 +62,7 @@ app
     theme: {
       preset: Theme,
       options: {
-        /* App is always-dark; force PrimeVue dark color scheme unconditionally. */
+        /* Dark tokens apply while <html> has .p-dark — toggled by useDarkMode from the saved setting or prefers-color-scheme. */
         darkModeSelector: '.p-dark',
       },
     },
