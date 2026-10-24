@@ -280,7 +280,6 @@ onUnmounted(() => {
     :data-state="gameState"
   >
     <h1 class="flex items-center gap-2 text-2xl font-semibold">
-      <span>🎙️</span>
       <span>{{ $t('warmUp.title') }}</span>
     </h1>
     <p

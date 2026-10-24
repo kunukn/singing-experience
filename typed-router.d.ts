@@ -157,6 +157,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/program-icons-test': RouteRecordInfo<
+      '/program-icons-test',
+      '/program-icons-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/scale-detector': RouteRecordInfo<
       '/scale-detector',
       '/scale-detector',
@@ -435,6 +442,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/pitch-game-test.vue': {
       routes:
         | '/pitch-game-test'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/program-icons-test.vue': {
+      routes:
+        | '/program-icons-test'
       views:
         | never
       pathParamNames:

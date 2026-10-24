@@ -28,7 +28,7 @@ const isCelebrated = computed(
 <template>
   <div class="flex w-full flex-col items-center gap-2">
     <div class="flex flex-wrap items-baseline justify-center gap-2">
-      <div class="text-4xl">🎯</div>
+      <ProgramPitchGameIcon class="size-10 self-center" />
       <h2 class="text-2xl font-bold text-(--p-green-400)">
         {{
           isCelebrated ? $t('generic.congratulations') : $t('generic.gameOver')

@@ -447,7 +447,6 @@ onUnmounted(() => {
   >
     <div class="text-center">
       <h1 class="flex items-center justify-center gap-2 text-2xl font-semibold">
-        <span>🎹</span>
         <span>{{ t('home.programs.singTheKeys.name') }} {{ titleSuffix }}</span>
       </h1>
       <p class="text-sm text-(--p-text-muted-color)">

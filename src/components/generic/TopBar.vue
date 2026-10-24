@@ -30,7 +30,10 @@ function goBack() {
       <span class="text-sm">{{ t('generic.back') }}</span>
     </button>
     <div v-else />
-    <ProgramStageTag v-if="stage" :stage class="ms-3 me-auto" />
+    <div v-if="program || stage" class="ms-3 me-auto flex items-center gap-2">
+      <component :is="program.icon" v-if="program" class="size-6 shrink-0" />
+      <ProgramStageTag v-if="stage" :stage />
+    </div>
     <div class="flex items-center gap-2">
       <LanguageSwitcher v-if="isLandingPage" class="me-2" />
       <ProgramHelpButton v-if="program" :programKey="program.key" />

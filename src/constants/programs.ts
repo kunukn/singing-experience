@@ -1,9 +1,30 @@
+import type { Component } from 'vue'
+
+import ProgramCircleOfFifthsIcon from '@/components/icons/program/ProgramCircleOfFifthsIcon.vue'
+import ProgramDoReMiIcon from '@/components/icons/program/ProgramDoReMiIcon.vue'
+import ProgramGraceKellyIcon from '@/components/icons/program/ProgramGraceKellyIcon.vue'
+import ProgramGuitarIcon from '@/components/icons/program/ProgramGuitarIcon.vue'
+import ProgramNotesIcon from '@/components/icons/program/ProgramNotesIcon.vue'
+import ProgramPianoIcon from '@/components/icons/program/ProgramPianoIcon.vue'
+import ProgramPitchDetectorIcon from '@/components/icons/program/ProgramPitchDetectorIcon.vue'
+import ProgramPitchGameIcon from '@/components/icons/program/ProgramPitchGameIcon.vue'
+import ProgramScaleDetectorIcon from '@/components/icons/program/ProgramScaleDetectorIcon.vue'
+import ProgramSingFlyIcon from '@/components/icons/program/ProgramSingFlyIcon.vue'
+import ProgramSingTheKeysIcon from '@/components/icons/program/ProgramSingTheKeysIcon.vue'
+import ProgramSingToneIcon from '@/components/icons/program/ProgramSingToneIcon.vue'
+import ProgramSingingGamesIcon from '@/components/icons/program/ProgramSingingGamesIcon.vue'
+import ProgramSingingToolsIcon from '@/components/icons/program/ProgramSingingToolsIcon.vue'
+import ProgramSongRecorderIcon from '@/components/icons/program/ProgramSongRecorderIcon.vue'
+import ProgramToneDetectorIcon from '@/components/icons/program/ProgramToneDetectorIcon.vue'
+import ProgramTunerIcon from '@/components/icons/program/ProgramTunerIcon.vue'
+import ProgramWarmUpIcon from '@/components/icons/program/ProgramWarmUpIcon.vue'
+
 /* Maturity of an unfinished program — shown as a tag on its card and in the top bar */
 export type ProgramStage = 'alpha' | 'beta'
 
 export type Program = {
   key: string
-  icon: string
+  icon: Component
   route: string
   stage?: ProgramStage
 }
@@ -11,41 +32,41 @@ export type Program = {
 export const games: Program[] = [
   {
     key: 'singTone',
-    icon: '🎯',
+    icon: ProgramSingToneIcon,
     route: '/sing-tone',
   },
   {
     key: 'doReMi',
-    icon: '🎶',
+    icon: ProgramDoReMiIcon,
     route: '/do-re-mi',
   },
   {
     key: 'singTheKeys',
-    icon: '🎹',
+    icon: ProgramSingTheKeysIcon,
     route: '/sing-the-keys',
     stage: 'beta',
   },
   {
     key: 'graceKelly',
-    icon: '👑',
+    icon: ProgramGraceKellyIcon,
     route: '/grace-kelly-challenge',
     stage: 'beta',
   },
   {
     key: 'singFly',
-    icon: '🐦',
+    icon: ProgramSingFlyIcon,
     route: '/singfly',
     stage: 'beta',
   },
   {
     key: 'pitchGame',
-    icon: '🎼',
+    icon: ProgramPitchGameIcon,
     route: '/pitch-game',
     stage: 'beta',
   },
   {
     key: 'circleOfFifths',
-    icon: '🎡',
+    icon: ProgramCircleOfFifthsIcon,
     route: '/circle-of-fifths',
     stage: 'beta',
   },
@@ -54,53 +75,53 @@ export const games: Program[] = [
 export const tools: Program[] = [
   {
     key: 'pitchDetector',
-    icon: '🎤',
+    icon: ProgramPitchDetectorIcon,
     route: '/pitch-detector',
   },
   {
     key: 'warmUp',
-    icon: '🎙️',
+    icon: ProgramWarmUpIcon,
     route: '/warm-up',
   },
   {
     key: 'notes',
-    icon: '🎵',
+    icon: ProgramNotesIcon,
     route: '/notes',
   },
 
   {
     key: 'piano',
-    icon: '🎹',
+    icon: ProgramPianoIcon,
     route: '/piano',
     stage: 'beta',
   },
   {
     key: 'guitar',
-    icon: '🎸',
+    icon: ProgramGuitarIcon,
     route: '/guitar',
     stage: 'beta',
   },
   {
     key: 'scaleDetector',
-    icon: '🔑',
+    icon: ProgramScaleDetectorIcon,
     route: '/scale-detector',
     stage: 'beta',
   },
   {
     key: 'songRecorder',
-    icon: '📝',
+    icon: ProgramSongRecorderIcon,
     route: '/song-recorder',
     stage: 'alpha',
   },
   {
     key: 'toneDetector',
-    icon: '🎚️',
+    icon: ProgramToneDetectorIcon,
     route: '/tone-detector',
     stage: 'alpha',
   },
   {
     key: 'tuner',
-    icon: '🪕',
+    icon: ProgramTunerIcon,
     route: '/tuner',
   },
 ]
@@ -108,12 +129,12 @@ export const tools: Program[] = [
 export const programs: Program[] = [
   {
     key: 'singingTools',
-    icon: '🎛️',
+    icon: ProgramSingingToolsIcon,
     route: '/tools',
   },
   {
     key: 'singingGames',
-    icon: '🕹️',
+    icon: ProgramSingingGamesIcon,
     route: '/games',
   },
 ]

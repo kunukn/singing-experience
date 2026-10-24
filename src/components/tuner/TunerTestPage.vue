@@ -36,7 +36,6 @@ const {
 <template>
   <div class="flex flex-1 flex-col items-center gap-4">
     <h1 class="flex items-center gap-2 text-2xl font-semibold">
-      <span>🎸</span>
       <span>{{ t('tuner.tuning') }} (Test)</span>
     </h1>
 

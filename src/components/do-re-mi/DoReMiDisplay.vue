@@ -318,7 +318,6 @@ onUnmounted(() => {
       (v-show → display:none) doesn't shift everything below it. -->
     <div class="flex min-h-17 flex-col items-center gap-4">
       <h1 class="flex items-center gap-2 text-2xl font-semibold">
-        <span>🎶</span>
         <span>
           {{ t('home.programs.doReMi.name')
           }}{{ titleSuffix ? ` ${titleSuffix}` : '' }}

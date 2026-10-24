@@ -24,7 +24,7 @@ function prewarmAudio() {
         <PrimeCard>
           <template #content>
             <div class="flex items-start gap-3 sm:gap-4">
-              <span class="text-4xl">{{ tool.icon }}</span>
+              <component :is="tool.icon" class="size-10 shrink-0" />
               <div>
                 <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
                   <h2 class="text-xl font-semibold">

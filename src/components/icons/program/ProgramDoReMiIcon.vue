@@ -1,0 +1,47 @@
+<template>
+  <ProgramIconTile hue="emerald">
+    <!-- Solfege ladder: each held step fills, climbing from DO -->
+    <rect
+      x="8"
+      y="7.5"
+      width="24"
+      height="4.5"
+      rx="2.25"
+      stroke="var(--icon-strong)"
+      stroke-width="1.5"
+    />
+    <rect
+      x="8"
+      y="14.5"
+      width="24"
+      height="4.5"
+      rx="2.25"
+      stroke="var(--icon-strong)"
+      stroke-width="1.5"
+    />
+    <rect
+      x="8"
+      y="14.5"
+      width="12"
+      height="4.5"
+      rx="2.25"
+      fill="var(--icon-strong)"
+    />
+    <rect
+      x="8"
+      y="21.5"
+      width="24"
+      height="4.5"
+      rx="2.25"
+      fill="var(--icon-strong)"
+    />
+    <rect
+      x="8"
+      y="28.5"
+      width="24"
+      height="4.5"
+      rx="2.25"
+      fill="var(--icon-strong)"
+    />
+  </ProgramIconTile>
+</template>

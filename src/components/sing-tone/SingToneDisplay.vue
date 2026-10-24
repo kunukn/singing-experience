@@ -290,7 +290,6 @@ onUnmounted(() => {
     :data-state="gameState"
   >
     <h1 class="flex items-center gap-2 text-2xl font-semibold">
-      <span>🎯</span>
       <span>{{ t('home.programs.singTone.name') }}</span>
     </h1>
     <p

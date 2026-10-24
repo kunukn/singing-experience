@@ -39,9 +39,9 @@ const musicNoteColorClass = computed(() => {
         <PrimeCard>
           <template #content>
             <div class="flex items-start gap-3 sm:gap-4">
-              <span class="w-12 shrink-0 text-center text-4xl">{{
-                program.icon
-              }}</span>
+              <div class="flex w-12 shrink-0 justify-center">
+                <component :is="program.icon" class="size-10" />
+              </div>
               <div class="min-w-0 grow">
                 <h2 class="mb-1 text-xl font-semibold">
                   {{ t(`home.programs.${program.key}.name`) }}
@@ -64,9 +64,7 @@ const musicNoteColorClass = computed(() => {
                     :key="item.key"
                     class="flex items-center gap-2 text-sm text-(--p-text-muted-color)"
                   >
-                    <span aria-hidden="true" class="w-6 shrink-0 text-center">{{
-                      item.icon
-                    }}</span>
+                    <component :is="item.icon" class="size-5 shrink-0" />
                     <span>{{ t(`home.programs.${item.key}.name`) }}</span>
                   </li>
                 </ul>
