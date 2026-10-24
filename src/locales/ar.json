@@ -153,8 +153,8 @@
         "description": "النوتات تسقط على البيانو. غنِّ كل نوتة عندما تصل إلى مفتاحها."
       },
       "notes": {
-        "name": "Notes",
-        "description": "See every note on the staff and learn its name."
+        "name": "النوتات",
+        "description": "شاهد كل نوتة على المدرج الموسيقي وتعلّم اسمها."
       },
       "songRecorder": {
         "name": "مسجّل الأغاني",
@@ -497,15 +497,15 @@
   "notes": {
     "accidentals": "دييز وبيمول",
     "tabs": {
-      "listen": "Listen",
+      "listen": "استمع",
       "overview": "نظرة عامة"
     },
     "clefLabels": {
-      "treble": "Treble clef",
-      "bass": "Bass clef"
+      "treble": "مفتاح صول",
+      "bass": "مفتاح فا"
     },
     "outliers": {
-      "heading": "Notes beyond the lines"
+      "heading": "نوتات خارج الخطوط"
     }
   },
   "songRecorder": {
@@ -613,7 +613,7 @@
     },
     "notes": {
       "step1": "انظر إلى المدرج الموسيقي لترى مكان كل نوتة.",
-      "step2": "اضغط على زر ابدأ في تبويب Listen لتسمع النوتات واحدة تلو الأخرى.",
+      "step2": "اضغط على زر ابدأ في تبويب استمع لتسمع النوتات واحدة تلو الأخرى.",
       "step3": "استخدم تبويب نظرة عامة لترى كل النوتات معًا."
     },
     "piano": {

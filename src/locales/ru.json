@@ -153,8 +153,8 @@
         "description": "Ноты падают на пианино. Пой каждую, когда она приземляется на свою клавишу."
       },
       "notes": {
-        "name": "Notes",
-        "description": "See every note on the staff and learn its name."
+        "name": "Ноты",
+        "description": "Смотри все ноты на нотном стане и учи их названия."
       },
       "songRecorder": {
         "name": "Запись песни",
@@ -497,15 +497,15 @@
   "notes": {
     "accidentals": "Диезы и бемоли",
     "tabs": {
-      "listen": "Listen",
+      "listen": "Слушать",
       "overview": "Обзор"
     },
     "clefLabels": {
-      "treble": "Treble clef",
-      "bass": "Bass clef"
+      "treble": "Скрипичный ключ",
+      "bass": "Басовый ключ"
     },
     "outliers": {
-      "heading": "Notes beyond the lines"
+      "heading": "Ноты за линейками"
     }
   },
   "songRecorder": {
@@ -613,7 +613,7 @@
     },
     "notes": {
       "step1": "Посмотри на нотный стан, чтобы увидеть, где стоит каждая нота.",
-      "step2": "Нажми «Старт» на вкладке «Listen», чтобы послушать ноты по одной.",
+      "step2": "Нажми «Старт» на вкладке «Слушать», чтобы послушать ноты по одной.",
       "step3": "Открой вкладку «Обзор», чтобы увидеть все ноты сразу."
     },
     "piano": {

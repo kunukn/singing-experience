@@ -153,8 +153,8 @@
         "description": "音符がピアノに落ちてくるよ。鍵盤に着いたら、その音を歌おう。"
       },
       "notes": {
-        "name": "Notes",
-        "description": "See every note on the staff and learn its name."
+        "name": "音符",
+        "description": "五線の上のすべての音符を見て、名前をおぼえよう。"
       },
       "songRecorder": {
         "name": "うたレコーダー",
@@ -497,15 +497,15 @@
   "notes": {
     "accidentals": "シャープとフラット",
     "tabs": {
-      "listen": "Listen",
+      "listen": "聴く",
       "overview": "概要"
     },
     "clefLabels": {
-      "treble": "Treble clef",
-      "bass": "Bass clef"
+      "treble": "ト音記号",
+      "bass": "ヘ音記号"
     },
     "outliers": {
-      "heading": "Notes beyond the lines"
+      "heading": "線の外の音符"
     }
   },
   "songRecorder": {
@@ -613,7 +613,7 @@
     },
     "notes": {
       "step1": "五線を見て、それぞれの音がどこにあるか見てみよう。",
-      "step2": "「Listen」タブで「開始」を押すと、音を1つずつ聞けるよ。",
+      "step2": "「聴く」タブで「開始」を押すと、音を1つずつ聞けるよ。",
       "step3": "「概要」タブで、ぜんぶの音をいっぺんに見られるよ。"
     },
     "piano": {

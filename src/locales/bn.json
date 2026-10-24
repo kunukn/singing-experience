@@ -153,8 +153,8 @@
         "description": "সুরগুলো পিয়ানোর ওপর পড়ে। প্রতিটি সুর তার কী-তে পৌঁছালেই গাও।"
       },
       "notes": {
-        "name": "Notes",
-        "description": "See every note on the staff and learn its name."
+        "name": "নোট",
+        "description": "স্টাফে প্রতিটা নোট দেখো আর তার নাম শেখো।"
       },
       "songRecorder": {
         "name": "গান রেকর্ডার",
@@ -497,15 +497,15 @@
   "notes": {
     "accidentals": "শার্প ও ফ্ল্যাট",
     "tabs": {
-      "listen": "Listen",
+      "listen": "শোনো",
       "overview": "সারসংক্ষেপ"
     },
     "clefLabels": {
-      "treble": "Treble clef",
-      "bass": "Bass clef"
+      "treble": "ট্রেবল ক্লেফ",
+      "bass": "বেস ক্লেফ"
     },
     "outliers": {
-      "heading": "Notes beyond the lines"
+      "heading": "লাইনের বাইরের নোট"
     }
   },
   "songRecorder": {
@@ -613,7 +613,7 @@
     },
     "notes": {
       "step1": "স্টাফে দেখো কোন নোট কোথায় বসে।",
-      "step2": "নোটগুলো একটা একটা করে শুনতে Listen ট্যাবে শুরু বোতাম চাপো।",
+      "step2": "নোটগুলো একটা একটা করে শুনতে শোনো ট্যাবে শুরু বোতাম চাপো।",
       "step3": "সব নোট একসাথে দেখতে সারসংক্ষেপ ট্যাব ব্যবহার করো।"
     },
     "piano": {

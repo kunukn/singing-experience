@@ -153,8 +153,8 @@
         "description": "सुर पियानो पर गिरते हैं। हर सुर को उसकी कुंजी पर पहुँचते ही गाओ।"
       },
       "notes": {
-        "name": "Notes",
-        "description": "See every note on the staff and learn its name."
+        "name": "सुर",
+        "description": "स्टाफ़ पर हर सुर देखो और उसका नाम सीखो।"
       },
       "songRecorder": {
         "name": "गीत रिकॉर्डर",
@@ -497,15 +497,15 @@
   "notes": {
     "accidentals": "शार्प और फ्लैट",
     "tabs": {
-      "listen": "Listen",
+      "listen": "सुनो",
       "overview": "अवलोकन"
     },
     "clefLabels": {
-      "treble": "Treble clef",
-      "bass": "Bass clef"
+      "treble": "ट्रेबल क्लेफ़",
+      "bass": "बास क्लेफ़"
     },
     "outliers": {
-      "heading": "Notes beyond the lines"
+      "heading": "रेखाओं के बाहर के सुर"
     }
   },
   "songRecorder": {
@@ -613,7 +613,7 @@
     },
     "notes": {
       "step1": "स्टाफ़ पर देखो कि हर सुर कहाँ बैठता है।",
-      "step2": "Listen टैब पर शुरू दबाओ और सुरों को एक-एक करके सुनो।",
+      "step2": "सुनो टैब पर शुरू दबाओ और सुरों को एक-एक करके सुनो।",
       "step3": "सारे सुर एक साथ देखने के लिए अवलोकन टैब खोलो।"
     },
     "piano": {

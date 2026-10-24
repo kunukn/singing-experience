@@ -153,8 +153,8 @@
         "description": "音符落到钢琴上。每个音符落到琴键时，把它唱出来。"
       },
       "notes": {
-        "name": "Notes",
-        "description": "See every note on the staff and learn its name."
+        "name": "音符",
+        "description": "看看五线谱上的每个音符，学会它的名字。"
       },
       "songRecorder": {
         "name": "歌曲录音机",
@@ -497,15 +497,15 @@
   "notes": {
     "accidentals": "升号和降号",
     "tabs": {
-      "listen": "Listen",
+      "listen": "听一听",
       "overview": "概览"
     },
     "clefLabels": {
-      "treble": "Treble clef",
-      "bass": "Bass clef"
+      "treble": "高音谱号",
+      "bass": "低音谱号"
     },
     "outliers": {
-      "heading": "Notes beyond the lines"
+      "heading": "线外的音符"
     }
   },
   "songRecorder": {
@@ -613,7 +613,7 @@
     },
     "notes": {
       "step1": "看看五线谱，找到每个音在哪里。",
-      "step2": "在“Listen”标签点“开始”，一个一个地听这些音。",
+      "step2": "在“听一听”标签点“开始”，一个一个地听这些音。",
       "step3": "用“概览”标签一次看到所有的音。"
     },
     "piano": {

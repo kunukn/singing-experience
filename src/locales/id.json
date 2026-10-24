@@ -153,8 +153,8 @@
         "description": "Nada jatuh ke piano. Nyanyikan tiap nada saat mendarat di tutsnya."
       },
       "notes": {
-        "name": "Notes",
-        "description": "See every note on the staff and learn its name."
+        "name": "Not",
+        "description": "Lihat setiap not di paranada dan pelajari namanya."
       },
       "songRecorder": {
         "name": "Perekam Lagu",
@@ -497,15 +497,15 @@
   "notes": {
     "accidentals": "Kres & mol",
     "tabs": {
-      "listen": "Listen",
+      "listen": "Dengar",
       "overview": "Ikhtisar"
     },
     "clefLabels": {
-      "treble": "Treble clef",
-      "bass": "Bass clef"
+      "treble": "Kunci G",
+      "bass": "Kunci F"
     },
     "outliers": {
-      "heading": "Notes beyond the lines"
+      "heading": "Not di luar garis"
     }
   },
   "songRecorder": {
@@ -613,7 +613,7 @@
     },
     "notes": {
       "step1": "Lihat paranada untuk tahu letak setiap not.",
-      "step2": "Tekan Mulai di tab Listen untuk mendengar not satu per satu.",
+      "step2": "Tekan Mulai di tab Dengar untuk mendengar not satu per satu.",
       "step3": "Pakai tab Ikhtisar untuk melihat semua not sekaligus."
     },
     "piano": {

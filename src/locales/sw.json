@@ -153,8 +153,8 @@
         "description": "Noti zinaanguka kwenye piano. Imba kila moja inapofika kwenye kitufe chake."
       },
       "notes": {
-        "name": "Notes",
-        "description": "See every note on the staff and learn its name."
+        "name": "Noti",
+        "description": "Ona kila noti kwenye mistari ya noti na ujifunze jina lake."
       },
       "songRecorder": {
         "name": "Kinasa Nyimbo",
@@ -497,15 +497,15 @@
   "notes": {
     "accidentals": "Shap na flati",
     "tabs": {
-      "listen": "Listen",
+      "listen": "Sikiliza",
       "overview": "Muhtasari"
     },
     "clefLabels": {
-      "treble": "Treble clef",
-      "bass": "Bass clef"
+      "treble": "Ufunguo wa treble",
+      "bass": "Ufunguo wa besi"
     },
     "outliers": {
-      "heading": "Notes beyond the lines"
+      "heading": "Noti nje ya mistari"
     }
   },
   "songRecorder": {
@@ -613,7 +613,7 @@
     },
     "notes": {
       "step1": "Angalia mistari ya noti uone kila noti inakaa wapi.",
-      "step2": "Bonyeza “Anza” kwenye kichupo cha “Listen” ili kusikia noti moja baada ya nyingine.",
+      "step2": "Bonyeza “Anza” kwenye kichupo cha “Sikiliza” ili kusikia noti moja baada ya nyingine.",
       "step3": "Tumia kichupo cha “Muhtasari” kuona noti zote kwa pamoja."
     },
     "piano": {
