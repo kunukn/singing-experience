@@ -168,6 +168,16 @@ const isCoarsePointer = useMediaQuery('(pointer: coarse)')
 
 const { isPreviewEnabled } = useSettings()
 
+/* In Piano only the toggle reads off; turning it on (only possible while
+ * idle) switches to Voice + piano so the mic can draw the voice. */
+const isPreviewToggleOn = computed({
+  get: () => isPreviewEnabled.value && isVoiceEnabled.value,
+  set: (enabled: boolean) => {
+    if (enabled && !isVoiceEnabled.value) inputMode.value = 'voiceAndPiano'
+    isPreviewEnabled.value = enabled
+  },
+})
+
 /* "See your voice" between listening sessions, as on /piano. While listening
  * the detector's own mic draws the line instead. The setter keeps the shared
  * setting writable so useIdlePreview can switch it off when permission is
@@ -309,9 +319,9 @@ defineExpose({ detector })
           @click="reset"
         />
         <PreviewToggle
-          v-model="isPreviewEnabled"
+          v-model="isPreviewToggleOn"
           :disabled="
-            !isVoiceEnabled ||
+            (!isVoiceEnabled && isListening) ||
             (!simulateIdlePreview && micPermission === 'denied')
           "
         />
