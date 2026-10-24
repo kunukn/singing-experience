@@ -85,7 +85,6 @@
   "home": {
     "title": "Erinarsornermik misigisaq",
     "subtitle": "Atortussamik toqqaruk aallartinniarlutit",
-    "welcome": "Sing into your mic and watch your voice come alive. New here? Try Nipip Qaffassusia.",
     "programs": {
       "pitchDetector": {
         "name": "Nipip Qaffassusia",
@@ -549,6 +548,11 @@
       "step1": "Pick a game to play.",
       "step2": "Games listen to you sing, so allow the microphone when your browser asks.",
       "step3": "Inside each game, tap How it works for the rules."
+    },
+    "home": {
+      "step1": "Pick a tool or a game to open it.",
+      "step2": "Allow the microphone when your browser asks. Without it, the programs can't hear you sing.",
+      "step3": "New here? Start with the Pitch Detector."
     }
   },
   "glossary": {

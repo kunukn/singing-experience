@@ -90,7 +90,6 @@
   "home": {
     "title": "Expérience de Chant",
     "subtitle": "Choisis un programme pour commencer",
-    "welcome": "Chante dans ton micro et regarde ta voix prendre vie. Tu débutes ? Essaie le Détecteur de hauteur.",
     "programs": {
       "pitchDetector": {
         "name": "Détecteur de hauteur",
@@ -690,6 +689,11 @@
       "step1": "Choisis un jeu pour jouer.",
       "step2": "Les jeux t'écoutent chanter, alors autorise le micro quand ton navigateur te le demande.",
       "step3": "Dans chaque jeu, appuie sur Comment ça marche pour voir les règles."
+    },
+    "home": {
+      "step1": "Choisis un outil ou un jeu pour l'ouvrir.",
+      "step2": "Autorise le micro quand ton navigateur te le demande. Sans lui, les programmes ne peuvent pas t'entendre chanter.",
+      "step3": "Tu débutes ? Commence par le Détecteur de hauteur."
     }
   },
   "glossary": {

@@ -26,13 +26,8 @@ const musicNoteColorClass = computed(() => {
       <h2 class="product-title mb-2 font-bold">{{ t('home.title') }}</h2>
     </div>
 
-    <p class="text-(--p-text-muted-color)">
+    <p class="mb-4 text-(--p-text-muted-color)">
       {{ t('home.subtitle') }}
-    </p>
-    <p
-      class="mt-1 mb-4 max-w-lg px-4 text-center text-sm text-(--p-text-muted-color)"
-    >
-      {{ t('home.welcome') }}
     </p>
 
     <div class="grid w-full max-w-lg gap-4" @click="prewarmAudio">

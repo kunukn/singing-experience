@@ -90,7 +90,6 @@
   "home": {
     "title": "Experiência de Canto",
     "subtitle": "Escolha um programa para começar",
-    "welcome": "Cante no microfone e veja sua voz ganhar vida. É novo por aqui? Experimente o Detector de afinação.",
     "programs": {
       "pitchDetector": {
         "name": "Detector de afinação",
@@ -690,6 +689,11 @@
       "step1": "Escolha um jogo para jogar.",
       "step2": "Os jogos ouvem você cantar, então permita o microfone quando o navegador perguntar.",
       "step3": "Dentro de cada jogo, aperte Como funciona para ver as regras."
+    },
+    "home": {
+      "step1": "Escolha uma ferramenta ou um jogo para abrir.",
+      "step2": "Permita o microfone quando o navegador perguntar. Sem ele, os programas não conseguem ouvir você cantar.",
+      "step3": "É novo aqui? Comece pelo Detector de afinação."
     }
   },
   "glossary": {

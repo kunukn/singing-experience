@@ -26,7 +26,6 @@ function lookUp(messages: Record<string, unknown>, key: string) {
 
 function requiredHelpKeys() {
   const keys = [
-    'home.welcome',
     'programHelp.buttonLabel',
     'programHelp.howTo',
     'programHelp.terms',
@@ -49,8 +48,9 @@ describe('program help', () => {
       (program) => program.key,
     )
 
+    /* `home` is the landing page's guide, not a program */
     expect(Object.keys(programHelpByKey).toSorted()).toEqual(
-      programKeys.toSorted(),
+      [...programKeys, 'home'].toSorted(),
     )
   })
 

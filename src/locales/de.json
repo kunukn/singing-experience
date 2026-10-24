@@ -90,7 +90,6 @@
   "home": {
     "title": "Gesangserlebnis",
     "subtitle": "Wähle ein Programm, um zu beginnen",
-    "welcome": "Sing in dein Mikro und sieh, wie deine Stimme lebendig wird. Neu hier? Probier die Tonhöhenerkennung aus.",
     "programs": {
       "pitchDetector": {
         "name": "Tonhöhenerkennung",
@@ -690,6 +689,11 @@
       "step1": "Wähl ein Spiel zum Spielen aus.",
       "step2": "Die Spiele hören dir beim Singen zu. Erlaube also das Mikrofon, wenn dein Browser fragt.",
       "step3": "Drück in jedem Spiel auf „So geht's“, dann siehst du die Regeln."
+    },
+    "home": {
+      "step1": "Wähl ein Werkzeug oder ein Spiel aus, um es zu öffnen.",
+      "step2": "Erlaube das Mikrofon, wenn dein Browser fragt. Sonst können die Programme dich nicht singen hören.",
+      "step3": "Neu hier? Fang mit der Tonhöhenerkennung an."
     }
   },
   "glossary": {

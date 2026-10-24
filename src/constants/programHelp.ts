@@ -21,9 +21,12 @@ export type ProgramHelp = {
   /* How many `programHelp.<key>.stepN` strings exist, starting at step1 */
   stepCount: number
   terms: GlossaryTerm[]
+  /* Popover heading; defaults to `home.programs.<key>.name` / `.description` */
+  nameKey?: string
+  descriptionKey?: string
 }
 
-/* Keyed by `Program.key` in programs.ts — the help button reads it by route */
+/* Keyed by `Program.key` in programs.ts, plus `home` for the landing page — the help button reads it by route */
 export const programHelpByKey: Record<string, ProgramHelp> = {
   pitchDetector: {
     stepCount: 3,
@@ -57,4 +60,10 @@ export const programHelpByKey: Record<string, ProgramHelp> = {
   circleOfFifths: { stepCount: 3, terms: ['solfege', 'key'] },
   singingTools: { stepCount: 3, terms: [] },
   singingGames: { stepCount: 3, terms: [] },
+  home: {
+    stepCount: 3,
+    terms: [],
+    nameKey: 'home.title',
+    descriptionKey: 'home.subtitle',
+  },
 }

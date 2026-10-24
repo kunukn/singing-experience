@@ -49,10 +49,15 @@ function togglePopover(event: Event) {
       >
         <div>
           <h3 class="mb-1 text-base font-semibold">
-            {{ t(`home.programs.${programKey}.name`) }}
+            {{ t(help.nameKey ?? `home.programs.${programKey}.name`) }}
           </h3>
           <p class="text-(--p-text-muted-color)">
-            {{ t(`home.programs.${programKey}.description`) }}
+            {{
+              t(
+                help.descriptionKey ??
+                  `home.programs.${programKey}.description`,
+              )
+            }}
           </p>
         </div>
 

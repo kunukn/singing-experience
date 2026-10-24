@@ -90,7 +90,6 @@
   "home": {
     "title": "Sangoplevelse",
     "subtitle": "Vælg et program for at komme i gang",
-    "welcome": "Syng i mikrofonen, og se din stemme komme til live. Ny her? Prøv programmet Tonemåler.",
     "programs": {
       "pitchDetector": {
         "name": "Tonemåler",
@@ -690,6 +689,11 @@
       "step1": "Vælg et spil, du vil spille.",
       "step2": "Spillene lytter, når du synger, så sig ja til mikrofonen, når browseren spørger.",
       "step3": "Tryk på Sådan virker det inde i hvert spil for at se reglerne."
+    },
+    "home": {
+      "step1": "Vælg et værktøj eller et spil for at åbne det.",
+      "step2": "Sig ja til mikrofonen, når browseren spørger. Ellers kan programmerne ikke høre dig synge.",
+      "step3": "Ny her? Start med Tonemåleren."
     }
   },
   "glossary": {

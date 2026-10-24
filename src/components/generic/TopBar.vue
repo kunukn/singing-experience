@@ -34,6 +34,7 @@ function goBack() {
     <div class="flex items-center gap-2">
       <LanguageSwitcher v-if="isLandingPage" />
       <ProgramHelpButton v-if="program" :programKey="program.key" />
+      <ProgramHelpButton v-else-if="isLandingPage" programKey="home" />
       <SettingsPanel />
     </div>
   </div>

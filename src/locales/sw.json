@@ -90,7 +90,6 @@
   "home": {
     "title": "Uzoefu wa Kuimba",
     "subtitle": "Chagua programu ili kuanza",
-    "welcome": "Imba kwenye maikrofoni na uone sauti yako ikichangamka. Ni mara yako ya kwanza? Jaribu Kipimo cha Sauti.",
     "programs": {
       "pitchDetector": {
         "name": "Kipimo cha Sauti",
@@ -690,6 +689,11 @@
       "step1": "Chagua mchezo wa kucheza.",
       "step2": "Michezo inakusikiliza ukiimba, kwa hiyo ruhusu maikrofoni kivinjari kinapouliza.",
       "step3": "Ndani ya kila mchezo, bonyeza “Jinsi inavyofanya kazi” ili uone sheria."
+    },
+    "home": {
+      "step1": "Chagua zana au mchezo ili uufungue.",
+      "step2": "Ruhusu maikrofoni kivinjari kinapouliza. Bila hiyo, programu haziwezi kukusikia ukiimba.",
+      "step3": "Mgeni hapa? Anza na Kipimo cha Sauti."
     }
   },
   "glossary": {

@@ -90,7 +90,6 @@
   "home": {
     "title": "Pengalaman Bernyanyi",
     "subtitle": "Pilih program untuk memulai",
-    "welcome": "Nyanyi ke mikrofonmu dan lihat suaramu jadi hidup. Baru di sini? Coba Detektor Nada.",
     "programs": {
       "pitchDetector": {
         "name": "Detektor Nada",
@@ -690,6 +689,11 @@
       "step1": "Pilih permainan untuk dimainkan.",
       "step2": "Permainan mendengarkan kamu bernyanyi, jadi izinkan mikrofon saat browser bertanya.",
       "step3": "Di dalam setiap permainan, tekan Cara pakainya untuk melihat aturannya."
+    },
+    "home": {
+      "step1": "Pilih alat atau permainan untuk membukanya.",
+      "step2": "Izinkan mikrofon saat browser bertanya. Tanpa itu, program tidak bisa mendengar kamu bernyanyi.",
+      "step3": "Baru di sini? Mulai dengan Detektor Nada."
     }
   },
   "glossary": {

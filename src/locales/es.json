@@ -90,7 +90,6 @@
   "home": {
     "title": "Experiencia de Canto",
     "subtitle": "Elige un programa para comenzar",
-    "welcome": "Canta al micrófono y mira cómo tu voz cobra vida. ¿Primera vez aquí? Prueba el Detector de tono.",
     "programs": {
       "pitchDetector": {
         "name": "Detector de tono",
@@ -690,6 +689,11 @@
       "step1": "Elige un juego para jugar.",
       "step2": "Los juegos te escuchan cantar, así que permite el micrófono cuando tu navegador te lo pida.",
       "step3": "Dentro de cada juego, pulsa Cómo funciona para ver las reglas."
+    },
+    "home": {
+      "step1": "Elige una herramienta o un juego para abrirlo.",
+      "step2": "Permite el micrófono cuando tu navegador te lo pida. Sin él, los programas no pueden oírte cantar.",
+      "step3": "¿Eres nuevo? Empieza con el Detector de tono."
     }
   },
   "glossary": {
