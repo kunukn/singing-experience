@@ -20,6 +20,7 @@ const STORAGE_KEYS = [
   'syng.doReMiDifficulty',
   'syng.duetEnabled',
   'syng.durationSec',
+  'syng.focusLevelGuideSeen',
   'syng.graceKellyBarHighlight',
   'syng.graceKellyBpm',
   'syng.graceKellyHarmonyVoices',
