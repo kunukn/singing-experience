@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
+
 type Props = {
   /* The leftmost mapped computer key, in the user's own layout (e.g. "Z"). */
   char: string
@@ -27,6 +29,7 @@ const { t } = useI18n()
       rounded
       size="small"
       icon="pi pi-minus"
+      :pt="LARGE_SMALL_BUTTON_ICON_PT"
       :disabled="!canShiftDown"
       :aria-label="t('generic.octaveDown')"
       :title="t('generic.octaveDown')"
@@ -50,6 +53,7 @@ const { t } = useI18n()
       rounded
       size="small"
       icon="pi pi-plus"
+      :pt="LARGE_SMALL_BUTTON_ICON_PT"
       :disabled="!canShiftUp"
       :aria-label="t('generic.octaveUp')"
       :title="t('generic.octaveUp')"

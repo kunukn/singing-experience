@@ -18,6 +18,7 @@ import {
   type NoteInfo,
   type NoteName,
 } from '@/utils/noteUtils'
+import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
 import { CLEAN_CENTS, cleanColor, cleanTextColor } from '@/utils/pitchColors'
 import { useUkuleleSampler } from './useUkuleleSampler'
 
@@ -392,6 +393,7 @@ watch(
         size="small"
         rounded
         icon="pi pi-volume-up"
+        :pt="LARGE_SMALL_BUTTON_ICON_PT"
         :class="{ 'string-playing': isPlayingSequence }"
         :aria-label="t('generic.previewButton')"
         @click="toggleTuningPreview"

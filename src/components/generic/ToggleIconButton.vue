@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useBreakpoints, breakpointsTailwind } from '@vueuse/core'
+import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
 
 type Props = {
   iconOn: string
@@ -26,11 +27,6 @@ const isLabelVisible = computed(
 </script>
 
 <template>
-  <!-- Icon is 20px, like the header icons. `.p-button-sm .p-button-icon` sets
-       the small font size directly, ignoring --p-icon-size, and as unlayered
-       CSS it beats a layered Tailwind utility — hence `text-xl!`. -my-1 lets
-       the taller glyph overhang the padding, so a labelled toggle keeps the
-       35px control height of its row. -->
   <PrimeButton
     :class="[
       // PrimeVue leaves .p-button wrappable; a short label must overflow a tight track, not break onto two lines
@@ -40,7 +36,7 @@ const isLabelVisible = computed(
        * and the two stacked left a disabled-off icon near invisible. */
       { 'border border-(--p-green-500)! text-(--p-text-color)!': modelValue },
     ]"
-    :pt="{ icon: { class: 'text-xl! -my-1' } }"
+    :pt="LARGE_SMALL_BUTTON_ICON_PT"
     severity="secondary"
     text
     rounded

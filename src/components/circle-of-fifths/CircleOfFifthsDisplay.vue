@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
 import type { Difficulty } from '@/constants/difficulty'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { pitchClassOf } from '@/utils/scaleHighlight'
@@ -432,6 +433,7 @@ onUnmounted(() => stop())
             size="small"
             rounded
             icon="pi pi-volume-up"
+            :pt="LARGE_SMALL_BUTTON_ICON_PT"
             :label="t('circleOfFifths.hearIt')"
             @click="playTarget()"
           />
@@ -495,6 +497,7 @@ onUnmounted(() => stop())
             size="small"
             rounded
             icon="pi pi-volume-up"
+            :pt="LARGE_SMALL_BUTTON_ICON_PT"
             :label="t('circleOfFifths.hearIt')"
             :disabled="selectedKeyIndex === null"
             @click="handlePlaySelectedKey()"

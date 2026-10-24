@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
 import {
   buildGuitarTuningGroups,
   DEFAULT_GUITAR_TUNING_ID,
@@ -414,6 +415,7 @@ watch(
         size="small"
         rounded
         icon="pi pi-volume-up"
+        :pt="LARGE_SMALL_BUTTON_ICON_PT"
         :class="{ 'string-playing': isPlayingSequence }"
         :aria-label="t('generic.previewButton')"
         @click="toggleTuningPreview"
