@@ -223,6 +223,13 @@ watch(
   { immediate: true },
 )
 
+/* Same anti-flicker as the idle preview, for the detector's own mic (and the
+ * simulated one on the test page). */
+const { stableNoteInfo } = useStablePitch({
+  noteInfo: props.detection.noteInfo,
+  isClean: props.detection.isClean,
+})
+
 const EMPTY_PIANO_LANE: DuetLane & { laneId: PianoPreviewLaneId } = {
   previewMidi: null,
   previewFrequency: null,
@@ -249,13 +256,13 @@ const previewLanes = computed<Array<DuetLane & { laneId: PianoPreviewLaneId }>>(
       ]
     }
 
-    const noteInfo = props.detection.noteInfo.value
-    if (!noteInfo || !props.detection.isClean.value) return [EMPTY_PIANO_LANE]
+    const noteInfo = stableNoteInfo.value
+    if (!noteInfo) return [EMPTY_PIANO_LANE]
 
     return [
       {
         previewMidi: noteInfo.midiNote,
-        previewFrequency: props.detection.frequency.value,
+        previewFrequency: noteInfo.frequency,
         previewNoteLabel: midiToNoteLabel(noteInfo.midiNote).label,
         laneId: 'low',
       },

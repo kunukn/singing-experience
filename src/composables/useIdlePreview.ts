@@ -19,6 +19,13 @@ export function useIdlePreview(options: IdlePreviewOptions) {
    * preview mic listens (IDLE_DEAF_PERIOD_MS masks the overlap). */
   const detection = usePitchDetection({ softRawAudio: true })
 
+  /* A noise blip can read as a clean, far-off pitch for a frame or two; the
+   * stabilizer keeps the line on the sung note until a change has held. */
+  const { stableNoteInfo } = useStablePitch({
+    noteInfo: detection.noteInfo,
+    isClean: detection.isClean,
+  })
+
   const isDeaf = ref(false)
   let deafTimer: ReturnType<typeof setTimeout> | null = null
 
@@ -36,21 +43,20 @@ export function useIdlePreview(options: IdlePreviewOptions) {
     if (isDeaf.value || isPlayingSequence?.value) return null
     if (isEnabled !== undefined && !isEnabled.value) return null
 
-    return detection.noteInfo.value?.midiNote ?? null
+    return stableNoteInfo.value?.midiNote ?? null
   })
 
   const previewFrequency = computed(() => {
     if (previewMidi.value === null) return null
 
-    return detection.frequency.value
+    return stableNoteInfo.value?.frequency ?? null
   })
 
-  /* Note label shown only when the detected pitch is clean */
+  /* The stabilizer only emits clean pitches, so no separate clean check. */
   const previewNoteLabel = computed(() => {
     if (previewMidi.value === null) return null
-    if (!detection.isClean.value) return null
 
-    const info = detection.noteInfo.value
+    const info = stableNoteInfo.value
     if (!info) return null
 
     return toAccidentalGlyph(`${info.note}${info.octave}`)

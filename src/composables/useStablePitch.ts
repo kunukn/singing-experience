@@ -7,16 +7,45 @@ import {
   snapMidiWithHysteresis,
 } from '@/utils/noteUtils'
 
-import {
-  SNAP_HYSTERESIS_SEMITONES,
-  STABILIZE_ACCEPT_BAND_SEMITONES,
-  STABILIZE_ACCEPT_HOLD_MS,
-  STABILIZE_FAR_SEMITONES,
-  STABILIZE_JUMP_HOLD_MS,
-  STABILIZE_MEDIAN_WINDOW_MS,
-  STABILIZE_START_HOLD_MS,
-} from './singFlyConstants'
-import { rangePadSemitones } from './singFlyGeometry'
+/* --- Anti-flicker tunables ---
+ * Raw detection emits occasional single-frame spikes (pitchy octave/fifth
+ * errors, noise transients). These tame them before the pitch drives anything
+ * on screen (SingFly's bird, the "See your voice" line), without lagging
+ * normal singing. */
+
+/* Rolling-median window. ~80ms ≈ 5 frames at 60fps, so the median outvotes
+ * up to two consecutive bad frames regardless of how far off they are — a
+ * cheap pre-filter ahead of the temporal dwell below. */
+export const STABILIZE_MEDIAN_WINDOW_MS = 80
+/* Cold start (no held tone yet): a pitch must persist this long before it is
+ * adopted, so a stray blip at the start of a phrase never seeds the bird. */
+export const STABILIZE_START_HOLD_MS = 100
+/* A "far" jump (≥ STABILIZE_FAR_SEMITONES) away from the held tone must persist
+ * this long before it is adopted — a brief octave/fifth spike is ignored, a
+ * deliberate leap lands after ~100ms. */
+export const STABILIZE_JUMP_HOLD_MS = 100
+/* Distance (semitones) that classifies a change from the held tone as a
+ * suspicious "far" jump (→ JUMP_HOLD) rather than an ordinary change. 7 = a
+ * fifth: catches the classic octave (12) and fifth (7) pitch-detector errors. */
+export const STABILIZE_FAR_SEMITONES = 7
+/* Universal fluke gate: ANY change of at least STABILIZE_ACCEPT_BAND_SEMITONES
+ * (but below FAR) must hold this long before the bird adopts it, so a brief
+ * detector spike / background-noise blip (e.g. C3→F#2 for ~30ms) is ignored.
+ * Well under every pipe interval, so a deliberate note change is imperceptibly
+ * delayed. */
+export const STABILIZE_ACCEPT_HOLD_MS = 50
+/* Below this semitone distance a change is treated as micro-drift (vibrato,
+ * expressive wobble, a smooth glissando the bird chases frame-by-frame) and
+ * adopted instantly — sustained singing has zero added latency. It is also the
+ * candidate-coherence band: a dwell only completes if successive medians stay
+ * within this of the candidate anchor, so a wandering spike never adopts while
+ * a steady new note does. */
+export const STABILIZE_ACCEPT_BAND_SEMITONES = 2
+/* Snap hysteresis: with Snap on, the bird keeps its note until the pitch is
+ * more than 60 cents away — 10 cents past the midpoint — so a voice hovering
+ * between two notes commits to one instead of flipping every frame and leaving
+ * the bird stranded between them. */
+export const SNAP_HYSTERESIS_SEMITONES = 0.6
 
 type UseStablePitchOptions = {
   /* Raw detection output (real mic or simulated). Both write a fresh object
@@ -25,14 +54,14 @@ type UseStablePitchOptions = {
   noteInfo: Ref<NoteInfo | null>
   isClean: Ref<boolean>
   /* Optional voice-range gate. When all three are supplied, a stabilized pitch
-   * outside [midiMin - rangePad, midiMax + rangePad] is treated as silence —
-   * so breath/decay noise the detector mistakes for a fast descending slide
-   * can't drag the bird out of range; the bird holds its last position
-   * instead. The band is the bird-position freeze band, so it never filters a
-   * pitch the bird could legitimately reach. Omit all three to disable. */
+   * outside [midiMin - rangePadSemitones, midiMax + rangePadSemitones] is
+   * treated as silence — so breath/decay noise the detector mistakes for a
+   * fast descending slide can't drag the output out of range. SingFly passes
+   * its bird-position freeze band, so it never filters a pitch the bird could
+   * legitimately reach. Omit all three to disable. */
   midiMin?: Ref<number>
   midiMax?: Ref<number>
-  gapHalfSemitones?: Ref<number>
+  rangePadSemitones?: Ref<number>
   /* Child-friendly snap: emit a whole semitone instead of the exact pitch,
    * with hysteresis (SNAP_HYSTERESIS_SEMITONES) so a midpoint pitch doesn't
    * flip notes. The median and holds still run on the continuous pitch, so
@@ -53,7 +82,7 @@ function median(samples: Sample[]): number {
 }
 
 /**
- * Singfly-local pitch stabilizer. Wraps a raw detection's noteInfo and emits a
+ * Pitch stabilizer, shared by SingFly's bird and the "See your voice" line. Wraps a raw detection's noteInfo and emits a
  * de-flickered NoteInfo by combining a short rolling median (kills isolated
  * 1–2 frame spikes) with a distance-aware temporal hold:
  *
@@ -105,7 +134,12 @@ export function useStablePitch(options: UseStablePitchOptions) {
 
     if (!options.isSnapped?.value) {
       snappedMidi = null
-      stableNoteInfo.value = frequencyToNote(midiToFrequency(stableMidi))
+      /* Passing the last note keeps frequencyToNote's own boundary
+       * hysteresis, so a pitch near the midpoint doesn't flip the name. */
+      stableNoteInfo.value = frequencyToNote(
+        midiToFrequency(stableMidi),
+        stableNoteInfo.value?.midiNote,
+      )
       return
     }
 
@@ -139,8 +173,8 @@ export function useStablePitch(options: UseStablePitchOptions) {
        * descent — drives the median itself out of band and is treated as
        * silence). Falls through to the exact !isClean path: stableNoteInfo →
        * null → useBirdMotion holds the last position, not a noise chase. */
-      if (options.midiMin && options.midiMax && options.gapHalfSemitones) {
-        const pad = rangePadSemitones(options.gapHalfSemitones.value)
+      if (options.midiMin && options.midiMax && options.rangePadSemitones) {
+        const pad = options.rangePadSemitones.value
         if (
           m < options.midiMin.value - pad ||
           m > options.midiMax.value + pad

@@ -6,12 +6,12 @@ import SingFlyCompletePanel from './SingFlyCompletePanel.vue'
 import SingFlyIdlePanel from './SingFlyIdlePanel.vue'
 import SingFlyPlayingPanel from './SingFlyPlayingPanel.vue'
 import { DIFFICULTY_GAP_HALF_SEMITONES } from './singFlyConstants'
+import { rangePadSemitones } from './singFlyGeometry'
 import type { Difficulty } from '@/constants/difficulty'
 import { useBirdMotion } from './useBirdMotion'
 import { useCheatPitchDetection } from './useCheatPitchDetection'
 import { useDetectedTonesLog } from './useDetectedTonesLog'
 import { useSingFly } from './useSingFly'
-import { useStablePitch } from './useStablePitch'
 
 type PitchDetectionInput = {
   frequency: Readonly<Ref<number | null>>
@@ -107,6 +107,11 @@ const gapHalfSemitones = computed(
   () => DIFFICULTY_GAP_HALF_SEMITONES[difficulty.value],
 )
 
+/* The stabilizer's range gate uses the bird-position freeze band. */
+const stableRangePadSemitones = computed(() =>
+  rangePadSemitones(gapHalfSemitones.value),
+)
+
 /* Stage 1 of the conditioning (see the block comment above). Range-gated so a
  * breath/decay slide the detector mistakes for a fast descent is treated as
  * silence instead of dragging the bird out of range. */
@@ -115,7 +120,7 @@ const { stableNoteInfo } = useStablePitch({
   isClean,
   midiMin: gameMidiMin,
   midiMax: gameMidiMax,
-  gapHalfSemitones,
+  rangePadSemitones: stableRangePadSemitones,
   isSnapped: isPitchSnapEnabled,
 })
 
@@ -279,7 +284,7 @@ const { stableNoteInfo: stableIdleNoteInfo } = useStablePitch({
   isClean: idleRawIsClean,
   midiMin: gameMidiMin,
   midiMax: gameMidiMax,
-  gapHalfSemitones,
+  rangePadSemitones: stableRangePadSemitones,
   isSnapped: isPitchSnapEnabled,
 })
 

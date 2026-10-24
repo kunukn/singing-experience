@@ -79,45 +79,6 @@ export const RANGE_PAD_BUFFER_SEMITONES = 1
  * the returned frequency is no longer a meaningful pitch. */
 export const SINGFLY_CLARITY_THRESHOLD = 0.5
 
-/* --- Pitch stabilizer (useStablePitch) anti-flicker tunables ---
- * Raw detection emits occasional single-frame spikes (pitchy octave/fifth
- * errors, noise transients). These tame them before the pitch drives the
- * bird and the collision/scoring logic, without lagging normal singing. */
-
-/* Rolling-median window. ~80ms ≈ 5 frames at 60fps, so the median outvotes
- * up to two consecutive bad frames regardless of how far off they are — a
- * cheap pre-filter ahead of the temporal dwell below. */
-export const STABILIZE_MEDIAN_WINDOW_MS = 80
-/* Cold start (no held tone yet): a pitch must persist this long before it is
- * adopted, so a stray blip at the start of a phrase never seeds the bird. */
-export const STABILIZE_START_HOLD_MS = 100
-/* A "far" jump (≥ STABILIZE_FAR_SEMITONES) away from the held tone must persist
- * this long before it is adopted — a brief octave/fifth spike is ignored, a
- * deliberate leap lands after ~100ms. */
-export const STABILIZE_JUMP_HOLD_MS = 100
-/* Distance (semitones) that classifies a change from the held tone as a
- * suspicious "far" jump (→ JUMP_HOLD) rather than an ordinary change. 7 = a
- * fifth: catches the classic octave (12) and fifth (7) pitch-detector errors. */
-export const STABILIZE_FAR_SEMITONES = 7
-/* Universal fluke gate: ANY change of at least STABILIZE_ACCEPT_BAND_SEMITONES
- * (but below FAR) must hold this long before the bird adopts it, so a brief
- * detector spike / background-noise blip (e.g. C3→F#2 for ~30ms) is ignored.
- * Well under every pipe interval, so a deliberate note change is imperceptibly
- * delayed. */
-export const STABILIZE_ACCEPT_HOLD_MS = 50
-/* Below this semitone distance a change is treated as micro-drift (vibrato,
- * expressive wobble, a smooth glissando the bird chases frame-by-frame) and
- * adopted instantly — sustained singing has zero added latency. It is also the
- * candidate-coherence band: a dwell only completes if successive medians stay
- * within this of the candidate anchor, so a wandering spike never adopts while
- * a steady new note does. */
-export const STABILIZE_ACCEPT_BAND_SEMITONES = 2
-/* Snap hysteresis: with Snap on, the bird keeps its note until the pitch is
- * more than 60 cents away — 10 cents past the midpoint — so a voice hovering
- * between two notes commits to one instead of flipping every frame and leaving
- * the bird stranded between them. */
-export const SNAP_HYSTERESIS_SEMITONES = 0.6
-
 /* --- Bird motion (useBirdMotion) — constant-time, never teleport ---
  * Sits after the stabilizer: the stabilizer decides WHICH note, this decides
  * HOW the bird travels there. Exponential ease toward the target, with a

@@ -30,6 +30,13 @@ declare global {
   const SCALE_MODE_OPTIONS: typeof import('./composables/useDoReMiGame').SCALE_MODE_OPTIONS
   const SCALE_STEPS: typeof import('./composables/useDoReMiGame').SCALE_STEPS
   const SCORE_TOLERANCE_CENTS: typeof import('./composables/useDwellSingScore').SCORE_TOLERANCE_CENTS
+  const SNAP_HYSTERESIS_SEMITONES: typeof import('./composables/useStablePitch').SNAP_HYSTERESIS_SEMITONES
+  const STABILIZE_ACCEPT_BAND_SEMITONES: typeof import('./composables/useStablePitch').STABILIZE_ACCEPT_BAND_SEMITONES
+  const STABILIZE_ACCEPT_HOLD_MS: typeof import('./composables/useStablePitch').STABILIZE_ACCEPT_HOLD_MS
+  const STABILIZE_FAR_SEMITONES: typeof import('./composables/useStablePitch').STABILIZE_FAR_SEMITONES
+  const STABILIZE_JUMP_HOLD_MS: typeof import('./composables/useStablePitch').STABILIZE_JUMP_HOLD_MS
+  const STABILIZE_MEDIAN_WINDOW_MS: typeof import('./composables/useStablePitch').STABILIZE_MEDIAN_WINDOW_MS
+  const STABILIZE_START_HOLD_MS: typeof import('./composables/useStablePitch').STABILIZE_START_HOLD_MS
   const START_TONE_OPTIONS: typeof import('./composables/useDoReMiGame').START_TONE_OPTIONS
   const TONE_MODE_RELEASE_S: typeof import('./composables/toneEngine').TONE_MODE_RELEASE_S
   const TOO_LOW_OR_HIGH_HINT_MS: typeof import('./composables/useDoReMiGame').TOO_LOW_OR_HIGH_HINT_MS
@@ -140,6 +147,7 @@ declare global {
   const useSimulatedPitchDetection: typeof import('./composables/useSimulatedPitchDetection').useSimulatedPitchDetection
   const useSimulatedSingers: typeof import('./composables/useSimulatedSingers').useSimulatedSingers
   const useSlots: typeof import('vue').useSlots
+  const useStablePitch: typeof import('./composables/useStablePitch').useStablePitch
   const useTemplateRef: typeof import('vue').useTemplateRef
   const useToneLabelMode: typeof import('./composables/toneLabelMode').useToneLabelMode
   const useToneLabelModeOptions: typeof import('./composables/toneLabelMode').useToneLabelModeOptions
@@ -203,6 +211,13 @@ declare module 'vue' {
     readonly REFERENCE_PITCH_PRESETS: UnwrapRef<typeof import('./composables/useReferencePitch')['REFERENCE_PITCH_PRESETS']>
     readonly REFERENCE_PITCH_STEP: UnwrapRef<typeof import('./composables/useReferencePitch')['REFERENCE_PITCH_STEP']>
     readonly SCORE_TOLERANCE_CENTS: UnwrapRef<typeof import('./composables/useDwellSingScore')['SCORE_TOLERANCE_CENTS']>
+    readonly SNAP_HYSTERESIS_SEMITONES: UnwrapRef<typeof import('./composables/useStablePitch')['SNAP_HYSTERESIS_SEMITONES']>
+    readonly STABILIZE_ACCEPT_BAND_SEMITONES: UnwrapRef<typeof import('./composables/useStablePitch')['STABILIZE_ACCEPT_BAND_SEMITONES']>
+    readonly STABILIZE_ACCEPT_HOLD_MS: UnwrapRef<typeof import('./composables/useStablePitch')['STABILIZE_ACCEPT_HOLD_MS']>
+    readonly STABILIZE_FAR_SEMITONES: UnwrapRef<typeof import('./composables/useStablePitch')['STABILIZE_FAR_SEMITONES']>
+    readonly STABILIZE_JUMP_HOLD_MS: UnwrapRef<typeof import('./composables/useStablePitch')['STABILIZE_JUMP_HOLD_MS']>
+    readonly STABILIZE_MEDIAN_WINDOW_MS: UnwrapRef<typeof import('./composables/useStablePitch')['STABILIZE_MEDIAN_WINDOW_MS']>
+    readonly STABILIZE_START_HOLD_MS: UnwrapRef<typeof import('./composables/useStablePitch')['STABILIZE_START_HOLD_MS']>
     readonly TONE_MODE_RELEASE_S: UnwrapRef<typeof import('./composables/toneEngine')['TONE_MODE_RELEASE_S']>
     readonly centsFromConcertPitch: UnwrapRef<typeof import('./composables/useReferencePitch')['centsFromConcertPitch']>
     readonly clampReferencePitch: UnwrapRef<typeof import('./composables/useReferencePitch')['clampReferencePitch']>
@@ -303,6 +318,7 @@ declare module 'vue' {
     readonly useSimulatedPitchDetection: UnwrapRef<typeof import('./composables/useSimulatedPitchDetection')['useSimulatedPitchDetection']>
     readonly useSimulatedSingers: UnwrapRef<typeof import('./composables/useSimulatedSingers')['useSimulatedSingers']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
+    readonly useStablePitch: UnwrapRef<typeof import('./composables/useStablePitch')['useStablePitch']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useToneLabelMode: UnwrapRef<typeof import('./composables/toneLabelMode')['useToneLabelMode']>
     readonly useToneLabelModeOptions: UnwrapRef<typeof import('./composables/toneLabelMode')['useToneLabelModeOptions']>

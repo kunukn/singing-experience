@@ -6,8 +6,8 @@ import {
   STABILIZE_ACCEPT_HOLD_MS,
   STABILIZE_JUMP_HOLD_MS,
   STABILIZE_START_HOLD_MS,
-} from './singFlyConstants'
-import { useStablePitch } from './useStablePitch'
+  useStablePitch,
+} from './useStablePitch'
 
 /* MIDI notes used across the cases. E3 is the "held" tone; F3 (+1 st) is
  * micro-drift; G3 (+3 st) is an ordinary/medium change; C5 (+20 st) and
@@ -82,7 +82,11 @@ describe('useStablePitch', () => {
     await feed(E3, STABILIZE_START_HOLD_MS + 10)
     expect(stableNoteInfo.value?.midiNote).toBe(E3)
 
-    await feed(F3, 16) // +1 semitone — micro-drift, no hold
+    /* +1 semitone — micro-drift, no hold. The first F3 frame puts the median
+     * exactly on the E3/F3 midpoint, where note-name hysteresis keeps E3; the
+     * second settles it. */
+    await feed(F3, 16)
+    await feed(F3, 16)
     expect(stableNoteInfo.value?.midiNote).toBe(F3)
   })
 
@@ -177,11 +181,11 @@ describe('useStablePitch', () => {
 describe('useStablePitch — voice-range gate', () => {
   let noteInfo: Ref<NoteInfo | null>
   let isClean: Ref<boolean>
-  /* C3–C4 range, normal gap (1.5) → rangePad = max(1, 1.5) + 1 = 2.5, so the
-   * accepted band is [45.5, 62.5]. E3 (52) is in band; C2 (36) is far below. */
+  /* C3–C4 range with SingFly's normal-gap pad (2.5), so the accepted band is
+   * [45.5, 62.5]. E3 (52) is in band; C2 (36) is far below. */
   let midiMin: Ref<number>
   let midiMax: Ref<number>
-  let gapHalfSemitones: Ref<number>
+  let rangePadSemitones: Ref<number>
 
   beforeEach(() => {
     vi.useFakeTimers()
@@ -189,7 +193,7 @@ describe('useStablePitch — voice-range gate', () => {
     isClean = ref(false)
     midiMin = ref(48) // C3
     midiMax = ref(60) // C4
-    gapHalfSemitones = ref(1.5) // normal
+    rangePadSemitones = ref(2.5)
   })
 
   afterEach(() => {
@@ -221,7 +225,7 @@ describe('useStablePitch — voice-range gate', () => {
       isClean,
       midiMin,
       midiMax,
-      gapHalfSemitones,
+      rangePadSemitones,
     })
 
     await lockE3(stableNoteInfo)
@@ -239,7 +243,7 @@ describe('useStablePitch — voice-range gate', () => {
       isClean,
       midiMin,
       midiMax,
-      gapHalfSemitones,
+      rangePadSemitones,
     })
 
     await lockE3(stableNoteInfo)
