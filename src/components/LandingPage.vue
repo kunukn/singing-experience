@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ProgramIconHue } from '@/components/icons/program/programIconHue'
 import { games, programs, tools } from '@/constants/programs'
 
 const { t } = useI18n()
@@ -9,20 +10,18 @@ function prewarmAudio() {
   warmUpAudio().catch(() => {})
 }
 
-const musicNoteColorClass = computed(() => {
-  if (micPermission.value === 'granted') return 'text-(--p-green-400)'
-  if (micPermission.value === 'denied') return 'text-(--p-red-400)'
+const logoHue = computed<ProgramIconHue>(() => {
+  if (micPermission.value === 'granted') return 'green'
+  if (micPermission.value === 'denied') return 'red'
 
-  return ''
+  return 'surface'
 })
 </script>
 
 <template>
   <div class="flex grow flex-col items-center pt-1">
     <div class="flex flex-wrap items-center gap-2">
-      <MusicNoteIcon
-        :class="['h-9 w-auto', musicNoteColorClass]"
-      ></MusicNoteIcon>
+      <MusicNoteIcon :hue="logoHue" class="size-9" />
       <h2 class="product-title mb-2 font-bold">{{ t('home.title') }}</h2>
     </div>
 

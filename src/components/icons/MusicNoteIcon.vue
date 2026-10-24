@@ -1,18 +1,39 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import type { ProgramIconHue } from '@/components/icons/program/programIconHue'
+
+/* Brand mark: beamed notes on the program-icon tile; hue shows mic permission */
+withDefaults(defineProps<{ hue?: ProgramIconHue }>(), { hue: 'surface' })
+</script>
 
 <template>
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="800"
-    height="800"
-    fill="none"
-    viewBox="0 0 24 24"
-  >
-    <path
-      stroke="currentColor"
-      stroke-linejoin="round"
-      stroke-width="2"
-      d="M9 18c0 1.105-1.12 2-2.5 2S4 19.105 4 18s1.12-2 2.5-2 2.5.895 2.5 2zm0 0V7l11-3v11m0 0c0 1.105-1.12 2-2.5 2s-2.5-.895-2.5-2 1.12-2 2.5-2 2.5.895 2.5 2z"
+  <!-- Geometry is copied into the favicons (useFaviconPermissionColor.ts, public/icons/note.svg) -->
+  <ProgramIconTile :hue="hue">
+    <ellipse
+      cx="13.5"
+      cy="29.5"
+      rx="4"
+      ry="3"
+      transform="rotate(-20 13.5 29.5)"
+      fill="var(--icon-strong)"
     />
-  </svg>
+    <ellipse
+      cx="26.5"
+      cy="26.5"
+      rx="4"
+      ry="3"
+      transform="rotate(-20 26.5 26.5)"
+      fill="var(--icon-strong)"
+    />
+    <path
+      d="M17 29V13M30 26V10"
+      stroke="var(--icon-strong)"
+      stroke-width="2.5"
+    />
+    <path
+      d="M15.75 13.3 31.25 9.7"
+      stroke="var(--icon-strong)"
+      stroke-width="4.5"
+      stroke-linecap="butt"
+    />
+  </ProgramIconTile>
 </template>

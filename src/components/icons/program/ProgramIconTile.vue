@@ -7,16 +7,7 @@
  *   --icon-accent  optional second hue for one small detail
  *   --icon-light   near-white highlight (white keys, eyes, dial faces)
  */
-type ProgramIconHue =
-  | 'emerald'
-  | 'teal'
-  | 'blue'
-  | 'sky'
-  | 'purple'
-  | 'rose'
-  | 'orange'
-  | 'amber'
-  | 'yellow'
+import type { ProgramIconHue } from './programIconHue'
 
 const props = defineProps<{
   hue: ProgramIconHue
