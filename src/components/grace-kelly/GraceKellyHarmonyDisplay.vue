@@ -101,7 +101,7 @@ const allVozLabels = computed(() =>
       :isRunning="isRunning"
     />
 
-    <div class="flex min-w-50 items-baseline gap-2">
+    <div class="flex min-w-50 items-center gap-2">
       <PrimeButton
         v-if="isRunning"
         severity="danger"

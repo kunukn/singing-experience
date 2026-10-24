@@ -26,12 +26,21 @@ const isLabelVisible = computed(
 </script>
 
 <template>
+  <!-- Icon is 20px, like the header icons. `.p-button-sm .p-button-icon` sets
+       the small font size directly, ignoring --p-icon-size, and as unlayered
+       CSS it beats a layered Tailwind utility — hence `text-xl!`. -my-1 lets
+       the taller glyph overhang the padding, so a labelled toggle keeps the
+       35px control height of its row. -->
   <PrimeButton
     :class="[
       // PrimeVue leaves .p-button wrappable; a short label must overflow a tight track, not break onto two lines
       'whitespace-nowrap',
-      modelValue ? 'border border-(--p-green-500)!' : 'opacity-50',
+      /* Off keeps the secondary button's muted colour; on brightens to full
+       * text colour. Not opacity: PrimeVue already fades a disabled button,
+       * and the two stacked left a disabled-off icon near invisible. */
+      { 'border border-(--p-green-500)! text-(--p-text-color)!': modelValue },
     ]"
+    :pt="{ icon: { class: 'text-xl! -my-1' } }"
     severity="secondary"
     text
     rounded

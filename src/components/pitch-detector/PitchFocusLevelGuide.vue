@@ -50,17 +50,18 @@ const stopFirstVisitWatch = watch(isButtonVisible, async (isVisible) => {
 
 <template>
   <div>
-    <!-- Keeps the global 35px control floor so the rounded hover stays a
-         circle. PrimeVue's unlayered `.pi` font-size beats text-* utilities,
-         so the icon is sized via the token, as the settings cog is. -->
+    <!-- Labelled at every width with its own icon: icon-only, it was a second
+         ? next to the header's "How it works" and the two read as one -->
     <PrimeButton
       ref="button"
       severity="secondary"
       text
       rounded
-      icon="pi pi-question-circle"
-      class="[--p-icon-size:1.25rem]"
-      :aria-label="t('pitchDetector.focus.guide.title')"
+      size="small"
+      icon="pi pi-trophy"
+      class="whitespace-nowrap"
+      :pt="{ icon: { class: 'text-base!' } }"
+      :label="t('pitchDetector.focus.guide.title')"
       data-testid="focus-level-guide"
       @click="togglePopover"
     />

@@ -35,7 +35,7 @@ function togglePopover(event: Event) {
     >
       <span class="inline-flex items-center gap-2">
         <!-- Sized via the token like the settings cog beside it -->
-        <i class="pi pi-question-circle max-md:[--p-icon-size:1.25rem]" />
+        <i class="pi pi-question-circle [--p-icon-size:1.25rem]" />
         <span class="hidden text-sm md:inline">{{
           t('programHelp.buttonLabel')
         }}</span>

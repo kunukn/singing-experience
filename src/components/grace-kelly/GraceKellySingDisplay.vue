@@ -358,7 +358,7 @@ const vozLabel = computed(() =>
     </div>
 
     <EdgeFadeScroller
-      class="flex min-w-50 items-baseline justify-center-safe gap-2 pb-2"
+      class="flex min-w-50 items-center justify-center-safe gap-2 pb-2"
     >
       <PrimeButton
         v-if="isRunning"
