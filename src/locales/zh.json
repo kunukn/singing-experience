@@ -280,6 +280,7 @@
       "guide": {
         "title": "等级",
         "intro": "把一个音保持{seconds}秒，就能看到等级",
+        "recent": "等级看你最近几秒唱得怎么样",
         "onPitchGoal": "音准 {percent}",
         "spotOnGoal": "精准 {percent}",
         "firstLevel": "大家都从这里开始",

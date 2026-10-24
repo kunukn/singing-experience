@@ -280,6 +280,7 @@
       "guide": {
         "title": "レベル",
         "intro": "音を{seconds}秒のばすとレベルが出るよ",
+        "recent": "レベルはさいごの数秒で決まるよ",
         "onPitchGoal": "音程OK {percent}",
         "spotOnGoal": "ぴったり {percent}",
         "firstLevel": "みんなここからスタート",

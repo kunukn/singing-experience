@@ -280,6 +280,7 @@
       "guide": {
         "title": "Level",
         "intro": "Halte einen Ton {seconds} Sekunden lang, dann bekommst du ein Level",
+        "recent": "Dein Level richtet sich nach deinen letzten paar Sekunden",
         "onPitchGoal": "{percent} im Ton",
         "spotOnGoal": "{percent} genau getroffen",
         "firstLevel": "Hier fangen alle an",

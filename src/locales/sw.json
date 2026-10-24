@@ -280,6 +280,7 @@
       "guide": {
         "title": "Viwango",
         "intro": "Shikilia noti kwa sekunde {seconds} upate kiwango",
+        "recent": "Kiwango chako kinafuata sekunde zako chache za mwisho",
         "onPitchGoal": "{percent} kwenye sauti",
         "spotOnGoal": "{percent} sawasawa kabisa",
         "firstLevel": "Kila mtu anaanzia hapa",

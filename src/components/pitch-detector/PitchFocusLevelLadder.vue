@@ -55,13 +55,21 @@ const rows = computed(() =>
 
 <template>
   <div class="flex flex-col gap-3 text-sm" data-testid="focus-level-ladder">
-    <p class="font-medium">
-      {{
-        t('pitchDetector.focus.guide.intro', {
-          seconds: LEVEL_MIN_HOLD_MS / 1000,
-        })
-      }}
-    </p>
+    <div>
+      <p class="font-medium">
+        {{
+          t('pitchDetector.focus.guide.intro', {
+            seconds: LEVEL_MIN_HOLD_MS / 1000,
+          })
+        }}
+      </p>
+      <p
+        class="text-xs text-(--p-text-muted-color)"
+        data-testid="focus-level-recent"
+      >
+        {{ t('pitchDetector.focus.guide.recent') }}
+      </p>
+    </div>
 
     <ol class="flex flex-col">
       <li

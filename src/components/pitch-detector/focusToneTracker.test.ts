@@ -4,6 +4,7 @@ import {
   createFocusTracker,
   DEFAULT_FOCUS_HOLD_MS,
   HEARD_PITCH_WINDOW_MS,
+  STATS_HALF_LIFE_MS,
 } from './focusToneTracker'
 
 const A3 = 57
@@ -189,7 +190,8 @@ describe('createFocusTracker - stats', () => {
   })
 
   test('should compute average, wobble and both shares over two phrases', () => {
-    const tracker = createFocusTracker({ holdMs: 0 })
+    /* No fading, so both phrases weigh the same and the maths stays exact */
+    const tracker = createFocusTracker({ holdMs: 0, statsHalfLifeMs: Infinity })
     tracker.lockTo(A3)
 
     /* Two equal phrases split by a pause, so neither bleeds into the other:
@@ -222,7 +224,7 @@ describe('createFocusTracker - stats', () => {
   })
 
   test('should hear each phrase fresh after a pause', () => {
-    const tracker = createFocusTracker({ holdMs: 0 })
+    const tracker = createFocusTracker({ holdMs: 0, statsHalfLifeMs: Infinity })
     tracker.lockTo(A3)
 
     /* +40 cents, a pause, then dead on. Were the +40 tail carried over, the
@@ -231,6 +233,46 @@ describe('createFocusTracker - stats', () => {
     sing(tracker, A3, next + PAUSE_GAP_MS + 1, next + PAUSE_GAP_MS + 497)
 
     expect(tracker.stats.spotOnPercent).toBe(50)
+  })
+
+  test('should let a poor start fade once the tone is on pitch', () => {
+    const tracker = createFocusTracker({ holdMs: 0 })
+    tracker.lockTo(A3)
+
+    /* +30 cents still counts towards the stats but is never on pitch */
+    let next = sing(tracker, A3 + 0.3, 0, 10_000)
+    next = sing(tracker, A3, next, next + 1000)
+
+    expect(STATS_HALF_LIFE_MS).toBe(1500)
+    expect(tracker.stats.onPitchPercent).toBeLessThan(60)
+
+    sing(tracker, A3, next, next + 9000)
+
+    expect(tracker.stats.onPitchPercent).toBeGreaterThan(98)
+  })
+
+  test('should drop the on pitch share within a second of drifting sharp', () => {
+    const tracker = createFocusTracker({ holdMs: 0 })
+    tracker.lockTo(A3)
+
+    const next = sing(tracker, A3, 0, 10_000)
+    sing(tracker, A3 + 0.3, next, next + 1000)
+
+    expect(tracker.stats.onPitchPercent).toBeLessThan(75)
+  })
+
+  test('should not fade the stats across a pause', () => {
+    function singWithPause(pauseMs: number) {
+      const tracker = createFocusTracker({ holdMs: 0 })
+      tracker.lockTo(A3)
+      const next = sing(tracker, A3 + 0.3, 0, 1000)
+      tracker.push(null, next)
+      sing(tracker, A3, next + pauseMs, next + pauseMs + 500)
+
+      return tracker.stats
+    }
+
+    expect(singWithPause(10_000)).toEqual(singWithPause(PAUSE_GAP_MS + 1))
   })
 
   test('should leave out frames more than 50 cents off the focus', () => {

@@ -4,8 +4,9 @@ import {
   focusLevelFor,
   focusTipFor,
   LEVEL_MIN_HOLD_MS,
+  type FocusLevel,
 } from './focusLevel'
-import type { FocusToneStats } from './focusToneTracker'
+import { createFocusTracker, type FocusToneStats } from './focusToneTracker'
 
 /* A clean, centred, long-enough take; each test bends the field it is about */
 function take(overrides: Partial<FocusToneStats> = {}): FocusToneStats {
@@ -48,6 +49,74 @@ describe('focusLevelFor', () => {
     expect(focusLevelFor(take({ onPitchPercent: 99, spotOnPercent: 49 }))).toBe(
       'stageReady',
     )
+  })
+})
+
+describe('focusLevelFor - hysteresis', () => {
+  test('should climb as soon as a higher rung is met', () => {
+    expect(
+      focusLevelFor(
+        take({ onPitchPercent: 95, spotOnPercent: 80 }),
+        'stageReady',
+      ),
+    ).toBe('pitchPerfect')
+  })
+
+  test('should keep the current rung through a small dip', () => {
+    expect(focusLevelFor(take({ onPitchPercent: 87 }), 'leadSinger')).toBe(
+      'leadSinger',
+    )
+    expect(
+      focusLevelFor(
+        take({ onPitchPercent: 90, spotOnPercent: 46 }),
+        'leadSinger',
+      ),
+    ).toBe('leadSinger')
+  })
+
+  test('should drop once the take falls clearly below the current rung', () => {
+    expect(focusLevelFor(take({ onPitchPercent: 84 }), 'leadSinger')).toBe(
+      'stageReady',
+    )
+    expect(
+      focusLevelFor(
+        take({ onPitchPercent: 90, spotOnPercent: 44 }),
+        'leadSinger',
+      ),
+    ).toBe('stageReady')
+  })
+
+  test('should still give no level before the minimum hold', () => {
+    expect(
+      focusLevelFor(take({ holdMs: LEVEL_MIN_HOLD_MS - 1 }), 'pitchPerfect'),
+    ).toBe(null)
+  })
+})
+
+describe('focusLevelFor - recovering from a poor start', () => {
+  /* ~60 fps frames; the level is re-read every 200 ms, as useFocusTone does */
+  const FRAME_MS = 16
+  const REFRESH_MS = 200
+  const A3 = 57
+
+  test('should reach pitch perfect within 7 s of singing dead on after 10 s off pitch', () => {
+    const tracker = createFocusTracker({ holdMs: 0 })
+    tracker.lockTo(A3)
+    let level: FocusLevel | null = null
+    const levelAt = new Map<number, FocusLevel | null>()
+
+    for (let timestamp = 0; timestamp <= 20_000; timestamp += FRAME_MS) {
+      /* +30 cents: counted, but never on pitch */
+      tracker.push(timestamp < 10_000 ? A3 + 0.3 : A3, timestamp)
+      if (timestamp % REFRESH_MS < FRAME_MS) {
+        level = focusLevelFor(tracker.stats, level)
+        levelAt.set(Math.floor(timestamp / 1000), level)
+      }
+    }
+
+    expect(levelAt.get(9)).toBe('warmingUp')
+    expect(levelAt.get(12)).not.toBe('pitchPerfect')
+    expect(levelAt.get(16)).toBe('pitchPerfect')
   })
 })
 

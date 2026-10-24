@@ -280,6 +280,7 @@
       "guide": {
         "title": "Níveis",
         "intro": "Segure uma nota por {seconds} segundos para ganhar um nível",
+        "recent": "Seu nível acompanha seus últimos segundos",
         "onPitchGoal": "{percent} afinado",
         "spotOnGoal": "{percent} na mosca",
         "firstLevel": "Todo mundo começa aqui",

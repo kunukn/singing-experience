@@ -280,6 +280,7 @@
       "guide": {
         "title": "Level",
         "intro": "Tahan satu nada selama {seconds} detik untuk dapat level",
+        "recent": "Levelmu mengikuti beberapa detik terakhirmu",
         "onPitchGoal": "{percent} pas nada",
         "spotOnGoal": "{percent} tepat sekali",
         "firstLevel": "Semua mulai dari sini",

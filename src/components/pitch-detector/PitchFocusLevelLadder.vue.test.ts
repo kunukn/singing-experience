@@ -43,6 +43,12 @@ describe('PitchFocusLevelLadder', () => {
     expect(row(wrapper, 'niceAndClose').text()).toContain('You')
   })
 
+  test('should say the level follows recent singing', () => {
+    expect(
+      mountLadder(null).get('[data-testid="focus-level-recent"]').text(),
+    ).toBe('Your level follows your last few seconds')
+  })
+
   test('should mark no level before one is given', () => {
     expect(mountLadder(null).find('[data-current="true"]').exists()).toBe(false)
   })

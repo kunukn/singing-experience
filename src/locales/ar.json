@@ -280,6 +280,7 @@
       "guide": {
         "title": "المستويات",
         "intro": "اثبت على نغمة {seconds} ثوانٍ لتحصل على مستوى",
+        "recent": "مستواك يتبع آخر بضع ثوانٍ من غنائك",
         "onPitchGoal": "{percent} على النغمة",
         "spotOnGoal": "{percent} مضبوط تمامًا",
         "firstLevel": "الجميع يبدأ من هنا",

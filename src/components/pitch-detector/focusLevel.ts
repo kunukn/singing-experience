@@ -28,6 +28,13 @@ export type FocusTip =
  * a title */
 export const LEVEL_MIN_HOLD_MS = 3000
 
+/*
+ * Percentage points a take may slip below its rung before dropping a level.
+ * Climbing needs the full threshold; dropping needs a clear dip, so a take
+ * sitting on a boundary doesn't flicker between two rungs on every refresh.
+ */
+const LEVEL_DROP_MARGIN_PERCENT = 5
+
 /* ¢ — heard-pitch wobble above this is audible unsteadiness; below it a
  * tone sounds still */
 const STEADY_WOBBLE_CENTS = 15
@@ -63,16 +70,43 @@ export const FOCUS_LEVEL_RULES: readonly FocusLevelRule[] = [
   { level: 'warmingUp', minOnPitchPercent: 0, minSpotOnPercent: 0 },
 ]
 
-export function focusLevelFor(stats: FocusToneStats): FocusLevel | null {
+function meetsRule(
+  stats: FocusToneStats,
+  { minOnPitchPercent, minSpotOnPercent }: FocusLevelRule,
+  marginPercent = 0,
+) {
+  return (
+    stats.onPitchPercent >= minOnPitchPercent - marginPercent &&
+    stats.spotOnPercent >= minSpotOnPercent - marginPercent
+  )
+}
+
+/**
+ * The rung the take has earned. Pass the level currently shown as
+ * `currentLevel` to keep it until the take falls clearly below it.
+ */
+export function focusLevelFor(
+  stats: FocusToneStats,
+  currentLevel: FocusLevel | null = null,
+): FocusLevel | null {
   if (stats.holdMs < LEVEL_MIN_HOLD_MS) return null
 
-  const rule = FOCUS_LEVEL_RULES.find(
-    ({ minOnPitchPercent, minSpotOnPercent }) =>
-      stats.onPitchPercent >= minOnPitchPercent &&
-      stats.spotOnPercent >= minSpotOnPercent,
+  const earnedIndex = FOCUS_LEVEL_RULES.findIndex((rule) =>
+    meetsRule(stats, rule),
   )
+  const currentIndex = FOCUS_LEVEL_RULES.findIndex(
+    (rule) => rule.level === currentLevel,
+  )
+  /* Rules run highest first, so a lower index is a higher rung */
+  const isDrop = currentIndex !== -1 && currentIndex < earnedIndex
+  if (
+    isDrop &&
+    meetsRule(stats, FOCUS_LEVEL_RULES[currentIndex], LEVEL_DROP_MARGIN_PERCENT)
+  ) {
+    return FOCUS_LEVEL_RULES[currentIndex].level
+  }
 
-  return rule?.level ?? 'warmingUp'
+  return FOCUS_LEVEL_RULES[earnedIndex]?.level ?? 'warmingUp'
 }
 
 /*

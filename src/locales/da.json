@@ -280,6 +280,7 @@
       "guide": {
         "title": "Niveauer",
         "intro": "Hold en tone i {seconds} sekunder for at få et niveau",
+        "recent": "Dit niveau følger dine sidste par sekunder",
         "onPitchGoal": "{percent} rammer tonen",
         "spotOnGoal": "{percent} helt præcis",
         "firstLevel": "Her starter alle",

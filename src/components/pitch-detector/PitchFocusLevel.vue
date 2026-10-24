@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import type { FocusToneStats } from './focusToneTracker'
-import { FOCUS_LEVEL_EMOJI, focusLevelFor, focusTipFor } from './focusLevel'
+import {
+  FOCUS_LEVEL_EMOJI,
+  focusLevelFor,
+  focusTipFor,
+  type FocusLevel,
+} from './focusLevel'
 import PitchFocusLevelGuide from './PitchFocusLevelGuide.vue'
 
 type Props = {
@@ -11,7 +16,16 @@ const props = defineProps<Props>()
 
 const { t } = useI18n()
 
-const level = computed(() => focusLevelFor(props.stats))
+/* A ref rather than a computed: the next level depends on the one shown, so
+ * a take near a boundary holds its rung instead of flickering */
+const level = ref<FocusLevel | null>(null)
+watch(
+  () => props.stats,
+  (stats) => {
+    level.value = focusLevelFor(stats, level.value)
+  },
+  { immediate: true },
+)
 const tip = computed(() => focusTipFor(props.stats, level.value))
 </script>
 

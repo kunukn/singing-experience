@@ -10,8 +10,13 @@ import { PAUSE_GAP_MS } from './pitchConstants'
  * be tested with hand-written timestamps.
  */
 
+/*
+ * Every field but holdMs is a fading average weighted toward the last few
+ * seconds (see STATS_HALF_LIFE_MS), so it describes how the tone sounds now
+ * rather than over the whole take.
+ */
 export type FocusToneStats = {
-  /* Voiced time on the focus tone, gaps excluded */
+  /* Voiced time on the focus tone, gaps excluded — the whole take */
   holdMs: number
   /* Signed: positive = sharp, negative = flat */
   averageCents: number
@@ -48,6 +53,13 @@ export const DEFAULT_FOCUS_HOLD_MS = 400
  */
 export const HEARD_PITCH_WINDOW_MS = 200
 
+/*
+ * A frame's weight in the stats halves every this many ms of voiced singing,
+ * so a poor start fades out within seconds instead of dragging the whole take:
+ * after 10 s of good singing, the earlier part weighs about 1%.
+ */
+export const STATS_HALF_LIFE_MS = 1500
+
 const EMPTY_STATS: FocusToneStats = {
   holdMs: 0,
   averageCents: 0,
@@ -58,7 +70,8 @@ const EMPTY_STATS: FocusToneStats = {
 
 export function createFocusTracker({
   holdMs = DEFAULT_FOCUS_HOLD_MS,
-}: { holdMs?: number } = {}): FocusToneTracker {
+  statsHalfLifeMs = STATS_HALF_LIFE_MS,
+}: { holdMs?: number; statsHalfLifeMs?: number } = {}): FocusToneTracker {
   let focusMidi: number | null = null
   let isLocked = false
 
@@ -67,13 +80,13 @@ export function createFocusTracker({
 
   let lastTimestamp: number | null = null
 
-  /* Running sums, so stats stay O(1) per frame over a long held tone */
-  let sampleCount = 0
+  /* Fading running sums, so stats stay O(1) per frame over a long held tone */
+  let weightSum = 0
   let centsSum = 0
   let heardCentsSum = 0
   let heardCentsSquaredSum = 0
-  let onPitchCount = 0
-  let spotOnCount = 0
+  let onPitchWeight = 0
+  let spotOnWeight = 0
   let voicedMs = 0
 
   /* The last HEARD_PITCH_WINDOW_MS of counted frames, with a running sum */
@@ -86,12 +99,12 @@ export function createFocusTracker({
   }
 
   function resetStats() {
-    sampleCount = 0
+    weightSum = 0
     centsSum = 0
     heardCentsSum = 0
     heardCentsSquaredSum = 0
-    onPitchCount = 0
-    spotOnCount = 0
+    onPitchWeight = 0
+    spotOnWeight = 0
     voicedMs = 0
     resetHeardWindow()
   }
@@ -142,12 +155,18 @@ export function createFocusTracker({
 
     const heardCents = heardCentsFor(cents, timestampMs)
 
-    sampleCount++
-    centsSum += cents
-    heardCentsSum += heardCents
-    heardCentsSquaredSum += heardCents * heardCents
-    if (Math.abs(heardCents) <= CLOSE_CENTS) onPitchCount++
-    if (Math.abs(heardCents) <= CLEAN_CENTS) spotOnCount++
+    /* Ages every earlier frame by this frame's voiced time, then adds it at
+     * full weight. Pauses and skipped frames add no time, so they fade
+     * nothing. */
+    const fade = 2 ** (-elapsedMs / statsHalfLifeMs)
+    weightSum = weightSum * fade + 1
+    centsSum = centsSum * fade + cents
+    heardCentsSum = heardCentsSum * fade + heardCents
+    heardCentsSquaredSum = heardCentsSquaredSum * fade + heardCents * heardCents
+    onPitchWeight =
+      onPitchWeight * fade + (Math.abs(heardCents) <= CLOSE_CENTS ? 1 : 0)
+    spotOnWeight =
+      spotOnWeight * fade + (Math.abs(heardCents) <= CLEAN_CENTS ? 1 : 0)
     voicedMs += elapsedMs
   }
 
@@ -159,22 +178,22 @@ export function createFocusTracker({
       return isLocked
     },
     get stats() {
-      if (sampleCount === 0) return { ...EMPTY_STATS, holdMs: voicedMs }
+      if (weightSum === 0) return { ...EMPTY_STATS, holdMs: voicedMs }
 
-      const heardAverage = heardCentsSum / sampleCount
+      const heardAverage = heardCentsSum / weightSum
       /* Population variance via E[x²] − E[x]²; clamped since float error can
        * dip it a hair below zero for a perfectly steady tone. */
       const variance = Math.max(
         0,
-        heardCentsSquaredSum / sampleCount - heardAverage * heardAverage,
+        heardCentsSquaredSum / weightSum - heardAverage * heardAverage,
       )
 
       return {
         holdMs: voicedMs,
-        averageCents: centsSum / sampleCount,
+        averageCents: centsSum / weightSum,
         wobbleCents: Math.sqrt(variance),
-        onPitchPercent: (onPitchCount / sampleCount) * 100,
-        spotOnPercent: (spotOnCount / sampleCount) * 100,
+        onPitchPercent: (onPitchWeight / weightSum) * 100,
+        spotOnPercent: (spotOnWeight / weightSum) * 100,
       }
     },
     push(midi, timestampMs) {
