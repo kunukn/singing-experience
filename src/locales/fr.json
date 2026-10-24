@@ -90,6 +90,7 @@
   "home": {
     "title": "Expérience de Chant",
     "subtitle": "Choisis un programme pour commencer",
+    "welcome": "Chante dans ton micro et regarde ta voix prendre vie. Tu débutes ? Essaie le Détecteur de hauteur.",
     "programs": {
       "pitchDetector": {
         "name": "Détecteur de hauteur",
@@ -595,5 +596,156 @@
     "hopUp": "Saute vers le haut",
     "hopDown": "Saute vers le bas",
     "youAreSinging": "Tu chantes"
+  },
+  "programHelp": {
+    "buttonLabel": "Comment ça marche",
+    "howTo": "Comment ça marche",
+    "terms": "Les mots que tu vas voir",
+    "pitchDetector": {
+      "step1": "Appuie sur Démarrer et chante n'importe quelle note.",
+      "step2": "La grande lettre, c'est ta note. La barre à côté montre si tu es un peu dièse ou bémol.",
+      "step3": "Ouvre l'onglet Focus pour tenir une note et gagner un niveau."
+    },
+    "warmUp": {
+      "step1": "Choisis ta voix et un motif, puis appuie sur Démarrer.",
+      "step2": "Écoute la phrase, puis chante-la à ton tour.",
+      "step3": "Chaque tour monte d'un demi-ton. Arrête quand ça devient trop haut."
+    },
+    "notes": {
+      "step1": "Regarde la portée pour voir où se place chaque note.",
+      "step2": "Appuie sur Démarrer dans l'onglet Écoute pour entendre les notes une par une.",
+      "step3": "Va dans l'onglet Aperçu pour voir toutes les notes d'un coup."
+    },
+    "piano": {
+      "step1": "Tape sur les touches pour jouer.",
+      "step2": "Chante et regarde ta voix allumer la touche que tu chantes.",
+      "step3": "Choisis une tonalité et une gamme pour surligner les notes qui vont avec."
+    },
+    "guitar": {
+      "step1": "Tape sur les cordes pour jouer.",
+      "step2": "Chante et regarde ta voix se poser sur le manche.",
+      "step3": "Choisis une tonalité et une gamme pour surligner les notes qui vont avec."
+    },
+    "scaleDetector": {
+      "step1": "Chante ou joue quelques notes différentes.",
+      "step2": "Regarde quelles gammes ou quels accords collent à tes notes.",
+      "step3": "Appuie sur Recommencer pour essayer de nouvelles notes."
+    },
+    "songRecorder": {
+      "step1": "Choisis un tempo et appuie sur Enregistrer.",
+      "step2": "Commence à chanter après 4 clics.",
+      "step3": "Regarde ton air se transformer en notes sur la portée."
+    },
+    "toneDetector": {
+      "step1": "Appuie sur Démarrer.",
+      "step2": "Chante, fredonne ou joue plusieurs notes en même temps.",
+      "step3": "Chaque son que tu fais apparaît à l'écran."
+    },
+    "tuner": {
+      "step1": "Choisis ton instrument et ton accord, puis appuie sur Démarrer.",
+      "step2": "Pince une seule corde et laisse-la sonner.",
+      "step3": "Tourne la cheville jusqu'à ce que l'aiguille soit au milieu et que tu entendes un carillon."
+    },
+    "singTone": {
+      "step1": "Appuie sur Jouer pour entendre un son.",
+      "step2": "Chante le même son et tiens-le.",
+      "step3": "Retrouve tous les sons pour gagner."
+    },
+    "doReMi": {
+      "step1": "Choisis ton ton de départ et appuie sur Démarrer.",
+      "step2": "Chante la note affichée et tiens-la jusqu'à ce qu'elle change.",
+      "step3": "Monte toute la gamme jusqu'en haut pour finir."
+    },
+    "singTheKeys": {
+      "step1": "Choisis une chanson et appuie sur Démarrer.",
+      "step2": "Les notes tombent vers le piano.",
+      "step3": "Chante chaque note quand elle arrive sur sa touche."
+    },
+    "graceKelly": {
+      "step1": "Choisis une voix à chanter.",
+      "step2": "Appuie sur Démarrer et suis les sons pendant la chanson.",
+      "step3": "Essaie l'onglet Harmonie pour entendre les voix ensemble."
+    },
+    "singFly": {
+      "step1": "Appuie sur Démarrer.",
+      "step2": "Chante plus haut pour monter, plus bas pour descendre.",
+      "step3": "Passe dans les trous pour marquer des points."
+    },
+    "pitchGame": {
+      "step1": "Appuie sur Démarrer.",
+      "step2": "Chante chaque note quand elle arrive et tiens-la pour marquer.",
+      "step3": "Touche le plus de notes possible avant la fin du temps."
+    },
+    "circleOfFifths": {
+      "step1": "Appuie sur Démarrer.",
+      "step2": "Chante DO puis SO pour sauter à la tonalité suivante.",
+      "step3": "Allume les 12 tonalités pour finir."
+    }
+  },
+  "glossary": {
+    "note": {
+      "name": "Note",
+      "description": "La lettre qui donne le nom du son que tu chantes, comme C, D ou E. C, c'est DO, D, c'est RÉ, E, c'est MI."
+    },
+    "octave": {
+      "name": "Octave",
+      "description": "Le petit chiffre après une note. Plus le chiffre est grand, plus le son est aigu."
+    },
+    "sharpFlat": {
+      "name": "Dièse ♯ et bémol ♭",
+      "description": "Dièse veut dire plus haut, bémol veut dire plus bas. Chanter un peu dièse, c'est chanter un peu trop haut."
+    },
+    "cents": {
+      "name": "Cents",
+      "description": "À quelle distance tu es de la note exacte. 100 cents, c'est une touche de piano. Plus tu es près de 0, mieux c'est."
+    },
+    "semitone": {
+      "name": "Demi-ton",
+      "description": "Le plus petit pas en musique : d'une touche de piano à la toute suivante."
+    },
+    "hz": {
+      "name": "Hz",
+      "description": "La vitesse à laquelle le son vibre. Plus il y a de Hz, plus le son est aigu."
+    },
+    "clarity": {
+      "name": "Clarté",
+      "description": "À quel point ton son est net et stable. Plus c'est haut, plus il est facile à lire."
+    },
+    "voiceParts": {
+      "name": "De Soprano à Basse",
+      "description": "Les noms des voix, de la plus aiguë à la plus grave : Soprano, Mezzo-soprano, Alto, Ténor, Baryton, Basse."
+    },
+    "voiceRange": {
+      "name": "Tessiture",
+      "description": "Les notes de ta plus grave à ta plus aiguë. Choisis celle où tu es à l'aise."
+    },
+    "solfege": {
+      "name": "DO RÉ MI",
+      "description": "Les noms des notes d'une gamme : DO RE MI FA SO LA TI DO. Ici, SO veut dire SOL et TI veut dire SI."
+    },
+    "scale": {
+      "name": "Gamme",
+      "description": "Des notes qui sonnent bien ensemble, chantées dans l'ordre."
+    },
+    "key": {
+      "name": "Tonalité",
+      "description": "La note de base autour de laquelle une chanson est construite, comme C majeur."
+    },
+    "chord": {
+      "name": "Accord",
+      "description": "Trois notes ou plus qui sonnent bien ensemble."
+    },
+    "harmony": {
+      "name": "Harmonie",
+      "description": "Des notes différentes chantées en même temps qui vont bien ensemble."
+    },
+    "staff": {
+      "name": "Portée",
+      "description": "Les cinq lignes où se posent les notes. Plus la note est haut sur les lignes, plus elle est aiguë."
+    },
+    "bpm": {
+      "name": "BPM",
+      "description": "Battements par minute : la vitesse de la musique."
+    }
   }
 }

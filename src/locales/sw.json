@@ -90,6 +90,7 @@
   "home": {
     "title": "Uzoefu wa Kuimba",
     "subtitle": "Chagua programu ili kuanza",
+    "welcome": "Imba kwenye maikrofoni na uone sauti yako ikichangamka. Ni mara yako ya kwanza? Jaribu Kipimo cha Sauti.",
     "programs": {
       "pitchDetector": {
         "name": "Kipimo cha Sauti",
@@ -595,5 +596,156 @@
     "hopUp": "Ruka juu",
     "hopDown": "Ruka chini",
     "youAreSinging": "Unaimba"
+  },
+  "programHelp": {
+    "buttonLabel": "Jinsi inavyofanya kazi",
+    "howTo": "Jinsi inavyofanya kazi",
+    "terms": "Maneno utakayoona",
+    "pitchDetector": {
+      "step1": "Bonyeza “Anza” na uimbe noti yoyote.",
+      "step2": "Herufi kubwa ni noti yako. Upau ulio kando yake unaonyesha kama uko juu kidogo au chini kidogo.",
+      "step3": "Fungua kichupo cha “Lenga” ili kushikilia noti moja na kupata kiwango."
+    },
+    "warmUp": {
+      "step1": "Chagua sauti yako na mtindo, kisha bonyeza “Anza”.",
+      "step2": "Sikiliza kifungu, kisha ukiimbe tena.",
+      "step3": "Kila raundi inapanda nusu-toni moja. Acha ukiona ni juu sana."
+    },
+    "notes": {
+      "step1": "Angalia mistari ya noti uone kila noti inakaa wapi.",
+      "step2": "Bonyeza “Anza” kwenye kichupo cha “Listen” ili kusikia noti moja baada ya nyingine.",
+      "step3": "Tumia kichupo cha “Muhtasari” kuona noti zote kwa pamoja."
+    },
+    "piano": {
+      "step1": "Gusa vitufe ili kucheza.",
+      "step2": "Imba, na uone sauti yako ikiwasha kitufe ulichopo.",
+      "step3": "Chagua toni ya msingi na mizani ili kuangazia noti zinazofaa."
+    },
+    "guitar": {
+      "step1": "Gusa nyuzi ili kucheza.",
+      "step2": "Imba, na uone sauti yako ikitokea kwenye ubao wa nyuzi.",
+      "step3": "Chagua toni ya msingi na mizani ili kuangazia noti zinazofaa."
+    },
+    "scaleDetector": {
+      "step1": "Imba au piga noti chache tofauti.",
+      "step2": "Angalia ni mizani au kodi gani zinazolingana na noti zako.",
+      "step3": "Bonyeza “Anza upya” ili kujaribu noti mpya."
+    },
+    "songRecorder": {
+      "step1": "Chagua tempo na ubonyeze “Rekodi”.",
+      "step2": "Anza kuimba baada ya milio 4.",
+      "step3": "Tazama wimbo wako ukigeuka kuwa noti kwenye mistari ya noti."
+    },
+    "toneDetector": {
+      "step1": "Bonyeza “Anza”.",
+      "step2": "Imba, vuma au piga noti kadhaa kwa wakati mmoja.",
+      "step3": "Kila toni unayotoa inaonekana kwenye skrini."
+    },
+    "tuner": {
+      "step1": "Chagua ala yako na jinsi ya kurekebisha, kisha bonyeza “Anza”.",
+      "step2": "Piga uzi mmoja na uuache ulie.",
+      "step3": "Zungusha kigingi hadi mshale ukae katikati na usikie mlio wa kengele."
+    },
+    "singTone": {
+      "step1": "Bonyeza “Cheza” usikie toni.",
+      "step2": "Imba toni hiyo hiyo na uishikilie.",
+      "step3": "Linganisha toni zote ili kushinda."
+    },
+    "doReMi": {
+      "step1": "Chagua toni yako ya kuanzia na ubonyeze “Anza”.",
+      "step2": "Imba noti inayoonyeshwa na uishikilie hadi isogee.",
+      "step3": "Panda mizani yote hadi juu ili kumaliza."
+    },
+    "singTheKeys": {
+      "step1": "Chagua wimbo na ubonyeze “Anza”.",
+      "step2": "Noti zinaanguka kuelekea piano.",
+      "step3": "Imba kila noti inapofika kwenye kitufe chake."
+    },
+    "graceKelly": {
+      "step1": "Chagua sauti ya kuimba.",
+      "step2": "Bonyeza “Anza” na ufuate toni wimbo unapocheza.",
+      "step3": "Jaribu kichupo cha “Harmoni” kusikia sauti zote pamoja."
+    },
+    "singFly": {
+      "step1": "Bonyeza “Anza”.",
+      "step2": "Imba juu zaidi kupaa, chini zaidi kushuka.",
+      "step3": "Pita kwenye mianya upate pointi."
+    },
+    "pitchGame": {
+      "step1": "Bonyeza “Anza”.",
+      "step2": "Imba kila noti inapoingia na uishikilie upate pointi.",
+      "step3": "Piga noti nyingi kadri uwezavyo kabla muda haujaisha."
+    },
+    "circleOfFifths": {
+      "step1": "Bonyeza “Anza”.",
+      "step2": "Imba DO, kisha SO, kuruka hadi ufunguo unaofuata.",
+      "step3": "Washa funguo zote 12 ili kumaliza."
+    }
+  },
+  "glossary": {
+    "note": {
+      "name": "Noti",
+      "description": "Jina la herufi la sauti unayoimba, kama C, D au E."
+    },
+    "octave": {
+      "name": "Oktavu",
+      "description": "Namba ndogo baada ya noti. Namba kubwa zaidi inamaanisha sauti ya juu zaidi."
+    },
+    "sharpFlat": {
+      "name": "Juu ♯ na chini ♭",
+      "description": "Juu (sharp) maana yake ni sauti ya juu zaidi, chini (flat) maana yake ni sauti ya chini zaidi. Ukiimba juu kidogo, uko juu kidogo kuliko inavyotakiwa."
+    },
+    "cents": {
+      "name": "Senti",
+      "description": "Uko mbali kiasi gani na noti kamili. Senti 100 ni kitufe kimoja cha piano. Karibu zaidi na 0 ni bora."
+    },
+    "semitone": {
+      "name": "Nusu-toni",
+      "description": "Hatua ndogo kabisa katika muziki: kutoka kitufe kimoja cha piano hadi kinachofuata moja kwa moja."
+    },
+    "hz": {
+      "name": "Hz",
+      "description": "Jinsi sauti inavyotetemeka kwa kasi. Hz zaidi inamaanisha sauti ya juu zaidi."
+    },
+    "clarity": {
+      "name": "Uwazi",
+      "description": "Jinsi sauti yako ilivyo safi na tulivu. Ikiwa juu zaidi, ni rahisi kusoma."
+    },
+    "voiceParts": {
+      "name": "Soprano hadi Besi",
+      "description": "Majina ya sauti kutoka juu hadi chini: Soprano, Mezzo-Soprano, Alto, Tenori, Baritoni, Besi."
+    },
+    "voiceRange": {
+      "name": "Kiwango cha sauti",
+      "description": "Noti kutoka ya chini kabisa hadi ya juu kabisa unayoweza kuimba. Chagua inayokufaa vizuri."
+    },
+    "solfege": {
+      "name": "DO RE MI",
+      "description": "Majina ya noti za mizani: DO RE MI FA SO LA TI DO."
+    },
+    "scale": {
+      "name": "Mizani",
+      "description": "Kundi la noti zinazosikika vizuri pamoja, zikiimbwa kwa mpangilio."
+    },
+    "key": {
+      "name": "Ufunguo",
+      "description": "Toni ya msingi ambayo wimbo umejengwa juu yake, kama C meja."
+    },
+    "chord": {
+      "name": "Kodi",
+      "description": "Noti tatu au zaidi zinazosikika vizuri pamoja."
+    },
+    "harmony": {
+      "name": "Harmoni",
+      "description": "Noti tofauti zinazoimbwa kwa wakati mmoja na kuendana."
+    },
+    "staff": {
+      "name": "Mistari ya noti",
+      "description": "Mistari mitano ambayo noti hukaa juu yake. Kadiri noti ilivyo juu kwenye mistari, ndivyo sauti yake ilivyo ya juu."
+    },
+    "bpm": {
+      "name": "BPM",
+      "description": "Mipigo kwa dakika: jinsi muziki unavyokwenda kwa kasi."
+    }
   }
 }

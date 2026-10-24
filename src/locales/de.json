@@ -90,6 +90,7 @@
   "home": {
     "title": "Gesangserlebnis",
     "subtitle": "Wähle ein Programm, um zu beginnen",
+    "welcome": "Sing in dein Mikro und sieh, wie deine Stimme lebendig wird. Neu hier? Probier die Tonhöhenerkennung aus.",
     "programs": {
       "pitchDetector": {
         "name": "Tonhöhenerkennung",
@@ -595,5 +596,156 @@
     "hopUp": "Spring hoch",
     "hopDown": "Spring runter",
     "youAreSinging": "Du singst"
+  },
+  "programHelp": {
+    "buttonLabel": "So geht's",
+    "howTo": "So geht's",
+    "terms": "Wörter, die du siehst",
+    "pitchDetector": {
+      "step1": "Drück auf Start und sing irgendeinen Ton.",
+      "step2": "Der große Buchstabe ist dein Ton. Der Balken daneben zeigt, ob du ein bisschen zu hoch oder zu tief bist.",
+      "step3": "Öffne den Tab Fokus, halte einen Ton und hol dir ein Level."
+    },
+    "warmUp": {
+      "step1": "Wähl deine Stimme und ein Muster und drück dann auf Start.",
+      "step2": "Hör dir die Tonfolge an und sing sie dann nach.",
+      "step3": "Jede Runde geht einen Halbton höher. Hör auf, wenn es sich zu hoch anfühlt."
+    },
+    "notes": {
+      "step1": "Schau aufs Notensystem, um zu sehen, wo jede Note sitzt.",
+      "step2": "Drück im Tab Hören auf Start, dann hörst du die Noten nacheinander.",
+      "step3": "Im Tab Übersicht siehst du alle Noten auf einmal."
+    },
+    "piano": {
+      "step1": "Tipp auf die Tasten, um zu spielen.",
+      "step2": "Sing und sieh, wie deine Stimme die Taste aufleuchten lässt, auf der du gerade bist.",
+      "step3": "Wähl eine Tonart und eine Tonleiter, um die passenden Töne hervorzuheben."
+    },
+    "guitar": {
+      "step1": "Tipp auf die Saiten, um zu spielen.",
+      "step2": "Sing und sieh, wie deine Stimme auf dem Griffbrett landet.",
+      "step3": "Wähl eine Tonart und eine Tonleiter, um die passenden Töne hervorzuheben."
+    },
+    "scaleDetector": {
+      "step1": "Sing oder spiel ein paar verschiedene Töne.",
+      "step2": "Schau, welche Tonleitern oder Akkorde zu deinen Tönen passen.",
+      "step3": "Drück auf Neu anfangen, um neue Töne auszuprobieren."
+    },
+    "songRecorder": {
+      "step1": "Wähl ein Tempo und drück auf Aufnehmen.",
+      "step2": "Fang nach 4 Klicks an zu singen.",
+      "step3": "Sieh, wie deine Melodie zu Noten im Notensystem wird."
+    },
+    "toneDetector": {
+      "step1": "Drück auf Start.",
+      "step2": "Sing, summ oder spiel mehrere Töne gleichzeitig.",
+      "step3": "Jeder Ton, den du machst, erscheint auf dem Bildschirm."
+    },
+    "tuner": {
+      "step1": "Wähl dein Instrument und die Stimmung und drück dann auf Start.",
+      "step2": "Zupf eine Saite und lass sie klingen.",
+      "step3": "Dreh am Wirbel, bis die Nadel in der Mitte steht und du einen Glockenton hörst."
+    },
+    "singTone": {
+      "step1": "Drück auf Spielen, um einen Ton zu hören.",
+      "step2": "Sing denselben Ton nach und halte ihn.",
+      "step3": "Triff alle Töne, um zu gewinnen."
+    },
+    "doReMi": {
+      "step1": "Wähl deinen Startton und drück auf Start.",
+      "step2": "Sing die angezeigte Note und halte sie, bis es weitergeht.",
+      "step3": "Schaff die ganze Tonleiter bis nach oben, dann bist du fertig."
+    },
+    "singTheKeys": {
+      "step1": "Wähl ein Lied und drück auf Start.",
+      "step2": "Noten fallen auf das Klavier zu.",
+      "step3": "Sing jede Note, wenn sie auf ihrer Taste landet."
+    },
+    "graceKelly": {
+      "step1": "Wähl eine Stimme zum Singen.",
+      "step2": "Drück auf Start und folge den Tönen, während das Lied läuft.",
+      "step3": "Probier den Tab Harmonie aus, um die Stimmen zusammen zu hören."
+    },
+    "singFly": {
+      "step1": "Drück auf Start.",
+      "step2": "Sing höher, um hochzufliegen, und tiefer, um runterzufliegen.",
+      "step3": "Flieg durch die Lücken, um zu punkten."
+    },
+    "pitchGame": {
+      "step1": "Drück auf Start.",
+      "step2": "Sing jede Note, wenn sie hereingleitet, und halte sie, um zu punkten.",
+      "step3": "Triff so viele Noten wie möglich, bevor die Zeit abläuft."
+    },
+    "circleOfFifths": {
+      "step1": "Drück auf Start.",
+      "step2": "Sing DO und dann SO, um zur nächsten Tonart zu hüpfen.",
+      "step3": "Bring alle 12 Tonarten zum Leuchten, dann bist du fertig."
+    }
+  },
+  "glossary": {
+    "note": {
+      "name": "Note",
+      "description": "Der Buchstabenname des Tons, den du singst, zum Beispiel C, D oder E."
+    },
+    "octave": {
+      "name": "Oktave",
+      "description": "Die kleine Zahl nach der Note. Eine größere Zahl heißt ein höherer Ton."
+    },
+    "sharpFlat": {
+      "name": "Zu hoch ♯ und zu tief ♭",
+      "description": "♯ heißt Kreuz und bedeutet höher. ♭ heißt b und bedeutet tiefer. Singst du ein bisschen zu hoch, liegst du knapp über dem Ton."
+    },
+    "cents": {
+      "name": "Cent",
+      "description": "Wie weit du vom genauen Ton weg bist. 100 Cent sind eine Klaviertaste. Je näher an 0, desto besser."
+    },
+    "semitone": {
+      "name": "Halbton",
+      "description": "Der kleinste Schritt in der Musik: von einer Klaviertaste zur direkt nächsten."
+    },
+    "hz": {
+      "name": "Hz",
+      "description": "Wie schnell der Ton schwingt. Mehr Hz heißt ein höherer Ton."
+    },
+    "clarity": {
+      "name": "Klarheit",
+      "description": "Wie sauber und ruhig dein Ton ist. Je höher, desto leichter lässt er sich erkennen."
+    },
+    "voiceParts": {
+      "name": "Sopran bis Bass",
+      "description": "Namen für Stimmen von hoch bis tief: Sopran, Mezzosopran, Alt, Tenor, Bariton, Bass."
+    },
+    "voiceRange": {
+      "name": "Stimmumfang",
+      "description": "Die Töne von deinem tiefsten bis zu deinem höchsten. Wähl einen, der sich gut anfühlt."
+    },
+    "solfege": {
+      "name": "DO RE MI",
+      "description": "Namen für die Töne einer Tonleiter: DO RE MI FA SO LA TI DO."
+    },
+    "scale": {
+      "name": "Tonleiter",
+      "description": "Töne, die gut zusammenpassen und der Reihe nach gesungen werden."
+    },
+    "key": {
+      "name": "Tonart",
+      "description": "Der Heimatton, um den ein Lied gebaut ist, zum Beispiel C-Dur."
+    },
+    "chord": {
+      "name": "Akkord",
+      "description": "Drei oder mehr Töne, die gut zusammen klingen."
+    },
+    "harmony": {
+      "name": "Harmonie",
+      "description": "Verschiedene Töne, die gleichzeitig gesungen werden und zusammenpassen."
+    },
+    "staff": {
+      "name": "Notensystem",
+      "description": "Die fünf Linien, auf denen die Noten sitzen. Je höher auf den Linien, desto höher der Ton."
+    },
+    "bpm": {
+      "name": "BPM",
+      "description": "Schläge pro Minute: wie schnell die Musik ist."
+    }
   }
 }

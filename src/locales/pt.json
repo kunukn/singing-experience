@@ -90,6 +90,7 @@
   "home": {
     "title": "Experiência de Canto",
     "subtitle": "Escolha um programa para começar",
+    "welcome": "Cante no microfone e veja sua voz ganhar vida. É novo por aqui? Experimente o Detector de afinação.",
     "programs": {
       "pitchDetector": {
         "name": "Detector de afinação",
@@ -595,5 +596,156 @@
     "hopUp": "Pule para cima",
     "hopDown": "Pule para baixo",
     "youAreSinging": "Você está cantando"
+  },
+  "programHelp": {
+    "buttonLabel": "Como funciona",
+    "howTo": "Como funciona",
+    "terms": "Palavras que você vai ver",
+    "pitchDetector": {
+      "step1": "Aperte Iniciar e cante qualquer nota.",
+      "step2": "A letra grande é a sua nota. A barra ao lado mostra se você está um pouco alto (sustenido) ou baixo (bemol).",
+      "step3": "Abra a aba Foco para segurar uma nota e ganhar um nível."
+    },
+    "warmUp": {
+      "step1": "Escolha sua voz e um padrão, depois aperte Iniciar.",
+      "step2": "Ouça a frase e depois repita cantando.",
+      "step3": "Cada rodada sobe um semitom. Pare quando ficar alto demais."
+    },
+    "notes": {
+      "step1": "Olhe a pauta para ver onde fica cada nota.",
+      "step2": "Aperte Iniciar na aba Ouve para ouvir as notas uma por uma.",
+      "step3": "Use a aba Visão geral para ver todas as notas de uma vez."
+    },
+    "piano": {
+      "step1": "Toque nas teclas para tocar.",
+      "step2": "Cante e veja sua voz acender a tecla em que você está.",
+      "step3": "Escolha um tom e uma escala para destacar as notas que combinam."
+    },
+    "guitar": {
+      "step1": "Toque nas cordas para tocar.",
+      "step2": "Cante e veja sua voz aparecer no braço da guitarra.",
+      "step3": "Escolha um tom e uma escala para destacar as notas que combinam."
+    },
+    "scaleDetector": {
+      "step1": "Cante ou toque algumas notas diferentes.",
+      "step2": "Veja quais escalas ou acordes combinam com suas notas.",
+      "step3": "Aperte Começar de novo para tentar outras notas."
+    },
+    "songRecorder": {
+      "step1": "Escolha o tempo e aperte Gravar.",
+      "step2": "Comece a cantar depois de 4 cliques.",
+      "step3": "Veja sua melodia virar notas na pauta."
+    },
+    "toneDetector": {
+      "step1": "Aperte Iniciar.",
+      "step2": "Cante, cantarole ou toque várias notas ao mesmo tempo.",
+      "step3": "Cada tom que você faz aparece na tela."
+    },
+    "tuner": {
+      "step1": "Escolha seu instrumento e a afinação, depois aperte Iniciar.",
+      "step2": "Toque uma corda e deixe ela soar.",
+      "step3": "Gire a tarraxa até o ponteiro ficar no meio e você ouvir um sino."
+    },
+    "singTone": {
+      "step1": "Aperte Tocar para ouvir um tom.",
+      "step2": "Cante o mesmo tom e segure.",
+      "step3": "Acerte todos os tons para vencer."
+    },
+    "doReMi": {
+      "step1": "Escolha seu tom inicial e aperte Iniciar.",
+      "step2": "Cante a nota mostrada e segure até ela mudar.",
+      "step3": "Suba a escala inteira para terminar."
+    },
+    "singTheKeys": {
+      "step1": "Escolha uma música e aperte Iniciar.",
+      "step2": "As notas caem em direção ao piano.",
+      "step3": "Cante cada nota quando ela chegar à sua tecla."
+    },
+    "graceKelly": {
+      "step1": "Escolha uma voz para cantar.",
+      "step2": "Aperte Iniciar e siga os tons enquanto a música toca.",
+      "step3": "Experimente a aba Harmonia para ouvir as vozes juntas."
+    },
+    "singFly": {
+      "step1": "Aperte Iniciar.",
+      "step2": "Cante mais agudo para subir e mais grave para descer.",
+      "step3": "Passe pelos buracos para fazer pontos."
+    },
+    "pitchGame": {
+      "step1": "Aperte Iniciar.",
+      "step2": "Cante cada nota que vai aparecendo e segure para fazer pontos.",
+      "step3": "Acerte o máximo de notas que puder antes de o tempo acabar."
+    },
+    "circleOfFifths": {
+      "step1": "Aperte Iniciar.",
+      "step2": "Cante DO e depois SO para pular para o próximo tom.",
+      "step3": "Acenda os 12 tons para terminar."
+    }
+  },
+  "glossary": {
+    "note": {
+      "name": "Nota",
+      "description": "O nome em letra do som que você canta, como C, D ou E."
+    },
+    "octave": {
+      "name": "Oitava",
+      "description": "O numerozinho depois da nota. Quanto maior o número, mais agudo o som."
+    },
+    "sharpFlat": {
+      "name": "Sustenido ♯ e bemol ♭",
+      "description": "Sustenido quer dizer mais alto, bemol quer dizer mais baixo. Cantar um pouco sustenido quer dizer que você está um pouquinho alto demais."
+    },
+    "cents": {
+      "name": "Cents",
+      "description": "O quanto você está longe da nota certinha. 100 cents são uma tecla do piano. Quanto mais perto de 0, melhor."
+    },
+    "semitone": {
+      "name": "Semitom",
+      "description": "O menor passo da música: de uma tecla do piano até a tecla logo ao lado."
+    },
+    "hz": {
+      "name": "Hz",
+      "description": "A rapidez com que o som vibra. Mais Hz quer dizer um som mais agudo."
+    },
+    "clarity": {
+      "name": "Clareza",
+      "description": "O quanto seu som está limpo e firme. Quanto mais alto, mais fácil de ler."
+    },
+    "voiceParts": {
+      "name": "Soprano a Baixo",
+      "description": "Nomes das vozes, da mais aguda para a mais grave: Soprano, Mezzo-soprano, Contralto, Tenor, Barítono, Baixo."
+    },
+    "voiceRange": {
+      "name": "Extensão vocal",
+      "description": "As notas da sua mais grave até a sua mais aguda. Escolha uma que seja confortável."
+    },
+    "solfege": {
+      "name": "DÓ RÉ MI",
+      "description": "Nomes das notas de uma escala: DÓ RÉ MI FÁ SOL LÁ SI DÓ."
+    },
+    "scale": {
+      "name": "Escala",
+      "description": "Um grupo de notas que soam bem juntas, cantadas em ordem."
+    },
+    "key": {
+      "name": "Tom",
+      "description": "A nota principal em volta da qual a música é feita, como C maior."
+    },
+    "chord": {
+      "name": "Acorde",
+      "description": "Três ou mais notas que soam bem juntas."
+    },
+    "harmony": {
+      "name": "Harmonia",
+      "description": "Notas diferentes cantadas ao mesmo tempo que combinam entre si."
+    },
+    "staff": {
+      "name": "Pauta",
+      "description": "As cinco linhas onde ficam as notas. Quanto mais alto nas linhas, mais aguda a nota."
+    },
+    "bpm": {
+      "name": "BPM",
+      "description": "Batidas por minuto: a velocidade da música."
+    }
   }
 }

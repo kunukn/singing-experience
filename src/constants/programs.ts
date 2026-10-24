@@ -123,3 +123,7 @@ export const programStageByRoute = new Map(
     program.stage ? [[program.route, program.stage] as const] : [],
   ),
 )
+
+export const programByRoute = new Map(
+  [...games, ...tools].map((program) => [program.route, program] as const),
+)

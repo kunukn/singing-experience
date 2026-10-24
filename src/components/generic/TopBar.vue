@@ -1,11 +1,12 @@
 <script setup lang="ts">
-import { programStageByRoute } from '@/constants/programs'
+import { programByRoute, programStageByRoute } from '@/constants/programs'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const isHome = computed(() => route.path === '/')
 const stage = computed(() => programStageByRoute.get(route.path))
+const program = computed(() => programByRoute.get(route.path))
 const isLandingPage = computed(() => route.meta.isLandingPage === true)
 
 function goBack() {
@@ -32,6 +33,7 @@ function goBack() {
     <ProgramStageTag v-if="stage" :stage class="ms-3 me-auto" />
     <div class="flex items-center gap-2">
       <LanguageSwitcher v-if="isLandingPage" />
+      <ProgramHelpButton v-if="program" :programKey="program.key" />
       <SettingsPanel />
     </div>
   </div>

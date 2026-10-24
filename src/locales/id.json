@@ -90,6 +90,7 @@
   "home": {
     "title": "Pengalaman Bernyanyi",
     "subtitle": "Pilih program untuk memulai",
+    "welcome": "Nyanyi ke mikrofonmu dan lihat suaramu jadi hidup. Baru di sini? Coba Detektor Nada.",
     "programs": {
       "pitchDetector": {
         "name": "Detektor Nada",
@@ -595,5 +596,156 @@
     "hopUp": "Lompat naik",
     "hopDown": "Lompat turun",
     "youAreSinging": "Kamu sedang menyanyi"
+  },
+  "programHelp": {
+    "buttonLabel": "Cara pakainya",
+    "howTo": "Cara pakainya",
+    "terms": "Kata-kata yang akan kamu lihat",
+    "pitchDetector": {
+      "step1": "Tekan Mulai dan nyanyikan nada apa saja.",
+      "step2": "Huruf besar itu nadamu. Bar di sebelahnya menunjukkan apakah nadamu sedikit terlalu tinggi atau terlalu rendah.",
+      "step3": "Buka tab Fokus untuk menahan satu nada dan dapat level."
+    },
+    "warmUp": {
+      "step1": "Pilih suaramu dan sebuah pola, lalu tekan Mulai.",
+      "step2": "Dengarkan frasanya, lalu nyanyikan kembali.",
+      "step3": "Setiap putaran naik satu semiton. Berhenti kalau sudah terasa terlalu tinggi."
+    },
+    "notes": {
+      "step1": "Lihat paranada untuk tahu letak setiap not.",
+      "step2": "Tekan Mulai di tab Listen untuk mendengar not satu per satu.",
+      "step3": "Pakai tab Ikhtisar untuk melihat semua not sekaligus."
+    },
+    "piano": {
+      "step1": "Ketuk tuts untuk bermain.",
+      "step2": "Bernyanyilah, dan lihat suaramu menyalakan tuts yang sedang kamu nyanyikan.",
+      "step3": "Pilih nada dasar dan tangga nada untuk menyorot nada-nada yang cocok."
+    },
+    "guitar": {
+      "step1": "Ketuk senar untuk bermain.",
+      "step2": "Bernyanyilah, dan lihat suaramu mendarat di fretboard.",
+      "step3": "Pilih nada dasar dan tangga nada untuk menyorot nada-nada yang cocok."
+    },
+    "scaleDetector": {
+      "step1": "Nyanyikan atau mainkan beberapa nada yang berbeda.",
+      "step2": "Lihat tangga nada atau akor mana yang cocok dengan nadamu.",
+      "step3": "Tekan Mulai lagi untuk mencoba nada baru."
+    },
+    "songRecorder": {
+      "step1": "Pilih tempo lalu tekan Rekam.",
+      "step2": "Mulai bernyanyi setelah 4 klik.",
+      "step3": "Lihat melodimu berubah jadi not di paranada."
+    },
+    "toneDetector": {
+      "step1": "Tekan Mulai.",
+      "step2": "Nyanyikan, senandungkan, atau mainkan beberapa nada sekaligus.",
+      "step3": "Setiap nada yang kamu buat muncul di layar."
+    },
+    "tuner": {
+      "step1": "Pilih alat musik dan penalaanmu, lalu tekan Mulai.",
+      "step2": "Petik satu senar dan biarkan berbunyi.",
+      "step3": "Putar pasaknya sampai jarumnya ada di tengah dan kamu dengar dentingan."
+    },
+    "singTone": {
+      "step1": "Tekan Putar untuk mendengar sebuah nada.",
+      "step2": "Nyanyikan nada yang sama lalu tahan.",
+      "step3": "Cocokkan semua nada untuk menang."
+    },
+    "doReMi": {
+      "step1": "Pilih nada awalmu lalu tekan Mulai.",
+      "step2": "Nyanyikan not yang ditampilkan dan tahan sampai pindah ke not berikutnya.",
+      "step3": "Naiki tangga nada sampai ke atas untuk selesai."
+    },
+    "singTheKeys": {
+      "step1": "Pilih lagu lalu tekan Mulai.",
+      "step2": "Nada-nada jatuh ke arah piano.",
+      "step3": "Nyanyikan tiap nada saat mendarat di tutsnya."
+    },
+    "graceKelly": {
+      "step1": "Pilih suara yang mau kamu nyanyikan.",
+      "step2": "Tekan Mulai dan ikuti nadanya selama lagu diputar.",
+      "step3": "Coba tab Harmoni untuk mendengar semua suara bersama-sama."
+    },
+    "singFly": {
+      "step1": "Tekan Mulai.",
+      "step2": "Nyanyi lebih tinggi untuk terbang naik, lebih rendah untuk turun.",
+      "step3": "Terbang lewat celah untuk dapat skor."
+    },
+    "pitchGame": {
+      "step1": "Tekan Mulai.",
+      "step2": "Nyanyikan tiap nada saat meluncur masuk dan tahan untuk dapat skor.",
+      "step3": "Kena sebanyak mungkin nada sebelum waktu habis."
+    },
+    "circleOfFifths": {
+      "step1": "Tekan Mulai.",
+      "step2": "Nyanyikan DO, lalu SO, untuk melompat ke nada dasar berikutnya.",
+      "step3": "Nyalakan semua 12 nada dasar untuk selesai."
+    }
+  },
+  "glossary": {
+    "note": {
+      "name": "Not",
+      "description": "Nama huruf dari bunyi yang kamu nyanyikan, seperti C, D, atau E."
+    },
+    "octave": {
+      "name": "Oktaf",
+      "description": "Angka kecil setelah not. Angka yang lebih besar berarti bunyi yang lebih tinggi."
+    },
+    "sharpFlat": {
+      "name": "Kres ♯ dan mol ♭",
+      "description": "Kres berarti lebih tinggi, mol berarti lebih rendah. Kalau bar menunjukkan Tinggi ♯, nadamu sedikit terlalu tinggi."
+    },
+    "cents": {
+      "name": "Sen",
+      "description": "Seberapa jauh kamu dari nada yang tepat. 100 sen itu satu tuts piano. Makin dekat ke 0, makin bagus."
+    },
+    "semitone": {
+      "name": "Semiton",
+      "description": "Langkah terkecil dalam musik: dari satu tuts piano ke tuts tepat di sebelahnya."
+    },
+    "hz": {
+      "name": "Hz",
+      "description": "Seberapa cepat bunyi bergetar. Makin banyak Hz, makin tinggi bunyinya."
+    },
+    "clarity": {
+      "name": "Kejernihan",
+      "description": "Seberapa bersih dan stabil suaramu. Makin tinggi, makin mudah dibaca."
+    },
+    "voiceParts": {
+      "name": "Sopran sampai Bass",
+      "description": "Nama-nama suara dari tinggi ke rendah: Sopran, Mezzo-Sopran, Alto, Tenor, Bariton, Bass."
+    },
+    "voiceRange": {
+      "name": "Jangkauan suara",
+      "description": "Nada-nada dari yang paling rendah sampai paling tinggi yang bisa kamu nyanyikan. Pilih yang terasa nyaman."
+    },
+    "solfege": {
+      "name": "DO RE MI",
+      "description": "Nama-nama nada dalam tangga nada: DO RE MI FA SO LA TI DO."
+    },
+    "scale": {
+      "name": "Tangga nada",
+      "description": "Sekumpulan nada yang enak didengar bersama, dinyanyikan berurutan."
+    },
+    "key": {
+      "name": "Nada dasar",
+      "description": "Nada rumah yang jadi pusat sebuah lagu, seperti C mayor."
+    },
+    "chord": {
+      "name": "Akor",
+      "description": "Tiga nada atau lebih yang enak didengar bersama."
+    },
+    "harmony": {
+      "name": "Harmoni",
+      "description": "Nada-nada berbeda yang dinyanyikan bersamaan dan cocok satu sama lain."
+    },
+    "staff": {
+      "name": "Paranada",
+      "description": "Lima garis tempat not berada. Makin tinggi letaknya di garis, makin tinggi notnya."
+    },
+    "bpm": {
+      "name": "BPM",
+      "description": "Ketukan per menit: seberapa cepat musiknya."
+    }
   }
 }

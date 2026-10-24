@@ -90,6 +90,7 @@
   "home": {
     "title": "Sangoplevelse",
     "subtitle": "Vælg et program for at komme i gang",
+    "welcome": "Syng i mikrofonen, og se din stemme komme til live. Ny her? Prøv programmet Tonemåler.",
     "programs": {
       "pitchDetector": {
         "name": "Tonemåler",
@@ -595,5 +596,156 @@
     "hopUp": "Hop op",
     "hopDown": "Hop ned",
     "youAreSinging": "Du synger"
+  },
+  "programHelp": {
+    "buttonLabel": "Sådan virker det",
+    "howTo": "Sådan virker det",
+    "terms": "Ord du vil se",
+    "pitchDetector": {
+      "step1": "Tryk på Start, og syng en hvilken som helst tone.",
+      "step2": "Det store bogstav er din tone. Bjælken ved siden af viser, om du er lidt for høj eller for lav.",
+      "step3": "Åbn fanen Fokus for at holde én tone og få et niveau."
+    },
+    "warmUp": {
+      "step1": "Vælg din stemme og et mønster, og tryk så på Start.",
+      "step2": "Lyt til frasen, og syng den så efter.",
+      "step3": "Hver runde går en halvtone op. Stop, når det føles for højt."
+    },
+    "notes": {
+      "step1": "Kig på nodelinjen for at se, hvor hver node sidder.",
+      "step2": "Tryk på Start under fanen Lyt for at høre tonerne én ad gangen.",
+      "step3": "Brug fanen Oversigt for at se alle tonerne på én gang."
+    },
+    "piano": {
+      "step1": "Tryk på tangenterne for at spille.",
+      "step2": "Syng, og se din stemme lyse den tangent op, du rammer.",
+      "step3": "Vælg en toneart og en skala for at fremhæve de toner, der passer."
+    },
+    "guitar": {
+      "step1": "Tryk på strengene for at spille.",
+      "step2": "Syng, og se din stemme lande på gribebrættet.",
+      "step3": "Vælg en toneart og en skala for at fremhæve de toner, der passer."
+    },
+    "scaleDetector": {
+      "step1": "Syng eller spil et par forskellige toner.",
+      "step2": "Se, hvilke skalaer eller akkorder der passer til dine toner.",
+      "step3": "Tryk på Start forfra for at prøve nye toner."
+    },
+    "songRecorder": {
+      "step1": "Vælg et tempo, og tryk på Optag.",
+      "step2": "Begynd at synge efter 4 klik.",
+      "step3": "Se din melodi blive til noder på nodelinjen."
+    },
+    "toneDetector": {
+      "step1": "Tryk på Start.",
+      "step2": "Syng, nyn eller spil flere toner på én gang.",
+      "step3": "Hver tone, du laver, dukker op på skærmen."
+    },
+    "tuner": {
+      "step1": "Vælg dit instrument og din stemning, og tryk så på Start.",
+      "step2": "Knips på én streng, og lad den klinge.",
+      "step3": "Drej på stemmeskruen, indtil viseren står i midten, og du hører en klokke."
+    },
+    "singTone": {
+      "step1": "Tryk på Afspil for at høre en tone.",
+      "step2": "Syng den samme tone, og hold den.",
+      "step3": "Ram alle tonerne for at vinde."
+    },
+    "doReMi": {
+      "step1": "Vælg din starttone, og tryk på Start.",
+      "step2": "Syng den tone, du ser, og hold den, indtil den skifter.",
+      "step3": "Kom hele vejen op ad skalaen for at blive færdig."
+    },
+    "singTheKeys": {
+      "step1": "Vælg en sang, og tryk på Start.",
+      "step2": "Tonerne falder ned mod klaveret.",
+      "step3": "Syng hver tone, når den lander på sin tangent."
+    },
+    "graceKelly": {
+      "step1": "Vælg en stemme, du vil synge.",
+      "step2": "Tryk på Start, og følg tonerne, mens sangen spiller.",
+      "step3": "Prøv fanen Harmoni for at høre stemmerne sammen."
+    },
+    "singFly": {
+      "step1": "Tryk på Start.",
+      "step2": "Syng højere for at flyve op og dybere for at flyve ned.",
+      "step3": "Flyv gennem hullerne for at score."
+    },
+    "pitchGame": {
+      "step1": "Tryk på Start.",
+      "step2": "Syng hver tone, når den glider ind, og hold den for at score.",
+      "step3": "Ram så mange toner som muligt, før tiden løber ud."
+    },
+    "circleOfFifths": {
+      "step1": "Tryk på Start.",
+      "step2": "Syng DO og så SO for at hoppe til næste toneart.",
+      "step3": "Tænd alle 12 tonearter for at blive færdig."
+    }
+  },
+  "glossary": {
+    "note": {
+      "name": "Node",
+      "description": "Bogstavnavnet på den tone, du synger, som C, D eller E."
+    },
+    "octave": {
+      "name": "Oktav",
+      "description": "Det lille tal efter noden. Et større tal betyder en højere tone."
+    },
+    "sharpFlat": {
+      "name": "For høj ♯ og for lav ♭",
+      "description": "♯ hedder kryds og betyder højere. ♭ hedder b og betyder lavere. Synger du lidt for højt, ligger du en smule over tonen."
+    },
+    "cents": {
+      "name": "Cent",
+      "description": "Hvor langt du er fra den præcise tone. 100 cent er én tangent på klaveret. Jo tættere på 0, jo bedre."
+    },
+    "semitone": {
+      "name": "Halvtone",
+      "description": "Det mindste trin i musik: fra én tangent på klaveret til den lige ved siden af."
+    },
+    "hz": {
+      "name": "Hz",
+      "description": "Hvor hurtigt lyden svinger. Flere Hz betyder en højere tone."
+    },
+    "clarity": {
+      "name": "Klarhed",
+      "description": "Hvor ren og rolig din lyd er. Jo højere, jo lettere er den at aflæse."
+    },
+    "voiceParts": {
+      "name": "Sopran til Bas",
+      "description": "Navne på stemmer fra høj til dyb: Sopran, Mezzosopran, Alt, Tenor, Baryton, Bas."
+    },
+    "voiceRange": {
+      "name": "Stemmeleje",
+      "description": "Tonerne fra din dybeste til din højeste. Vælg et, der føles behageligt."
+    },
+    "solfege": {
+      "name": "DO RE MI",
+      "description": "Navne på tonerne i en skala: DO RE MI FA SO LA TI DO."
+    },
+    "scale": {
+      "name": "Skala",
+      "description": "Toner, der lyder godt sammen, sunget i rækkefølge."
+    },
+    "key": {
+      "name": "Toneart",
+      "description": "Den hjemmetone, en sang er bygget op omkring, som C-dur."
+    },
+    "chord": {
+      "name": "Akkord",
+      "description": "Tre eller flere toner, der lyder godt sammen."
+    },
+    "harmony": {
+      "name": "Harmoni",
+      "description": "Forskellige toner, der synges på samme tid og passer sammen."
+    },
+    "staff": {
+      "name": "Nodelinjer",
+      "description": "De fem linjer, noderne sidder på. Jo højere oppe på linjerne, jo højere tone."
+    },
+    "bpm": {
+      "name": "BPM",
+      "description": "Slag i minuttet: hvor hurtigt musikken går."
+    }
   }
 }
