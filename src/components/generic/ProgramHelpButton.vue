@@ -22,7 +22,7 @@ function togglePopover(event: Event) {
 </script>
 
 <template>
-  <div v-if="help">
+  <template v-if="help">
     <PrimeButton
       :aria-label="t('programHelp.buttonLabel')"
       :title="t('programHelp.buttonLabel')"
@@ -83,7 +83,7 @@ function togglePopover(event: Event) {
         </div>
       </div>
     </PrimePopover>
-  </div>
+  </template>
 </template>
 
 <style scoped>
