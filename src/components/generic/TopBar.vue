@@ -32,7 +32,7 @@ function goBack() {
     <div v-else />
     <ProgramStageTag v-if="stage" :stage class="ms-3 me-auto" />
     <div class="flex items-center gap-2">
-      <LanguageSwitcher v-if="isLandingPage" />
+      <LanguageSwitcher v-if="isLandingPage" class="me-2" />
       <ProgramHelpButton v-if="program" :programKey="program.key" />
       <ProgramHelpButton v-else-if="isLandingPage" programKey="home" />
       <SettingsPanel />
