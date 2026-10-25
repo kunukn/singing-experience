@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
-  <!-- Same mark as MusicNoteIcon.vue; every shape draws in currentColor -->
+  <!-- Hand copy of src/components/icons/noteMark.ts; every shape draws in currentColor -->
   <style>
     svg { color: #475569; }
     @media (prefers-color-scheme: dark) {
@@ -9,6 +9,5 @@
   <rect x="1" y="1" width="38" height="38" rx="10" fill="currentColor" fill-opacity="0.16"/>
   <ellipse cx="13.5" cy="29.5" rx="4" ry="3" transform="rotate(-20 13.5 29.5)" fill="currentColor"/>
   <ellipse cx="26.5" cy="26.5" rx="4" ry="3" transform="rotate(-20 26.5 26.5)" fill="currentColor"/>
-  <path d="M17 29V13M30 26V10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-  <path d="M15.75 13.3 31.25 9.7" stroke="currentColor" stroke-width="4.5"/>
+  <path d="M14.9 29.5V12.6Q14.9 11.6 15.87 11.37L29.43 8.23Q30.4 8 30.4 9V26.5H27.9V14.28Q27.9 13.08 26.73 13.35L18.57 15.25Q17.4 15.52 17.4 16.72V29.5Z" fill="currentColor"/>
 </svg>

@@ -1,5 +1,7 @@
+import { NOTE_HEADS, NOTE_STEMS_BEAM_PATH } from '@/components/icons/noteMark'
+
 /*
- * Brand mark from MusicNoteIcon.vue (and public/icons/note.svg) as a plain SVG
+ * Brand mark from noteMark.ts (and public/icons/note.svg) as a plain SVG
  * string: a data-URI favicon can't read CSS vars, so every shape takes one hex
  * colour and the tile is that colour at 16%, matching the in-app tile tint.
  */
@@ -7,10 +9,11 @@ function buildBrandNoteSvg(color: string): string {
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" color="${color}">`,
     '<rect x="1" y="1" width="38" height="38" rx="10" fill="currentColor" fill-opacity="0.16"/>',
-    '<ellipse cx="13.5" cy="29.5" rx="4" ry="3" transform="rotate(-20 13.5 29.5)" fill="currentColor"/>',
-    '<ellipse cx="26.5" cy="26.5" rx="4" ry="3" transform="rotate(-20 26.5 26.5)" fill="currentColor"/>',
-    '<path d="M17 29V13M30 26V10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>',
-    '<path d="M15.75 13.3 31.25 9.7" stroke="currentColor" stroke-width="4.5"/>',
+    ...NOTE_HEADS.map(
+      (head) =>
+        `<ellipse cx="${head.cx}" cy="${head.cy}" rx="${head.rx}" ry="${head.ry}" transform="${head.transform}" fill="currentColor"/>`,
+    ),
+    `<path d="${NOTE_STEMS_BEAM_PATH}" fill="currentColor"/>`,
     '</svg>',
   ].join('')
 }
