@@ -19,9 +19,12 @@ function prewarmAudio() {
       {{ t('tools.subtitle') }}
     </p>
 
-    <div class="grid w-full max-w-lg gap-4" @click="prewarmAudio">
+    <div
+      class="grid w-full max-w-lg gap-4 md:max-w-none md:grid-cols-2"
+      @click="prewarmAudio"
+    >
       <CardLink v-for="tool in tools" :key="tool.route" :to="tool.route">
-        <PrimeCard>
+        <PrimeCard class="h-full">
           <template #content>
             <div class="flex items-start gap-3 sm:gap-4">
               <component :is="tool.icon" class="size-10 shrink-0" />

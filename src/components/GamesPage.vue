@@ -19,9 +19,12 @@ function prewarmAudio() {
       {{ t('games.subtitle') }}
     </p>
 
-    <div class="grid w-full max-w-lg gap-4" @click="prewarmAudio">
+    <div
+      class="grid w-full max-w-lg gap-4 md:max-w-none md:grid-cols-2"
+      @click="prewarmAudio"
+    >
       <CardLink v-for="game in games" :key="game.route" :to="game.route">
-        <PrimeCard>
+        <PrimeCard class="h-full">
           <template #content>
             <div class="flex items-start gap-3 sm:gap-4">
               <component :is="game.icon" class="size-10 shrink-0" />
