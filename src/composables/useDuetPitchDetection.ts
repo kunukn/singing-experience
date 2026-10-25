@@ -5,7 +5,11 @@ import {
   toAccidentalGlyph,
 } from '@/utils/noteUtils'
 import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
-import { smoothPitch } from '@/utils/pitchSmoothing'
+import {
+  createJumpGate,
+  smoothPitch,
+  type JumpGate,
+} from '@/utils/pitchSmoothing'
 import { PitchDetector } from 'pitchy'
 import {
   BAND_FILTER_STAGES,
@@ -90,6 +94,10 @@ type DuetPitchDetectionOptions = {
   isEnabled: Ref<boolean>
   midiMin: MaybeRefOrGetter<number>
   midiMax: MaybeRefOrGetter<number>
+  /* Hold each lane's last pitch through one- or two-frame jumps of more than a
+   * semitone, which background noise causes and a voice can't make. Mirrors
+   * the option of the same name in usePitchDetection. */
+  rejectSpikes?: boolean
 }
 
 /* Per-band detector plus the smoothing/hysteresis state that has to persist
@@ -102,6 +110,10 @@ type LaneTracker = {
   smoothedFrequency: number | null
   previousMidi: number | undefined
   cleanSinceTimestamp: number | null
+  /* One gate per lane — the two voices change notes independently */
+  jumpGate: JumpGate | null
+  /* The last reported note, repeated while the gate holds back a jump */
+  heldReading: { frequency: number; noteInfo: NoteInfo | null } | null
 }
 
 type LaneReading = {
@@ -210,6 +222,8 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
       smoothedFrequency: null,
       previousMidi: undefined,
       cleanSinceTimestamp: null,
+      jumpGate: options.rejectSpikes ? createJumpGate() : null,
+      heldReading: null,
     }
   }
 
@@ -245,13 +259,32 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
     if (!isUsable) {
       tracker.cleanSinceTimestamp = null
       tracker.smoothedFrequency = null
+      tracker.jumpGate?.reset()
+      tracker.heldReading = null
 
       return { frequency: null, noteInfo: null, clarity: detectedClarity, rms }
     }
 
-    tracker.smoothedFrequency = smoothPitch(tracker.smoothedFrequency, pitch)
-
     const now = performance.now()
+    const acceptedPitch = tracker.jumpGate
+      ? tracker.jumpGate.push(pitch, now)
+      : pitch
+    /* An unconfirmed jump repeats the last note; clarity and rms stay live so
+     * the high-lane gate still compares the bands' real loudness */
+    if (acceptedPitch === null) {
+      return {
+        frequency: tracker.heldReading?.frequency ?? null,
+        noteInfo: tracker.heldReading?.noteInfo ?? null,
+        clarity: detectedClarity,
+        rms,
+      }
+    }
+
+    tracker.smoothedFrequency = smoothPitch(
+      tracker.smoothedFrequency,
+      acceptedPitch,
+    )
+
     if (tracker.cleanSinceTimestamp === null) {
       tracker.cleanSinceTimestamp = now
     }
@@ -263,13 +296,12 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
     const reported = tracker.smoothedFrequency
     const noteInfo = frequencyToNote(reported, tracker.previousMidi)
     tracker.previousMidi = noteInfo?.midiNote
-
-    return {
+    tracker.heldReading = {
       frequency: Math.round(reported * 10) / 10, // 0.1 Hz precision
       noteInfo,
-      clarity: detectedClarity,
-      rms,
     }
+
+    return { ...tracker.heldReading, clarity: detectedClarity, rms }
   }
 
   function tick(sampleRate: number) {

@@ -175,6 +175,8 @@ const {
   isEnabled: isDuetMicEnabled,
   midiMin: () => selectedRange.value.midiMin,
   midiMax: () => selectedRange.value.midiMax,
+  /* Same noise-spike guard as the single-voice detector in PitchDetectorPage */
+  rejectSpikes: true,
 })
 
 const micPermission = computed(() =>
