@@ -1,7 +1,7 @@
 import type { NoteInfo } from '@/utils/noteUtils'
 import { frequencyToNote } from '@/utils/noteUtils'
 import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
-import { smoothPitch } from '@/utils/pitchSmoothing'
+import { createJumpGate, smoothPitch } from '@/utils/pitchSmoothing'
 import { PitchDetector } from 'pitchy'
 
 /*
@@ -61,6 +61,10 @@ type UsePitchDetectionOptions = {
   /* Frequency of A4 that note names and cents are measured against. Defaults to
    * 440. The tuner moves it to follow recordings that sit off concert pitch. */
   referenceA4?: MaybeRefOrGetter<number>
+  /* Hold the last pitch through one- or two-frame jumps of more than a
+   * semitone, which background noise causes and a voice can't make (see
+   * JUMP_CONFIRM_MS). A real jump shows once it holds, a little later. */
+  rejectSpikes?: boolean
 }
 
 /* Linear Q of the two stages of a 4th-order Butterworth low-pass: flat below
@@ -96,6 +100,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
   let mediaStream: MediaStream | null = null
   let animationFrameId: number | null = null
   let smoothedFrequency: number | null = null
+  const jumpGate = options.rejectSpikes ? createJumpGate() : null
   // Tracks the last detected MIDI note to apply hysteresis in frequencyToNote
   let prevMidi: number | undefined = undefined
   let cleanSinceTimestamp: number | null = null
@@ -138,20 +143,29 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
       pitch >= MIN_FREQUENCY &&
       pitch <= MAX_FREQUENCY
     ) {
+      const now = performance.now()
+      const acceptedPitch = jumpGate ? jumpGate.push(pitch, now) : pitch
+      /* An unconfirmed jump leaves every reading as it was, so consumers see
+       * the last pitch held rather than the spike */
+      if (acceptedPitch === null) {
+        scheduleNextFrame(detector, input, sampleRate)
+
+        return
+      }
+
       /* Out-of-band pitches (see bandMinFrequency docs) are reported raw and
        * skip the EMA entirely, so one harmonic glitch frame can't pollute the
        * smoothed in-band stream. */
       const isInBand =
-        pitch >= toValue(options.bandMinFrequency ?? MIN_FREQUENCY) &&
-        pitch <= toValue(options.bandMaxFrequency ?? MAX_FREQUENCY)
+        acceptedPitch >= toValue(options.bandMinFrequency ?? MIN_FREQUENCY) &&
+        acceptedPitch <= toValue(options.bandMaxFrequency ?? MAX_FREQUENCY)
 
-      let reportedFrequency = pitch
+      let reportedFrequency = acceptedPitch
       if (isInBand) {
-        smoothedFrequency = smoothPitch(smoothedFrequency, pitch)
+        smoothedFrequency = smoothPitch(smoothedFrequency, acceptedPitch)
         reportedFrequency = smoothedFrequency
       }
 
-      const now = performance.now()
       if (cleanSinceTimestamp === null) {
         cleanSinceTimestamp = now
       }
@@ -170,16 +184,25 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
     } else {
       cleanSinceTimestamp = null
       smoothedFrequency = null
+      jumpGate?.reset()
       frequency.value = null
       noteInfo.value = null
       isClean.value = false
     }
 
-    if (isListening.value) {
-      animationFrameId = requestAnimationFrame(() =>
-        detectPitch(detector, input, sampleRate),
-      )
-    }
+    scheduleNextFrame(detector, input, sampleRate)
+  }
+
+  function scheduleNextFrame(
+    detector: PitchDetector<Float32Array<ArrayBuffer>>,
+    input: Float32Array<ArrayBuffer>,
+    sampleRate: number,
+  ) {
+    if (!isListening.value) return
+
+    animationFrameId = requestAnimationFrame(() =>
+      detectPitch(detector, input, sampleRate),
+    )
   }
 
   /* rawAudio: EC+NS+AGC off (silent games — nothing plays while listening).
@@ -266,6 +289,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
 
     analyserNode = null
     smoothedFrequency = null
+    jumpGate?.reset()
     cleanSinceTimestamp = null
     prevMidi = undefined
     frequency.value = null

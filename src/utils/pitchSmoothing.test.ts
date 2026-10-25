@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { centsBetween } from './pitchMatch'
-import { smoothPitch } from './pitchSmoothing'
+import { createJumpGate, smoothPitch } from './pitchSmoothing'
 
 const C3 = 130.81
 
@@ -46,5 +46,66 @@ describe('pitchSmoothing', () => {
     }
 
     expect(worstCents).toBeLessThanOrEqual(100)
+  })
+})
+
+describe('pitchSmoothing - createJumpGate', () => {
+  /* One frame at 60 fps */
+  const FRAME_MS = 16
+
+  test('accepts the first pitch after a reset', () => {
+    const gate = createJumpGate({ confirmMs: 80 })
+
+    expect(gate.push(C3, 0)).toBe(C3)
+  })
+
+  test('accepts vibrato within a semitone at once', () => {
+    const gate = createJumpGate({ confirmMs: 80 })
+    gate.push(C3, 0)
+    const sharp = centsAbove(C3, 60)
+
+    expect(gate.push(sharp, FRAME_MS)).toBe(sharp)
+  })
+
+  test('holds through a two-frame octave-down spike and resumes the note', () => {
+    const gate = createJumpGate({ confirmMs: 80 })
+    const spike = centsAbove(C3, -1200)
+    gate.push(C3, 0)
+
+    expect(gate.push(spike, FRAME_MS)).toBeNull()
+    expect(gate.push(spike, 2 * FRAME_MS)).toBeNull()
+    expect(gate.push(C3, 3 * FRAME_MS)).toBe(C3)
+  })
+
+  test('accepts a real jump once it has held for confirmMs', () => {
+    const gate = createJumpGate({ confirmMs: 80 })
+    const fifthUp = centsAbove(C3, 700)
+    gate.push(C3, 0)
+
+    expect(gate.push(fifthUp, 100)).toBeNull()
+    expect(gate.push(fifthUp, 160)).toBeNull()
+    expect(gate.push(fifthUp, 180)).toBe(fifthUp)
+  })
+
+  test('never confirms noise that keeps jumping', () => {
+    const gate = createJumpGate({ confirmMs: 80 })
+    gate.push(C3, 0)
+    const results: (number | null)[] = []
+    for (let frame = 1; frame <= 20; frame++) {
+      /* Alternates an octave down and a fifth up, each far from the other */
+      const cents = frame % 2 === 0 ? -1200 : 700
+      results.push(gate.push(centsAbove(C3, cents), frame * FRAME_MS))
+    }
+
+    expect(results.every((result) => result === null)).toBe(true)
+  })
+
+  test('accepts any pitch at once after reset', () => {
+    const gate = createJumpGate({ confirmMs: 80 })
+    const fifthUp = centsAbove(C3, 700)
+    gate.push(C3, 0)
+    gate.reset()
+
+    expect(gate.push(fifthUp, FRAME_MS)).toBe(fifthUp)
   })
 })
