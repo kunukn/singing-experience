@@ -263,6 +263,11 @@ const guidedStringTextColor = computed(() =>
  */
 const IN_TUNE_SUSTAIN_MS = 500 // pitch must hold for 500 ms before bell fires
 const HIGHLIGHT_DEBOUNCE_MS = 250 // matches Do Re Mi GRACE_PERIOD_MS — absorbs pitch jitter
+/* A string stays in tune through dropouts shorter than this, so one frame of
+ * background noise or detector jitter outside the TUNER_IN_TUNE_CENTS window
+ * doesn't restart the bell's sustain or blink the highlight. Matches Do Re Mi
+ * GRACE_PERIOD_MS. A different string still takes over at once. */
+const IN_TUNE_GRACE_MS = 250
 const SAME_STRING_COOLDOWN_MS = 2000
 const BELL_DURATION_S = 0.5 // bell is held this long before its release tail
 const GUITAR_BUTTON_BELL_MUTE_MS = 3000 // suppress bell after tapping a reference string
@@ -274,8 +279,43 @@ let pendingBellTimer: ReturnType<typeof setTimeout> | null = null
 let pendingBellKey: string | null = null
 let highlightTimer: ReturnType<typeof setTimeout> | null = null
 let highlightKey: string | null = null
+let inTuneGraceTimer: ReturnType<typeof setTimeout> | null = null
+
+/* inTuneString with IN_TUNE_GRACE_MS of slack on the way out — what the bell
+ * and the highlight below follow */
+const steadyInTuneString = ref<GuitarTuningString | null>(null)
+
+function clearSteadyInTuneString() {
+  clearTimeout(inTuneGraceTimer ?? undefined)
+  inTuneGraceTimer = null
+  steadyInTuneString.value = null
+}
 
 watch(inTuneString, (current) => {
+  if (current) {
+    clearTimeout(inTuneGraceTimer ?? undefined)
+    inTuneGraceTimer = null
+    steadyInTuneString.value = current
+
+    return
+  }
+
+  /* Stopping the mic is not a dropout — let go at once */
+  if (!props.isListening) {
+    clearSteadyInTuneString()
+
+    return
+  }
+
+  if (inTuneGraceTimer !== null || steadyInTuneString.value === null) return
+
+  inTuneGraceTimer = setTimeout(() => {
+    inTuneGraceTimer = null
+    steadyInTuneString.value = null
+  }, IN_TUNE_GRACE_MS)
+})
+
+watch(steadyInTuneString, (current) => {
   if (!current) {
     clearTimeout(pendingBellTimer ?? undefined)
     pendingBellTimer = null
@@ -311,7 +351,7 @@ watch(inTuneString, (current) => {
   }, IN_TUNE_SUSTAIN_MS)
 })
 
-watch(inTuneString, (current) => {
+watch(steadyInTuneString, (current) => {
   if (!current) {
     clearTimeout(highlightTimer ?? undefined)
     highlightTimer = null
@@ -340,6 +380,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   stopSequence()
+  clearSteadyInTuneString()
   clearTimeout(pendingBellTimer ?? undefined)
   pendingBellTimer = null
   pendingBellKey = null
@@ -352,6 +393,7 @@ onUnmounted(() => {
 watch(selectedTuning, () => {
   stopSequence()
   releaseBellReading()
+  clearSteadyInTuneString()
   clearTimeout(pendingBellTimer ?? undefined)
   pendingBellTimer = null
   pendingBellKey = null
