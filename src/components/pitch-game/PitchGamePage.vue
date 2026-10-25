@@ -25,8 +25,10 @@ if (!GAME_DURATION_OPTIONS.includes(gameDurationSec.value as GameDurationSec)) {
 
 /* softRawAudio — NS/AGC off so steady sung notes register, EC kept on because
  * reference tones can play through the speaker while the mic listens (a deaf
- * window masks the overlap). */
-const detection = usePitchDetection({ softRawAudio: true })
+ * window masks the overlap). rejectSpikes keeps background-noise frames off
+ * the chart; its ~80 ms delay on a new note is small against the 3.75 s a
+ * target stays capturable. */
+const detection = usePitchDetection({ softRawAudio: true, rejectSpikes: true })
 </script>
 
 <template>

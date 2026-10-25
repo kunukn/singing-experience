@@ -510,6 +510,12 @@ function drawChart() {
   const segments: ChartPoint[][] = []
   let currentSegment: ChartPoint[] = []
 
+  /* Off-chart samples are pinned to the edge. Unpinned, one far outlier
+   * bends its on-pitch neighbours' spline tangents into a tall ghost spike
+   * pointing the other way. */
+  const topY = PADDING_TOP
+  const bottomY = height - PADDING_BOTTOM
+
   for (let i = 0; i < samples.length; i++) {
     if (
       i > 0 &&
@@ -520,7 +526,10 @@ function drawChart() {
     }
     currentSegment.push({
       x: timeToX(samples[i].timestamp, now, geom),
-      y: midiToY(samples[i].midiNote, height),
+      y: Math.min(
+        bottomY,
+        Math.max(topY, midiToY(samples[i].midiNote, height)),
+      ),
       cents: samples[i].cents,
     })
   }
