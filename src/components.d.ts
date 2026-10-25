@@ -71,6 +71,7 @@ declare module 'vue' {
     MetronomeToggle: typeof import('./components/grace-kelly/MetronomeToggle.vue')['default']
     MusicNoteIcon: typeof import('./components/icons/MusicNoteIcon.vue')['default']
     NoteDisplay: typeof import('./components/pitch-detector/NoteDisplay.vue')['default']
+    NoteIcon: typeof import('./components/icons/NoteIcon.vue')['default']
     NotesListenDisplay: typeof import('./components/notes/NotesListenDisplay.vue')['default']
     NotesOutlierSheet: typeof import('./components/notes/NotesOutlierSheet.vue')['default']
     NotesOverviewDisplay: typeof import('./components/notes/NotesOverviewDisplay.vue')['default']

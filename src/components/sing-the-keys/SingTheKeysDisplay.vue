@@ -517,7 +517,7 @@ onUnmounted(() => {
 
       <PrimeButton
         v-if="!isPlaying"
-        class="toggle-sequence-idle min-w-20"
+        class="min-w-20"
         severity="secondary"
         size="small"
         rounded
@@ -525,7 +525,7 @@ onUnmounted(() => {
         :title="t('singTheKeys.preview')"
         @click="startPreview"
       >
-        {{ t('generic.previewButton') }}
+        <NoteIcon class="size-5" />
       </PrimeButton>
 
       <PreviewToggle
@@ -623,10 +623,3 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped lang="css">
-.toggle-sequence-idle {
-  padding-block: 0;
-  font-size: 1.2rem;
-}
-</style>

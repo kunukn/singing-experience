@@ -35,22 +35,19 @@ const { t } = useI18n()
         data-testid="btn-play-sequence"
         class="grid place-items-center rounded-xl border border-(--p-content-border-color) px-6 py-2 font-bold tracking-tight transition-transform hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
         :disabled="isReplaying"
+        :aria-label="isPlayingSequence ? undefined : t('generic.previewButton')"
         @click="emit('playSequence')"
       >
+        <!-- Stays in the grid while hidden so the button keeps its size when the mute text shows -->
+        <NoteIcon
+          class="size-20 text-(--p-surface-500) [grid-area:1/1]"
+          :class="{ invisible: isPlayingSequence }"
+        />
         <span
-          aria-hidden="true"
-          class="invisible text-8xl leading-none [grid-area:1/1]"
-          >♪</span
+          v-if="isPlayingSequence"
+          class="text-base text-(--p-orange-400) [grid-area:1/1]"
         >
-        <span
-          class="[grid-area:1/1]"
-          :class="
-            isPlayingSequence
-              ? 'text-base text-(--p-orange-400)'
-              : 'text-8xl leading-none text-(--p-surface-500)'
-          "
-        >
-          {{ isPlayingSequence ? t('generic.muteButton') : '♪' }}
+          {{ t('generic.muteButton') }}
         </span>
       </button>
 

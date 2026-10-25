@@ -337,17 +337,18 @@ onUnmounted(() => {
 
         <PrimeButton
           class="min-w-20"
-          :class="{ 'toggle-sequence-idle': !isPlayingSequence }"
           :severity="isPlayingSequence ? 'warn' : 'secondary'"
+          :aria-label="
+            isPlayingSequence ? undefined : t('generic.previewButton')
+          "
           size="small"
           rounded
           @click="toggleSequence"
         >
-          {{
-            isPlayingSequence
-              ? t('generic.muteButton')
-              : t('generic.previewButton')
-          }}
+          <template v-if="isPlayingSequence">
+            {{ t('generic.muteButton') }}
+          </template>
+          <NoteIcon v-else class="size-5" />
         </PrimeButton>
 
         <PreviewToggle
@@ -462,10 +463,3 @@ onUnmounted(() => {
     />
   </div>
 </template>
-
-<style scoped lang="css">
-.toggle-sequence-idle {
-  padding-block: 0;
-  font-size: 1.2rem;
-}
-</style>

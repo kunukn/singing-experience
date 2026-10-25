@@ -53,13 +53,16 @@ const { t } = useI18n()
 
       <PrimeButton
         class="min-w-20"
-        :class="{ 'toggle-sequence-idle': !isPlayingSequence }"
         :severity="isPlayingSequence ? 'warn' : 'secondary'"
+        :aria-label="isPlayingSequence ? undefined : t('generic.previewButton')"
         size="small"
         rounded
         @click="emit('toggleSequence')"
       >
-        {{ isPlayingSequence ? $t('generic.muteButton') : '♪' }}
+        <template v-if="isPlayingSequence">
+          {{ t('generic.muteButton') }}
+        </template>
+        <NoteIcon v-else class="size-5" />
       </PrimeButton>
 
       <PreviewToggle
@@ -71,10 +74,3 @@ const { t } = useI18n()
     <p v-if="error" class="text-sm text-(--p-red-400)">{{ error }}</p>
   </div>
 </template>
-
-<style scoped lang="css">
-.toggle-sequence-idle {
-  padding-block: 0;
-  font-size: 1.2rem;
-}
-</style>

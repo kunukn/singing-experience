@@ -6,7 +6,7 @@ withDefaults(defineProps<{ hue?: ProgramIconHue }>(), { hue: 'surface' })
 </script>
 
 <template>
-  <!-- Geometry is copied into the favicons (useFaviconPermissionColor.ts, public/icons/note.svg) -->
+  <!-- Geometry is copied into the favicons (useFaviconPermissionColor.ts, public/icons/note.svg) and NoteIcon.vue -->
   <ProgramIconTile :hue="hue">
     <ellipse
       cx="13.5"

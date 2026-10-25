@@ -406,17 +406,16 @@ const vozLabel = computed(() =>
       <PrimeButton
         v-if="!isRunning"
         class="min-w-20"
-        :class="{ 'toggle-sequence-idle': !isPreviewPlaying }"
         :severity="isPreviewPlaying ? 'warn' : 'secondary'"
+        :aria-label="isPreviewPlaying ? undefined : t('generic.previewButton')"
         size="small"
         rounded
         @click="togglePreview"
       >
-        {{
-          isPreviewPlaying
-            ? t('generic.muteButton')
-            : t('generic.previewButton')
-        }}
+        <template v-if="isPreviewPlaying">
+          {{ t('generic.muteButton') }}
+        </template>
+        <NoteIcon v-else class="size-5" />
       </PrimeButton>
 
       <PreviewToggle
@@ -470,10 +469,3 @@ const vozLabel = computed(() =>
     />
   </div>
 </template>
-
-<style scoped lang="css">
-.toggle-sequence-idle {
-  padding-block: 0;
-  font-size: 1.2rem;
-}
-</style>
