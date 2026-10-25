@@ -2,6 +2,7 @@
 import TunerCentsDeviationBar from '@/components/tuner/TunerCentsDeviationBar.vue'
 import TunerReferencePitch from '@/components/tuner/TunerReferencePitch.vue'
 import { useBellHold } from '@/components/tuner/useBellHold'
+import { useInTuneBell } from '@/components/tuner/useInTuneBell'
 import {
   findNearestString,
   nearestStringBadge,
@@ -175,35 +176,35 @@ function toggleTuningPreview() {
 }
 
 const activeString = ref<string | null>(null)
-const confirmedInTuneString = ref<UkuleleString | null>(null)
+const BELL_DURATION_S = 0.5 // bell is held this long before its release tail
+
+const {
+  confirmedInTuneString,
+  muteAfterTap,
+  reset: resetInTuneBell,
+} = useInTuneBell({
+  strings: () => [...leftStrings.value, ...rightStrings.value],
+  noteInfo: shownNoteInfo,
+  isClean: isShownClean,
+  isListening: () => props.isListening,
+  onBell: (string) => {
+    holdBellReading((BELL_DURATION_S + TONE_MODE_RELEASE_S.bell) * 1000)
+    playBellFeedback(
+      noteToFrequency(string.note, string.octave, referenceA4.value),
+      BELL_DURATION_S,
+    )
+  },
+})
 
 function playUkuleleString(note: NoteName, octave: number) {
   activeString.value = `${note}${octave}`
-  lastStringClickTime = Date.now()
+  muteAfterTap()
   playUkuleleSample(note, octave)
 }
 
 watch(isPlaying, (playing) => {
   if (!playing) activeString.value = null
 })
-
-function isStringInTune(note: NoteName, octave: number): boolean {
-  return (
-    props.isListening &&
-    isShownClean.value &&
-    shownNoteInfo.value != null &&
-    shownNoteInfo.value.note === note &&
-    shownNoteInfo.value.octave === octave &&
-    Math.abs(shownNoteInfo.value.cents) <= TUNER_IN_TUNE_CENTS
-  )
-}
-
-const inTuneString = computed<UkuleleString | null>(
-  () =>
-    [...leftStrings.value, ...rightStrings.value].find((s) =>
-      isStringInTune(s.note, s.octave),
-    ) ?? null,
-)
 
 /*
  * The string an off pitch is closest to, so the user sees which peg to turn and
@@ -254,155 +255,14 @@ const guidedStringTextColor = computed(() =>
     : undefined,
 )
 
-/*
- * Bell feedback guards:
- * - IN_TUNE_SUSTAIN_MS: pitch must hold steady for 500 ms before the bell fires,
- *   so transient wobbles into the TUNER_IN_TUNE_CENTS window don't trigger a ding.
- * - SAME_STRING_COOLDOWN_MS: suppresses repeat dings for the same string after
- *   the bell has fired; pitch detection at ~15-30×/sec would otherwise cause
- *   rapid-fire sounds as pitch drifts in/out of the window.
- * - STRING_BUTTON_BELL_MUTE_MS: suppresses the bell after the user taps a
- *   reference string button, since they will hear that tone directly.
- * Switching strings (G4 → A4) resets the sustain timer immediately.
- */
-const IN_TUNE_SUSTAIN_MS = 500 // pitch must hold for 500 ms before bell fires
-const HIGHLIGHT_DEBOUNCE_MS = 250 // matches Do Re Mi GRACE_PERIOD_MS — absorbs pitch jitter
-/* A string stays in tune through dropouts shorter than this, so one frame of
- * background noise or detector jitter outside the TUNER_IN_TUNE_CENTS window
- * doesn't restart the bell's sustain or blink the highlight. Matches Do Re Mi
- * GRACE_PERIOD_MS. A different string still takes over at once. */
-const IN_TUNE_GRACE_MS = 250
-const SAME_STRING_COOLDOWN_MS = 2000
-const BELL_DURATION_S = 0.5 // bell is held this long before its release tail
-const STRING_BUTTON_BELL_MUTE_MS = 3000 // suppress bell after tapping a reference string
-
-let lastBellKey: string | null = null
-let lastBellTime = 0
-let lastStringClickTime = 0
-let pendingBellTimer: ReturnType<typeof setTimeout> | null = null
-let pendingBellKey: string | null = null
-let highlightTimer: ReturnType<typeof setTimeout> | null = null
-let highlightKey: string | null = null
-let inTuneGraceTimer: ReturnType<typeof setTimeout> | null = null
-
-/* inTuneString with IN_TUNE_GRACE_MS of slack on the way out — what the bell
- * and the highlight below follow */
-const steadyInTuneString = ref<UkuleleString | null>(null)
-
-function clearSteadyInTuneString() {
-  clearTimeout(inTuneGraceTimer ?? undefined)
-  inTuneGraceTimer = null
-  steadyInTuneString.value = null
-}
-
-watch(inTuneString, (current) => {
-  if (current) {
-    clearTimeout(inTuneGraceTimer ?? undefined)
-    inTuneGraceTimer = null
-    steadyInTuneString.value = current
-
-    return
-  }
-
-  /* Stopping the mic is not a dropout — let go at once */
-  if (!props.isListening) {
-    clearSteadyInTuneString()
-
-    return
-  }
-
-  if (inTuneGraceTimer !== null || steadyInTuneString.value === null) return
-
-  inTuneGraceTimer = setTimeout(() => {
-    inTuneGraceTimer = null
-    steadyInTuneString.value = null
-  }, IN_TUNE_GRACE_MS)
-})
-
-watch(steadyInTuneString, (current) => {
-  if (!current) {
-    clearTimeout(pendingBellTimer ?? undefined)
-    pendingBellTimer = null
-    pendingBellKey = null
-    return
-  }
-
-  const key = `${current.note}${current.octave}`
-
-  if (key === pendingBellKey) return // timer already running for this string
-
-  clearTimeout(pendingBellTimer ?? undefined)
-  pendingBellKey = key
-
-  pendingBellTimer = setTimeout(() => {
-    pendingBellTimer = null
-    pendingBellKey = null
-
-    const now = Date.now()
-
-    if (now - lastStringClickTime < STRING_BUTTON_BELL_MUTE_MS) return
-
-    if (key === lastBellKey && now - lastBellTime < SAME_STRING_COOLDOWN_MS)
-      return
-
-    lastBellKey = key
-    lastBellTime = now
-    holdBellReading((BELL_DURATION_S + TONE_MODE_RELEASE_S.bell) * 1000)
-    playBellFeedback(
-      noteToFrequency(current.note, current.octave, referenceA4.value),
-      BELL_DURATION_S,
-    )
-  }, IN_TUNE_SUSTAIN_MS)
-})
-
-watch(steadyInTuneString, (current) => {
-  if (!current) {
-    clearTimeout(highlightTimer ?? undefined)
-    highlightTimer = null
-    highlightKey = null
-    confirmedInTuneString.value = null
-    return
-  }
-
-  const key = `${current.note}${current.octave}`
-  if (key === highlightKey) return
-
-  clearTimeout(highlightTimer ?? undefined)
-  confirmedInTuneString.value = null
-  highlightKey = key
-
-  highlightTimer = setTimeout(() => {
-    highlightTimer = null
-    highlightKey = null
-    confirmedInTuneString.value = current
-  }, HIGHLIGHT_DEBOUNCE_MS)
-})
-
 onUnmounted(() => {
   stopSequence()
-  clearSteadyInTuneString()
-  clearTimeout(pendingBellTimer ?? undefined)
-  pendingBellTimer = null
-  pendingBellKey = null
-  clearTimeout(highlightTimer ?? undefined)
-  highlightTimer = null
-  highlightKey = null
-  confirmedInTuneString.value = null
 })
 
 watch(selectedTuning, () => {
   stopSequence()
   releaseBellReading()
-  clearSteadyInTuneString()
-  clearTimeout(pendingBellTimer ?? undefined)
-  pendingBellTimer = null
-  pendingBellKey = null
-  lastBellKey = null
-  lastBellTime = 0
-  clearTimeout(highlightTimer ?? undefined)
-  highlightTimer = null
-  highlightKey = null
-  confirmedInTuneString.value = null
+  resetInTuneBell()
 })
 
 watch(
