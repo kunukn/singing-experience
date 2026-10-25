@@ -87,8 +87,19 @@ function togglePopover(event: Event) {
 </template>
 
 <style scoped>
-/* Keeps a gutter on a phone; PrimeVue otherwise pins it flush to the edge */
-:global(.program-help-popover) {
-  max-width: calc(100vw - 2rem);
+/*
+ * PrimeVue clamps the popover to left 0 when right-aligning it to the button
+ * would overflow, pinning it flush to a phone's edge. It positions from the
+ * physical left in RTL too, so the margin goes on both inline sides; only the
+ * left one moves it. max-width reserves the same gutter on the far side.
+ * Phone-only: on wide screens PrimeVue left-aligns to the button instead, and
+ * the margin would push the popover away from its arrow.
+ */
+@media (max-width: 40rem) {
+  :global(.program-help-popover) {
+    --program-help-gutter: 1rem; /* 16px; try 0.5rem (8px) */
+    margin-inline: var(--program-help-gutter);
+    max-width: calc(100vw - 2 * var(--program-help-gutter));
+  }
 }
 </style>
