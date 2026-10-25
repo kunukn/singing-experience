@@ -31,8 +31,9 @@ export function useSimulatedPitchDetection(config: SimulationConfig) {
       config.note.value,
       config.octave.value,
     )
+    /* Uniform in ±jitter — the "±N¢" the test pages label it with */
     const centsOffset =
-      config.cents.value + (Math.random() - 0.5) * config.jitter.value
+      config.cents.value + (Math.random() * 2 - 1) * config.jitter.value
     // 1200 cents = 1 octave; 2^(cents/1200) converts cents offset to frequency ratio
     return baseFrequency * Math.pow(2, centsOffset / 1200)
   }

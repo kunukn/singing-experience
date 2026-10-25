@@ -74,7 +74,8 @@ export function useSynthesizedToneDetection(
 
   function targetFrequency(config: SimulatedToneConfig): number {
     const baseHz = noteToFrequency(config.note, config.octave)
-    const centsOffset = config.cents + (Math.random() - 0.5) * config.jitter
+    /* Uniform in ±jitter — the "±N¢" the test page labels it with */
+    const centsOffset = config.cents + (Math.random() * 2 - 1) * config.jitter
     // 1200 cents = 1 octave; 2^(cents/1200) converts cents offset to frequency ratio
     return baseHz * Math.pow(2, centsOffset / 1200)
   }
