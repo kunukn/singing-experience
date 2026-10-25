@@ -392,7 +392,6 @@
     },
     "guitar": "吉他",
     "ukulele": "尤克里里",
-    "custom": "自定义",
     "tuningGroups": {
       "standard": "标准",
       "drop": "降弦",

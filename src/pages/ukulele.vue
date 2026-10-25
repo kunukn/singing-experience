@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const router = useRouter()
-router.replace('/tuner')
+router.replace({ path: '/tuner', query: { tab: 'ukulele' } })
 </script>
 
 <template>

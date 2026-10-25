@@ -392,7 +392,6 @@
     },
     "guitar": "Guitar",
     "ukulele": "Ukulele",
-    "custom": "Brugerdefineret",
     "tuningGroups": {
       "standard": "Standard",
       "drop": "Drop",

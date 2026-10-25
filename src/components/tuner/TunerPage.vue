@@ -2,16 +2,33 @@
 import UkuleleDisplay from '@/components/ukulele/UkuleleDisplay.vue'
 import TunerDisplay from './TunerDisplay.vue'
 
-type InstrumentType = 'guitar' | 'ukulele' | 'custom'
+const route = useRoute()
+const router = useRouter()
 
-const selectedInstrument = ref<InstrumentType>('guitar')
+const TAB_VALUES = ['guitar', 'ukulele'] as const
+type TunerTab = (typeof TAB_VALUES)[number]
+const DEFAULT_TAB: TunerTab = 'guitar'
+
+/* Active instrument lives only in the URL (?tab=guitar|ukulele), as on /notes.
+ * Unknown/missing values fall back to guitar. replace() keeps instrument
+ * switches out of the browser history. */
+const selectedInstrument = computed<TunerTab>({
+  get() {
+    const tab = route.query.tab
+    return TAB_VALUES.includes(tab as TunerTab)
+      ? (tab as TunerTab)
+      : DEFAULT_TAB
+  },
+  set(tab) {
+    router.replace({ query: { ...route.query, tab } })
+  },
+})
 
 const { t } = useI18n()
 
 const instrumentOptions = computed(() => [
-  { label: `🎸 ${t('tuner.guitar')}`, value: 'guitar' as InstrumentType },
-  { label: `🪕 ${t('tuner.ukulele')}`, value: 'ukulele' as InstrumentType },
-  /*{ label: `🎵 ${t('tuner.custom')}`, value: 'custom' as InstrumentType },*/
+  { label: `🎸 ${t('tuner.guitar')}`, value: 'guitar' as TunerTab },
+  { label: `🪕 ${t('tuner.ukulele')}`, value: 'ukulele' as TunerTab },
 ])
 
 const { referenceA4 } = useReferencePitch()
@@ -63,7 +80,7 @@ onUnmounted(() => {
       v-model:referenceA4="referenceA4"
     />
     <UkuleleDisplay
-      v-else-if="selectedInstrument === 'ukulele'"
+      v-else
       :noteInfo="noteInfo"
       :frequency="frequency"
       :clarity="clarity"
@@ -74,7 +91,5 @@ onUnmounted(() => {
       :stop="stop"
       v-model:referenceA4="referenceA4"
     />
-    <div v-else-if="selectedInstrument === 'custom'">TODO</div>
-    <div v-else>ERROR IN App</div>
   </div>
 </template>
