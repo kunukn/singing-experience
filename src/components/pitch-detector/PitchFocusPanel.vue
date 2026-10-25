@@ -156,11 +156,11 @@ const centsColor = computed(() =>
           {{ t('pitchDetector.focus.hint') }}
         </span>
         <!-- Kept in the layout through silence (invisible, not removed) and
-             wide enough for "−120¢", so the lock button beside it holds still
-             as the singer starts and stops -->
+             7ch wide to fit "−2,000¢" — a locked tone can sit octaves away —
+             so the lock button beside it holds still -->
         <span
           v-if="focusLabel"
-          class="min-w-18 text-xl tabular-nums"
+          class="min-w-[7ch] text-xl tabular-nums"
           :class="{ invisible: !centsLabel }"
           dir="ltr"
           :style="{ color: centsColor }"
