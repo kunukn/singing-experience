@@ -187,12 +187,10 @@ const isOnPitchForScore = computed(() => {
 const isRunScored = ref(true)
 const isScoring = computed(() => isPlaying.value && isRunScored.value)
 
-/* The idle preview is cents-coloured like every program's. During a run green
- * must keep meaning "hit", and a snapped pitch is always 0¢ — both keep the
- * neutral orange. */
-const isPreviewColoredByCents = computed(
-  () => !isPlaying.value && !isPitchSnapEnabled.value,
-)
+/* The idle preview is cents-coloured like every program's; with Snap on the
+ * pitch sits on the key at 0¢, so it reads green. During a run green must keep
+ * meaning "hit", so the line keeps the neutral orange. */
+const isPreviewColoredByCents = computed(() => !isPlaying.value)
 
 const startLabel = computed(() =>
   showResult.value ? t('generic.playAgain') : t('generic.start'),

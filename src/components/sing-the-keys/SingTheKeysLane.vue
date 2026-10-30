@@ -42,7 +42,7 @@ type Props = {
   sungMidi: number | null
   sungFrequency: number | null
   /* Cents-colour the sung line, matching the key track's line below it —
-   * idle with Snap off. During a run green must keep meaning "hit". */
+   * idle only. During a run green must keep meaning "hit". */
   shouldColorByCents?: boolean
   /* False in a ♪ preview (the melody plays): passed blocks go neutral rather
    * than red, since nothing was being judged. */
