@@ -14,6 +14,13 @@ export const LOOKAHEAD_MS = 3000
  * came off the front of every note and had to be won back by singing early. */
 export const SCORE_LAG_MS = 80
 
+/* ms the lane and key highlight run ahead of the song: a block lands this much
+ * before its note is due. Starting a sung note takes a moment — the felt onset
+ * comes after the sound starts, and the pitch needs a beat to settle — so a
+ * singer aiming at the landing felt late. Visual only: scoring keeps the
+ * song's own clock. */
+export const VISUAL_LEAD_MS = 60
+
 export type TimelineNote = {
   /* Index into the song's `notes` — the score composable keys on it. */
   index: number

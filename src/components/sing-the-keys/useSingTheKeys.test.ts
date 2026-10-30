@@ -12,7 +12,11 @@ import { defineComponent, nextTick, ref } from 'vue'
 import { createMockToneEngine } from '@/composables/toneEngine.mock'
 import { midiToFrequency } from '@/utils/noteUtils'
 import type { Song } from './singTheKeysSongs'
-import { ENDING_GLIDE_MS, LOOKAHEAD_MS } from './singTheKeysTimeline'
+import {
+  ENDING_GLIDE_MS,
+  LOOKAHEAD_MS,
+  VISUAL_LEAD_MS,
+} from './singTheKeysTimeline'
 import { useSingTheKeys } from './useSingTheKeys'
 
 const C4 = 60
@@ -175,7 +179,61 @@ describe('useSingTheKeys', () => {
     await nextTick()
 
     expect(game.elapsedMs.value).toBeCloseTo(1800, 5)
-    expect(game.laneElapsedMs.value).toBeCloseTo(1800, 5)
+    expect(game.laneElapsedMs.value).toBeCloseTo(1800 + VISUAL_LEAD_MS, 5)
+  })
+
+  test('should light the next key as its block lands, ahead of the scorer', async () => {
+    const { game, nowS } = createGame()
+
+    await game.start(startParams())
+    /* Note 1 is due at 600 ms; the lane and keys reach it VISUAL_LEAD_MS early. */
+    nowS.value = SONG_START_S + (600 - VISUAL_LEAD_MS / 2) / 1000
+    vi.advanceTimersByTime(20)
+    await nextTick()
+
+    expect(game.activeNoteIndex.value).toBe(1)
+    expect(game.scoredNoteIndex.value).toBe(0)
+  })
+
+  test('should run the song on the speaker clock, behind the output latency', async () => {
+    const nowS = { value: 0 }
+    const outputLatencyS = 0.2
+    const engine = createMockToneEngine({
+      getNow: vi.fn(() => nowS.value),
+      getImmediate: vi.fn(() => nowS.value),
+      getOutputLatency: vi.fn(() => outputLatencyS),
+    })
+    let game!: ReturnType<typeof useSingTheKeys>
+    mount(
+      defineComponent({
+        setup() {
+          game = useSingTheKeys({ toneEngine: engine })
+
+          return () => null
+        },
+      }),
+    )
+
+    await game.start(startParams())
+    nowS.value = SONG_START_S + 1 + outputLatencyS
+    vi.advanceTimersByTime(20)
+    await nextTick()
+
+    /* Guide tones are still scheduled on the audio clock; only the clock the
+     * lane and scorer read waits for the speaker. */
+    expect(engine.playToneAt).toHaveBeenCalledWith(
+      expect.any(Number),
+      expect.any(Number),
+      SONG_START_S,
+    )
+    expect(game.elapsedMs.value).toBeCloseTo(1000, 5)
+
+    /* The run ends once the last note has been heard, not rendered. */
+    nowS.value = SONG_START_S + 2.4
+    vi.advanceTimersByTime((SONG_START_S + 2.4) * 1000 + 1)
+    await nextTick()
+
+    expect(game.isDone.value).toBe(false)
   })
 
   test('should fall on while the last guide tone rings, then glide back to the ending', async () => {
@@ -198,7 +256,7 @@ describe('useSingTheKeys', () => {
     vi.advanceTimersByTime(20)
     await nextTick()
 
-    expect(game.laneElapsedMs.value).toBeCloseTo(3000, 5)
+    expect(game.laneElapsedMs.value).toBeCloseTo(3000 + VISUAL_LEAD_MS, 5)
     /* The scorer's clock stays on the finish. */
     expect(game.elapsedMs.value).toBeCloseTo(2400, 5)
 
@@ -228,7 +286,7 @@ describe('useSingTheKeys', () => {
     vi.advanceTimersByTime((SONG_START_S + 4.8) * 1000 + 1)
     await nextTick()
 
-    expect(game.laneElapsedMs.value).toBeCloseTo(4800, 5)
+    expect(game.laneElapsedMs.value).toBeCloseTo(4800 + VISUAL_LEAD_MS, 5)
 
     nowS.value = SONG_START_S + 4.8 + ENDING_GLIDE_MS / 1000 + 0.05
     vi.advanceTimersByTime(20)
@@ -501,7 +559,7 @@ describe('useSingTheKeys - lane scroll', () => {
     game.scrollLaneTo(0)
 
     expect(game.canScrollLane.value).toBe(false)
-    expect(game.laneElapsedMs.value).toBeCloseTo(4800, 5)
+    expect(game.laneElapsedMs.value).toBeCloseTo(4800 + VISUAL_LEAD_MS, 5)
 
     nowS.value = SONG_START_S + 4.8 + ENDING_GLIDE_MS / 1000 + 0.05
     vi.advanceTimersByTime(20)

@@ -23,6 +23,7 @@ import {
   beatFlashAt,
   KEYBOARD_MIN_SEMITONE_UNIT,
   SCORE_LAG_MS,
+  VISUAL_LEAD_MS,
   songMidiRange,
 } from './singTheKeysTimeline'
 import { useMetronomeMask } from './useMetronomeMask'
@@ -605,7 +606,7 @@ onUnmounted(() => {
             :sungFrequency="liveFrequency"
             :shouldColorByCents="isPreviewColoredByCents"
             :isScored="isRunScored"
-            :scoreLagMs="SCORE_LAG_MS"
+            :scoreLagMs="SCORE_LAG_MS + VISUAL_LEAD_MS"
             :beatLines="isBeatLinesEnabled ? timeline.beatLines : []"
             :beatFlash="beatFlash"
             :isPlaying="isPlaying"

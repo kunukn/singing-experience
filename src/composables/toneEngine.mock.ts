@@ -25,6 +25,7 @@ export function createMockToneEngine(
     }),
     getNow: vi.fn(() => mockNow),
     getImmediate: vi.fn(() => mockNow),
+    getOutputLatency: vi.fn(() => 0),
     scheduleDraw: vi.fn((callback: () => void, whenS: number) => {
       const delayMs = Math.max(0, (whenS - mockNow) * 1000)
       const timer = setTimeout(callback, delayMs)

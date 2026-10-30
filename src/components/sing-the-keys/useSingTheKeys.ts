@@ -14,6 +14,7 @@ import {
   laneEndViewMs,
   LOOKAHEAD_MS,
   SCORE_LAG_MS,
+  VISUAL_LEAD_MS,
   type Timeline,
 } from './singTheKeysTimeline'
 
@@ -106,9 +107,14 @@ export function useSingTheKeys(options: Options = {}) {
    * view, so blocks left part-way past the hit line can be clipped there. */
   const isEndingSettled = ref(false)
 
+  /* Follows the lane, VISUAL_LEAD_MS ahead, so the key lights as its block
+   * lands. */
   const activeNoteIndex = computed(() =>
     isPlaying.value
-      ? activeNoteIndexAt(timeline.value.notes, elapsedMs.value)
+      ? activeNoteIndexAt(
+          timeline.value.notes,
+          elapsedMs.value + VISUAL_LEAD_MS,
+        )
       : null,
   )
 
@@ -130,14 +136,17 @@ export function useSingTheKeys(options: Options = {}) {
 
   /* Audio-clock second at which elapsedMs reads 0: the song's first note. */
   let songStartS = 0
+  /* Speaker latency, read once per run so the clock can't jump mid-song. */
+  let outputLatencyS = 0
   let rafId: number | null = null
   let endingPath = { fallEndMs: 0, endingViewMs: 0 }
 
-  /* On the immediate clock, the one the speaker is on. getNow() runs Tone's
-   * 100 ms look-ahead early: read from it, every block and beat line reached
-   * the hit line 100 ms before its tone or tick sounded. */
+  /* What the speaker is playing now: the immediate clock less the output
+   * latency. getNow() runs Tone's 100 ms look-ahead early, and the immediate
+   * clock is when the sound is rendered, not heard — on Bluetooth every block
+   * landed 150–300 ms before its tone. */
   function readElapsedMs() {
-    return (engine.getImmediate() - songStartS) * 1000
+    return (engine.getImmediate() - outputLatencyS - songStartS) * 1000
   }
 
   /* The first beat line the metronome has not yet looked at. */
@@ -199,14 +208,17 @@ export function useSingTheKeys(options: Options = {}) {
     scheduleDueMetronome()
     updateMetronomeSounding()
     elapsedMs.value = readElapsedMs()
-    laneElapsedMs.value = elapsedMs.value
+    laneElapsedMs.value = elapsedMs.value + VISUAL_LEAD_MS
     rafId = requestAnimationFrame(tick)
   }
 
   /* After DONE: the lane alone moves on; elapsedMs stays frozen at the finish
    * for the scorer and the tally. */
   function tickEnding() {
-    const { laneMs, isSettled } = endingLaneMsAt(readElapsedMs(), endingPath)
+    const { laneMs, isSettled } = endingLaneMsAt(
+      readElapsedMs() + VISUAL_LEAD_MS,
+      endingPath,
+    )
     laneElapsedMs.value = laneMs
     if (isSettled) {
       isEndingSettled.value = true
@@ -258,13 +270,16 @@ export function useSingTheKeys(options: Options = {}) {
           lastNote.durationMs * ARTICULATION +
           TONE_MODE_RELEASE_S[engine.toneMode.value] * 1000
         : 0
+    /* In lane time, VISUAL_LEAD_MS ahead of the song, so the lane keeps falling
+     * from where it is at the finish rather than jumping into the glide. */
     endingPath = {
-      fallEndMs: Math.max(built.totalMs, lastToneEndMs),
+      fallEndMs: Math.max(built.totalMs, lastToneEndMs) + VISUAL_LEAD_MS,
       endingViewMs: laneEndViewMs(built.totalMs),
     }
 
     const leadInMs = params.hasLeadIn ? LOOKAHEAD_MS : 0
     songStartS = engine.getNow() + SCHEDULE_AHEAD_S + leadInMs / 1000
+    outputLatencyS = engine.getOutputLatency()
 
     if (params.isMelodyGuideEnabled) {
       for (const note of built.notes) {
@@ -291,14 +306,16 @@ export function useSingTheKeys(options: Options = {}) {
         send({ type: 'DONE' })
         tickEnding()
       },
-      songStartS + built.totalMs / 1000,
+      /* Once the last note has reached the speaker, so the scorer's last
+       * window isn't cut short by the output latency. */
+      songStartS + built.totalMs / 1000 + outputLatencyS,
     )
 
     /* From the clock, not a flat −leadInMs: the clock starts SCHEDULE_AHEAD_S
      * in the future, so the flat value would sit on the first count-in beat
      * line and the first frame would jump back off it. */
     elapsedMs.value = readElapsedMs()
-    laneElapsedMs.value = elapsedMs.value
+    laneElapsedMs.value = elapsedMs.value + VISUAL_LEAD_MS
     send({ type: 'START' })
     rafId = requestAnimationFrame(tick)
   }

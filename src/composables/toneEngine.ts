@@ -27,6 +27,10 @@ export type ToneEngine = {
    * where nothing needs aligning and the look-ahead is pure latency; sequences
    * should keep scheduling from getNow(). */
   getImmediate: () => number
+  /* Seconds from getImmediate() to the speaker: the context's own processing
+   * plus the device's output path (Bluetooth adds 150–300 ms). 0 where the
+   * browser doesn't report it. */
+  getOutputLatency: () => number
   scheduleDraw: (callback: () => void, whenS: number) => void
   cancelScheduled: (afterS?: number) => void
   /* (Re)builds a pool of `count` standalone monophonic voices for the current
@@ -538,6 +542,24 @@ export function createTonejsAdapter(): ToneEngine {
     return _tone ? _tone.immediate() : 0
   }
 
+  /** Returns the seconds between getImmediate() and the sound leaving the speaker. */
+  function getOutputLatency(): number {
+    if (!_tone) return 0
+
+    const rawContext = _tone.getContext().rawContext
+    /* standardized-audio-context forwards baseLatency but not outputLatency, so
+     * read that from the native context it wraps. A private field: if it is
+     * ever renamed this falls back to baseLatency alone. */
+    const nativeContext: { outputLatency?: number } =
+      'outputLatency' in rawContext
+        ? rawContext
+        : ((rawContext as { _nativeAudioContext?: { outputLatency?: number } })
+            ._nativeAudioContext ?? {})
+    const baseLatency = 'baseLatency' in rawContext ? rawContext.baseLatency : 0
+
+    return (baseLatency || 0) + (nativeContext.outputLatency || 0)
+  }
+
   /** Schedules a callback to fire at `whenS` (audio-clock seconds) inside Tone's draw loop. */
   function scheduleDraw(callback: () => void, whenS: number): void {
     if (!_tone) return
@@ -641,6 +663,7 @@ export function createTonejsAdapter(): ToneEngine {
     setToneMode,
     getNow,
     getImmediate,
+    getOutputLatency,
     scheduleDraw,
     cancelScheduled,
     setHarmonyVoiceCount,
