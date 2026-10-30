@@ -2,6 +2,7 @@
   "generic": {
     "start": "Start",
     "stop": "Stop",
+    "skip": "Skip",
     "pause": "Pause",
     "resume": "Resume",
     "clear": "Clear",

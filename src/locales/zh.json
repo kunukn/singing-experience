@@ -2,6 +2,7 @@
   "generic": {
     "start": "开始",
     "stop": "停止",
+    "skip": "跳过",
     "pause": "暂停",
     "resume": "继续",
     "clear": "清除",

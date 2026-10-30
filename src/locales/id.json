@@ -2,6 +2,7 @@
   "generic": {
     "start": "Mulai",
     "stop": "Berhenti",
+    "skip": "Lewati",
     "pause": "Jeda",
     "resume": "Lanjut",
     "clear": "Hapus",

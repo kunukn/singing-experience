@@ -8,6 +8,7 @@ import {
   DEAF_PERIOD_MS,
   GRACE_PERIOD_MS,
   MAX_CENTS_DEVIATION,
+  SKIP_UNLOCK_MS,
   DEFAULT_TOTAL_ROUNDS,
   useSingTone,
 } from './useSingTone'
@@ -521,5 +522,108 @@ describe('useSingTone', () => {
 
     game.triggerDeafPeriod()
     expect(game.isDeaf.value).toBe(false)
+  })
+})
+
+describe('useSingTone - skip', () => {
+  const MIDI_MIN = 48
+  const MIDI_MAX = 72
+
+  beforeEach(() => {
+    vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    while (wrappers.length) wrappers.pop()!.unmount()
+    vi.useRealTimers()
+  })
+
+  async function startGame(options: singToneOptions = {}) {
+    const mock = createMockPitchDetection()
+    const game = mountGame({
+      pitchDetection: mock.provider,
+      midiMin: MIDI_MIN,
+      midiMax: MIDI_MAX,
+      ...options,
+    })
+    await game.start()
+
+    return { mock, game }
+  }
+
+  test('should unlock skip only after SKIP_UNLOCK_MS on the same tone', async () => {
+    const { game } = await startGame()
+
+    advanceRAF(SKIP_UNLOCK_MS - 100)
+    expect(game.isSkipAvailable.value).toBe(false)
+
+    advanceRAF(200)
+    expect(game.isSkipAvailable.value).toBe(true)
+  })
+
+  test('should ignore skip before it unlocks', async () => {
+    const { game } = await startGame()
+    const firstTarget = game.targetMidi.value
+
+    advanceRAF(1000)
+    game.skip()
+
+    expect(game.completedCount.value).toBe(0)
+    expect(game.skippedCount.value).toBe(0)
+    expect(game.targetMidi.value).toBe(firstTarget)
+  })
+
+  test('should use up the round without scoring and pick a new tone', async () => {
+    const { game } = await startGame()
+    const firstTarget = game.targetMidi.value
+
+    advanceRAF(SKIP_UNLOCK_MS + 100)
+    game.skip()
+
+    expect(game.completedCount.value).toBe(1)
+    expect(game.skippedCount.value).toBe(1)
+    expect(game.targetMidi.value).not.toBe(firstTarget)
+    expect(game.isSkipAvailable.value).toBe(false)
+    expect(game.isPlaying.value).toBe(true)
+  })
+
+  test('should complete the game when the last round is skipped', async () => {
+    const { game } = await startGame({ totalRounds: 2 })
+
+    for (let i = 0; i < 2; i++) {
+      advanceRAF(SKIP_UNLOCK_MS + 100)
+      game.skip()
+    }
+
+    expect(game.isComplete.value).toBe(true)
+    expect(game.completedCount.value).toBe(2)
+    expect(game.skippedCount.value).toBe(2)
+    expect(game.isSkipAvailable.value).toBe(false)
+  })
+
+  test('should restart the unlock countdown after a matched tone', async () => {
+    const holdMs = 100
+    const { mock, game } = await startGame({ holdDurationMs: holdMs })
+
+    advanceRAF(SKIP_UNLOCK_MS - 500)
+    simulateSingingMidi(mock, game.targetMidi.value!)
+    await nextTick()
+    advanceRAF(holdMs + 50)
+
+    expect(game.completedCount.value).toBe(1)
+    expect(game.skippedCount.value).toBe(0)
+
+    advanceRAF(1000)
+    expect(game.isSkipAvailable.value).toBe(false)
+  })
+
+  test('should clear the skip count on stop', async () => {
+    const { game } = await startGame()
+
+    advanceRAF(SKIP_UNLOCK_MS + 100)
+    game.skip()
+    game.stop()
+
+    expect(game.skippedCount.value).toBe(0)
   })
 })

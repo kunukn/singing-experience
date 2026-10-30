@@ -2,6 +2,7 @@
   "generic": {
     "start": "Aallartitsit",
     "stop": "Unikkit",
+    "skip": "Skip",
     "pause": "Unitsikkit",
     "resume": "Nangikkit",
     "clear": "Peerit",

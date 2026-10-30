@@ -46,6 +46,9 @@ const DEAF_PERIOD_MS =
 const MAX_CENTS_DEVIATION = OFF_CENTS
 /* Delay before showing "too low" / "too high" hint arrow */
 const TOO_LOW_OR_HIGH_HINT_MS = 500
+/* Time on one tone before Skip unlocks — counted from when the tone is set,
+ * deaf period included, so a singer gets a few real attempts first */
+const SKIP_UNLOCK_MS = 4000
 
 type singToneOptions = {
   holdDurationMs?: number
@@ -66,6 +69,7 @@ export {
   DEFAULT_TOTAL_ROUNDS,
   GRACE_PERIOD_MS,
   MAX_CENTS_DEVIATION,
+  SKIP_UNLOCK_MS,
   TOO_LOW_OR_HIGH_HINT_MS,
 }
 export type { PitchDetectionProvider, singToneOptions }
@@ -95,6 +99,10 @@ export function useSingTone(options: singToneOptions = {}) {
 
   const targetMidi = ref<number | null>(null)
   const completedCount = ref(0)
+  /* Rounds ended via skip — they count toward completedCount but score no point */
+  const skippedCount = ref(0)
+  /* elapsedMs when the current target was set; drives the skip unlock */
+  const roundStartedAtMs = ref(0)
   const holdTimeMs = ref(0)
   const graceTimeMs = ref(0)
   const elapsedMs = ref(0)
@@ -150,6 +158,12 @@ export function useSingTone(options: singToneOptions = {}) {
   )
 
   const isDeaf = computed(() => elapsedMs.value < deafUntilMs.value)
+
+  const isSkipAvailable = computed(
+    () =>
+      isPlaying.value &&
+      elapsedMs.value - roundStartedAtMs.value >= SKIP_UNLOCK_MS,
+  )
 
   const isSingingCorrectNote = computed(() => {
     if (isDeaf.value) return false
@@ -228,13 +242,14 @@ export function useSingTone(options: singToneOptions = {}) {
     }
   }
 
-  function advanceStep() {
+  function advanceStep({ isSkipped = false } = {}) {
     holdTimeMs.value = 0
     graceTimeMs.value = 0
     tooLowMs.value = 0
     tooHighMs.value = 0
     lastTimestamp = null
     completedCount.value++
+    if (isSkipped) skippedCount.value++
 
     if (completedCount.value >= totalRounds.value) {
       send({ type: 'COMPLETE' })
@@ -242,10 +257,19 @@ export function useSingTone(options: singToneOptions = {}) {
     } else {
       const midi = generateRandomMidi()
       targetMidi.value = midi
+      roundStartedAtMs.value = elapsedMs.value
       deafUntilMs.value = elapsedMs.value + DEAF_PERIOD_MS
       playTargetTone(midi)
       startTimer()
     }
+  }
+
+  /* Give up on an unreachable tone: the round is used up, no point scored */
+  function skip() {
+    if (!isSkipAvailable.value) return
+
+    stopTimer()
+    advanceStep({ isSkipped: true })
   }
 
   function startTimer() {
@@ -281,6 +305,8 @@ export function useSingTone(options: singToneOptions = {}) {
     const midi = toValue(options.firstTargetMidi) ?? generateRandomMidi()
     targetMidi.value = midi
     completedCount.value = 0
+    skippedCount.value = 0
+    roundStartedAtMs.value = elapsedMs.value
     await playTargetTone(midi)
     deafUntilMs.value = elapsedMs.value + DEAF_PERIOD_MS
 
@@ -303,6 +329,8 @@ export function useSingTone(options: singToneOptions = {}) {
   function clearRound() {
     targetMidi.value = null
     completedCount.value = 0
+    skippedCount.value = 0
+    roundStartedAtMs.value = 0
     holdTimeMs.value = 0
     graceTimeMs.value = 0
     tooLowMs.value = 0
@@ -355,6 +383,7 @@ export function useSingTone(options: singToneOptions = {}) {
     targetFrequency,
     targetNoteLabel,
     completedCount: readonly(completedCount),
+    skippedCount: readonly(skippedCount),
     totalRounds: readonly(totalRounds),
     noteInfo,
     clarity,
@@ -375,6 +404,7 @@ export function useSingTone(options: singToneOptions = {}) {
     isStarted: readonly(isStarted),
     isSingingCorrectNote,
     isDeaf,
+    isSkipAvailable,
     isListening,
     targetTonePlayCount: readonly(targetTonePlayCount),
     error,
@@ -383,6 +413,7 @@ export function useSingTone(options: singToneOptions = {}) {
     start,
     stop,
     reset,
+    skip,
     setHoldDuration,
     setTotalRounds,
     setMidiRange,

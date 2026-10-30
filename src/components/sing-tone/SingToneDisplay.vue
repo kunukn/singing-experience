@@ -33,6 +33,7 @@ const {
   targetFrequency,
   targetNoteLabel,
   completedCount,
+  skippedCount,
   totalRounds: gameTotalRounds,
   noteInfo,
   currentFrequency,
@@ -45,6 +46,7 @@ const {
   gameState,
   isSingingCorrectNote,
   isDeaf,
+  isSkipAvailable,
   isListening,
   error,
   midiMin,
@@ -52,6 +54,7 @@ const {
   start,
   stop,
   reset,
+  skip,
   setHoldDuration,
   setTotalRounds,
   setMidiRange,
@@ -178,6 +181,8 @@ const highlightedMidi = computed(() => {
 
   return (n.octave + 1) * 12 + noteIndex
 })
+
+const matchedCount = computed(() => completedCount.value - skippedCount.value)
 
 const elapsedSeconds = computed(() => (elapsedMs.value / 1000).toFixed(1))
 /* Whole seconds while playing — a ticking tenths digit is stressful to watch; the complete screen keeps the decimal */
@@ -380,15 +385,28 @@ onUnmounted(() => {
       class="flex flex-col items-center gap-2 sm:mb-4"
     >
       <div class="pt-4"></div>
-      <PrimeButton
-        class="min-w-20"
-        severity="danger"
-        size="small"
-        rounded
-        @click="handleStop"
-      >
-        {{ t('generic.stop') }}
-      </PrimeButton>
+      <div class="flex items-center gap-2">
+        <PrimeButton
+          class="min-w-20"
+          severity="danger"
+          size="small"
+          rounded
+          @click="handleStop"
+        >
+          {{ t('generic.stop') }}
+        </PrimeButton>
+        <PrimeButton
+          class="min-w-20"
+          :class="{ invisible: !isSkipAvailable }"
+          severity="secondary"
+          size="small"
+          rounded
+          data-testid="sing-tone-skip"
+          @click="skip"
+        >
+          {{ t('generic.skip') }}
+        </PrimeButton>
+      </div>
 
       <div class="flex items-center gap-4">
         <p
@@ -411,7 +429,14 @@ onUnmounted(() => {
         {{ t('generic.congratulations') }}
       </h2>
       <div class="flex flex-col items-center gap-1">
-        <p class="text-(--p-surface-400) dark:text-(--p-surface-300)">
+        <PrimeTag
+          v-if="skippedCount > 0"
+          severity="secondary"
+          rounded
+          data-testid="sing-tone-matched-count"
+          >{{ matchedCount }}/{{ gameTotalRounds }}</PrimeTag
+        >
+        <p v-else class="text-(--p-surface-400) dark:text-(--p-surface-300)">
           {{
             t(
               'singTone.congratulationsMessage',

@@ -2,6 +2,7 @@
   "generic": {
     "start": "Start",
     "stop": "Stop",
+    "skip": "Spring over",
     "pause": "Pause",
     "resume": "Fortsæt",
     "clear": "Ryd",

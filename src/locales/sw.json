@@ -2,6 +2,7 @@
   "generic": {
     "start": "Anza",
     "stop": "Simama",
+    "skip": "Ruka",
     "pause": "Pumzika",
     "resume": "Endelea",
     "clear": "Futa",
