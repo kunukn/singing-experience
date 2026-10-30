@@ -23,9 +23,9 @@ type Props = {
   holdProgress: number
   highlightedMidi?: number | null
   onTonePlayed?: () => void
-  /* Cents-colour the singer's line — the idle preview with Snap off. During a
-   * game green must keep meaning "on target", and a snapped pitch is always
-   * 0¢, so both keep the neutral orange. */
+  /* Cents-colour the singer's line — the idle preview only; with Snap on it sits
+   * at 0¢ and reads green. During a game green must keep meaning "on target",
+   * so the line keeps the neutral orange. */
   shouldColorByCents?: boolean
   /* Note-target overlay props (only used while game is playing) */
   showOverlay?: boolean

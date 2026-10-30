@@ -25,8 +25,9 @@ type Props = {
   previewMidi?: number | null
   previewFrequency?: number | null
   previewNoteLabel?: string | null
-  /* Cents-colour the preview line — idle with Snap off. The same indicator
-   * also shows mid-game, where green must keep meaning "on target". */
+  /* Cents-colour the preview line — idle only; with Snap on it sits at 0¢ and
+   * reads green. The same indicator also shows mid-game, where green must keep
+   * meaning "on target". */
   shouldColorPreviewByCents?: boolean
   onTonePlayed?: () => void
   scaleMode?: ScaleMode

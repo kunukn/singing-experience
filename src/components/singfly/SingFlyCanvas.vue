@@ -49,8 +49,9 @@ type Props = {
    * line can be eyeballed against the bird/hitboxes while playing/scrubbing. */
   alwaysShowPreviewLine?: boolean
   /* Cents-colour the preview line like every program's idle preview — the
-   * idle screen with Snap off. After a crash it stays orange: drawn against
-   * the pipe that killed the bird, green would read as "you'd have made it". */
+   * idle screen only; with Snap on it sits at 0¢ and reads green. After a
+   * crash it stays orange: drawn against the pipe that killed the bird, green
+   * would read as "you'd have made it". */
   shouldColorByCents?: boolean
   /* Where the bird perches when there is no pitch (idle screen with preview
    * off): the bird is drawn here instead of being hidden, so it is never
