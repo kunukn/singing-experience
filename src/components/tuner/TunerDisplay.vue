@@ -458,10 +458,18 @@ watch(
         class="self-stretch"
       />
 
-      <div class="flex min-w-38 flex-col items-start justify-center">
+      <!--
+        Fixed width, not min-w: the row is centred, so a wider readout would slide the bar sideways.
+        w-44 fits the widest note (G♯3 ≈ 141px) and the English hint; longer translations wrap.
+        Rows 1fr / auto / 1fr pin the note to the bar's centre line; the subtext hangs in the
+        bottom track, so lines appearing beneath the note no longer re-centre it vertically.
+      -->
+      <div
+        class="grid w-44 grid-rows-[1fr_auto_1fr] justify-items-start self-stretch"
+      >
         <div
           v-if="shownNoteInfo && isShownClean"
-          class="transition-colors duration-150"
+          class="row-start-2 transition-colors duration-150"
           :style="{ color: noteColor ?? undefined }"
         >
           <span class="text-7xl font-bold tracking-tight md:text-8xl">
@@ -471,46 +479,52 @@ watch(
             {{ shownNoteInfo.octave }}
           </span>
         </div>
-        <div v-else class="text-(--p-text-muted-color)">
+        <div v-else class="row-start-2 text-(--p-text-muted-color)">
           <p class="text-sm">{{ t('generic.listening') }}</p>
         </div>
 
-        <div
-          v-if="shownNoteInfo && isShownClean"
-          class="mt-1 flex items-center gap-1 text-xs tabular-nums"
-          :style="{ color: centsColor ?? undefined }"
-        >
-          <span>{{ t('generic.cents') }}</span>
-          <span class="min-w-6 text-end tabular-nums">
-            {{ shownNoteInfo.cents > 0 ? '+' : '' }}{{ shownNoteInfo.cents }}
-          </span>
-        </div>
+        <div class="row-start-3 w-full">
+          <div
+            v-if="shownNoteInfo && isShownClean"
+            class="mt-1 flex items-center gap-1 text-xs tabular-nums"
+            :style="{ color: centsColor ?? undefined }"
+          >
+            <span>{{ t('generic.cents') }}</span>
+            <span class="min-w-6 text-end tabular-nums">
+              {{ shownNoteInfo.cents > 0 ? '+' : '' }}{{ shownNoteInfo.cents }}
+            </span>
+          </div>
 
-        <div
-          v-if="guidedString && nearestStringSemitones(guidedString.cents) > 0"
-          class="mt-1 text-xs tabular-nums"
-          :style="{ color: guidedStringTextColor }"
-          data-testid="nearest-string-target"
-        >
-          →
-          {{ toAccidentalGlyph(guidedString.string.note)
-          }}{{ guidedString.string.octave }} ·
-          {{
-            t(
-              guidedString.cents > 0
-                ? 'tuner.nearestString.tooHigh'
-                : 'tuner.nearestString.tooLow',
-              nearestStringSemitones(guidedString.cents),
-            )
-          }}
-        </div>
+          <div
+            v-if="
+              guidedString && nearestStringSemitones(guidedString.cents) > 0
+            "
+            class="mt-1 text-xs wrap-anywhere tabular-nums"
+            :style="{ color: guidedStringTextColor }"
+            data-testid="nearest-string-target"
+          >
+            →
+            {{ toAccidentalGlyph(guidedString.string.note)
+            }}{{ guidedString.string.octave }} ·
+            {{
+              t(
+                guidedString.cents > 0
+                  ? 'tuner.nearestString.tooHigh'
+                  : 'tuner.nearestString.tooLow',
+                nearestStringSemitones(guidedString.cents),
+              )
+            }}
+          </div>
 
-        <div
-          v-if="referenceA4 !== A4_FREQUENCY"
-          class="mt-1 text-xs text-(--p-orange-500) tabular-nums"
-          data-testid="reference-pitch-readout"
-        >
-          {{ t('tuner.referencePitch.readout', { hz: formattedReferenceA4 }) }}
+          <div
+            v-if="referenceA4 !== A4_FREQUENCY"
+            class="mt-1 text-xs text-(--p-orange-500) tabular-nums"
+            data-testid="reference-pitch-readout"
+          >
+            {{
+              t('tuner.referencePitch.readout', { hz: formattedReferenceA4 })
+            }}
+          </div>
         </div>
       </div>
 
