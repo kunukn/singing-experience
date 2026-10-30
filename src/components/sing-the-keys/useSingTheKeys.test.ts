@@ -12,11 +12,7 @@ import { defineComponent, nextTick, ref } from 'vue'
 import { createMockToneEngine } from '@/composables/toneEngine.mock'
 import { midiToFrequency } from '@/utils/noteUtils'
 import type { Song } from './singTheKeysSongs'
-import {
-  ENDING_GLIDE_MS,
-  LOOKAHEAD_MS,
-  VISUAL_LEAD_MS,
-} from './singTheKeysTimeline'
+import { ENDING_GLIDE_MS, DEFAULT_LOOKAHEAD_MS } from './singTheKeysTimeline'
 import { useSingTheKeys } from './useSingTheKeys'
 
 const C4 = 60
@@ -37,11 +33,15 @@ const song: Song = {
 /* The mock engine's virtual clock starts at 0, so with SCHEDULE_AHEAD_S the
  * lead-in begins at 0.05 s and the first note lands at 3.05 s. */
 const TONE_START_S = 0.05
-const SONG_START_S = TONE_START_S + LOOKAHEAD_MS / 1000
+const SONG_START_S = TONE_START_S + DEFAULT_LOOKAHEAD_MS / 1000
 
 /* useMachine starts its actor in onMounted, so the composable has to live in a
  * mounted component for the phase to move. */
-function createGame(nowS = { value: 0 }, isMetronomeEnabled = ref(false)) {
+function createGame(
+  nowS = { value: 0 },
+  isMetronomeEnabled = ref(false),
+  lookaheadMs = ref(DEFAULT_LOOKAHEAD_MS),
+) {
   /* One clock for both: the mock has no look-ahead between them. */
   const engine = createMockToneEngine({
     getNow: vi.fn(() => nowS.value),
@@ -51,7 +51,11 @@ function createGame(nowS = { value: 0 }, isMetronomeEnabled = ref(false)) {
   mount(
     defineComponent({
       setup() {
-        game = useSingTheKeys({ toneEngine: engine, isMetronomeEnabled })
+        game = useSingTheKeys({
+          toneEngine: engine,
+          isMetronomeEnabled,
+          lookaheadMs,
+        })
 
         return () => null
       },
@@ -115,7 +119,7 @@ describe('useSingTheKeys', () => {
     expect(game.isPlaying.value).toBe(true)
     /* The clock is still SCHEDULE_AHEAD_S short of the lead-in's start. */
     expect(game.elapsedMs.value).toBeCloseTo(
-      -LOOKAHEAD_MS - TONE_START_S * 1000,
+      -DEFAULT_LOOKAHEAD_MS - TONE_START_S * 1000,
       5,
     )
     expect(game.activeNoteIndex.value).toBeNull()
@@ -169,6 +173,16 @@ describe('useSingTheKeys', () => {
     expect(game.activeNoteIndex.value).toBe(1)
   })
 
+  test("should lead in and end on a taller lane's longer look-ahead", async () => {
+    const { game } = createGame({ value: 0 }, ref(false), ref(4500))
+
+    /* Half speed: a 4.8 s song, longer than the 4.5 s lane. */
+    await game.start({ ...startParams(), speed: 0.5 })
+
+    expect(game.elapsedMs.value).toBeCloseTo(-4500 - TONE_START_S * 1000, 5)
+    expect(game.laneScrollMaxMs.value).toBe(4800 - 4500)
+  })
+
   test('should keep the lane on the clock through the last note', async () => {
     const { game, nowS } = createGame()
 
@@ -179,20 +193,7 @@ describe('useSingTheKeys', () => {
     await nextTick()
 
     expect(game.elapsedMs.value).toBeCloseTo(1800, 5)
-    expect(game.laneElapsedMs.value).toBeCloseTo(1800 + VISUAL_LEAD_MS, 5)
-  })
-
-  test('should light the next key as its block lands, ahead of the scorer', async () => {
-    const { game, nowS } = createGame()
-
-    await game.start(startParams())
-    /* Note 1 is due at 600 ms; the lane and keys reach it VISUAL_LEAD_MS early. */
-    nowS.value = SONG_START_S + (600 - VISUAL_LEAD_MS / 2) / 1000
-    vi.advanceTimersByTime(20)
-    await nextTick()
-
-    expect(game.activeNoteIndex.value).toBe(1)
-    expect(game.scoredNoteIndex.value).toBe(0)
+    expect(game.laneElapsedMs.value).toBeCloseTo(1800, 5)
   })
 
   test('should run the song on the speaker clock, behind the output latency', async () => {
@@ -256,7 +257,7 @@ describe('useSingTheKeys', () => {
     vi.advanceTimersByTime(20)
     await nextTick()
 
-    expect(game.laneElapsedMs.value).toBeCloseTo(3000 + VISUAL_LEAD_MS, 5)
+    expect(game.laneElapsedMs.value).toBeCloseTo(3000, 5)
     /* The scorer's clock stays on the finish. */
     expect(game.elapsedMs.value).toBeCloseTo(2400, 5)
 
@@ -286,14 +287,14 @@ describe('useSingTheKeys', () => {
     vi.advanceTimersByTime((SONG_START_S + 4.8) * 1000 + 1)
     await nextTick()
 
-    expect(game.laneElapsedMs.value).toBeCloseTo(4800 + VISUAL_LEAD_MS, 5)
+    expect(game.laneElapsedMs.value).toBeCloseTo(4800, 5)
 
     nowS.value = SONG_START_S + 4.8 + ENDING_GLIDE_MS / 1000 + 0.05
     vi.advanceTimersByTime(20)
     await nextTick()
 
-    /* The last LOOKAHEAD_MS of the song fills the lane. */
-    expect(game.laneElapsedMs.value).toBe(4800 - LOOKAHEAD_MS)
+    /* The last look-ahead of the song fills the lane. */
+    expect(game.laneElapsedMs.value).toBe(4800 - DEFAULT_LOOKAHEAD_MS)
     expect(game.isEndingSettled.value).toBe(true)
   })
 
@@ -559,7 +560,7 @@ describe('useSingTheKeys - lane scroll', () => {
     game.scrollLaneTo(0)
 
     expect(game.canScrollLane.value).toBe(false)
-    expect(game.laneElapsedMs.value).toBeCloseTo(4800 + VISUAL_LEAD_MS, 5)
+    expect(game.laneElapsedMs.value).toBeCloseTo(4800, 5)
 
     nowS.value = SONG_START_S + 4.8 + ENDING_GLIDE_MS / 1000 + 0.05
     vi.advanceTimersByTime(20)

@@ -12,9 +12,8 @@ import {
   buildTimeline,
   endingLaneMsAt,
   laneEndViewMs,
-  LOOKAHEAD_MS,
+  DEFAULT_LOOKAHEAD_MS,
   SCORE_LAG_MS,
-  VISUAL_LEAD_MS,
   type Timeline,
 } from './singTheKeysTimeline'
 
@@ -53,7 +52,7 @@ export type SingTheKeysStartParams = {
   speed: number
   /* Play each note out loud as it reaches the hit line. */
   isMelodyGuideEnabled: boolean
-  /* Let the first blocks fall in for LOOKAHEAD_MS before note 0, so a singer
+  /* Let the first blocks fall in for the look-ahead before note 0, so a singer
    * can get ready. Off, the song starts at once from the idle preview's view. */
   hasLeadIn: boolean
 }
@@ -66,6 +65,9 @@ type Options = {
   /* Sound a tick on every beat line, in a scored run and a preview alike. A
    * ref, not a start param, so it can be flipped mid-run. */
   isMetronomeEnabled?: Readonly<Ref<boolean>>
+  /* How long a block falls the lane, from its height — see lookaheadMsFor.
+   * Sets the lead-in and the ending view. */
+  lookaheadMs?: Readonly<Ref<number>>
 }
 
 /*
@@ -77,7 +79,7 @@ type Options = {
  * agree on which note is due.
  *
  * `elapsedMs` counts from the song's first note: it is negative during the
- * LOOKAHEAD_MS lead-in while the first blocks fall in (a run started without
+ * look-ahead lead-in while the first blocks fall in (a run started without
  * one begins at 0), and sits at 0 while idle so the lane shows the opening of
  * the tune as a still preview.
  * `laneElapsedMs` is what the lane draws: the same clock while playing. After a
@@ -87,6 +89,7 @@ type Options = {
  */
 export function useSingTheKeys(options: Options = {}) {
   const engine = options.toneEngine ?? defaultToneEngine
+  const lookaheadMs = options.lookaheadMs ?? ref(DEFAULT_LOOKAHEAD_MS)
   const { snapshot, send } = useMachine(singTheKeysMachine)
 
   const phase = computed<SingTheKeysPhase>(
@@ -107,14 +110,9 @@ export function useSingTheKeys(options: Options = {}) {
    * view, so blocks left part-way past the hit line can be clipped there. */
   const isEndingSettled = ref(false)
 
-  /* Follows the lane, VISUAL_LEAD_MS ahead, so the key lights as its block
-   * lands. */
   const activeNoteIndex = computed(() =>
     isPlaying.value
-      ? activeNoteIndexAt(
-          timeline.value.notes,
-          elapsedMs.value + VISUAL_LEAD_MS,
-        )
+      ? activeNoteIndexAt(timeline.value.notes, elapsedMs.value)
       : null,
   )
 
@@ -208,17 +206,14 @@ export function useSingTheKeys(options: Options = {}) {
     scheduleDueMetronome()
     updateMetronomeSounding()
     elapsedMs.value = readElapsedMs()
-    laneElapsedMs.value = elapsedMs.value + VISUAL_LEAD_MS
+    laneElapsedMs.value = elapsedMs.value
     rafId = requestAnimationFrame(tick)
   }
 
   /* After DONE: the lane alone moves on; elapsedMs stays frozen at the finish
    * for the scorer and the tally. */
   function tickEnding() {
-    const { laneMs, isSettled } = endingLaneMsAt(
-      readElapsedMs() + VISUAL_LEAD_MS,
-      endingPath,
-    )
+    const { laneMs, isSettled } = endingLaneMsAt(readElapsedMs(), endingPath)
     laneElapsedMs.value = laneMs
     if (isSettled) {
       isEndingSettled.value = true
@@ -243,7 +238,7 @@ export function useSingTheKeys(options: Options = {}) {
     if (isPlaying.value) return
 
     stopTicking()
-    timeline.value = buildTimeline(song, tonicMidi, speed)
+    timeline.value = buildTimeline(song, tonicMidi, speed, lookaheadMs.value)
     elapsedMs.value = 0
     laneElapsedMs.value = 0
     isShowingEnding.value = false
@@ -255,7 +250,12 @@ export function useSingTheKeys(options: Options = {}) {
     engine.cancelScheduled()
     stopTicking()
 
-    const built = buildTimeline(params.song, params.tonicMidi, params.speed)
+    const built = buildTimeline(
+      params.song,
+      params.tonicMidi,
+      params.speed,
+      lookaheadMs.value,
+    )
     timeline.value = built
     isShowingEnding.value = false
     isEndingSettled.value = false
@@ -270,14 +270,12 @@ export function useSingTheKeys(options: Options = {}) {
           lastNote.durationMs * ARTICULATION +
           TONE_MODE_RELEASE_S[engine.toneMode.value] * 1000
         : 0
-    /* In lane time, VISUAL_LEAD_MS ahead of the song, so the lane keeps falling
-     * from where it is at the finish rather than jumping into the glide. */
     endingPath = {
-      fallEndMs: Math.max(built.totalMs, lastToneEndMs) + VISUAL_LEAD_MS,
-      endingViewMs: laneEndViewMs(built.totalMs),
+      fallEndMs: Math.max(built.totalMs, lastToneEndMs),
+      endingViewMs: laneEndViewMs(built.totalMs, lookaheadMs.value),
     }
 
-    const leadInMs = params.hasLeadIn ? LOOKAHEAD_MS : 0
+    const leadInMs = params.hasLeadIn ? lookaheadMs.value : 0
     songStartS = engine.getNow() + SCHEDULE_AHEAD_S + leadInMs / 1000
     outputLatencyS = engine.getOutputLatency()
 
@@ -315,14 +313,16 @@ export function useSingTheKeys(options: Options = {}) {
      * in the future, so the flat value would sit on the first count-in beat
      * line and the first frame would jump back off it. */
     elapsedMs.value = readElapsedMs()
-    laneElapsedMs.value = elapsedMs.value + VISUAL_LEAD_MS
+    laneElapsedMs.value = elapsedMs.value
     send({ type: 'START' })
     rafId = requestAnimationFrame(tick)
   }
 
   /* Scroll range for browsing the song while not playing: the opening view
    * up to the ending view. */
-  const laneScrollMaxMs = computed(() => laneEndViewMs(timeline.value.totalMs))
+  const laneScrollMaxMs = computed(() =>
+    laneEndViewMs(timeline.value.totalMs, lookaheadMs.value),
+  )
 
   /* Idle, or done once the ending glide has landed — mid-glide its rAF would
    * overwrite the scroll on the next frame. */

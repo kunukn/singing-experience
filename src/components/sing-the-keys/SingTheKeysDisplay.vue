@@ -22,8 +22,8 @@ import {
   aimedNoteIndicesAt,
   beatFlashAt,
   KEYBOARD_MIN_SEMITONE_UNIT,
+  lookaheadMsFor,
   SCORE_LAG_MS,
-  VISUAL_LEAD_MS,
   songMidiRange,
 } from './singTheKeysTimeline'
 import { useMetronomeMask } from './useMetronomeMask'
@@ -106,7 +106,26 @@ const range = computed(() => songMidiRange(song.value, tonicMidi.value))
  * on the blocks here too. */
 const accidentalStyle = useAccidentalStyle('syng.pianoAccidentals', 'sharp')
 
-const game = useSingTheKeys({ isMetronomeEnabled })
+/* Lane height follows the viewport so the keyboard stays on screen under it:
+ * 40% of the height, never shorter than 240px nor taller than 360px. */
+const LANE_MIN_HEIGHT = 240
+const LANE_MAX_HEIGHT = 360
+const LANE_VIEWPORT_FRACTION = 0.4
+const { height: windowHeight } = useWindowSize()
+const laneHeight = computed(() =>
+  Math.round(
+    Math.min(
+      LANE_MAX_HEIGHT,
+      Math.max(LANE_MIN_HEIGHT, windowHeight.value * LANE_VIEWPORT_FRACTION),
+    ),
+  ),
+)
+
+/* Blocks fall at the same px speed on every screen: a taller lane looks
+ * further ahead instead of moving faster. */
+const lookaheadMs = computed(() => lookaheadMsFor(laneHeight.value))
+
+const game = useSingTheKeys({ isMetronomeEnabled, lookaheadMs })
 const {
   isPlaying,
   isDone,
@@ -347,21 +366,6 @@ const previewLanes = computed<Array<DuetLane & { laneId: PianoPreviewLaneId }>>(
   },
 )
 
-/* Lane height follows the viewport so the keyboard stays on screen under it:
- * 40% of the height, never shorter than 240px nor taller than 360px. */
-const LANE_MIN_HEIGHT = 240
-const LANE_MAX_HEIGHT = 360
-const LANE_VIEWPORT_FRACTION = 0.4
-const { height: windowHeight } = useWindowSize()
-const laneHeight = computed(() =>
-  Math.round(
-    Math.min(
-      LANE_MAX_HEIGHT,
-      Math.max(LANE_MIN_HEIGHT, windowHeight.value * LANE_VIEWPORT_FRACTION),
-    ),
-  ),
-)
-
 /* A scored run opens the mic first, so a permission prompt never eats the
  * lead-in, then launches the timeline without the melody. A preview plays it
  * and keeps the mic closed: with the speaker playing, the detected line whips
@@ -594,6 +598,7 @@ onUnmounted(() => {
             :notes="timeline.notes"
             :layout="layout"
             :laneHeight="laneHeight"
+            :lookaheadMs="lookaheadMs"
             :elapsedMs="laneElapsedMs"
             :isShowingEnding="isShowingEnding"
             :isEndingSettled="isEndingSettled"
@@ -606,7 +611,7 @@ onUnmounted(() => {
             :sungFrequency="liveFrequency"
             :shouldColorByCents="isPreviewColoredByCents"
             :isScored="isRunScored"
-            :scoreLagMs="SCORE_LAG_MS + VISUAL_LEAD_MS"
+            :scoreLagMs="SCORE_LAG_MS"
             :beatLines="isBeatLinesEnabled ? timeline.beatLines : []"
             :beatFlash="beatFlash"
             :isPlaying="isPlaying"

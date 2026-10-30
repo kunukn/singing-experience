@@ -3,9 +3,21 @@ import { midiToFrequency } from '@/utils/noteUtils'
 import { isOnPitch } from '@/utils/pitchMatch'
 import type { Song } from './singTheKeysSongs'
 
-/* How long a block takes to fall from the top of the lane to the hit line, and
- * therefore how far ahead the singer sees. Also the lead-in before note 0. */
-export const LOOKAHEAD_MS = 3000
+/* px/ms a block falls: a 240px phone lane over 3 s. The same on every screen,
+ * so a taller lane shows more of the song rather than moving faster — a late
+ * start lands the same few px past the hit line everywhere. */
+export const FALL_PX_PER_MS = 0.08
+
+/* The phone lane's look-ahead (240px at FALL_PX_PER_MS), for callers that
+ * don't know their lane height. */
+export const DEFAULT_LOOKAHEAD_MS = 3000
+
+/* How long a block takes to fall from the top of a lane this tall to the hit
+ * line, and therefore how far ahead the singer sees. Also the lead-in before
+ * note 0. */
+export function lookaheadMsFor(laneHeight: number): number {
+  return laneHeight / FALL_PX_PER_MS
+}
 
 /* ms the detected pitch runs behind the voice: mic and browser input, the
  * detector's window filling with the new note, and the wait for the next
@@ -13,13 +25,6 @@ export const LOOKAHEAD_MS = 3000
  * starts as the block lands is judged on the whole note — without it the lag
  * came off the front of every note and had to be won back by singing early. */
 export const SCORE_LAG_MS = 80
-
-/* ms the lane and key highlight run ahead of the song: a block lands this much
- * before its note is due. Starting a sung note takes a moment — the felt onset
- * comes after the sound starts, and the pitch needs a beat to settle — so a
- * singer aiming at the landing felt late. Visual only: scoring keeps the
- * song's own clock. */
-export const VISUAL_LEAD_MS = 60
 
 export type TimelineNote = {
   /* Index into the song's `notes` — the score composable keys on it. */
@@ -71,11 +76,13 @@ export type Timeline = {
 }
 
 /* Lays the song out in ms at a tonic and speed. Rests advance the cursor
- * without adding a note, so `index` stays aligned with the song data. */
+ * without adding a note, so `index` stays aligned with the song data. Beat
+ * lines start `lookaheadMs` before note 0, covering the lead-in. */
 export function buildTimeline(
   song: Song,
   tonicMidi: number,
   speed: number,
+  lookaheadMs: number,
 ): Timeline {
   const beatMs = 60000 / (song.bpm * speed)
   const notes: TimelineNote[] = []
@@ -96,7 +103,7 @@ export function buildTimeline(
     notes,
     totalMs: cursorMs,
     beatMs,
-    beatLines: buildBeatLines(song, beatMs, cursorMs),
+    beatLines: buildBeatLines(song, beatMs, cursorMs, lookaheadMs),
   }
 }
 
@@ -108,11 +115,12 @@ function buildBeatLines(
   song: Song,
   beatMs: number,
   totalMs: number,
+  lookaheadMs: number,
 ): BeatLine[] {
   const { pulseBeats, pulsesPerBar, pickupBeats } = song.meter
   const pulseMs = pulseBeats * beatMs
   const downbeatMs = pickupBeats * beatMs
-  const firstPulse = Math.ceil((-LOOKAHEAD_MS - downbeatMs) / pulseMs)
+  const firstPulse = Math.ceil((-lookaheadMs - downbeatMs) / pulseMs)
   const lastPulse = Math.floor((totalMs - downbeatMs) / pulseMs)
   const lines: BeatLine[] = []
 
@@ -216,8 +224,8 @@ export const ENDING_GLIDE_MS = 600
 /* The lane view showing the song's last stretch: the final note ending at the
  * lane's top. A song shorter than the lane stays on its opening (0). Both the
  * ending glide and the idle scroll stop here. */
-export function laneEndViewMs(totalMs: number): number {
-  return Math.max(0, totalMs - LOOKAHEAD_MS)
+export function laneEndViewMs(totalMs: number, lookaheadMs: number): number {
+  return Math.max(0, totalMs - lookaheadMs)
 }
 
 type EndingPath = {

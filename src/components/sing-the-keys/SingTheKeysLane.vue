@@ -8,7 +8,6 @@ import {
 import { buildPianoPreviewLine } from '@/components/piano/pianoPreview'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
-  LOOKAHEAD_MS,
   type BeatFlash,
   type BeatLine,
   type TimelineNote,
@@ -19,7 +18,7 @@ import { useLaneScroll } from './useLaneScroll'
 
 /*
  * The falling-note lane above the keyboard. Every block is laid out once, in
- * the coordinates of a strip that is LOOKAHEAD_MS tall per lane height, and
+ * the coordinates of a strip that is lookaheadMs tall per lane height, and
  * the whole strip translates down as time passes — one transform per frame,
  * no per-note re-render. A block's bottom edge crosses the hit line (the lane
  * bottom, the top of the keys) exactly when its note starts.
@@ -28,6 +27,8 @@ type Props = {
   notes: TimelineNote[]
   layout: PianoLayout
   laneHeight: number
+  /* Ms a block takes to fall the lane's height. */
+  lookaheadMs: number
   /* Ms since the first note started; negative during the lead-in. */
   elapsedMs: number
   activeNoteIndex: number | null
@@ -101,7 +102,7 @@ type NoteStatus =
   | 'missed'
   | 'passed'
 
-const pxPerMs = computed(() => props.laneHeight / LOOKAHEAD_MS)
+const pxPerMs = computed(() => props.laneHeight / props.lookaheadMs)
 
 /* px — gap between consecutive blocks of the same pitch so repeated notes read
  * as separate hits rather than one long bar. */
@@ -331,7 +332,8 @@ const scrollThumb = computed(() => {
   if (!props.isScrollable || props.scrollMaxMs <= 0) return null
 
   const heightPx =
-    (props.laneHeight * LOOKAHEAD_MS) / (props.scrollMaxMs + LOOKAHEAD_MS)
+    (props.laneHeight * props.lookaheadMs) /
+    (props.scrollMaxMs + props.lookaheadMs)
   const progress = clampScrollMs(props.elapsedMs) / props.scrollMaxMs
   const topPx = (props.laneHeight - heightPx) * (1 - progress)
 

@@ -15,7 +15,8 @@ import {
   endingLaneMsAt,
   KEYBOARD_MIN_SEMITONE_UNIT,
   laneEndViewMs,
-  LOOKAHEAD_MS,
+  DEFAULT_LOOKAHEAD_MS,
+  lookaheadMsFor,
   songMidiRange,
   type TimelineNote,
 } from './singTheKeysTimeline'
@@ -36,13 +37,13 @@ const song: Song = {
 
 describe('buildTimeline', () => {
   test('derives the beat length from bpm and speed', () => {
-    expect(buildTimeline(song, C4, 1).beatMs).toBe(600)
-    expect(buildTimeline(song, C4, 0.5).beatMs).toBe(1200)
-    expect(buildTimeline(song, C4, 1.25).beatMs).toBe(480)
+    expect(buildTimeline(song, C4, 1, DEFAULT_LOOKAHEAD_MS).beatMs).toBe(600)
+    expect(buildTimeline(song, C4, 0.5, DEFAULT_LOOKAHEAD_MS).beatMs).toBe(1200)
+    expect(buildTimeline(song, C4, 1.25, DEFAULT_LOOKAHEAD_MS).beatMs).toBe(480)
   })
 
   test('lays notes out end to end, with rests shifting the next start', () => {
-    const { notes, totalMs } = buildTimeline(song, C4, 1)
+    const { notes, totalMs } = buildTimeline(song, C4, 1, DEFAULT_LOOKAHEAD_MS)
 
     expect(notes).toEqual([
       { index: 0, midi: 60, startMs: 0, durationMs: 600 },
@@ -55,7 +56,12 @@ describe('buildTimeline', () => {
 
 describe('buildTimeline - beat lines', () => {
   test('lays a line every beat with a bar line every 4 in 4/4', () => {
-    const { beatLines, beatMs } = buildTimeline(SONGS.twinkle, C4, 1)
+    const { beatLines, beatMs } = buildTimeline(
+      SONGS.twinkle,
+      C4,
+      1,
+      DEFAULT_LOOKAHEAD_MS,
+    )
     const downbeat = beatLines.findIndex((line) => line.ms === 0)
 
     expect(beatLines.slice(downbeat, downbeat + 5)).toEqual([
@@ -68,10 +74,15 @@ describe('buildTimeline - beat lines', () => {
   })
 
   test('starts the lines at the lead-in and ends them at the song end', () => {
-    const { beatLines, totalMs } = buildTimeline(SONGS.twinkle, C4, 1)
+    const { beatLines, totalMs } = buildTimeline(
+      SONGS.twinkle,
+      C4,
+      1,
+      DEFAULT_LOOKAHEAD_MS,
+    )
 
     /* 3000ms lead-in over a 600ms beat: exactly five count-in lines. */
-    expect(beatLines[0].ms).toBe(-LOOKAHEAD_MS)
+    expect(beatLines[0].ms).toBe(-DEFAULT_LOOKAHEAD_MS)
     expect(beatLines.at(-1)?.ms).toBe(totalMs)
   })
 
@@ -82,6 +93,7 @@ describe('buildTimeline - beat lines', () => {
       SONGS.happyBirthday,
       C4,
       1,
+      DEFAULT_LOOKAHEAD_MS,
     )
     const firstBar = beatLines.find((line) => line.isBarStart && line.ms >= 0)
 
@@ -90,7 +102,12 @@ describe('buildTimeline - beat lines', () => {
   })
 
   test('marks bar lines every 3 beats in 3/4, including the lead-in', () => {
-    const { beatLines, beatMs } = buildTimeline(SONGS.happyBirthday, C4, 1)
+    const { beatLines, beatMs } = buildTimeline(
+      SONGS.happyBirthday,
+      C4,
+      1,
+      DEFAULT_LOOKAHEAD_MS,
+    )
     const barLines = beatLines
       .filter((line) => line.isBarStart)
       .map((line) => line.ms)
@@ -103,14 +120,29 @@ describe('buildTimeline - beat lines', () => {
   })
 
   test('pulses on the eighth for Für Elise', () => {
-    const { beatLines, beatMs } = buildTimeline(SONGS.furElise, C4, 1)
+    const { beatLines, beatMs } = buildTimeline(
+      SONGS.furElise,
+      C4,
+      1,
+      DEFAULT_LOOKAHEAD_MS,
+    )
 
     expect(beatLines[1].ms - beatLines[0].ms).toBe(beatMs / 2)
   })
 
   test('scales the line spacing with speed', () => {
-    const slow = buildTimeline(SONGS.twinkle, C4, 0.5).beatLines
-    const fast = buildTimeline(SONGS.twinkle, C4, 1.25).beatLines
+    const slow = buildTimeline(
+      SONGS.twinkle,
+      C4,
+      0.5,
+      DEFAULT_LOOKAHEAD_MS,
+    ).beatLines
+    const fast = buildTimeline(
+      SONGS.twinkle,
+      C4,
+      1.25,
+      DEFAULT_LOOKAHEAD_MS,
+    ).beatLines
 
     expect(slow[1].ms - slow[0].ms).toBe(1200)
     expect(fast[1].ms - fast[0].ms).toBe(480)
@@ -121,7 +153,12 @@ describe('buildTimeline - pulse in bar', () => {
   test('counts 1 2 3 across the lead-in and the pickup in 3/4', () => {
     /* Happy Birthday's first downbeat is at 1 beat (600ms); the lead-in lines
      * from −3000ms count back from it. */
-    const { beatLines } = buildTimeline(SONGS.happyBirthday, C4, 1)
+    const { beatLines } = buildTimeline(
+      SONGS.happyBirthday,
+      C4,
+      1,
+      DEFAULT_LOOKAHEAD_MS,
+    )
 
     expect(beatLines.slice(0, 7).map((line) => line.pulseInBar)).toEqual([
       0, 1, 2, 0, 1, 2, 0,
@@ -180,7 +217,7 @@ describe('beatFlashAt', () => {
 })
 
 describe('activeNoteIndexAt', () => {
-  const { notes } = buildTimeline(song, C4, 1)
+  const { notes } = buildTimeline(song, C4, 1, DEFAULT_LOOKAHEAD_MS)
 
   test.each([
     { elapsedMs: -1, expected: null },
@@ -321,10 +358,35 @@ describe('KEYBOARD_MIN_SEMITONE_UNIT', () => {
 
 describe('laneEndViewMs', () => {
   test.each([
-    { totalMs: 10_000, expected: 10_000 - LOOKAHEAD_MS },
-    { totalMs: LOOKAHEAD_MS, expected: 0 },
+    { totalMs: 10_000, expected: 10_000 - DEFAULT_LOOKAHEAD_MS },
+    { totalMs: DEFAULT_LOOKAHEAD_MS, expected: 0 },
     { totalMs: 2400, expected: 0 },
   ])('returns $expected for a $totalMs ms song', ({ totalMs, expected }) => {
-    expect(laneEndViewMs(totalMs)).toBe(expected)
+    expect(laneEndViewMs(totalMs, DEFAULT_LOOKAHEAD_MS)).toBe(expected)
+  })
+
+  test('shows a longer last stretch in a taller lane', () => {
+    expect(laneEndViewMs(10_000, 4500)).toBe(5500)
+  })
+})
+
+describe('lookaheadMsFor', () => {
+  /* A phone lane keeps its 3 s; the tallest lane looks further ahead at the
+   * same fall speed rather than falling faster. */
+  test.each([
+    { laneHeight: 240, expected: 3000 },
+    { laneHeight: 360, expected: 4500 },
+  ])(
+    'gives $expected ms for a $laneHeight px lane',
+    ({ laneHeight, expected }) => {
+      expect(lookaheadMsFor(laneHeight)).toBeCloseTo(expected, 5)
+    },
+  )
+
+  test("starts the beat lines a taller lane's look-ahead before note 0", () => {
+    const { beatLines } = buildTimeline(SONGS.twinkle, C4, 1, 4500)
+
+    expect(beatLines[0].ms).toBeGreaterThanOrEqual(-4500)
+    expect(beatLines[0].ms).toBeLessThan(-DEFAULT_LOOKAHEAD_MS)
   })
 })

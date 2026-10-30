@@ -31,6 +31,7 @@ function mountLane(
       notes,
       layout,
       laneHeight: LANE_HEIGHT,
+      lookaheadMs: 3000,
       elapsedMs: 0,
       activeNoteIndex: null,
       correctNoteIndices: [],
