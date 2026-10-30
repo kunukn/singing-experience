@@ -32,7 +32,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "@vueuse/core": "^14.4.0",
     "@xstate/vue": "^5.0.1",
-    "abcjs": "6.7.0",
+    "abcjs": "6.7.2",
     "canvas-confetti": "^1.9.4",
     "dayjs": "^1.11.23",
     "pinia": "^4.0.3",
@@ -48,7 +48,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
-    "@commitlint/config-conventional": "21.2.2",
+    "@commitlint/config-conventional": "21.2.4",
     "@types/canvas-confetti": "^1.9.0",
     "@vitejs/plugin-vue": "^6.0.9",
     "@vitest/ui": "^4.1.12",
@@ -100,5 +100,8 @@
   },
   "allowScripts": {
     "fsevents": false
+  },
+  "overrides": {
+    "@vue/language-core": "3.3.11"
   }
 }
