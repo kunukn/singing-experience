@@ -165,17 +165,12 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 
 /*
  * Five items (each col-span-2), and five never divides evenly, so the row steps
- * up a breakpoint at a time: 2 per row at md, 3 at lg, all five from 2xl. Fitting
- * more sooner would push the whole document into a horizontal scrollbar — the
- * piano's items are wider than the guitar row's, which manages 4 per row at lg.
+ * up a breakpoint at a time: 2 per row at md, 3 from lg. Fitting more sooner
+ * would push the whole document into a horizontal scrollbar — the piano's items
+ * are wider than the guitar row's, which manages 4 per row at lg.
  *
- * The single row waits for 2xl (1536px) rather than xl (1280px) because five
- * piano items genuinely need the extra width. At xl the tracks were squeezed
- * below their max-content size, and the toggle labels were the only part of the
- * row that could give — "See your voice" broke onto two lines and took the row's
- * height with it. The labels no longer wrap (see ToggleIconButton), so a track
- * too narrow to hold one would now overflow instead; the breakpoint has to be
- * where five items actually fit.
+ * There is deliberately no single-row layout on wide screens: all five items in
+ * one line stretched the row far wider than the keyboard beneath it.
  *
  * Every track is `auto`, never `1fr`: the row is content-sized (md:w-auto), so a
  * grid of `1fr` tracks resolves one shared flex fraction from the widest control
@@ -187,6 +182,5 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 .settings-row {
   @apply md:grid-cols-[repeat(4,auto)];
   @apply lg:grid-cols-[repeat(6,auto)];
-  @apply 2xl:grid-cols-[repeat(10,auto)];
 }
 </style>
