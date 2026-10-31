@@ -123,10 +123,15 @@ const rows = computed(() =>
   }),
 )
 
-const guideLines = computed(() => [
-  toPercent(props.midiMin),
-  toPercent(props.midiMax),
-])
+/* The singer's two ends: drawn as a line through every row and labelled once
+ * in the footer, so the lines read as "your range" */
+const guideLines = computed(() =>
+  [props.midiMin, props.midiMax].map((midi) => ({
+    midi,
+    left: toPercent(midi),
+    label: formatNote(midi),
+  })),
+)
 </script>
 
 <template>
@@ -180,6 +185,13 @@ const guideLines = computed(() => [
           locale, like a keyboard (see GraceKellyPartLadder.vue).
         -->
         <span aria-hidden="true" class="relative h-6" dir="ltr">
+          <!-- Faint C marks under the bars, lining up with the header labels -->
+          <span
+            v-for="tick in ticks"
+            :key="tick.midi"
+            class="absolute inset-y-0 w-0 border-s border-dashed border-(--p-content-border-color)"
+            :style="{ insetInlineStart: `${tick.left}%` }"
+          />
           <span
             class="absolute top-1/2 h-2 -translate-y-1/2 rounded-full"
             :style="{ ...row.voiceStyle, backgroundColor: row.faintColor }"
@@ -191,10 +203,10 @@ const guideLines = computed(() => [
           />
           <!-- The singer's two ends, repeated per row so they read as one line down the list -->
           <span
-            v-for="(left, index) in guideLines"
+            v-for="(line, index) in guideLines"
             :key="index"
             class="absolute inset-y-0 w-px bg-(--p-text-muted-color) opacity-60"
-            :style="{ insetInlineStart: `${left}%` }"
+            :style="{ insetInlineStart: `${line.left}%` }"
           />
         </span>
         <span
@@ -213,6 +225,25 @@ const guideLines = computed(() => [
           {{ row.hint }}
         </span>
       </button>
+
+      <!--
+        Each label sits on the outer side of its line (low end to the left,
+        high end to the right), so the two never overlap, even for a one-note range.
+      -->
+      <div aria-hidden="true" class="col-span-4 grid grid-cols-subgrid">
+        <div class="relative col-start-2 h-4" dir="ltr">
+          <span
+            v-for="(line, index) in guideLines"
+            :key="index"
+            data-testid="voice-type-comparison-range-label"
+            class="absolute text-[10px] font-semibold whitespace-nowrap text-(--p-text-color)"
+            :class="index === 0 ? '-translate-x-full pe-1' : 'ps-1'"
+            :style="{ insetInlineStart: `${line.left}%` }"
+          >
+            {{ line.label }}
+          </span>
+        </div>
+      </div>
     </div>
 
     <p class="text-xs text-(--p-text-muted-color)">

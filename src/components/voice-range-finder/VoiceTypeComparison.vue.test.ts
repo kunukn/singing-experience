@@ -78,6 +78,15 @@ describe('VoiceTypeComparison', () => {
     ])
   })
 
+  test('should label both ends of the singer range', () => {
+    /* G2–E4 */
+    const labels = mountComparison(43, 64)
+      .findAll('[data-testid="voice-type-comparison-range-label"]')
+      .map((label) => label.text())
+
+    expect(labels).toEqual(['G2', 'E4'])
+  })
+
   test('should ask for the voice range when a row is tapped', async () => {
     const wrapper = mountComparison()
 
