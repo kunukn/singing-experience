@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useTimeoutFn } from '@vueuse/core'
 import { MY_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import {
   normalizeVoiceRange,
@@ -133,7 +134,7 @@ const isLiveClean = computed(
 /* Names what the filling bar is about to do. Shown only while it fills — on a
  * paused bar it would claim progress that isn't happening. */
 const holdHint = computed(() =>
-  isFilling.value && candidateMidi.value !== null
+  !isRecordFlash.value && isFilling.value && candidateMidi.value !== null
     ? t('voiceRangeFinder.keepHolding', {
         note: formatNote(candidateMidi.value),
       })
@@ -147,6 +148,35 @@ const isJustSaved = ref(false)
 
 const stepRecord = computed(() =>
   step.value === 'low' ? lowestMidi.value : highestMidi.value,
+)
+
+/* How long a new record shows as a full bar with a ✓ — long enough to
+ * register, short enough not to stall a singer creeping on to the next note. */
+const RECORD_FLASH_MS = 700
+
+const justRecordedMidi = ref<number | null>(null)
+const { isPending: isRecordFlash, start: startRecordFlash } = useTimeoutFn(
+  () => {},
+  RECORD_FLASH_MS,
+  { immediate: false },
+)
+
+/* A new record in the same step is a win. Moving low → high also changes
+ * stepRecord (to the empty high record), which must not flash. */
+watch([stepRecord, step], ([record, currentStep], [previous, previousStep]) => {
+  if (record === null || currentStep !== previousStep || record === previous)
+    return
+
+  justRecordedMidi.value = record
+  startRecordFlash()
+})
+
+/* What the bar and readout show: the win while it flashes, then live again */
+const barPercent = computed(() =>
+  isRecordFlash.value ? 100 : Math.round(progress.value * 100),
+)
+const shownMidi = computed(() =>
+  isRecordFlash.value ? justRecordedMidi.value : liveMidi.value,
 )
 
 const recordText = computed(() => {
@@ -334,7 +364,7 @@ onUnmounted(() => {
         severity="success"
         rounded
         data-testid="voice-range-finder-start"
-        @click="startSearch"
+        @click="startSearch()"
       >
         {{ t('voiceRangeFinder.findBySinging') }}
       </PrimeButton>
@@ -352,6 +382,7 @@ onUnmounted(() => {
       class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
       data-testid="voice-range-finder-step"
       :data-step="step"
+      :data-record-flash="isRecordFlash"
     >
       <p class="text-center text-sm">
         {{
@@ -365,14 +396,18 @@ onUnmounted(() => {
         cents hang in a second row beneath the note without pulling it up.
         Fixed note column so the bar doesn't jump as the label changes width.
         A paused bar dims, so a kept-but-idle hold doesn't look like progress.
+        PrimeVue's 1 s width transition is switched off: progress already moves
+        every frame, and the transition made the bar trail the real hold (never
+        visibly full) and drain on reset, which read as failure.
       -->
       <div class="grid w-full grid-cols-[1fr_4rem] items-center gap-x-3">
         <PrimeProgressBar
           class="h-2 transition-opacity"
-          :class="{ 'opacity-40': !isFilling }"
+          :class="{ 'opacity-40': !isFilling && !isRecordFlash }"
+          :pt="{ value: { style: { transition: 'none' } } }"
           data-testid="voice-range-finder-hold-bar"
           :data-filling="isFilling"
-          :value="Math.round(progress * 100)"
+          :value="barPercent"
           :showValue="false"
         />
         <span
@@ -380,10 +415,18 @@ onUnmounted(() => {
           dir="ltr"
           data-testid="voice-range-finder-live-note"
         >
-          {{ liveMidi === null ? '–' : formatNote(liveMidi) }}
+          {{ shownMidi === null ? '–' : formatNote(shownMidi) }}
         </span>
         <!-- Always rendered so the card keeps its height when the cents vanish -->
         <span
+          v-if="isRecordFlash"
+          class="col-start-2 justify-self-end text-sm font-semibold text-(--p-green-500)"
+          data-testid="voice-range-finder-record-tick"
+        >
+          ✓
+        </span>
+        <span
+          v-else
           class="col-start-2 justify-self-end text-sm font-medium tabular-nums"
           dir="ltr"
           :style="{ color: liveCentsColor }"
@@ -413,7 +456,12 @@ onUnmounted(() => {
         }}
       </p>
       <p
-        class="text-sm text-(--p-text-muted-color)"
+        class="text-sm"
+        :class="
+          isRecordFlash
+            ? 'font-semibold text-(--p-green-500)'
+            : 'text-(--p-text-muted-color)'
+        "
         data-testid="voice-range-finder-record"
       >
         {{ recordText }}
@@ -468,7 +516,7 @@ onUnmounted(() => {
           severity="secondary"
           size="small"
           rounded
-          @click="startSearch"
+          @click="startSearch()"
         >
           {{ t('voiceRangeFinder.tryAgain') }}
         </PrimeButton>
