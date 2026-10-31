@@ -10,6 +10,8 @@ type Props = {
   /* The singer's range, drawn against every voice type */
   midiMin: number
   midiMax: number
+  /* The note being sung right now, fractional so cents move the line; null when silent */
+  liveMidi?: number | null
 }
 
 const props = defineProps<Props>()
@@ -132,6 +134,16 @@ const guideLines = computed(() =>
     label: formatNote(midi),
   })),
 )
+
+/* Pinned to the chart's edge rather than widening the axis: a live note
+ * resizing the axis would rescale every bar while the singer sings. */
+const liveLeft = computed(() => {
+  if (props.liveMidi == null) return null
+
+  return toPercent(
+    Math.min(axisMax.value, Math.max(axisMin.value, props.liveMidi)),
+  )
+})
 </script>
 
 <template>
@@ -207,6 +219,13 @@ const guideLines = computed(() =>
             :key="index"
             class="absolute inset-y-0 w-px bg-(--p-text-muted-color) opacity-60"
             :style="{ insetInlineStart: `${line.left}%` }"
+          />
+          <!-- The live note; 75 ms glide smooths detector jitter without lagging the voice -->
+          <span
+            v-if="liveLeft !== null"
+            data-testid="voice-type-comparison-live-line"
+            class="absolute inset-y-0 w-0.5 -translate-x-1/2 bg-(--p-primary-color) transition-[inset-inline-start] duration-75 ease-linear motion-reduce:transition-none"
+            :style="{ insetInlineStart: `${liveLeft}%` }"
           />
         </span>
         <span

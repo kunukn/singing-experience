@@ -87,6 +87,34 @@ describe('VoiceTypeComparison', () => {
     expect(labels).toEqual(['G2', 'E4'])
   })
 
+  describe('live note line', () => {
+    const liveLinesOf = (liveMidi: number | null) =>
+      mount(VoiceTypeComparison, {
+        props: { midiMin: 44, midiMax: 60, liveMidi },
+        global: { plugins: [i18n] },
+      }).findAll('[data-testid="voice-type-comparison-live-line"]')
+
+    test('should not draw a line while nothing is sung', () => {
+      expect(liveLinesOf(null)).toHaveLength(0)
+    })
+
+    test('should draw the sung note through every row', () => {
+      /* D4 on the E2–C6 axis: (62 − 40) / 44 */
+      const lines = liveLinesOf(62)
+
+      /* One per voice-type row */
+      expect(lines).toHaveLength(6)
+      for (const line of lines)
+        expect(line.attributes('style')).toContain('inset-inline-start: 50%')
+    })
+
+    test('should pin a note below the chart to its edge', () => {
+      expect(liveLinesOf(30)[0]!.attributes('style')).toContain(
+        'inset-inline-start: 0%',
+      )
+    })
+  })
+
   test('should ask for the voice range when a row is tapped', async () => {
     const wrapper = mountComparison()
 

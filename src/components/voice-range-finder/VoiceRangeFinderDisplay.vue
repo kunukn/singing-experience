@@ -393,6 +393,7 @@ onUnmounted(() => {
       <VoiceTypeComparison
         :midiMin="myVoiceRange.midiMin"
         :midiMax="myVoiceRange.midiMax"
+        :liveMidi="sungMidi"
         @selectRange="adoptVoiceType"
       />
 
