@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useTimeoutFn } from '@vueuse/core'
+import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
 import { MY_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import {
   normalizeVoiceRange,
@@ -304,6 +305,7 @@ onUnmounted(() => {
           </label>
           <PrimeButton
             icon="pi pi-microphone"
+            :pt="LARGE_SMALL_BUTTON_ICON_PT"
             severity="secondary"
             size="small"
             rounded
@@ -330,6 +332,7 @@ onUnmounted(() => {
           </label>
           <PrimeButton
             icon="pi pi-microphone"
+            :pt="LARGE_SMALL_BUTTON_ICON_PT"
             severity="secondary"
             size="small"
             rounded
