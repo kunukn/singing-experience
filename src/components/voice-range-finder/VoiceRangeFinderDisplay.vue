@@ -430,12 +430,15 @@ onUnmounted(() => {
           :value="barPercent"
           :showValue="false"
         />
+        <!-- Meter before the note, so note and cents keep one end-aligned edge -->
         <span
-          class="justify-self-end text-xl font-semibold tabular-nums"
+          class="flex items-center gap-1.5 justify-self-end text-xl font-semibold tabular-nums"
           dir="ltr"
-          data-testid="voice-range-finder-live-note"
         >
-          {{ shownMidi === null ? '–' : formatNote(shownMidi) }}
+          <CentsMeter :cents="isRecordFlash ? null : liveCents" />
+          <span data-testid="voice-range-finder-live-note">
+            {{ shownMidi === null ? '–' : formatNote(shownMidi) }}
+          </span>
         </span>
         <!-- Always rendered so the card keeps its height when the cents vanish -->
         <span
