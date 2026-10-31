@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import { octaveStopColor } from '@/utils/pitchColors'
+import { cleanTextColor, octaveStopColor } from '@/utils/pitchColors'
+import { centsOffNearest } from './useRangeFinder'
 import {
   compareWithVoiceTypes,
   type VoiceTypeComparisonRow,
@@ -144,6 +145,21 @@ const liveLeft = computed(() => {
     Math.min(axisMax.value, Math.max(axisMin.value, props.liveMidi)),
   )
 })
+
+/* What the line is: the real note even when the line is pinned to an edge.
+ * It sits on the roomier side of the line, so it never leaves the track. */
+const liveLabel = computed(() => {
+  if (props.liveMidi == null || liveLeft.value === null) return null
+
+  const cents = Math.round(centsOffNearest(props.liveMidi))
+
+  return {
+    note: formatNote(Math.round(props.liveMidi)),
+    centsText: cents > 0 ? `+${cents}¢` : `${cents}¢`,
+    centsColor: cleanTextColor(cents, isDark.value),
+    side: liveLeft.value < 50 ? 'end' : 'start',
+  }
+})
 </script>
 
 <template>
@@ -158,7 +174,7 @@ const liveLeft = computed(() => {
       whatever their text length.
     -->
     <div
-      class="grid grid-cols-[auto_1fr_auto_auto] items-center gap-x-2 gap-y-1"
+      class="relative grid grid-cols-[auto_1fr_auto_auto] items-center gap-x-2 gap-y-1"
     >
       <div aria-hidden="true" class="col-span-4 grid grid-cols-subgrid">
         <div class="relative col-start-2 h-4" dir="ltr">
@@ -244,6 +260,36 @@ const liveLeft = computed(() => {
           {{ row.hint }}
         </span>
       </button>
+
+      <!--
+        Spans the track column of the six voice rows (grid rows 2–7). Absolute,
+        so it takes its area from the grid without auto-placement pushing the
+        rows aside; pointer-events-none keeps the rows tappable beneath it.
+        Both column lines are explicit: an absolute item's auto end line is
+        the container's edge, not the next grid line.
+      -->
+      <div
+        v-if="liveLabel"
+        aria-hidden="true"
+        class="pointer-events-none absolute inset-0 col-start-2 col-end-3 row-span-6 row-start-2"
+        dir="ltr"
+      >
+        <span
+          data-testid="voice-type-comparison-live-label"
+          :data-side="liveLabel.side"
+          class="absolute top-1/2 -translate-y-1/2 rounded bg-(--p-content-background) px-1 text-xs whitespace-nowrap tabular-nums transition-[inset-inline-start] duration-75 ease-linear motion-reduce:transition-none"
+          :class="
+            liveLabel.side === 'start' ? '-ms-1 -translate-x-full' : 'ms-1'
+          "
+          :style="{ insetInlineStart: `${liveLeft}%` }"
+        >
+          <span class="font-semibold">{{ liveLabel.note }}</span>
+          {{ ' ' }}
+          <span :style="{ color: liveLabel.centsColor }">
+            {{ liveLabel.centsText }}
+          </span>
+        </span>
+      </div>
 
       <!--
         Each label sits on the outer side of its line (low end to the left,

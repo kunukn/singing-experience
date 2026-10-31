@@ -108,6 +108,37 @@ describe('VoiceTypeComparison', () => {
         expect(line.attributes('style')).toContain('inset-inline-start: 50%')
     })
 
+    const liveLabelOf = (liveMidi: number | null) =>
+      mount(VoiceTypeComparison, {
+        props: { midiMin: 44, midiMax: 60, liveMidi },
+        global: { plugins: [i18n] },
+      }).find('[data-testid="voice-type-comparison-live-label"]')
+
+    test('should name the sung note and its cents beside the line', () => {
+      /* E3, 20¢ sharp — left half of the axis, so the label sits after the line */
+      const label = liveLabelOf(52.2)
+
+      expect(label.text().replace(/\s+/g, ' ')).toBe('E3 +20¢')
+      expect(label.attributes('data-side')).toBe('end')
+    })
+
+    test('should put the label before the line past the middle', () => {
+      /* C5 */
+      const label = liveLabelOf(72)
+
+      expect(label.text().replace(/\s+/g, ' ')).toBe('C5 0¢')
+      expect(label.attributes('data-side')).toBe('start')
+    })
+
+    test('should name the real note when the line is pinned to the edge', () => {
+      /* A1, below the E2 axis start */
+      expect(liveLabelOf(33).text()).toContain('A1')
+    })
+
+    test('should not label anything while nothing is sung', () => {
+      expect(liveLabelOf(null).exists()).toBe(false)
+    })
+
     test('should pin a note below the chart to its edge', () => {
       expect(liveLinesOf(30)[0]!.attributes('style')).toContain(
         'inset-inline-start: 0%',
