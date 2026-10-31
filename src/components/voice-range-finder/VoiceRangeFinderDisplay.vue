@@ -145,7 +145,15 @@ const holdHint = computed(() =>
 const isSearching = computed(
   () => step.value === 'low' || step.value === 'high',
 )
-const isJustSaved = ref(false)
+
+/* How long the ✓ beside the range confirms a sung save */
+const SAVED_FLASH_MS = 2000
+
+const {
+  isPending: isJustSaved,
+  start: startSavedFlash,
+  stop: stopSavedFlash,
+} = useTimeoutFn(() => {}, SAVED_FLASH_MS, { immediate: false })
 
 const stepRecord = computed(() =>
   step.value === 'low' ? lowestMidi.value : highestMidi.value,
@@ -215,7 +223,7 @@ const isWidened = computed(
 )
 
 async function startSearch(only?: 'low' | 'high') {
-  isJustSaved.value = false
+  stopSavedFlash()
   finder.start(only)
   await props.detection.start()
 }
@@ -253,7 +261,7 @@ function saveFoundRange() {
 
 function markSaved() {
   sharedRangeIndex.value = MY_RANGE_INDEX
-  isJustSaved.value = true
+  startSavedFlash()
   finder.cancel()
 }
 
@@ -279,12 +287,28 @@ onUnmounted(() => {
       <h2 class="text-sm font-medium text-(--p-text-muted-color)">
         {{ t('voiceRanges.myRange') }}
       </h2>
+      <!-- aria-live reads a new range aloud, standing in for the ✓ a screen reader can't see -->
       <p
-        class="text-3xl font-semibold tabular-nums"
+        class="relative text-3xl font-semibold tabular-nums"
         dir="ltr"
+        aria-live="polite"
         data-testid="my-range-notes"
       >
         {{ formatRange(myVoiceRange.midiMin, myVoiceRange.midiMax) }}
+        <!-- Absolutely placed so the range stays centred while the ✓ comes and goes -->
+        <Transition
+          leaveActiveClass="transition-opacity duration-500"
+          leaveToClass="opacity-0"
+        >
+          <span
+            v-if="isJustSaved"
+            aria-hidden="true"
+            data-testid="my-range-saved"
+            class="absolute start-full top-1/2 ms-2 -translate-y-1/2 text-xl text-(--p-green-500)"
+          >
+            ✓
+          </span>
+        </Transition>
       </p>
 
       <!-- Mic buttons sit outside the labels, so a tap isn't forwarded to the select -->
@@ -371,13 +395,6 @@ onUnmounted(() => {
       >
         {{ t('voiceRangeFinder.findBySinging') }}
       </PrimeButton>
-      <p
-        v-if="isJustSaved"
-        class="text-sm font-medium text-(--p-green-500)"
-        data-testid="voice-range-finder-saved"
-      >
-        {{ t('voiceRangeFinder.saved') }}
-      </p>
     </template>
 
     <section

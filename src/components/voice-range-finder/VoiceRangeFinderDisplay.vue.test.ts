@@ -64,4 +64,25 @@ describe('VoiceRangeFinderDisplay', () => {
       wrapper.find('[data-testid="voice-range-finder-record-tick"]').exists(),
     ).toBe(false)
   })
+
+  test('should show a ✓ beside the range after a sung save, then hide it', async () => {
+    const { wrapper, frequency } = mountDisplay()
+    const savedTick = () => wrapper.find('[data-testid="my-range-saved"]')
+
+    await wrapper.get('[data-testid="my-range-sing-lowest"]').trigger('click')
+    frequency.value = G2_HZ
+    vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS + 100)
+    await nextTick()
+    await wrapper
+      .get('[data-testid="voice-range-finder-done"]')
+      .trigger('click')
+
+    expect(wrapper.get('[data-testid="my-range-notes"]').text()).toContain('G2')
+    expect(savedTick().exists()).toBe(true)
+
+    vi.advanceTimersByTime(2000)
+    await nextTick()
+
+    expect(savedTick().exists()).toBe(false)
+  })
 })
