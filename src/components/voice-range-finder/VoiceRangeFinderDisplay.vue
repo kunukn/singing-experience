@@ -228,23 +228,33 @@ async function startSearch(only?: 'low' | 'high') {
   await props.detection.start()
 }
 
-/* A one-end search saves straight away: there is no sung range to review, and
- * the result screen would credit the singer with the end they didn't sing.
- * The picker setters keep the octave span, as a hand pick would. */
+/* One end found — a one-end search, or a full search with an end skipped —
+ * saves straight away: there is no sung range to review, and the result
+ * screen would credit the singer with the end they didn't sing. The picker
+ * setters keep the octave span, as a hand pick would. */
 function saveSingleEnd() {
-  if (mode.value === 'high' && highestMidi.value !== null)
-    highestNote.value = highestMidi.value
-  if (mode.value === 'low' && lowestMidi.value !== null)
-    lowestNote.value = lowestMidi.value
+  if (highestMidi.value !== null) highestNote.value = highestMidi.value
+  if (lowestMidi.value !== null) lowestNote.value = lowestMidi.value
   markSaved()
 }
+
+/* In a full search Done also skips: past the low step with nothing sung, or
+ * out of the high step keeping just the low end. It only stays off when
+ * pressing it would save nothing. */
+const canFinishStep = computed(() =>
+  mode.value === 'both'
+    ? step.value === 'low' ||
+      lowestMidi.value !== null ||
+      highestMidi.value !== null
+    : stepRecord.value !== null,
+)
 
 function finishStep() {
   finder.next()
   if (step.value !== 'result') return
 
   props.detection.stop()
-  if (mode.value !== 'both') saveSingleEnd()
+  if (!sungRange.value) saveSingleEnd()
 }
 
 function cancelSearch() {
@@ -414,13 +424,14 @@ onUnmounted(() => {
       <!--
         Bar and note share the first row, so the note centres on the bar; the
         cents hang in a second row beneath the note without pulling it up.
-        Fixed note column so the bar doesn't jump as the label changes width.
-        A paused bar dims, so a kept-but-idle hold doesn't look like progress.
+        The meter has its own column and the note a fixed, start-aligned one
+        sized for the widest label (D♯3), so neither the bar nor the meter
+        moves as the label changes width. A paused bar dims, so a kept-but-idle hold doesn't look like progress.
         PrimeVue's 1 s width transition is switched off: progress already moves
         every frame, and the transition made the bar trail the real hold (never
         visibly full) and drain on reset, which read as failure.
       -->
-      <div class="grid w-full grid-cols-[1fr_4rem] items-center gap-x-3">
+      <div class="grid w-full grid-cols-[1fr_auto_3rem] items-center gap-x-2">
         <PrimeProgressBar
           class="h-2 transition-opacity"
           :class="{ 'opacity-40': !isFilling && !isRecordFlash }"
@@ -430,27 +441,25 @@ onUnmounted(() => {
           :value="barPercent"
           :showValue="false"
         />
-        <!-- Meter before the note, so note and cents keep one end-aligned edge -->
+        <CentsMeter class="text-xl" :cents="isRecordFlash ? null : liveCents" />
         <span
-          class="flex items-center gap-1.5 justify-self-end text-xl font-semibold tabular-nums"
+          class="justify-self-start text-xl font-semibold tabular-nums"
           dir="ltr"
+          data-testid="voice-range-finder-live-note"
         >
-          <CentsMeter :cents="isRecordFlash ? null : liveCents" />
-          <span data-testid="voice-range-finder-live-note">
-            {{ shownMidi === null ? '–' : formatNote(shownMidi) }}
-          </span>
+          {{ shownMidi === null ? '–' : formatNote(shownMidi) }}
         </span>
         <!-- Always rendered so the card keeps its height when the cents vanish -->
         <span
           v-if="isRecordFlash"
-          class="col-start-2 justify-self-end text-sm font-semibold text-(--p-green-500)"
+          class="col-start-3 justify-self-start text-sm font-semibold text-(--p-green-500)"
           data-testid="voice-range-finder-record-tick"
         >
           ✓
         </span>
         <span
           v-else
-          class="col-start-2 justify-self-end text-sm font-medium tabular-nums"
+          class="col-start-3 justify-self-start text-sm font-medium tabular-nums"
           dir="ltr"
           :style="{ color: liveCentsColor }"
           data-testid="voice-range-finder-live-cents"
@@ -502,7 +511,7 @@ onUnmounted(() => {
         <PrimeButton
           size="small"
           rounded
-          :disabled="stepRecord === null"
+          :disabled="!canFinishStep"
           data-testid="voice-range-finder-done"
           @click="finishStep"
         >

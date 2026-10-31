@@ -69,6 +69,55 @@ describe('VoiceRangeFinderDisplay', () => {
     ).toBe(false)
   })
 
+  test('should save the low end when the high step is skipped', async () => {
+    const { wrapper, frequency } = mountDisplay()
+    const done = () => wrapper.get('[data-testid="voice-range-finder-done"]')
+
+    await wrapper
+      .get('[data-testid="voice-range-finder-start"]')
+      .trigger('click')
+    frequency.value = G2_HZ
+    vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS + 100)
+    await nextTick()
+    await done().trigger('click')
+    frequency.value = null
+    await nextTick()
+
+    expect(
+      wrapper
+        .get('[data-testid="voice-range-finder-step"]')
+        .attributes('data-step'),
+    ).toBe('high')
+    expect(done().attributes('disabled')).toBeUndefined()
+
+    await done().trigger('click')
+
+    expect(
+      wrapper.find('[data-testid="voice-range-finder-step"]').exists(),
+    ).toBe(false)
+    expect(
+      wrapper.get('[data-testid="my-range-notes"]').text().startsWith('G2'),
+    ).toBe(true)
+    expect(wrapper.find('[data-testid="my-range-saved"]').exists()).toBe(true)
+  })
+
+  test('should skip the low step but not save from nothing', async () => {
+    const { wrapper } = mountDisplay()
+    const done = () => wrapper.get('[data-testid="voice-range-finder-done"]')
+
+    await wrapper
+      .get('[data-testid="voice-range-finder-start"]')
+      .trigger('click')
+    await done().trigger('click')
+
+    expect(
+      wrapper
+        .get('[data-testid="voice-range-finder-step"]')
+        .attributes('data-step'),
+    ).toBe('high')
+    expect(done().attributes('disabled')).toBeDefined()
+  })
+
   test('should show a ✓ beside the range after a sung save, then hide it', async () => {
     const { wrapper, frequency } = mountDisplay()
     const savedTick = () => wrapper.find('[data-testid="my-range-saved"]')
