@@ -54,7 +54,7 @@ export const RIBBON_BAR_OPACITY = 0.55
 export const MIN_VOICE_COVERAGE = 0.75
 
 /* Ascending by pitch, so stopIndex 0 is Bass and 5 is Soprano. */
-const VOICE_TYPES = VOICE_RANGES.map((range, rangeIndex) => ({
+export const VOICE_TYPES = VOICE_RANGES.map((range, rangeIndex) => ({
   range,
   rangeIndex,
 }))

@@ -132,6 +132,7 @@ declare global {
   const useMicrophonePermission: typeof import('./composables/useMicrophonePermission').useMicrophonePermission
   const useModel: typeof import('vue').useModel
   const useMultiToneDetection: typeof import('./composables/useMultiToneDetection').useMultiToneDetection
+  const useMyVoiceRange: typeof import('./composables/useMyVoiceRange').useMyVoiceRange
   const usePitchDetection: typeof import('./composables/usePitchDetection').usePitchDetection
   const usePitchPreviewColor: typeof import('./composables/usePitchPreviewColor').usePitchPreviewColor
   const usePitchSnap: typeof import('./composables/usePitchSnap').usePitchSnap
@@ -305,6 +306,7 @@ declare module 'vue' {
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useMicrophonePermission: UnwrapRef<typeof import('./composables/useMicrophonePermission')['useMicrophonePermission']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly useMyVoiceRange: UnwrapRef<typeof import('./composables/useMyVoiceRange')['useMyVoiceRange']>
     readonly usePitchDetection: UnwrapRef<typeof import('./composables/usePitchDetection')['usePitchDetection']>
     readonly usePitchPreviewColor: UnwrapRef<typeof import('./composables/usePitchPreviewColor')['usePitchPreviewColor']>
     readonly usePitchSnap: UnwrapRef<typeof import('./composables/usePitchSnap')['usePitchSnap']>

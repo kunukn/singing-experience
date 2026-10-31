@@ -29,6 +29,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Hard",
     "voiceRange": "Nipit annertussusia",
+    "findMyRange": "Find my range",
     "voiceTypeSpan": "{name}, {from}–{to}",
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Octave down",
@@ -120,6 +121,10 @@
       "warmUp": {
         "name": "Nipersiorneq",
         "description": "Nipit nipilersuutigalugit nipersioriaruk — nota ataaseq tigusimaaruk siusinnaannginnarlutit."
+      },
+      "voiceRangeFinder": {
+        "name": "Voice Range Finder",
+        "description": "Sing your lowest and highest notes to find your range. Every game can use it."
       },
       "singingTools": {
         "name": "Nipilersuutit atortut",
@@ -232,7 +237,9 @@
     "replaySound": "Nipimik uteqqiigit\n(kingulleq 30 sek.)"
   },
   "voiceRanges": {
+    "myRange": "My range",
     "groups": {
+      "mine": "Your voice",
       "easy": "Nemme valg",
       "voiceTypes": "Stemmetyper",
       "wide": "Brede lejer"
@@ -257,6 +264,36 @@
     "bassToTenor": "Bass–Tenor",
     "bassToBaritone": "Bass–Bariton",
     "duet": "Angutit aamma arnat"
+  },
+  "voiceRangeFinder": {
+    "highest": "Highest note",
+    "lowest": "Lowest note",
+    "reset": "Reset",
+    "findBySinging": "Find it by singing",
+    "lowPrompt": "Sing a low note and hold it. Then try a little lower!",
+    "highPrompt": "Sing a high note and hold it. Then try a little higher! Only clean notes count.",
+    "lowestSoFar": "Lowest so far: {note}",
+    "highestSoFar": "Highest so far: {note}",
+    "noRecordYet": "Hold a note until the bar fills",
+    "keepHolding": "Keep holding {note} to save it",
+    "cleanCounts": "Clean — this note counts",
+    "notCleanYet": "Not clean yet — get within {cents}¢",
+    "done": "Done",
+    "cancel": "Cancel",
+    "resultTitle": "You sang {range}",
+    "widened": "We'll save it as {range}, a whole octave, so every game can use it.",
+    "useThis": "Use this",
+    "tryAgain": "Try again",
+    "saved": "Saved as My range",
+    "compare": {
+      "title": "You vs. voice types",
+      "explainer": "Solid = notes you can sing. ↑ ↓ shows where to go to cover the whole voice.",
+      "rowLabel": "{name}, {from}–{to}. You cover {percent}.",
+      "reachUp": "Sing up to {note}.",
+      "reachDown": "Sing down to {note}.",
+      "reachBoth": "Sing down to {low} and up to {high}.",
+      "covered": "You cover all of it."
+    }
   },
   "toneDetector": {
     "tonesDetected": "{count} nipi nassaarineqarput",
@@ -472,6 +509,11 @@
       "step1": "Pick your voice and a pattern, then press Aallartitsit.",
       "step2": "Listen to the phrase, then sing it back.",
       "step3": "Each round moves up a semitone. Stop when it feels too high."
+    },
+    "voiceRangeFinder": {
+      "step1": "Press Find it by singing and sing a low note. Hold it until the bar fills, then try lower.",
+      "step2": "Press Done, then do the same going up. Only clean, in-tune notes count.",
+      "step3": "Press Use this to save it as My range — or pick the notes yourself."
     },
     "notes": {
       "step1": "Look at the staff to see where each note sits.",

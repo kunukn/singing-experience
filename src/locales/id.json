@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Sulit",
     "voiceRange": "Jangkauan suara",
+    "findMyRange": "Cari jangkauanku",
     "voiceTypeSpan": "{name}, {from}–{to}",
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Turun satu oktaf",
@@ -129,6 +130,10 @@
       "warmUp": {
         "name": "Pemanasan Vokal",
         "description": "Panaskan suaramu melalui rangkaian nada terpandu — tahan setiap nada untuk melanjutkan."
+      },
+      "voiceRangeFinder": {
+        "name": "Pencari Jangkauan Suara",
+        "description": "Nyanyikan nada terendah dan tertinggimu untuk menemukan jangkauan suaramu. Semua permainan bisa memakainya."
       },
       "singingTools": {
         "name": "Alat Musik",
@@ -289,7 +294,9 @@
     }
   },
   "voiceRanges": {
+    "myRange": "Jangkauanku",
     "groups": {
+      "mine": "Suaramu",
       "easy": "Pilihan mudah",
       "voiceTypes": "Jenis suara",
       "wide": "Jangkauan lebar"
@@ -314,6 +321,36 @@
     "bassToTenor": "Bass–Tenor",
     "bassToBaritone": "Bass–Bariton",
     "duet": "Pria & wanita"
+  },
+  "voiceRangeFinder": {
+    "highest": "Nada tertinggi",
+    "lowest": "Nada terendah",
+    "reset": "Atur ulang",
+    "findBySinging": "Cari dengan bernyanyi",
+    "lowPrompt": "Nyanyikan nada rendah dan tahan. Lalu coba sedikit lebih rendah!",
+    "highPrompt": "Nyanyikan nada tinggi dan tahan. Lalu coba sedikit lebih tinggi! Hanya nada yang bersih yang dihitung.",
+    "lowestSoFar": "Terendah sejauh ini: {note}",
+    "highestSoFar": "Tertinggi sejauh ini: {note}",
+    "noRecordYet": "Tahan satu nada sampai bilahnya penuh",
+    "keepHolding": "Terus tahan {note} untuk menyimpannya",
+    "cleanCounts": "Bersih — nada ini dihitung",
+    "notCleanYet": "Belum bersih — usahakan dalam {cents}¢",
+    "done": "Selesai",
+    "cancel": "Batal",
+    "resultTitle": "Kamu menyanyikan {range}",
+    "widened": "Kami simpan sebagai {range}, satu oktaf penuh, supaya semua permainan bisa memakainya.",
+    "useThis": "Pakai ini",
+    "tryAgain": "Coba lagi",
+    "saved": "Tersimpan sebagai Jangkauanku",
+    "compare": {
+      "title": "Kamu dan jenis suara",
+      "explainer": "Penuh = nada yang bisa kamu nyanyikan. ↑ ↓ menunjukkan arah untuk mencakup seluruh suara.",
+      "rowLabel": "{name}, {from}–{to}. Kamu mencakup {percent}.",
+      "reachUp": "Nyanyi naik sampai {note}.",
+      "reachDown": "Nyanyi turun sampai {note}.",
+      "reachBoth": "Nyanyi turun sampai {low} dan naik sampai {high}.",
+      "covered": "Kamu mencakup semuanya."
+    }
   },
   "toneDetector": {
     "tonesDetected": "{count} nada terdeteksi",
@@ -613,6 +650,11 @@
       "step1": "Pilih suaramu dan sebuah pola, lalu tekan Mulai.",
       "step2": "Dengarkan frasanya, lalu nyanyikan kembali.",
       "step3": "Setiap putaran naik satu semiton. Berhenti kalau sudah terasa terlalu tinggi."
+    },
+    "voiceRangeFinder": {
+      "step1": "Tekan Cari dengan bernyanyi lalu nyanyikan nada rendah. Tahan sampai bilahnya penuh, lalu coba lebih rendah.",
+      "step2": "Tekan Selesai, lalu lakukan hal yang sama ke atas. Hanya nada yang bersih yang dihitung.",
+      "step3": "Tekan Pakai ini untuk menyimpannya sebagai Jangkauanku, atau pilih sendiri nadanya."
     },
     "notes": {
       "step1": "Lihat paranada untuk tahu letak setiap not.",

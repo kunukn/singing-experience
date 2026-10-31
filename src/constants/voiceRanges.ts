@@ -1,4 +1,6 @@
-export type VoiceRangeGroupId = 'easy' | 'voiceTypes' | 'wide'
+import { midiToNoteLabel } from '@/utils/noteUtils'
+
+export type VoiceRangeGroupId = 'mine' | 'easy' | 'voiceTypes' | 'wide'
 
 export type VoiceRange = {
   labelKey: string
@@ -18,13 +20,14 @@ export type VoiceRange = {
 
 /* Display order of the option groups in the voice-range select. */
 export const VOICE_RANGE_GROUP_ORDER = [
+  'mine',
   'easy',
   'voiceTypes',
   'wide',
 ] as const satisfies readonly VoiceRangeGroupId[]
 
 /*
- * Ordered for the select: everyday picks, then the classical voice types, then
+ * Ordered for the select: the singer's own range, then everyday picks, then the classical voice types, then
  * the wide spans. Within every group the options run high to low, matching the
  * chart's y-axis — see "Pitch Orientation" in AGENTS.md. A range sorts on its
  * midpoint, since a span has no single pitch; the catch-alls (choir, full) sit
@@ -33,7 +36,29 @@ export const VOICE_RANGE_GROUP_ORDER = [
  * Reordering is safe — selections are persisted by labelKey, not index (see
  * useVoiceRangeIndex).
  */
+const { myVoiceRange } = useMyVoiceRange()
+
 export const VOICE_RANGES: VoiceRange[] = [
+  /* The singer's own range from the Voice Range Finder, first so it is easy to
+   * find. Getters rather than values: every program reads
+   * VOICE_RANGES[rangeIndex] inside a computed, so they all follow an edit
+   * without knowing this entry is special. Anything spreading the entry takes a
+   * snapshot, which is fine for a single read. */
+  {
+    labelKey: 'voiceRanges.myRange',
+    group: 'mine',
+    get midiMin() {
+      return myVoiceRange.value.midiMin
+    },
+    get midiMax() {
+      return myVoiceRange.value.midiMax
+    },
+    get noteRange() {
+      const { midiMin, midiMax } = myVoiceRange.value
+
+      return `${midiToNoteLabel(midiMin).label}–${midiToNoteLabel(midiMax).label}`
+    },
+  },
   {
     labelKey: 'voiceRanges.kids',
     noteRange: 'D4–D5',
@@ -221,4 +246,9 @@ export const VOICE_RANGES: VoiceRange[] = [
 /* Resolve by labelKey so the default survives reordering of VOICE_RANGES */
 export const DEFAULT_RANGE_INDEX = VOICE_RANGES.findIndex(
   (range) => range.labelKey === 'voiceRanges.everyone',
+)
+
+/* Where the singer's own range sits — resolved by labelKey like the default */
+export const MY_RANGE_INDEX = VOICE_RANGES.findIndex(
+  (range) => range.labelKey === 'voiceRanges.myRange',
 )

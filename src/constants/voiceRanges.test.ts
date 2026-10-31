@@ -1,4 +1,5 @@
-import { describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test } from 'vitest'
+import { useMyVoiceRange } from '@/composables/useMyVoiceRange'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { getSegmentsForRange } from '@/utils/voiceRangeSegments'
 import { VOICE_RANGE_GROUP_ORDER, VOICE_RANGES } from './voiceRanges'
@@ -146,5 +147,41 @@ describe('VOICE_RANGES ordering', () => {
     )
 
     expect(groupsInArrayOrder).toEqual([...VOICE_RANGE_GROUP_ORDER])
+  })
+})
+
+/*
+ * My range is the one entry whose span is not written in this file: its MIDI
+ * numbers and label are getters over the stored range. Every program reads it
+ * through VOICE_RANGES[rangeIndex], so the entry itself has to follow an edit.
+ */
+describe('VOICE_RANGES - My range', () => {
+  const myRange = VOICE_RANGES.find(
+    (range) => range.labelKey === 'voiceRanges.myRange',
+  )!
+  const { setMyVoiceRange, resetMyVoiceRange } = useMyVoiceRange()
+
+  afterEach(() => {
+    resetMyVoiceRange()
+  })
+
+  test('should start out as G3–G4, the same as Everyone', () => {
+    expect(myRange.noteRange).toBe('G3–G4')
+  })
+
+  test('should follow the stored range', () => {
+    setMyVoiceRange(43, 71)
+
+    expect(myRange.midiMin).toBe(43)
+    expect(myRange.midiMax).toBe(71)
+    expect(myRange.noteRange).toBe('G2–B4')
+  })
+
+  test('should spell accidentals the way midiToNoteLabel does', () => {
+    setMyVoiceRange(42, 70)
+
+    expect(myRange.noteRange).toBe(
+      `${midiToNoteLabel(42).label}–${midiToNoteLabel(70).label}`,
+    )
   })
 })

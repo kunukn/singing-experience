@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Difficile",
     "voiceRange": "Tessiture ",
+    "findMyRange": "Trouver ma tessiture",
     "voiceTypeSpan": "{name}, {from}–{to}",
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Octave en bas",
@@ -129,6 +130,10 @@
       "warmUp": {
         "name": "Échauffement Vocal",
         "description": "Échauffe ta voix avec une séquence de tons guidée — tiens chaque note pour passer à la suivante."
+      },
+      "voiceRangeFinder": {
+        "name": "Trouve ta tessiture",
+        "description": "Chante ta note la plus grave et la plus aiguë pour trouver ta tessiture. Tous les jeux peuvent l'utiliser."
       },
       "singingTools": {
         "name": "Outils de musique",
@@ -289,7 +294,9 @@
     }
   },
   "voiceRanges": {
+    "myRange": "Ma tessiture",
     "groups": {
+      "mine": "Ta voix",
       "easy": "Choix faciles",
       "voiceTypes": "Types de voix",
       "wide": "Tessitures larges"
@@ -314,6 +321,36 @@
     "bassToTenor": "Basse–Ténor",
     "bassToBaritone": "Basse–Baryton",
     "duet": "Hommes et femmes"
+  },
+  "voiceRangeFinder": {
+    "highest": "Note la plus aiguë",
+    "lowest": "Note la plus grave",
+    "reset": "Réinitialiser",
+    "findBySinging": "Trouver en chantant",
+    "lowPrompt": "Chante une note grave et tiens-la. Puis essaie un peu plus grave !",
+    "highPrompt": "Chante une note aiguë et tiens-la. Puis essaie un peu plus aigu ! Seules les notes nettes comptent.",
+    "lowestSoFar": "La plus grave pour l'instant : {note}",
+    "highestSoFar": "La plus aiguë pour l'instant : {note}",
+    "noRecordYet": "Tiens une note jusqu'à ce que la barre soit pleine",
+    "keepHolding": "Continue de tenir {note} pour l'enregistrer",
+    "cleanCounts": "Nette — cette note compte",
+    "notCleanYet": "Pas encore nette — reste à {cents}¢ près",
+    "done": "Fini",
+    "cancel": "Annuler",
+    "resultTitle": "Tu as chanté {range}",
+    "widened": "On l'enregistre comme {range}, une octave entière, pour que tous les jeux puissent l'utiliser.",
+    "useThis": "Garder",
+    "tryAgain": "Réessayer",
+    "saved": "Enregistré comme Ma tessiture",
+    "compare": {
+      "title": "Toi et les types de voix",
+      "explainer": "Plein = notes que tu peux chanter. ↑ ↓ montre où aller pour couvrir toute la voix.",
+      "rowLabel": "{name}, {from}–{to}. Tu couvres {percent}.",
+      "reachUp": "Monte jusqu'à {note}.",
+      "reachDown": "Descends jusqu'à {note}.",
+      "reachBoth": "Descends jusqu'à {low} et monte jusqu'à {high}.",
+      "covered": "Tu la couvres entièrement."
+    }
   },
   "toneDetector": {
     "tonesDetected": "{count} tons trouvés",
@@ -613,6 +650,11 @@
       "step1": "Choisis ta voix et un motif, puis appuie sur Démarrer.",
       "step2": "Écoute la phrase, puis chante-la à ton tour.",
       "step3": "Chaque tour monte d'un demi-ton. Arrête quand ça devient trop haut."
+    },
+    "voiceRangeFinder": {
+      "step1": "Appuie sur Trouver en chantant et chante une note grave. Tiens-la jusqu'à ce que la barre soit pleine, puis essaie plus grave.",
+      "step2": "Appuie sur Fini et fais pareil vers l'aigu. Seules les notes nettes et justes comptent.",
+      "step3": "Appuie sur Garder pour l'enregistrer comme Ma tessiture, ou choisis les notes toi-même."
     },
     "notes": {
       "step1": "Regarde la portée pour voir où se place chaque note.",

@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Svær",
     "voiceRange": "Stemmeleje",
+    "findMyRange": "Find mit leje",
     "voiceTypeSpan": "{name}, {from}–{to}",
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Oktav ned",
@@ -129,6 +130,10 @@
       "warmUp": {
         "name": "Stemmeopvarmning",
         "description": "Varm stemmen op gennem en guidet tonesekvens — hold hver tone for at gå videre."
+      },
+      "voiceRangeFinder": {
+        "name": "Find dit stemmeleje",
+        "description": "Syng din dybeste og højeste tone og find dit stemmeleje. Alle spil kan bruge det."
       },
       "singingTools": {
         "name": "Musikværktøjer",
@@ -289,7 +294,9 @@
     }
   },
   "voiceRanges": {
+    "myRange": "Mit leje",
     "groups": {
+      "mine": "Din stemme",
       "easy": "Nemme valg",
       "voiceTypes": "Stemmetyper",
       "wide": "Brede lejer"
@@ -314,6 +321,36 @@
     "bassToTenor": "Bas–Tenor",
     "bassToBaritone": "Bas–Baryton",
     "duet": "Mænd & kvinder"
+  },
+  "voiceRangeFinder": {
+    "highest": "Højeste tone",
+    "lowest": "Dybeste tone",
+    "reset": "Nulstil",
+    "findBySinging": "Find det ved at synge",
+    "lowPrompt": "Syng en dyb tone, og hold den. Prøv så lidt dybere!",
+    "highPrompt": "Syng en høj tone, og hold den. Prøv så lidt højere! Kun rene toner tæller.",
+    "lowestSoFar": "Dybeste indtil nu: {note}",
+    "highestSoFar": "Højeste indtil nu: {note}",
+    "noRecordYet": "Hold en tone, til baren er fyldt",
+    "keepHolding": "Bliv ved med at holde {note} for at gemme den",
+    "cleanCounts": "Rent — den her tone tæller",
+    "notCleanYet": "Ikke rent endnu — kom inden for {cents}¢",
+    "done": "Færdig",
+    "cancel": "Annuller",
+    "resultTitle": "Du sang {range}",
+    "widened": "Vi gemmer det som {range}, en hel oktav, så alle spil kan bruge det.",
+    "useThis": "Brug det",
+    "tryAgain": "Prøv igen",
+    "saved": "Gemt som Mit leje",
+    "compare": {
+      "title": "Dig og stemmetyperne",
+      "explainer": "Fyldt = toner, du kan synge. ↑ ↓ viser, hvor du skal hen for at dække hele stemmen.",
+      "rowLabel": "{name}, {from}–{to}. Du dækker {percent}.",
+      "reachUp": "Syng op til {note}.",
+      "reachDown": "Syng ned til {note}.",
+      "reachBoth": "Syng ned til {low} og op til {high}.",
+      "covered": "Du dækker det hele."
+    }
   },
   "toneDetector": {
     "tonesDetected": "{count} toner fundet",
@@ -613,6 +650,11 @@
       "step1": "Vælg din stemme og et mønster, og tryk så på Start.",
       "step2": "Lyt til frasen, og syng den så efter.",
       "step3": "Hver runde går en halvtone op. Stop, når det føles for højt."
+    },
+    "voiceRangeFinder": {
+      "step1": "Tryk på Find det ved at synge, og syng en dyb tone. Hold den, til baren er fyldt, og prøv så dybere.",
+      "step2": "Tryk på Færdig, og gør det samme opad. Kun rene toner tæller.",
+      "step3": "Tryk på Brug det for at gemme det som Mit leje — eller vælg tonerne selv."
     },
     "notes": {
       "step1": "Kig på nodelinjen for at se, hvor hver node sidder.",

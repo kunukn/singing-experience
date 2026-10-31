@@ -32,6 +32,7 @@
     "difficulty_normal": "普通",
     "difficulty_hard": "困难",
     "voiceRange": "音域",
+    "findMyRange": "找到我的音域",
     "voiceTypeSpan": "{name}，{from}–{to}",
     "voiceTypeSpanCoverage": "{name}，{from}–{to}，{percent}%",
     "octaveDown": "低八度",
@@ -129,6 +130,10 @@
       "warmUp": {
         "name": "嗓音热身",
         "description": "跟随引导的音阶热身嗓音 — 保持每个音以进入下一个。"
+      },
+      "voiceRangeFinder": {
+        "name": "找音域",
+        "description": "唱出你最低和最高的音，找到你的音域。所有游戏都能用它。"
       },
       "singingTools": {
         "name": "音乐工具",
@@ -289,7 +294,9 @@
     }
   },
   "voiceRanges": {
+    "myRange": "我的音域",
     "groups": {
+      "mine": "你的声音",
       "easy": "简单选择",
       "voiceTypes": "声部类型",
       "wide": "宽音域"
@@ -314,6 +321,36 @@
     "bassToTenor": "男低音–男高音",
     "bassToBaritone": "男低音–男中音",
     "duet": "男声与女声"
+  },
+  "voiceRangeFinder": {
+    "highest": "最高音",
+    "lowest": "最低音",
+    "reset": "重置",
+    "findBySinging": "唱歌来找",
+    "lowPrompt": "唱一个低音并保持住。然后再低一点试试！",
+    "highPrompt": "唱一个高音并保持住。然后再高一点试试！只有干净的音才算数。",
+    "lowestSoFar": "目前最低：{note}",
+    "highestSoFar": "目前最高：{note}",
+    "noRecordYet": "保持一个音，直到进度条满",
+    "keepHolding": "继续保持 {note} 就能存下来",
+    "cleanCounts": "很干净——这个音算数",
+    "notCleanYet": "还不够干净——要在 {cents}¢ 以内",
+    "done": "好了",
+    "cancel": "取消",
+    "resultTitle": "你唱出了 {range}",
+    "widened": "我们会存为 {range}，整整一个八度，这样所有游戏都能用。",
+    "useThis": "就用这个",
+    "tryAgain": "再试一次",
+    "saved": "已存为“我的音域”",
+    "compare": {
+      "title": "你和各声部",
+      "explainer": "实心 = 你能唱的音。↑ ↓ 表示要往哪边唱才能覆盖整个声部。",
+      "rowLabel": "{name}，{from}–{to}。你覆盖了 {percent}。",
+      "reachUp": "往上唱到 {note}。",
+      "reachDown": "往下唱到 {note}。",
+      "reachBoth": "往下唱到 {low}，往上唱到 {high}。",
+      "covered": "你全部覆盖了。"
+    }
   },
   "toneDetector": {
     "tonesDetected": "检测到 {count} 个音调",
@@ -613,6 +650,11 @@
       "step1": "选好你的声音和模式，然后点“开始”。",
       "step2": "先听一遍乐句，再把它唱回来。",
       "step3": "每一轮升高一个半音。觉得太高了就停下来。"
+    },
+    "voiceRangeFinder": {
+      "step1": "点“唱歌来找”，唱一个低音。一直唱到进度条满，然后试试更低的。",
+      "step2": "点“好了”，再往高处做一遍。只有干净、准确的音才算数。",
+      "step3": "点“就用这个”把它存为“我的音域”，也可以自己选音。"
     },
     "notes": {
       "step1": "看看五线谱，找到每个音在哪里。",

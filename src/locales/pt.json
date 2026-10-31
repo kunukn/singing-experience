@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Difícil",
     "voiceRange": "Extensão vocal",
+    "findMyRange": "Encontrar minha extensão",
     "voiceTypeSpan": "{name}, {from}–{to}",
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Oitava abaixo",
@@ -129,6 +130,10 @@
       "warmUp": {
         "name": "Aquecimento Vocal",
         "description": "Aqueça a voz com uma sequência guiada de tons — sustente cada nota para avançar."
+      },
+      "voiceRangeFinder": {
+        "name": "Descubra sua extensão",
+        "description": "Cante sua nota mais grave e a mais aguda para descobrir sua extensão vocal. Todos os jogos podem usá-la."
       },
       "singingTools": {
         "name": "Ferramentas de música",
@@ -289,7 +294,9 @@
     }
   },
   "voiceRanges": {
+    "myRange": "Minha extensão",
     "groups": {
+      "mine": "Sua voz",
       "easy": "Escolhas fáceis",
       "voiceTypes": "Tipos de voz",
       "wide": "Extensões amplas"
@@ -314,6 +321,36 @@
     "bassToTenor": "Baixo–Tenor",
     "bassToBaritone": "Baixo–Barítono",
     "duet": "Homens e mulheres"
+  },
+  "voiceRangeFinder": {
+    "highest": "Nota mais aguda",
+    "lowest": "Nota mais grave",
+    "reset": "Redefinir",
+    "findBySinging": "Descobrir cantando",
+    "lowPrompt": "Cante uma nota grave e segure. Depois tente um pouco mais grave!",
+    "highPrompt": "Cante uma nota aguda e segure. Depois tente um pouco mais aguda! Só contam notas limpas.",
+    "lowestSoFar": "Mais grave até agora: {note}",
+    "highestSoFar": "Mais aguda até agora: {note}",
+    "noRecordYet": "Segure uma nota até a barra encher",
+    "keepHolding": "Continue segurando {note} para salvar",
+    "cleanCounts": "Limpa — esta nota conta",
+    "notCleanYet": "Ainda não está limpa — chegue a {cents}¢",
+    "done": "Pronto",
+    "cancel": "Cancelar",
+    "resultTitle": "Você cantou {range}",
+    "widened": "Vamos salvar como {range}, uma oitava inteira, para todos os jogos poderem usar.",
+    "useThis": "Usar esta",
+    "tryAgain": "Tentar de novo",
+    "saved": "Salva como Minha extensão",
+    "compare": {
+      "title": "Você e os tipos de voz",
+      "explainer": "Cheio = notas que você consegue cantar. ↑ ↓ mostra para onde ir para cobrir a voz inteira.",
+      "rowLabel": "{name}, {from}–{to}. Você cobre {percent}.",
+      "reachUp": "Cante subindo até {note}.",
+      "reachDown": "Cante descendo até {note}.",
+      "reachBoth": "Cante descendo até {low} e subindo até {high}.",
+      "covered": "Você cobre tudo."
+    }
   },
   "toneDetector": {
     "tonesDetected": "{count} tons encontrados",
@@ -613,6 +650,11 @@
       "step1": "Escolha sua voz e um padrão, depois aperte Iniciar.",
       "step2": "Ouça a frase e depois repita cantando.",
       "step3": "Cada rodada sobe um semitom. Pare quando ficar alto demais."
+    },
+    "voiceRangeFinder": {
+      "step1": "Toque em Descobrir cantando e cante uma nota grave. Segure até a barra encher e depois tente mais grave.",
+      "step2": "Toque em Pronto e faça o mesmo subindo. Só contam notas limpas e afinadas.",
+      "step3": "Toque em Usar esta para salvar como Minha extensão, ou escolha as notas você mesmo."
     },
     "notes": {
       "step1": "Olhe a pauta para ver onde fica cada nota.",

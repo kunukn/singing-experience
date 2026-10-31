@@ -32,6 +32,7 @@
     "difficulty_normal": "ふつう",
     "difficulty_hard": "むずかしい",
     "voiceRange": "声域",
+    "findMyRange": "わたしの声域をさがす",
     "voiceTypeSpan": "{name}、{from}–{to}",
     "voiceTypeSpanCoverage": "{name}、{from}–{to}、{percent}%",
     "octaveDown": "1オクターブ下げる",
@@ -129,6 +130,10 @@
       "warmUp": {
         "name": "ボイスウォームアップ",
         "description": "ガイド付きの音階で声を温めましょう。各音を保持すると次に進みます。"
+      },
+      "voiceRangeFinder": {
+        "name": "声域さがし",
+        "description": "いちばん低い音といちばん高い音を歌って、きみの声域を見つけよう。どのゲームでも使えるよ。"
       },
       "singingTools": {
         "name": "音楽ツール",
@@ -289,7 +294,9 @@
     }
   },
   "voiceRanges": {
+    "myRange": "わたしの声域",
     "groups": {
+      "mine": "きみの声",
       "easy": "かんたん",
       "voiceTypes": "声の種類",
       "wide": "広い声域"
@@ -314,6 +321,36 @@
     "bassToTenor": "バス–テノール",
     "bassToBaritone": "バス–バリトン",
     "duet": "男性と女性"
+  },
+  "voiceRangeFinder": {
+    "highest": "いちばん高い音",
+    "lowest": "いちばん低い音",
+    "reset": "リセット",
+    "findBySinging": "歌ってさがす",
+    "lowPrompt": "低い音を歌って、のばそう。それから、もう少し低く！",
+    "highPrompt": "高い音を歌って、のばそう。それから、もう少し高く！きれいな音だけがカウントされるよ。",
+    "lowestSoFar": "いままででいちばん低い音：{note}",
+    "highestSoFar": "いままででいちばん高い音：{note}",
+    "noRecordYet": "バーがいっぱいになるまで音をのばそう",
+    "keepHolding": "{note} をのばしつづけると保存されるよ",
+    "cleanCounts": "きれい！この音はカウントされるよ",
+    "notCleanYet": "まだきれいじゃないよ。{cents}¢ 以内をめざそう",
+    "done": "できた",
+    "cancel": "キャンセル",
+    "resultTitle": "きみが歌ったのは {range}",
+    "widened": "どのゲームでも使えるように、1オクターブにして {range} で保存するよ。",
+    "useThis": "これにする",
+    "tryAgain": "もう一回",
+    "saved": "「わたしの声域」に保存したよ",
+    "compare": {
+      "title": "きみと声の種類",
+      "explainer": "ぬりつぶし＝歌える音。↑ ↓ は、その声を全部カバーするためにどっちへのばせばいいかを表すよ。",
+      "rowLabel": "{name}、{from}–{to}。{percent} カバーしているよ。",
+      "reachUp": "{note} まで上げてみよう。",
+      "reachDown": "{note} まで下げてみよう。",
+      "reachBoth": "{low} まで下げて、{high} まで上げてみよう。",
+      "covered": "全部カバーしているよ。"
+    }
   },
   "toneDetector": {
     "tonesDetected": "{count}音を検出",
@@ -613,6 +650,11 @@
       "step1": "声とパターンを選んで、「開始」を押そう。",
       "step2": "フレーズを聞いて、まねして歌おう。",
       "step3": "1回ごとに半音ずつ上がるよ。高すぎると感じたらストップしよう。"
+    },
+    "voiceRangeFinder": {
+      "step1": "「歌ってさがす」をおして、低い音を歌おう。バーがいっぱいになるまでのばして、もっと低い音にもチャレンジ。",
+      "step2": "「できた」をおして、こんどは高い音で同じようにやろう。きれいな音だけがカウントされるよ。",
+      "step3": "「これにする」をおすと「わたしの声域」に保存されるよ。音を自分で選んでもいいよ。"
     },
     "notes": {
       "step1": "五線を見て、それぞれの音がどこにあるか見てみよう。",

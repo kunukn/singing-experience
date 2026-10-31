@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Schwer",
     "voiceRange": "Stimmumfang",
+    "findMyRange": "Meinen Umfang finden",
     "voiceTypeSpan": "{name}, {from}–{to}",
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Oktave tiefer",
@@ -129,6 +130,10 @@
       "warmUp": {
         "name": "Stimm-Aufwärmen",
         "description": "Wärme deine Stimme mit einer geführten Tonfolge auf — halte jeden Ton, um weiterzukommen."
+      },
+      "voiceRangeFinder": {
+        "name": "Stimmumfang-Finder",
+        "description": "Sing deinen tiefsten und höchsten Ton und finde deinen Stimmumfang. Jedes Spiel kann ihn nutzen."
       },
       "singingTools": {
         "name": "Musikwerkzeuge",
@@ -289,7 +294,9 @@
     }
   },
   "voiceRanges": {
+    "myRange": "Mein Umfang",
     "groups": {
+      "mine": "Deine Stimme",
       "easy": "Einfache Auswahl",
       "voiceTypes": "Stimmlagen",
       "wide": "Große Umfänge"
@@ -314,6 +321,36 @@
     "bassToTenor": "Bass–Tenor",
     "bassToBaritone": "Bass–Bariton",
     "duet": "Männer & Frauen"
+  },
+  "voiceRangeFinder": {
+    "highest": "Höchster Ton",
+    "lowest": "Tiefster Ton",
+    "reset": "Zurücksetzen",
+    "findBySinging": "Durch Singen finden",
+    "lowPrompt": "Sing einen tiefen Ton und halte ihn. Dann versuch es ein bisschen tiefer!",
+    "highPrompt": "Sing einen hohen Ton und halte ihn. Dann versuch es ein bisschen höher! Nur saubere Töne zählen.",
+    "lowestSoFar": "Bisher am tiefsten: {note}",
+    "highestSoFar": "Bisher am höchsten: {note}",
+    "noRecordYet": "Halte einen Ton, bis der Balken voll ist",
+    "keepHolding": "Halte {note} weiter, um ihn zu speichern",
+    "cleanCounts": "Sauber — dieser Ton zählt",
+    "notCleanYet": "Noch nicht sauber — komm auf {cents}¢ heran",
+    "done": "Fertig",
+    "cancel": "Abbrechen",
+    "resultTitle": "Du hast {range} gesungen",
+    "widened": "Wir speichern ihn als {range}, eine ganze Oktave, damit jedes Spiel ihn nutzen kann.",
+    "useThis": "Übernehmen",
+    "tryAgain": "Nochmal versuchen",
+    "saved": "Als Mein Umfang gespeichert",
+    "compare": {
+      "title": "Du und die Stimmlagen",
+      "explainer": "Voll = Töne, die du singen kannst. ↑ ↓ zeigt, wohin du musst, um die ganze Stimmlage abzudecken.",
+      "rowLabel": "{name}, {from}–{to}. Du schaffst {percent}.",
+      "reachUp": "Sing hoch bis {note}.",
+      "reachDown": "Sing runter bis {note}.",
+      "reachBoth": "Sing runter bis {low} und hoch bis {high}.",
+      "covered": "Du schaffst alles."
+    }
   },
   "toneDetector": {
     "tonesDetected": "{count} Töne gefunden",
@@ -613,6 +650,11 @@
       "step1": "Wähl deine Stimme und ein Muster und drück dann auf Start.",
       "step2": "Hör dir die Tonfolge an und sing sie dann nach.",
       "step3": "Jede Runde geht einen Halbton höher. Hör auf, wenn es sich zu hoch anfühlt."
+    },
+    "voiceRangeFinder": {
+      "step1": "Drück auf Durch Singen finden und sing einen tiefen Ton. Halte ihn, bis der Balken voll ist, und versuch es dann tiefer.",
+      "step2": "Drück auf Fertig und mach dasselbe nach oben. Nur saubere Töne zählen.",
+      "step3": "Drück auf Übernehmen, um ihn als Mein Umfang zu speichern — oder wähl die Töne selbst."
     },
     "notes": {
       "step1": "Schau aufs Notensystem, um zu sehen, wo jede Note sitzt.",

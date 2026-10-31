@@ -276,6 +276,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/voice-range-finder': RouteRecordInfo<
+      '/voice-range-finder',
+      '/voice-range-finder',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/voice-range-finder-test': RouteRecordInfo<
+      '/voice-range-finder-test',
+      '/voice-range-finder-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/warm-up': RouteRecordInfo<
       '/warm-up',
       '/warm-up',
@@ -578,6 +592,22 @@ declare module 'vue-router/auto-routes' {
     'src/pages/ukulele.vue': {
       routes:
         | '/ukulele'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/voice-range-finder.vue': {
+      routes:
+        | '/voice-range-finder'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/voice-range-finder-test.vue': {
+      routes:
+        | '/voice-range-finder-test'
       views:
         | never
       pathParamNames:

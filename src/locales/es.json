@@ -32,6 +32,7 @@
     "difficulty_normal": "Normal",
     "difficulty_hard": "Difícil",
     "voiceRange": "Rango vocal",
+    "findMyRange": "Encontrar mi rango",
     "voiceTypeSpan": "{name}, {from}–{to}",
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Octava abajo",
@@ -129,6 +130,10 @@
       "warmUp": {
         "name": "Calentamiento Vocal",
         "description": "Calienta tu voz con una secuencia guiada de tonos — sostén cada nota para avanzar."
+      },
+      "voiceRangeFinder": {
+        "name": "Buscador de rango vocal",
+        "description": "Canta tu nota más grave y la más aguda para encontrar tu rango. Todos los juegos pueden usarlo."
       },
       "singingTools": {
         "name": "Herramientas de música",
@@ -289,7 +294,9 @@
     }
   },
   "voiceRanges": {
+    "myRange": "Mi rango",
     "groups": {
+      "mine": "Tu voz",
       "easy": "Fáciles",
       "voiceTypes": "Tipos de voz",
       "wide": "Rangos amplios"
@@ -314,6 +321,36 @@
     "bassToTenor": "Bajo–Tenor",
     "bassToBaritone": "Bajo–Barítono",
     "duet": "Hombres y mujeres"
+  },
+  "voiceRangeFinder": {
+    "highest": "Nota más aguda",
+    "lowest": "Nota más grave",
+    "reset": "Restablecer",
+    "findBySinging": "Encontrarlo cantando",
+    "lowPrompt": "Canta una nota grave y mantenla. ¡Luego prueba un poco más grave!",
+    "highPrompt": "Canta una nota aguda y mantenla. ¡Luego prueba un poco más aguda! Solo cuentan las notas limpias.",
+    "lowestSoFar": "La más grave hasta ahora: {note}",
+    "highestSoFar": "La más aguda hasta ahora: {note}",
+    "noRecordYet": "Mantén una nota hasta que se llene la barra",
+    "keepHolding": "Sigue manteniendo {note} para guardarla",
+    "cleanCounts": "Limpia: esta nota cuenta",
+    "notCleanYet": "Todavía no está limpia: acércate a {cents}¢",
+    "done": "Listo",
+    "cancel": "Cancelar",
+    "resultTitle": "Cantaste {range}",
+    "widened": "Lo guardaremos como {range}, una octava entera, para que todos los juegos puedan usarlo.",
+    "useThis": "Usar este",
+    "tryAgain": "Intentar de nuevo",
+    "saved": "Guardado como Mi rango",
+    "compare": {
+      "title": "Tú y los tipos de voz",
+      "explainer": "Relleno = notas que puedes cantar. ↑ ↓ muestra hacia dónde ir para cubrir toda la voz.",
+      "rowLabel": "{name}, {from}–{to}. Cubres {percent}.",
+      "reachUp": "Canta hasta {note} hacia arriba.",
+      "reachDown": "Canta hasta {note} hacia abajo.",
+      "reachBoth": "Canta hacia abajo hasta {low} y hacia arriba hasta {high}.",
+      "covered": "La cubres entera."
+    }
   },
   "toneDetector": {
     "tonesDetected": "{count} tonos encontrados",
@@ -613,6 +650,11 @@
       "step1": "Elige tu voz y un patrón, y luego pulsa Iniciar.",
       "step2": "Escucha la frase y luego cántala tú.",
       "step3": "Cada ronda sube un semitono. Para cuando lo sientas demasiado alto."
+    },
+    "voiceRangeFinder": {
+      "step1": "Pulsa Encontrarlo cantando y canta una nota grave. Mantenla hasta que se llene la barra y luego prueba más grave.",
+      "step2": "Pulsa Listo y haz lo mismo hacia arriba. Solo cuentan las notas limpias y afinadas.",
+      "step3": "Pulsa Usar este para guardarlo como Mi rango, o elige tú las notas."
     },
     "notes": {
       "step1": "Mira el pentagrama para ver dónde va cada nota.",

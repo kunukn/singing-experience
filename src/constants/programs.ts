@@ -17,6 +17,7 @@ import ProgramSingingToolsIcon from '@/components/icons/program/ProgramSingingTo
 import ProgramSongRecorderIcon from '@/components/icons/program/ProgramSongRecorderIcon.vue'
 import ProgramToneDetectorIcon from '@/components/icons/program/ProgramToneDetectorIcon.vue'
 import ProgramTunerIcon from '@/components/icons/program/ProgramTunerIcon.vue'
+import ProgramVoiceRangeFinderIcon from '@/components/icons/program/ProgramVoiceRangeFinderIcon.vue'
 import ProgramWarmUpIcon from '@/components/icons/program/ProgramWarmUpIcon.vue'
 
 /* Maturity of an unfinished program — shown as a tag on its card and in the top bar */
@@ -80,6 +81,12 @@ export const tools: Program[] = [
     key: 'warmUp',
     icon: ProgramWarmUpIcon,
     route: '/warm-up',
+  },
+  {
+    key: 'voiceRangeFinder',
+    icon: ProgramVoiceRangeFinderIcon,
+    route: '/voice-range-finder',
+    stage: 'beta',
   },
   {
     key: 'notes',

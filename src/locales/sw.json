@@ -32,6 +32,7 @@
     "difficulty_normal": "Kawaida",
     "difficulty_hard": "Ngumu",
     "voiceRange": "Kiwango cha sauti",
+    "findMyRange": "Tafuta kiwango changu",
     "voiceTypeSpan": "{name}, {from}–{to}",
     "voiceTypeSpanCoverage": "{name}, {from}–{to}, {percent}%",
     "octaveDown": "Oktavu chini",
@@ -129,6 +130,10 @@
       "warmUp": {
         "name": "Kuipasha Sauti",
         "description": "Ipashe sauti yako kwa mfululizo wa toni unaoongozwa — shikilia kila toni ili kuendelea."
+      },
+      "voiceRangeFinder": {
+        "name": "Kitafuta Kiwango cha Sauti",
+        "description": "Imba noti yako ya chini kabisa na ya juu kabisa ili kupata kiwango chako cha sauti. Kila mchezo unaweza kukitumia."
       },
       "singingTools": {
         "name": "Zana za Muziki",
@@ -289,7 +294,9 @@
     }
   },
   "voiceRanges": {
+    "myRange": "Kiwango changu",
     "groups": {
+      "mine": "Sauti yako",
       "easy": "Chaguo rahisi",
       "voiceTypes": "Aina za sauti",
       "wide": "Viwango vipana"
@@ -314,6 +321,36 @@
     "bassToTenor": "Besi–Tenori",
     "bassToBaritone": "Besi–Baritoni",
     "duet": "Wanaume na wanawake"
+  },
+  "voiceRangeFinder": {
+    "highest": "Noti ya juu kabisa",
+    "lowest": "Noti ya chini kabisa",
+    "reset": "Weka upya",
+    "findBySinging": "Tafuta kwa kuimba",
+    "lowPrompt": "Imba noti ya chini na uishikilie. Kisha jaribu chini kidogo zaidi!",
+    "highPrompt": "Imba noti ya juu na uishikilie. Kisha jaribu juu kidogo zaidi! Noti safi tu ndizo zinahesabiwa.",
+    "lowestSoFar": "Ya chini kabisa hadi sasa: {note}",
+    "highestSoFar": "Ya juu kabisa hadi sasa: {note}",
+    "noRecordYet": "Shikilia noti hadi upau ujae",
+    "keepHolding": "Endelea kushikilia {note} ili kuihifadhi",
+    "cleanCounts": "Safi — noti hii inahesabiwa",
+    "notCleanYet": "Bado si safi — karibia hadi {cents}¢",
+    "done": "Nimemaliza",
+    "cancel": "Ghairi",
+    "resultTitle": "Uliimba {range}",
+    "widened": "Tutakihifadhi kama {range}, Oktavu nzima, ili kila mchezo uweze kukitumia.",
+    "useThis": "Tumia hiki",
+    "tryAgain": "Jaribu tena",
+    "saved": "Kimehifadhiwa kama Kiwango changu",
+    "compare": {
+      "title": "Wewe na aina za sauti",
+      "explainer": "Imejaa = noti unazoweza kuimba. ↑ ↓ inaonyesha uelekee wapi ili kufikia sauti nzima.",
+      "rowLabel": "{name}, {from}–{to}. Unafikia {percent}.",
+      "reachUp": "Imba juu hadi {note}.",
+      "reachDown": "Imba chini hadi {note}.",
+      "reachBoth": "Imba chini hadi {low} na juu hadi {high}.",
+      "covered": "Unafikia yote."
+    }
   },
   "toneDetector": {
     "tonesDetected": "Toni {count} zimegunduliwa",
@@ -613,6 +650,11 @@
       "step1": "Chagua sauti yako na mtindo, kisha bonyeza “Anza”.",
       "step2": "Sikiliza kifungu, kisha ukiimbe tena.",
       "step3": "Kila raundi inapanda nusu-toni moja. Acha ukiona ni juu sana."
+    },
+    "voiceRangeFinder": {
+      "step1": "Bonyeza Tafuta kwa kuimba kisha imba noti ya chini. Ishikilie hadi upau ujae, kisha jaribu chini zaidi.",
+      "step2": "Bonyeza Nimemaliza, kisha fanya vivyo hivyo kwenda juu. Noti safi tu ndizo zinahesabiwa.",
+      "step3": "Bonyeza Tumia hiki ili kukihifadhi kama Kiwango changu, au chagua noti mwenyewe."
     },
     "notes": {
       "step1": "Angalia mistari ya noti uone kila noti inakaa wapi.",

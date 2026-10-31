@@ -36,6 +36,7 @@ const STORAGE_KEYS = [
   'syng.guitarToneLabelMode',
   'syng.guitarTuning',
   'syng.keyboardHints',
+  'syng.myVoiceRange',
   'syng.noiseGate',
   'syng.notesBpm',
   'syng.notesClefIndex',

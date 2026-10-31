@@ -41,6 +41,7 @@ export const programHelpByKey: Record<string, ProgramHelp> = {
     ],
   },
   warmUp: { stepCount: 3, terms: ['note', 'semitone', 'voiceRange'] },
+  voiceRangeFinder: { stepCount: 3, terms: ['note', 'octave', 'voiceRange'] },
   notes: { stepCount: 3, terms: ['note', 'octave', 'sharpFlat', 'staff'] },
   piano: { stepCount: 3, terms: ['note', 'octave', 'scale', 'key'] },
   guitar: { stepCount: 3, terms: ['note', 'scale', 'key'] },

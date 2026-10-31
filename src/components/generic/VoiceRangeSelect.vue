@@ -37,6 +37,16 @@ const voiceRangeGroups = useVoiceRangeGroups(() => ({
         {{ headerLabel ?? t('generic.voiceRange') }}
       </div>
     </template>
+    <template #footer>
+      <!-- A real link, so it opens in a new tab and reads as navigation -->
+      <RouterLink
+        to="/voice-range-finder"
+        class="block border-t border-(--p-content-border-color) px-3 py-2 text-sm text-(--p-primary-color) no-underline"
+        data-testid="voice-range-select-find-my-range"
+      >
+        🎤 {{ t('generic.findMyRange') }}
+      </RouterLink>
+    </template>
     <template #optiongroup="{ index, option }">
       <div
         class="select-voice-range-option-group flex items-center"

@@ -44,6 +44,11 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
     description:
       'Warm up your voice with guided pitch sequences that transpose up a half step each round. Hold each note to advance — free, in your browser.',
   },
+  '/voice-range-finder': {
+    title: 'Voice Range Finder',
+    description:
+      'Find your vocal range: sing your lowest and highest clean notes, or pick them yourself. Every singing game and tool can then use your range — free, in your browser.',
+  },
   '/notes': {
     title: 'Music Notes on the Staff',
     description:
