@@ -190,6 +190,37 @@ describe('useRangeFinder', () => {
     scope.stop()
   })
 
+  test('should sing only the high note when asked', () => {
+    const { midi, finder, scope } = setup()
+
+    finder.start('high')
+    expect(finder.step.value).toBe('high')
+
+    midi.value = 72 // C5
+    vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+    finder.next()
+
+    expect(finder.step.value).toBe('result')
+    expect(finder.mode.value).toBe('high')
+    expect(finder.highestMidi.value).toBe(72)
+    expect(finder.lowestMidi.value).toBe(null)
+    scope.stop()
+  })
+
+  test('should end after the low step when only the low note is asked', () => {
+    const { midi, finder, scope } = setup()
+
+    finder.start('low')
+    midi.value = 43
+    vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+    finder.next()
+
+    expect(finder.step.value).toBe('result')
+    expect(finder.lowestMidi.value).toBe(43)
+    expect(finder.highestMidi.value).toBe(null)
+    scope.stop()
+  })
+
   test('should clear earlier records on a fresh start', () => {
     const { midi, finder, scope } = setup()
 

@@ -94,8 +94,15 @@ const sungMidi = computed(() => {
 })
 
 const finder = useRangeFinder({ sungMidi })
-const { step, lowestMidi, highestMidi, candidateMidi, progress, isFilling } =
-  finder
+const {
+  step,
+  mode,
+  lowestMidi,
+  highestMidi,
+  candidateMidi,
+  progress,
+  isFilling,
+} = finder
 
 /* The note being sung right now, or none. Not the hold's candidate: that stays
  * set through silence, and a frozen note would read as still being heard. */
@@ -176,15 +183,29 @@ const isWidened = computed(
       sungRange.value.midiMax !== foundRange.value.midiMax),
 )
 
-async function startSearch() {
+async function startSearch(only?: 'low' | 'high') {
   isJustSaved.value = false
-  finder.start()
+  finder.start(only)
   await props.detection.start()
+}
+
+/* A one-end search saves straight away: there is no sung range to review, and
+ * the result screen would credit the singer with the end they didn't sing.
+ * The picker setters keep the octave span, as a hand pick would. */
+function saveSingleEnd() {
+  if (mode.value === 'high' && highestMidi.value !== null)
+    highestNote.value = highestMidi.value
+  if (mode.value === 'low' && lowestMidi.value !== null)
+    lowestNote.value = lowestMidi.value
+  markSaved()
 }
 
 function finishStep() {
   finder.next()
-  if (step.value === 'result') props.detection.stop()
+  if (step.value !== 'result') return
+
+  props.detection.stop()
+  if (mode.value !== 'both') saveSingleEnd()
 }
 
 function cancelSearch() {
@@ -196,6 +217,10 @@ function saveFoundRange() {
   if (!foundRange.value) return
 
   setMyVoiceRange(foundRange.value.midiMin, foundRange.value.midiMax)
+  markSaved()
+}
+
+function markSaved() {
   sharedRangeIndex.value = MY_RANGE_INDEX
   isJustSaved.value = true
   finder.cancel()
@@ -231,33 +256,60 @@ onUnmounted(() => {
         {{ formatRange(myVoiceRange.midiMin, myVoiceRange.midiMax) }}
       </p>
 
+      <!-- Mic buttons sit outside the labels, so a tap isn't forwarded to the select -->
       <div class="flex w-full flex-col gap-2">
-        <label class="flex items-center justify-between gap-3">
-          <span class="text-sm">{{ t('voiceRangeFinder.highest') }}</span>
-          <PrimeSelect
-            v-model="highestNote"
-            :options="noteOptions"
-            optionLabel="label"
-            optionValue="value"
+        <div class="flex items-center gap-1">
+          <label class="flex flex-1 items-center justify-between gap-3">
+            <span class="text-sm">{{ t('voiceRangeFinder.highest') }}</span>
+            <PrimeSelect
+              v-model="highestNote"
+              :options="noteOptions"
+              optionLabel="label"
+              optionValue="value"
+              size="small"
+              scrollHeight="300px"
+              class="min-w-24"
+              data-testid="my-range-highest"
+            />
+          </label>
+          <PrimeButton
+            icon="pi pi-microphone"
+            severity="secondary"
             size="small"
-            scrollHeight="300px"
-            class="min-w-24"
-            data-testid="my-range-highest"
+            rounded
+            text
+            :disabled="isSearching"
+            :aria-label="`${t('voiceRangeFinder.findBySinging')}: ${t('voiceRangeFinder.highest')}`"
+            data-testid="my-range-sing-highest"
+            @click="startSearch('high')"
           />
-        </label>
-        <label class="flex items-center justify-between gap-3">
-          <span class="text-sm">{{ t('voiceRangeFinder.lowest') }}</span>
-          <PrimeSelect
-            v-model="lowestNote"
-            :options="noteOptions"
-            optionLabel="label"
-            optionValue="value"
+        </div>
+        <div class="flex items-center gap-1">
+          <label class="flex flex-1 items-center justify-between gap-3">
+            <span class="text-sm">{{ t('voiceRangeFinder.lowest') }}</span>
+            <PrimeSelect
+              v-model="lowestNote"
+              :options="noteOptions"
+              optionLabel="label"
+              optionValue="value"
+              size="small"
+              scrollHeight="300px"
+              class="min-w-24"
+              data-testid="my-range-lowest"
+            />
+          </label>
+          <PrimeButton
+            icon="pi pi-microphone"
+            severity="secondary"
             size="small"
-            scrollHeight="300px"
-            class="min-w-24"
-            data-testid="my-range-lowest"
+            rounded
+            text
+            :disabled="isSearching"
+            :aria-label="`${t('voiceRangeFinder.findBySinging')}: ${t('voiceRangeFinder.lowest')}`"
+            data-testid="my-range-sing-lowest"
+            @click="startSearch('low')"
           />
-        </label>
+        </div>
       </div>
 
       <VoiceTypeComparison

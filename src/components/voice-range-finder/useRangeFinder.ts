@@ -20,6 +20,9 @@ export const MAX_RECORD_STEP = 5
 
 export type RangeFinderStep = 'idle' | 'low' | 'high' | 'result'
 
+/* Which ends a search covers: both (low then high) or just one */
+export type RangeFinderMode = 'both' | 'low' | 'high'
+
 type RangeFinderOptions = {
   /* Fractional MIDI of the live sung pitch, or null for silence */
   sungMidi: MaybeRefOrGetter<number | null>
@@ -50,6 +53,7 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
   const hold = createTuningHold({ holdMs: RANGE_FINDER_HOLD_MS })
 
   const step = ref<RangeFinderStep>('idle')
+  const mode = ref<RangeFinderMode>('both')
   const lowestMidi = ref<number | null>(null)
   const highestMidi = ref<number | null>(null)
   const candidateMidi = ref<number | null>(null)
@@ -129,15 +133,20 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
     isFilling.value = false
   }
 
-  function start() {
+  /* Omit `only` for the full low → high search; pass an end to sing just that
+   * one. Records start empty either way, so a singer who can no longer reach
+   * the saved note can still move it inward. */
+  function start(only?: 'low' | 'high') {
+    mode.value = only ?? 'both'
     lowestMidi.value = null
     highestMidi.value = null
-    listen('low')
+    listen(only ?? 'low')
   }
 
-  /* Done on the current step: low moves on to high, high shows the result. */
+  /* Done on the current step: in a full search low moves on to high; otherwise
+   * the search ends and shows the result. */
   function next() {
-    if (step.value === 'low') {
+    if (step.value === 'low' && mode.value === 'both') {
       listen('high')
 
       return
@@ -154,6 +163,7 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
 
   return {
     step: readonly(step),
+    mode: readonly(mode),
     lowestMidi: readonly(lowestMidi),
     highestMidi: readonly(highestMidi),
     candidateMidi: readonly(candidateMidi),
