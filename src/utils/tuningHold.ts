@@ -1,8 +1,9 @@
 /*
- * The hold behind "Tune": the singer picks the song's lowest note by singing
- * it, and a semitone held for holdMs becomes that note. Same idea as the focus
- * tab's tone tracker, but it reports progress for the bar and stops at the
- * first completed hold.
+ * A semitone held for holdMs becomes "the note the singer meant". Behind Sing
+ * the Keys' "Tune" (sing the song's lowest note) and the Voice Range Finder
+ * (sing your lowest and highest notes). Same idea as the focus tab's tone
+ * tracker, but it reports progress for the bar and stops at the first
+ * completed hold — callers that want another reset() it.
  *
  * Kept free of Vue and timers, so the timing rules can be tested with
  * hand-written timestamps.

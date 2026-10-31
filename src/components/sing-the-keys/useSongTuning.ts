@@ -6,7 +6,7 @@ import {
   tonicMidiForRange,
   type Song,
 } from './singTheKeysSongs'
-import { createTuningHold } from './tuningHold'
+import { createTuningHold } from '@/utils/tuningHold'
 
 /* How long the "Song range: …" confirmation stays up after a tune */
 const RESULT_VISIBLE_MS = 2500

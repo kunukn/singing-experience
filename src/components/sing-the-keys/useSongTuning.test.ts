@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { effectScope, ref } from 'vue'
 import { SONGS, sungMidiRange, tonicMidiForRange } from './singTheKeysSongs'
-import { TUNING_HOLD_MS } from './tuningHold'
+import { TUNING_HOLD_MS } from '@/utils/tuningHold'
 import { useSongTuning } from './useSongTuning'
 
 function setup(sungMidi: number | null) {
