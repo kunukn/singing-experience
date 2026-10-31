@@ -119,6 +119,7 @@ declare module 'vue' {
     PrimeChip: typeof import('primevue/chip')['default']
     PrimeMessage: typeof import('primevue/message')['default']
     PrimePopover: typeof import('primevue/popover')['default']
+    PrimeProgressBar: typeof import('primevue/progressbar')['default']
     PrimeSelect: typeof import('primevue/select')['default']
     PrimeSelectButton: typeof import('primevue/selectbutton')['default']
     PrimeSlider: typeof import('primevue/slider')['default']

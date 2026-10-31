@@ -345,6 +345,12 @@
     "songRange": "Nipit annertussusia",
     "pickRangeHeader": "Pick a range that fits your voice",
     "pickRangeFooter": "⭐ = a good place to start",
+    "tune": "Tune",
+    "tunePrompt": "Sing a low note that feels easy and hold it",
+    "tuned": "Song range: {range}",
+    "tuneTooLow": "Very low! Closest range: {range}",
+    "tuneTooHigh": "Very high! Closest range: {range}",
+    "tuneCancel": "Cancel",
     "preview": "Preview",
     "scrollSong": "Erinarsuut ingerlaartiguk",
     "songs": {

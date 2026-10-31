@@ -456,6 +456,12 @@
     "songRange": "সুরের পরিসর",
     "pickRangeHeader": "তোমার গলার সাথে মানানসই পরিসর বেছে নাও",
     "pickRangeFooter": "⭐ = শুরু করার জন্য ভালো",
+    "tune": "টিউন",
+    "tunePrompt": "একটা সহজ নিচু সুর গাও আর ধরে রাখো",
+    "tuned": "সুরের পরিসর: {range}",
+    "tuneTooLow": "খুব নিচু! সবচেয়ে কাছের পরিসর: {range}",
+    "tuneTooHigh": "খুব উঁচু! সবচেয়ে কাছের পরিসর: {range}",
+    "tuneCancel": "বাতিল",
     "preview": "প্রিভিউ",
     "scrollSong": "গানটা স্ক্রল করো",
     "songs": {

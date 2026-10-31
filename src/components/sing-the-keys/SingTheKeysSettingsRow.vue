@@ -17,9 +17,15 @@ type Props = {
   /* The selected song, so the range options show its own lowest–highest. */
   song: Song
   accidentalStyle: AccidentalStyle
+  /* "Tune" is listening for the singer's low note — the button reads pressed */
+  isTuning: boolean
+  /* No tuning during a run, or without mic permission */
+  isTuneDisabled: boolean
 }
 
 const props = defineProps<Props>()
+
+const emit = defineEmits<{ tune: [] }>()
 
 const songId = defineModel<SongId>('songId', { required: true })
 const rangeOffset = defineModel<number>('rangeOffset', { required: true })
@@ -70,12 +76,26 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         class="hidden text-end text-sm text-(--p-text-muted-color) md:block"
         >{{ t('singTheKeys.songRange') }}</label
       >
-      <SongRangeSelect
-        v-model:rangeOffset="rangeOffset"
-        :song="props.song"
-        :accidentalStyle="props.accidentalStyle"
-        :disabled="props.isRunning"
-      />
+      <div class="flex items-center gap-1">
+        <SongRangeSelect
+          v-model:rangeOffset="rangeOffset"
+          :song="props.song"
+          :accidentalStyle="props.accidentalStyle"
+          :disabled="props.isRunning"
+        />
+        <PrimeButton
+          icon="pi pi-microphone"
+          size="small"
+          rounded
+          :severity="props.isTuning ? 'primary' : 'secondary'"
+          :disabled="props.isTuneDisabled"
+          :aria-label="t('singTheKeys.tune')"
+          :aria-pressed="props.isTuning"
+          :title="t('singTheKeys.tune')"
+          data-testid="sing-the-keys-tune"
+          @click="emit('tune')"
+        />
+      </div>
     </div>
 
     <div class="settings-item">

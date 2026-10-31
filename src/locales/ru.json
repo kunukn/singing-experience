@@ -456,6 +456,12 @@
     "songRange": "Диапазон",
     "pickRangeHeader": "Выбери диапазон под свой голос",
     "pickRangeFooter": "⭐ = хорошее начало",
+    "tune": "Настроить",
+    "tunePrompt": "Спой низкую ноту, которую легко петь, и тяни её",
+    "tuned": "Диапазон: {range}",
+    "tuneTooLow": "Очень низко! Ближайший диапазон: {range}",
+    "tuneTooHigh": "Очень высоко! Ближайший диапазон: {range}",
+    "tuneCancel": "Отмена",
     "preview": "Прослушать",
     "scrollSong": "Листай песню",
     "songs": {

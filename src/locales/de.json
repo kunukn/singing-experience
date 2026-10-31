@@ -456,6 +456,12 @@
     "songRange": "Tonbereich",
     "pickRangeHeader": "Wähle einen Bereich, der zu deiner Stimme passt",
     "pickRangeFooter": "⭐ = ein guter Anfang",
+    "tune": "Stimmen",
+    "tunePrompt": "Sing einen tiefen Ton, der sich leicht anfühlt, und halte ihn",
+    "tuned": "Tonbereich: {range}",
+    "tuneTooLow": "Sehr tief! Nächster Bereich: {range}",
+    "tuneTooHigh": "Sehr hoch! Nächster Bereich: {range}",
+    "tuneCancel": "Abbrechen",
     "preview": "Vorschau",
     "scrollSong": "Scroll durch das Lied",
     "songs": {

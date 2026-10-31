@@ -1,4 +1,4 @@
-import { C3_MIDI } from '@/utils/noteUtils'
+import { C3_MIDI, START_TONE_OPTIONS } from '@/utils/noteUtils'
 
 /* Sing the Keys — melody data.
  *
@@ -129,6 +129,34 @@ export function sungMidiRange(
   const { min, max } = offsetSpan(song)
 
   return { lowestMidi: tonicMidi + min, highestMidi: tonicMidi + max }
+}
+
+const RANGE_OFFSETS = START_TONE_OPTIONS.map((option) => option.offset)
+const MIN_RANGE_OFFSET = Math.min(...RANGE_OFFSETS)
+const MAX_RANGE_OFFSET = Math.max(...RANGE_OFFSETS)
+
+/* The range offset that puts the song's lowest sung note on lowestMidi — the
+ * inverse of tonicMidiForRange + sungMidiRange, used when the singer tunes the
+ * range by singing their low note. Each offset step moves the tonic by one
+ * semitone, so every note inside the picker's window maps back exactly; a note
+ * beyond it lands on the nearest option and isClamped says so. */
+export function rangeOffsetForLowestMidi(
+  song: Song,
+  lowestMidi: number,
+): { offset: number; isClamped: boolean } {
+  const { min, max } = offsetSpan(song)
+  const exactOffset =
+    lowestMidi -
+    min -
+    C3_MIDI -
+    SCALE_CENTER_SEMITONES +
+    Math.round((min + max) / 2)
+  const offset = Math.min(
+    MAX_RANGE_OFFSET,
+    Math.max(MIN_RANGE_OFFSET, exactOffset),
+  )
+
+  return { offset, isClamped: offset !== exactOffset }
 }
 
 export function isSongId(value: unknown): value is SongId {

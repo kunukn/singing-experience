@@ -456,6 +456,12 @@
     "songRange": "音域",
     "pickRangeHeader": "自分の声に合う音域を選ぼう",
     "pickRangeFooter": "⭐ = おすすめ",
+    "tune": "チューニング",
+    "tunePrompt": "楽に出せる低い音を歌って、のばしてね",
+    "tuned": "音域：{range}",
+    "tuneTooLow": "低すぎ！いちばん近い音域：{range}",
+    "tuneTooHigh": "高すぎ！いちばん近い音域：{range}",
+    "tuneCancel": "キャンセル",
     "preview": "プレビュー",
     "scrollSong": "曲をスクロール",
     "songs": {

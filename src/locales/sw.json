@@ -456,6 +456,12 @@
     "songRange": "Kiwango cha sauti",
     "pickRangeHeader": "Chagua kiwango kinachofaa sauti yako",
     "pickRangeFooter": "⭐ = mahali pazuri pa kuanzia",
+    "tune": "Tunisha",
+    "tunePrompt": "Imba noti ya chini inayokuwia rahisi na uishikilie",
+    "tuned": "Kiwango cha sauti: {range}",
+    "tuneTooLow": "Chini sana! Kiwango kilicho karibu: {range}",
+    "tuneTooHigh": "Juu sana! Kiwango kilicho karibu: {range}",
+    "tuneCancel": "Ghairi",
     "preview": "Hakiki",
     "scrollSong": "Sogeza wimbo",
     "songs": {

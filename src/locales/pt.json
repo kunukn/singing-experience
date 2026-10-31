@@ -456,6 +456,12 @@
     "songRange": "Extensão",
     "pickRangeHeader": "Escolha uma extensão que combine com sua voz",
     "pickRangeFooter": "⭐ = um bom começo",
+    "tune": "Afinar",
+    "tunePrompt": "Cante uma nota grave que saia fácil e segure",
+    "tuned": "Extensão: {range}",
+    "tuneTooLow": "Muito grave! Extensão mais próxima: {range}",
+    "tuneTooHigh": "Muito agudo! Extensão mais próxima: {range}",
+    "tuneCancel": "Cancelar",
     "preview": "Prévia",
     "scrollSong": "Role pela música",
     "songs": {

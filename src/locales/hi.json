@@ -456,6 +456,12 @@
     "songRange": "सुर की रेंज",
     "pickRangeHeader": "अपनी आवाज़ के हिसाब से रेंज चुनो",
     "pickRangeFooter": "⭐ = शुरू करने के लिए बढ़िया",
+    "tune": "ट्यून",
+    "tunePrompt": "एक आसान नीचा सुर गाओ और उसे पकड़े रहो",
+    "tuned": "सुर की रेंज: {range}",
+    "tuneTooLow": "बहुत नीचा! सबसे पास की रेंज: {range}",
+    "tuneTooHigh": "बहुत ऊँचा! सबसे पास की रेंज: {range}",
+    "tuneCancel": "रद्द करें",
     "preview": "झलक",
     "scrollSong": "गाना स्क्रॉल करो",
     "songs": {

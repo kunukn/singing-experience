@@ -456,6 +456,12 @@
     "songRange": "音域",
     "pickRangeHeader": "选一个适合你声音的音域",
     "pickRangeFooter": "⭐ = 推荐",
+    "tune": "调音",
+    "tunePrompt": "唱一个你觉得轻松的低音，并保持住",
+    "tuned": "音域：{range}",
+    "tuneTooLow": "太低啦！最接近的音域：{range}",
+    "tuneTooHigh": "太高啦！最接近的音域：{range}",
+    "tuneCancel": "取消",
     "preview": "预览",
     "scrollSong": "滚动浏览歌曲",
     "songs": {

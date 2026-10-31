@@ -456,6 +456,12 @@
     "songRange": "Tessiture",
     "pickRangeHeader": "Choisis une tessiture qui va à ta voix",
     "pickRangeFooter": "⭐ = un bon point de départ",
+    "tune": "Accorder",
+    "tunePrompt": "Chante une note grave facile pour toi et tiens-la",
+    "tuned": "Tessiture : {range}",
+    "tuneTooLow": "Très grave ! Tessiture la plus proche : {range}",
+    "tuneTooHigh": "Très aigu ! Tessiture la plus proche : {range}",
+    "tuneCancel": "Annuler",
     "preview": "Aperçu",
     "scrollSong": "Fais défiler la chanson",
     "songs": {

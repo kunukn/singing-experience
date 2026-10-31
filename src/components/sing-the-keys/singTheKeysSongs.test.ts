@@ -7,6 +7,7 @@ import {
   groupSongIdsByDifficulty,
   isSongId,
   isSpeedOption,
+  rangeOffsetForLowestMidi,
   SONG_DIFFICULTIES,
   SONG_IDS,
   SONGS,
@@ -261,6 +262,51 @@ describe('singTheKeysSongs', () => {
       expect(sungMidiRange(song, tonicMidi)).toEqual({
         lowestMidi: 53,
         highestMidi: 69,
+      })
+    })
+  })
+
+  describe('rangeOffsetForLowestMidi', () => {
+    test.each(SONG_IDS)(
+      '%s maps every option back from its lowest note',
+      (id) => {
+        const song = SONGS[id]
+
+        for (const { offset } of START_TONE_OPTIONS) {
+          const { lowestMidi } = sungMidiRange(
+            song,
+            tonicMidiForRange(song, offset),
+          )
+
+          expect(rangeOffsetForLowestMidi(song, lowestMidi)).toEqual({
+            offset,
+            isClamped: false,
+          })
+        }
+      },
+    )
+
+    test('a sung A3 puts Mary Had a Little Lamb at A3–E4', () => {
+      const song = SONGS.maryLamb
+      const { offset } = rangeOffsetForLowestMidi(song, 57) // A3
+
+      expect(sungMidiRange(song, tonicMidiForRange(song, offset))).toEqual({
+        lowestMidi: 57,
+        highestMidi: 64, // E4
+      })
+    })
+
+    test('clamps a note below or above the picker to the nearest option', () => {
+      const song = SONGS.maryLamb
+      const offsets = START_TONE_OPTIONS.map((option) => option.offset)
+
+      expect(rangeOffsetForLowestMidi(song, 20)).toEqual({
+        offset: Math.min(...offsets),
+        isClamped: true,
+      })
+      expect(rangeOffsetForLowestMidi(song, 100)).toEqual({
+        offset: Math.max(...offsets),
+        isClamped: true,
       })
     })
   })

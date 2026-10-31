@@ -456,6 +456,12 @@
     "songRange": "Toneområde",
     "pickRangeHeader": "Vælg et toneområde, der passer til din stemme",
     "pickRangeFooter": "⭐ = et godt sted at starte",
+    "tune": "Stem",
+    "tunePrompt": "Syng en dyb tone, der føles nem, og hold den",
+    "tuned": "Toneområde: {range}",
+    "tuneTooLow": "Meget dybt! Nærmeste område: {range}",
+    "tuneTooHigh": "Meget højt! Nærmeste område: {range}",
+    "tuneCancel": "Annuller",
     "preview": "Forhåndsvis",
     "scrollSong": "Rul gennem sangen",
     "songs": {

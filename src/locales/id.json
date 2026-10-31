@@ -456,6 +456,12 @@
     "songRange": "Rentang nada",
     "pickRangeHeader": "Pilih rentang nada yang pas untuk suaramu",
     "pickRangeFooter": "⭐ = awal yang bagus",
+    "tune": "Setel",
+    "tunePrompt": "Nyanyikan nada rendah yang terasa mudah dan tahan",
+    "tuned": "Rentang nada: {range}",
+    "tuneTooLow": "Rendah sekali! Rentang terdekat: {range}",
+    "tuneTooHigh": "Tinggi sekali! Rentang terdekat: {range}",
+    "tuneCancel": "Batal",
     "preview": "Pratinjau",
     "scrollSong": "Gulir lagunya",
     "songs": {

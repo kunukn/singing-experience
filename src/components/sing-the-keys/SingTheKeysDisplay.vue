@@ -5,6 +5,7 @@ import type { NoteInfo } from '@/utils/noteUtils'
 import {
   frequencyToMidi,
   midiToFrequency,
+  midiToNoteLabel,
   snapFrequencyToSemitone,
   toAccidentalGlyph,
 } from '@/utils/noteUtils'
@@ -14,6 +15,7 @@ import SingTheKeysLane from './SingTheKeysLane.vue'
 import SingTheKeysSettingsRow from './SingTheKeysSettingsRow.vue'
 import {
   SONGS,
+  sungMidiRange,
   tonicMidiForRange,
   type SongId,
   type SpeedOption,
@@ -28,6 +30,7 @@ import {
 } from './singTheKeysTimeline'
 import { useMetronomeMask } from './useMetronomeMask'
 import { useSingTheKeys } from './useSingTheKeys'
+import { useSongTuning } from './useSongTuning'
 
 type PitchDetectionInput = {
   frequency: Readonly<Ref<number | null>>
@@ -282,6 +285,18 @@ const isTargetCorrect = computed(
 
 const { isPreviewEnabled } = useSettings()
 
+/* "Tune": the singer holds their lowest comfortable note and the song moves so
+ * its lowest note is that one. sungMidi is read lazily, once per frame while
+ * tuning — it is declared below, after the preview mic it reads from. */
+const tuning = useSongTuning({
+  sungMidi: () => sungMidi.value,
+  song,
+  onTuned: (offset) => {
+    rangeOffset.value = offset
+  },
+})
+const { isTuning } = tuning
+
 /* "See your voice" — the live pitch while idle, so the singer can find the
  * first key before pressing Start. Listens only while no run is playing, the
  * same split as Grace Kelly "Sing live": during a run the scoring mic draws the
@@ -289,7 +304,9 @@ const { isPreviewEnabled } = useSettings()
  * writable, so useIdlePreview can flip it off when permission is denied; the
  * getter is always false on a simulated page, so the real mic never opens. */
 const isRealIdlePreviewEnabled = computed({
-  get: () => isPreviewEnabled.value && !props.simulateIdlePreview,
+  /* Tuning listens through the same mic, even with "See your voice" off */
+  get: () =>
+    (isPreviewEnabled.value || isTuning.value) && !props.simulateIdlePreview,
   set: (enabled: boolean) => {
     isPreviewEnabled.value = enabled
   },
@@ -311,6 +328,51 @@ const {
 const isIdleSource = computed(
   () => !isPlaying.value && !props.simulateIdlePreview,
 )
+/* A permission prompt answered "no" while tuning ends the tune. */
+watch(micPermission, (permission) => {
+  if (permission === 'denied') tuning.cancel()
+})
+
+const isTuneDisabled = computed(
+  () =>
+    isPlaying.value ||
+    (!props.simulateIdlePreview && micPermission.value === 'denied'),
+)
+
+function toggleTuning() {
+  if (isTuning.value) tuning.cancel()
+  else tuning.start()
+}
+
+const preferFlats = computed(() => accidentalStyle.value === 'flat')
+const tuningNoteLabel = computed(() =>
+  tuning.candidateMidi.value === null
+    ? '–'
+    : midiToNoteLabel(tuning.candidateMidi.value, {
+        preferFlats: preferFlats.value,
+      }).label,
+)
+/* The song's lowest–highest sung note, as the Song range select shows it */
+const songRangeLabel = computed(() => {
+  const { lowestMidi, highestMidi } = sungMidiRange(song.value, tonicMidi.value)
+  const label = (midi: number) =>
+    midiToNoteLabel(midi, { preferFlats: preferFlats.value }).label
+
+  return `${label(lowestMidi)} – ${label(highestMidi)}`
+})
+const tuningResultText = computed(() => {
+  switch (tuning.lastReach.value) {
+    case 'exact':
+      return t('singTheKeys.tuned', { range: songRangeLabel.value })
+    case 'tooLow':
+      return t('singTheKeys.tuneTooLow', { range: songRangeLabel.value })
+    case 'tooHigh':
+      return t('singTheKeys.tuneTooHigh', { range: songRangeLabel.value })
+    default:
+      return null
+  }
+})
+
 const rawLiveFrequency = computed(() =>
   isIdleSource.value ? idleFrequency.value : frequency.value,
 )
@@ -414,7 +476,9 @@ watch(isPlaying, (playing) => {
  * like the real mic. */
 const isSimulatedIdlePreviewOn = computed(
   () =>
-    !!props.simulateIdlePreview && isPreviewEnabled.value && !isPlaying.value,
+    !!props.simulateIdlePreview &&
+    (isPreviewEnabled.value || isTuning.value) &&
+    !isPlaying.value,
 )
 watch(
   isSimulatedIdlePreviewOn,
@@ -463,8 +527,57 @@ onUnmounted(() => {
       v-model:speed="speed"
       :song="song"
       :accidentalStyle="accidentalStyle"
-      :isRunning="isPlaying"
+      :isRunning="isPlaying || isTuning"
+      :isTuning="isTuning"
+      :isTuneDisabled="isTuneDisabled"
+      @tune="toggleTuning"
     />
+
+    <div
+      v-if="isTuning || tuningResultText"
+      class="flex w-full max-w-sm flex-col items-center gap-2 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-3"
+      data-testid="sing-the-keys-tuning"
+      :data-tuning="isTuning"
+    >
+      <template v-if="isTuning">
+        <p class="text-center text-sm">🎤 {{ t('singTheKeys.tunePrompt') }}</p>
+        <div class="flex w-full items-center gap-3">
+          <PrimeProgressBar
+            class="h-2 flex-1"
+            :value="Math.round(tuning.progress.value * 100)"
+            :showValue="false"
+          />
+          <span
+            class="min-w-10 text-end font-semibold tabular-nums"
+            dir="ltr"
+            data-testid="sing-the-keys-tuning-note"
+            >{{ tuningNoteLabel }}</span
+          >
+        </div>
+        <PrimeButton
+          severity="secondary"
+          size="small"
+          rounded
+          text
+          @click="tuning.cancel"
+        >
+          {{ t('singTheKeys.tuneCancel') }}
+        </PrimeButton>
+      </template>
+      <p
+        v-else
+        class="text-sm font-medium"
+        :class="
+          tuning.lastReach.value === 'exact'
+            ? 'text-(--p-green-400)'
+            : 'text-(--p-orange-400)'
+        "
+        data-testid="sing-the-keys-tuning-result"
+        :data-reach="tuning.lastReach.value"
+      >
+        {{ tuningResultText }}
+      </p>
+    </div>
 
     <div v-if="showResult" class="flex flex-col items-center gap-1">
       <p
@@ -513,6 +626,7 @@ onUnmounted(() => {
         severity="success"
         size="small"
         rounded
+        :disabled="isTuning"
         @click="startSinging"
       >
         {{ startLabel }}
@@ -526,6 +640,7 @@ onUnmounted(() => {
         rounded
         :aria-label="t('singTheKeys.preview')"
         :title="t('singTheKeys.preview')"
+        :disabled="isTuning"
         @click="startPreview"
       >
         <NoteIcon class="size-5" />
@@ -602,7 +717,7 @@ onUnmounted(() => {
             :elapsedMs="laneElapsedMs"
             :isShowingEnding="isShowingEnding"
             :isEndingSettled="isEndingSettled"
-            :areBlocksPressable="!isPlaying"
+            :areBlocksPressable="!isPlaying && !isTuning"
             :activeNoteIndex="activeNoteIndex"
             :correctNoteIndices="resultNoteIndices"
             :aimedNoteIndices="aimedNoteIndices"

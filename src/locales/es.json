@@ -456,6 +456,12 @@
     "songRange": "Rango",
     "pickRangeHeader": "Elige un rango que vaya con tu voz",
     "pickRangeFooter": "⭐ = un buen punto de partida",
+    "tune": "Afinar",
+    "tunePrompt": "Canta una nota grave que te salga fácil y mantenla",
+    "tuned": "Rango: {range}",
+    "tuneTooLow": "¡Muy grave! Rango más cercano: {range}",
+    "tuneTooHigh": "¡Muy agudo! Rango más cercano: {range}",
+    "tuneCancel": "Cancelar",
     "preview": "Vista previa",
     "scrollSong": "Desplázate por la canción",
     "songs": {

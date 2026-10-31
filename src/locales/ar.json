@@ -456,6 +456,12 @@
     "songRange": "مدى الأغنية",
     "pickRangeHeader": "اختر مدى يناسب صوتك",
     "pickRangeFooter": "⭐ = بداية جيدة",
+    "tune": "ضبط",
+    "tunePrompt": "غنِّ نغمة منخفضة سهلة عليك واثبت عليها",
+    "tuned": "مدى الأغنية: {range}",
+    "tuneTooLow": "منخفضة جدًا! أقرب مدى: {range}",
+    "tuneTooHigh": "مرتفعة جدًا! أقرب مدى: {range}",
+    "tuneCancel": "إلغاء",
     "preview": "معاينة",
     "scrollSong": "تصفّح الأغنية",
     "songs": {
