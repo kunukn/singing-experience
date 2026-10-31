@@ -459,6 +459,7 @@ onUnmounted(() => {
     <div v-if="step === 'idle'" class="flex items-center gap-2">
       <PrimeButton
         severity="success"
+        size="small"
         rounded
         data-testid="voice-range-finder-start"
         @click="startSearch()"

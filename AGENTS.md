@@ -69,6 +69,8 @@ PrimeVue components are **auto-imported** via `PrimeVueResolver({ prefix: 'Prime
 
 **Control height is global.** Buttons, selects, select buttons and text inputs share a 35px minimum height (`--app-control-height` in [style.css](src/style.css)), so controls in one row line up on their own. Don't add `min-h-*` to individual controls to align them; if one control is deliberately smaller, opt out with `min-h-0`.
 
+**Control size is `small`.** Action buttons, toggles, selects and select buttons use `size="small"`, main CTAs included. Their text size comes from `formField.sm.fontSize` in [theme.ts](src/theme.ts) — change it there, never per control.
+
 **When to add to `/src/components/generic/`**:
 
 - The element needs app-specific logic or styling PrimeVue doesn't cover
