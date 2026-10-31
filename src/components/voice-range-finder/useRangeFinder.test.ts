@@ -1,7 +1,11 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { effectScope, ref } from 'vue'
 import { CLOSE_CENTS } from '@/utils/pitchColors'
-import { RANGE_FINDER_HOLD_MS, useRangeFinder } from './useRangeFinder'
+import {
+  MAX_RECORD_STEP,
+  RANGE_FINDER_HOLD_MS,
+  useRangeFinder,
+} from './useRangeFinder'
 
 /* A little past the hold, so the last frame lands after it completes */
 const HOLD_WITH_SLACK_MS = RANGE_FINDER_HOLD_MS + 100
@@ -75,6 +79,62 @@ describe('useRangeFinder', () => {
 
     expect(finder.progress.value).toBe(0)
     expect(finder.lowestMidi.value).toBe(43)
+    scope.stop()
+  })
+
+  test('should ignore a note below C2', () => {
+    const { midi, finder, scope } = setup()
+
+    finder.start()
+    midi.value = 35 // B1 — at the detector's floor, and below My range's
+    vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+
+    expect(finder.progress.value).toBe(0)
+    expect(finder.lowestMidi.value).toBe(null)
+    scope.stop()
+  })
+
+  test('should ignore a jump further than MAX_RECORD_STEP past the record', () => {
+    const { midi, finder, scope } = setup()
+
+    finder.start()
+    midi.value = 46 // A♯2 — becomes the record
+    vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+    midi.value = 46 - 12 + 2 // an octave slip down to C2
+    vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+
+    expect(finder.lowestMidi.value).toBe(46)
+    scope.stop()
+  })
+
+  test('should accept a step of MAX_RECORD_STEP past the record', () => {
+    const { midi, finder, scope } = setup()
+
+    finder.start()
+    finder.next()
+    midi.value = 60 // C4
+    vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+    midi.value = 60 + MAX_RECORD_STEP
+    vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+
+    expect(finder.highestMidi.value).toBe(60 + MAX_RECORD_STEP)
+    scope.stop()
+  })
+
+  test('should report a paused hold as not filling', () => {
+    const { midi, finder, scope } = setup()
+
+    finder.start()
+    midi.value = 43
+    vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS / 2)
+    expect(finder.isFilling.value).toBe(true)
+
+    midi.value = null
+    vi.advanceTimersByTime(100)
+
+    expect(finder.isFilling.value).toBe(false)
+    expect(finder.candidateMidi.value).toBe(43)
+    expect(finder.progress.value).toBeGreaterThan(0)
     scope.stop()
   })
 

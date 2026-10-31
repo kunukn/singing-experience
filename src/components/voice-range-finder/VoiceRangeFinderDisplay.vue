@@ -94,13 +94,13 @@ const sungMidi = computed(() => {
 })
 
 const finder = useRangeFinder({ sungMidi })
-const { step, lowestMidi, highestMidi, candidateMidi, progress } = finder
+const { step, lowestMidi, highestMidi, candidateMidi, progress, isFilling } =
+  finder
 
-/* The note being sung right now; between notes, the one the bar is holding.
- * Not the candidate alone — an out-of-tune high note never becomes one, and
- * the readout must still show the singer what they are singing. */
+/* The note being sung right now, or none. Not the hold's candidate: that stays
+ * set through silence, and a frozen note would read as still being heard. */
 const liveMidi = computed(() =>
-  sungMidi.value === null ? candidateMidi.value : Math.round(sungMidi.value),
+  sungMidi.value === null ? null : Math.round(sungMidi.value),
 )
 
 /* How far the live note sits from its semitone, in the tuner's colours */
@@ -123,12 +123,10 @@ const isLiveClean = computed(
   () => sungMidi.value !== null && isCleanEnough(sungMidi.value),
 )
 
-/* Names what the filling bar is about to do. Shown only while the singer is
- * on that note — a paused bar under a different note would read as a lie. */
+/* Names what the filling bar is about to do. Shown only while it fills — on a
+ * paused bar it would claim progress that isn't happening. */
 const holdHint = computed(() =>
-  candidateMidi.value !== null &&
-  progress.value > 0 &&
-  liveMidi.value === candidateMidi.value
+  isFilling.value && candidateMidi.value !== null
     ? t('voiceRangeFinder.keepHolding', {
         note: formatNote(candidateMidi.value),
       })
@@ -314,10 +312,14 @@ onUnmounted(() => {
         Bar and note share the first row, so the note centres on the bar; the
         cents hang in a second row beneath the note without pulling it up.
         Fixed note column so the bar doesn't jump as the label changes width.
+        A paused bar dims, so a kept-but-idle hold doesn't look like progress.
       -->
       <div class="grid w-full grid-cols-[1fr_4rem] items-center gap-x-3">
         <PrimeProgressBar
-          class="h-2"
+          class="h-2 transition-opacity"
+          :class="{ 'opacity-40': !isFilling }"
+          data-testid="voice-range-finder-hold-bar"
+          :data-filling="isFilling"
           :value="Math.round(progress * 100)"
           :showValue="false"
         />

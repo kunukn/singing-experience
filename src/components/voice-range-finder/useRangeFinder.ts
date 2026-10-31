@@ -1,5 +1,9 @@
 import { useRafFn } from '@vueuse/core'
 import type { MaybeRefOrGetter } from 'vue'
+import {
+  VOICE_RANGE_HIGHEST_MIDI,
+  VOICE_RANGE_LOWEST_MIDI,
+} from '@/utils/normalizeVoiceRange'
 import { CLOSE_CENTS } from '@/utils/pitchColors'
 import { createTuningHold } from '@/utils/tuningHold'
 
@@ -7,6 +11,12 @@ import { createTuningHold } from '@/utils/tuningHold'
  * times while the singer creeps lower or higher, and the extremes of a voice
  * are tiring to sustain. Still long enough to rule out a passing slide. */
 export const RANGE_FINDER_HOLD_MS = 1000
+
+/* The furthest a new record may land past the current one, in semitones (a
+ * fourth). The usual detector slips — an octave (12) or a fifth (7, locking on
+ * the third harmonic) — land further out, so they can't steal the record; a
+ * singer creeping step by step never notices the limit. */
+export const MAX_RECORD_STEP = 5
 
 export type RangeFinderStep = 'idle' | 'low' | 'high' | 'result'
 
@@ -27,7 +37,7 @@ export const isCleanEnough = (midi: number) =>
  * Finds the singer's lowest steady note and highest clean note. Each step keeps
  * listening after a hold completes, so the singer can creep further and every
  * new hold past the record replaces it; they press Done when they have reached
- * their limit. Only notes past the record fill the hold.
+ * their limit. Only notes a small step past the record fill the hold.
  *
  * The low step only asks for a steady hold. The high step also asks for the
  * note to sit within CLOSE_CENTS: a strained top note wobbles out of tune, and
@@ -44,14 +54,26 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
   const highestMidi = ref<number | null>(null)
   const candidateMidi = ref<number | null>(null)
   const progress = ref(0)
+  /* Whether the bar is moving right now, as opposed to paused on a candidate */
+  const isFilling = ref(false)
 
-  /* Past the current record — the only notes worth holding for */
+  /*
+   * Past the current record, but not implausibly far past it, and inside the
+   * C2–C7 span My range can hold — the only notes worth holding for. A note
+   * outside that span would only be clamped on save; at the bottom it is
+   * usually rumble or an octave slip near the detector's frequency floor.
+   */
   function beatsRecord(midi: number): boolean {
     const note = Math.round(midi)
+    if (note < VOICE_RANGE_LOWEST_MIDI || note > VOICE_RANGE_HIGHEST_MIDI)
+      return false
 
-    return step.value === 'low'
-      ? lowestMidi.value === null || note < lowestMidi.value
-      : highestMidi.value === null || note > highestMidi.value
+    const record = step.value === 'low' ? lowestMidi.value : highestMidi.value
+    if (record === null) return true
+
+    const stepPast = step.value === 'low' ? record - note : note - record
+
+    return stepPast > 0 && stepPast <= MAX_RECORD_STEP
   }
 
   /*
@@ -79,9 +101,12 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
 
   const { pause, resume } = useRafFn(
     ({ timestamp }) => {
-      hold.push(readFrame(), timestamp)
+      const frame = readFrame()
+      hold.push(frame, timestamp)
       candidateMidi.value = hold.candidateMidi
       progress.value = hold.progress
+      isFilling.value =
+        frame !== null && Math.round(frame) === hold.candidateMidi
 
       if (hold.heldMidi !== null) recordHeld(hold.heldMidi)
     },
@@ -92,6 +117,7 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
     hold.reset()
     candidateMidi.value = null
     progress.value = 0
+    isFilling.value = false
     step.value = nextStep
     resume()
   }
@@ -100,6 +126,7 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
     pause()
     candidateMidi.value = null
     progress.value = 0
+    isFilling.value = false
   }
 
   function start() {
@@ -131,6 +158,7 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
     highestMidi: readonly(highestMidi),
     candidateMidi: readonly(candidateMidi),
     progress: readonly(progress),
+    isFilling: readonly(isFilling),
     start,
     next,
     cancel,
