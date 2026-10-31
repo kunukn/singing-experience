@@ -118,7 +118,6 @@ type ChartRow = {
   voiceStyle: ReturnType<typeof trackStyle>
   /* The solid part of the bar, or null when the whole bar is faint */
   solidStyle: ReturnType<typeof trackStyle> | null
-  isEmphasised: boolean
   ariaLabel: string
   /* With a range only: how much of this voice the singer covers */
   comparison: {
@@ -149,7 +148,6 @@ const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>
       voiceStyle: trackStyle(row.voiceMin, row.voiceMax),
       solidStyle:
         row.covered && trackStyle(row.covered.midiMin, row.covered.midiMax),
-      isEmphasised: row.isBestFit,
       ariaLabel: `${t('voiceRangeFinder.compare.rowLabel', {
         name,
         from: formatNote(row.voiceMin),
@@ -188,7 +186,6 @@ const exploreRows = (): ChartRow[] =>
       ...rowColors(stopIndex),
       voiceStyle,
       solidStyle: isSounding ? voiceStyle : null,
-      isEmphasised: isSounding,
       ariaLabel: t('generic.voiceTypeSpan', {
         name,
         from: formatNote(voice.midiMin),
@@ -299,10 +296,21 @@ const liveLabel = computed(() => {
         :class="{ 'cursor-pointer': range }"
         @click="selectRow(row)"
       >
+        <!--
+          Exploring lights the name with colour, not weight: the name column is
+          auto-sized, so a bold name changing on every note shifted the bars.
+          Best fit can stay bold — it only changes when the range is edited.
+        -->
         <span
           aria-hidden="true"
           class="text-xs whitespace-nowrap"
-          :class="{ 'font-semibold': row.isEmphasised }"
+          :class="
+            row.comparison
+              ? { 'font-semibold': row.comparison.isBestFit }
+              : row.isSounding
+                ? 'text-(--p-text-color)'
+                : 'text-(--p-text-muted-color)'
+          "
         >
           {{ row.name }}
         </span>
