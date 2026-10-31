@@ -55,7 +55,6 @@ export const games: Program[] = [
     key: 'singFly',
     icon: ProgramSingFlyIcon,
     route: '/singfly',
-    stage: 'beta',
   },
   {
     key: 'pitchGame',
