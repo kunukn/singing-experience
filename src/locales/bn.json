@@ -8,7 +8,7 @@
     "clear": "মুছে ফেলো",
     "back": "ফিরুন",
     "hz": "Hz",
-    "previewSoundLabel": "আপনার কণ্ঠ দেখুন",
+    "previewSoundLabel": "আমার কণ্ঠ দেখাও",
     "duetPreviewLabel": "দুজন গায়ক",
     "keyboardHintsLabel": "কী হিন্ট",
     "noteLogLabel": "বাজানো স্বর",
@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "আমার পরিসর",
     "groups": {
-      "mine": "তোমার কণ্ঠ",
+      "mine": "আমার কণ্ঠ",
       "easy": "সহজ পছন্দ",
       "voiceTypes": "কণ্ঠের ধরন",
       "wide": "বড় পরিসর"

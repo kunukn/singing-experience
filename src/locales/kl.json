@@ -239,7 +239,7 @@
   "voiceRanges": {
     "myRange": "My range",
     "groups": {
-      "mine": "Your voice",
+      "mine": "My voice",
       "easy": "Nemme valg",
       "voiceTypes": "Stemmetyper",
       "wide": "Brede lejer"

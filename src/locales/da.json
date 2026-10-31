@@ -8,7 +8,7 @@
     "clear": "Ryd",
     "back": "Tilbage",
     "hz": "Hz",
-    "previewSoundLabel": "Se din stemme",
+    "previewSoundLabel": "Se min stemme",
     "duetPreviewLabel": "To sangere",
     "keyboardHintsLabel": "Tastetip",
     "noteLogLabel": "Spillede toner",
@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "Mit leje",
     "groups": {
-      "mine": "Din stemme",
+      "mine": "Min stemme",
       "easy": "Nemme valg",
       "voiceTypes": "Stemmetyper",
       "wide": "Brede lejer"

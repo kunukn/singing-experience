@@ -8,7 +8,7 @@
     "clear": "مسح",
     "back": "رجوع",
     "hz": "Hz",
-    "previewSoundLabel": "شاهد صوتك",
+    "previewSoundLabel": "شاهد صوتي",
     "duetPreviewLabel": "مغنيان",
     "keyboardHintsLabel": "تلميحات المفاتيح",
     "noteLogLabel": "النغمات المعزوفة",
@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "نطاقي",
     "groups": {
-      "mine": "صوتك",
+      "mine": "صوتي",
       "easy": "خيارات سهلة",
       "voiceTypes": "أنواع الأصوات",
       "wide": "نطاقات واسعة"

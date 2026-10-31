@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "わたしの声域",
     "groups": {
-      "mine": "きみの声",
+      "mine": "わたしの声",
       "easy": "かんたん",
       "voiceTypes": "声の種類",
       "wide": "広い声域"

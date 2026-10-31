@@ -8,7 +8,7 @@
     "clear": "Futa",
     "back": "Rudi",
     "hz": "Hz",
-    "previewSoundLabel": "Ona sauti yako",
+    "previewSoundLabel": "Ona sauti yangu",
     "duetPreviewLabel": "Waimbaji wawili",
     "keyboardHintsLabel": "Vidokezo vya vitufe",
     "noteLogLabel": "Noti zilizochezwa",
@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "Kiwango changu",
     "groups": {
-      "mine": "Sauti yako",
+      "mine": "Sauti yangu",
       "easy": "Chaguo rahisi",
       "voiceTypes": "Aina za sauti",
       "wide": "Viwango vipana"

@@ -8,7 +8,7 @@
     "clear": "Löschen",
     "back": "Zurück",
     "hz": "Hz",
-    "previewSoundLabel": "Sieh deine Stimme",
+    "previewSoundLabel": "Meine Stimme sehen",
     "duetPreviewLabel": "Zwei Stimmen",
     "keyboardHintsLabel": "Tastenhilfe",
     "noteLogLabel": "Gespielte Töne",
@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "Mein Umfang",
     "groups": {
-      "mine": "Deine Stimme",
+      "mine": "Meine Stimme",
       "easy": "Einfache Auswahl",
       "voiceTypes": "Stimmlagen",
       "wide": "Große Umfänge"

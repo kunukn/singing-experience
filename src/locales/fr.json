@@ -8,7 +8,7 @@
     "clear": "Effacer",
     "back": "Retour",
     "hz": "Hz",
-    "previewSoundLabel": "Regarde ta voix",
+    "previewSoundLabel": "Voir ma voix",
     "duetPreviewLabel": "Deux voix",
     "keyboardHintsLabel": "Aide touches",
     "noteLogLabel": "Notes jouées",
@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "Ma tessiture",
     "groups": {
-      "mine": "Ta voix",
+      "mine": "Ma voix",
       "easy": "Choix faciles",
       "voiceTypes": "Types de voix",
       "wide": "Tessitures larges"

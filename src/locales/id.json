@@ -8,7 +8,7 @@
     "clear": "Hapus",
     "back": "Kembali",
     "hz": "Hz",
-    "previewSoundLabel": "Lihat suaramu",
+    "previewSoundLabel": "Lihat suaraku",
     "duetPreviewLabel": "Dua penyanyi",
     "keyboardHintsLabel": "Petunjuk tombol",
     "noteLogLabel": "Nada yang dimainkan",
@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "Jangkauanku",
     "groups": {
-      "mine": "Suaramu",
+      "mine": "Suaraku",
       "easy": "Pilihan mudah",
       "voiceTypes": "Jenis suara",
       "wide": "Jangkauan lebar"

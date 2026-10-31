@@ -8,7 +8,7 @@
     "clear": "Clear",
     "back": "Back",
     "hz": "Hz",
-    "previewSoundLabel": "See your voice",
+    "previewSoundLabel": "See my voice",
     "duetPreviewLabel": "Two singers",
     "keyboardHintsLabel": "Key hints",
     "noteLogLabel": "Played notes",
@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "My range",
     "groups": {
-      "mine": "Your voice",
+      "mine": "My voice",
       "easy": "Easy picks",
       "voiceTypes": "Voice types",
       "wide": "Wide ranges"

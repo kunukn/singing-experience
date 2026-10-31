@@ -8,7 +8,7 @@
     "clear": "清除",
     "back": "返回",
     "hz": "Hz",
-    "previewSoundLabel": "查看你的声音",
+    "previewSoundLabel": "查看我的声音",
     "duetPreviewLabel": "两个人唱",
     "keyboardHintsLabel": "按键提示",
     "noteLogLabel": "弹过的音",
@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "我的音域",
     "groups": {
-      "mine": "你的声音",
+      "mine": "我的声音",
       "easy": "简单选择",
       "voiceTypes": "声部类型",
       "wide": "宽音域"

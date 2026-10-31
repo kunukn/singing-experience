@@ -8,7 +8,7 @@
     "clear": "Borrar",
     "back": "Volver",
     "hz": "Hz",
-    "previewSoundLabel": "Mira tu voz",
+    "previewSoundLabel": "Ver mi voz",
     "duetPreviewLabel": "Dos voces",
     "keyboardHintsLabel": "Pistas de teclas",
     "noteLogLabel": "Notas tocadas",
@@ -296,7 +296,7 @@
   "voiceRanges": {
     "myRange": "Mi rango",
     "groups": {
-      "mine": "Tu voz",
+      "mine": "Mi voz",
       "easy": "Fáciles",
       "voiceTypes": "Tipos de voz",
       "wide": "Rangos amplios"
