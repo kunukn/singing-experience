@@ -64,20 +64,20 @@ describe('VoiceRangeLegend', () => {
   })
 
   test('should show how much of the range each voice covers', () => {
-    /* Comfy – Women C4–C5 is the narrow case: four voices span the whole
-     * window and so report nothing, while Baritone stops at A4 and sits on
-     * the 75% minimum. */
+    /* Comfy – Women C4–C5 is the narrow case: four voices hold the whole
+     * window, yet it is only 12 of their 24 semitones, so they read 50% rather
+     * than nothing. Baritone stops at A4, 9 of its notes. */
     const wrapper = mountLegend('voiceRanges.comfyWomen')
     const textOf = (labelKey: string) =>
       wrapper.get(`[data-voice-type="${labelKey}"]`).text()
 
-    expect(textOf('voiceRanges.soprano')).not.toContain('%')
-    expect(textOf('voiceRanges.baritone')).toContain('75%')
+    expect(textOf('voiceRanges.soprano')).toContain('50%')
+    expect(textOf('voiceRanges.baritone')).toContain('38%')
     expect(
       wrapper
         .get('[data-voice-type="voiceRanges.baritone"]')
         .attributes('aria-label'),
-    ).toBe('Baritone, C4–A4, 75%')
+    ).toBe('Baritone, C4–A4, 38%')
   })
 
   test('should omit coverage for the voice type that is the range', () => {

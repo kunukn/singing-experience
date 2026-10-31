@@ -118,12 +118,26 @@ describe('getVoiceTypeSegments', () => {
   })
 
   test('reports how much of each voice the range covers', () => {
-    /* Comfy – Women C4–C5 is 12 semitones, so coverage measures how much of
-     * that window each voice fills: Soprano spans all of it, Baritone stops at
-     * A4 and lands on exactly the 0.75 minimum, which `<` lets through. */
-    expect(segmentFor('voiceRanges.soprano', 60, 72)?.coverage).toBe(1)
-    expect(segmentFor('voiceRanges.baritone', 60, 72)?.coverage).toBe(0.75)
+    /* Coverage is measured against the voice's own 24 semitones, even where the
+     * range is narrower. Comfy – Women C4–C5 holds half of Soprano, and
+     * Baritone stops at A4, so 9 of its notes. */
+    expect(segmentFor('voiceRanges.soprano', 60, 72)?.coverage).toBe(0.5)
+    expect(segmentFor('voiceRanges.baritone', 60, 72)?.coverage).toBe(0.375)
     expect(segmentFor('voiceRanges.tenor', 45, 69)?.coverage).toBeCloseTo(0.875)
+  })
+
+  test('reports partial coverage for a voice that contains the whole range', () => {
+    /* A#2–D#4 fits inside Bass and Baritone, yet covers only 17 of each
+     * voice's 24 semitones — a figure, not a silent 100%. */
+    const segments = getVoiceTypeSegments(46, 63)
+
+    expect(
+      segments.map((segment) => [segment.labelKey, segment.coverage]),
+    ).toEqual([
+      ['voiceRanges.bass', 17 / 24],
+      ['voiceRanges.baritone', 17 / 24],
+      ['voiceRanges.tenor', 15 / 24],
+    ])
   })
 
   test('reports no coverage for a range that names its own voices', () => {

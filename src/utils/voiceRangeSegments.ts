@@ -21,8 +21,9 @@ export type VoiceTypeSegment = {
   /* Position among all six voice types, low to high — the identity that picks
    * the colour, so Bass stays burgundy whichever other voices are on screen. */
   stopIndex: number
-  /* 0–1, how much of this voice the selected range covers — the number the
-   * MIN_VOICE_COVERAGE test is made of. Null for a range that names its own
+  /* 0–1, how much of this voice the selected range covers — the figure the
+   * legend prints. Not the number MIN_VOICE_COVERAGE tests, which also passes
+   * a voice that fills a narrow range. Null for a range that names its own
    * voices: nothing measured them, so there is no figure to report. */
   coverage: number | null
 }
@@ -90,12 +91,13 @@ export function getVoiceTypeSegments(
      * range narrower than a voice type — all six are 24 semitones, so against
      * the default Everyone (G3–G4) none of them could clear even half.
      */
-    const coverage =
-      (midiTo - midiFrom) / Math.min(range.midiMax - range.midiMin, chartSpan)
+    const overlap = midiTo - midiFrom
+    const voiceSpan = range.midiMax - range.midiMin
+    const fit = overlap / Math.min(voiceSpan, chartSpan)
 
     if (focusVoices) {
       if (!focusVoices.includes(range.labelKey)) return
-    } else if (coverage < MIN_VOICE_COVERAGE) return
+    } else if (fit < MIN_VOICE_COVERAGE) return
 
     segments.push({
       rangeIndex,
@@ -106,7 +108,9 @@ export function getVoiceTypeSegments(
       isClippedHigh: range.midiMax > midiMax,
       lane: segments.length,
       stopIndex,
-      coverage: focusVoices ? null : coverage,
+      /* Against the voice alone: a narrow range sitting wholly inside Bass
+       * fits it completely, but still covers only part of the voice. */
+      coverage: focusVoices ? null : overlap / voiceSpan,
     })
   })
 
