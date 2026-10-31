@@ -350,32 +350,35 @@ onUnmounted(() => {
       class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
       data-testid="my-range-card"
     >
-      <h2 class="text-sm font-medium text-(--p-text-muted-color)">
-        {{ t('voiceRanges.myRange') }}
-      </h2>
-      <!-- aria-live reads a new range aloud, standing in for the ✓ a screen reader can't see -->
-      <p
-        class="relative text-3xl font-semibold tabular-nums"
-        dir="ltr"
-        aria-live="polite"
-        data-testid="my-range-notes"
-      >
-        {{ formatRange(myVoiceRange.midiMin, myVoiceRange.midiMax) }}
-        <!-- Absolutely placed so the range stays centred while the ✓ comes and goes -->
-        <Transition
-          leaveActiveClass="transition-opacity duration-500"
-          leaveToClass="opacity-0"
+      <!-- Label and range share a line to save height on phones; wraps back to stacked if a translation can't fit -->
+      <div class="flex flex-wrap items-baseline justify-center gap-x-3">
+        <h2 class="text-sm font-medium text-(--p-text-muted-color)">
+          {{ t('voiceRanges.myRange') }}
+        </h2>
+        <!-- aria-live reads a new range aloud, standing in for the ✓ a screen reader can't see -->
+        <p
+          class="relative text-3xl font-semibold tabular-nums"
+          dir="ltr"
+          aria-live="polite"
+          data-testid="my-range-notes"
         >
-          <span
-            v-if="isJustSaved"
-            aria-hidden="true"
-            data-testid="my-range-saved"
-            class="absolute start-full top-1/2 ms-2 -translate-y-1/2 text-xl text-(--p-green-500)"
+          {{ formatRange(myVoiceRange.midiMin, myVoiceRange.midiMax) }}
+          <!-- Absolutely placed so the range stays put while the ✓ comes and goes -->
+          <Transition
+            leaveActiveClass="transition-opacity duration-500"
+            leaveToClass="opacity-0"
           >
-            ✓
-          </span>
-        </Transition>
-      </p>
+            <span
+              v-if="isJustSaved"
+              aria-hidden="true"
+              data-testid="my-range-saved"
+              class="absolute start-full top-1/2 ms-2 -translate-y-1/2 text-xl text-(--p-green-500)"
+            >
+              ✓
+            </span>
+          </Transition>
+        </p>
+      </div>
 
       <!-- Mic buttons sit outside the labels, so a tap isn't forwarded to the select -->
       <div class="flex w-full flex-col gap-2">
