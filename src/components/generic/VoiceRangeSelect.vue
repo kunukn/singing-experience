@@ -38,7 +38,7 @@ const voiceRangeGroups = useVoiceRangeGroups(() => ({
       </div>
     </template>
     <template #footer>
-      <!-- A real link, so it opens in a new tab and reads as navigation -->
+      <!-- A real link, so it navigates in the same tab and reads as navigation -->
       <RouterLink
         to="/voice-range-finder"
         class="block border-t border-(--p-content-border-color) px-3 py-2 text-sm text-(--p-primary-color) no-underline"
