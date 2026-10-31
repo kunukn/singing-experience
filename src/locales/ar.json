@@ -333,7 +333,6 @@
     "highestSoFar": "الأعلى حتى الآن: {note}",
     "noRecordYet": "اثبت على نغمة حتى يمتلئ الشريط",
     "keepHolding": "واصل الثبات على {note} لحفظها",
-    "cleanCounts": "نظيفة — هذه النغمة تُحسب",
     "notCleanYet": "ليست نظيفة بعد — اقترب إلى {cents}¢",
     "done": "تم",
     "cancel": "إلغاء",

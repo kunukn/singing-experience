@@ -132,15 +132,26 @@ const isLiveClean = computed(
   () => sungMidi.value !== null && isCleanEnough(sungMidi.value),
 )
 
-/* Names what the filling bar is about to do. Shown only while it fills — on a
- * paused bar it would claim progress that isn't happening. */
-const holdHint = computed(() =>
-  !isRecordFlash.value && isFilling.value && candidateMidi.value !== null
+/* One line for what to do next. An out-of-tune high note pauses the bar, so
+ * that warning wins; otherwise name what the filling bar is about to save.
+ * Empty on a paused bar — it would claim progress that isn't happening. */
+const isOffPitchWarning = computed(
+  () =>
+    !isRecordFlash.value &&
+    step.value === 'high' &&
+    sungMidi.value !== null &&
+    !isLiveClean.value,
+)
+const holdHint = computed(() => {
+  if (isOffPitchWarning.value)
+    return t('voiceRangeFinder.notCleanYet', { cents: CLOSE_CENTS })
+
+  return !isRecordFlash.value && isFilling.value && candidateMidi.value !== null
     ? t('voiceRangeFinder.keepHolding', {
         note: formatNote(candidateMidi.value),
       })
-    : '',
-)
+    : ''
+})
 
 const isSearching = computed(
   () => step.value === 'low' || step.value === 'high',
@@ -470,22 +481,11 @@ onUnmounted(() => {
       <!-- Always rendered so the card keeps its height as the hint comes and goes -->
       <p
         class="min-h-5 text-sm font-medium"
+        :class="{ 'text-(--p-orange-400)': isOffPitchWarning }"
         data-testid="voice-range-finder-hold-hint"
+        :data-off-pitch="isOffPitchWarning"
       >
         {{ holdHint }}
-      </p>
-      <p
-        v-if="step === 'high' && liveCents !== null"
-        class="text-sm font-medium"
-        :class="isLiveClean ? 'text-(--p-green-500)' : 'text-(--p-orange-400)'"
-        data-testid="voice-range-finder-clean"
-        :data-clean="isLiveClean"
-      >
-        {{
-          isLiveClean
-            ? t('voiceRangeFinder.cleanCounts')
-            : t('voiceRangeFinder.notCleanYet', { cents: CLOSE_CENTS })
-        }}
       </p>
       <p
         class="text-sm"

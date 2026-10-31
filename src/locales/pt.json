@@ -333,7 +333,6 @@
     "highestSoFar": "Mais aguda até agora: {note}",
     "noRecordYet": "Segure uma nota até a barra encher",
     "keepHolding": "Continue segurando {note} para salvar",
-    "cleanCounts": "Limpa — esta nota conta",
     "notCleanYet": "Ainda não está limpa — chegue a {cents}¢",
     "done": "Pronto",
     "cancel": "Cancelar",

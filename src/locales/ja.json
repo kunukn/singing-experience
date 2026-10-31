@@ -333,7 +333,6 @@
     "highestSoFar": "いままででいちばん高い音：{note}",
     "noRecordYet": "バーがいっぱいになるまで音をのばそう",
     "keepHolding": "{note} をのばしつづけると保存されるよ",
-    "cleanCounts": "きれい！この音はカウントされるよ",
     "notCleanYet": "まだきれいじゃないよ。{cents}¢ 以内をめざそう",
     "done": "できた",
     "cancel": "キャンセル",

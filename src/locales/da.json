@@ -333,7 +333,6 @@
     "highestSoFar": "Højeste indtil nu: {note}",
     "noRecordYet": "Hold en tone, til baren er fyldt",
     "keepHolding": "Bliv ved med at holde {note} for at gemme den",
-    "cleanCounts": "Rent — den her tone tæller",
     "notCleanYet": "Ikke rent endnu — kom inden for {cents}¢",
     "done": "Færdig",
     "cancel": "Annuller",

@@ -333,7 +333,6 @@
     "highestSoFar": "目前最高：{note}",
     "noRecordYet": "保持一个音，直到进度条满",
     "keepHolding": "继续保持 {note} 就能存下来",
-    "cleanCounts": "很干净——这个音算数",
     "notCleanYet": "还不够干净——要在 {cents}¢ 以内",
     "done": "好了",
     "cancel": "取消",

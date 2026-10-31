@@ -333,7 +333,6 @@
     "highestSoFar": "Tertinggi sejauh ini: {note}",
     "noRecordYet": "Tahan satu nada sampai bilahnya penuh",
     "keepHolding": "Terus tahan {note} untuk menyimpannya",
-    "cleanCounts": "Bersih — nada ini dihitung",
     "notCleanYet": "Belum bersih — usahakan dalam {cents}¢",
     "done": "Selesai",
     "cancel": "Batal",

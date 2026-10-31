@@ -333,7 +333,6 @@
     "highestSoFar": "अब तक सबसे ऊँचा: {note}",
     "noRecordYet": "बार भरने तक एक सुर पकड़े रखो",
     "keepHolding": "{note} को पकड़े रखो, ताकि यह सेव हो जाए",
-    "cleanCounts": "साफ़ — यह सुर गिना जाएगा",
     "notCleanYet": "अभी साफ़ नहीं — {cents}¢ के अंदर आओ",
     "done": "हो गया",
     "cancel": "रद्द करें",
