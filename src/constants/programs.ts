@@ -50,7 +50,6 @@ export const games: Program[] = [
     key: 'graceKelly',
     icon: ProgramGraceKellyIcon,
     route: '/grace-kelly-challenge',
-    stage: 'beta',
   },
   {
     key: 'singFly',
@@ -93,13 +92,11 @@ export const tools: Program[] = [
     key: 'piano',
     icon: ProgramPianoIcon,
     route: '/piano',
-    stage: 'beta',
   },
   {
     key: 'guitar',
     icon: ProgramGuitarIcon,
     route: '/guitar',
-    stage: 'beta',
   },
   {
     key: 'scaleDetector',
