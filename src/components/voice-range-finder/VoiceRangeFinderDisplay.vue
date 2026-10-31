@@ -310,28 +310,33 @@ onUnmounted(() => {
             : t('voiceRangeFinder.highPrompt')
         }}
       </p>
-      <div class="flex w-full items-center gap-3">
+      <!--
+        Bar and note share the first row, so the note centres on the bar; the
+        cents hang in a second row beneath the note without pulling it up.
+        Fixed note column so the bar doesn't jump as the label changes width.
+      -->
+      <div class="grid w-full grid-cols-[1fr_4rem] items-center gap-x-3">
         <PrimeProgressBar
-          class="h-2 flex-1"
+          class="h-2"
           :value="Math.round(progress * 100)"
           :showValue="false"
         />
-        <!-- Fixed width so the bar doesn't jump as the cents change -->
-        <div class="flex w-16 flex-col items-end tabular-nums" dir="ltr">
-          <span
-            class="text-xl font-semibold"
-            data-testid="voice-range-finder-live-note"
-          >
-            {{ liveMidi === null ? '–' : formatNote(liveMidi) }}
-          </span>
-          <span
-            class="text-sm font-medium"
-            :style="{ color: liveCentsColor }"
-            data-testid="voice-range-finder-live-cents"
-          >
-            {{ liveCentsText || '&nbsp;' }}
-          </span>
-        </div>
+        <span
+          class="justify-self-end text-xl font-semibold tabular-nums"
+          dir="ltr"
+          data-testid="voice-range-finder-live-note"
+        >
+          {{ liveMidi === null ? '–' : formatNote(liveMidi) }}
+        </span>
+        <!-- Always rendered so the card keeps its height when the cents vanish -->
+        <span
+          class="col-start-2 justify-self-end text-sm font-medium tabular-nums"
+          dir="ltr"
+          :style="{ color: liveCentsColor }"
+          data-testid="voice-range-finder-live-cents"
+        >
+          {{ liveCentsText || '&nbsp;' }}
+        </span>
       </div>
       <!-- Always rendered so the card keeps its height as the hint comes and goes -->
       <p
