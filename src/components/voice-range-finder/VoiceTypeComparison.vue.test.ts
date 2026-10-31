@@ -146,6 +146,14 @@ describe('VoiceTypeComparison', () => {
     })
   })
 
+  test('should mark every C above the tracks', () => {
+    expect(
+      mountComparison()
+        .findAll('[data-testid="voice-type-comparison-tick"]')
+        .map((tick) => tick.text()),
+    ).toEqual(['C3', 'C4', 'C5', 'C6'])
+  })
+
   test('should not label voice ends beside My range', () => {
     expect(
       mountComparison()
@@ -238,6 +246,14 @@ describe('VoiceTypeComparison', () => {
         ).toBe(end)
       },
     )
+
+    test('should leave out the C tick labels, which the bar ends already name', () => {
+      expect(
+        mountExplore()
+          .find('[data-testid="voice-type-comparison-tick"]')
+          .exists(),
+      ).toBe(false)
+    })
 
     test('should light up nothing while nothing is sung', () => {
       expect(soundingVoices(mountExplore(null))).toEqual([])

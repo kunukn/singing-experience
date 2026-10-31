@@ -281,17 +281,24 @@ const liveLabel = computed(() => {
     <!--
       One grid for the tick header and every row (rows join it through
       subgrid), so names, tracks, percentages and hints line up in columns
-      whatever their text length. Exploring drops the % and hint columns.
+      whatever their text length. Exploring drops the % and hint columns,
+      and the tick header: the bar-end labels already name every C line, and
+      a second, differently placed "C6" read as a contradiction.
     -->
     <div
       class="relative grid items-center gap-x-2 gap-y-1"
       :class="range ? 'grid-cols-[auto_1fr_auto_auto]' : 'grid-cols-[auto_1fr]'"
     >
-      <div aria-hidden="true" class="col-span-full grid grid-cols-subgrid">
+      <div
+        v-if="range"
+        aria-hidden="true"
+        class="col-span-full grid grid-cols-subgrid"
+      >
         <div class="relative col-start-2 h-4" dir="ltr">
           <span
             v-for="tick in ticks"
             :key="tick.midi"
+            data-testid="voice-type-comparison-tick"
             class="absolute -translate-x-1/2 text-[10px] text-(--p-text-muted-color)"
             :style="{ insetInlineStart: `${tick.left}%` }"
           >
@@ -422,7 +429,8 @@ const liveLabel = computed(() => {
       </component>
 
       <!--
-        Spans the track column of the six voice rows (grid rows 2–7). Absolute,
+        Spans the track column of the six voice rows: grid rows 2–7 below the
+        tick header, or 1–6 while exploring, which has no header. Absolute,
         so it takes its area from the grid without auto-placement pushing the
         rows aside; pointer-events-none keeps the rows tappable beneath it.
         Both column lines are explicit: an absolute item's auto end line is
@@ -431,7 +439,8 @@ const liveLabel = computed(() => {
       <div
         v-if="liveLabel"
         aria-hidden="true"
-        class="pointer-events-none absolute inset-0 col-start-2 col-end-3 row-span-6 row-start-2"
+        class="pointer-events-none absolute inset-0 col-start-2 col-end-3 row-span-6"
+        :class="range ? 'row-start-2' : 'row-start-1'"
         dir="ltr"
       >
         <span
