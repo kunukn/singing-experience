@@ -27,6 +27,8 @@ type Props = {
     start: () => void | Promise<void>
     stop: () => void
   }
+  /* Test page: "See your voice" drives `detection` instead of opening the mic */
+  simulateIdlePreview?: boolean
 }
 
 const props = defineProps<Props>()
@@ -106,6 +108,53 @@ const {
   isFilling,
 } = finder
 
+const isSearching = computed(
+  () => step.value === 'low' || step.value === 'high',
+)
+
+/* "See your voice" — the live pitch on the chart between searches, so the
+ * singer sees where their voice sits before pressing Find. During a search the
+ * search's own detector draws the line. The setter keeps the shared setting
+ * writable, so useIdlePreview can flip it off when permission is denied; the
+ * getter is always false on a simulated page, so the real mic never opens. */
+const { isPreviewEnabled } = useSettings()
+
+const isRealIdlePreviewEnabled = computed({
+  get: () => isPreviewEnabled.value && !props.simulateIdlePreview,
+  set: (enabled: boolean) => {
+    isPreviewEnabled.value = enabled
+  },
+})
+
+const { previewFrequency, micPermission } = useIdlePreview({
+  isGameActive: isSearching,
+  isEnabled: isRealIdlePreviewEnabled,
+})
+
+/* Simulated idle preview: the one detector runs between searches while the
+ * toggle is on. A search starting keeps the detector startSearch just started,
+ * since this watcher flushes after it. */
+const isSimulatedIdlePreviewOn = computed(
+  () =>
+    !!props.simulateIdlePreview && isPreviewEnabled.value && !isSearching.value,
+)
+watch(
+  isSimulatedIdlePreviewOn,
+  (isOn) => {
+    if (isOn) void props.detection.start()
+    else if (!isSearching.value) props.detection.stop()
+  },
+  { immediate: true },
+)
+
+const chartLiveMidi = computed(() => {
+  if (isSearching.value || props.simulateIdlePreview) return sungMidi.value
+
+  return previewFrequency.value === null
+    ? null
+    : frequencyToMidi(previewFrequency.value)
+})
+
 /* The note being sung right now, or none. Not the hold's candidate: that stays
  * set through silence, and a frozen note would read as still being heard. */
 const liveMidi = computed(() =>
@@ -152,10 +201,6 @@ const holdHint = computed(() => {
       })
     : ''
 })
-
-const isSearching = computed(
-  () => step.value === 'low' || step.value === 'high',
-)
 
 /* How long the ✓ beside the range confirms a sung save */
 const SAVED_FLASH_MS = 2000
@@ -393,7 +438,7 @@ onUnmounted(() => {
       <VoiceTypeComparison
         :midiMin="myVoiceRange.midiMin"
         :midiMax="myVoiceRange.midiMax"
-        :liveMidi="sungMidi"
+        :liveMidi="chartLiveMidi"
         @selectRange="adoptVoiceType"
       />
 
@@ -408,7 +453,7 @@ onUnmounted(() => {
       </PrimeButton>
     </section>
 
-    <template v-if="step === 'idle'">
+    <div v-if="step === 'idle'" class="flex items-center gap-2">
       <PrimeButton
         severity="success"
         rounded
@@ -417,7 +462,11 @@ onUnmounted(() => {
       >
         {{ t('voiceRangeFinder.findBySinging') }}
       </PrimeButton>
-    </template>
+      <PreviewToggle
+        v-model="isPreviewEnabled"
+        :disabled="!simulateIdlePreview && micPermission === 'denied'"
+      />
+    </div>
 
     <section
       v-else-if="isSearching"

@@ -74,6 +74,6 @@ const octaveOptions = [7, 6, 5, 4, 3, 2]
       </label>
     </div>
 
-    <VoiceRangeFinderDisplay :detection="detection" />
+    <VoiceRangeFinderDisplay :detection="detection" simulateIdlePreview />
   </div>
 </template>

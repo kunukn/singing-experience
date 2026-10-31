@@ -10,23 +10,35 @@ const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
 
 const G2_HZ = 98
 
+const D3_HZ = 146.83
+
+const { isPreviewEnabled } = useSettings()
+
 function mountDisplay() {
   const frequency = ref<number | null>(null)
+  const isListening = ref(false)
   const detection = {
     frequency,
     isClean: ref(true),
-    isListening: ref(true),
+    isListening,
     error: ref<string | null>(null),
-    start: () => {},
-    stop: () => {},
+    start: vi.fn(() => {
+      isListening.value = true
+    }),
+    stop: vi.fn(() => {
+      isListening.value = false
+    }),
   }
   const wrapper = mount(VoiceRangeFinderDisplay, {
-    props: { detection },
+    props: { detection, simulateIdlePreview: true },
     global: { plugins: [i18n, PrimeVue] },
   })
 
-  return { wrapper, frequency }
+  return { wrapper, frequency, detection }
 }
+
+const liveLinesOf = (wrapper: ReturnType<typeof mountDisplay>['wrapper']) =>
+  wrapper.findAll('[data-testid="voice-type-comparison-live-line"]')
 
 describe('VoiceRangeFinderDisplay', () => {
   beforeEach(() => {
@@ -34,6 +46,46 @@ describe('VoiceRangeFinderDisplay', () => {
   })
   afterEach(() => {
     vi.useRealTimers()
+    isPreviewEnabled.value = false
+  })
+
+  describe('See your voice', () => {
+    test('should draw the sung note on the chart while idle', async () => {
+      isPreviewEnabled.value = true
+      const { wrapper, frequency } = mountDisplay()
+
+      frequency.value = D3_HZ
+      await nextTick()
+
+      expect(liveLinesOf(wrapper).length).toBeGreaterThan(0)
+    })
+
+    test('should hide the line and stop listening when switched off', async () => {
+      isPreviewEnabled.value = true
+      const { wrapper, frequency, detection } = mountDisplay()
+      frequency.value = D3_HZ
+      await nextTick()
+
+      isPreviewEnabled.value = false
+      await nextTick()
+
+      expect(detection.stop).toHaveBeenCalled()
+      expect(liveLinesOf(wrapper)).toHaveLength(0)
+    })
+
+    test('should keep the detector running when a search starts', async () => {
+      isPreviewEnabled.value = true
+      const { wrapper, detection } = mountDisplay()
+      await nextTick()
+
+      await wrapper
+        .get('[data-testid="voice-range-finder-start"]')
+        .trigger('click')
+      await nextTick()
+
+      expect(detection.stop).not.toHaveBeenCalled()
+      expect(detection.isListening.value).toBe(true)
+    })
   })
 
   test('should flash a ✓ when a hold sets a record, then return to live', async () => {
