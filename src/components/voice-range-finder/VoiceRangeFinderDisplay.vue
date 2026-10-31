@@ -490,9 +490,7 @@ onUnmounted(() => {
       <p
         class="text-sm"
         :class="
-          isRecordFlash
-            ? 'font-semibold text-(--p-green-500)'
-            : 'text-(--p-text-muted-color)'
+          isRecordFlash ? 'text-(--p-green-500)' : 'text-(--p-text-muted-color)'
         "
         data-testid="voice-range-finder-record"
       >
