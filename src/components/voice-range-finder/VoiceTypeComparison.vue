@@ -31,6 +31,11 @@ const { isDark } = useDarkMode()
 const AXIS_MIN_MIDI = 40
 const AXIS_MAX_MIDI = 84
 
+/* Semitones of room past Bass and Soprano while exploring, so the note labels
+ * beside the outermost bar ends (E2, C6) fit on a phone-width track. Three
+ * puts the edges on C♯2 and D♯6, so no C tick lands half off the edge. */
+const EXPLORE_AXIS_PADDING = 3
+
 /* Opacity of the part of a voice the singer doesn't reach yet — faint enough
  * that the solid covered part reads as "yours" at a glance. */
 const UNCOVERED_OPACITY = 0.25
@@ -42,10 +47,14 @@ const range = computed(() =>
 )
 
 const axisMin = computed(() =>
-  Math.min(AXIS_MIN_MIDI, range.value?.midiMin ?? AXIS_MIN_MIDI),
+  range.value
+    ? Math.min(AXIS_MIN_MIDI, range.value.midiMin)
+    : AXIS_MIN_MIDI - EXPLORE_AXIS_PADDING,
 )
 const axisMax = computed(() =>
-  Math.max(AXIS_MAX_MIDI, range.value?.midiMax ?? AXIS_MAX_MIDI),
+  range.value
+    ? Math.max(AXIS_MAX_MIDI, range.value.midiMax)
+    : AXIS_MAX_MIDI + EXPLORE_AXIS_PADDING,
 )
 
 const toPercent = (midi: number) =>
@@ -128,6 +137,13 @@ type ChartRow = {
   } | null
   /* Exploring only: the live note sits inside this voice */
   isSounding: boolean | null
+  /* Exploring only: the voice's own notes, labelled at each end of its bar */
+  ends: {
+    startLabel: string
+    endLabel: string
+    startLeft: number
+    endLeft: number
+  } | null
 }
 
 const rowColors = (stopIndex: number) => ({
@@ -161,6 +177,7 @@ const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>
         isBestFit: row.isBestFit,
       },
       isSounding: null,
+      ends: null,
     }
   })
 
@@ -193,6 +210,12 @@ const exploreRows = (): ChartRow[] =>
       }),
       comparison: null,
       isSounding,
+      ends: {
+        startLabel: formatNote(voice.midiMin),
+        endLabel: formatNote(voice.midiMax),
+        startLeft: toPercent(voice.midiMin),
+        endLeft: toPercent(voice.midiMax),
+      },
     }
   }).toReversed()
 
@@ -335,6 +358,33 @@ const liveLabel = computed(() => {
             class="absolute top-1/2 h-2 -translate-y-1/2 rounded-full"
             :style="{ ...row.solidStyle, backgroundColor: row.color }"
           />
+          <!-- Each note on the outer side of its end, so it never sits on the bar -->
+          <template v-if="row.ends">
+            <span
+              data-testid="voice-type-comparison-voice-start"
+              class="absolute top-1/2 -translate-x-full -translate-y-1/2 pe-1 text-[10px] whitespace-nowrap tabular-nums"
+              :class="
+                row.isSounding
+                  ? 'text-(--p-text-color)'
+                  : 'text-(--p-text-muted-color)'
+              "
+              :style="{ insetInlineStart: `${row.ends.startLeft}%` }"
+            >
+              {{ row.ends.startLabel }}
+            </span>
+            <span
+              data-testid="voice-type-comparison-voice-end"
+              class="absolute top-1/2 -translate-y-1/2 ps-1 text-[10px] whitespace-nowrap tabular-nums"
+              :class="
+                row.isSounding
+                  ? 'text-(--p-text-color)'
+                  : 'text-(--p-text-muted-color)'
+              "
+              :style="{ insetInlineStart: `${row.ends.endLeft}%` }"
+            >
+              {{ row.ends.endLabel }}
+            </span>
+          </template>
           <!-- The singer's two ends, repeated per row so they read as one line down the list -->
           <span
             v-for="(line, index) in guideLines"

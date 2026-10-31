@@ -146,6 +146,14 @@ describe('VoiceTypeComparison', () => {
     })
   })
 
+  test('should not label voice ends beside My range', () => {
+    expect(
+      mountComparison()
+        .find('[data-testid="voice-type-comparison-voice-start"]')
+        .exists(),
+    ).toBe(false)
+  })
+
   test('should ask for the voice range when a row is tapped', async () => {
     const wrapper = mountComparison()
 
@@ -213,6 +221,23 @@ describe('VoiceTypeComparison', () => {
         'voiceRanges.mezzoSoprano',
       ])
     })
+
+    test.each([
+      { labelKey: 'voiceRanges.soprano', start: 'C4', end: 'C6' },
+      { labelKey: 'voiceRanges.bass', start: 'E2', end: 'E4' },
+    ])(
+      'should label $labelKey from $start to $end',
+      ({ labelKey, start, end }) => {
+        const row = mountExplore().get(`[data-voice-type="${labelKey}"]`)
+
+        expect(
+          row.get('[data-testid="voice-type-comparison-voice-start"]').text(),
+        ).toBe(start)
+        expect(
+          row.get('[data-testid="voice-type-comparison-voice-end"]').text(),
+        ).toBe(end)
+      },
+    )
 
     test('should light up nothing while nothing is sung', () => {
       expect(soundingVoices(mountExplore(null))).toEqual([])
