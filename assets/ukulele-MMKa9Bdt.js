@@ -1,0 +1,1 @@
+import{P as e,f as t,v as n}from"./runtime-core.esm-bundler-De5B8hPt.js";import{_ as r}from"./useApi-CUWMwLLw-Zq4XtvC4.js";var i={"data-page":`ukulele`},a=n({__name:`ukulele`,setup(n){return r().replace({path:`/tuner`,query:{tab:`ukulele`}}),(n,r)=>(e(),t(`div`,i))}});export{a as default};

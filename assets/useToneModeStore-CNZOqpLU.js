@@ -1,0 +1,1 @@
+import{n as e}from"./pinia-Bl36Kc1w.js";import{s as t}from"./dist-Da1grKSA.js";var n=new Set([`keyboard`,`bell`,`bass`,`square`,`tuning`,`tuning2`]),r=`bell`,i=e(`toneMode`,()=>{let e=t(`syng.toneMode`,r);return n.has(e.value)||(e.value=r),{toneMode:e}});export{i as t};
