@@ -655,9 +655,9 @@
       "step3": "Cada ronda sube un semitono. Para cuando lo sientas demasiado alto."
     },
     "voiceRangeFinder": {
-      "step1": "Pulsa Encontrarlo cantando y canta una nota grave. Mantenla hasta que se llene la barra y luego prueba más grave.",
-      "step2": "Pulsa Listo y haz lo mismo hacia arriba. Solo cuentan las notas limpias y afinadas.",
-      "step3": "Pulsa Usar este para guardarlo como Mi rango, o elige tú las notas."
+      "step1": "Pulsa Encontrarlo cantando. Mantén tu nota más grave hasta que se llene la barra, pulsa Listo y luego haz lo mismo hacia arriba.",
+      "step2": "Pulsa Usar este para guardarlo como Mi rango, o elige tú las notas.",
+      "step3": "Abre la pestaña Explorar y activa Ver mi voz. Las voces que pueden cantar tu nota se iluminan."
     },
     "notes": {
       "step1": "Mira el pentagrama para ver dónde va cada nota.",

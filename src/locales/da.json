@@ -655,9 +655,9 @@
       "step3": "Hver runde går en halvtone op. Stop, når det føles for højt."
     },
     "voiceRangeFinder": {
-      "step1": "Tryk på Find det ved at synge, og syng en dyb tone. Hold den, til baren er fyldt, og prøv så dybere.",
-      "step2": "Tryk på Færdig, og gør det samme opad. Kun rene toner tæller.",
-      "step3": "Tryk på Brug det for at gemme det som Mit leje — eller vælg tonerne selv."
+      "step1": "Tryk på Find det ved at synge. Hold din dybeste tone, til baren er fyldt, tryk på Færdig, og gør så det samme opad.",
+      "step2": "Tryk på Brug det for at gemme det som Mit leje — eller vælg tonerne selv.",
+      "step3": "Åbn fanen Udforsk, og slå Se min stemme til. De stemmer, der kan synge din tone, lyser op."
     },
     "notes": {
       "step1": "Kig på nodelinjen for at se, hvor hver node sidder.",

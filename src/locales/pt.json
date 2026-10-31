@@ -655,9 +655,9 @@
       "step3": "Cada rodada sobe um semitom. Pare quando ficar alto demais."
     },
     "voiceRangeFinder": {
-      "step1": "Toque em Descobrir cantando e cante uma nota grave. Segure até a barra encher e depois tente mais grave.",
-      "step2": "Toque em Pronto e faça o mesmo subindo. Só contam notas limpas e afinadas.",
-      "step3": "Toque em Usar esta para salvar como Minha extensão, ou escolha as notas você mesmo."
+      "step1": "Toque em Descobrir cantando. Segure sua nota mais grave até a barra encher, toque em Pronto e depois faça o mesmo subindo.",
+      "step2": "Toque em Usar esta para salvar como Minha extensão, ou escolha as notas você mesmo.",
+      "step3": "Abra a aba Explorar e ative Ver minha voz. As vozes que conseguem cantar sua nota acendem."
     },
     "notes": {
       "step1": "Olhe a pauta para ver onde fica cada nota.",

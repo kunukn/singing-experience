@@ -655,9 +655,9 @@
       "step3": "Setiap putaran naik satu semiton. Berhenti kalau sudah terasa terlalu tinggi."
     },
     "voiceRangeFinder": {
-      "step1": "Tekan Cari dengan bernyanyi lalu nyanyikan nada rendah. Tahan sampai bilahnya penuh, lalu coba lebih rendah.",
-      "step2": "Tekan Selesai, lalu lakukan hal yang sama ke atas. Hanya nada yang bersih yang dihitung.",
-      "step3": "Tekan Pakai ini untuk menyimpannya sebagai Jangkauanku, atau pilih sendiri nadanya."
+      "step1": "Tekan Cari dengan bernyanyi. Tahan nada terendahmu sampai bilahnya penuh, tekan Selesai, lalu lakukan hal yang sama ke atas.",
+      "step2": "Tekan Pakai ini untuk menyimpannya sebagai Jangkauanku, atau pilih sendiri nadanya.",
+      "step3": "Buka tab Jelajahi dan nyalakan Lihat suaraku. Suara yang bisa menyanyikan nadamu akan menyala."
     },
     "notes": {
       "step1": "Lihat paranada untuk tahu letak setiap not.",

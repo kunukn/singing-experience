@@ -655,9 +655,9 @@
       "step3": "Kila raundi inapanda nusu-toni moja. Acha ukiona ni juu sana."
     },
     "voiceRangeFinder": {
-      "step1": "Bonyeza Tafuta kwa kuimba kisha imba noti ya chini. Ishikilie hadi upau ujae, kisha jaribu chini zaidi.",
-      "step2": "Bonyeza Nimemaliza, kisha fanya vivyo hivyo kwenda juu. Noti safi tu ndizo zinahesabiwa.",
-      "step3": "Bonyeza Tumia hiki ili kukihifadhi kama Kiwango changu, au chagua noti mwenyewe."
+      "step1": "Bonyeza Tafuta kwa kuimba. Shikilia noti yako ya chini kabisa hadi upau ujae, bonyeza Nimemaliza, kisha fanya vivyo hivyo kwenda juu.",
+      "step2": "Bonyeza Tumia hiki ili kukihifadhi kama Kiwango changu, au chagua noti mwenyewe.",
+      "step3": "Fungua kichupo cha Chunguza na uwashe Ona sauti yangu. Sauti zinazoweza kuimba noti yako zitawaka."
     },
     "notes": {
       "step1": "Angalia mistari ya noti uone kila noti inakaa wapi.",

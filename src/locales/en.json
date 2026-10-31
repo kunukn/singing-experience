@@ -655,9 +655,9 @@
       "step3": "Each round moves up a semitone. Stop when it feels too high."
     },
     "voiceRangeFinder": {
-      "step1": "Press Find it by singing and sing a low note. Hold it until the bar fills, then try lower.",
-      "step2": "Press Done, then do the same going up. Only clean, in-tune notes count.",
-      "step3": "Press Use this to save it as My range — or pick the notes yourself."
+      "step1": "Press Find it by singing. Hold your lowest note until the bar fills, press Done, then do the same going up.",
+      "step2": "Press Use this to save it as My range — or pick the notes yourself.",
+      "step3": "Open the Explore tab and turn on See my voice. The voices that can sing your note light up."
     },
     "notes": {
       "step1": "Look at the staff to see where each note sits.",
