@@ -347,7 +347,12 @@
       "reachUp": "Тянись вверх до {note}.",
       "reachDown": "Тянись вниз до {note}.",
       "reachBoth": "Тянись вниз до {low} и вверх до {high}.",
-      "covered": "Ты охватываешь всё."
+      "covered": "Ты охватываешь всё.",
+      "exploreTitle": "Типы голоса",
+      "exploreExplainer": "Спой ноту — голоса, которые могут её спеть, засветятся."
+    },
+    "tabs": {
+      "explore": "Исследуй"
     }
   },
   "toneDetector": {

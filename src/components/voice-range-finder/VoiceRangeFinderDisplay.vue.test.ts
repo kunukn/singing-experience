@@ -1,7 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import { createI18n } from 'vue-i18n'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import en from '@/locales/en.json'
 import { RANGE_FINDER_HOLD_MS } from './useRangeFinder'
 import VoiceRangeFinderDisplay from './VoiceRangeFinderDisplay.vue'
@@ -14,7 +15,17 @@ const D3_HZ = 146.83
 
 const { isPreviewEnabled } = useSettings()
 
-function mountDisplay() {
+async function createTestRouter() {
+  const router = createRouter({
+    history: createMemoryHistory(),
+    routes: [{ path: '/', component: { template: '<div />' } }],
+  })
+  await router.push('/')
+
+  return router
+}
+
+async function mountDisplay() {
   const frequency = ref<number | null>(null)
   const isListening = ref(false)
   const detection = {
@@ -31,13 +42,15 @@ function mountDisplay() {
   }
   const wrapper = mount(VoiceRangeFinderDisplay, {
     props: { detection, simulateIdlePreview: true },
-    global: { plugins: [i18n, PrimeVue] },
+    global: { plugins: [i18n, PrimeVue, await createTestRouter()] },
   })
 
   return { wrapper, frequency, detection }
 }
 
-const liveLinesOf = (wrapper: ReturnType<typeof mountDisplay>['wrapper']) =>
+type DisplayWrapper = Awaited<ReturnType<typeof mountDisplay>>['wrapper']
+
+const liveLinesOf = (wrapper: DisplayWrapper) =>
   wrapper.findAll('[data-testid="voice-type-comparison-live-line"]')
 
 describe('VoiceRangeFinderDisplay', () => {
@@ -52,7 +65,7 @@ describe('VoiceRangeFinderDisplay', () => {
   describe('See your voice', () => {
     test('should draw the sung note on the chart while idle', async () => {
       isPreviewEnabled.value = true
-      const { wrapper, frequency } = mountDisplay()
+      const { wrapper, frequency } = await mountDisplay()
 
       frequency.value = D3_HZ
       await nextTick()
@@ -62,7 +75,7 @@ describe('VoiceRangeFinderDisplay', () => {
 
     test('should hide the line and stop listening when switched off', async () => {
       isPreviewEnabled.value = true
-      const { wrapper, frequency, detection } = mountDisplay()
+      const { wrapper, frequency, detection } = await mountDisplay()
       frequency.value = D3_HZ
       await nextTick()
 
@@ -75,7 +88,7 @@ describe('VoiceRangeFinderDisplay', () => {
 
     test('should keep the detector running when a search starts', async () => {
       isPreviewEnabled.value = true
-      const { wrapper, detection } = mountDisplay()
+      const { wrapper, detection } = await mountDisplay()
       await nextTick()
 
       await wrapper
@@ -89,7 +102,7 @@ describe('VoiceRangeFinderDisplay', () => {
   })
 
   test('should flash a ✓ when a hold sets a record, then return to live', async () => {
-    const { wrapper, frequency } = mountDisplay()
+    const { wrapper, frequency } = await mountDisplay()
 
     await wrapper
       .get('[data-testid="voice-range-finder-start"]')
@@ -122,7 +135,7 @@ describe('VoiceRangeFinderDisplay', () => {
   })
 
   test('should save the low end when the high step is skipped', async () => {
-    const { wrapper, frequency } = mountDisplay()
+    const { wrapper, frequency } = await mountDisplay()
     const done = () => wrapper.get('[data-testid="voice-range-finder-done"]')
 
     await wrapper
@@ -154,7 +167,7 @@ describe('VoiceRangeFinderDisplay', () => {
   })
 
   test('should skip the low step but not save from nothing', async () => {
-    const { wrapper } = mountDisplay()
+    const { wrapper } = await mountDisplay()
     const done = () => wrapper.get('[data-testid="voice-range-finder-done"]')
 
     await wrapper
@@ -171,7 +184,7 @@ describe('VoiceRangeFinderDisplay', () => {
   })
 
   test('should show a ✓ beside the range after a sung save, then hide it', async () => {
-    const { wrapper, frequency } = mountDisplay()
+    const { wrapper, frequency } = await mountDisplay()
     const savedTick = () => wrapper.find('[data-testid="my-range-saved"]')
 
     await wrapper.get('[data-testid="my-range-sing-lowest"]').trigger('click')
@@ -189,5 +202,51 @@ describe('VoiceRangeFinderDisplay', () => {
     await nextTick()
 
     expect(savedTick().exists()).toBe(false)
+  })
+
+  describe('Explore tab', () => {
+    const openExplore = (wrapper: DisplayWrapper) =>
+      wrapper
+        .get('[data-testid="voice-range-finder-tab-explore"]')
+        .trigger('click')
+
+    test('should show the live note without the My range card', async () => {
+      isPreviewEnabled.value = true
+      const { wrapper, frequency } = await mountDisplay()
+
+      await openExplore(wrapper)
+      frequency.value = D3_HZ
+      await nextTick()
+
+      const explore = wrapper.get('[data-testid="voice-range-explore"]')
+      expect(
+        explore.get('[data-testid="voice-range-explore-note"]').text(),
+      ).toBe('D3')
+      expect(
+        explore
+          .findAll('[data-testid="voice-type-comparison-row"]')
+          .some((row) => row.attributes('data-sounding') === 'true'),
+      ).toBe(true)
+      expect(explore.find('[data-testid="my-range-highest"]').exists()).toBe(
+        false,
+      )
+    })
+
+    test('should cancel a running search when switching tabs', async () => {
+      const { wrapper, detection } = await mountDisplay()
+
+      await wrapper
+        .get('[data-testid="voice-range-finder-start"]')
+        .trigger('click')
+      expect(detection.isListening.value).toBe(true)
+
+      await openExplore(wrapper)
+      await flushPromises()
+
+      expect(detection.stop).toHaveBeenCalled()
+      expect(
+        wrapper.find('[data-testid="voice-range-finder-step"]').exists(),
+      ).toBe(false)
+    })
   })
 })

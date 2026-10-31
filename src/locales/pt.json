@@ -347,7 +347,12 @@
       "reachUp": "Cante subindo até {note}.",
       "reachDown": "Cante descendo até {note}.",
       "reachBoth": "Cante descendo até {low} e subindo até {high}.",
-      "covered": "Você cobre tudo."
+      "covered": "Você cobre tudo.",
+      "exploreTitle": "Tipos de voz",
+      "exploreExplainer": "Cante uma nota. As vozes que conseguem cantá-la acendem."
+    },
+    "tabs": {
+      "explore": "Explorar"
     }
   },
   "toneDetector": {

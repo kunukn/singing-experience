@@ -347,7 +347,12 @@
       "reachUp": "Sing up to {note}.",
       "reachDown": "Sing down to {note}.",
       "reachBoth": "Sing down to {low} and up to {high}.",
-      "covered": "You cover all of it."
+      "covered": "You cover all of it.",
+      "exploreTitle": "Voice types",
+      "exploreExplainer": "Sing a note. The voices that can sing it light up."
+    },
+    "tabs": {
+      "explore": "Explore"
     }
   },
   "toneDetector": {

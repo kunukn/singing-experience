@@ -347,7 +347,12 @@
       "reachUp": "Canta hasta {note} hacia arriba.",
       "reachDown": "Canta hasta {note} hacia abajo.",
       "reachBoth": "Canta hacia abajo hasta {low} y hacia arriba hasta {high}.",
-      "covered": "La cubres entera."
+      "covered": "La cubres entera.",
+      "exploreTitle": "Tipos de voz",
+      "exploreExplainer": "Canta una nota. Las voces que pueden cantarla se iluminan."
+    },
+    "tabs": {
+      "explore": "Explorar"
     }
   },
   "toneDetector": {

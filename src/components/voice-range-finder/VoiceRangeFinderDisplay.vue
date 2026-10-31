@@ -15,6 +15,7 @@ import {
   isCleanEnough,
   useRangeFinder,
 } from './useRangeFinder'
+import VoiceRangeExplorePanel from './VoiceRangeExplorePanel.vue'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
 
 type Props = {
@@ -35,6 +36,28 @@ const props = defineProps<Props>()
 
 const { t } = useI18n()
 const { isDark } = useDarkMode()
+
+const route = useRoute()
+const router = useRouter()
+
+const TAB_VALUES = ['range', 'explore'] as const
+type FinderTab = (typeof TAB_VALUES)[number]
+const DEFAULT_TAB: FinderTab = 'range'
+
+/* Active tab lives only in the URL (?tab=range|explore), as on /pitch-detector.
+ * replace() keeps tab switches out of the browser history. */
+const activeTab = computed<FinderTab>({
+  get() {
+    const tab = route.query.tab
+
+    return TAB_VALUES.includes(tab as FinderTab)
+      ? (tab as FinderTab)
+      : DEFAULT_TAB
+  },
+  set(tab) {
+    router.replace({ query: { ...route.query, tab } })
+  },
+})
 
 const { myVoiceRange, setMyVoiceRange, resetMyVoiceRange } = useMyVoiceRange()
 
@@ -331,6 +354,12 @@ function markSaved() {
   finder.cancel()
 }
 
+/* Both panels stay mounted, so a result waiting for "Use this" survives a
+ * switch — but a running search would keep listening behind a hidden tab. */
+watch(activeTab, () => {
+  if (isSearching.value) cancelSearch()
+})
+
 /* A refused mic prompt ends the search instead of leaving it listening to nothing */
 watch(
   () => props.detection.error.value,
@@ -346,147 +375,167 @@ onUnmounted(() => {
 
 <template>
   <div class="flex w-full max-w-md flex-col items-center gap-4">
-    <section
-      class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
-      data-testid="my-range-card"
+    <PrimeTabs
+      v-model:value="activeTab"
+      class="flex w-full flex-col gap-4"
+      data-testid="voice-range-finder-tabs"
     >
-      <!-- Label and range share a line to save height on phones; wraps back to stacked if a translation can't fit -->
-      <div class="flex flex-wrap items-baseline justify-center gap-x-3">
-        <h2 class="text-sm font-medium text-(--p-text-muted-color)">
+      <PrimeTabList class="w-full">
+        <PrimeTab value="range" data-testid="voice-range-finder-tab-range">
           {{ t('voiceRanges.myRange') }}
-        </h2>
-        <!-- aria-live reads a new range aloud, standing in for the ✓ a screen reader can't see -->
-        <p
-          class="relative text-3xl font-semibold tabular-nums"
-          dir="ltr"
-          aria-live="polite"
-          data-testid="my-range-notes"
-        >
-          {{ formatRange(myVoiceRange.midiMin, myVoiceRange.midiMax) }}
-          <!-- Absolutely placed so the range stays put while the ✓ comes and goes -->
-          <Transition
-            leaveActiveClass="transition-opacity duration-500"
-            leaveToClass="opacity-0"
+        </PrimeTab>
+        <PrimeTab value="explore" data-testid="voice-range-finder-tab-explore">
+          {{ t('voiceRangeFinder.tabs.explore') }}
+        </PrimeTab>
+      </PrimeTabList>
+
+      <PrimeTabPanels class="w-full p-0">
+        <PrimeTabPanel value="range" class="flex flex-col items-center gap-4">
+          <section
+            class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
+            data-testid="my-range-card"
           >
-            <span
-              v-if="isJustSaved"
-              aria-hidden="true"
-              data-testid="my-range-saved"
-              class="absolute start-full top-1/2 ms-2 -translate-y-1/2 text-xl text-(--p-green-500)"
+            <!-- Label and range share a line to save height on phones; wraps back to stacked if a translation can't fit -->
+            <div class="flex flex-wrap items-baseline justify-center gap-x-3">
+              <h2 class="text-sm font-medium text-(--p-text-muted-color)">
+                {{ t('voiceRanges.myRange') }}
+              </h2>
+              <!-- aria-live reads a new range aloud, standing in for the ✓ a screen reader can't see -->
+              <p
+                class="relative text-3xl font-semibold tabular-nums"
+                dir="ltr"
+                aria-live="polite"
+                data-testid="my-range-notes"
+              >
+                {{ formatRange(myVoiceRange.midiMin, myVoiceRange.midiMax) }}
+                <!-- Absolutely placed so the range stays put while the ✓ comes and goes -->
+                <Transition
+                  leaveActiveClass="transition-opacity duration-500"
+                  leaveToClass="opacity-0"
+                >
+                  <span
+                    v-if="isJustSaved"
+                    aria-hidden="true"
+                    data-testid="my-range-saved"
+                    class="absolute start-full top-1/2 ms-2 -translate-y-1/2 text-xl text-(--p-green-500)"
+                  >
+                    ✓
+                  </span>
+                </Transition>
+              </p>
+            </div>
+
+            <!-- Mic buttons sit outside the labels, so a tap isn't forwarded to the select -->
+            <div class="flex w-full flex-col gap-2">
+              <div class="flex items-center gap-1">
+                <label class="flex flex-1 items-center justify-between gap-3">
+                  <span class="text-sm">{{
+                    t('voiceRangeFinder.highest')
+                  }}</span>
+                  <PrimeSelect
+                    v-model="highestNote"
+                    :options="noteOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    size="small"
+                    scrollHeight="300px"
+                    class="min-w-24"
+                    data-testid="my-range-highest"
+                  />
+                </label>
+                <PrimeButton
+                  icon="pi pi-microphone"
+                  :pt="LARGE_SMALL_BUTTON_ICON_PT"
+                  severity="secondary"
+                  size="small"
+                  rounded
+                  text
+                  :disabled="isSearching"
+                  :aria-label="`${t('voiceRangeFinder.findBySinging')}: ${t('voiceRangeFinder.highest')}`"
+                  data-testid="my-range-sing-highest"
+                  @click="startSearch('high')"
+                />
+              </div>
+              <div class="flex items-center gap-1">
+                <label class="flex flex-1 items-center justify-between gap-3">
+                  <span class="text-sm">{{
+                    t('voiceRangeFinder.lowest')
+                  }}</span>
+                  <PrimeSelect
+                    v-model="lowestNote"
+                    :options="noteOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    size="small"
+                    scrollHeight="300px"
+                    class="min-w-24"
+                    data-testid="my-range-lowest"
+                  />
+                </label>
+                <PrimeButton
+                  icon="pi pi-microphone"
+                  :pt="LARGE_SMALL_BUTTON_ICON_PT"
+                  severity="secondary"
+                  size="small"
+                  rounded
+                  text
+                  :disabled="isSearching"
+                  :aria-label="`${t('voiceRangeFinder.findBySinging')}: ${t('voiceRangeFinder.lowest')}`"
+                  data-testid="my-range-sing-lowest"
+                  @click="startSearch('low')"
+                />
+              </div>
+            </div>
+
+            <VoiceTypeComparison
+              :midiMin="myVoiceRange.midiMin"
+              :midiMax="myVoiceRange.midiMax"
+              :liveMidi="chartLiveMidi"
+              @selectRange="adoptVoiceType"
+            />
+
+            <PrimeButton
+              severity="secondary"
+              size="small"
+              rounded
+              text
+              @click="resetMyVoiceRange"
             >
-              ✓
-            </span>
-          </Transition>
-        </p>
-      </div>
+              {{ t('voiceRangeFinder.reset') }}
+            </PrimeButton>
+          </section>
 
-      <!-- Mic buttons sit outside the labels, so a tap isn't forwarded to the select -->
-      <div class="flex w-full flex-col gap-2">
-        <div class="flex items-center gap-1">
-          <label class="flex flex-1 items-center justify-between gap-3">
-            <span class="text-sm">{{ t('voiceRangeFinder.highest') }}</span>
-            <PrimeSelect
-              v-model="highestNote"
-              :options="noteOptions"
-              optionLabel="label"
-              optionValue="value"
+          <div v-if="step === 'idle'" class="flex items-center gap-2">
+            <PrimeButton
+              severity="success"
               size="small"
-              scrollHeight="300px"
-              class="min-w-24"
-              data-testid="my-range-highest"
+              rounded
+              data-testid="voice-range-finder-start"
+              @click="startSearch()"
+            >
+              {{ t('voiceRangeFinder.findBySinging') }}
+            </PrimeButton>
+            <PreviewToggle
+              v-model="isPreviewEnabled"
+              :disabled="!simulateIdlePreview && micPermission === 'denied'"
             />
-          </label>
-          <PrimeButton
-            icon="pi pi-microphone"
-            :pt="LARGE_SMALL_BUTTON_ICON_PT"
-            severity="secondary"
-            size="small"
-            rounded
-            text
-            :disabled="isSearching"
-            :aria-label="`${t('voiceRangeFinder.findBySinging')}: ${t('voiceRangeFinder.highest')}`"
-            data-testid="my-range-sing-highest"
-            @click="startSearch('high')"
-          />
-        </div>
-        <div class="flex items-center gap-1">
-          <label class="flex flex-1 items-center justify-between gap-3">
-            <span class="text-sm">{{ t('voiceRangeFinder.lowest') }}</span>
-            <PrimeSelect
-              v-model="lowestNote"
-              :options="noteOptions"
-              optionLabel="label"
-              optionValue="value"
-              size="small"
-              scrollHeight="300px"
-              class="min-w-24"
-              data-testid="my-range-lowest"
-            />
-          </label>
-          <PrimeButton
-            icon="pi pi-microphone"
-            :pt="LARGE_SMALL_BUTTON_ICON_PT"
-            severity="secondary"
-            size="small"
-            rounded
-            text
-            :disabled="isSearching"
-            :aria-label="`${t('voiceRangeFinder.findBySinging')}: ${t('voiceRangeFinder.lowest')}`"
-            data-testid="my-range-sing-lowest"
-            @click="startSearch('low')"
-          />
-        </div>
-      </div>
+          </div>
 
-      <VoiceTypeComparison
-        :midiMin="myVoiceRange.midiMin"
-        :midiMax="myVoiceRange.midiMax"
-        :liveMidi="chartLiveMidi"
-        @selectRange="adoptVoiceType"
-      />
-
-      <PrimeButton
-        severity="secondary"
-        size="small"
-        rounded
-        text
-        @click="resetMyVoiceRange"
-      >
-        {{ t('voiceRangeFinder.reset') }}
-      </PrimeButton>
-    </section>
-
-    <div v-if="step === 'idle'" class="flex items-center gap-2">
-      <PrimeButton
-        severity="success"
-        size="small"
-        rounded
-        data-testid="voice-range-finder-start"
-        @click="startSearch()"
-      >
-        {{ t('voiceRangeFinder.findBySinging') }}
-      </PrimeButton>
-      <PreviewToggle
-        v-model="isPreviewEnabled"
-        :disabled="!simulateIdlePreview && micPermission === 'denied'"
-      />
-    </div>
-
-    <section
-      v-else-if="isSearching"
-      class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
-      data-testid="voice-range-finder-step"
-      :data-step="step"
-      :data-record-flash="isRecordFlash"
-    >
-      <p class="text-center text-sm">
-        {{
-          step === 'low'
-            ? t('voiceRangeFinder.lowPrompt')
-            : t('voiceRangeFinder.highPrompt')
-        }}
-      </p>
-      <!--
+          <section
+            v-else-if="isSearching"
+            class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
+            data-testid="voice-range-finder-step"
+            :data-step="step"
+            :data-record-flash="isRecordFlash"
+          >
+            <p class="text-center text-sm">
+              {{
+                step === 'low'
+                  ? t('voiceRangeFinder.lowPrompt')
+                  : t('voiceRangeFinder.highPrompt')
+              }}
+            </p>
+            <!--
         Bar and note share the first row, so the note centres on the bar; the
         cents hang in a second row beneath the note without pulling it up.
         The meter has its own column and the note a fixed, start-aligned one
@@ -496,125 +545,143 @@ onUnmounted(() => {
         every frame, and the transition made the bar trail the real hold (never
         visibly full) and drain on reset, which read as failure.
       -->
-      <div class="grid w-full grid-cols-[1fr_auto_3rem] items-center gap-x-2">
-        <PrimeProgressBar
-          class="h-2 transition-opacity"
-          :class="{ 'opacity-40': !isFilling && !isRecordFlash }"
-          :pt="{ value: { style: { transition: 'none' } } }"
-          data-testid="voice-range-finder-hold-bar"
-          :data-filling="isFilling"
-          :value="barPercent"
-          :showValue="false"
-        />
-        <CentsMeter class="text-xl" :cents="isRecordFlash ? null : liveCents" />
-        <span
-          class="justify-self-start text-xl font-semibold tabular-nums"
-          dir="ltr"
-          data-testid="voice-range-finder-live-note"
-        >
-          {{ shownMidi === null ? '–' : formatNote(shownMidi) }}
-        </span>
-        <!-- Always rendered so the card keeps its height when the cents vanish -->
-        <span
-          v-if="isRecordFlash"
-          class="col-start-3 justify-self-start text-sm font-semibold text-(--p-green-500)"
-          data-testid="voice-range-finder-record-tick"
-        >
-          ✓
-        </span>
-        <span
-          v-else
-          class="col-start-3 justify-self-start text-sm font-medium tabular-nums"
-          dir="ltr"
-          :style="{ color: liveCentsColor }"
-          data-testid="voice-range-finder-live-cents"
-        >
-          {{ liveCentsText || '&nbsp;' }}
-        </span>
-      </div>
-      <!-- Always rendered so the card keeps its height as the hint comes and goes -->
-      <p
-        class="min-h-5 text-sm font-medium"
-        :class="{ 'text-(--p-orange-400)': isOffPitchWarning }"
-        data-testid="voice-range-finder-hold-hint"
-        :data-off-pitch="isOffPitchWarning"
-      >
-        {{ holdHint }}
-      </p>
-      <p
-        class="text-sm"
-        :class="
-          isRecordFlash ? 'text-(--p-green-500)' : 'text-(--p-text-muted-color)'
-        "
-        data-testid="voice-range-finder-record"
-      >
-        {{ recordText }}
-      </p>
-      <div class="flex items-center gap-2">
-        <PrimeButton
-          severity="secondary"
-          size="small"
-          rounded
-          text
-          @click="cancelSearch"
-        >
-          {{ t('voiceRangeFinder.cancel') }}
-        </PrimeButton>
-        <PrimeButton
-          size="small"
-          rounded
-          :disabled="!canFinishStep"
-          data-testid="voice-range-finder-done"
-          @click="finishStep"
-        >
-          {{ t('voiceRangeFinder.done') }}
-        </PrimeButton>
-      </div>
-    </section>
+            <div
+              class="grid w-full grid-cols-[1fr_auto_3rem] items-center gap-x-2"
+            >
+              <PrimeProgressBar
+                class="h-2 transition-opacity"
+                :class="{ 'opacity-40': !isFilling && !isRecordFlash }"
+                :pt="{ value: { style: { transition: 'none' } } }"
+                data-testid="voice-range-finder-hold-bar"
+                :data-filling="isFilling"
+                :value="barPercent"
+                :showValue="false"
+              />
+              <CentsMeter
+                class="text-xl"
+                :cents="isRecordFlash ? null : liveCents"
+              />
+              <span
+                class="justify-self-start text-xl font-semibold tabular-nums"
+                dir="ltr"
+                data-testid="voice-range-finder-live-note"
+              >
+                {{ shownMidi === null ? '–' : formatNote(shownMidi) }}
+              </span>
+              <!-- Always rendered so the card keeps its height when the cents vanish -->
+              <span
+                v-if="isRecordFlash"
+                class="col-start-3 justify-self-start text-sm font-semibold text-(--p-green-500)"
+                data-testid="voice-range-finder-record-tick"
+              >
+                ✓
+              </span>
+              <span
+                v-else
+                class="col-start-3 justify-self-start text-sm font-medium tabular-nums"
+                dir="ltr"
+                :style="{ color: liveCentsColor }"
+                data-testid="voice-range-finder-live-cents"
+              >
+                {{ liveCentsText || '&nbsp;' }}
+              </span>
+            </div>
+            <!-- Always rendered so the card keeps its height as the hint comes and goes -->
+            <p
+              class="min-h-5 text-sm font-medium"
+              :class="{ 'text-(--p-orange-400)': isOffPitchWarning }"
+              data-testid="voice-range-finder-hold-hint"
+              :data-off-pitch="isOffPitchWarning"
+            >
+              {{ holdHint }}
+            </p>
+            <p
+              class="text-sm"
+              :class="
+                isRecordFlash
+                  ? 'text-(--p-green-500)'
+                  : 'text-(--p-text-muted-color)'
+              "
+              data-testid="voice-range-finder-record"
+            >
+              {{ recordText }}
+            </p>
+            <div class="flex items-center gap-2">
+              <PrimeButton
+                severity="secondary"
+                size="small"
+                rounded
+                text
+                @click="cancelSearch"
+              >
+                {{ t('voiceRangeFinder.cancel') }}
+              </PrimeButton>
+              <PrimeButton
+                size="small"
+                rounded
+                :disabled="!canFinishStep"
+                data-testid="voice-range-finder-done"
+                @click="finishStep"
+              >
+                {{ t('voiceRangeFinder.done') }}
+              </PrimeButton>
+            </div>
+          </section>
 
-    <section
-      v-else-if="step === 'result' && sungRange && foundRange"
-      class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
-      data-testid="voice-range-finder-result"
-    >
-      <p class="text-center">
-        {{
-          t('voiceRangeFinder.resultTitle', {
-            range: formatRange(sungRange.midiMin, sungRange.midiMax),
-          })
-        }}
-      </p>
-      <p
-        v-if="isWidened"
-        class="text-center text-sm text-(--p-text-muted-color)"
-        data-testid="voice-range-finder-widened"
-      >
-        {{
-          t('voiceRangeFinder.widened', {
-            range: formatRange(foundRange.midiMin, foundRange.midiMax),
-          })
-        }}
-      </p>
-      <div class="flex items-center gap-2">
-        <PrimeButton
-          severity="secondary"
-          size="small"
-          rounded
-          @click="startSearch()"
-        >
-          {{ t('voiceRangeFinder.tryAgain') }}
-        </PrimeButton>
-        <PrimeButton
-          severity="success"
-          size="small"
-          rounded
-          data-testid="voice-range-finder-use"
-          @click="saveFoundRange"
-        >
-          {{ t('voiceRangeFinder.useThis') }}
-        </PrimeButton>
-      </div>
-    </section>
+          <section
+            v-else-if="step === 'result' && sungRange && foundRange"
+            class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
+            data-testid="voice-range-finder-result"
+          >
+            <p class="text-center">
+              {{
+                t('voiceRangeFinder.resultTitle', {
+                  range: formatRange(sungRange.midiMin, sungRange.midiMax),
+                })
+              }}
+            </p>
+            <p
+              v-if="isWidened"
+              class="text-center text-sm text-(--p-text-muted-color)"
+              data-testid="voice-range-finder-widened"
+            >
+              {{
+                t('voiceRangeFinder.widened', {
+                  range: formatRange(foundRange.midiMin, foundRange.midiMax),
+                })
+              }}
+            </p>
+            <div class="flex items-center gap-2">
+              <PrimeButton
+                severity="secondary"
+                size="small"
+                rounded
+                @click="startSearch()"
+              >
+                {{ t('voiceRangeFinder.tryAgain') }}
+              </PrimeButton>
+              <PrimeButton
+                severity="success"
+                size="small"
+                rounded
+                data-testid="voice-range-finder-use"
+                @click="saveFoundRange"
+              >
+                {{ t('voiceRangeFinder.useThis') }}
+              </PrimeButton>
+            </div>
+          </section>
+        </PrimeTabPanel>
+
+        <PrimeTabPanel value="explore" class="flex flex-col items-center gap-4">
+          <VoiceRangeExplorePanel :liveMidi="chartLiveMidi" />
+          <PreviewToggle
+            v-model="isPreviewEnabled"
+            :disabled="!simulateIdlePreview && micPermission === 'denied'"
+          />
+        </PrimeTabPanel>
+      </PrimeTabPanels>
+    </PrimeTabs>
 
     <p v-if="detection.error.value" class="text-sm text-(--p-red-400)">
       {{ detection.error.value }}

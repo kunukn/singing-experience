@@ -347,7 +347,12 @@
       "reachUp": "غنِّ صعودًا حتى {note}.",
       "reachDown": "غنِّ نزولًا حتى {note}.",
       "reachBoth": "غنِّ نزولًا حتى {low} وصعودًا حتى {high}.",
-      "covered": "أنت تغطيه كله."
+      "covered": "أنت تغطيه كله.",
+      "exploreTitle": "أنواع الأصوات",
+      "exploreExplainer": "غنِّ نغمة، فتضيء الأصوات التي تستطيع غناءها."
+    },
+    "tabs": {
+      "explore": "استكشف"
     }
   },
   "toneDetector": {

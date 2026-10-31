@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { cleanTextColor, octaveStopColor } from '@/utils/pitchColors'
+import { VOICE_TYPES } from '@/utils/voiceRangeSegments'
 import { centsOffNearest } from './useRangeFinder'
 import {
   compareWithVoiceTypes,
@@ -8,9 +9,10 @@ import {
 } from './voiceTypeComparison'
 
 type Props = {
-  /* The singer's range, drawn against every voice type */
-  midiMin: number
-  midiMax: number
+  /* The singer's range, drawn against every voice type. Leave both out to
+   * explore: the voices alone, lit up where the live note falls. */
+  midiMin?: number
+  midiMax?: number
   /* The note being sung right now, fractional so cents move the line; null when silent */
   liveMidi?: number | null
 }
@@ -33,8 +35,18 @@ const AXIS_MAX_MIDI = 84
  * that the solid covered part reads as "yours" at a glance. */
 const UNCOVERED_OPACITY = 0.25
 
-const axisMin = computed(() => Math.min(AXIS_MIN_MIDI, props.midiMin))
-const axisMax = computed(() => Math.max(AXIS_MAX_MIDI, props.midiMax))
+const range = computed(() =>
+  props.midiMin === undefined || props.midiMax === undefined
+    ? null
+    : { midiMin: props.midiMin, midiMax: props.midiMax },
+)
+
+const axisMin = computed(() =>
+  Math.min(AXIS_MIN_MIDI, range.value?.midiMin ?? AXIS_MIN_MIDI),
+)
+const axisMax = computed(() =>
+  Math.max(AXIS_MAX_MIDI, range.value?.midiMax ?? AXIS_MAX_MIDI),
+)
 
 const toPercent = (midi: number) =>
   ((midi - axisMin.value) / (axisMax.value - axisMin.value)) * 100
@@ -92,48 +104,122 @@ function reachSentence(row: VoiceTypeComparisonRow): string {
   return t('voiceRangeFinder.compare.covered')
 }
 
-const rows = computed(() =>
-  compareWithVoiceTypes(props.midiMin, props.midiMax).map((row) => {
+const trackStyle = (midiMin: number, midiMax: number) => ({
+  insetInlineStart: `${toPercent(midiMin)}%`,
+  width: `${toPercent(midiMax) - toPercent(midiMin)}%`,
+})
+
+type ChartRow = {
+  labelKey: string
+  rangeIndex: number
+  name: string
+  color: string
+  faintColor: string
+  voiceStyle: ReturnType<typeof trackStyle>
+  /* The solid part of the bar, or null when the whole bar is faint */
+  solidStyle: ReturnType<typeof trackStyle> | null
+  isEmphasised: boolean
+  ariaLabel: string
+  /* With a range only: how much of this voice the singer covers */
+  comparison: {
+    coverage: number
+    percent: string
+    hint: string
+    isBestFit: boolean
+  } | null
+  /* Exploring only: the live note sits inside this voice */
+  isSounding: boolean | null
+}
+
+const rowColors = (stopIndex: number) => ({
+  color: octaveStopColor(stopIndex, isDark.value),
+  faintColor: octaveStopColor(stopIndex, isDark.value, UNCOVERED_OPACITY),
+})
+
+const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>
+  compareWithVoiceTypes(midiMin, midiMax).map((row) => {
     const name = t(row.labelKey)
     const percent = percentFormat.value.format(row.coverage)
 
     return {
-      ...row,
+      labelKey: row.labelKey,
+      rangeIndex: row.rangeIndex,
       name,
-      percent,
-      hint: reachHint(row),
-      color: octaveStopColor(row.stopIndex, isDark.value),
-      faintColor: octaveStopColor(
-        row.stopIndex,
-        isDark.value,
-        UNCOVERED_OPACITY,
-      ),
-      voiceStyle: {
-        insetInlineStart: `${toPercent(row.voiceMin)}%`,
-        width: `${toPercent(row.voiceMax) - toPercent(row.voiceMin)}%`,
-      },
-      coveredStyle: row.covered && {
-        insetInlineStart: `${toPercent(row.covered.midiMin)}%`,
-        width: `${toPercent(row.covered.midiMax) - toPercent(row.covered.midiMin)}%`,
-      },
+      ...rowColors(row.stopIndex),
+      voiceStyle: trackStyle(row.voiceMin, row.voiceMax),
+      solidStyle:
+        row.covered && trackStyle(row.covered.midiMin, row.covered.midiMax),
+      isEmphasised: row.isBestFit,
       ariaLabel: `${t('voiceRangeFinder.compare.rowLabel', {
         name,
         from: formatNote(row.voiceMin),
         to: formatNote(row.voiceMax),
         percent,
       })} ${reachSentence(row)}`,
+      comparison: {
+        coverage: row.coverage,
+        percent,
+        hint: reachHint(row),
+        isBestFit: row.isBestFit,
+      },
+      isSounding: null,
     }
-  }),
+  })
+
+/* The note as the readout names it, so a lit row always agrees with the label */
+const liveNote = computed(() =>
+  props.liveMidi == null ? null : Math.round(props.liveMidi),
 )
+
+/* High to low, as every vertical pitch list in the app reads */
+const exploreRows = (): ChartRow[] =>
+  VOICE_TYPES.map(({ range: voice, rangeIndex }, stopIndex) => {
+    const name = t(voice.labelKey)
+    const voiceStyle = trackStyle(voice.midiMin, voice.midiMax)
+    const isSounding =
+      liveNote.value !== null &&
+      liveNote.value >= voice.midiMin &&
+      liveNote.value <= voice.midiMax
+
+    return {
+      labelKey: voice.labelKey,
+      rangeIndex,
+      name,
+      ...rowColors(stopIndex),
+      voiceStyle,
+      solidStyle: isSounding ? voiceStyle : null,
+      isEmphasised: isSounding,
+      ariaLabel: t('generic.voiceTypeSpan', {
+        name,
+        from: formatNote(voice.midiMin),
+        to: formatNote(voice.midiMax),
+      }),
+      comparison: null,
+      isSounding,
+    }
+  }).toReversed()
+
+const rows = computed(() =>
+  range.value
+    ? compareRows(range.value.midiMin, range.value.midiMax)
+    : exploreRows(),
+)
+
+/* Rows adopt a voice as My range, which only makes sense beside My range */
+function selectRow(row: ChartRow) {
+  if (range.value) emit('selectRange', row.rangeIndex)
+}
 
 /* The singer's two ends: drawn as a line through every row and labelled once
  * in the footer, so the lines read as "your range" */
 const guideLines = computed(() =>
-  [props.midiMin, props.midiMax].map((midi) => ({
-    midi,
-    left: toPercent(midi),
-    label: formatNote(midi),
-  })),
+  range.value
+    ? [range.value.midiMin, range.value.midiMax].map((midi) => ({
+        midi,
+        left: toPercent(midi),
+        label: formatNote(midi),
+      }))
+    : [],
 )
 
 /* Pinned to the chart's edge rather than widening the axis: a live note
@@ -165,18 +251,23 @@ const liveLabel = computed(() => {
 <template>
   <div class="flex w-full flex-col gap-2" data-testid="voice-type-comparison">
     <h3 class="text-xs font-medium text-(--p-text-muted-color)">
-      {{ t('voiceRangeFinder.compare.title') }}
+      {{
+        range
+          ? t('voiceRangeFinder.compare.title')
+          : t('voiceRangeFinder.compare.exploreTitle')
+      }}
     </h3>
 
     <!--
       One grid for the tick header and every row (rows join it through
       subgrid), so names, tracks, percentages and hints line up in columns
-      whatever their text length.
+      whatever their text length. Exploring drops the % and hint columns.
     -->
     <div
-      class="relative grid grid-cols-[auto_1fr_auto_auto] items-center gap-x-2 gap-y-1"
+      class="relative grid items-center gap-x-2 gap-y-1"
+      :class="range ? 'grid-cols-[auto_1fr_auto_auto]' : 'grid-cols-[auto_1fr]'"
     >
-      <div aria-hidden="true" class="col-span-4 grid grid-cols-subgrid">
+      <div aria-hidden="true" class="col-span-full grid grid-cols-subgrid">
         <div class="relative col-start-2 h-4" dir="ltr">
           <span
             v-for="tick in ticks"
@@ -189,22 +280,29 @@ const liveLabel = computed(() => {
         </div>
       </div>
 
-      <button
+      <!-- A plain row while exploring: tapping it must not rewrite My range from another tab -->
+      <component
+        :is="range ? 'button' : 'div'"
         v-for="row in rows"
         :key="row.labelKey"
-        type="button"
+        :type="range ? 'button' : undefined"
+        :role="range ? undefined : 'img'"
         data-testid="voice-type-comparison-row"
         :data-voice-type="row.labelKey"
-        :data-coverage="Math.round(row.coverage * 100)"
-        :data-best-fit="row.isBestFit"
+        :data-coverage="
+          row.comparison ? Math.round(row.comparison.coverage * 100) : undefined
+        "
+        :data-best-fit="row.comparison?.isBestFit"
+        :data-sounding="row.isSounding ?? undefined"
         :aria-label="row.ariaLabel"
-        class="col-span-4 grid min-h-6 cursor-pointer grid-cols-subgrid items-center rounded border-none bg-transparent p-0 text-start text-(--p-text-color)"
-        @click="emit('selectRange', row.rangeIndex)"
+        class="col-span-full grid min-h-6 grid-cols-subgrid items-center rounded border-none bg-transparent p-0 text-start text-(--p-text-color)"
+        :class="{ 'cursor-pointer': range }"
+        @click="selectRow(row)"
       >
         <span
           aria-hidden="true"
           class="text-xs whitespace-nowrap"
-          :class="{ 'font-semibold': row.isBestFit }"
+          :class="{ 'font-semibold': row.isEmphasised }"
         >
           {{ row.name }}
         </span>
@@ -225,9 +323,9 @@ const liveLabel = computed(() => {
             :style="{ ...row.voiceStyle, backgroundColor: row.faintColor }"
           />
           <span
-            v-if="row.coveredStyle"
+            v-if="row.solidStyle"
             class="absolute top-1/2 h-2 -translate-y-1/2 rounded-full"
-            :style="{ ...row.coveredStyle, backgroundColor: row.color }"
+            :style="{ ...row.solidStyle, backgroundColor: row.color }"
           />
           <!-- The singer's two ends, repeated per row so they read as one line down the list -->
           <span
@@ -244,22 +342,26 @@ const liveLabel = computed(() => {
             :style="{ insetInlineStart: `${liveLeft}%` }"
           />
         </span>
-        <span
-          aria-hidden="true"
-          class="text-end text-xs whitespace-nowrap text-(--p-text-muted-color) tabular-nums"
-          :class="{ 'font-semibold text-(--p-text-color)': row.isBestFit }"
-        >
-          {{ row.percent }}
-        </span>
-        <span
-          aria-hidden="true"
-          class="text-xs whitespace-nowrap tabular-nums"
-          dir="ltr"
-          data-testid="voice-type-comparison-hint"
-        >
-          {{ row.hint }}
-        </span>
-      </button>
+        <template v-if="row.comparison">
+          <span
+            aria-hidden="true"
+            class="text-end text-xs whitespace-nowrap text-(--p-text-muted-color) tabular-nums"
+            :class="{
+              'font-semibold text-(--p-text-color)': row.comparison.isBestFit,
+            }"
+          >
+            {{ row.comparison.percent }}
+          </span>
+          <span
+            aria-hidden="true"
+            class="text-xs whitespace-nowrap tabular-nums"
+            dir="ltr"
+            data-testid="voice-type-comparison-hint"
+          >
+            {{ row.comparison.hint }}
+          </span>
+        </template>
+      </component>
 
       <!--
         Spans the track column of the six voice rows (grid rows 2–7). Absolute,
@@ -295,7 +397,11 @@ const liveLabel = computed(() => {
         Each label sits on the outer side of its line (low end to the left,
         high end to the right), so the two never overlap, even for a one-note range.
       -->
-      <div aria-hidden="true" class="col-span-4 grid grid-cols-subgrid">
+      <div
+        v-if="range"
+        aria-hidden="true"
+        class="col-span-full grid grid-cols-subgrid"
+      >
         <div class="relative col-start-2 h-4" dir="ltr">
           <span
             v-for="(line, index) in guideLines"
@@ -312,7 +418,11 @@ const liveLabel = computed(() => {
     </div>
 
     <p class="text-xs text-(--p-text-muted-color)">
-      {{ t('voiceRangeFinder.compare.explainer') }}
+      {{
+        range
+          ? t('voiceRangeFinder.compare.explainer')
+          : t('voiceRangeFinder.compare.exploreExplainer')
+      }}
     </p>
   </div>
 </template>

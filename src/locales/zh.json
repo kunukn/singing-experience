@@ -347,7 +347,12 @@
       "reachUp": "往上唱到 {note}。",
       "reachDown": "往下唱到 {note}。",
       "reachBoth": "往下唱到 {low}，往上唱到 {high}。",
-      "covered": "你全部覆盖了。"
+      "covered": "你全部覆盖了。",
+      "exploreTitle": "声部",
+      "exploreExplainer": "唱一个音，能唱这个音的声部会亮起来。"
+    },
+    "tabs": {
+      "explore": "探索"
     }
   },
   "toneDetector": {

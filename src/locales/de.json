@@ -347,7 +347,12 @@
       "reachUp": "Sing hoch bis {note}.",
       "reachDown": "Sing runter bis {note}.",
       "reachBoth": "Sing runter bis {low} und hoch bis {high}.",
-      "covered": "Du schaffst alles."
+      "covered": "Du schaffst alles.",
+      "exploreTitle": "Stimmlagen",
+      "exploreExplainer": "Sing einen Ton. Die Stimmlagen, die ihn singen können, leuchten auf."
+    },
+    "tabs": {
+      "explore": "Entdecken"
     }
   },
   "toneDetector": {

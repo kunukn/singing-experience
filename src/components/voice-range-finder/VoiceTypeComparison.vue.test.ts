@@ -159,4 +159,73 @@ describe('VoiceTypeComparison', () => {
       ],
     ])
   })
+
+  describe('explore mode', () => {
+    function mountExplore(liveMidi: number | null = null) {
+      return mount(VoiceTypeComparison, {
+        props: { liveMidi },
+        global: { plugins: [i18n] },
+      })
+    }
+
+    const soundingVoices = (wrapper: ReturnType<typeof mountExplore>) =>
+      wrapper
+        .findAll('[data-testid="voice-type-comparison-row"]')
+        .filter((row) => row.attributes('data-sounding') === 'true')
+        .map((row) => row.attributes('data-voice-type'))
+
+    test('should list all six voice types, Soprano first, without a range', () => {
+      const wrapper = mountExplore()
+
+      expect(
+        wrapper
+          .findAll('[data-testid="voice-type-comparison-row"]')
+          .map((row) => row.attributes('data-voice-type')),
+      ).toEqual([
+        'voiceRanges.soprano',
+        'voiceRanges.mezzoSoprano',
+        'voiceRanges.alto',
+        'voiceRanges.tenor',
+        'voiceRanges.baritone',
+        'voiceRanges.bass',
+      ])
+      expect(wrapper.text()).toContain('Voice types')
+    })
+
+    test('should leave out coverage, hints and range labels', () => {
+      const wrapper = mountExplore(60)
+
+      expect(
+        wrapper.find('[data-testid="voice-type-comparison-hint"]').exists(),
+      ).toBe(false)
+      expect(
+        wrapper
+          .find('[data-testid="voice-type-comparison-range-label"]')
+          .exists(),
+      ).toBe(false)
+      expect(wrapper.text()).not.toContain('%')
+    })
+
+    test('should light up the voices that can sing the live note', () => {
+      /* G5, a little sharp: inside Soprano (C4–C6) and Mezzo (A3–A5) only */
+      expect(soundingVoices(mountExplore(79.2))).toEqual([
+        'voiceRanges.soprano',
+        'voiceRanges.mezzoSoprano',
+      ])
+    })
+
+    test('should light up nothing while nothing is sung', () => {
+      expect(soundingVoices(mountExplore(null))).toEqual([])
+    })
+
+    test('should not offer a voice as My range when a row is tapped', async () => {
+      const wrapper = mountExplore()
+
+      expect(wrapper.find('button').exists()).toBe(false)
+
+      await wrapper.get('[data-voice-type="voiceRanges.alto"]').trigger('click')
+
+      expect(wrapper.emitted('selectRange')).toBeUndefined()
+    })
+  })
 })

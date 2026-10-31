@@ -347,7 +347,12 @@
       "reachUp": "Nyanyi naik sampai {note}.",
       "reachDown": "Nyanyi turun sampai {note}.",
       "reachBoth": "Nyanyi turun sampai {low} dan naik sampai {high}.",
-      "covered": "Kamu mencakup semuanya."
+      "covered": "Kamu mencakup semuanya.",
+      "exploreTitle": "Jenis suara",
+      "exploreExplainer": "Nyanyikan satu nada. Suara yang bisa menyanyikannya akan menyala."
+    },
+    "tabs": {
+      "explore": "Jelajahi"
     }
   },
   "toneDetector": {
