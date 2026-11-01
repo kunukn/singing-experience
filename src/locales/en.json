@@ -348,6 +348,8 @@
       "reachDown": "Sing down to {note}.",
       "reachBoth": "Sing down to {low} and up to {high}.",
       "covered": "You cover all of it.",
+      "bestFit": "Your best fit.",
+      "bestFitLegend": "★ = your best fit.",
       "exploreTitle": "Voice types",
       "exploreExplainer": "Sing a note. The voices that can sing it light up."
     },

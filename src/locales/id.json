@@ -348,6 +348,8 @@
       "reachDown": "Nyanyi turun sampai {note}.",
       "reachBoth": "Nyanyi turun sampai {low} dan naik sampai {high}.",
       "covered": "Kamu mencakup semuanya.",
+      "bestFit": "Paling cocok untukmu.",
+      "bestFitLegend": "★ = paling cocok untukmu.",
       "exploreTitle": "Jenis suara",
       "exploreExplainer": "Nyanyikan satu nada. Suara yang bisa menyanyikannya akan menyala."
     },

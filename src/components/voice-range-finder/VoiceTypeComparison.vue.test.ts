@@ -100,6 +100,38 @@ describe('VoiceTypeComparison', () => {
     ])
   })
 
+  test('should star the best fit, say it in words and explain the star', () => {
+    const wrapper = mountComparison()
+    const starredVoices = rowsOf(wrapper)
+      .filter((row) =>
+        row
+          .find('[data-testid="voice-type-comparison-best-fit-mark"]')
+          .exists(),
+      )
+      .map((row) => row.attributes('data-voice-type'))
+
+    expect(starredVoices).toEqual(['voiceRanges.bass'])
+    expect(
+      rowFor(wrapper, 'voiceRanges.bass').attributes('aria-label'),
+    ).toMatch(/ Your best fit\.$/)
+    expect(
+      rowFor(wrapper, 'voiceRanges.baritone').attributes('aria-label'),
+    ).not.toContain('best fit')
+    expect(wrapper.text()).toContain('★ = your best fit.')
+  })
+
+  test('should leave out the star key when the range misses every voice', () => {
+    /* F♯6–A6: above Soprano's C6, so no voice is covered at all */
+    const wrapper = mountComparison(90, 93)
+
+    expect(
+      wrapper
+        .find('[data-testid="voice-type-comparison-best-fit-mark"]')
+        .exists(),
+    ).toBe(false)
+    expect(wrapper.text()).not.toContain('best fit')
+  })
+
   test('should label both ends of the singer range', () => {
     /* G2–E4 */
     const labels = mountComparison(43, 64)
@@ -338,6 +370,17 @@ describe('VoiceTypeComparison', () => {
       await wrapper.get('[data-voice-type="voiceRanges.alto"]').trigger('click')
 
       expect(wrapper.emitted('selectRange')).toBeUndefined()
+    })
+
+    test('should show no best fit while exploring', () => {
+      const wrapper = mountExplore()
+
+      expect(
+        wrapper
+          .find('[data-testid="voice-type-comparison-best-fit-mark"]')
+          .exists(),
+      ).toBe(false)
+      expect(wrapper.text()).not.toContain('best fit')
     })
   })
 })

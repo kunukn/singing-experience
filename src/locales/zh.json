@@ -348,6 +348,8 @@
       "reachDown": "往下唱到 {note}。",
       "reachBoth": "往下唱到 {low}，往上唱到 {high}。",
       "covered": "你全部覆盖了。",
+      "bestFit": "最适合你。",
+      "bestFitLegend": "★ = 最适合你。",
       "exploreTitle": "声部",
       "exploreExplainer": "唱一个音，能唱这个音的声部会亮起来。"
     },

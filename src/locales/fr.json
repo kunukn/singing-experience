@@ -348,6 +348,8 @@
       "reachDown": "Descends jusqu'à {note}.",
       "reachBoth": "Descends jusqu'à {low} et monte jusqu'à {high}.",
       "covered": "Tu la couvres entièrement.",
+      "bestFit": "C'est celle qui te va le mieux.",
+      "bestFitLegend": "★ = celle qui te va le mieux.",
       "exploreTitle": "Types de voix",
       "exploreExplainer": "Chante une note. Les voix qui peuvent la chanter s'allument."
     },

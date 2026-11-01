@@ -348,6 +348,8 @@
       "reachDown": "Imba chini hadi {note}.",
       "reachBoth": "Imba chini hadi {low} na juu hadi {high}.",
       "covered": "Unafikia yote.",
+      "bestFit": "Inakufaa zaidi.",
+      "bestFitLegend": "★ = inayokufaa zaidi.",
       "exploreTitle": "Aina za sauti",
       "exploreExplainer": "Imba noti moja. Sauti zinazoweza kuiimba zitawaka."
     },

@@ -348,6 +348,8 @@
       "reachDown": "غنِّ نزولًا حتى {note}.",
       "reachBoth": "غنِّ نزولًا حتى {low} وصعودًا حتى {high}.",
       "covered": "أنت تغطيه كله.",
+      "bestFit": "الأنسب لك.",
+      "bestFitLegend": "★ = الأنسب لك.",
       "exploreTitle": "أنواع الأصوات",
       "exploreExplainer": "غنِّ نغمة، فتضيء الأصوات التي تستطيع غناءها."
     },

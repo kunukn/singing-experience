@@ -348,6 +348,8 @@
       "reachDown": "{note} まで下げてみよう。",
       "reachBoth": "{low} まで下げて、{high} まで上げてみよう。",
       "covered": "全部カバーしているよ。",
+      "bestFit": "いちばん合う声だよ。",
+      "bestFitLegend": "★＝いちばん合う声。",
       "exploreTitle": "声の種類",
       "exploreExplainer": "音をひとつ歌ってみて。その音を歌える声が光るよ。"
     },

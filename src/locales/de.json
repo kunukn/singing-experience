@@ -348,6 +348,8 @@
       "reachDown": "Sing runter bis {note}.",
       "reachBoth": "Sing runter bis {low} und hoch bis {high}.",
       "covered": "Du schaffst alles.",
+      "bestFit": "Passt am besten zu dir.",
+      "bestFitLegend": "★ = passt am besten zu dir.",
       "exploreTitle": "Stimmlagen",
       "exploreExplainer": "Sing einen Ton. Die Stimmlagen, die ihn singen können, leuchten auf."
     },

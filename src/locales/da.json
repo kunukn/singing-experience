@@ -348,6 +348,8 @@
       "reachDown": "Syng ned til {note}.",
       "reachBoth": "Syng ned til {low} og op til {high}.",
       "covered": "Du dækker det hele.",
+      "bestFit": "Passer bedst til dig.",
+      "bestFitLegend": "★ = passer bedst til dig.",
       "exploreTitle": "Stemmetyper",
       "exploreExplainer": "Syng en tone. De stemmer, der kan synge den, lyser op."
     },

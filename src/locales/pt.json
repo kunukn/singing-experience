@@ -348,6 +348,8 @@
       "reachDown": "Cante descendo até {note}.",
       "reachBoth": "Cante descendo até {low} e subindo até {high}.",
       "covered": "Você cobre tudo.",
+      "bestFit": "É a que mais combina com você.",
+      "bestFitLegend": "★ = a que mais combina com você.",
       "exploreTitle": "Tipos de voz",
       "exploreExplainer": "Cante uma nota. As vozes que conseguem cantá-la acendem."
     },
