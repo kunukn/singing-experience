@@ -342,7 +342,8 @@
     "tryAgain": "Prøv igen",
     "compare": {
       "title": "Dig og stemmetyperne",
-      "explainer": "Fyldt = toner, du kan synge. ↑ ↓ viser, hvor du skal hen for at dække hele stemmen.",
+      "rangeLegend": "Stribet = dit leje.",
+      "explainer": "Fyldt = den del af hver stemme, du kan synge. ↑ ↓ viser, hvor du skal hen for at dække hele stemmen.",
       "rowLabel": "{name}, {from}–{to}. Du dækker {percent}.",
       "reachUp": "Syng op til {note}.",
       "reachDown": "Syng ned til {note}.",

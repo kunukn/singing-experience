@@ -611,12 +611,23 @@ const liveLabel = computed(() => {
       </div>
     </div>
 
-    <p class="text-xs text-(--p-text-muted-color)">
-      {{
-        range
-          ? t('voiceRangeFinder.compare.explainer')
-          : t('voiceRangeFinder.compare.exploreExplainer')
-      }}
+    <!--
+      With a range, the striped bar is always explained; the solid parts and
+      arrows only while listening, since a faded chart has no solid parts.
+    -->
+    <p
+      class="text-xs text-(--p-text-muted-color)"
+      data-testid="voice-type-comparison-legend"
+    >
+      <template v-if="range">
+        {{ t('voiceRangeFinder.compare.rangeLegend') }}
+        <template v-if="isListening">
+          {{ t('voiceRangeFinder.compare.explainer') }}
+        </template>
+      </template>
+      <template v-else>
+        {{ t('voiceRangeFinder.compare.exploreExplainer') }}
+      </template>
       <template v-if="hasBestFit">
         {{ t('voiceRangeFinder.compare.bestFitLegend') }}
       </template>

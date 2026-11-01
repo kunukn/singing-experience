@@ -342,7 +342,8 @@
     "tryAgain": "Tentar de novo",
     "compare": {
       "title": "Você e os tipos de voz",
-      "explainer": "Cheio = notas que você consegue cantar. ↑ ↓ mostra para onde ir para cobrir a voz inteira.",
+      "rangeLegend": "Listrado = sua extensão.",
+      "explainer": "Cheio = a parte de cada voz que você consegue cantar. ↑ ↓ mostra para onde ir para cobrir a voz inteira.",
       "rowLabel": "{name}, {from}–{to}. Você cobre {percent}.",
       "reachUp": "Cante subindo até {note}.",
       "reachDown": "Cante descendo até {note}.",

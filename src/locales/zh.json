@@ -342,7 +342,8 @@
     "tryAgain": "再试一次",
     "compare": {
       "title": "你和各声部",
-      "explainer": "实心 = 你能唱的音。↑ ↓ 表示要往哪边唱才能覆盖整个声部。",
+      "rangeLegend": "斜纹 = 你的音域。",
+      "explainer": "实心 = 每个声部里你能唱的部分。↑ ↓ 表示要往哪边唱才能覆盖整个声部。",
       "rowLabel": "{name}，{from}–{to}。你覆盖了 {percent}。",
       "reachUp": "往上唱到 {note}。",
       "reachDown": "往下唱到 {note}。",

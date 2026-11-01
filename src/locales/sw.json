@@ -342,7 +342,8 @@
     "tryAgain": "Jaribu tena",
     "compare": {
       "title": "Wewe na aina za sauti",
-      "explainer": "Imejaa = noti unazoweza kuimba. ↑ ↓ inaonyesha uelekee wapi ili kufikia sauti nzima.",
+      "rangeLegend": "Yenye mistari = kiwango chako.",
+      "explainer": "Imejaa = sehemu ya kila sauti unayoweza kuimba. ↑ ↓ inaonyesha uelekee wapi ili kufikia sauti nzima.",
       "rowLabel": "{name}, {from}–{to}. Unafikia {percent}.",
       "reachUp": "Imba juu hadi {note}.",
       "reachDown": "Imba chini hadi {note}.",

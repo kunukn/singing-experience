@@ -342,7 +342,8 @@
     "tryAgain": "Nochmal versuchen",
     "compare": {
       "title": "Du und die Stimmlagen",
-      "explainer": "Voll = Töne, die du singen kannst. ↑ ↓ zeigt, wohin du musst, um die ganze Stimmlage abzudecken.",
+      "rangeLegend": "Gestreift = dein Umfang.",
+      "explainer": "Voll = der Teil jeder Stimmlage, den du singen kannst. ↑ ↓ zeigt, wohin du musst, um die ganze Stimmlage abzudecken.",
       "rowLabel": "{name}, {from}–{to}. Du schaffst {percent}.",
       "reachUp": "Sing hoch bis {note}.",
       "reachDown": "Sing runter bis {note}.",

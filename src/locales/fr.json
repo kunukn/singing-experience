@@ -342,7 +342,8 @@
     "tryAgain": "Réessayer",
     "compare": {
       "title": "Toi et les types de voix",
-      "explainer": "Plein = notes que tu peux chanter. ↑ ↓ montre où aller pour couvrir toute la voix.",
+      "rangeLegend": "Rayé = ta tessiture.",
+      "explainer": "Plein = la partie de chaque voix que tu peux chanter. ↑ ↓ montre où aller pour couvrir toute la voix.",
       "rowLabel": "{name}, {from}–{to}. Tu couvres {percent}.",
       "reachUp": "Monte jusqu'à {note}.",
       "reachDown": "Descends jusqu'à {note}.",
