@@ -132,8 +132,8 @@ const trackStyle = (midiMin: number, midiMax: number) => ({
 })
 
 /* The name column is as wide as its longest name, so one long name squeezes
- * every bar on a phone. Rows show the short name singers use ("Mezzo"); the
- * aria label keeps the full one. */
+ * every bar on a phone. A narrow chart shows the short name singers use
+ * ("Mezzo"), a wide one the full name; the aria label always keeps the full one. */
 const SHORT_LABEL_KEYS: Partial<Record<string, string>> = {
   'voiceRanges.mezzoSoprano': 'voiceRanges.mezzoSopranoShort',
 }
@@ -145,7 +145,7 @@ type ChartRow = {
   labelKey: string
   rangeIndex: number
   name: string
-  /* What the row shows; `name` stays the full name for the aria label */
+  /* Shown instead of `name` while the chart is narrow */
   shortName: string
   color: string
   faintColor: string
@@ -302,7 +302,10 @@ const liveLabel = computed(() => {
 </script>
 
 <template>
-  <div class="flex w-full flex-col gap-2" data-testid="voice-type-comparison">
+  <div
+    class="@container flex w-full flex-col gap-2"
+    data-testid="voice-type-comparison"
+  >
     <h3 class="text-xs font-medium text-(--p-text-muted-color)">
       {{
         range
@@ -366,7 +369,20 @@ const liveLabel = computed(() => {
           class="text-xs whitespace-nowrap"
           :class="{ 'font-semibold': row.comparison.isBestFit }"
         >
-          {{ row.shortName }}
+          <template v-if="row.shortName === row.name">{{ row.name }}</template>
+          <!-- Short on a narrow chart, full once the chart has room (container query) -->
+          <template v-else>
+            <span
+              class="@md:hidden"
+              data-testid="voice-type-comparison-short-name"
+              >{{ row.shortName }}</span
+            >
+            <span
+              class="hidden @md:inline"
+              data-testid="voice-type-comparison-full-name"
+              >{{ row.name }}</span
+            >
+          </template>
         </span>
         <!--
           Exploring lights the name in its voice's colour and a faux bold. Real
@@ -385,7 +401,20 @@ const liveLabel = computed(() => {
           "
           :style="row.isSounding ? { color: row.color } : undefined"
         >
-          {{ row.shortName }}
+          <template v-if="row.shortName === row.name">{{ row.name }}</template>
+          <!-- Short on a narrow chart, full once the chart has room (container query) -->
+          <template v-else>
+            <span
+              class="@md:hidden"
+              data-testid="voice-type-comparison-short-name"
+              >{{ row.shortName }}</span
+            >
+            <span
+              class="hidden @md:inline"
+              data-testid="voice-type-comparison-full-name"
+              >{{ row.name }}</span
+            >
+          </template>
         </span>
         <!--
           Pinned left-to-right: a horizontal pitch axis runs low → high in every

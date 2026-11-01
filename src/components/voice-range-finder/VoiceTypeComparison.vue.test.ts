@@ -52,12 +52,26 @@ describe('VoiceTypeComparison', () => {
     )
   })
 
-  test('should show Mezzo-Soprano by its short name and read out the full one', () => {
+  /* Which of the two shows is a container query, so the DOM shim sees both */
+  test('should give Mezzo-Soprano a short and a full name, and read out the full one', () => {
     const mezzo = rowFor(mountComparison(), 'voiceRanges.mezzoSoprano')
 
-    expect(mezzo.text()).toContain('Mezzo')
-    expect(mezzo.text()).not.toContain('Mezzo-Soprano')
+    expect(
+      mezzo.get('[data-testid="voice-type-comparison-short-name"]').text(),
+    ).toBe('Mezzo')
+    expect(
+      mezzo.get('[data-testid="voice-type-comparison-full-name"]').text(),
+    ).toBe('Mezzo-Soprano')
     expect(mezzo.attributes('aria-label')).toContain('Mezzo-Soprano')
+  })
+
+  test('should show a name without a short form once', () => {
+    const soprano = rowFor(mountComparison(), 'voiceRanges.soprano')
+
+    expect(
+      soprano.find('[data-testid="voice-type-comparison-short-name"]').exists(),
+    ).toBe(false)
+    expect(soprano.text().match(/Soprano/g)).toHaveLength(1)
   })
 
   test('should point both ways when the range sits inside the voice', () => {
