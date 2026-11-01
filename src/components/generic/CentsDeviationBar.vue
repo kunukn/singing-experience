@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { cleanColor, directionalColor, OFF_CENTS } from '@/utils/pitchColors'
+import {
+  directionalCleanColor,
+  directionalColor,
+  OFF_CENTS,
+} from '@/utils/pitchColors'
 
 type Props = {
   cents: number | null
@@ -27,7 +31,7 @@ const indicatorColor = computed(() => {
 
   return props.colorMode === 'directional'
     ? directionalColor(props.cents, props.threshold)
-    : cleanColor(props.cents)
+    : directionalCleanColor(props.cents)
 })
 
 function toTopPercent(cents: number) {

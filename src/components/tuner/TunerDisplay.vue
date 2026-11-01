@@ -17,7 +17,6 @@ import {
 } from '@/utils/noteUtils'
 import {
   CLEAN_CENTS,
-  cleanTextColor,
   directionalCleanColor,
   directionalTextColor,
 } from '@/utils/pitchColors'
@@ -70,13 +69,13 @@ const formattedReferenceA4 = computed(() =>
 
 const noteColor = computed(() =>
   shownNoteInfo.value && isShownClean.value
-    ? cleanTextColor(shownNoteInfo.value.cents, isDark.value)
+    ? directionalTextColor(shownNoteInfo.value.cents, isDark.value)
     : null,
 )
 
 const centsColor = computed(() =>
   shownNoteInfo.value && isShownClean.value
-    ? cleanTextColor(shownNoteInfo.value.cents, isDark.value)
+    ? directionalTextColor(shownNoteInfo.value.cents, isDark.value)
     : null,
 )
 

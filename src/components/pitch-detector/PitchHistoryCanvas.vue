@@ -3,8 +3,6 @@ import { CHART_LABEL_GUTTER_WIDTH } from '@/constants/chartStyles'
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
-  cleanColor,
-  cleanColorRgb,
   CLEAN_CENTS,
   directionalCleanColor,
   directionalCleanColorRgb,
@@ -84,7 +82,7 @@ const LABEL_COLLISION_Y = 26
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
-const { colorForCents, directionalColorForCents } = usePitchPreviewColor()
+const { colorForCents } = usePitchPreviewColor()
 const { t } = useI18n()
 
 /*
@@ -98,10 +96,11 @@ const recorders: Record<PitchLaneId, PitchLaneRecorder> = {
 }
 
 /*
- * Both voices keep the cents colouring (green → yellow → red), because each
- * singer still needs to see whether they are in tune. The second voice is told
- * apart by shape instead — a thinner spline and hollow dots — and only its head
- * dot and name pill carry the blue that matches its dashed preview line.
+ * Both voices keep the cents colouring (green, warm when sharp, blue when
+ * flat), because each singer still needs to see whether they are in tune.
+ * The second voice is told apart by shape instead — a thinner spline and
+ * hollow dots — and only its head dot and name pill carry the blue that
+ * matches its dashed preview line.
  */
 const LANE_TRAIL_STYLE: Record<
   PitchLaneId,
@@ -136,19 +135,19 @@ function centsFor(sample: PitchSample): number {
   return (sample.midiNote - props.focusMidi) * 100
 }
 
-/* Focus cents run from one fixed target, so their sign means "below / above
- * your note" and flat can turn blue. Nearest-note cents flip sign at every
- * semitone, so elsewhere the trail keeps the size-only ramp — a slide would
- * otherwise flash blue → red at each half-step. */
+/* Warm when sharp, blue when flat, as everywhere in the app. Nearest-note
+ * cents flip sign halfway between two notes, so a slide turns from warm to
+ * blue there: sharp of the lower note, then flat of the upper one. */
 const isFocusMode = () => props.focusMidi != null
 
-const trailColorRgb = (cents: number) =>
-  isFocusMode() ? directionalCleanColorRgb(cents) : cleanColorRgb(cents)
+const trailColorRgb = (cents: number) => directionalCleanColorRgb(cents)
 
 const trailColor = (cents: number, opacity: number) =>
-  isFocusMode()
-    ? directionalCleanColor(cents, opacity)
-    : cleanColor(cents, opacity)
+  directionalCleanColor(cents, opacity)
+
+/* Cents jump by about 100 where nearest-note cents wrap (+49 → −49);
+ * averaging across that would paint a green blip, so the newer point wins */
+const WRAP_JUMP_CENTS = 50
 
 function midiToY(midi: number, height: number): number {
   const usableHeight = height - PADDING_TOP - PADDING_BOTTOM
@@ -244,7 +243,7 @@ function drawPreviewIndicators(
           ? midiToNoteLabel(focusMidi).label
           : lane.previewNoteLabel,
       /* No game here, so the line is always cents-coloured, like the trail. */
-      colorForCents: isFocusMode() ? directionalColorForCents : colorForCents,
+      colorForCents,
       /* Off the zoomed focus chart the line keeps its direction: below the
        * chart is too low, so blue, never the generic off-chart red */
       colorOffChartByDirection: isFocusMode(),
@@ -488,11 +487,10 @@ function drawLaneTrail(
         const cp2x = p2.x - (p3.x - p1.x) / 6
         const cp2y = p2.y - (p3.y - p1.y) / 6
 
-        /* Signed in focus mode, where cents never wrap; abs elsewhere, where
-         * +50 → −50 at a semitone boundary would average to a green blip */
-        const avgCents = isFocusMode()
-          ? (p1.cents + p2.cents) / 2
-          : (Math.abs(p1.cents) + Math.abs(p2.cents)) / 2
+        const avgCents =
+          Math.abs(p1.cents - p2.cents) > WRAP_JUMP_CENTS
+            ? p2.cents
+            : (p1.cents + p2.cents) / 2
         const [r, g, b] = trailColorRgb(avgCents)
 
         ctx.beginPath()

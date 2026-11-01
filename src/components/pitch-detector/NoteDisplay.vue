@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { toAccidentalGlyph, type NoteInfo } from '@/utils/noteUtils'
-import { cleanTextColor } from '@/utils/pitchColors'
+import { directionalTextColor } from '@/utils/pitchColors'
 
 type Props = {
   noteInfo: NoteInfo | null
@@ -17,7 +17,7 @@ const { isDark } = useDarkMode()
 
 const noteColor = computed(() =>
   props.noteInfo && props.isClean
-    ? cleanTextColor(props.noteInfo.cents, isDark.value)
+    ? directionalTextColor(props.noteInfo.cents, isDark.value)
     : null,
 )
 

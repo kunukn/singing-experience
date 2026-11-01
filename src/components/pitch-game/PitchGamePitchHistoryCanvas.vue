@@ -2,7 +2,10 @@
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import { cleanColor, cleanColorRgb } from '@/utils/pitchColors'
+import {
+  directionalCleanColor,
+  directionalCleanColorRgb,
+} from '@/utils/pitchColors'
 import {
   clampPitchY,
   pitchLineColors,
@@ -551,8 +554,14 @@ function drawChart() {
         const cp2x = p2.x - (p3.x - p1.x) / 6
         const cp2y = p2.y - (p3.y - p1.y) / 6
 
-        const avgCents = (Math.abs(p1.cents) + Math.abs(p2.cents)) / 2
-        const [r, g, b] = cleanColorRgb(avgCents)
+        /* Warm when sharp, blue when flat. Where nearest-note cents wrap
+         * (+49 → −49) an average would paint a green blip, so the newer
+         * point wins. */
+        const avgCents =
+          Math.abs(p1.cents - p2.cents) > 50
+            ? p2.cents
+            : (p1.cents + p2.cents) / 2
+        const [r, g, b] = directionalCleanColorRgb(avgCents)
 
         ctx.beginPath()
         ctx.moveTo(p1.x, p1.y)
@@ -564,7 +573,7 @@ function drawChart() {
       ctx.beginPath()
       ctx.moveTo(points[0].x, points[0].y)
       ctx.lineTo(points[0].x, points[0].y)
-      ctx.strokeStyle = cleanColor(points[0].cents, 0.7)
+      ctx.strokeStyle = directionalCleanColor(points[0].cents, 0.7)
       ctx.stroke()
     }
   }
@@ -582,7 +591,7 @@ function drawChart() {
     ctx.arc(x, y, sample.isClean ? 2 : 1.5, 0, Math.PI * 2)
     // Unclean samples rendered at 60% opacity to dim them relative to clean ones
     ctx.fillStyle = sample.isClean
-      ? cleanColor(sample.cents, opacity)
+      ? directionalCleanColor(sample.cents, opacity)
       : `rgba(250, 204, 21, ${opacity * 0.6})`
     ctx.fill()
   }
@@ -654,7 +663,7 @@ function drawChart() {
   if (latestSample && latestSample.isClean) {
     const headX = timeToX(latestSample.timestamp, now, geom)
     const headY = midiToY(latestSample.midiNote, height)
-    const headColor = cleanColor(latestSample.cents, 1)
+    const headColor = directionalCleanColor(latestSample.cents, 1)
 
     // Head dot: outer glow ring (7 px) + solid color center (5 px)
     ctx.beginPath()

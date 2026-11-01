@@ -19,6 +19,17 @@ describe('usePitchPreviewColor', () => {
     expect(off.r).toBeGreaterThan(off.g)
   })
 
+  test('turns blue when 30 cents flat and warm when 30 cents sharp', () => {
+    const { colorForCents } = usePitchPreviewColor()
+    const flat = parseRgba(colorForCents(-30))
+    const sharp = parseRgba(colorForCents(30))
+
+    expect(flat.b).toBeGreaterThan(flat.r)
+    expect(flat.b).toBeGreaterThan(flat.g)
+    expect(sharp.r).toBeGreaterThan(sharp.b)
+    expect(sharp.r).toBeGreaterThan(sharp.g)
+  })
+
   test('applies the requested opacity, opaque by default', () => {
     const { colorForCents } = usePitchPreviewColor()
 

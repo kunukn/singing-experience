@@ -20,7 +20,11 @@ import {
   type NoteName,
 } from '@/utils/noteUtils'
 import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
-import { CLEAN_CENTS, cleanColor, cleanTextColor } from '@/utils/pitchColors'
+import {
+  CLEAN_CENTS,
+  directionalCleanColor,
+  directionalTextColor,
+} from '@/utils/pitchColors'
 import { useUkuleleSampler } from './useUkuleleSampler'
 
 type Props = {
@@ -61,13 +65,13 @@ const formattedReferenceA4 = computed(() =>
 
 const noteColor = computed(() =>
   shownNoteInfo.value && isShownClean.value
-    ? cleanTextColor(shownNoteInfo.value.cents, isDark.value)
+    ? directionalTextColor(shownNoteInfo.value.cents, isDark.value)
     : null,
 )
 
 const centsColor = computed(() =>
   shownNoteInfo.value && isShownClean.value
-    ? cleanTextColor(shownNoteInfo.value.cents, isDark.value)
+    ? directionalTextColor(shownNoteInfo.value.cents, isDark.value)
     : null,
 )
 
@@ -246,12 +250,12 @@ const guidedStringRingColor = computed(() => {
 
   return isGuidedStringAlmost.value
     ? 'var(--p-green-300)'
-    : cleanColor(guidedString.value.cents)
+    : directionalCleanColor(guidedString.value.cents)
 })
 
 const guidedStringTextColor = computed(() =>
   guidedString.value
-    ? cleanTextColor(guidedString.value.cents, isDark.value)
+    ? directionalTextColor(guidedString.value.cents, isDark.value)
     : undefined,
 )
 
