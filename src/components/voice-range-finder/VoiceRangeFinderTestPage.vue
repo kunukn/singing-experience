@@ -68,6 +68,13 @@ const octaveOptions = [7, 6, 5, 4, 3, 2]
         <PrimeSlider v-model="selectedCents" :min="-50" :max="50" />
       </div>
 
+      <div class="flex min-w-28 flex-col gap-1">
+        <label class="text-xs text-(--p-text-muted-color)">
+          Jitter: ±{{ selectedJitter }}¢
+        </label>
+        <PrimeSlider v-model="selectedJitter" :min="0" :max="20" />
+      </div>
+
       <label class="flex items-center gap-2 text-sm">
         <PrimeToggleSwitch v-model="isVoiceOn" />
         Voice
