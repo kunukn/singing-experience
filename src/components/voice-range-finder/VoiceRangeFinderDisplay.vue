@@ -8,6 +8,7 @@ import {
 import { frequencyToMidi } from '@/utils/noteUtils'
 import { useRangeFinder } from './useRangeFinder'
 import VoiceRangeExplorePanel from './VoiceRangeExplorePanel.vue'
+import VoiceRangeResult from './VoiceRangeResult.vue'
 import VoiceRangeSearchStep from './VoiceRangeSearchStep.vue'
 import VoiceRangeSlots from './VoiceRangeSlots.vue'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
@@ -178,14 +179,6 @@ const foundRange = computed(() =>
   sungRange.value
     ? normalizeVoiceRange(sungRange.value.midiMin, sungRange.value.midiMax)
     : null,
-)
-
-const isWidened = computed(
-  () =>
-    !!sungRange.value &&
-    !!foundRange.value &&
-    (sungRange.value.midiMin !== foundRange.value.midiMin ||
-      sungRange.value.midiMax !== foundRange.value.midiMax),
 )
 
 async function startSearch(only?: 'low' | 'high') {
@@ -459,49 +452,13 @@ onUnmounted(() => {
         @done="finishStep"
       />
 
-      <section
+      <VoiceRangeResult
         v-else-if="step === 'result' && sungRange && foundRange"
-        class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
-        data-testid="voice-range-finder-result"
-      >
-        <p class="text-center">
-          {{
-            t('voiceRangeFinder.resultTitle', {
-              range: formatRange(sungRange.midiMin, sungRange.midiMax),
-            })
-          }}
-        </p>
-        <p
-          v-if="isWidened"
-          class="text-center text-sm text-(--p-text-muted-color)"
-          data-testid="voice-range-finder-widened"
-        >
-          {{
-            t('voiceRangeFinder.widened', {
-              range: formatRange(foundRange.midiMin, foundRange.midiMax),
-            })
-          }}
-        </p>
-        <div class="flex items-center gap-2">
-          <PrimeButton
-            severity="secondary"
-            size="small"
-            rounded
-            @click="startSearch()"
-          >
-            {{ t('voiceRangeFinder.tryAgain') }}
-          </PrimeButton>
-          <PrimeButton
-            severity="success"
-            size="small"
-            rounded
-            data-testid="voice-range-finder-use"
-            @click="saveFoundRange"
-          >
-            {{ t('voiceRangeFinder.useThis') }}
-          </PrimeButton>
-        </div>
-      </section>
+        :sungRange="sungRange"
+        :foundRange="foundRange"
+        @tryAgain="startSearch()"
+        @use="saveFoundRange"
+      />
     </div>
   </div>
 </template>
