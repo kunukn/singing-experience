@@ -121,7 +121,8 @@ describe('VoiceRangeFinderDisplay', () => {
       wrapper.get('[data-testid="voice-range-finder-record"]').text(),
     ).toBe('Lowest so far: G2')
 
-    const centsMeter = () => wrapper.get('[data-testid="cents-meter"]')
+    /* Scoped to the step: the hidden Explore panel has its own meter */
+    const centsMeter = () => stepSection().get('[data-testid="cents-meter"]')
     expect(centsMeter().attributes('data-visible')).toBe('false')
 
     vi.advanceTimersByTime(1000)

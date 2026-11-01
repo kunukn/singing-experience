@@ -365,7 +365,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex w-full flex-col items-center gap-4">
+  <div class="flex w-full grow flex-col items-center gap-4">
     <PrimeTabs
       v-model:value="activeTab"
       class="flex w-full flex-col gap-4"
@@ -380,7 +380,8 @@ onUnmounted(() => {
         </PrimeTab>
       </PrimeTabList>
 
-      <PrimeTabPanels class="w-full p-0">
+      <!-- p-0! beats PrimeVue's padding, which would widen the gap to the action bar below -->
+      <PrimeTabPanels class="w-full p-0!">
         <PrimeTabPanel value="range" class="flex flex-col items-center gap-4">
           <section
             class="flex w-full flex-col gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
@@ -497,188 +498,12 @@ onUnmounted(() => {
               @selectRange="adoptVoiceType"
             />
           </section>
-
-          <div v-if="step === 'idle'" class="flex items-center gap-2">
-            <PrimeButton
-              severity="success"
-              size="small"
-              rounded
-              data-testid="voice-range-finder-start"
-              @click="startSearch()"
-            >
-              {{ t('voiceRangeFinder.findBySinging') }}
-            </PrimeButton>
-            <!-- Only two buttons in this row, so the text fits from xs up -->
-            <PreviewToggle
-              v-model="isPreviewEnabled"
-              :disabled="!simulateIdlePreview && micPermission === 'denied'"
-              labelFrom="xs"
-            />
-          </div>
-
-          <section
-            v-else-if="isSearching"
-            class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
-            data-testid="voice-range-finder-step"
-            :data-step="step"
-            :data-record-flash="isRecordFlash"
-          >
-            <p class="text-center text-sm">
-              {{
-                step === 'low'
-                  ? t('voiceRangeFinder.lowPrompt')
-                  : t('voiceRangeFinder.highPrompt')
-              }}
-            </p>
-            <!--
-        Bar and note share the first row, so the note centres on the bar; the
-        cents hang in a second row beneath the note without pulling it up.
-        The meter has its own column and the note a fixed, start-aligned one
-        sized for the widest label (D♯3), so neither the bar nor the meter
-        moves as the label changes width. A paused bar dims, so a kept-but-idle hold doesn't look like progress.
-        PrimeVue's 1 s width transition is switched off: progress already moves
-        every frame, and the transition made the bar trail the real hold (never
-        visibly full) and drain on reset, which read as failure.
-      -->
-            <div
-              class="grid w-full grid-cols-[1fr_auto_3rem] items-center gap-x-2"
-            >
-              <PrimeProgressBar
-                class="h-2 transition-opacity"
-                :class="{ 'opacity-40': !isFilling && !isRecordFlash }"
-                :pt="{ value: { style: { transition: 'none' } } }"
-                data-testid="voice-range-finder-hold-bar"
-                :data-filling="isFilling"
-                :value="barPercent"
-                :showValue="false"
-              />
-              <CentsMeter
-                class="text-xl"
-                :cents="isRecordFlash ? null : liveCents"
-              />
-              <span
-                class="justify-self-start text-xl font-semibold tabular-nums"
-                dir="ltr"
-                data-testid="voice-range-finder-live-note"
-              >
-                {{ shownMidi === null ? '–' : formatNote(shownMidi) }}
-              </span>
-              <!-- Always rendered so the card keeps its height when the cents vanish -->
-              <span
-                v-if="isRecordFlash"
-                class="col-start-3 justify-self-start text-sm font-semibold text-(--p-green-500)"
-                data-testid="voice-range-finder-record-tick"
-              >
-                ✓
-              </span>
-              <span
-                v-else
-                class="col-start-3 justify-self-start text-sm font-medium tabular-nums"
-                dir="ltr"
-                :style="{ color: liveCentsColor }"
-                data-testid="voice-range-finder-live-cents"
-              >
-                {{ liveCentsText || '&nbsp;' }}
-              </span>
-            </div>
-            <!-- Always rendered so the card keeps its height as the hint comes and goes -->
-            <p
-              class="min-h-5 text-sm font-medium"
-              :class="{ 'text-(--p-orange-400)': isOffPitchWarning }"
-              data-testid="voice-range-finder-hold-hint"
-              :data-off-pitch="isOffPitchWarning"
-            >
-              {{ holdHint }}
-            </p>
-            <p
-              class="text-sm"
-              :class="
-                isRecordFlash
-                  ? 'text-(--p-green-500)'
-                  : 'text-(--p-text-muted-color)'
-              "
-              data-testid="voice-range-finder-record"
-            >
-              {{ recordText }}
-            </p>
-            <div class="flex items-center gap-2">
-              <PrimeButton
-                severity="secondary"
-                size="small"
-                rounded
-                text
-                @click="cancelSearch"
-              >
-                {{ t('voiceRangeFinder.cancel') }}
-              </PrimeButton>
-              <PrimeButton
-                size="small"
-                rounded
-                :disabled="!canFinishStep"
-                data-testid="voice-range-finder-done"
-                @click="finishStep"
-              >
-                {{ t('voiceRangeFinder.done') }}
-              </PrimeButton>
-            </div>
-          </section>
-
-          <section
-            v-else-if="step === 'result' && sungRange && foundRange"
-            class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
-            data-testid="voice-range-finder-result"
-          >
-            <p class="text-center">
-              {{
-                t('voiceRangeFinder.resultTitle', {
-                  range: formatRange(sungRange.midiMin, sungRange.midiMax),
-                })
-              }}
-            </p>
-            <p
-              v-if="isWidened"
-              class="text-center text-sm text-(--p-text-muted-color)"
-              data-testid="voice-range-finder-widened"
-            >
-              {{
-                t('voiceRangeFinder.widened', {
-                  range: formatRange(foundRange.midiMin, foundRange.midiMax),
-                })
-              }}
-            </p>
-            <div class="flex items-center gap-2">
-              <PrimeButton
-                severity="secondary"
-                size="small"
-                rounded
-                @click="startSearch()"
-              >
-                {{ t('voiceRangeFinder.tryAgain') }}
-              </PrimeButton>
-              <PrimeButton
-                severity="success"
-                size="small"
-                rounded
-                data-testid="voice-range-finder-use"
-                @click="saveFoundRange"
-              >
-                {{ t('voiceRangeFinder.useThis') }}
-              </PrimeButton>
-            </div>
-          </section>
         </PrimeTabPanel>
 
         <PrimeTabPanel value="explore" class="flex flex-col items-center gap-4">
           <VoiceRangeExplorePanel
             :liveMidi="chartLiveMidi"
             :isListening="isPreviewEnabled"
-          />
-          <!-- Same state as My range's toggle, so switching tabs doesn't change
-               it. Alone on its row here, so the label always fits. -->
-          <PreviewToggle
-            v-model="isPreviewEnabled"
-            :disabled="!simulateIdlePreview && micPermission === 'denied'"
-            labelFrom="always"
           />
         </PrimeTabPanel>
       </PrimeTabPanels>
@@ -687,5 +512,194 @@ onUnmounted(() => {
     <p v-if="detection.error.value" class="text-sm text-(--p-red-400)">
       {{ detection.error.value }}
     </p>
+
+    <!--
+      One action bar shared by both tabs, so the toggle stays put on a tab
+      switch. Phones pin it to the bottom of the viewport: mt-auto pushes it
+      down when the panel is short (Explore), and sticky holds it there while
+      a tall panel (My range) scrolls under it, until it settles under the
+      card. Native sticky over the document scroller, not an inner scroller,
+      so iOS momentum and the URL-bar collapse keep working. The fade fills
+      the gap-4 above, so the chart dissolves behind the bar instead of
+      cutting off. pb-4 applies at every size, so the buttons never touch the
+      bottom edge (e.g. phone landscape, which is past sm and not sticky).
+    -->
+    <div
+      class="flex w-full justify-center pb-4 max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:mt-auto max-sm:bg-(--p-content-background) max-sm:before:pointer-events-none max-sm:before:absolute max-sm:before:inset-x-0 max-sm:before:bottom-full max-sm:before:h-4 max-sm:before:bg-linear-to-t max-sm:before:from-(--p-content-background) max-sm:before:to-transparent"
+      data-testid="voice-range-finder-actions"
+    >
+      <!-- Explore has no search, so it always shows the toggle; a pending
+           result waits on My range (the tab switch already cancels a search) -->
+      <div
+        v-if="activeTab === 'explore' || step === 'idle'"
+        class="flex items-center gap-2"
+      >
+        <PrimeButton
+          v-if="activeTab === 'range'"
+          severity="success"
+          size="small"
+          rounded
+          data-testid="voice-range-finder-start"
+          @click="startSearch()"
+        >
+          {{ t('voiceRangeFinder.findBySinging') }}
+        </PrimeButton>
+        <!-- Beside Find the text fits from xs up; alone on Explore it always fits -->
+        <PreviewToggle
+          v-model="isPreviewEnabled"
+          :disabled="!simulateIdlePreview && micPermission === 'denied'"
+          :labelFrom="activeTab === 'range' ? 'xs' : 'always'"
+        />
+      </div>
+
+      <section
+        v-else-if="isSearching"
+        class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
+        data-testid="voice-range-finder-step"
+        :data-step="step"
+        :data-record-flash="isRecordFlash"
+      >
+        <p class="text-center text-sm">
+          {{
+            step === 'low'
+              ? t('voiceRangeFinder.lowPrompt')
+              : t('voiceRangeFinder.highPrompt')
+          }}
+        </p>
+        <!--
+  Bar and note share the first row, so the note centres on the bar; the
+  cents hang in a second row beneath the note without pulling it up.
+  The meter has its own column and the note a fixed, start-aligned one
+  sized for the widest label (D♯3), so neither the bar nor the meter
+  moves as the label changes width. A paused bar dims, so a kept-but-idle hold doesn't look like progress.
+  PrimeVue's 1 s width transition is switched off: progress already moves
+  every frame, and the transition made the bar trail the real hold (never
+  visibly full) and drain on reset, which read as failure.
+-->
+        <div class="grid w-full grid-cols-[1fr_auto_3rem] items-center gap-x-2">
+          <PrimeProgressBar
+            class="h-2 transition-opacity"
+            :class="{ 'opacity-40': !isFilling && !isRecordFlash }"
+            :pt="{ value: { style: { transition: 'none' } } }"
+            data-testid="voice-range-finder-hold-bar"
+            :data-filling="isFilling"
+            :value="barPercent"
+            :showValue="false"
+          />
+          <CentsMeter
+            class="text-xl"
+            :cents="isRecordFlash ? null : liveCents"
+          />
+          <span
+            class="justify-self-start text-xl font-semibold tabular-nums"
+            dir="ltr"
+            data-testid="voice-range-finder-live-note"
+          >
+            {{ shownMidi === null ? '–' : formatNote(shownMidi) }}
+          </span>
+          <!-- Always rendered so the card keeps its height when the cents vanish -->
+          <span
+            v-if="isRecordFlash"
+            class="col-start-3 justify-self-start text-sm font-semibold text-(--p-green-500)"
+            data-testid="voice-range-finder-record-tick"
+          >
+            ✓
+          </span>
+          <span
+            v-else
+            class="col-start-3 justify-self-start text-sm font-medium tabular-nums"
+            dir="ltr"
+            :style="{ color: liveCentsColor }"
+            data-testid="voice-range-finder-live-cents"
+          >
+            {{ liveCentsText || '&nbsp;' }}
+          </span>
+        </div>
+        <!-- Always rendered so the card keeps its height as the hint comes and goes -->
+        <p
+          class="min-h-5 text-sm font-medium"
+          :class="{ 'text-(--p-orange-400)': isOffPitchWarning }"
+          data-testid="voice-range-finder-hold-hint"
+          :data-off-pitch="isOffPitchWarning"
+        >
+          {{ holdHint }}
+        </p>
+        <p
+          class="text-sm"
+          :class="
+            isRecordFlash
+              ? 'text-(--p-green-500)'
+              : 'text-(--p-text-muted-color)'
+          "
+          data-testid="voice-range-finder-record"
+        >
+          {{ recordText }}
+        </p>
+        <div class="flex items-center gap-2">
+          <PrimeButton
+            severity="secondary"
+            size="small"
+            rounded
+            text
+            @click="cancelSearch"
+          >
+            {{ t('voiceRangeFinder.cancel') }}
+          </PrimeButton>
+          <PrimeButton
+            size="small"
+            rounded
+            :disabled="!canFinishStep"
+            data-testid="voice-range-finder-done"
+            @click="finishStep"
+          >
+            {{ t('voiceRangeFinder.done') }}
+          </PrimeButton>
+        </div>
+      </section>
+
+      <section
+        v-else-if="step === 'result' && sungRange && foundRange"
+        class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
+        data-testid="voice-range-finder-result"
+      >
+        <p class="text-center">
+          {{
+            t('voiceRangeFinder.resultTitle', {
+              range: formatRange(sungRange.midiMin, sungRange.midiMax),
+            })
+          }}
+        </p>
+        <p
+          v-if="isWidened"
+          class="text-center text-sm text-(--p-text-muted-color)"
+          data-testid="voice-range-finder-widened"
+        >
+          {{
+            t('voiceRangeFinder.widened', {
+              range: formatRange(foundRange.midiMin, foundRange.midiMax),
+            })
+          }}
+        </p>
+        <div class="flex items-center gap-2">
+          <PrimeButton
+            severity="secondary"
+            size="small"
+            rounded
+            @click="startSearch()"
+          >
+            {{ t('voiceRangeFinder.tryAgain') }}
+          </PrimeButton>
+          <PrimeButton
+            severity="success"
+            size="small"
+            rounded
+            data-testid="voice-range-finder-use"
+            @click="saveFoundRange"
+          >
+            {{ t('voiceRangeFinder.useThis') }}
+          </PrimeButton>
+        </div>
+      </section>
+    </div>
   </div>
 </template>
