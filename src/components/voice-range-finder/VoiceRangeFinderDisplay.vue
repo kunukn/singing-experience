@@ -392,37 +392,51 @@ onUnmounted(() => {
       <PrimeTabPanels class="w-full p-0">
         <PrimeTabPanel value="range" class="flex flex-col items-center gap-4">
           <section
-            class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
+            class="flex w-full flex-col gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
             data-testid="my-range-card"
           >
-            <!-- Label and range share a line to save height on phones; wraps back to stacked if a translation can't fit -->
-            <div class="flex flex-wrap items-baseline gap-x-3 self-start">
-              <h2 class="text-sm font-medium text-(--p-text-muted-color)">
-                {{ t('voiceRanges.myRange') }}
-              </h2>
-              <!-- aria-live reads a new range aloud, standing in for the ✓ a screen reader can't see -->
-              <p
-                class="relative text-3xl font-semibold tabular-nums"
-                dir="ltr"
-                aria-live="polite"
-                data-testid="my-range-notes"
-              >
-                {{ formatRange(myVoiceRange.midiMin, myVoiceRange.midiMax) }}
-                <!-- Absolutely placed so the range stays put while the ✓ comes and goes -->
-                <Transition
-                  leaveActiveClass="transition-opacity duration-500"
-                  leaveToClass="opacity-0"
+            <!-- Stat-tile header: small label over the range, Reset tucked in the card's end corner -->
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex flex-col items-start">
+                <h2 class="text-sm font-medium text-(--p-text-muted-color)">
+                  {{ t('voiceRanges.myRange') }}
+                </h2>
+                <!-- aria-live reads a new range aloud, standing in for the ✓ a screen reader can't see -->
+                <p
+                  class="relative text-3xl font-semibold tabular-nums"
+                  dir="ltr"
+                  aria-live="polite"
+                  data-testid="my-range-notes"
                 >
-                  <span
-                    v-if="isJustSaved"
-                    aria-hidden="true"
-                    data-testid="my-range-saved"
-                    class="absolute start-full top-1/2 ms-2 -translate-y-1/2 text-xl text-(--p-green-500)"
+                  {{ formatRange(myVoiceRange.midiMin, myVoiceRange.midiMax) }}
+                  <!-- Absolutely placed so the range stays put while the ✓ comes and goes -->
+                  <Transition
+                    leaveActiveClass="transition-opacity duration-500"
+                    leaveToClass="opacity-0"
                   >
-                    ✓
-                  </span>
-                </Transition>
-              </p>
+                    <span
+                      v-if="isJustSaved"
+                      aria-hidden="true"
+                      data-testid="my-range-saved"
+                      class="absolute start-full top-1/2 ms-2 -translate-y-1/2 text-xl text-(--p-green-500)"
+                    >
+                      ✓
+                    </span>
+                  </Transition>
+                </p>
+              </div>
+              <!-- -me-2/-mt-2 cancel the text button's padding, so "Reset" lines up with the chart's end edge and the "My range" label -->
+              <PrimeButton
+                severity="secondary"
+                size="small"
+                rounded
+                text
+                class="-me-2 -mt-2"
+                data-testid="my-range-reset"
+                @click="resetMyVoiceRange"
+              >
+                {{ t('voiceRangeFinder.reset') }}
+              </PrimeButton>
             </div>
 
             <!--
@@ -500,16 +514,6 @@ onUnmounted(() => {
               :liveMidi="chartLiveMidi"
               @selectRange="adoptVoiceType"
             />
-
-            <PrimeButton
-              severity="secondary"
-              size="small"
-              rounded
-              text
-              @click="resetMyVoiceRange"
-            >
-              {{ t('voiceRangeFinder.reset') }}
-            </PrimeButton>
           </section>
 
           <div v-if="step === 'idle'" class="flex items-center gap-2">
