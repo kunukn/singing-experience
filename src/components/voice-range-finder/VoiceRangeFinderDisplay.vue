@@ -6,14 +6,12 @@ import {
   normalizeVoiceRange,
 } from '@/utils/normalizeVoiceRange'
 import { frequencyToMidi } from '@/utils/noteUtils'
-import { CLOSE_CENTS } from '@/utils/pitchColors'
-import { useLiveCents } from './useLiveCents'
-import { isCleanEnough, useRangeFinder } from './useRangeFinder'
+import { useRangeFinder } from './useRangeFinder'
 import VoiceRangeExplorePanel from './VoiceRangeExplorePanel.vue'
+import VoiceRangeSearchStep from './VoiceRangeSearchStep.vue'
 import VoiceRangeSlots from './VoiceRangeSlots.vue'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
 import {
-  formatNote,
   formatRange,
   VOICE_RANGE_NOTE_OPTIONS,
   withHighest,
@@ -157,41 +155,6 @@ const chartLiveMidi = computed(() => {
     : frequencyToMidi(previewFrequency.value)
 })
 
-/* The note being sung right now, or none. Not the hold's candidate: that stays
- * set through silence, and a frozen note would read as still being heard. */
-const liveMidi = computed(() =>
-  sungMidi.value === null ? null : Math.round(sungMidi.value),
-)
-
-/* How far the live note sits from its semitone, in the tuner's colours */
-const { liveCents, liveCentsText, liveCentsColor } = useLiveCents(sungMidi)
-
-/* The high step only counts clean notes, so say which kind this one is */
-const isLiveClean = computed(
-  () => sungMidi.value !== null && isCleanEnough(sungMidi.value),
-)
-
-/* One line for what to do next. An out-of-tune high note pauses the bar, so
- * that warning wins; otherwise name what the filling bar is about to save.
- * Empty on a paused bar — it would claim progress that isn't happening. */
-const isOffPitchWarning = computed(
-  () =>
-    !isRecordFlash.value &&
-    step.value === 'high' &&
-    sungMidi.value !== null &&
-    !isLiveClean.value,
-)
-const holdHint = computed(() => {
-  if (isOffPitchWarning.value)
-    return t('voiceRangeFinder.notCleanYet', { cents: CLOSE_CENTS })
-
-  return !isRecordFlash.value && isFilling.value && candidateMidi.value !== null
-    ? t('voiceRangeFinder.keepHolding', {
-        note: formatNote(candidateMidi.value),
-      })
-    : ''
-})
-
 /* How long the ✓ beside the range confirms a sung save */
 const SAVED_FLASH_MS = 2000
 
@@ -200,49 +163,6 @@ const {
   start: startSavedFlash,
   stop: stopSavedFlash,
 } = useTimeoutFn(() => {}, SAVED_FLASH_MS, { immediate: false })
-
-const stepRecord = computed(() =>
-  step.value === 'low' ? lowestMidi.value : highestMidi.value,
-)
-
-/* How long a new record shows as a full bar with a ✓ — long enough to
- * register, short enough not to stall a singer creeping on to the next note. */
-const RECORD_FLASH_MS = 700
-
-const justRecordedMidi = ref<number | null>(null)
-const { isPending: isRecordFlash, start: startRecordFlash } = useTimeoutFn(
-  () => {},
-  RECORD_FLASH_MS,
-  { immediate: false },
-)
-
-/* A new record in the same step is a win. Moving low → high also changes
- * stepRecord (to the empty high record), which must not flash. */
-watch([stepRecord, step], ([record, currentStep], [previous, previousStep]) => {
-  if (record === null || currentStep !== previousStep || record === previous)
-    return
-
-  justRecordedMidi.value = record
-  startRecordFlash()
-})
-
-/* What the bar and readout show: the win while it flashes, then live again */
-const barPercent = computed(() =>
-  isRecordFlash.value ? 100 : Math.round(progress.value * 100),
-)
-const shownMidi = computed(() =>
-  isRecordFlash.value ? justRecordedMidi.value : liveMidi.value,
-)
-
-const recordText = computed(() => {
-  if (stepRecord.value === null) return t('voiceRangeFinder.noRecordYet')
-
-  const note = formatNote(stepRecord.value)
-
-  return step.value === 'low'
-    ? t('voiceRangeFinder.lowestSoFar', { note })
-    : t('voiceRangeFinder.highestSoFar', { note })
-})
 
 const sungRange = computed(() =>
   lowestMidi.value === null || highestMidi.value === null
@@ -283,17 +203,6 @@ function saveSingleEnd() {
   if (lowestMidi.value !== null) lowestNote.value = lowestMidi.value
   markSaved()
 }
-
-/* In a full search Done also skips: past the low step with nothing sung, or
- * out of the high step keeping just the low end. It only stays off when
- * pressing it would save nothing. */
-const canFinishStep = computed(() =>
-  mode.value === 'both'
-    ? step.value === 'low' ||
-      lowestMidi.value !== null ||
-      highestMidi.value !== null
-    : stepRecord.value !== null,
-)
 
 function finishStep() {
   finder.next()
@@ -536,110 +445,19 @@ onUnmounted(() => {
         />
       </div>
 
-      <section
+      <VoiceRangeSearchStep
         v-else-if="isSearching"
-        class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
-        data-testid="voice-range-finder-step"
-        :data-step="step"
-        :data-record-flash="isRecordFlash"
-      >
-        <p class="text-center text-sm">
-          {{
-            step === 'low'
-              ? t('voiceRangeFinder.lowPrompt')
-              : t('voiceRangeFinder.highPrompt')
-          }}
-        </p>
-        <!--
-  Bar and note share the first row, so the note centres on the bar; the
-  cents hang in a second row beneath the note without pulling it up.
-  The meter has its own column and the note a fixed, start-aligned one
-  sized for the widest label (D♯3), so neither the bar nor the meter
-  moves as the label changes width. A paused bar dims, so a kept-but-idle hold doesn't look like progress.
-  PrimeVue's 1 s width transition is switched off: progress already moves
-  every frame, and the transition made the bar trail the real hold (never
-  visibly full) and drain on reset, which read as failure.
--->
-        <div class="grid w-full grid-cols-[1fr_auto_3rem] items-center gap-x-2">
-          <PrimeProgressBar
-            class="h-2 transition-opacity"
-            :class="{ 'opacity-40': !isFilling && !isRecordFlash }"
-            :pt="{ value: { style: { transition: 'none' } } }"
-            data-testid="voice-range-finder-hold-bar"
-            :data-filling="isFilling"
-            :value="barPercent"
-            :showValue="false"
-          />
-          <CentsMeter
-            class="text-xl"
-            :cents="isRecordFlash ? null : liveCents"
-          />
-          <span
-            class="justify-self-start text-xl font-semibold tabular-nums"
-            dir="ltr"
-            data-testid="voice-range-finder-live-note"
-          >
-            {{ shownMidi === null ? '–' : formatNote(shownMidi) }}
-          </span>
-          <!-- Always rendered so the card keeps its height when the cents vanish -->
-          <span
-            v-if="isRecordFlash"
-            class="col-start-3 justify-self-start text-sm font-semibold text-(--p-green-500)"
-            data-testid="voice-range-finder-record-tick"
-          >
-            ✓
-          </span>
-          <span
-            v-else
-            class="col-start-3 justify-self-start text-sm font-medium tabular-nums"
-            dir="ltr"
-            :style="{ color: liveCentsColor }"
-            data-testid="voice-range-finder-live-cents"
-          >
-            {{ liveCentsText || '&nbsp;' }}
-          </span>
-        </div>
-        <!-- Always rendered so the card keeps its height as the hint comes and goes -->
-        <p
-          class="min-h-5 text-sm font-medium"
-          :class="{ 'text-(--p-orange-400)': isOffPitchWarning }"
-          data-testid="voice-range-finder-hold-hint"
-          :data-off-pitch="isOffPitchWarning"
-        >
-          {{ holdHint }}
-        </p>
-        <p
-          class="text-sm"
-          :class="
-            isRecordFlash
-              ? 'text-(--p-green-500)'
-              : 'text-(--p-text-muted-color)'
-          "
-          data-testid="voice-range-finder-record"
-        >
-          {{ recordText }}
-        </p>
-        <div class="flex items-center gap-2">
-          <PrimeButton
-            severity="secondary"
-            size="small"
-            rounded
-            text
-            @click="cancelSearch"
-          >
-            {{ t('voiceRangeFinder.cancel') }}
-          </PrimeButton>
-          <PrimeButton
-            size="small"
-            rounded
-            :disabled="!canFinishStep"
-            data-testid="voice-range-finder-done"
-            @click="finishStep"
-          >
-            {{ t('voiceRangeFinder.done') }}
-          </PrimeButton>
-        </div>
-      </section>
+        :step="step"
+        :mode="mode"
+        :sungMidi="sungMidi"
+        :candidateMidi="candidateMidi"
+        :progress="progress"
+        :isFilling="isFilling"
+        :lowestMidi="lowestMidi"
+        :highestMidi="highestMidi"
+        @cancel="cancelSearch"
+        @done="finishStep"
+      />
 
       <section
         v-else-if="step === 'result' && sungRange && foundRange"

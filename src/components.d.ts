@@ -216,6 +216,7 @@ declare module 'vue' {
     VoiceRangeFinderTestPage: typeof import('./components/voice-range-finder/VoiceRangeFinderTestPage.vue')['default']
     VoiceRangeLegend: typeof import('./components/generic/VoiceRangeLegend.vue')['default']
     VoiceRangeRibbon: typeof import('./components/generic/VoiceRangeRibbon.vue')['default']
+    VoiceRangeSearchStep: typeof import('./components/voice-range-finder/VoiceRangeSearchStep.vue')['default']
     VoiceRangeSelect: typeof import('./components/generic/VoiceRangeSelect.vue')['default']
     VoiceRangeSlots: typeof import('./components/voice-range-finder/VoiceRangeSlots.vue')['default']
     VoiceTypeComparison: typeof import('./components/voice-range-finder/VoiceTypeComparison.vue')['default']
