@@ -9,6 +9,7 @@
     "back": "Назад",
     "hz": "Гц",
     "previewSoundLabel": "Увидеть свой голос",
+    "turnOnPreview": "Включи «{toggle}».",
     "duetPreviewLabel": "Два голоса",
     "keyboardHintsLabel": "Подсказки клавиш",
     "noteLogLabel": "Сыгранные ноты",

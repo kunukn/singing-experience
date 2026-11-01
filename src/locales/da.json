@@ -9,6 +9,7 @@
     "back": "Tilbage",
     "hz": "Hz",
     "previewSoundLabel": "Se min stemme",
+    "turnOnPreview": "Slå {toggle} til.",
     "duetPreviewLabel": "To sangere",
     "keyboardHintsLabel": "Tastetip",
     "noteLogLabel": "Spillede toner",

@@ -9,6 +9,7 @@
     "back": "戻る",
     "hz": "Hz",
     "previewSoundLabel": "自分の声を見る",
+    "turnOnPreview": "「{toggle}」をオンにしよう。",
     "duetPreviewLabel": "ふたりの声",
     "keyboardHintsLabel": "キーのヒント",
     "noteLogLabel": "弾いた音",

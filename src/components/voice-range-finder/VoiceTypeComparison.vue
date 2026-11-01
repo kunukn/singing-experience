@@ -626,6 +626,14 @@ const liveLabel = computed(() => {
         </template>
       </template>
       <template v-else>
+        <!-- Nothing lights up with the toggle off, so say how to turn it on -->
+        <template v-if="!isListening">
+          {{
+            t('generic.turnOnPreview', {
+              toggle: t('generic.previewSoundLabel'),
+            })
+          }}
+        </template>
         {{ t('voiceRangeFinder.compare.exploreExplainer') }}
       </template>
       <template v-if="hasBestFit">

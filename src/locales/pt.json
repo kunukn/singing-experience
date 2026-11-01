@@ -9,6 +9,7 @@
     "back": "Voltar",
     "hz": "Hz",
     "previewSoundLabel": "Ver minha voz",
+    "turnOnPreview": "Ative {toggle}.",
     "duetPreviewLabel": "Duas vozes",
     "keyboardHintsLabel": "Dicas de teclas",
     "noteLogLabel": "Notas tocadas",

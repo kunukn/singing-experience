@@ -9,6 +9,7 @@
     "back": "Zurück",
     "hz": "Hz",
     "previewSoundLabel": "Meine Stimme sehen",
+    "turnOnPreview": "Schalte {toggle} ein.",
     "duetPreviewLabel": "Zwei Stimmen",
     "keyboardHintsLabel": "Tastenhilfe",
     "noteLogLabel": "Gespielte Töne",

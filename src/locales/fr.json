@@ -9,6 +9,7 @@
     "back": "Retour",
     "hz": "Hz",
     "previewSoundLabel": "Voir ma voix",
+    "turnOnPreview": "Active {toggle}.",
     "duetPreviewLabel": "Deux voix",
     "keyboardHintsLabel": "Aide touches",
     "noteLogLabel": "Notes jouées",

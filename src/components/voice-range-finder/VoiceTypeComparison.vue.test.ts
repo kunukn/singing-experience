@@ -415,6 +415,20 @@ describe('VoiceTypeComparison', () => {
           wrapper.find('[data-testid="voice-type-comparison-bar"]').exists(),
         ).toBe(false)
       })
+
+      test('should tell the singer to turn on See my voice', () => {
+        expect(
+          mountOff().get('[data-testid="voice-type-comparison-legend"]').text(),
+        ).toContain('Turn on See my voice.')
+      })
+    })
+
+    test('should not ask to turn on See my voice while listening', () => {
+      expect(
+        mountExplore()
+          .get('[data-testid="voice-type-comparison-legend"]')
+          .text(),
+      ).not.toContain('Turn on')
     })
 
     test('should not fade the bars while listening', () => {
