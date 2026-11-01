@@ -673,11 +673,12 @@ onUnmounted(() => {
             :liveMidi="chartLiveMidi"
             :isListening="isPreviewEnabled"
           />
-          <!-- Same as My range's toggle, so switching tabs doesn't change it -->
+          <!-- Same state as My range's toggle, so switching tabs doesn't change
+               it. Alone on its row here, so the label always fits. -->
           <PreviewToggle
             v-model="isPreviewEnabled"
             :disabled="!simulateIdlePreview && micPermission === 'denied'"
-            labelFrom="xs"
+            labelFrom="always"
           />
         </PrimeTabPanel>
       </PrimeTabPanels>
