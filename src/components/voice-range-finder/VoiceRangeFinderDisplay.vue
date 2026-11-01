@@ -396,7 +396,7 @@ onUnmounted(() => {
             data-testid="my-range-card"
           >
             <!-- Label and range share a line to save height on phones; wraps back to stacked if a translation can't fit -->
-            <div class="flex flex-wrap items-baseline justify-center gap-x-3">
+            <div class="flex flex-wrap items-baseline gap-x-3 self-start">
               <h2 class="text-sm font-medium text-(--p-text-muted-color)">
                 {{ t('voiceRanges.myRange') }}
               </h2>
@@ -425,11 +425,18 @@ onUnmounted(() => {
               </p>
             </div>
 
-            <!-- Mic buttons sit outside the labels, so a tap isn't forwarded to the select -->
-            <div class="flex w-full max-w-md flex-col gap-2 self-start">
-              <div class="flex items-center gap-1">
-                <label class="flex flex-1 items-center justify-between gap-3">
-                  <span class="text-sm">{{
+            <!--
+              Mic buttons sit outside the labels, so a tap isn't forwarded to the select.
+              Label | select | mic columns are shared through subgrid, so both selects
+              line up after the longest label in any language. gap-x-1 keeps the mic close;
+              the label's me-2 widens only the label-to-select gap.
+            -->
+            <div
+              class="grid grid-cols-[auto_auto_auto] items-center gap-x-1 gap-y-2 self-start"
+            >
+              <div class="col-span-3 grid grid-cols-subgrid items-center">
+                <label class="col-span-2 grid grid-cols-subgrid items-center">
+                  <span class="me-2 text-sm">{{
                     t('voiceRangeFinder.highest')
                   }}</span>
                   <PrimeSelect
@@ -456,9 +463,9 @@ onUnmounted(() => {
                   @click="startSearch('high')"
                 />
               </div>
-              <div class="flex items-center gap-1">
-                <label class="flex flex-1 items-center justify-between gap-3">
-                  <span class="text-sm">{{
+              <div class="col-span-3 grid grid-cols-subgrid items-center">
+                <label class="col-span-2 grid grid-cols-subgrid items-center">
+                  <span class="me-2 text-sm">{{
                     t('voiceRangeFinder.lowest')
                   }}</span>
                   <PrimeSelect
