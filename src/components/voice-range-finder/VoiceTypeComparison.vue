@@ -345,14 +345,20 @@ const liveLabel = computed(() => {
           {{ row.name }}
         </span>
         <!--
-          Exploring lights the name in its voice's colour, never weight: bold
-          glyphs are wider, so the word visibly stretches on every note.
+          Exploring lights the name in its voice's colour and a faux bold. Real
+          bold glyphs are wider, so the word visibly stretched on every note; a
+          text stroke is paint only and thickens each letter in place.
+          0.4px ≈ the stem gain from regular to semibold at 12px.
         -->
         <span
           v-else
           aria-hidden="true"
           class="text-xs whitespace-nowrap"
-          :class="{ 'text-(--p-text-muted-color)': !row.isSounding }"
+          :class="
+            row.isSounding
+              ? '[-webkit-text-stroke:0.4px_currentColor]'
+              : 'text-(--p-text-muted-color)'
+          "
           :style="row.isSounding ? { color: row.color } : undefined"
         >
           {{ row.name }}
