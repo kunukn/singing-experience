@@ -15,9 +15,9 @@ describe('formatSignedCents', () => {
 describe('centsLabel', () => {
   test.each([
     { cents: -3, expected: '-3¢' },
-    { cents: -2, expected: '' },
-    { cents: 0, expected: '' },
-    { cents: 2, expected: '' },
+    { cents: -2, expected: '≈0¢' },
+    { cents: 0, expected: '≈0¢' },
+    { cents: 2, expected: '≈0¢' },
     { cents: 3, expected: '+3¢' },
   ])('labels $cents as "$expected"', ({ cents, expected }) => {
     expect(centsLabel(cents)).toBe(expected)
@@ -52,16 +52,16 @@ describe('useLiveCents', () => {
     scope.stop()
   })
 
-  test('should hide the text within 2¢ but keep the exact cents', () => {
+  test('should read ≈0¢ within 2¢ but keep the exact cents', () => {
     const midi = ref(57.02)
     const scope = effectScope()
     const { liveCents, liveCentsText } = scope.run(() => useLiveCents(midi))!
 
     expect(liveCents.value).toBe(2)
-    expect(liveCentsText.value).toBe('')
+    expect(liveCentsText.value).toBe('≈0¢')
 
     midi.value = 56.98
-    expect(liveCentsText.value).toBe('')
+    expect(liveCentsText.value).toBe('≈0¢')
 
     midi.value = 57.03
     expect(liveCentsText.value).toBe('+3¢')

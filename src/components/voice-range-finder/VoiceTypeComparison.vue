@@ -577,12 +577,10 @@ const liveLabel = computed(() => {
           :style="{ insetInlineStart: `${liveLeft}%` }"
         >
           <span class="font-semibold">{{ liveLabel.note }}</span>
-          <template v-if="liveLabel.centsText">
-            {{ ' ' }}
-            <span :style="{ color: liveLabel.centsColor }">
-              {{ liveLabel.centsText }}
-            </span>
-          </template>
+          {{ ' ' }}
+          <span :style="{ color: liveLabel.centsColor }">
+            {{ liveLabel.centsText }}
+          </span>
         </span>
       </div>
 
