@@ -350,6 +350,15 @@
       "exploreTitle": "Tipos de voz",
       "exploreExplainer": "Canta una nota. Las voces que pueden cantarla se iluminan."
     },
+    "slots": {
+      "title": "Rangos guardados",
+      "slotName": "Espacio {number}",
+      "empty": "Vacío",
+      "use": "Usar {name}: {range}",
+      "edit": "Editar {name}",
+      "name": "Nombre",
+      "save": "Guardar"
+    },
     "tabs": {
       "explore": "Explorar"
     }

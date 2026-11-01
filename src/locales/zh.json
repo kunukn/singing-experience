@@ -350,6 +350,15 @@
       "exploreTitle": "声部",
       "exploreExplainer": "唱一个音，能唱这个音的声部会亮起来。"
     },
+    "slots": {
+      "title": "保存的音域",
+      "slotName": "位置 {number}",
+      "empty": "空",
+      "use": "使用{name}：{range}",
+      "edit": "编辑{name}",
+      "name": "名称",
+      "save": "保存"
+    },
     "tabs": {
       "explore": "探索"
     }

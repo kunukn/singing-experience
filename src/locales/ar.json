@@ -350,6 +350,15 @@
       "exploreTitle": "أنواع الأصوات",
       "exploreExplainer": "غنِّ نغمة، فتضيء الأصوات التي تستطيع غناءها."
     },
+    "slots": {
+      "title": "النطاقات المحفوظة",
+      "slotName": "الخانة {number}",
+      "empty": "فارغة",
+      "use": "استخدم {name}: {range}",
+      "edit": "عدّل {name}",
+      "name": "الاسم",
+      "save": "احفظ"
+    },
     "tabs": {
       "explore": "استكشف"
     }

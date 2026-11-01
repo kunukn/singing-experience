@@ -350,6 +350,15 @@
       "exploreTitle": "Types de voix",
       "exploreExplainer": "Chante une note. Les voix qui peuvent la chanter s'allument."
     },
+    "slots": {
+      "title": "Tessitures enregistrées",
+      "slotName": "Case {number}",
+      "empty": "Vide",
+      "use": "Prendre {name} : {range}",
+      "edit": "Modifier {name}",
+      "name": "Nom",
+      "save": "Enregistrer"
+    },
     "tabs": {
       "explore": "Explorer"
     }

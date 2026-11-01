@@ -78,6 +78,7 @@ const STORAGE_KEYS = [
   'syng.startOffset',
   'syng.toneMode',
   'syng.tunerReferencePitch',
+  'syng.voiceRangeSlots',
   'syng.voiceTypeRibbon',
   'syng.warmup.durationSec',
   'syng.warmup.patternId',
@@ -92,13 +93,15 @@ const KEY_TAKING_CALLS = [
   'useVoiceRangeIndex',
   'useToneLabelMode',
   'useAccidentalStyle',
+  'useVoiceRangeSlots',
 ]
 
 /* The only places useLocalStorage may be called with a non-literal key: the
- * three wrappers above (scanned via their call sites) and useDarkMode, which
+ * wrappers above (scanned via their call sites) and useDarkMode, which
  * holds its key in a module constant. A new entry here would be a key the
  * scan cannot see — add the file only alongside a way to resolve its key. */
 const DYNAMIC_KEY_CALLERS = [
+  '/src/components/voice-range-finder/useVoiceRangeSlots.ts',
   '/src/composables/accidentalStyle.ts',
   '/src/composables/toneLabelMode.ts',
   '/src/composables/useDarkMode.ts',

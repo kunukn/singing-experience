@@ -350,6 +350,15 @@
       "exploreTitle": "声の種類",
       "exploreExplainer": "音をひとつ歌ってみて。その音を歌える声が光るよ。"
     },
+    "slots": {
+      "title": "保存した声域",
+      "slotName": "スロット {number}",
+      "empty": "空き",
+      "use": "{name}を使う：{range}",
+      "edit": "{name}を編集",
+      "name": "名前",
+      "save": "保存"
+    },
     "tabs": {
       "explore": "たんけん"
     }

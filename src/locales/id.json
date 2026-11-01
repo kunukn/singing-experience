@@ -350,6 +350,15 @@
       "exploreTitle": "Jenis suara",
       "exploreExplainer": "Nyanyikan satu nada. Suara yang bisa menyanyikannya akan menyala."
     },
+    "slots": {
+      "title": "Jangkauan tersimpan",
+      "slotName": "Tempat {number}",
+      "empty": "Kosong",
+      "use": "Pakai {name}: {range}",
+      "edit": "Ubah {name}",
+      "name": "Nama",
+      "save": "Simpan"
+    },
     "tabs": {
       "explore": "Jelajahi"
     }

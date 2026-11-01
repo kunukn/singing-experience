@@ -350,6 +350,15 @@
       "exploreTitle": "Tipos de voz",
       "exploreExplainer": "Cante uma nota. As vozes que conseguem cantá-la acendem."
     },
+    "slots": {
+      "title": "Extensões salvas",
+      "slotName": "Espaço {number}",
+      "empty": "Vazio",
+      "use": "Usar {name}: {range}",
+      "edit": "Editar {name}",
+      "name": "Nome",
+      "save": "Salvar"
+    },
     "tabs": {
       "explore": "Explorar"
     }

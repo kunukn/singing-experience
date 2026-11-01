@@ -350,6 +350,15 @@
       "exploreTitle": "Aina za sauti",
       "exploreExplainer": "Imba noti moja. Sauti zinazoweza kuiimba zitawaka."
     },
+    "slots": {
+      "title": "Viwango vilivyohifadhiwa",
+      "slotName": "Nafasi {number}",
+      "empty": "Tupu",
+      "use": "Tumia {name}: {range}",
+      "edit": "Badilisha {name}",
+      "name": "Jina",
+      "save": "Hifadhi"
+    },
     "tabs": {
       "explore": "Chunguza"
     }

@@ -350,6 +350,15 @@
       "exploreTitle": "Stemmetyper",
       "exploreExplainer": "Syng en tone. De stemmer, der kan synge den, lyser op."
     },
+    "slots": {
+      "title": "Gemte lejer",
+      "slotName": "Plads {number}",
+      "empty": "Tom",
+      "use": "Brug {name}: {range}",
+      "edit": "Ret {name}",
+      "name": "Navn",
+      "save": "Gem"
+    },
     "tabs": {
       "explore": "Udforsk"
     }
