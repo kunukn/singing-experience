@@ -246,6 +246,15 @@ describe('VoiceTypeComparison', () => {
       expect(label.attributes('data-side')).toBe('end')
     })
 
+    test('should read a note within 2¢ as 0¢', () => {
+      const textOf = (liveMidi: number) =>
+        liveLabelOf(liveMidi).text().replace(/\s+/g, ' ')
+
+      expect(textOf(52.02)).toBe('E3 0¢')
+      expect(textOf(51.98)).toBe('E3 0¢')
+      expect(textOf(52.03)).toBe('E3 +3¢')
+    })
+
     test('should put the label before the line past the middle', () => {
       /* C5 */
       const label = liveLabelOf(72)

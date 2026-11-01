@@ -5,7 +5,7 @@ import {
   voiceTypeColor,
 } from '@/utils/pitchColors'
 import { VOICE_TYPES } from '@/utils/voiceRangeSegments'
-import { formatSignedCents } from './useLiveCents'
+import { formatSignedCents, toleratedCents } from './useLiveCents'
 import { centsOffNearest } from './useRangeFinder'
 import {
   compareWithVoiceTypes,
@@ -322,7 +322,7 @@ const liveLeft = computed(() => {
 const liveLabel = computed(() => {
   if (props.liveMidi == null || liveLeft.value === null) return null
 
-  const cents = Math.round(centsOffNearest(props.liveMidi))
+  const cents = toleratedCents(Math.round(centsOffNearest(props.liveMidi)))
 
   return {
     note: formatNote(Math.round(props.liveMidi)),

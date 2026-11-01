@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { effectScope, ref } from 'vue'
-import { formatSignedCents, useLiveCents } from './useLiveCents'
+import { formatSignedCents, toleratedCents, useLiveCents } from './useLiveCents'
 
 describe('formatSignedCents', () => {
   test.each([
@@ -9,6 +9,18 @@ describe('formatSignedCents', () => {
     { cents: 0, expected: '0¢' },
   ])('formats $cents as "$expected"', ({ cents, expected }) => {
     expect(formatSignedCents(cents)).toBe(expected)
+  })
+})
+
+describe('toleratedCents', () => {
+  test.each([
+    { cents: -3, expected: -3 },
+    { cents: -2, expected: 0 },
+    { cents: 0, expected: 0 },
+    { cents: 2, expected: 0 },
+    { cents: 3, expected: 3 },
+  ])('reads $cents as $expected', ({ cents, expected }) => {
+    expect(toleratedCents(cents)).toBe(expected)
   })
 })
 
@@ -37,6 +49,22 @@ describe('useLiveCents', () => {
     const { liveCentsText } = scope.run(() => useLiveCents(() => 56.93))!
 
     expect(liveCentsText.value).toBe('-7¢')
+    scope.stop()
+  })
+
+  test('should read a note within 2¢ as 0¢, and 3¢ off as it is', () => {
+    const midi = ref(57.02)
+    const scope = effectScope()
+    const { liveCents, liveCentsText } = scope.run(() => useLiveCents(midi))!
+
+    expect(liveCents.value).toBe(0)
+    expect(liveCentsText.value).toBe('0¢')
+
+    midi.value = 56.98
+    expect(liveCentsText.value).toBe('0¢')
+
+    midi.value = 57.03
+    expect(liveCentsText.value).toBe('+3¢')
     scope.stop()
   })
 })
