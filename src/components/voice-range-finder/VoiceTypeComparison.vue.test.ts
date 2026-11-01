@@ -177,22 +177,24 @@ describe('VoiceTypeComparison', () => {
       expect(rowFor(mountOff(), 'voiceRanges.tenor').text()).toContain('%')
     })
 
-    test('should explain only the striped range bar, as no bar is solid', () => {
+    test('should explain the striped bar and the arrows, but not solid bars, as no bar is solid', () => {
       const legend = mountOff()
         .get('[data-testid="voice-type-comparison-legend"]')
         .text()
 
       expect(legend).toContain(en.voiceRangeFinder.compare.rangeLegend)
-      expect(legend).not.toContain(en.voiceRangeFinder.compare.explainer)
+      expect(legend).toContain(en.voiceRangeFinder.compare.reachLegend)
+      expect(legend).not.toContain(en.voiceRangeFinder.compare.solidLegend)
     })
 
-    test('should explain both the striped and the solid bars while listening', () => {
+    test('should explain the striped bar, the solid bars and the arrows while listening', () => {
       const legend = mountComparison()
         .get('[data-testid="voice-type-comparison-legend"]')
         .text()
 
       expect(legend).toContain(en.voiceRangeFinder.compare.rangeLegend)
-      expect(legend).toContain(en.voiceRangeFinder.compare.explainer)
+      expect(legend).toContain(en.voiceRangeFinder.compare.solidLegend)
+      expect(legend).toContain(en.voiceRangeFinder.compare.reachLegend)
     })
 
     test('should not fade the bars while listening', () => {

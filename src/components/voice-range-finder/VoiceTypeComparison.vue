@@ -612,8 +612,8 @@ const liveLabel = computed(() => {
     </div>
 
     <!--
-      With a range, the striped bar is always explained; the solid parts and
-      arrows only while listening, since a faded chart has no solid parts.
+      With a range, the striped bar and the ↑ ↓ hints are always explained;
+      the solid parts only while listening, since a faded chart has none.
     -->
     <p
       class="text-xs text-(--p-text-muted-color)"
@@ -622,8 +622,9 @@ const liveLabel = computed(() => {
       <template v-if="range">
         {{ t('voiceRangeFinder.compare.rangeLegend') }}
         <template v-if="isListening">
-          {{ t('voiceRangeFinder.compare.explainer') }}
+          {{ t('voiceRangeFinder.compare.solidLegend') }}
         </template>
+        {{ t('voiceRangeFinder.compare.reachLegend') }}
       </template>
       <template v-else>
         <!-- Nothing lights up with the toggle off, so say how to turn it on -->

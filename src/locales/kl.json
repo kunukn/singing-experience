@@ -287,7 +287,8 @@
     "compare": {
       "title": "You vs. voice types",
       "rangeLegend": "Striped = your range.",
-      "explainer": "Solid = the part of each voice you can sing. ↑ ↓ shows where to go to cover the whole voice.",
+      "solidLegend": "Solid = the part of each voice you can sing.",
+      "reachLegend": "↑ ↓ shows where to go to cover the whole voice.",
       "rowLabel": "{name}, {from}–{to}. You cover {percent}.",
       "reachUp": "Sing up to {note}.",
       "reachDown": "Sing down to {note}.",

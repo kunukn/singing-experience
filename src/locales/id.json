@@ -344,7 +344,8 @@
     "compare": {
       "title": "Kamu dan jenis suara",
       "rangeLegend": "Bergaris = jangkauanmu.",
-      "explainer": "Penuh = bagian tiap suara yang bisa kamu nyanyikan. ↑ ↓ menunjukkan arah untuk mencakup seluruh suara.",
+      "solidLegend": "Penuh = bagian tiap suara yang bisa kamu nyanyikan.",
+      "reachLegend": "↑ ↓ menunjukkan arah untuk mencakup seluruh suara.",
       "rowLabel": "{name}, {from}–{to}. Kamu mencakup {percent}.",
       "reachUp": "Nyanyi naik sampai {note}.",
       "reachDown": "Nyanyi turun sampai {note}.",
