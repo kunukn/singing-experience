@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useLocalStorage, useMediaQuery } from '@vueuse/core'
 import type { MidiRange } from '@/utils/normalizeVoiceRange'
 import {
   useVoiceRangeSlots,
@@ -42,6 +43,30 @@ const isMatchingSlot = (index: number) => {
     !!slot && slot.midiMin === props.midiMin && slot.midiMax === props.midiMax
   )
 }
+
+const matchingSlotIndex = computed(() =>
+  slots.value.findIndex((_slot, index) => isMatchingSlot(index)),
+)
+
+/* Three slot rows crowd the chart off a phone screen, so the list starts
+ * collapsed there and open on wider screens. 'auto' follows the viewport until
+ * the user toggles; from then on their choice sticks. */
+const isPhone = useMediaQuery('(max-width: 639px)')
+const storedExpanded = useLocalStorage<'auto' | 'open' | 'closed'>(
+  'syng.voiceRangeSlotsExpanded',
+  'auto',
+)
+const isExpanded = computed(() =>
+  storedExpanded.value === 'auto'
+    ? !isPhone.value
+    : storedExpanded.value === 'open',
+)
+
+function toggleExpanded() {
+  storedExpanded.value = isExpanded.value ? 'closed' : 'open'
+}
+
+const slotListId = useId()
 
 /* null while the dialog is closed */
 const editingIndex = ref<number | null>(null)
@@ -113,10 +138,36 @@ function clearEditingSlot() {
 
 <template>
   <section class="flex flex-col gap-2" data-testid="range-slots">
-    <h3 class="text-xs font-medium text-(--p-text-muted-color)">
-      {{ t('voiceRangeFinder.slots.title') }}
-    </h3>
-    <div class="flex flex-wrap gap-2">
+    <div class="flex flex-wrap items-center gap-x-2">
+      <h3>
+        <PrimeButton
+          severity="secondary"
+          text
+          size="small"
+          :icon="isExpanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+          :label="t('voiceRangeFinder.slots.title')"
+          :aria-expanded="isExpanded"
+          :aria-controls="slotListId"
+          data-testid="range-slots-toggle"
+          @click="toggleExpanded"
+        />
+      </h3>
+      <!-- Collapsed, the slot that matches My range still says which one is in use -->
+      <span
+        v-if="!isExpanded && matchingSlotIndex !== -1"
+        class="text-sm font-semibold tabular-nums"
+        data-testid="range-slots-summary"
+      >
+        {{ slotLabel(matchingSlotIndex) }}
+        <span dir="ltr">{{ formatRange(props.midiMin, props.midiMax) }}</span>
+      </span>
+    </div>
+    <div
+      v-show="isExpanded"
+      :id="slotListId"
+      class="flex flex-wrap gap-2"
+      data-testid="range-slots-list"
+    >
       <!-- Slot button and its ✎ sit tight together so they read as one control -->
       <div
         v-for="(slot, index) in slots"

@@ -79,6 +79,7 @@ const STORAGE_KEYS = [
   'syng.toneMode',
   'syng.tunerReferencePitch',
   'syng.voiceRangeSlots',
+  'syng.voiceRangeSlotsExpanded',
   'syng.voiceTypeRibbon',
   'syng.warmup.durationSec',
   'syng.warmup.patternId',
