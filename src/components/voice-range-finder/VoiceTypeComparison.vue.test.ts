@@ -146,12 +146,21 @@ describe('VoiceTypeComparison', () => {
     })
   })
 
-  test('should mark every C above the tracks', () => {
+  test('should mark the Bass bottom and every C above the tracks', () => {
     expect(
       mountComparison()
         .findAll('[data-testid="voice-type-comparison-tick"]')
         .map((tick) => tick.text()),
-    ).toEqual(['C3', 'C4', 'C5', 'C6'])
+    ).toEqual(['E2', 'C3', 'C4', 'C5', 'C6'])
+  })
+
+  test('should keep the Bass bottom mark when the range runs below it', () => {
+    /* C2–C4: the axis widens to C2, so E2 sits inside it */
+    expect(
+      mountComparison(36, 60)
+        .findAll('[data-testid="voice-type-comparison-tick"]')
+        .map((tick) => tick.text()),
+    ).toEqual(['C2', 'E2', 'C3', 'C4', 'C5', 'C6'])
   })
 
   test('should not label voice ends beside My range', () => {

@@ -63,18 +63,28 @@ const axisMax = computed(() =>
 const toPercent = (midi: number) =>
   ((midi - axisMin.value) / (axisMax.value - axisMin.value)) * 100
 
-/* Every C on the axis, as orientation marks for the tracks */
+/* The lowest note any voice type sings — Bass's E2 (VOICE_TYPES is sorted low first) */
+const LOWEST_VOICE_MIDI = VOICE_TYPES[0]!.range.midiMin
+
+/* Every C on the axis, as orientation marks for the tracks. Beside My range
+ * the Bass bottom joins them, so the chart's low end is named like C6 names
+ * its top. Exploring leaves it out: Bass's own bar-end label names it there. */
 const ticks = computed(() => {
   const firstC = Math.ceil(axisMin.value / 12) * 12
-
-  return Array.from(
+  const cs = Array.from(
     { length: Math.floor((axisMax.value - firstC) / 12) + 1 },
-    (_, index) => {
-      const midi = firstC + index * 12
-
-      return { midi, label: midiToNoteLabel(midi).label, left: toPercent(midi) }
-    },
+    (_, index) => firstC + index * 12,
   )
+  const midis =
+    range.value && !cs.includes(LOWEST_VOICE_MIDI)
+      ? [LOWEST_VOICE_MIDI, ...cs].sort((a, b) => a - b)
+      : cs
+
+  return midis.map((midi) => ({
+    midi,
+    label: midiToNoteLabel(midi).label,
+    left: toPercent(midi),
+  }))
 })
 
 const percentFormat = computed(
