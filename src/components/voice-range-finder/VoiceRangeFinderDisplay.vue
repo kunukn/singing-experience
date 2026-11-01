@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useTimeoutFn } from '@vueuse/core'
-import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
 import { MY_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import {
   normalizeVoiceRange,
@@ -440,10 +439,12 @@ onUnmounted(() => {
             </div>
 
             <!--
-              Mic buttons sit outside the labels, so a tap isn't forwarded to the select.
-              Label | select | mic columns are shared through subgrid, so both selects
-              line up after the longest label in any language. gap-x-1 keeps the mic close;
-              the label's me-2 widens only the label-to-select gap.
+              Sing buttons sit outside the labels, so a tap isn't forwarded to the select.
+              They say "Sing" rather than show a mic: the mic icon means "See my voice"
+              everywhere else. Label | select | Sing columns are shared through subgrid,
+              so both selects line up after the longest label in any language. gap-x-1
+              plus the button's own padding matches the label's me-2 + gap-x-1, so the
+              text sits the same distance either side of the select.
             -->
             <div
               class="grid grid-cols-[auto_auto_auto] items-center gap-x-1 gap-y-2 self-start"
@@ -465,14 +466,13 @@ onUnmounted(() => {
                   />
                 </label>
                 <PrimeButton
-                  icon="pi pi-microphone"
-                  :pt="LARGE_SMALL_BUTTON_ICON_PT"
+                  :label="t('generic.sing')"
                   severity="secondary"
                   size="small"
                   rounded
                   text
                   :disabled="isSearching"
-                  :aria-label="`${t('voiceRangeFinder.findBySinging')}: ${t('voiceRangeFinder.highest')}`"
+                  :aria-label="`${t('generic.sing')}: ${t('voiceRangeFinder.highest')}`"
                   data-testid="my-range-sing-highest"
                   @click="startSearch('high')"
                 />
@@ -494,14 +494,13 @@ onUnmounted(() => {
                   />
                 </label>
                 <PrimeButton
-                  icon="pi pi-microphone"
-                  :pt="LARGE_SMALL_BUTTON_ICON_PT"
+                  :label="t('generic.sing')"
                   severity="secondary"
                   size="small"
                   rounded
                   text
                   :disabled="isSearching"
-                  :aria-label="`${t('voiceRangeFinder.findBySinging')}: ${t('voiceRangeFinder.lowest')}`"
+                  :aria-label="`${t('generic.sing')}: ${t('voiceRangeFinder.lowest')}`"
                   data-testid="my-range-sing-lowest"
                   @click="startSearch('low')"
                 />
