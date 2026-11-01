@@ -1,11 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { effectScope, ref } from 'vue'
 import { CLOSE_CENTS } from '@/utils/pitchColors'
-import {
-  MAX_RECORD_STEP,
-  RANGE_FINDER_HOLD_MS,
-  useRangeFinder,
-} from './useRangeFinder'
+import { RANGE_FINDER_HOLD_MS, useRangeFinder } from './useRangeFinder'
 
 /* A little past the hold, so the last frame lands after it completes */
 const HOLD_WITH_SLACK_MS = RANGE_FINDER_HOLD_MS + 100
@@ -94,30 +90,30 @@ describe('useRangeFinder', () => {
     scope.stop()
   })
 
-  test('should ignore a jump further than MAX_RECORD_STEP past the record', () => {
+  test('should accept a big leap down past the low record', () => {
     const { midi, finder, scope } = setup()
 
     finder.start()
-    midi.value = 46 // A♯2 — becomes the record
+    midi.value = 54 // F♯3 — becomes the record
     vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
-    midi.value = 46 - 12 + 2 // an octave slip down to C2
+    midi.value = 47 // B2, a fifth lower
     vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
 
-    expect(finder.lowestMidi.value).toBe(46)
+    expect(finder.lowestMidi.value).toBe(47)
     scope.stop()
   })
 
-  test('should accept a step of MAX_RECORD_STEP past the record', () => {
+  test('should accept a big leap up past the high record', () => {
     const { midi, finder, scope } = setup()
 
     finder.start()
     finder.next()
     midi.value = 60 // C4
     vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
-    midi.value = 60 + MAX_RECORD_STEP
+    midi.value = 72 // C5, an octave higher
     vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
 
-    expect(finder.highestMidi.value).toBe(60 + MAX_RECORD_STEP)
+    expect(finder.highestMidi.value).toBe(72)
     scope.stop()
   })
 

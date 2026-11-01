@@ -12,12 +12,6 @@ import { createTuningHold } from '@/utils/tuningHold'
  * are tiring to sustain. Still long enough to rule out a passing slide. */
 export const RANGE_FINDER_HOLD_MS = 1000
 
-/* The furthest a new record may land past the current one, in semitones (a
- * fourth). The usual detector slips — an octave (12) or a fifth (7, locking on
- * the third harmonic) — land further out, so they can't steal the record; a
- * singer creeping step by step never notices the limit. */
-export const MAX_RECORD_STEP = 5
-
 export type RangeFinderStep = 'idle' | 'low' | 'high' | 'result'
 
 /* Which ends a search covers: both (low then high) or just one */
@@ -40,7 +34,11 @@ export const isCleanEnough = (midi: number) =>
  * Finds the singer's lowest steady note and highest clean note. Each step keeps
  * listening after a hold completes, so the singer can creep further and every
  * new hold past the record replaces it; they press Done when they have reached
- * their limit. Only notes a small step past the record fill the hold.
+ * their limit. Only notes past the record fill the hold.
+ *
+ * Any distance past the record counts: the singer is in control, and a leap
+ * from a comfortable note straight down to the bottom is normal. The clarity
+ * gate and the steady hold already keep brief detector slips out.
  *
  * The low step only asks for a steady hold. The high step also asks for the
  * note to sit within CLOSE_CENTS: a strained top note wobbles out of tune, and
@@ -62,10 +60,10 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
   const isFilling = ref(false)
 
   /*
-   * Past the current record, but not implausibly far past it, and inside the
-   * C2–C7 span My range can hold — the only notes worth holding for. A note
-   * outside that span would only be clamped on save; at the bottom it is
-   * usually rumble or an octave slip near the detector's frequency floor.
+   * Past the current record and inside the C2–C7 span My range can hold —
+   * the only notes worth holding for. A note outside that span would only be
+   * clamped on save; at the bottom it is usually rumble or an octave slip near
+   * the detector's frequency floor.
    */
   function beatsRecord(midi: number): boolean {
     const note = Math.round(midi)
@@ -75,9 +73,7 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
     const record = step.value === 'low' ? lowestMidi.value : highestMidi.value
     if (record === null) return true
 
-    const stepPast = step.value === 'low' ? record - note : note - record
-
-    return stepPast > 0 && stepPast <= MAX_RECORD_STEP
+    return step.value === 'low' ? note < record : note > record
   }
 
   /*
