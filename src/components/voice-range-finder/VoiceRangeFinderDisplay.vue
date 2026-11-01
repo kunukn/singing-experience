@@ -527,9 +527,10 @@ onUnmounted(() => {
               Sing buttons sit outside the labels, so a tap isn't forwarded to the select.
               They say "Sing" rather than show a mic: the mic icon means "See my voice"
               everywhere else. Label | select | Sing columns are shared through subgrid,
-              so both selects line up after the longest label in any language. gap-x-1
-              plus the button's own padding matches the label's me-2 + gap-x-1, so the
-              text sits the same distance either side of the select.
+              so both selects line up after the longest label in any language. They are
+              filled pills, as in Sing the Keys: text-only, they read as a caption beside
+              the bordered selects. gap-x-1 keeps each pill tight to its select, so the
+              two read as one control; the label's me-2 gives it the wider gap.
             -->
             <div
               class="grid grid-cols-[auto_auto_auto] items-center gap-x-1 gap-y-2 self-start"
@@ -555,7 +556,6 @@ onUnmounted(() => {
                   severity="secondary"
                   size="small"
                   rounded
-                  text
                   :disabled="isSearching"
                   :aria-label="`${t('generic.sing')}: ${t('voiceRangeFinder.highest')}`"
                   data-testid="my-range-sing-highest"
@@ -583,7 +583,6 @@ onUnmounted(() => {
                   severity="secondary"
                   size="small"
                   rounded
-                  text
                   :disabled="isSearching"
                   :aria-label="`${t('generic.sing')}: ${t('voiceRangeFinder.lowest')}`"
                   data-testid="my-range-sing-lowest"
