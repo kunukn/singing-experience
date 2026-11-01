@@ -319,10 +319,12 @@ onUnmounted(() => {
               @applyRange="applySlot"
             />
 
+            <!-- Extra room above, so the slots don't read as part of the chart -->
             <VoiceTypeComparison
               :midiMin="myVoiceRange.midiMin"
               :midiMax="myVoiceRange.midiMax"
               :liveMidi="chartLiveMidi"
+              class="mt-2"
             />
           </section>
         </PrimeTabPanel>
