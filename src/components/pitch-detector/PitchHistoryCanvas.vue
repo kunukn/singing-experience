@@ -245,6 +245,9 @@ function drawPreviewIndicators(
           : lane.previewNoteLabel,
       /* No game here, so the line is always cents-coloured, like the trail. */
       colorForCents: isFocusMode() ? directionalColorForCents : colorForCents,
+      /* Off the zoomed focus chart the line keeps its direction: below the
+       * chart is too low, so blue, never the generic off-chart red */
+      colorOffChartByDirection: isFocusMode(),
       isHighLane: lane.laneId === 'high',
       /* While listening, keep only the dashed reference line: the center dot and
        * label are redundant with the live head dot, which carries the label instead. */

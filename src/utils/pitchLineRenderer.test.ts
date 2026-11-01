@@ -5,6 +5,7 @@ import {
   pitchLineColors,
   resolveEffectiveMidi,
 } from './pitchLineRenderer'
+import { OFF_CENTS } from './pitchColors'
 
 describe('resolveEffectiveMidi', () => {
   test('returns fractional MIDI from a valid frequency (A4 = 440 Hz → 69)', () => {
@@ -171,6 +172,30 @@ describe('drawPitchLine - cents colour', () => {
     })
   })
 
+  /* Height 100 with 16px paddings: y -100 is above the chart, y 300 below */
+  test.each([
+    { side: 'above', y: -100, cents: OFF_CENTS },
+    { side: 'below', y: 300, cents: -OFF_CENTS },
+  ])(
+    'colours an off-chart line $side by direction when asked',
+    ({ y, cents }) => {
+      const { ctx, recorded } = createColorRecordingContext()
+      drawPitchLine(ctx, {
+        midi: 69,
+        frequency: A4_30_CENTS_SHARP,
+        height: 100,
+        midiToY: () => y,
+        lineX0: 0,
+        lineX1: 100,
+        dotX: 50,
+        colorForCents: (c, opacity) => `cents ${c} @ ${opacity}`,
+        colorOffChartByDirection: true,
+      })
+
+      expect(recorded.dot).toBe(`cents ${cents} @ 0.7`)
+    },
+  )
+
   test('keeps the orange palette without a measured frequency', () => {
     const { ctx, recorded } = createColorRecordingContext()
     const colorForCents = vi.fn(() => 'cents-colour')
@@ -243,6 +268,24 @@ describe('pitchLineColors - cents colour', () => {
     })
 
     expect(colors.dot).toBe(dot)
+  })
+
+  test('colours off-chart by offChartCents, still below on-target', () => {
+    expect(
+      pitchLineColors({
+        isOutOfRange: true,
+        offChartCents: -OFF_CENTS,
+        colorForCents,
+      }).dot,
+    ).toBe(`cents ${-OFF_CENTS} @ 0.7`)
+    expect(
+      pitchLineColors({
+        isOutOfRange: true,
+        isCorrect: true,
+        offChartCents: -OFF_CENTS,
+        colorForCents,
+      }).dot,
+    ).toBe('rgba(74, 222, 128, 0.8)')
   })
 
   test('falls back to orange without cents', () => {

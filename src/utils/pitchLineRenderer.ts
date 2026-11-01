@@ -13,6 +13,7 @@ import {
   frequencyToMidi,
   midiToNoteLabel,
 } from '@/utils/noteUtils'
+import { OFF_CENTS } from '@/utils/pitchColors'
 
 /* The one place to change the pitch line's stroke/dot geometry. Consumed by
  * every Tier-A chart; Tier B/C intentionally keep their own (different) values. */
@@ -115,6 +116,10 @@ export type ColorForCents = (cents: number, opacity: number) => string
  * ranks just above the plain orange, so it never hides any of the above.
  * Callers leave `cents` undefined when there is no measured frequency — a
  * made-up 0¢ would read as a perfect green.
+ *
+ * `offChartCents` (with `colorForCents`) replaces the fixed off-chart red
+ * where the chart measures from one target (the Focus tab): off the bottom
+ * is too low, so it must stay as blue as a flat line on the chart.
  */
 export function pitchLineColors(state: {
   isOutOfRange: boolean
@@ -122,19 +127,29 @@ export function pitchLineColors(state: {
   isHighLane?: boolean
   cents?: number
   colorForCents?: ColorForCents | null
+  offChartCents?: number
 }): { line: string; dot: string; label: string } {
   if (state.isCorrect) return COLORS.correct
+  if (
+    state.isOutOfRange &&
+    state.colorForCents &&
+    state.offChartCents !== undefined
+  )
+    return centsColors(state.colorForCents, state.offChartCents)
   if (state.isOutOfRange) return COLORS.outOfRange
   if (state.isHighLane) return COLORS.highLane
-  if (state.colorForCents && state.cents !== undefined) {
-    return {
-      line: state.colorForCents(state.cents, CENTS_COLOR_OPACITY.line),
-      dot: state.colorForCents(state.cents, CENTS_COLOR_OPACITY.dot),
-      label: state.colorForCents(state.cents, CENTS_COLOR_OPACITY.label),
-    }
-  }
+  if (state.colorForCents && state.cents !== undefined)
+    return centsColors(state.colorForCents, state.cents)
 
   return COLORS.inRange
+}
+
+function centsColors(colorForCents: ColorForCents, cents: number) {
+  return {
+    line: colorForCents(cents, CENTS_COLOR_OPACITY.line),
+    dot: colorForCents(cents, CENTS_COLOR_OPACITY.dot),
+    label: colorForCents(cents, CENTS_COLOR_OPACITY.label),
+  }
 }
 
 type DrawPitchLineOptions = {
@@ -172,6 +187,10 @@ type DrawPitchLineOptions = {
    * frequency, and for out-of-range, on-target and high-lane lines. See
    * pitchLineColors. */
   colorForCents?: ColorForCents | null
+  /* Off the chart, colour by direction through colorForCents (+OFF_CENTS
+   * above, -OFF_CENTS below) instead of the fixed red. For charts measured
+   * from one target, where off the bottom means too low. */
+  colorOffChartByDirection?: boolean
   paddingTop?: number
   paddingBottom?: number
 }
@@ -202,6 +221,7 @@ export function drawPitchLine(
     isRtl = false,
     noteLabel = null,
     colorForCents = null,
+    colorOffChartByDirection = false,
     paddingTop,
     paddingBottom,
   } = options
@@ -223,6 +243,13 @@ export function drawPitchLine(
     isHighLane,
     cents: frequency != null ? cents : undefined,
     colorForCents,
+    /* Clamping pulls an above-chart Y down, so a raw Y above the clamped one
+     * means the pitch is too high (canvas Y grows downward) */
+    offChartCents: colorOffChartByDirection
+      ? rawY < clampedY
+        ? OFF_CENTS
+        : -OFF_CENTS
+      : undefined,
   })
 
   ctx.save()
