@@ -181,7 +181,11 @@ function clearEditingSlot() {
       class="flex flex-wrap gap-2"
       data-testid="range-slots-list"
     >
-      <!-- Slot button and its ✎ sit tight together so they read as one control -->
+      <!--
+        Slot button and its ✎ sit tight together so they read as one control.
+        Both opt out of the control height and theme text size: slots are an
+        optional extra and should read smaller than the Sing buttons above.
+      -->
       <div
         v-for="(slot, index) in slots"
         :key="index"
@@ -192,6 +196,7 @@ function clearEditingSlot() {
           :outlined="!slot"
           size="small"
           rounded
+          class="min-h-0 py-1! text-xs! leading-tight"
           :aria-pressed="slot ? isMatchingSlot(index) : undefined"
           :aria-label="
             slot
@@ -207,7 +212,7 @@ function clearEditingSlot() {
         >
           <span class="max-w-28 truncate">{{ slotLabel(index) }}</span>
           <span
-            class="font-semibold tabular-nums"
+            class="font-medium tabular-nums"
             :class="{ 'opacity-70': !slot }"
             dir="ltr"
           >
@@ -224,6 +229,7 @@ function clearEditingSlot() {
           size="small"
           rounded
           text
+          class="size-6! min-h-0 min-w-0 p-0!"
           :aria-label="
             t('voiceRangeFinder.slots.edit', { name: slotLabel(index) })
           "
