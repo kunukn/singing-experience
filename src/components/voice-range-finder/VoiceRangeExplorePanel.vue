@@ -36,7 +36,11 @@ const { liveCents, liveCentsText, liveCentsColor } = useLiveCents(
       class="grid w-full grid-cols-[1fr_7rem_1fr] items-center gap-x-2"
       dir="ltr"
     >
-      <CentsMeter class="justify-self-end text-3xl" :cents="liveCents" />
+      <CentsMeter
+        class="justify-self-end text-3xl"
+        :cents="liveCents"
+        :color="liveCentsColor"
+      />
       <span
         class="text-center text-3xl font-semibold tabular-nums"
         data-testid="voice-range-explore-note"

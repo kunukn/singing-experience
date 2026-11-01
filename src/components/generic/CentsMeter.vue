@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { OFF_CENTS } from '@/utils/pitchColors'
 
-const { cents } = defineProps<{
+const { cents, color } = defineProps<{
   /* null = no pitch; the track keeps its space so neighbours hold still */
   cents: number | null
+  /* Overrides the preview colour, so the meter matches a cents label beside
+   * it that is coloured another way (the range finder's flat = blue) */
+  color?: string
 }>()
 
 const { colorForCents } = usePitchPreviewColor()
@@ -33,7 +36,8 @@ const indicatorTop = computed(() => {
       class="absolute start-0 h-[0.14em] w-full -translate-y-1/2 transition-[top] duration-100 motion-reduce:transition-none"
       :style="{
         top: indicatorTop,
-        backgroundColor: cents === null ? undefined : colorForCents(cents),
+        backgroundColor:
+          cents === null ? undefined : (color ?? colorForCents(cents)),
       }"
       data-testid="cents-meter-indicator"
     />

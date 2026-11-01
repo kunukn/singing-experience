@@ -163,7 +163,11 @@ const canFinishStep = computed(() =>
         :value="barPercent"
         :showValue="false"
       />
-      <CentsMeter class="text-xl" :cents="isRecordFlash ? null : liveCents" />
+      <CentsMeter
+        class="text-xl"
+        :cents="isRecordFlash ? null : liveCents"
+        :color="liveCentsColor"
+      />
       <span
         class="justify-self-start text-xl font-semibold tabular-nums"
         dir="ltr"

@@ -6,6 +6,7 @@ import {
   cleanTextColor,
   colorAtMidi,
   colorRgbAtMidi,
+  directionalTextColor,
   OFF_CENTS,
   textColorAtMidi,
   voiceTypeColor,
@@ -121,6 +122,52 @@ describe('textColorAtMidi', () => {
     const low = textColorAtMidi(36)
     const high = textColorAtMidi(84)
     expect(low).not.toBe(high)
+  })
+})
+
+describe('directionalTextColor', () => {
+  const themes = [false, true]
+
+  const contrastOnWhite = (color: string) => {
+    const [r, g, b] = parseRgb(color).map((channel) => {
+      const c = channel / 255
+
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+    })
+
+    return 1.05 / (0.2126 * r! + 0.7152 * g! + 0.0722 * b! + 0.05)
+  }
+
+  test('sharp keeps the existing ramp', () => {
+    for (const isDark of themes)
+      for (const cents of [0, 5, CLEAN_CENTS, 15, CLOSE_CENTS, 35, OFF_CENTS])
+        expect(directionalTextColor(cents, isDark)).toBe(
+          cleanTextColor(cents, isDark),
+        )
+  })
+
+  test('flat and sharp share the green within CLEAN_CENTS', () => {
+    for (const isDark of themes)
+      expect(directionalTextColor(-CLEAN_CENTS, isDark)).toBe(
+        directionalTextColor(CLEAN_CENTS, isDark),
+      )
+  })
+
+  test('flat beyond CLEAN_CENTS turns blue', () => {
+    for (const isDark of themes)
+      for (const cents of [-CLOSE_CENTS, -OFF_CENTS]) {
+        const [r, g, b] = parseRgb(directionalTextColor(cents, isDark))
+        expect(b).toBeGreaterThan(r)
+        expect(b).toBeGreaterThan(g)
+      }
+  })
+
+  /* The flat side is never harder to read than the sharp side it mirrors */
+  test('flat reads at least as well as sharp on white', () => {
+    for (const cents of [CLOSE_CENTS, 35, OFF_CENTS])
+      expect(
+        contrastOnWhite(directionalTextColor(-cents, false)),
+      ).toBeGreaterThanOrEqual(contrastOnWhite(cleanTextColor(cents, false)))
   })
 })
 

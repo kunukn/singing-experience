@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import { cleanTextColor, voiceTypeColor } from '@/utils/pitchColors'
+import { directionalTextColor, voiceTypeColor } from '@/utils/pitchColors'
 import { VOICE_TYPES } from '@/utils/voiceRangeSegments'
 import { formatSignedCents } from './useLiveCents'
 import { centsOffNearest } from './useRangeFinder'
@@ -319,7 +319,7 @@ const liveLabel = computed(() => {
   return {
     note: formatNote(Math.round(props.liveMidi)),
     centsText: formatSignedCents(cents),
-    centsColor: cleanTextColor(cents, isDark.value),
+    centsColor: directionalTextColor(cents, isDark.value),
     side: liveLeft.value < 50 ? 'end' : 'start',
   }
 })
@@ -505,8 +505,10 @@ const liveLabel = computed(() => {
           />
           <!--
             The live note; 75 ms glide smooths detector jitter without lagging
-            the voice. Coloured like its cents label: green when clean, yellow
-            → red as it drifts.
+            the voice. Coloured like its cents label: green when clean, blue
+            when flat, yellow → red when sharp. The halo (background-coloured
+            ring) keeps it visible on any bar: the voices' rainbow uses every
+            hue, so whatever colour the line is, some bar matches it.
           -->
           <span
             v-if="liveLabel"
@@ -515,6 +517,7 @@ const liveLabel = computed(() => {
             :style="{
               insetInlineStart: `${liveLeft}%`,
               backgroundColor: liveLabel.centsColor,
+              boxShadow: '0 0 0 1px var(--p-content-background)',
             }"
           />
         </span>

@@ -186,6 +186,39 @@ export function cleanTextColor(cents: number, isDark = true): string {
   return `rgb(${r}, ${g}, ${b})`
 }
 
+/* Flat-side text stops: light blue at CLOSE_CENTS deepening to blue at OFF_CENTS */
+const CLOSE_TEXT_FLAT_DARK: Rgb = [125, 211, 252] // sky-300
+const OFF_TEXT_FLAT_DARK: Rgb = [96, 165, 250] // blue-400
+const CLOSE_TEXT_FLAT_LIGHT: Rgb = [2, 132, 199] // sky-600
+const OFF_TEXT_FLAT_LIGHT: Rgb = [29, 78, 216] // blue-700
+
+/*
+ * cleanTextColor with a direction: sharp keeps its green → yellow → red ramp,
+ * flat mirrors it in blues. The size of the miss still shows, and now so does
+ * its direction, without reading the sign. Blue low, warm high is the
+ * language Do-Re-Mi's too low / too high already speaks (directionalColor);
+ * blue against orange is also the pair red-green colour-blind singers tell
+ * apart best. Within CLEAN_CENTS both sides are the same green.
+ */
+export function directionalTextColor(cents: number, isDark = true): string {
+  if (cents >= 0) return cleanTextColor(cents, isDark)
+
+  const stops = isDark
+    ? {
+        clean: CLEAN_TEXT_GREEN_DARK,
+        close: CLOSE_TEXT_FLAT_DARK,
+        off: OFF_TEXT_FLAT_DARK,
+      }
+    : {
+        clean: CLEAN_TEXT_GREEN_LIGHT,
+        close: CLOSE_TEXT_FLAT_LIGHT,
+        off: OFF_TEXT_FLAT_LIGHT,
+      }
+  const [r, g, b] = lerpThreeStop(stops, cents)
+
+  return `rgb(${r}, ${g}, ${b})`
+}
+
 const DIRECTIONAL_ORANGE = '#fb923c' // too high
 const DIRECTIONAL_BLUE = '#60a5fa' // too low
 const DIRECTIONAL_GREEN = '#4ade80' // in tune
