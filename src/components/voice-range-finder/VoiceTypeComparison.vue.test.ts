@@ -255,6 +255,17 @@ describe('VoiceTypeComparison', () => {
       ).toBe(false)
     })
 
+    test.each([null, 79.2])(
+      'should draw every voice bar whole, sung note or not (%s)',
+      (liveMidi) => {
+        const bars = mountExplore(liveMidi).findAll(
+          '[data-testid="voice-type-comparison-bar"]',
+        )
+
+        expect(bars).toHaveLength(6)
+      },
+    )
+
     test('should light up nothing while nothing is sung', () => {
       expect(soundingVoices(mountExplore(null))).toEqual([])
     })

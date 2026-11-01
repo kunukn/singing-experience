@@ -135,7 +135,9 @@ type ChartRow = {
     hint: string
     isBestFit: boolean
   } | null
-  /* Exploring only: the live note sits inside this voice */
+  /* Exploring only: the live note sits inside this voice. The bar stays
+   * solid either way — a bar fading in and out on every note distracted —
+   * so the name and end notes carry the signal instead. */
   isSounding: boolean | null
   /* Exploring only: the voice's own notes, labelled at each end of its bar */
   ends: {
@@ -202,7 +204,7 @@ const exploreRows = (): ChartRow[] =>
       name,
       ...rowColors(stopIndex),
       voiceStyle,
-      solidStyle: isSounding ? voiceStyle : null,
+      solidStyle: voiceStyle,
       ariaLabel: t('generic.voiceTypeSpan', {
         name,
         from: formatNote(voice.midiMin),
@@ -326,21 +328,24 @@ const liveLabel = computed(() => {
         :class="{ 'cursor-pointer': range }"
         @click="selectRow(row)"
       >
-        <!--
-          Exploring lights the name with colour, not weight: the name column is
-          auto-sized, so a bold name changing on every note shifted the bars.
-          Best fit can stay bold — it only changes when the range is edited.
-        -->
         <span
+          v-if="row.comparison"
           aria-hidden="true"
           class="text-xs whitespace-nowrap"
-          :class="
-            row.comparison
-              ? { 'font-semibold': row.comparison.isBestFit }
-              : row.isSounding
-                ? 'text-(--p-text-color)'
-                : 'text-(--p-text-muted-color)'
-          "
+          :class="{ 'font-semibold': row.comparison.isBestFit }"
+        >
+          {{ row.name }}
+        </span>
+        <!--
+          Exploring lights the name in its voice's colour, never weight: bold
+          glyphs are wider, so the word visibly stretches on every note.
+        -->
+        <span
+          v-else
+          aria-hidden="true"
+          class="text-xs whitespace-nowrap"
+          :class="{ 'text-(--p-text-muted-color)': !row.isSounding }"
+          :style="row.isSounding ? { color: row.color } : undefined"
         >
           {{ row.name }}
         </span>
@@ -362,6 +367,7 @@ const liveLabel = computed(() => {
           />
           <span
             v-if="row.solidStyle"
+            data-testid="voice-type-comparison-bar"
             class="absolute top-1/2 h-2 -translate-y-1/2 rounded-full"
             :style="{ ...row.solidStyle, backgroundColor: row.color }"
           />
@@ -370,24 +376,22 @@ const liveLabel = computed(() => {
             <span
               data-testid="voice-type-comparison-voice-start"
               class="absolute top-1/2 -translate-x-full -translate-y-1/2 pe-1 text-[10px] whitespace-nowrap tabular-nums"
-              :class="
-                row.isSounding
-                  ? 'text-(--p-text-color)'
-                  : 'text-(--p-text-muted-color)'
-              "
-              :style="{ insetInlineStart: `${row.ends.startLeft}%` }"
+              :class="{ 'text-(--p-text-muted-color)': !row.isSounding }"
+              :style="{
+                insetInlineStart: `${row.ends.startLeft}%`,
+                color: row.isSounding ? row.color : undefined,
+              }"
             >
               {{ row.ends.startLabel }}
             </span>
             <span
               data-testid="voice-type-comparison-voice-end"
               class="absolute top-1/2 -translate-y-1/2 ps-1 text-[10px] whitespace-nowrap tabular-nums"
-              :class="
-                row.isSounding
-                  ? 'text-(--p-text-color)'
-                  : 'text-(--p-text-muted-color)'
-              "
-              :style="{ insetInlineStart: `${row.ends.endLeft}%` }"
+              :class="{ 'text-(--p-text-muted-color)': !row.isSounding }"
+              :style="{
+                insetInlineStart: `${row.ends.endLeft}%`,
+                color: row.isSounding ? row.color : undefined,
+              }"
             >
               {{ row.ends.endLabel }}
             </span>
