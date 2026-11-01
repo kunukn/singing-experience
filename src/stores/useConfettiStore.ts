@@ -8,7 +8,7 @@ export const useConfettiStore = defineStore('confetti', () => {
    * to inject the real implementations. Other code triggers fireConfetti() or
    * fireFireworks() without knowing which component provides the effect.
    */
-  const _fire = ref<Fire>(() => {
+  const confettiProvider = ref<Fire>(() => {
     console.warn('useConfettiStore: no confetti provider registered')
   })
   const fireworksProvider = ref<Fire>(() => {
@@ -16,7 +16,7 @@ export const useConfettiStore = defineStore('confetti', () => {
   })
 
   function registerFireConfetti(fn: Fire) {
-    _fire.value = fn
+    confettiProvider.value = fn
   }
 
   function registerFireFireworks(fn: Fire) {
@@ -24,7 +24,7 @@ export const useConfettiStore = defineStore('confetti', () => {
   }
 
   function fireConfetti() {
-    _fire.value()
+    confettiProvider.value()
   }
 
   /* The bigger celebration, for a perfect run. */

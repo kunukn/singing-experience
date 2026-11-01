@@ -10,7 +10,7 @@ import type * as ToneType from 'tone'
  *    the fretboard reaches. Lazy for the tuner (loads only when a non-standard tuning plays);
  *    the fretboard prewarms it, since any fret can be pressed first.
  */
-let _tone: typeof ToneType | null = null
+let toneModule: typeof ToneType | null = null
 let standardSampler: ToneType.Sampler | null = null
 let standardReady = false
 let standardLoadPromise: Promise<void> | null = null
@@ -25,8 +25,8 @@ const SAMPLER_VOLUME_DB = -6 // dB — reference level for all guitar samples
  * A static top-level import would create the AudioContext on page load,
  * which browsers block and warn about before a user gesture. */
 async function requireTone(): Promise<typeof ToneType> {
-  if (!_tone) _tone = await import('tone')
-  return _tone
+  if (!toneModule) toneModule = await import('tone')
+  return toneModule
 }
 
 /* Standard EADGBE samples — prewarmed on tuner mount so the first ♪ click is instant. */
@@ -107,10 +107,10 @@ const STANDARD_NOTE_KEYS = new Set(Object.keys(STANDARD_SAMPLE_URLS))
 
 const SAMPLE_BASE_URL = `${import.meta.env.BASE_URL}sounds/guitar-acoustic/`
 
-/* Safe to call only after requireTone() has resolved — _tone is guaranteed non-null. */
+/* Safe to call only after requireTone() has resolved — toneModule is guaranteed non-null. */
 function getStandardSampler(): ToneType.Sampler {
   if (!standardSampler) {
-    standardSampler = new _tone!.Sampler({
+    standardSampler = new toneModule!.Sampler({
       urls: STANDARD_SAMPLE_URLS,
       baseUrl: SAMPLE_BASE_URL,
       volume: SAMPLER_VOLUME_DB,
@@ -127,7 +127,7 @@ function getStandardSampler(): ToneType.Sampler {
 
 function getExtraSampler(): ToneType.Sampler {
   if (!extraSampler) {
-    extraSampler = new _tone!.Sampler({
+    extraSampler = new toneModule!.Sampler({
       urls: EXTRA_SAMPLE_URLS,
       baseUrl: SAMPLE_BASE_URL,
       volume: SAMPLER_VOLUME_DB,
@@ -260,7 +260,7 @@ export function useGuitarSampler(options: UseGuitarSamplerOptions = {}) {
     whenS: number,
     duration: number = GUITAR_RING_S,
   ): void {
-    if (!_tone) return
+    if (!toneModule) return
 
     const key = `${note}${octave}`
     const useStandard = STANDARD_NOTE_KEYS.has(key)

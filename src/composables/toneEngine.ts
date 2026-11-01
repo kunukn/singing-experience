@@ -51,11 +51,11 @@ export type ToneEngine = {
 /* Defers AudioContext creation until the first user gesture.
  * A static top-level import would create the AudioContext on page load,
  * which browsers block and warn about before a user gesture. */
-let _tone: typeof ToneType | null = null
+let toneModule: typeof ToneType | null = null
 
 async function requireTone(): Promise<typeof ToneType> {
-  if (!_tone) _tone = await import('tone')
-  return _tone
+  if (!toneModule) toneModule = await import('tone')
+  return toneModule
 }
 
 /* Per-mode synth voice configs. Shared by the single shared PolySynth (manual /
@@ -189,8 +189,8 @@ export function createTonejsAdapter(): ToneEngine {
    */
   if (typeof document !== 'undefined') {
     document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible' && _tone) {
-        _tone
+      if (document.visibilityState === 'visible' && toneModule) {
+        toneModule
           .getContext()
           .resume()
           .catch(() => {})
@@ -201,7 +201,7 @@ export function createTonejsAdapter(): ToneEngine {
   /** Returns a square-wave polyphonic synth (lazy init). */
   function getSquareSynth(): ToneType.PolySynth {
     if (!squareSynth) {
-      squareSynth = new _tone!.PolySynth(_tone!.Synth, SQUARE_OPTIONS)
+      squareSynth = new toneModule!.PolySynth(toneModule!.Synth, SQUARE_OPTIONS)
       squareSynth.toDestination()
     }
 
@@ -211,7 +211,7 @@ export function createTonejsAdapter(): ToneEngine {
   /** Returns an FM-synthesis bell polyphonic synth (lazy init). */
   function getBellSynth(): ToneType.PolySynth {
     if (!bellSynth) {
-      bellSynth = new _tone!.PolySynth(_tone!.FMSynth, BELL_OPTIONS)
+      bellSynth = new toneModule!.PolySynth(toneModule!.FMSynth, BELL_OPTIONS)
       bellSynth.toDestination()
     }
 
@@ -221,7 +221,10 @@ export function createTonejsAdapter(): ToneEngine {
   /** Returns an FM electric-piano polyphonic synth (lazy init). Hz-accurate across C2–C7. */
   function getKeyboardSynth(): ToneType.PolySynth {
     if (!keyboardSynth) {
-      keyboardSynth = new _tone!.PolySynth(_tone!.FMSynth, KEYBOARD_OPTIONS)
+      keyboardSynth = new toneModule!.PolySynth(
+        toneModule!.FMSynth,
+        KEYBOARD_OPTIONS,
+      )
       keyboardSynth.toDestination()
     }
 
@@ -231,7 +234,7 @@ export function createTonejsAdapter(): ToneEngine {
   /** Returns a mono bass synth with a lowpass filter (lazy init). */
   function getBassSynth(): ToneType.MonoSynth {
     if (!bassSynth) {
-      bassSynth = new _tone!.MonoSynth(BASS_OPTIONS)
+      bassSynth = new toneModule!.MonoSynth(BASS_OPTIONS)
       bassSynth.toDestination()
     }
 
@@ -241,9 +244,9 @@ export function createTonejsAdapter(): ToneEngine {
   /** Returns a pure-sine tuning-fork polyphonic synth (lazy init). */
   function getTuningSynth(): ToneType.PolySynth {
     if (!tuningSynth) {
-      tuningSynth = new _tone!.PolySynth(_tone!.Synth, TUNING_OPTIONS)
+      tuningSynth = new toneModule!.PolySynth(toneModule!.Synth, TUNING_OPTIONS)
       // -1 dB ceiling — catches peaks when multiple sine voices sum
-      const limiter = new _tone!.Limiter(-1)
+      const limiter = new toneModule!.Limiter(-1)
       tuningSynth.connect(limiter)
       limiter.toDestination()
     }
@@ -254,9 +257,12 @@ export function createTonejsAdapter(): ToneEngine {
   /** Variant of the tuning-fork synth tuned louder for mobile speakers. */
   function getTuningSynth2(): ToneType.PolySynth {
     if (!tuningSynth2) {
-      tuningSynth2 = new _tone!.PolySynth(_tone!.Synth, TUNING2_OPTIONS)
+      tuningSynth2 = new toneModule!.PolySynth(
+        toneModule!.Synth,
+        TUNING2_OPTIONS,
+      )
       // 0 dB ceiling — only catches polyphonic peaks, does not attenuate single voices
-      const limiter = new _tone!.Limiter(0)
+      const limiter = new toneModule!.Limiter(0)
       tuningSynth2.connect(limiter)
       limiter.toDestination()
     }
@@ -271,13 +277,13 @@ export function createTonejsAdapter(): ToneEngine {
   function createMonoVoice(
     mode: ToneMode,
   ): ToneType.Synth | ToneType.FMSynth | ToneType.MonoSynth {
-    if (mode === 'bell') return new _tone!.FMSynth(BELL_OPTIONS)
-    if (mode === 'keyboard') return new _tone!.FMSynth(KEYBOARD_OPTIONS)
-    if (mode === 'bass') return new _tone!.MonoSynth(BASS_OPTIONS)
-    if (mode === 'tuning') return new _tone!.Synth(TUNING_OPTIONS)
-    if (mode === 'tuning2') return new _tone!.Synth(TUNING2_OPTIONS)
+    if (mode === 'bell') return new toneModule!.FMSynth(BELL_OPTIONS)
+    if (mode === 'keyboard') return new toneModule!.FMSynth(KEYBOARD_OPTIONS)
+    if (mode === 'bass') return new toneModule!.MonoSynth(BASS_OPTIONS)
+    if (mode === 'tuning') return new toneModule!.Synth(TUNING_OPTIONS)
+    if (mode === 'tuning2') return new toneModule!.Synth(TUNING2_OPTIONS)
 
-    return new _tone!.Synth(SQUARE_OPTIONS)
+    return new toneModule!.Synth(SQUARE_OPTIONS)
   }
 
   /** Starts the Tone.js audio context (requires user gesture) and preloads the active synth. */
@@ -313,11 +319,11 @@ export function createTonejsAdapter(): ToneEngine {
    * relying on the state happening to be checked at entry time.
    */
   function attachStateChangeListener() {
-    if (stateChangeAttached || !_tone) return
+    if (stateChangeAttached || !toneModule) return
 
-    const ctx = _tone.getContext()
+    const ctx = toneModule.getContext()
     ctx.on('statechange', () => {
-      if (_tone && _tone.getContext().state !== 'running') {
+      if (toneModule && toneModule.getContext().state !== 'running') {
         warmUpPromise = null
       }
     })
@@ -423,7 +429,7 @@ export function createTonejsAdapter(): ToneEngine {
     durationS: number,
     whenS: number,
   ): void {
-    if (!_tone) return
+    if (!toneModule) return
 
     const noteName = frequencyToNoteName(frequencyHz)
     if (!noteName) return
@@ -451,7 +457,7 @@ export function createTonejsAdapter(): ToneEngine {
        * 2 ms attack keeps the spectrum narrow, so nothing spills down into the
        * voice band the way a click's edge would.
        */
-      tickSynth = new _tone!.Synth({
+      tickSynth = new toneModule!.Synth({
         oscillator: { type: 'sine' },
         /* Percussive: gone within 15 ms, no sustain. */
         envelope: { attack: 0.002, decay: 0.015, sustain: 0, release: 0.005 },
@@ -464,7 +470,7 @@ export function createTonejsAdapter(): ToneEngine {
 
   /** Schedules a short, high metronome tick at a precise audio-clock time. */
   function playTickAt(whenS: number): void {
-    if (!_tone) return
+    if (!toneModule) return
 
     const durationS = 0.015 // 15 ms — matches the envelope decay
     getTickSynth().triggerAttackRelease('C8', durationS, whenS)
@@ -496,12 +502,12 @@ export function createTonejsAdapter(): ToneEngine {
 
   /** (Re)builds a pool of `count` monophonic voices for the current tone mode. */
   function setHarmonyVoiceCount(count: number): void {
-    if (!_tone) return
+    if (!toneModule) return
 
     disposeHarmonyVoices()
 
     // -1 dB ceiling — catches peaks when several voices sum, like the tuning bus
-    harmonyLimiter = new _tone.Limiter(-1)
+    harmonyLimiter = new toneModule.Limiter(-1)
     harmonyLimiter.toDestination()
 
     for (let index = 0; index < count; index++) {
@@ -534,27 +540,27 @@ export function createTonejsAdapter(): ToneEngine {
 
   /** Returns the current Tone.js audio-clock time in seconds. */
   function getNow(): number {
-    return _tone ? _tone.now() : 0
+    return toneModule ? toneModule.now() : 0
   }
 
   /** Returns the raw audio-clock time in seconds, skipping Tone's 100 ms look-ahead. */
   function getImmediate(): number {
-    return _tone ? _tone.immediate() : 0
+    return toneModule ? toneModule.immediate() : 0
   }
 
   /** Returns the seconds between getImmediate() and the sound leaving the speaker. */
   function getOutputLatency(): number {
-    if (!_tone) return 0
+    if (!toneModule) return 0
 
-    const rawContext = _tone.getContext().rawContext
+    const rawContext = toneModule.getContext().rawContext
     /* standardized-audio-context forwards baseLatency but not outputLatency, so
      * read that from the native context it wraps. A private field: if it is
      * ever renamed this falls back to baseLatency alone. */
+    const { _nativeAudioContext: wrappedContext } = rawContext as {
+      _nativeAudioContext?: { outputLatency?: number }
+    }
     const nativeContext: { outputLatency?: number } =
-      'outputLatency' in rawContext
-        ? rawContext
-        : ((rawContext as { _nativeAudioContext?: { outputLatency?: number } })
-            ._nativeAudioContext ?? {})
+      'outputLatency' in rawContext ? rawContext : (wrappedContext ?? {})
     const baseLatency = 'baseLatency' in rawContext ? rawContext.baseLatency : 0
 
     return (baseLatency || 0) + (nativeContext.outputLatency || 0)
@@ -562,25 +568,25 @@ export function createTonejsAdapter(): ToneEngine {
 
   /** Schedules a callback to fire at `whenS` (audio-clock seconds) inside Tone's draw loop. */
   function scheduleDraw(callback: () => void, whenS: number): void {
-    if (!_tone) return
+    if (!toneModule) return
 
-    _tone.getDraw().schedule(callback, whenS)
+    toneModule.getDraw().schedule(callback, whenS)
   }
 
   /** Cancels scheduled draw callbacks at or after `afterS` (audio-clock seconds)
    * and releases any in-flight or queued synth notes so a stopped sequence
    * goes silent immediately rather than continuing to play queued tones. */
   function cancelScheduled(afterS = 0): void {
-    if (!_tone) return
+    if (!toneModule) return
 
-    _tone.getDraw().cancel(afterS)
+    toneModule.getDraw().cancel(afterS)
 
     /* Always tear down the harmony pool — it is cheap, and the early return
      * below would otherwise leak its voices on unmount after a natural finish. */
     disposeHarmonyVoices()
 
     /* No queued audio still pending — nothing to silence. */
-    if (_tone.now() >= scheduledUntilS) return
+    if (toneModule.now() >= scheduledUntilS) return
 
     scheduledUntilS = 0
 

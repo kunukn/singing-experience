@@ -5,7 +5,7 @@ import type * as ToneType from 'tone'
  * Module-level singleton — survives component re-mounts so samples are never
  * fetched twice. Lazy: nothing loads until the first play() call.
  */
-let _tone: typeof ToneType | null = null
+let toneModule: typeof ToneType | null = null
 let sampler: ToneType.Sampler | null = null
 let samplerReady = false
 let loadPromise: Promise<void> | null = null
@@ -17,8 +17,8 @@ const SAMPLER_VOLUME_DB = -6 // dB — reference level for all ukulele samples
  * A static top-level import would create the AudioContext on page load,
  * which browsers block and warn about before a user gesture. */
 async function requireTone(): Promise<typeof ToneType> {
-  if (!_tone) _tone = await import('tone')
-  return _tone
+  if (!toneModule) toneModule = await import('tone')
+  return toneModule
 }
 
 /* Samples cover both Low G (G3) and High G (G4) tunings. */
@@ -30,10 +30,10 @@ const SAMPLE_URLS: Record<string, string> = {
   A4: 'A4.mp3',
 }
 
-/* Safe to call only after requireTone() has resolved — _tone is guaranteed non-null. */
+/* Safe to call only after requireTone() has resolved — toneModule is guaranteed non-null. */
 function getSampler(): ToneType.Sampler {
   if (!sampler) {
-    sampler = new _tone!.Sampler({
+    sampler = new toneModule!.Sampler({
       urls: SAMPLE_URLS,
       baseUrl: `${import.meta.env.BASE_URL}sounds/ukulele/`,
       volume: SAMPLER_VOLUME_DB,
