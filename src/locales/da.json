@@ -325,9 +325,6 @@
   "voiceRangeFinder": {
     "highest": "Højeste tone",
     "lowest": "Dybeste tone",
-    "reset": "Nulstil",
-    "undo": "Fortryd",
-    "resetDone": "Lejet er nulstillet til {range}",
     "findBySinging": "Find det ved at synge",
     "lowPrompt": "Syng en dyb tone, og hold den. Prøv så lidt dybere!",
     "highPrompt": "Syng en høj tone, og hold den. Prøv så lidt højere! Kun rene toner tæller.",

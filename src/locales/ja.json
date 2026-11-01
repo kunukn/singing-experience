@@ -325,9 +325,6 @@
   "voiceRangeFinder": {
     "highest": "いちばん高い音",
     "lowest": "いちばん低い音",
-    "reset": "リセット",
-    "undo": "もとにもどす",
-    "resetDone": "声域を {range} にリセットしたよ",
     "findBySinging": "歌ってさがす",
     "lowPrompt": "低い音を歌って、のばそう。それから、もう少し低く！",
     "highPrompt": "高い音を歌って、のばそう。それから、もう少し高く！きれいな音だけがカウントされるよ。",

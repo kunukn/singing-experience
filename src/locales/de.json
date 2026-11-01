@@ -325,9 +325,6 @@
   "voiceRangeFinder": {
     "highest": "Höchster Ton",
     "lowest": "Tiefster Ton",
-    "reset": "Zurücksetzen",
-    "undo": "Rückgängig",
-    "resetDone": "Umfang zurückgesetzt auf {range}",
     "findBySinging": "Durch Singen finden",
     "lowPrompt": "Sing einen tiefen Ton und halte ihn. Dann versuch es ein bisschen tiefer!",
     "highPrompt": "Sing einen hohen Ton und halte ihn. Dann versuch es ein bisschen höher! Nur saubere Töne zählen.",

@@ -325,9 +325,6 @@
   "voiceRangeFinder": {
     "highest": "Noti ya juu kabisa",
     "lowest": "Noti ya chini kabisa",
-    "reset": "Weka upya",
-    "undo": "Rudisha",
-    "resetDone": "Kiwango kimewekwa upya kuwa {range}",
     "findBySinging": "Tafuta kwa kuimba",
     "lowPrompt": "Imba noti ya chini na uishikilie. Kisha jaribu chini kidogo zaidi!",
     "highPrompt": "Imba noti ya juu na uishikilie. Kisha jaribu juu kidogo zaidi! Noti safi tu ndizo zinahesabiwa.",

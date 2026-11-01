@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, test } from 'vitest'
 import { useMyVoiceRange } from '@/composables/useMyVoiceRange'
 import { midiToNoteLabel } from '@/utils/noteUtils'
+import { DEFAULT_MY_VOICE_RANGE } from '@/utils/normalizeVoiceRange'
 import { getSegmentsForRange } from '@/utils/voiceRangeSegments'
 import { VOICE_RANGE_GROUP_ORDER, VOICE_RANGES } from './voiceRanges'
 
@@ -159,10 +160,13 @@ describe('VOICE_RANGES - My range', () => {
   const myRange = VOICE_RANGES.find(
     (range) => range.labelKey === 'voiceRanges.myRange',
   )!
-  const { setMyVoiceRange, resetMyVoiceRange } = useMyVoiceRange()
+  const { setMyVoiceRange } = useMyVoiceRange()
 
   afterEach(() => {
-    resetMyVoiceRange()
+    setMyVoiceRange(
+      DEFAULT_MY_VOICE_RANGE.midiMin,
+      DEFAULT_MY_VOICE_RANGE.midiMax,
+    )
   })
 
   test('should start out as G3–G4, the same as Everyone', () => {

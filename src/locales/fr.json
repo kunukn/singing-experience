@@ -325,9 +325,6 @@
   "voiceRangeFinder": {
     "highest": "Note la plus aiguë",
     "lowest": "Note la plus grave",
-    "reset": "Réinitialiser",
-    "undo": "Annuler",
-    "resetDone": "Tessiture réinitialisée à {range}",
     "findBySinging": "Trouver en chantant",
     "lowPrompt": "Chante une note grave et tiens-la. Puis essaie un peu plus grave !",
     "highPrompt": "Chante une note aiguë et tiens-la. Puis essaie un peu plus aigu ! Seules les notes nettes comptent.",

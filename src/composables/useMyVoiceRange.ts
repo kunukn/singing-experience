@@ -35,9 +35,5 @@ export function useMyVoiceRange() {
     storedRange.value = normalizeVoiceRange(midiMin, midiMax)
   }
 
-  function resetMyVoiceRange() {
-    storedRange.value = { ...DEFAULT_MY_VOICE_RANGE }
-  }
-
-  return { myVoiceRange, setMyVoiceRange, resetMyVoiceRange }
+  return { myVoiceRange, setMyVoiceRange }
 }
