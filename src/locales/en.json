@@ -360,7 +360,8 @@
       "use": "Use {name}: {range}",
       "edit": "Edit {name}",
       "name": "Name",
-      "save": "Save"
+      "save": "Save",
+      "useMyRange": "Use My range"
     },
     "tabs": {
       "explore": "Explore"

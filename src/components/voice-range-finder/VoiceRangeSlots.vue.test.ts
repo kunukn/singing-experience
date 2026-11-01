@@ -105,6 +105,41 @@ describe('VoiceRangeSlots', () => {
     )
   })
 
+  test('should overwrite a filled slot with My range and keep its name', async () => {
+    const wrapper = mountSlots()
+
+    await wrapper.get('[data-testid="range-slot-edit-1"]').trigger('click')
+
+    const useMyRange = wrapper.get('[data-testid="range-slot-use-my-range"]')
+    expect(useMyRange.text()).toContain('A2–D4')
+
+    await useMyRange.trigger('click')
+
+    expect(
+      wrapper.find('[data-testid="range-slot-use-my-range"]').exists(),
+    ).toBe(false)
+    expect(wrapper.find('[data-testid="range-slot-form"]').exists()).toBe(true)
+
+    await wrapper.get('[data-testid="range-slot-save"]').trigger('click')
+
+    expect(slotButton(wrapper, 1).text()).toContain('A2–D4')
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')[0]).toEqual({
+      midiMin: A2,
+      midiMax: D4,
+      name: 'Warm-up',
+    })
+  })
+
+  test('should hide Use My range when the draft already matches it', async () => {
+    const wrapper = mountSlots()
+
+    await slotButton(wrapper, 2).trigger('click')
+
+    expect(
+      wrapper.find('[data-testid="range-slot-use-my-range"]').exists(),
+    ).toBe(false)
+  })
+
   test('should clear a slot from its editor', async () => {
     const wrapper = mountSlots()
 

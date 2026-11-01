@@ -360,7 +360,8 @@
       "use": "{name}を使う：{range}",
       "edit": "{name}を編集",
       "name": "名前",
-      "save": "保存"
+      "save": "保存",
+      "useMyRange": "わたしの声域を使う"
     },
     "tabs": {
       "explore": "たんけん"

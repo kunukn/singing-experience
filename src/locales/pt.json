@@ -360,7 +360,8 @@
       "use": "Usar {name}: {range}",
       "edit": "Editar {name}",
       "name": "Nome",
-      "save": "Salvar"
+      "save": "Salvar",
+      "useMyRange": "Usar minha extensão"
     },
     "tabs": {
       "explore": "Explorar"

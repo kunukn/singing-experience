@@ -360,7 +360,8 @@
       "use": "Prendre {name} : {range}",
       "edit": "Modifier {name}",
       "name": "Nom",
-      "save": "Enregistrer"
+      "save": "Enregistrer",
+      "useMyRange": "Prendre ma tessiture"
     },
     "tabs": {
       "explore": "Explorer"

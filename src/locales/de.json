@@ -360,7 +360,8 @@
       "use": "{name} nehmen: {range}",
       "edit": "{name} bearbeiten",
       "name": "Name",
-      "save": "Speichern"
+      "save": "Speichern",
+      "useMyRange": "Meinen Umfang nehmen"
     },
     "tabs": {
       "explore": "Entdecken"

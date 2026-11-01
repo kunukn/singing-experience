@@ -360,7 +360,8 @@
       "use": "{name} चुनो: {range}",
       "edit": "{name} बदलो",
       "name": "नाम",
-      "save": "सहेजो"
+      "save": "सहेजो",
+      "useMyRange": "मेरी सीमा चुनो"
     },
     "tabs": {
       "explore": "खोजो"

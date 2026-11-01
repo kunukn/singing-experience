@@ -360,7 +360,8 @@
       "use": "使用{name}：{range}",
       "edit": "编辑{name}",
       "name": "名称",
-      "save": "保存"
+      "save": "保存",
+      "useMyRange": "使用我的音域"
     },
     "tabs": {
       "explore": "探索"

@@ -360,7 +360,8 @@
       "use": "{name} নাও: {range}",
       "edit": "{name} বদলাও",
       "name": "নাম",
-      "save": "রাখো"
+      "save": "রাখো",
+      "useMyRange": "আমার পরিসর নাও"
     },
     "tabs": {
       "explore": "ঘুরে দেখো"

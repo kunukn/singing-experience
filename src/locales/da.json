@@ -360,7 +360,8 @@
       "use": "Brug {name}: {range}",
       "edit": "Ret {name}",
       "name": "Navn",
-      "save": "Gem"
+      "save": "Gem",
+      "useMyRange": "Brug mit leje"
     },
     "tabs": {
       "explore": "Udforsk"

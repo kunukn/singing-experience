@@ -85,6 +85,18 @@ const isEditingFilledSlot = computed(
   () => editingIndex.value !== null && !!slots.value[editingIndex.value],
 )
 
+/* Overwriting a slot with a freshly sung range is the common edit; hidden
+ * once the draft already matches, e.g. an empty slot pre-filled from it. */
+const isDraftMyRange = computed(
+  () =>
+    draftRange.value.midiMin === props.midiMin &&
+    draftRange.value.midiMax === props.midiMax,
+)
+
+function useMyRangeInDraft() {
+  draftRange.value = { midiMin: props.midiMin, midiMax: props.midiMax }
+}
+
 const draftHighest = computed({
   get: () => draftRange.value.midiMax,
   set: (midi: number) => {
@@ -278,6 +290,23 @@ function clearEditingSlot() {
             data-testid="range-slot-lowest"
           />
         </label>
+        <!-- type="button" so it fills the pickers instead of submitting -->
+        <PrimeButton
+          v-if="!isDraftMyRange"
+          type="button"
+          severity="secondary"
+          size="small"
+          rounded
+          outlined
+          class="col-span-2 justify-self-start"
+          data-testid="range-slot-use-my-range"
+          @click="useMyRangeInDraft"
+        >
+          <span>{{ t('voiceRangeFinder.slots.useMyRange') }}</span>
+          <span class="font-semibold tabular-nums" dir="ltr">
+            {{ formatRange(props.midiMin, props.midiMax) }}
+          </span>
+        </PrimeButton>
       </form>
 
       <template #footer>

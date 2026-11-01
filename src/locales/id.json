@@ -360,7 +360,8 @@
       "use": "Pakai {name}: {range}",
       "edit": "Ubah {name}",
       "name": "Nama",
-      "save": "Simpan"
+      "save": "Simpan",
+      "useMyRange": "Pakai jangkauanku"
     },
     "tabs": {
       "explore": "Jelajahi"

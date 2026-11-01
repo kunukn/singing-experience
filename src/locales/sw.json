@@ -360,7 +360,8 @@
       "use": "Tumia {name}: {range}",
       "edit": "Badilisha {name}",
       "name": "Jina",
-      "save": "Hifadhi"
+      "save": "Hifadhi",
+      "useMyRange": "Tumia kiwango changu"
     },
     "tabs": {
       "explore": "Chunguza"

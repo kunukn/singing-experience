@@ -360,7 +360,8 @@
       "use": "استخدم {name}: {range}",
       "edit": "عدّل {name}",
       "name": "الاسم",
-      "save": "احفظ"
+      "save": "احفظ",
+      "useMyRange": "استخدم نطاقي"
     },
     "tabs": {
       "explore": "استكشف"
