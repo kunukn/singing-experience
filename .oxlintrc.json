@@ -21,7 +21,11 @@
     // Too noisy with TypeScript enums and type narrowing
     "no-shadow": "off",
     // .sort() is fine for local/intermediate arrays
-    "unicorn/no-array-sort": "off"
+    "unicorn/no-array-sort": "off",
+    // Using .reverse()'s result mutates the source array as a side effect; use
+    // .toReversed(), or .findLast() to search from the end. A bare in-place
+    // `arr.reverse()` statement is still allowed.
+    "unicorn/no-array-reverse": "error"
   },
   "overrides": [
     {
