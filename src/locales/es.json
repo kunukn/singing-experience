@@ -326,6 +326,8 @@
     "highest": "Nota más aguda",
     "lowest": "Nota más grave",
     "reset": "Restablecer",
+    "undo": "Deshacer",
+    "resetDone": "Rango restablecido a {range}",
     "findBySinging": "Encontrarlo cantando",
     "lowPrompt": "Canta una nota grave y mantenla. ¡Luego prueba un poco más grave!",
     "highPrompt": "Canta una nota aguda y mantenla. ¡Luego prueba un poco más aguda! Solo cuentan las notas limpias.",

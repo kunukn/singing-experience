@@ -2,6 +2,8 @@
 import { useTimeoutFn } from '@vueuse/core'
 import { MY_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import {
+  DEFAULT_MY_VOICE_RANGE,
+  type MidiRange,
   normalizeVoiceRange,
   VOICE_RANGE_HIGHEST_MIDI,
   VOICE_RANGE_LOWEST_MIDI,
@@ -67,6 +69,57 @@ const sharedRangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 const formatNote = (midi: number) => midiToNoteLabel(midi).label
 const formatRange = (midiMin: number, midiMax: number) =>
   `${formatNote(midiMin)}–${formatNote(midiMax)}`
+
+const defaultRangeLabel = formatRange(
+  DEFAULT_MY_VOICE_RANGE.midiMin,
+  DEFAULT_MY_VOICE_RANGE.midiMax,
+)
+
+const isDefaultRange = ({ midiMin, midiMax }: MidiRange) =>
+  midiMin === DEFAULT_MY_VOICE_RANGE.midiMin &&
+  midiMax === DEFAULT_MY_VOICE_RANGE.midiMax
+
+/* How long Reset offers Undo — long enough to notice a mis-tap and act on it */
+const RESET_UNDO_MS = 5000
+
+const rangeBeforeReset = ref<MidiRange | null>(null)
+
+const {
+  isPending: isResetUndoPending,
+  start: startResetUndo,
+  stop: stopResetUndo,
+} = useTimeoutFn(() => {}, RESET_UNDO_MS, { immediate: false })
+
+/* Undo only holds while the default still stands: once the singer picks or
+ * sings a new range, undoing would overwrite that newer choice. */
+const canUndoReset = computed(
+  () =>
+    isResetUndoPending.value &&
+    rangeBeforeReset.value !== null &&
+    isDefaultRange(myVoiceRange.value),
+)
+
+/* Reset wipes a range that may have taken real singing to find, and every
+ * program shares it — so it acts at once but offers a short Undo. */
+function resetRange() {
+  const previousRange = { ...myVoiceRange.value }
+  resetMyVoiceRange()
+  if (isDefaultRange(previousRange)) return
+
+  rangeBeforeReset.value = previousRange
+  startResetUndo()
+}
+
+function undoReset() {
+  stopResetUndo()
+  if (!rangeBeforeReset.value) return
+
+  setMyVoiceRange(
+    rangeBeforeReset.value.midiMin,
+    rangeBeforeReset.value.midiMax,
+  )
+  rangeBeforeReset.value = null
+}
 
 /* C7 down to C2, high to low like every pitch list in the app */
 const noteOptions = Array.from(
@@ -423,6 +476,34 @@ onUnmounted(() => {
                     </span>
                   </Transition>
                 </p>
+                <!--
+                  A live region that is always present, so inserting the text is announced.
+                  The row opens and closes by animating grid rows 0fr ↔ 1fr, so the card
+                  below glides instead of jumping when the notice comes and goes. The 0fr
+                  is ! so it beats the row's own grid-rows-[1fr] during the transition.
+                -->
+                <div role="status" class="text-sm text-(--p-text-muted-color)">
+                  <Transition
+                    enterActiveClass="transition-[grid-template-rows,opacity] duration-300 motion-reduce:transition-none"
+                    enterFromClass="grid-rows-[0fr]! opacity-0"
+                    leaveActiveClass="transition-[grid-template-rows,opacity] duration-300 motion-reduce:transition-none"
+                    leaveToClass="grid-rows-[0fr]! opacity-0"
+                  >
+                    <div
+                      v-if="canUndoReset"
+                      class="grid grid-rows-[1fr]"
+                      data-testid="my-range-reset-notice"
+                    >
+                      <span class="min-h-0 overflow-hidden">
+                        {{
+                          t('voiceRangeFinder.resetDone', {
+                            range: defaultRangeLabel,
+                          })
+                        }}
+                      </span>
+                    </div>
+                  </Transition>
+                </div>
               </div>
               <!-- -me-2/-mt-2 cancel the text button's padding, so "Reset" lines up with the chart's end edge and the "My range" label -->
               <PrimeButton
@@ -432,9 +513,13 @@ onUnmounted(() => {
                 text
                 class="-me-2 -mt-2"
                 data-testid="my-range-reset"
-                @click="resetMyVoiceRange"
+                @click="canUndoReset ? undoReset() : resetRange()"
               >
-                {{ t('voiceRangeFinder.reset') }}
+                {{
+                  canUndoReset
+                    ? t('voiceRangeFinder.undo')
+                    : t('voiceRangeFinder.reset')
+                }}
               </PrimeButton>
             </div>
 
