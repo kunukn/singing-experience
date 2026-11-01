@@ -149,6 +149,28 @@ describe('directionalTextColor', () => {
   })
 })
 
+describe('green clean tone (the Tuner)', () => {
+  const isGreen = ([r, g, b]: [number, number, number]) => g > r && g > b
+
+  test('should be green within CLEAN_CENTS in both themes and on canvas', () => {
+    for (const isDark of [false, true])
+      for (const cents of [-CLEAN_CENTS, 0, CLEAN_CENTS])
+        expect(
+          isGreen(parseRgb(directionalTextColor(cents, isDark, 'green'))),
+        ).toBe(true)
+
+    expect(isGreen(directionalCleanColorRgb(0, 'green'))).toBe(true)
+  })
+
+  test('should end on the same blue and red as the grey tone', () => {
+    for (const isDark of [false, true])
+      for (const cents of [-OFF_CENTS, -CLOSE_CENTS, CLOSE_CENTS, OFF_CENTS])
+        expect(directionalTextColor(cents, isDark, 'green')).toBe(
+          directionalTextColor(cents, isDark),
+        )
+  })
+})
+
 describe('directionalCleanColorRgb', () => {
   test('should be one grey on both sides within CLEAN_CENTS', () => {
     const grey = directionalCleanColorRgb(0)

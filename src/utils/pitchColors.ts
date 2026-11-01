@@ -148,9 +148,15 @@ function lerpThreeStop(
  * ("you hit it": game targets, the tuner's in-tune ring), never of cents.
  */
 
+/* Which colour "clean" takes. Grey everywhere, except the Tuner: there in
+ * tune is the goal itself, so it keeps a bright green — the green of its
+ * in-tune ring, purer and further from the flat blues than the old emerald. */
+export type CleanTone = 'grey' | 'green'
+
 /* Canvas palette — saturated tuples for trail splines and dots. The grey is
  * mid enough to read on both the light and the dark chart background. */
 const CLEAN_GREY: Rgb = [148, 163, 184] // slate-400
+const CLEAN_GREEN: Rgb = [34, 197, 94] // green-500
 const CLOSE_YELLOW: Rgb = [250, 204, 21] // yellow-400 — slightly sharp
 const OFF_RED: Rgb = [239, 68, 68] // red-500 — clearly sharp
 const CLOSE_FLAT: Rgb = [56, 189, 248] // sky-400 — slightly flat
@@ -166,6 +172,8 @@ const OFF_TEXT_FLAT_DARK: Rgb = [96, 165, 250] // blue-400
 
 const CLEAN_TEXT_GREY_LIGHT: Rgb = [100, 116, 139] // slate-500
 
+const CLEAN_TEXT_GREEN_DARK: Rgb = [74, 222, 128] // green-400
+const CLEAN_TEXT_GREEN_LIGHT: Rgb = [22, 163, 74] // green-600
 const CLOSE_TEXT_YELLOW_LIGHT: Rgb = [202, 138, 4] // yellow-600
 const OFF_TEXT_RED_LIGHT: Rgb = [220, 38, 38] // red-600
 const CLOSE_TEXT_FLAT_LIGHT: Rgb = [2, 132, 199] // sky-600
@@ -173,12 +181,15 @@ const OFF_TEXT_FLAT_LIGHT: Rgb = [29, 78, 216] // blue-700
 
 /* Trail colour: grey when clean, grey → yellow → red when sharp, grey →
  * light blue → blue when flat. See directionalTextColor for why. */
-export function directionalCleanColorRgb(cents: number): Rgb {
+export function directionalCleanColorRgb(
+  cents: number,
+  cleanTone: CleanTone = 'grey',
+): Rgb {
   const isFlat = cents < 0
 
   return lerpThreeStop(
     {
-      clean: CLEAN_GREY,
+      clean: cleanTone === 'green' ? CLEAN_GREEN : CLEAN_GREY,
       close: isFlat ? CLOSE_FLAT : CLOSE_YELLOW,
       off: isFlat ? OFF_FLAT : OFF_RED,
     },
@@ -186,8 +197,12 @@ export function directionalCleanColorRgb(cents: number): Rgb {
   )
 }
 
-export function directionalCleanColor(cents: number, opacity = 1): string {
-  const [r, g, b] = directionalCleanColorRgb(cents)
+export function directionalCleanColor(
+  cents: number,
+  opacity = 1,
+  cleanTone: CleanTone = 'grey',
+): string {
+  const [r, g, b] = directionalCleanColorRgb(cents, cleanTone)
 
   return `rgba(${r}, ${g}, ${b}, ${opacity})`
 }
@@ -200,16 +215,21 @@ export function directionalCleanColor(cents: number, opacity = 1): string {
  * (directionalColor); blue against orange is also the pair red-green
  * colour-blind singers tell apart best.
  */
-export function directionalTextColor(cents: number, isDark = true): string {
+export function directionalTextColor(
+  cents: number,
+  isDark = true,
+  cleanTone: CleanTone = 'grey',
+): string {
+  const isGreen = cleanTone === 'green'
   const isFlat = cents < 0
   const stops = isDark
     ? {
-        clean: CLEAN_TEXT_GREY_DARK,
+        clean: isGreen ? CLEAN_TEXT_GREEN_DARK : CLEAN_TEXT_GREY_DARK,
         close: isFlat ? CLOSE_TEXT_FLAT_DARK : CLOSE_TEXT_YELLOW_DARK,
         off: isFlat ? OFF_TEXT_FLAT_DARK : OFF_TEXT_RED_DARK,
       }
     : {
-        clean: CLEAN_TEXT_GREY_LIGHT,
+        clean: isGreen ? CLEAN_TEXT_GREEN_LIGHT : CLEAN_TEXT_GREY_LIGHT,
         close: isFlat ? CLOSE_TEXT_FLAT_LIGHT : CLOSE_TEXT_YELLOW_LIGHT,
         off: isFlat ? OFF_TEXT_FLAT_LIGHT : OFF_TEXT_RED_LIGHT,
       }
