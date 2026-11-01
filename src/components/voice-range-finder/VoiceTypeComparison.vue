@@ -274,6 +274,13 @@ function selectRow(row: ChartRow) {
   if (range.value) emit('selectRange', row.rangeIndex)
 }
 
+/* The singer's own range as a bar of its own, in the footer between its two
+ * labels: an outline in the guide lines' grey, so it reads as "you" beside
+ * the coloured voice bars without competing with them */
+const rangeBarStyle = computed(() =>
+  range.value ? trackStyle(range.value.midiMin, range.value.midiMax) : null,
+)
+
 /* The singer's two ends: drawn as a line through every row and labelled once
  * in the footer, so the lines read as "your range" */
 const guideLines = computed(() =>
@@ -563,6 +570,12 @@ const liveLabel = computed(() => {
         class="col-span-full grid grid-cols-subgrid"
       >
         <div class="relative col-start-2 h-4" dir="ltr">
+          <span
+            v-if="rangeBarStyle"
+            data-testid="voice-type-comparison-range-bar"
+            class="absolute top-1/2 h-2 -translate-y-1/2 rounded-full border border-(--p-text-muted-color) opacity-60"
+            :style="rangeBarStyle"
+          />
           <span
             v-for="(line, index) in guideLines"
             :key="index"

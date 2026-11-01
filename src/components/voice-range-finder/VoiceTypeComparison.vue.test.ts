@@ -134,6 +134,19 @@ describe('VoiceTypeComparison', () => {
     expect(wrapper.text()).not.toContain('best fit')
   })
 
+  test('should draw the singer range as its own bar beside My range only', () => {
+    expect(
+      mountComparison()
+        .find('[data-testid="voice-type-comparison-range-bar"]')
+        .exists(),
+    ).toBe(true)
+    expect(
+      mount(VoiceTypeComparison, { global: { plugins: [i18n] } })
+        .find('[data-testid="voice-type-comparison-range-bar"]')
+        .exists(),
+    ).toBe(false)
+  })
+
   test('should label both ends of the singer range', () => {
     /* G2–E4 */
     const labels = mountComparison(43, 64)
