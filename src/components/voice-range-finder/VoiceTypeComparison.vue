@@ -141,6 +141,12 @@ const SHORT_LABEL_KEYS: Partial<Record<string, string>> = {
 const shortName = (labelKey: string) =>
   t(SHORT_LABEL_KEYS[labelKey] ?? labelKey)
 
+/* Faux bold for the best fit's name and percentage: a text stroke is paint
+ * only, so the letters thicken in place. Real semibold glyphs are wider, so
+ * the name and its column grew whenever the best fit moved to another row.
+ * Same trick and weight as exploring's lit name (see the template). */
+const BEST_FIT_EMPHASIS = '[-webkit-text-stroke:0.4px_currentColor]'
+
 type ChartRow = {
   labelKey: string
   rangeIndex: number
@@ -385,7 +391,9 @@ const liveLabel = computed(() => {
           v-if="row.comparison"
           aria-hidden="true"
           class="text-xs whitespace-nowrap"
-          :class="{ 'font-semibold': row.comparison.isBestFit }"
+          :class="{
+            [BEST_FIT_EMPHASIS]: row.comparison.isBestFit,
+          }"
         >
           <template v-if="row.shortName === row.name">{{ row.name }}</template>
           <!-- Short on a narrow chart, full once the chart has room (container query) -->
@@ -512,7 +520,8 @@ const liveLabel = computed(() => {
             aria-hidden="true"
             class="text-end text-xs whitespace-nowrap text-(--p-text-muted-color) tabular-nums"
             :class="{
-              'font-semibold text-(--p-text-color)': row.comparison.isBestFit,
+              [`${BEST_FIT_EMPHASIS} text-(--p-text-color)`]:
+                row.comparison.isBestFit,
             }"
           >
             {{ row.comparison.percent }}
