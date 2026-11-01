@@ -667,7 +667,7 @@
       "step3": "Chaque tour monte d'un demi-ton. Arrête quand ça devient trop haut."
     },
     "voiceRangeFinder": {
-      "step1": "Appuie sur Trouver en chantant. Tiens ta note la plus grave jusqu'à ce que la barre soit pleine, appuie sur Fini, puis fais pareil vers l'aigu.",
+      "step1": "Appuie sur Trouver ma tessiture. Tiens ta note la plus grave jusqu'à ce que la barre soit pleine, appuie sur Fini, puis fais pareil vers l'aigu.",
       "step2": "Appuie sur Garder pour l'enregistrer comme Ma tessiture, ou choisis les notes toi-même.",
       "step3": "Ouvre l'onglet Explorer et active Voir ma voix. Les voix qui peuvent chanter ta note s'allument."
     },
