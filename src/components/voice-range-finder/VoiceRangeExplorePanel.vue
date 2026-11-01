@@ -54,7 +54,7 @@ const liveCentsColor = computed(() =>
         class="text-center text-3xl font-semibold tabular-nums"
         data-testid="voice-range-explore-note"
       >
-        {{ liveNote ?? '–' }}
+        {{ liveNote ?? '' }}
       </span>
       <span
         class="justify-self-start text-sm font-medium tabular-nums"
