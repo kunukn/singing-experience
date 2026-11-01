@@ -277,6 +277,23 @@ Three shared tiers in [pitchColors.ts](src/utils/pitchColors.ts) define "how in 
 
 The tier order is guarded by `pitchColors.test.ts`.
 
+### Pitch Colours
+
+Every cents colour in every program speaks one language, built on the tiers above:
+
+| Pitch                        | Colour                    |
+| ---------------------------- | ------------------------- |
+| Clean (within `CLEAN_CENTS`) | **Green**                 |
+| Sharp (positive cents)       | **Yellow → orange → red** |
+| Flat (negative cents)        | **Blue → deep blue**      |
+
+- **Use the helpers in [pitchColors.ts](src/utils/pitchColors.ts); never hardcode a pitch colour.** `directionalTextColor` for text and thin lines (theme-aware), `directionalCleanColor` / `directionalCleanColorRgb` for canvas trails and bars, `usePitchPreviewColor().colorForCents` for idle "See my voice" previews.
+- **Brightness separates thin lines, not hue.** On a 1–2 px line or a small dot the eye barely tells blue from green, so the clean green stays clearly brighter than every flat blue, and flat never uses sky or cyan (as bright as the green). The 10–20¢ fade is eased, so it is past the teal mix of green and blue within a few cents.
+- **Green also means success.** A game target hit, the Tuner's in-tune ring, a "correct note" line. During a game the singer's preview line stays the neutral orange, so green there only ever means "you hit it".
+- **Other colours keep off the pitch hues.** A colour that says _who_ or _what_ rather than _how in tune_ must avoid green, blue and the yellow → red ramp. The duet high-lane is violet for this reason.
+
+The rule is guarded by the "pitch colour rule" tests in `pitchColors.test.ts`. They assert the hues and the brightness gap, not exact shades, so a retune passes as long as it keeps the rule.
+
 ### Color Variables
 
 Use **PrimeVue CSS custom properties** (`--p-*`) for all colors — text, backgrounds, borders, and shadows. Do **not** use Tailwind's built-in color palette classes (`text-red-400`, `bg-green-500`, etc.). PrimeVue variables respect the active theme and automatically adapt to light/dark mode.
