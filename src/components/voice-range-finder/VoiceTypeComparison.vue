@@ -16,8 +16,8 @@ type Props = {
   midiMax?: number
   /* The note being sung right now, fractional so cents move the line; null when silent */
   liveMidi?: number | null
-  /* Exploring only: "See my voice" is on. Off fades every bar, so the chart
-   * reads as asleep rather than as a voice that matches nothing. */
+  /* "See my voice" is on. Off fades every bar, so the chart reads as asleep
+   * rather than as a voice that matches nothing. */
   isListening?: boolean
 }
 
@@ -166,7 +166,7 @@ type ChartRow = {
    * solid either way — a bar fading in and out on every note distracted —
    * so the name and end notes carry the signal instead. */
   isSounding: boolean | null
-  /* Exploring only: listening is off, so the whole bar is drawn faint */
+  /* Listening is off, so the whole bar is drawn faint */
   isFaded: boolean
   /* Exploring only: the voice's own notes, labelled at each end of its bar */
   ends: {
@@ -194,7 +194,9 @@ const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>
       ...rowColors(row.stopIndex),
       voiceStyle: trackStyle(row.voiceMin, row.voiceMax),
       solidStyle:
-        row.covered && trackStyle(row.covered.midiMin, row.covered.midiMax),
+        props.isListening && row.covered
+          ? trackStyle(row.covered.midiMin, row.covered.midiMax)
+          : null,
       ariaLabel: [
         t('voiceRangeFinder.compare.rowLabel', {
           name,
@@ -214,7 +216,7 @@ const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>
         isBestFit: row.isBestFit,
       },
       isSounding: null,
-      isFaded: false,
+      isFaded: !props.isListening,
       ends: null,
     }
   })

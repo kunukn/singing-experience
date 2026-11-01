@@ -319,11 +319,16 @@ onUnmounted(() => {
               @applyRange="applySlot"
             />
 
-            <!-- Extra room above, so the slots don't read as part of the chart -->
+            <!--
+              Extra room above, so the slots don't read as part of the chart.
+              Dimmed while See my voice is off, like Explore; a search always
+              listens, so the chart stays lit while the singer sings.
+            -->
             <VoiceTypeComparison
               :midiMin="myVoiceRange.midiMin"
               :midiMax="myVoiceRange.midiMax"
               :liveMidi="chartLiveMidi"
+              :isListening="isPreviewEnabled || isSearching"
               class="mt-2"
             />
           </section>

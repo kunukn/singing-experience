@@ -155,6 +155,35 @@ describe('VoiceTypeComparison', () => {
     expect(labels).toEqual(['G2', 'E4'])
   })
 
+  describe('with See my voice off', () => {
+    const mountOff = () =>
+      mount(VoiceTypeComparison, {
+        props: { midiMin: 44, midiMax: 60, isListening: false },
+        global: { plugins: [i18n] },
+      })
+
+    test('should fade every voice bar, covered part included', () => {
+      const wrapper = mountOff()
+
+      expect(
+        rowsOf(wrapper).map((row) => row.attributes('data-faded')),
+      ).toEqual(Array(6).fill('true'))
+      expect(
+        wrapper.find('[data-testid="voice-type-comparison-bar"]').exists(),
+      ).toBe(false)
+    })
+
+    test('should still show how much of each voice is covered', () => {
+      expect(rowFor(mountOff(), 'voiceRanges.tenor').text()).toContain('%')
+    })
+
+    test('should not fade the bars while listening', () => {
+      expect(
+        rowsOf(mountComparison()).map((row) => row.attributes('data-faded')),
+      ).toEqual(Array(6).fill(undefined))
+    })
+  })
+
   describe('live note line', () => {
     const liveLinesOf = (liveMidi: number | null) =>
       mount(VoiceTypeComparison, {
