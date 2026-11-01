@@ -2,7 +2,6 @@ import { describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
-import { VOICE_RANGES } from '@/constants/voiceRanges'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
@@ -240,18 +239,15 @@ describe('VoiceTypeComparison', () => {
     ).toBe(false)
   })
 
-  test('should ask for the voice range when a row is tapped', async () => {
+  /* A tap on the chart used to replace My range, losing a sung range unseen */
+  test('should not offer a voice as My range when a row is tapped', async () => {
     const wrapper = mountComparison()
+
+    expect(wrapper.find('button').exists()).toBe(false)
 
     await rowFor(wrapper, 'voiceRanges.baritone').trigger('click')
 
-    expect(wrapper.emitted('selectRange')).toEqual([
-      [
-        VOICE_RANGES.findIndex(
-          (range) => range.labelKey === 'voiceRanges.baritone',
-        ),
-      ],
-    ])
+    expect(wrapper.emitted('selectRange')).toBeUndefined()
   })
 
   describe('explore mode', () => {

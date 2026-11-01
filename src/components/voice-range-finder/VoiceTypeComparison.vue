@@ -23,10 +23,6 @@ type Props = {
 
 const props = withDefaults(defineProps<Props>(), { isListening: true })
 
-const emit = defineEmits<{
-  selectRange: [rangeIndex: number]
-}>()
-
 const { t, locale } = useI18n()
 const { isDark } = useDarkMode()
 
@@ -150,7 +146,6 @@ const BEST_FIT_EMPHASIS = '[-webkit-text-stroke:0.4px_currentColor]'
 
 type ChartRow = {
   labelKey: string
-  rangeIndex: number
   name: string
   /* Shown instead of `name` while the chart is narrow */
   shortName: string
@@ -194,7 +189,6 @@ const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>
 
     return {
       labelKey: row.labelKey,
-      rangeIndex: row.rangeIndex,
       name,
       shortName: shortName(row.labelKey),
       ...rowColors(row.stopIndex),
@@ -232,7 +226,7 @@ const liveNote = computed(() =>
 
 /* High to low, as every vertical pitch list in the app reads */
 const exploreRows = (): ChartRow[] =>
-  VOICE_TYPES.map(({ range: voice, rangeIndex }, stopIndex) => {
+  VOICE_TYPES.map(({ range: voice }, stopIndex) => {
     const name = t(voice.labelKey)
     const voiceStyle = trackStyle(voice.midiMin, voice.midiMax)
     const isSounding =
@@ -242,7 +236,6 @@ const exploreRows = (): ChartRow[] =>
 
     return {
       labelKey: voice.labelKey,
-      rangeIndex,
       name,
       shortName: shortName(voice.labelKey),
       ...rowColors(stopIndex),
@@ -275,11 +268,6 @@ const rows = computed(() =>
 const hasBestFit = computed(() =>
   rows.value.some((row) => row.comparison?.isBestFit),
 )
-
-/* Rows adopt a voice as My range, which only makes sense beside My range */
-function selectRow(row: ChartRow) {
-  if (range.value) emit('selectRange', row.rangeIndex)
-}
 
 /* The singer's own range as a bar of its own, in the footer between its two
  * labels. Voice types are fixed, so their bars are solid; a singer's range
@@ -379,13 +367,11 @@ const liveLabel = computed(() => {
         </div>
       </div>
 
-      <!-- A plain row while exploring: tapping it must not rewrite My range from another tab -->
-      <component
-        :is="range ? 'button' : 'div'"
+      <!-- Read-only: a tap here once replaced My range, losing a range just found by singing -->
+      <div
         v-for="row in rows"
         :key="row.labelKey"
-        :type="range ? 'button' : undefined"
-        :role="range ? undefined : 'img'"
+        role="img"
         data-testid="voice-type-comparison-row"
         :data-voice-type="row.labelKey"
         :data-coverage="
@@ -395,9 +381,7 @@ const liveLabel = computed(() => {
         :data-sounding="row.isSounding ?? undefined"
         :data-faded="row.isFaded || undefined"
         :aria-label="row.ariaLabel"
-        class="col-span-full grid min-h-6 grid-cols-subgrid items-center rounded border-none bg-transparent p-0 text-start text-(--p-text-color)"
-        :class="{ 'cursor-pointer': range }"
-        @click="selectRow(row)"
+        class="col-span-full grid min-h-6 grid-cols-subgrid items-center text-start text-(--p-text-color)"
       >
         <span
           v-if="row.comparison"
@@ -547,7 +531,7 @@ const liveLabel = computed(() => {
             {{ row.comparison.hint }}
           </span>
         </template>
-      </component>
+      </div>
 
       <!--
         Spans the track column of the six voice rows: grid rows 2–7 below the

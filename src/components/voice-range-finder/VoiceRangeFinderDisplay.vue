@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTimeoutFn } from '@vueuse/core'
-import { MY_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
+import { MY_RANGE_INDEX } from '@/constants/voiceRanges'
 import {
   type MidiRange,
   normalizeVoiceRange,
@@ -77,14 +77,6 @@ const highestNote = computed({
     setMyVoiceRange(midiMin, midiMax)
   },
 })
-
-/* A voice-type row in the legend is a shortcut: start from that voice's range */
-function adoptVoiceType(rangeIndex: number) {
-  const range = VOICE_RANGES[rangeIndex]
-  if (!range) return
-
-  setMyVoiceRange(range.midiMin, range.midiMax)
-}
 
 const sungMidi = computed(() => {
   const { frequency, isClean, isListening } = props.detection
@@ -331,7 +323,6 @@ onUnmounted(() => {
               :midiMin="myVoiceRange.midiMin"
               :midiMax="myVoiceRange.midiMax"
               :liveMidi="chartLiveMidi"
-              @selectRange="adoptVoiceType"
             />
           </section>
         </PrimeTabPanel>

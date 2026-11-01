@@ -2,8 +2,6 @@ import { VOICE_TYPES } from '@/utils/voiceRangeSegments'
 
 export type VoiceTypeComparisonRow = {
   labelKey: string
-  /* Index into VOICE_RANGES, for adopting this voice as My range */
-  rangeIndex: number
   /* 0 = Bass … 5 = Soprano, for the ribbon colour */
   stopIndex: number
   voiceMin: number
@@ -35,14 +33,13 @@ export function compareWithVoiceTypes(
 ): VoiceTypeComparisonRow[] {
   const rangeMidpoint = (midiMin + midiMax) / 2
 
-  const rows = VOICE_TYPES.map(({ range, rangeIndex }, stopIndex) => {
+  const rows = VOICE_TYPES.map(({ range }, stopIndex) => {
     const overlapMin = Math.max(range.midiMin, midiMin)
     const overlapMax = Math.min(range.midiMax, midiMax)
     const hasOverlap = overlapMax > overlapMin
 
     return {
       labelKey: range.labelKey,
-      rangeIndex,
       stopIndex,
       voiceMin: range.midiMin,
       voiceMax: range.midiMax,
