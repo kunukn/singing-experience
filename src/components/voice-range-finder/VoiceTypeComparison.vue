@@ -510,15 +510,16 @@ const liveLabel = computed(() => {
           />
           <!--
             The live note; 75 ms glide smooths detector jitter without lagging
-            the voice. A fixed grey: coloured by cents it flickered green, blue
-            and red on every wobble while singing; the cents label beside it
-            still carries the tuning. The halo (background-coloured ring) keeps
-            it visible on any bar, whatever the bar's colour.
+            the voice. 1px, like the guide lines but solid. A fixed grey:
+            coloured by cents it flickered green, blue and red on every wobble
+            while singing; the cents label beside it still carries the tuning.
+            The halo (background-coloured ring) keeps it visible on any bar,
+            whatever the bar's colour.
           -->
           <span
             v-if="liveLabel"
             data-testid="voice-type-comparison-live-line"
-            class="absolute inset-y-0 w-0.5 -translate-x-1/2 transition-[inset-inline-start] duration-75 ease-linear motion-reduce:transition-none"
+            class="absolute inset-y-0 w-px -translate-x-1/2 transition-[inset-inline-start] duration-75 ease-linear motion-reduce:transition-none"
             :style="{
               insetInlineStart: `${liveLeft}%`,
               backgroundColor: LIVE_LINE_COLOR,
