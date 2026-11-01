@@ -25,7 +25,10 @@
     // Using .reverse()'s result mutates the source array as a side effect; use
     // .toReversed(), or .findLast() to search from the end. A bare in-place
     // `arr.reverse()` statement is still allowed.
-    "unicorn/no-array-reverse": "error"
+    "unicorn/no-array-reverse": "error",
+    // Its fix is to mutate the mapped objects, which are often shared
+    // constants or props; the arrays mapped here are a few dozen items at most
+    "oxc/no-map-spread": "off"
   },
   "overrides": [
     {
