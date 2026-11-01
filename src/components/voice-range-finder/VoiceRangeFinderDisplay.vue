@@ -374,7 +374,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex w-full max-w-md flex-col items-center gap-4">
+  <div class="flex w-full flex-col items-center gap-4">
     <PrimeTabs
       v-model:value="activeTab"
       class="flex w-full flex-col gap-4"
@@ -426,7 +426,7 @@ onUnmounted(() => {
             </div>
 
             <!-- Mic buttons sit outside the labels, so a tap isn't forwarded to the select -->
-            <div class="flex w-full flex-col gap-2">
+            <div class="flex w-full max-w-md flex-col gap-2 self-start">
               <div class="flex items-center gap-1">
                 <label class="flex flex-1 items-center justify-between gap-3">
                   <span class="text-sm">{{
