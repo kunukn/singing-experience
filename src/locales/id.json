@@ -326,7 +326,7 @@
   "voiceRangeFinder": {
     "highest": "Nada tertinggi",
     "lowest": "Nada terendah",
-    "findBySinging": "Cari dengan bernyanyi",
+    "findBySinging": "Cari jangkauanku",
     "lowPrompt": "Nyanyikan nada rendah dan tahan. Lalu coba sedikit lebih rendah!",
     "highPrompt": "Nyanyikan nada tinggi dan tahan. Lalu coba sedikit lebih tinggi! Hanya nada yang bersih yang dihitung.",
     "lowestSoFar": "Terendah sejauh ini: {note}",

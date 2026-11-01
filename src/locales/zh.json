@@ -326,7 +326,7 @@
   "voiceRangeFinder": {
     "highest": "最高音",
     "lowest": "最低音",
-    "findBySinging": "唱歌来找",
+    "findBySinging": "找我的音域",
     "lowPrompt": "唱一个低音并保持住。然后再低一点试试！",
     "highPrompt": "唱一个高音并保持住。然后再高一点试试！只有干净的音才算数。",
     "lowestSoFar": "目前最低：{note}",

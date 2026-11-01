@@ -326,7 +326,7 @@
   "voiceRangeFinder": {
     "highest": "Noti ya juu kabisa",
     "lowest": "Noti ya chini kabisa",
-    "findBySinging": "Tafuta kwa kuimba",
+    "findBySinging": "Tafuta kiwango changu",
     "lowPrompt": "Imba noti ya chini na uishikilie. Kisha jaribu chini kidogo zaidi!",
     "highPrompt": "Imba noti ya juu na uishikilie. Kisha jaribu juu kidogo zaidi! Noti safi tu ndizo zinahesabiwa.",
     "lowestSoFar": "Ya chini kabisa hadi sasa: {note}",

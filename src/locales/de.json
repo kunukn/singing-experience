@@ -326,7 +326,7 @@
   "voiceRangeFinder": {
     "highest": "Höchster Ton",
     "lowest": "Tiefster Ton",
-    "findBySinging": "Durch Singen finden",
+    "findBySinging": "Meinen Umfang finden",
     "lowPrompt": "Sing einen tiefen Ton und halte ihn. Dann versuch es ein bisschen tiefer!",
     "highPrompt": "Sing einen hohen Ton und halte ihn. Dann versuch es ein bisschen höher! Nur saubere Töne zählen.",
     "lowestSoFar": "Bisher am tiefsten: {note}",

@@ -326,7 +326,7 @@
   "voiceRangeFinder": {
     "highest": "Højeste tone",
     "lowest": "Dybeste tone",
-    "findBySinging": "Find det ved at synge",
+    "findBySinging": "Find mit leje",
     "lowPrompt": "Syng en dyb tone, og hold den. Prøv så lidt dybere!",
     "highPrompt": "Syng en høj tone, og hold den. Prøv så lidt højere! Kun rene toner tæller.",
     "lowestSoFar": "Dybeste indtil nu: {note}",

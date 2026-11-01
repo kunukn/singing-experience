@@ -326,7 +326,7 @@
   "voiceRangeFinder": {
     "highest": "Highest note",
     "lowest": "Lowest note",
-    "findBySinging": "Find it by singing",
+    "findBySinging": "Find my range",
     "lowPrompt": "Sing a low note and hold it. Then try a little lower!",
     "highPrompt": "Sing a high note and hold it. Then try a little higher! Only clean notes count.",
     "lowestSoFar": "Lowest so far: {note}",

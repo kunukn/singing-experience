@@ -326,7 +326,7 @@
   "voiceRangeFinder": {
     "highest": "Note la plus aiguë",
     "lowest": "Note la plus grave",
-    "findBySinging": "Trouver en chantant",
+    "findBySinging": "Trouver ma tessiture",
     "lowPrompt": "Chante une note grave et tiens-la. Puis essaie un peu plus grave !",
     "highPrompt": "Chante une note aiguë et tiens-la. Puis essaie un peu plus aigu ! Seules les notes nettes comptent.",
     "lowestSoFar": "La plus grave pour l'instant : {note}",
