@@ -3,28 +3,40 @@ const MIDI_MAX = 96 // C7
 const NOTE_MIDIS = [36, 48, 60, 72, 84, 96]
 
 /*
- * "Ember to Sky" theme — warm earthy bass rising to cool ethereal soprano.
- * Used for canvas rendering (chart spline and dots).
+ * A rainbow, red → violet, low pitch to high — like light, where red is the
+ * lowest frequency and violet the highest. One palette for the whole app: the
+ * pitch axis interpolates between these stops (one per C, C2 → C7), and the
+ * six voice types take one stop each (Bass → Soprano), so a voice's bar and
+ * the notes it covers share a colour family everywhere.
+ *
+ * An open arc, not the full colour wheel: no pink or magenta on top, which
+ * would wrap round to Bass's red and make the two furthest voices look alike.
+ * Tuned for the voice types, the hardest use: six bars side by side, also at
+ * 25% opacity, need neighbours told apart and the two ends far apart. Light
+ * stops are drawn as 12px text on white, so each keeps ≥ 4.5:1 contrast.
  */
 export const OCTAVE_COLORS: [number, number, number][] = [
-  [127, 29, 29], // C2 — deep burgundy
-  [146, 64, 14], // C3 — burnt amber
-  [20, 83, 45], // C4 — moss green
-  [14, 116, 144], // C5 — ocean teal
-  [79, 70, 229], // C6 — soft lavender
-  [168, 50, 168], // C7 — soft magenta
+  [153, 27, 27], // C2 / Bass — red-800
+  [180, 83, 9], // C3 / Baritone — amber-700
+  [21, 128, 61], // C4 / Tenor — green-700
+  [14, 116, 144], // C5 / Alto — cyan-700
+  [37, 99, 235], // C6 / Mezzo-soprano — blue-600
+  [109, 40, 217], // C7 / Soprano — violet-700
 ]
 
 /*
- * Brighter variants of the same hue progression, suitable for text on dark backgrounds.
+ * Dark mode: brighter variants of the same arc (Tailwind 400s), for text and
+ * bars on dark surfaces. Lime and teal rather than green and cyan, and sky
+ * rather than blue: on a dark surface those neighbours otherwise blur, and
+ * blue next to violet is near-identical for red-green colour-blind singers.
  */
 const OCTAVE_TEXT_COLORS: [number, number, number][] = [
-  [248, 113, 113], // C2 — light red
-  [251, 146, 60], // C3 — light amber
-  [74, 222, 128], // C4 — light green
-  [34, 211, 238], // C5 — light cyan
-  [167, 139, 250], // C6 — light lavender
-  [232, 140, 232], // C7 — light magenta
+  [248, 113, 113], // C2 / Bass — red-400
+  [251, 146, 60], // C3 / Baritone — orange-400
+  [163, 230, 53], // C4 / Tenor — lime-400
+  [45, 212, 191], // C5 / Alto — teal-400
+  [56, 189, 248], // C6 / Mezzo-soprano — sky-400
+  [147, 106, 254], // C7 / Soprano — between violet-400 and -500: 400 put Bass ↔ Soprano closer than Baritone ↔ Tenor, 500 is under 4.5:1 as text
 ]
 
 function interpolateColor(
@@ -73,22 +85,18 @@ export function textColorAtMidi(midi: number, isDark = true): string {
 }
 
 /*
- * A single ramp stop by index, for entities that map one-to-one onto the six
- * octave colours — the six classical voice types — instead of onto a position
- * along the pitch axis. Picking those by MIDI would not work: every voice
- * type's midpoint sits between MIDI 52 and 72, barely a third of the ramp, so
+ * A voice type's colour: the palette stop at its index in VOICE_TYPES
+ * (0 = Bass, 5 = Soprano). Indexed, not picked by MIDI: every voice type's
+ * midpoint sits between MIDI 52 and 72, barely a third of the ramp, so
  * interpolation would hand back six near-identical colours.
- *
- * Light mode takes the deep OCTAVE_COLORS, dark mode the brighter text
- * variants — the same isDark split cleanTextColor uses.
  */
-export function octaveStopColor(
-  stopIndex: number,
+export function voiceTypeColor(
+  voiceIndex: number,
   isDark: boolean,
   opacity = 1,
 ): string {
   const colors = isDark ? OCTAVE_TEXT_COLORS : OCTAVE_COLORS
-  const index = Math.max(0, Math.min(colors.length - 1, stopIndex))
+  const index = Math.max(0, Math.min(colors.length - 1, voiceIndex))
   const [r, g, b] = colors[index]
 
   return `rgba(${r}, ${g}, ${b}, ${opacity})`

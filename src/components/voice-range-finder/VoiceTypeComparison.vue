@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import { cleanTextColor, octaveStopColor } from '@/utils/pitchColors'
+import { cleanTextColor, voiceTypeColor } from '@/utils/pitchColors'
 import { VOICE_TYPES } from '@/utils/voiceRangeSegments'
 import { formatSignedCents } from './useLiveCents'
 import { centsOffNearest } from './useRangeFinder'
@@ -178,8 +178,8 @@ type ChartRow = {
 }
 
 const rowColors = (stopIndex: number) => ({
-  color: octaveStopColor(stopIndex, isDark.value),
-  faintColor: octaveStopColor(stopIndex, isDark.value, UNCOVERED_OPACITY),
+  color: voiceTypeColor(stopIndex, isDark.value),
+  faintColor: voiceTypeColor(stopIndex, isDark.value, UNCOVERED_OPACITY),
 })
 
 const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>

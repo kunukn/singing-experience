@@ -1,6 +1,6 @@
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import { octaveStopColor } from '@/utils/pitchColors'
+import { voiceTypeColor } from '@/utils/pitchColors'
 import {
   getSegmentsForRange,
   type VoiceTypeSegment,
@@ -61,7 +61,7 @@ export function useVoiceTypeSegments(
       const percent = isSelected || rounded === 100 ? null : rounded
 
       return Object.assign({}, segment, {
-        color: octaveStopColor(segment.stopIndex, isDark.value),
+        color: voiceTypeColor(segment.stopIndex, isDark.value),
         name,
         /* The accessible name carries the coverage the row shows, so a screen
          * reader hears what a sighted user reads. */

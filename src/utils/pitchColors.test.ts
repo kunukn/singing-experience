@@ -8,6 +8,7 @@ import {
   colorRgbAtMidi,
   OFF_CENTS,
   textColorAtMidi,
+  voiceTypeColor,
 } from './pitchColors'
 
 /* Asserts the rule in AGENTS.md "Pitch Accuracy Thresholds" rather than
@@ -120,6 +121,86 @@ describe('textColorAtMidi', () => {
     const low = textColorAtMidi(36)
     const high = textColorAtMidi(84)
     expect(low).not.toBe(high)
+  })
+})
+
+describe('voiceTypeColor', () => {
+  const linear = (rgb: [number, number, number]) =>
+    rgb.map((channel) => {
+      const c = channel / 255
+
+      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+    })
+
+  const relativeLuminance = (rgb: [number, number, number]) => {
+    const [r, g, b] = linear(rgb)
+
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+  }
+
+  /* OKLab: a colour space where straight-line distance tracks perceived difference */
+  const oklab = (rgb: [number, number, number]) => {
+    const [r, g, b] = linear(rgb)
+    const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b)
+    const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b)
+    const s = Math.cbrt(0.0883024619 * r + 0.2817184344 * g + 0.6299787005 * b)
+
+    return [
+      0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s,
+      1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s,
+      0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s,
+    ]
+  }
+
+  const distance = (a: string, b: string) => {
+    const [x, y] = [oklab(parseRgb(a)), oklab(parseRgb(b))]
+
+    return Math.hypot(x[0] - y[0], x[1] - y[1], x[2] - y[2])
+  }
+
+  /* An ordered scale reads as an open arc: a palette that wraps round the
+   * colour wheel (red … pink) made Bass and Soprano, the furthest voices,
+   * look like neighbours */
+  test('Bass and Soprano differ more than any two neighbouring voices', () => {
+    for (const isDark of [false, true]) {
+      const colors = Array.from({ length: 6 }, (_, index) =>
+        voiceTypeColor(index, isDark),
+      )
+      const ends = distance(colors[0]!, colors[5]!)
+
+      for (let index = 0; index < 5; index++)
+        expect(ends).toBeGreaterThan(
+          distance(colors[index]!, colors[index + 1]!),
+        )
+    }
+  })
+
+  /* Light colours double as 12px text on white (exploring's lit name) */
+  test('every light colour reads as text on white (WCAG AA 4.5:1)', () => {
+    for (let index = 0; index < 6; index++) {
+      const luminance = relativeLuminance(
+        parseRgb(voiceTypeColor(index, false)),
+      )
+      expect((1 + 0.05) / (luminance + 0.05)).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  test('gives each of the six voices its own colour in both themes', () => {
+    for (const isDark of [false, true]) {
+      const colors = Array.from({ length: 6 }, (_, index) =>
+        voiceTypeColor(index, isDark),
+      )
+      expect(new Set(colors).size).toBe(6)
+    }
+  })
+
+  test('clamps an out-of-range index to Bass or Soprano', () => {
+    expect(voiceTypeColor(-1, false)).toBe(voiceTypeColor(0, false))
+    expect(voiceTypeColor(9, true)).toBe(voiceTypeColor(5, true))
+  })
+
+  test('applies opacity', () => {
+    expect(voiceTypeColor(0, false, 0.25)).toMatch(/, 0\.25\)$/)
   })
 })
 
