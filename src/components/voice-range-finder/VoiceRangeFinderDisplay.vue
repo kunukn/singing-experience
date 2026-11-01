@@ -351,13 +351,11 @@ onUnmounted(() => {
       so iOS momentum and the URL-bar collapse keep working. The fade fills
       the gap-4 above, so the chart dissolves behind the bar instead of
       cutting off. pb-4 applies at every size, so the buttons never touch the
-      bottom edge (e.g. phone landscape, which is past 30rem and not sticky).
-      30rem (480px), not Tailwind's sm (640px): it covers every phone in
-      portrait (the widest are ~440px) without pinning the bar on small
-      tablets. Keep in step with isPhone in VoiceRangeSlots.vue.
+      bottom edge (e.g. phone landscape, which is past xs and not sticky).
+      xs, not sm: sm would also pin the bar on small tablets (see style.css).
     -->
     <div
-      class="flex w-full justify-center pb-4 max-[30rem]:sticky max-[30rem]:bottom-0 max-[30rem]:z-10 max-[30rem]:mt-auto max-[30rem]:bg-(--p-content-background) max-[30rem]:before:pointer-events-none max-[30rem]:before:absolute max-[30rem]:before:inset-x-0 max-[30rem]:before:bottom-full max-[30rem]:before:h-4 max-[30rem]:before:bg-linear-to-t max-[30rem]:before:from-(--p-content-background) max-[30rem]:before:to-transparent"
+      class="flex w-full justify-center pb-4 max-xs:sticky max-xs:bottom-0 max-xs:z-10 max-xs:mt-auto max-xs:bg-(--p-content-background) max-xs:before:pointer-events-none max-xs:before:absolute max-xs:before:inset-x-0 max-xs:before:bottom-full max-xs:before:h-4 max-xs:before:bg-linear-to-t max-xs:before:from-(--p-content-background) max-xs:before:to-transparent"
       data-testid="voice-range-finder-actions"
     >
       <!-- Explore has no search, so it always shows the toggle; a pending

@@ -2,6 +2,13 @@
 
 @custom-variant dark (&:where(.p-dark, .p-dark *));
 
+/* xs = phones in portrait: the widest are ~440px, so 30rem (480px) catches
+ * every one without catching small tablets, which sm (40rem) does. Use
+ * `max-xs:` in templates; JS uses PHONE_MEDIA_QUERY (constants/breakpoints). */
+@theme {
+  --breakpoint-xs: 30rem;
+}
+
 @layer base {
   html {
     @apply h-full;

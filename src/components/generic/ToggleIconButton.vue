@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { useBreakpoints, breakpointsTailwind } from '@vueuse/core'
+import { BREAKPOINT_XS_PX } from '@/constants/breakpoints'
 import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
-import {
-  TOGGLE_LABEL_XS_PX,
-  type ToggleLabelBreakpoint,
-  type ToggleLabelFrom,
-} from './toggleIconButton'
+import type { ToggleLabelBreakpoint, ToggleLabelFrom } from './toggleIconButton'
 
 type Props = {
   iconOn: string
@@ -30,7 +27,7 @@ const modelValue = defineModel<boolean>({ required: true })
  * on every re-run. */
 const breakpoints = useBreakpoints({
   ...breakpointsTailwind,
-  xs: TOGGLE_LABEL_XS_PX,
+  xs: BREAKPOINT_XS_PX,
 })
 const isAtLeast: Record<ToggleLabelBreakpoint, Ref<boolean>> = {
   xs: breakpoints.greaterOrEqual('xs'),

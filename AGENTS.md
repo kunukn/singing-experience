@@ -71,6 +71,8 @@ PrimeVue components are **auto-imported** via `PrimeVueResolver({ prefix: 'Prime
 
 **Control size is `small`.** Action buttons, toggles, selects and select buttons use `size="small"`, main CTAs included. Their text size comes from `formField.sm.fontSize` in [theme.ts](src/theme.ts) — change it there, never per control.
 
+**Phone layout uses `xs`, not `sm`.** For phone-only styling use `max-xs:` (30rem / 480px, `--breakpoint-xs` in [style.css](src/style.css)) — `sm` (640px) also catches small tablets. In script, use `useMediaQuery(PHONE_MEDIA_QUERY)` from [breakpoints.ts](src/constants/breakpoints.ts); change both together.
+
 **When to add to `/src/components/generic/`**:
 
 - The element needs app-specific logic or styling PrimeVue doesn't cover

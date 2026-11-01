@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useLocalStorage, useMediaQuery } from '@vueuse/core'
+import { PHONE_MEDIA_QUERY } from '@/constants/breakpoints'
 import type { MidiRange } from '@/utils/normalizeVoiceRange'
 import {
   useVoiceRangeSlots,
@@ -50,9 +51,8 @@ const matchingSlotIndex = computed(() =>
 
 /* Three slot rows crowd the chart off a phone screen, so the list starts
  * collapsed there and open on wider screens. 'auto' follows the viewport until
- * the user toggles; from then on their choice sticks. Same breakpoint as the
- * sticky action bar's max-[30rem] in VoiceRangeFinderDisplay.vue. */
-const isPhone = useMediaQuery('(width < 30rem)')
+ * the user toggles; from then on their choice sticks. */
+const isPhone = useMediaQuery(PHONE_MEDIA_QUERY)
 const storedExpanded = useLocalStorage<'auto' | 'open' | 'closed'>(
   'syng.voiceRangeSlotsExpanded',
   'auto',
