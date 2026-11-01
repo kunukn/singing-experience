@@ -299,6 +299,9 @@ const guideLines = computed(() =>
     : [],
 )
 
+/* The live line's colour: the guide lines' grey, but solid. */
+const LIVE_LINE_COLOR = 'var(--p-text-muted-color)'
+
 /* Pinned to the chart's edge rather than widening the axis: a live note
  * resizing the axis would rescale every bar while the singer sings. */
 const liveLeft = computed(() => {
@@ -505,10 +508,10 @@ const liveLabel = computed(() => {
           />
           <!--
             The live note; 75 ms glide smooths detector jitter without lagging
-            the voice. Coloured like its cents label: green when clean, blue
-            when flat, yellow → red when sharp. The halo (background-coloured
-            ring) keeps it visible on any bar: the voices' rainbow uses every
-            hue, so whatever colour the line is, some bar matches it.
+            the voice. A fixed grey: coloured by cents it flickered green, blue
+            and red on every wobble while singing; the cents label beside it
+            still carries the tuning. The halo (background-coloured ring) keeps
+            it visible on any bar, whatever the bar's colour.
           -->
           <span
             v-if="liveLabel"
@@ -516,7 +519,7 @@ const liveLabel = computed(() => {
             class="absolute inset-y-0 w-0.5 -translate-x-1/2 transition-[inset-inline-start] duration-75 ease-linear motion-reduce:transition-none"
             :style="{
               insetInlineStart: `${liveLeft}%`,
-              backgroundColor: liveLabel.centsColor,
+              backgroundColor: LIVE_LINE_COLOR,
               boxShadow: '0 0 0 1px var(--p-content-background)',
             }"
           />

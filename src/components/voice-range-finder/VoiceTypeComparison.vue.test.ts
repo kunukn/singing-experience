@@ -176,21 +176,13 @@ describe('VoiceTypeComparison', () => {
         expect(line.attributes('style')).toContain('inset-inline-start: 50%')
     })
 
-    test('should colour the line like its cents label', () => {
-      const line = liveLinesOf(52.2)[0]!
-      const centsText = liveLabelOf(52.2).findAll('span')[1]!
-
-      expect(line.element.style.backgroundColor).not.toBe('')
-      expect(line.element.style.backgroundColor).toBe(
-        centsText.element.style.color,
-      )
-    })
-
-    test('should colour a clean note differently from an off one', () => {
+    test('should keep the line one colour whether the note is clean, flat or sharp', () => {
       const colorOf = (liveMidi: number) =>
         liveLinesOf(liveMidi)[0]!.element.style.backgroundColor
 
-      expect(colorOf(60)).not.toBe(colorOf(60.3))
+      expect(colorOf(60)).not.toBe('')
+      expect(colorOf(59.7)).toBe(colorOf(60))
+      expect(colorOf(60.3)).toBe(colorOf(60))
     })
 
     const liveLabelOf = (liveMidi: number | null) =>
