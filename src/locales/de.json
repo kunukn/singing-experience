@@ -351,6 +351,15 @@
       "exploreTitle": "Stimmlagen",
       "exploreExplainer": "Sing einen Ton. Die Stimmlagen, die ihn singen können, leuchten auf."
     },
+    "slots": {
+      "title": "Gespeicherte Umfänge",
+      "slotName": "Platz {number}",
+      "empty": "Leer",
+      "use": "{name} nehmen: {range}",
+      "edit": "{name} bearbeiten",
+      "name": "Name",
+      "save": "Speichern"
+    },
     "tabs": {
       "explore": "Entdecken"
     }

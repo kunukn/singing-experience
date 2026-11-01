@@ -294,6 +294,15 @@
       "exploreTitle": "Voice types",
       "exploreExplainer": "Sing a note. The voices that can sing it light up."
     },
+    "slots": {
+      "title": "Saved ranges",
+      "slotName": "Slot {number}",
+      "empty": "Empty",
+      "use": "Use {name}: {range}",
+      "edit": "Edit {name}",
+      "name": "Name",
+      "save": "Save"
+    },
     "tabs": {
       "explore": "Explore"
     }

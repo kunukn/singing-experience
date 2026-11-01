@@ -351,6 +351,15 @@
       "exploreTitle": "কণ্ঠের ধরন",
       "exploreExplainer": "একটা সুর গাও। যে কণ্ঠগুলো সেটা গাইতে পারে, সেগুলো জ্বলে উঠবে।"
     },
+    "slots": {
+      "title": "রাখা পরিসর",
+      "slotName": "ঘর {number}",
+      "empty": "খালি",
+      "use": "{name} নাও: {range}",
+      "edit": "{name} বদলাও",
+      "name": "নাম",
+      "save": "রাখো"
+    },
     "tabs": {
       "explore": "ঘুরে দেখো"
     }

@@ -3,12 +3,10 @@ import { useTimeoutFn } from '@vueuse/core'
 import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
 import { MY_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import {
+  type MidiRange,
   normalizeVoiceRange,
-  VOICE_RANGE_HIGHEST_MIDI,
-  VOICE_RANGE_LOWEST_MIDI,
-  VOICE_RANGE_MIN_SPAN,
 } from '@/utils/normalizeVoiceRange'
-import { frequencyToMidi, midiToNoteLabel } from '@/utils/noteUtils'
+import { frequencyToMidi } from '@/utils/noteUtils'
 import { CLOSE_CENTS, cleanTextColor } from '@/utils/pitchColors'
 import {
   centsOffNearest,
@@ -16,7 +14,15 @@ import {
   useRangeFinder,
 } from './useRangeFinder'
 import VoiceRangeExplorePanel from './VoiceRangeExplorePanel.vue'
+import VoiceRangeSlots from './VoiceRangeSlots.vue'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
+import {
+  formatNote,
+  formatRange,
+  VOICE_RANGE_NOTE_OPTIONS,
+  withHighest,
+  withLowest,
+} from './voiceRangeNotes'
 
 type Props = {
   /* The real mic on the page, simulated input on the test page */
@@ -65,42 +71,20 @@ const { myVoiceRange, setMyVoiceRange, resetMyVoiceRange } = useMyVoiceRange()
  * already picked the next time the singer opens a game. */
 const sharedRangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
-const formatNote = (midi: number) => midiToNoteLabel(midi).label
-const formatRange = (midiMin: number, midiMax: number) =>
-  `${formatNote(midiMin)}–${formatNote(midiMax)}`
-
-/* C7 down to C2, high to low like every pitch list in the app */
-const noteOptions = Array.from(
-  { length: VOICE_RANGE_HIGHEST_MIDI - VOICE_RANGE_LOWEST_MIDI + 1 },
-  (_, offset) => {
-    const midi = VOICE_RANGE_HIGHEST_MIDI - offset
-
-    return { label: formatNote(midi), value: midi }
-  },
-)
-
-/*
- * Each picker pushes the other end away when the two get closer than an
- * octave, rather than refusing the pick: someone setting F2 as a goal note
- * wants F2, not a select that silently snaps back.
- */
+/* Each picker pushes the other end away rather than refusing the pick (see withLowest) */
 const lowestNote = computed({
   get: () => myVoiceRange.value.midiMin,
   set: (midi: number) => {
-    setMyVoiceRange(
-      midi,
-      Math.max(myVoiceRange.value.midiMax, midi + VOICE_RANGE_MIN_SPAN),
-    )
+    const { midiMin, midiMax } = withLowest(myVoiceRange.value, midi)
+    setMyVoiceRange(midiMin, midiMax)
   },
 })
 
 const highestNote = computed({
   get: () => myVoiceRange.value.midiMax,
   set: (midi: number) => {
-    setMyVoiceRange(
-      Math.min(myVoiceRange.value.midiMin, midi - VOICE_RANGE_MIN_SPAN),
-      midi,
-    )
+    const { midiMin, midiMax } = withHighest(myVoiceRange.value, midi)
+    setMyVoiceRange(midiMin, midiMax)
   },
 })
 
@@ -348,6 +332,14 @@ function saveFoundRange() {
   markSaved()
 }
 
+/* A saved slot is a quick hand pick: confirm it like a save, but leave any
+ * running search alone — markSaved would cancel it. */
+function applySlot(range: MidiRange) {
+  setMyVoiceRange(range.midiMin, range.midiMax)
+  sharedRangeIndex.value = MY_RANGE_INDEX
+  startSavedFlash()
+}
+
 function markSaved() {
   sharedRangeIndex.value = MY_RANGE_INDEX
   startSavedFlash()
@@ -434,7 +426,7 @@ onUnmounted(() => {
                   }}</span>
                   <PrimeSelect
                     v-model="highestNote"
-                    :options="noteOptions"
+                    :options="VOICE_RANGE_NOTE_OPTIONS"
                     optionLabel="label"
                     optionValue="value"
                     size="small"
@@ -463,7 +455,7 @@ onUnmounted(() => {
                   }}</span>
                   <PrimeSelect
                     v-model="lowestNote"
-                    :options="noteOptions"
+                    :options="VOICE_RANGE_NOTE_OPTIONS"
                     optionLabel="label"
                     optionValue="value"
                     size="small"
@@ -486,6 +478,12 @@ onUnmounted(() => {
                 />
               </div>
             </div>
+
+            <VoiceRangeSlots
+              :midiMin="myVoiceRange.midiMin"
+              :midiMax="myVoiceRange.midiMax"
+              @applyRange="applySlot"
+            />
 
             <VoiceTypeComparison
               :midiMin="myVoiceRange.midiMin"

@@ -204,6 +204,27 @@ describe('VoiceRangeFinderDisplay', () => {
     expect(savedTick().exists()).toBe(false)
   })
 
+  test('should set My range from a saved slot and mark it', async () => {
+    const A2 = 45
+    const E4 = 64
+    localStorage.setItem(
+      'syng.voiceRangeSlots',
+      JSON.stringify([{ midiMin: A2, midiMax: E4, name: 'Choir' }]),
+    )
+    const { wrapper } = await mountDisplay()
+    const slot = () => wrapper.get('[data-testid="range-slot-1"]')
+
+    await slot().trigger('click')
+
+    expect(wrapper.get('[data-testid="my-range-notes"]').text()).toContain(
+      'A2–E4',
+    )
+    expect(wrapper.find('[data-testid="my-range-saved"]').exists()).toBe(true)
+    expect(slot().attributes('data-active')).toBe('true')
+
+    localStorage.removeItem('syng.voiceRangeSlots')
+  })
+
   describe('Explore tab', () => {
     const openExplore = (wrapper: DisplayWrapper) =>
       wrapper

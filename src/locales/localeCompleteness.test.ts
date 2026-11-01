@@ -81,6 +81,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'tuner.tuningGroups.standard',
     'tuner.tuningGroups.drop',
     'glossary.note.name',
+    'voiceRangeFinder.slots.name',
   ],
   es: [
     'generic.difficulty_normal',

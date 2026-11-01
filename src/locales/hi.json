@@ -351,6 +351,15 @@
       "exploreTitle": "आवाज़ के प्रकार",
       "exploreExplainer": "कोई सुर गाओ। जो आवाज़ें उसे गा सकती हैं, वे चमक उठेंगी।"
     },
+    "slots": {
+      "title": "सहेजी गई सीमाएँ",
+      "slotName": "खाना {number}",
+      "empty": "खाली",
+      "use": "{name} चुनो: {range}",
+      "edit": "{name} बदलो",
+      "name": "नाम",
+      "save": "सहेजो"
+    },
     "tabs": {
       "explore": "खोजो"
     }
