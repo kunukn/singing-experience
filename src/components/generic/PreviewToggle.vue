@@ -1,5 +1,13 @@
 <script setup lang="ts">
-defineProps<{ disabled?: boolean }>()
+import type { ToggleLabelFrom } from './toggleIconButton'
+
+type Props = {
+  disabled?: boolean
+  /* When "See my voice" shows as text; each page decides (see ToggleIconButton) */
+  labelFrom?: ToggleLabelFrom
+}
+
+defineProps<Props>()
 const modelValue = defineModel<boolean>({ required: true })
 const { t } = useI18n()
 </script>
@@ -11,5 +19,6 @@ const { t } = useI18n()
     iconOff="pi pi-microphone"
     :label="t('generic.previewSoundLabel')"
     :disabled="disabled"
+    :labelFrom="labelFrom"
   />
 </template>

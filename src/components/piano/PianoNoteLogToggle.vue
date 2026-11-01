@@ -9,6 +9,6 @@ const { t } = useI18n()
     iconOn="pi pi-list"
     iconOff="pi pi-list"
     :label="t('generic.noteLogLabel')"
-    isLabelHidden
+    labelFrom="never"
   />
 </template>

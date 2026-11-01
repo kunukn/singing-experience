@@ -508,9 +508,11 @@ onUnmounted(() => {
             >
               {{ t('voiceRangeFinder.findBySinging') }}
             </PrimeButton>
+            <!-- Only two buttons in this row, so the text fits from sm up -->
             <PreviewToggle
               v-model="isPreviewEnabled"
               :disabled="!simulateIdlePreview && micPermission === 'denied'"
+              labelFrom="sm"
             />
           </div>
 

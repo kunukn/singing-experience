@@ -21,6 +21,6 @@ const { t } = useI18n()
     iconOff="pi pi-eye-slash"
     :label="t('voiceRanges.groups.voiceTypes')"
     :disabled="disabled"
-    isLabelHidden
+    labelFrom="never"
   />
 </template>
