@@ -5,7 +5,7 @@ import {
   voiceTypeColor,
 } from '@/utils/pitchColors'
 import { VOICE_TYPES } from '@/utils/voiceRangeSegments'
-import { formatSignedCents, toleratedCents } from './useLiveCents'
+import { centsLabel } from './useLiveCents'
 import { centsOffNearest } from './useRangeFinder'
 import {
   compareWithVoiceTypes,
@@ -322,11 +322,11 @@ const liveLeft = computed(() => {
 const liveLabel = computed(() => {
   if (props.liveMidi == null || liveLeft.value === null) return null
 
-  const cents = toleratedCents(Math.round(centsOffNearest(props.liveMidi)))
+  const cents = Math.round(centsOffNearest(props.liveMidi))
 
   return {
     note: formatNote(Math.round(props.liveMidi)),
-    centsText: formatSignedCents(cents),
+    centsText: centsLabel(cents),
     centsColor: neutralDirectionalTextColor(cents, isDark.value),
     side: liveLeft.value < 50 ? 'end' : 'start',
   }
@@ -577,10 +577,12 @@ const liveLabel = computed(() => {
           :style="{ insetInlineStart: `${liveLeft}%` }"
         >
           <span class="font-semibold">{{ liveLabel.note }}</span>
-          {{ ' ' }}
-          <span :style="{ color: liveLabel.centsColor }">
-            {{ liveLabel.centsText }}
-          </span>
+          <template v-if="liveLabel.centsText">
+            {{ ' ' }}
+            <span :style="{ color: liveLabel.centsColor }">
+              {{ liveLabel.centsText }}
+            </span>
+          </template>
         </span>
       </div>
 

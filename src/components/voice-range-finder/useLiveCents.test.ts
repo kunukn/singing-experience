@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { effectScope, ref } from 'vue'
-import { formatSignedCents, toleratedCents, useLiveCents } from './useLiveCents'
+import { centsLabel, formatSignedCents, useLiveCents } from './useLiveCents'
 
 describe('formatSignedCents', () => {
   test.each([
@@ -12,15 +12,15 @@ describe('formatSignedCents', () => {
   })
 })
 
-describe('toleratedCents', () => {
+describe('centsLabel', () => {
   test.each([
-    { cents: -3, expected: -3 },
-    { cents: -2, expected: 0 },
-    { cents: 0, expected: 0 },
-    { cents: 2, expected: 0 },
-    { cents: 3, expected: 3 },
-  ])('reads $cents as $expected', ({ cents, expected }) => {
-    expect(toleratedCents(cents)).toBe(expected)
+    { cents: -3, expected: '-3¢' },
+    { cents: -2, expected: '' },
+    { cents: 0, expected: '' },
+    { cents: 2, expected: '' },
+    { cents: 3, expected: '+3¢' },
+  ])('labels $cents as "$expected"', ({ cents, expected }) => {
+    expect(centsLabel(cents)).toBe(expected)
   })
 })
 
@@ -52,16 +52,16 @@ describe('useLiveCents', () => {
     scope.stop()
   })
 
-  test('should read a note within 2¢ as 0¢, and 3¢ off as it is', () => {
+  test('should hide the text within 2¢ but keep the exact cents', () => {
     const midi = ref(57.02)
     const scope = effectScope()
     const { liveCents, liveCentsText } = scope.run(() => useLiveCents(midi))!
 
-    expect(liveCents.value).toBe(0)
-    expect(liveCentsText.value).toBe('0¢')
+    expect(liveCents.value).toBe(2)
+    expect(liveCentsText.value).toBe('')
 
     midi.value = 56.98
-    expect(liveCentsText.value).toBe('0¢')
+    expect(liveCentsText.value).toBe('')
 
     midi.value = 57.03
     expect(liveCentsText.value).toBe('+3¢')

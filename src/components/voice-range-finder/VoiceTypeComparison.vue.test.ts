@@ -246,12 +246,12 @@ describe('VoiceTypeComparison', () => {
       expect(label.attributes('data-side')).toBe('end')
     })
 
-    test('should read a note within 2¢ as 0¢', () => {
+    test('should show no cents for a note within 2¢', () => {
       const textOf = (liveMidi: number) =>
         liveLabelOf(liveMidi).text().replace(/\s+/g, ' ')
 
-      expect(textOf(52.02)).toBe('E3 0¢')
-      expect(textOf(51.98)).toBe('E3 0¢')
+      expect(textOf(52.02)).toBe('E3')
+      expect(textOf(51.98)).toBe('E3')
       expect(textOf(52.03)).toBe('E3 +3¢')
     })
 
@@ -259,7 +259,7 @@ describe('VoiceTypeComparison', () => {
       /* C5 */
       const label = liveLabelOf(72)
 
-      expect(label.text().replace(/\s+/g, ' ')).toBe('C5 0¢')
+      expect(label.text().replace(/\s+/g, ' ')).toBe('C5')
       expect(label.attributes('data-side')).toBe('start')
     })
 
