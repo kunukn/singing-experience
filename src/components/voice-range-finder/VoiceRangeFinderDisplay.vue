@@ -6,12 +6,9 @@ import {
   normalizeVoiceRange,
 } from '@/utils/normalizeVoiceRange'
 import { frequencyToMidi } from '@/utils/noteUtils'
-import { CLOSE_CENTS, cleanTextColor } from '@/utils/pitchColors'
-import {
-  centsOffNearest,
-  isCleanEnough,
-  useRangeFinder,
-} from './useRangeFinder'
+import { CLOSE_CENTS } from '@/utils/pitchColors'
+import { useLiveCents } from './useLiveCents'
+import { isCleanEnough, useRangeFinder } from './useRangeFinder'
 import VoiceRangeExplorePanel from './VoiceRangeExplorePanel.vue'
 import VoiceRangeSlots from './VoiceRangeSlots.vue'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
@@ -40,7 +37,6 @@ type Props = {
 const props = defineProps<Props>()
 
 const { t } = useI18n()
-const { isDark } = useDarkMode()
 
 const route = useRoute()
 const router = useRouter()
@@ -168,19 +164,7 @@ const liveMidi = computed(() =>
 )
 
 /* How far the live note sits from its semitone, in the tuner's colours */
-const liveCents = computed(() =>
-  sungMidi.value === null ? null : Math.round(centsOffNearest(sungMidi.value)),
-)
-const liveCentsText = computed(() => {
-  if (liveCents.value === null) return ''
-
-  return liveCents.value > 0 ? `+${liveCents.value}¢` : `${liveCents.value}¢`
-})
-const liveCentsColor = computed(() =>
-  liveCents.value === null
-    ? undefined
-    : cleanTextColor(liveCents.value, isDark.value),
-)
+const { liveCents, liveCentsText, liveCentsColor } = useLiveCents(sungMidi)
 
 /* The high step only counts clean notes, so say which kind this one is */
 const isLiveClean = computed(

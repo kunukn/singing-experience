@@ -2,6 +2,7 @@
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { cleanTextColor, octaveStopColor } from '@/utils/pitchColors'
 import { VOICE_TYPES } from '@/utils/voiceRangeSegments'
+import { formatSignedCents } from './useLiveCents'
 import { centsOffNearest } from './useRangeFinder'
 import {
   compareWithVoiceTypes,
@@ -329,7 +330,7 @@ const liveLabel = computed(() => {
 
   return {
     note: formatNote(Math.round(props.liveMidi)),
-    centsText: cents > 0 ? `+${cents}¢` : `${cents}¢`,
+    centsText: formatSignedCents(cents),
     centsColor: cleanTextColor(cents, isDark.value),
     side: liveLeft.value < 50 ? 'end' : 'start',
   }

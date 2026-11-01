@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import { cleanTextColor } from '@/utils/pitchColors'
-import { centsOffNearest } from './useRangeFinder'
+import { useLiveCents } from './useLiveCents'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
 
 type Props = {
@@ -13,26 +12,14 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const { isDark } = useDarkMode()
-
 const liveNote = computed(() =>
   props.liveMidi === null
     ? null
     : midiToNoteLabel(Math.round(props.liveMidi)).label,
 )
 
-const liveCents = computed(() =>
-  props.liveMidi === null ? null : Math.round(centsOffNearest(props.liveMidi)),
-)
-const liveCentsText = computed(() => {
-  if (liveCents.value === null) return ''
-
-  return liveCents.value > 0 ? `+${liveCents.value}¢` : `${liveCents.value}¢`
-})
-const liveCentsColor = computed(() =>
-  liveCents.value === null
-    ? undefined
-    : cleanTextColor(liveCents.value, isDark.value),
+const { liveCents, liveCentsText, liveCentsColor } = useLiveCents(
+  () => props.liveMidi,
 )
 </script>
 
