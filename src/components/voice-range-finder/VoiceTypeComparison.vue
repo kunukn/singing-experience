@@ -281,10 +281,21 @@ function selectRow(row: ChartRow) {
 }
 
 /* The singer's own range as a bar of its own, in the footer between its two
- * labels: an outline in the guide lines' grey, so it reads as "you" beside
- * the coloured voice bars without competing with them */
+ * labels. Voice types are fixed, so their bars are solid; a singer's range
+ * grows with practice, so theirs is striped — "not final" — in the guide
+ * lines' grey. Stripes rather than an outline: an empty middle made the bar
+ * look thinner than the 8px voice bars beside it. The colour is mixed, not
+ * faded with opacity, so the same value works in dark mode. */
+const RANGE_BAR_STRIPES =
+  'repeating-linear-gradient(-45deg, color-mix(in srgb, var(--p-text-muted-color) 60%, transparent) 0 2px, transparent 2px 5px)'
+
 const rangeBarStyle = computed(() =>
-  range.value ? trackStyle(range.value.midiMin, range.value.midiMax) : null,
+  range.value
+    ? {
+        ...trackStyle(range.value.midiMin, range.value.midiMax),
+        backgroundImage: RANGE_BAR_STRIPES,
+      }
+    : null,
 )
 
 /* The singer's two ends: drawn as a line through every row and labelled once
@@ -582,7 +593,7 @@ const liveLabel = computed(() => {
           <span
             v-if="rangeBarStyle"
             data-testid="voice-type-comparison-range-bar"
-            class="absolute top-1/2 h-2 -translate-y-1/2 rounded-full border border-(--p-text-muted-color) opacity-60"
+            class="absolute top-1/2 h-2 -translate-y-1/2 rounded-full"
             :style="rangeBarStyle"
           />
           <span
