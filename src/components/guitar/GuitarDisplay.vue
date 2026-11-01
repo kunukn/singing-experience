@@ -69,7 +69,7 @@ type Props = {
    * way, since the fret cells already mark every pitch position. */
   isPreviewEnabled?: boolean
   /* Cents-colour the low/only lane's segments and chip, like every program's
-   * idle preview. The duet high lane stays blue. */
+   * idle preview. The duet high lane stays violet. */
   shouldColorByCents?: boolean
   /* Note names in the cells: 'off' (open strings only), 'simple' (bare names,
    * e.g. C♯), or 'advanced' (names with octave, e.g. C♯3). */
@@ -410,7 +410,10 @@ const LANE_COLOUR_CLASS: Record<
   { line: string; chip: string }
 > = {
   low: { line: 'border-(--p-orange-400)/50', chip: 'text-(--p-orange-400)' },
-  high: { line: 'border-(--p-blue-400)/50', chip: 'text-(--p-blue-400)' },
+  high: {
+    line: 'border-(--p-violet-400)/50',
+    chip: 'text-(--p-violet-400)',
+  },
 }
 
 const { colorForCents } = usePitchPreviewColor()

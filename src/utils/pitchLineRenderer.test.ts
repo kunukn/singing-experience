@@ -79,12 +79,12 @@ describe('pitchLineColors', () => {
     })
   })
 
-  test('duet high lane in range → blue', () => {
+  test('duet high lane in range → violet', () => {
     const colors = pitchLineColors({ isOutOfRange: false, isHighLane: true })
     expect(colors).toEqual({
-      line: 'rgba(96, 165, 250, 0.25)',
-      dot: 'rgba(96, 165, 250, 0.7)',
-      label: 'rgba(96, 165, 250, 0.8)',
+      line: 'rgba(167, 139, 250, 0.25)',
+      dot: 'rgba(167, 139, 250, 0.7)',
+      label: 'rgba(167, 139, 250, 0.8)',
     })
   })
 
@@ -222,11 +222,11 @@ describe('drawPitchLine - cents colour', () => {
     })
   })
 
-  test('keeps the high lane blue', () => {
+  test('keeps the high lane violet', () => {
     const colorForCents = vi.fn(() => 'cents-colour')
 
     expect(drawColors({ isHighLane: true, colorForCents }).dot).toBe(
-      'rgba(96, 165, 250, 0.7)',
+      'rgba(167, 139, 250, 0.7)',
     )
     expect(colorForCents).not.toHaveBeenCalled()
   })
@@ -258,7 +258,7 @@ describe('pitchLineColors - cents colour', () => {
   test.each([
     { state: { isCorrect: true }, dot: 'rgba(74, 222, 128, 0.8)' },
     { state: { isOutOfRange: true }, dot: 'rgba(239, 68, 68, 0.7)' },
-    { state: { isHighLane: true }, dot: 'rgba(96, 165, 250, 0.7)' },
+    { state: { isHighLane: true }, dot: 'rgba(167, 139, 250, 0.7)' },
   ])('ranks below $state', ({ state, dot }) => {
     const colors = pitchLineColors({
       isOutOfRange: false,

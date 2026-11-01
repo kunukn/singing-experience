@@ -99,7 +99,7 @@ const recorders: Record<PitchLaneId, PitchLaneRecorder> = {
  * Both voices keep the cents colouring (green, warm when sharp, blue when
  * flat), because each singer still needs to see whether they are in tune.
  * The second voice is told apart by shape instead — a thinner spline and
- * hollow dots — and only its head dot and name pill carry the blue that
+ * hollow dots — and only its head dot and name pill carry the violet that
  * matches its dashed preview line.
  */
 const LANE_TRAIL_STYLE: Record<
@@ -118,7 +118,7 @@ const LANE_TRAIL_STYLE: Record<
     lineWidth: 2,
     dotRadius: 2.5,
     isDotHollow: true,
-    headTint: 'rgba(96, 165, 250, 1)', // --p-blue-400
+    headTint: 'rgba(167, 139, 250, 1)', // --p-violet-400
   },
 }
 

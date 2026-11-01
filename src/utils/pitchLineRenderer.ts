@@ -52,12 +52,13 @@ const COLORS = {
   },
   /* The second singer in duet mode. Two dashed lines in the same colour are
    * impossible to tell apart, so the high voice gets its own hue — the same
-   * blue (--p-blue-400, #60a5fa) the piano and guitar boards give their high
-   * lane. Alphas mirror inRange, which it stands in for. */
+   * violet (--p-violet-400, #a78bfa) the piano and guitar boards give their
+   * high lane. Not blue: blue means flat in every cents colour. Alphas mirror
+   * inRange, which it stands in for. */
   highLane: {
-    line: 'rgba(96, 165, 250, 0.25)',
-    dot: 'rgba(96, 165, 250, 0.7)',
-    label: 'rgba(96, 165, 250, 0.8)',
+    line: 'rgba(167, 139, 250, 0.25)',
+    dot: 'rgba(167, 139, 250, 0.7)',
+    label: 'rgba(167, 139, 250, 0.8)',
   },
 } as const
 

@@ -50,7 +50,7 @@ type Props = {
   isPreviewEnabled?: boolean
   /* Cents-colour the low/only lane's line and chip, like every program's idle
    * preview. The parent owns when: idle, and Snap off (a snapped pitch is
-   * always 0¢). The duet high lane stays blue, and a line pinned at the edge
+   * always 0¢). The duet high lane stays violet, and a line pinned at the edge
    * stays orange so it never reads as in tune. */
   shouldColorByCents?: boolean
   /* Note-name labels on the key face: 'off' (C-key octave markers only), 'simple'
@@ -449,7 +449,10 @@ const LANE_COLOUR_CLASS: Record<
   { line: string; chip: string }
 > = {
   low: { line: 'border-(--p-orange-400)/50', chip: 'text-(--p-orange-400)' },
-  high: { line: 'border-(--p-blue-400)/50', chip: 'text-(--p-blue-400)' },
+  high: {
+    line: 'border-(--p-violet-400)/50',
+    chip: 'text-(--p-violet-400)',
+  },
 }
 
 const { colorForCents } = usePitchPreviewColor()

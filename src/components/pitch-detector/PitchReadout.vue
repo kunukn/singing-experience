@@ -24,10 +24,10 @@ const props = withDefaults(defineProps<Props>(), {
 const { t } = useI18n()
 
 /* The same pairing as the dashed preview lines and the piano/guitar boards:
- * orange is the low (or only) voice, blue the high one. */
+ * orange is the low (or only) voice, violet the high one (blue means flat). */
 const LANE_HEADING_CLASS: Record<PitchLaneId, string> = {
   low: 'text-(--p-orange-400)',
-  high: 'text-(--p-blue-400)',
+  high: 'text-(--p-violet-400)',
 }
 
 const LANE_HEADING_KEY: Record<PitchLaneId, string> = {
