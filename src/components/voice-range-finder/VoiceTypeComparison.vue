@@ -373,12 +373,12 @@ const liveLabel = computed(() => {
           <!-- Short on a narrow chart, full once the chart has room (container query) -->
           <template v-else>
             <span
-              class="@md:hidden"
+              class="@lg:hidden"
               data-testid="voice-type-comparison-short-name"
               >{{ row.shortName }}</span
             >
             <span
-              class="hidden @md:inline"
+              class="hidden @lg:inline"
               data-testid="voice-type-comparison-full-name"
               >{{ row.name }}</span
             >
@@ -405,12 +405,12 @@ const liveLabel = computed(() => {
           <!-- Short on a narrow chart, full once the chart has room (container query) -->
           <template v-else>
             <span
-              class="@md:hidden"
+              class="@lg:hidden"
               data-testid="voice-type-comparison-short-name"
               >{{ row.shortName }}</span
             >
             <span
-              class="hidden @md:inline"
+              class="hidden @lg:inline"
               data-testid="voice-type-comparison-full-name"
               >{{ row.name }}</span
             >
