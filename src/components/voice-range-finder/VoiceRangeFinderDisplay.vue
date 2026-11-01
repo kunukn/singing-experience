@@ -669,7 +669,10 @@ onUnmounted(() => {
         </PrimeTabPanel>
 
         <PrimeTabPanel value="explore" class="flex flex-col items-center gap-4">
-          <VoiceRangeExplorePanel :liveMidi="chartLiveMidi" />
+          <VoiceRangeExplorePanel
+            :liveMidi="chartLiveMidi"
+            :isListening="isPreviewEnabled"
+          />
           <PreviewToggle
             v-model="isPreviewEnabled"
             :disabled="!simulateIdlePreview && micPermission === 'denied'"

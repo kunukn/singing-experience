@@ -7,6 +7,8 @@ import VoiceTypeComparison from './VoiceTypeComparison.vue'
 type Props = {
   /* The note being sung right now, fractional so cents move; null when silent */
   liveMidi: number | null
+  /* "See my voice" is on; off fades the voice bars */
+  isListening: boolean
 }
 
 const props = defineProps<Props>()
@@ -63,6 +65,6 @@ const liveCentsColor = computed(() =>
       </span>
     </div>
 
-    <VoiceTypeComparison :liveMidi="liveMidi" />
+    <VoiceTypeComparison :liveMidi="liveMidi" :isListening="isListening" />
   </section>
 </template>

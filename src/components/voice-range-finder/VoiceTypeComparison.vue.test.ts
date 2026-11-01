@@ -266,6 +266,35 @@ describe('VoiceTypeComparison', () => {
       },
     )
 
+    describe('with See my voice off', () => {
+      const mountOff = () =>
+        mount(VoiceTypeComparison, {
+          props: { liveMidi: null, isListening: false },
+          global: { plugins: [i18n] },
+        })
+
+      test('should fade every voice bar', () => {
+        const wrapper = mountOff()
+
+        expect(
+          wrapper
+            .findAll('[data-testid="voice-type-comparison-row"]')
+            .map((row) => row.attributes('data-faded')),
+        ).toEqual(Array(6).fill('true'))
+        expect(
+          wrapper.find('[data-testid="voice-type-comparison-bar"]').exists(),
+        ).toBe(false)
+      })
+    })
+
+    test('should not fade the bars while listening', () => {
+      expect(
+        mountExplore(60)
+          .find('[data-testid="voice-type-comparison-row"]')
+          .attributes('data-faded'),
+      ).toBeUndefined()
+    })
+
     test('should light up nothing while nothing is sung', () => {
       expect(soundingVoices(mountExplore(null))).toEqual([])
     })

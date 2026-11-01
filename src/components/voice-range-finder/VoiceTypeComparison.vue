@@ -15,9 +15,12 @@ type Props = {
   midiMax?: number
   /* The note being sung right now, fractional so cents move the line; null when silent */
   liveMidi?: number | null
+  /* Exploring only: "See my voice" is on. Off fades every bar, so the chart
+   * reads as asleep rather than as a voice that matches nothing. */
+  isListening?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { isListening: true })
 
 const emit = defineEmits<{
   selectRange: [rangeIndex: number]
@@ -139,6 +142,8 @@ type ChartRow = {
    * solid either way — a bar fading in and out on every note distracted —
    * so the name and end notes carry the signal instead. */
   isSounding: boolean | null
+  /* Exploring only: listening is off, so the whole bar is drawn faint */
+  isFaded: boolean
   /* Exploring only: the voice's own notes, labelled at each end of its bar */
   ends: {
     startLabel: string
@@ -179,6 +184,7 @@ const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>
         isBestFit: row.isBestFit,
       },
       isSounding: null,
+      isFaded: false,
       ends: null,
     }
   })
@@ -204,7 +210,7 @@ const exploreRows = (): ChartRow[] =>
       name,
       ...rowColors(stopIndex),
       voiceStyle,
-      solidStyle: voiceStyle,
+      solidStyle: props.isListening ? voiceStyle : null,
       ariaLabel: t('generic.voiceTypeSpan', {
         name,
         from: formatNote(voice.midiMin),
@@ -212,6 +218,7 @@ const exploreRows = (): ChartRow[] =>
       }),
       comparison: null,
       isSounding,
+      isFaded: !props.isListening,
       ends: {
         startLabel: formatNote(voice.midiMin),
         endLabel: formatNote(voice.midiMax),
@@ -323,6 +330,7 @@ const liveLabel = computed(() => {
         "
         :data-best-fit="row.comparison?.isBestFit"
         :data-sounding="row.isSounding ?? undefined"
+        :data-faded="row.isFaded || undefined"
         :aria-label="row.ariaLabel"
         class="col-span-full grid min-h-6 grid-cols-subgrid items-center rounded border-none bg-transparent p-0 text-start text-(--p-text-color)"
         :class="{ 'cursor-pointer': range }"
