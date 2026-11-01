@@ -61,6 +61,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'tuner.tuningGroups.drop',
     'tuner.tuningItems.ebStandard',
     'circleOfFifths.findLa',
+    'voiceRanges.mezzoSopranoShort',
   ],
   de: [
     'generic.start',
@@ -82,6 +83,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'tuner.tuningGroups.drop',
     'glossary.note.name',
     'voiceRangeFinder.slots.name',
+    'voiceRanges.mezzoSopranoShort',
   ],
   es: [
     'generic.difficulty_normal',
@@ -97,6 +99,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'songRecorder.inputPiano',
     'songRecorder.pianoLabel',
     'glossary.cents.name',
+    'voiceRanges.mezzoSopranoShort',
   ],
   fr: [
     'generic.pause',
@@ -125,6 +128,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'glossary.note.name',
     'glossary.octave.name',
     'glossary.cents.name',
+    'voiceRanges.mezzoSopranoShort',
   ],
   id: [
     'generic.difficulty_normal',
@@ -151,6 +155,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'scale.scaleModes.mixolydian',
     'circleOfFifths.mode',
     'circleOfFifths.relativeMinor',
+    'voiceRanges.mezzoSopranoShort',
   ],
   pt: [
     'generic.difficulty_normal',
@@ -167,6 +172,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'songRecorder.inputPiano',
     'songRecorder.pianoLabel',
     'glossary.cents.name',
+    'voiceRanges.mezzoSopranoShort',
   ],
   sw: [
     'generic.tempo',
@@ -181,6 +187,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'songRecorder.inputPiano',
     'songRecorder.pianoLabel',
     'circleOfFifths.relativeMinor',
+    'voiceRanges.mezzoSopranoShort',
   ],
 }
 

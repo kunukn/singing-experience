@@ -52,6 +52,14 @@ describe('VoiceTypeComparison', () => {
     )
   })
 
+  test('should show Mezzo-Soprano by its short name and read out the full one', () => {
+    const mezzo = rowFor(mountComparison(), 'voiceRanges.mezzoSoprano')
+
+    expect(mezzo.text()).toContain('Mezzo')
+    expect(mezzo.text()).not.toContain('Mezzo-Soprano')
+    expect(mezzo.attributes('aria-label')).toContain('Mezzo-Soprano')
+  })
+
   test('should point both ways when the range sits inside the voice', () => {
     const bass = rowFor(mountComparison(), 'voiceRanges.bass')
 

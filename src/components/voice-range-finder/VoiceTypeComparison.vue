@@ -131,10 +131,22 @@ const trackStyle = (midiMin: number, midiMax: number) => ({
   width: `${toPercent(midiMax) - toPercent(midiMin)}%`,
 })
 
+/* The name column is as wide as its longest name, so one long name squeezes
+ * every bar on a phone. Rows show the short name singers use ("Mezzo"); the
+ * aria label keeps the full one. */
+const SHORT_LABEL_KEYS: Partial<Record<string, string>> = {
+  'voiceRanges.mezzoSoprano': 'voiceRanges.mezzoSopranoShort',
+}
+
+const shortName = (labelKey: string) =>
+  t(SHORT_LABEL_KEYS[labelKey] ?? labelKey)
+
 type ChartRow = {
   labelKey: string
   rangeIndex: number
   name: string
+  /* What the row shows; `name` stays the full name for the aria label */
+  shortName: string
   color: string
   faintColor: string
   voiceStyle: ReturnType<typeof trackStyle>
@@ -177,6 +189,7 @@ const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>
       labelKey: row.labelKey,
       rangeIndex: row.rangeIndex,
       name,
+      shortName: shortName(row.labelKey),
       ...rowColors(row.stopIndex),
       voiceStyle: trackStyle(row.voiceMin, row.voiceMax),
       solidStyle:
@@ -218,6 +231,7 @@ const exploreRows = (): ChartRow[] =>
       labelKey: voice.labelKey,
       rangeIndex,
       name,
+      shortName: shortName(voice.labelKey),
       ...rowColors(stopIndex),
       voiceStyle,
       solidStyle: props.isListening ? voiceStyle : null,
@@ -352,7 +366,7 @@ const liveLabel = computed(() => {
           class="text-xs whitespace-nowrap"
           :class="{ 'font-semibold': row.comparison.isBestFit }"
         >
-          {{ row.name }}
+          {{ row.shortName }}
         </span>
         <!--
           Exploring lights the name in its voice's colour and a faux bold. Real
@@ -371,7 +385,7 @@ const liveLabel = computed(() => {
           "
           :style="row.isSounding ? { color: row.color } : undefined"
         >
-          {{ row.name }}
+          {{ row.shortName }}
         </span>
         <!--
           Pinned left-to-right: a horizontal pitch axis runs low → high in every
