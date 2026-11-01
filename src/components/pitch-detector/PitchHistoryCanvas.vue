@@ -828,18 +828,15 @@ function stopRendering() {
 function handlePointerAt(x: number, y: number) {
   if (props.isListening) return
 
-  /* Reverse order so the topmost pill wins where two voices overlap — the high
-   * lane's markers are painted last. */
-  const hit = markerHitAreas
-    .slice()
-    .reverse()
-    .find(
-      (area) =>
-        x >= area.x &&
-        x <= area.x + area.w &&
-        y >= area.y &&
-        y <= area.y + area.h,
-    )
+  /* Searched from the end so the topmost pill wins where two voices overlap —
+   * the high lane's markers are painted last. */
+  const hit = markerHitAreas.findLast(
+    (area) =>
+      x >= area.x &&
+      x <= area.x + area.w &&
+      y >= area.y &&
+      y <= area.y + area.h,
+  )
   if (!hit) return
 
   emit('markerClick', hit.midiNote)
