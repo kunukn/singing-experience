@@ -67,6 +67,7 @@ function toggleExpanded() {
 }
 
 const slotListId = useId()
+const editorFormId = useId()
 
 /* null while the dialog is closed */
 const editingIndex = ref<number | null>(null)
@@ -231,8 +232,16 @@ function clearEditingSlot() {
       class="w-80 max-w-[90vw]"
       data-testid="range-slot-dialog"
     >
-      <!-- Same label | select columns as the My range pickers -->
-      <div class="grid grid-cols-[auto_1fr] items-center gap-x-2 gap-y-2">
+      <!--
+        A real form so Enter in the name field (or a phone's Go key) submits
+        it like Save. Same label | select columns as the My range pickers.
+      -->
+      <form
+        :id="editorFormId"
+        class="grid grid-cols-[auto_1fr] items-center gap-x-2 gap-y-2"
+        data-testid="range-slot-form"
+        @submit.prevent="saveDraft"
+      >
         <label class="col-span-2 grid grid-cols-subgrid items-center">
           <span class="text-sm">{{ t('voiceRangeFinder.slots.name') }}</span>
           <PrimeInputText
@@ -269,7 +278,7 @@ function clearEditingSlot() {
             data-testid="range-slot-lowest"
           />
         </label>
-      </div>
+      </form>
 
       <template #footer>
         <div class="flex w-full items-center gap-2">
@@ -292,12 +301,14 @@ function clearEditingSlot() {
             class="ms-auto"
             @click="isDialogVisible = false"
           />
+          <!-- The footer renders outside the form; `form` links Save back to it -->
           <PrimeButton
+            type="submit"
+            :form="editorFormId"
             :label="t('voiceRangeFinder.slots.save')"
             size="small"
             rounded
             data-testid="range-slot-save"
-            @click="saveDraft"
           />
         </div>
       </template>

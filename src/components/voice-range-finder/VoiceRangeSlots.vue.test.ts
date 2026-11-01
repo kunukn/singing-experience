@@ -89,6 +89,22 @@ describe('VoiceRangeSlots', () => {
     })
   })
 
+  /* Enter in the name field submits the form natively; the test fires that
+   * submit directly since the DOM shim doesn't do implicit submission. */
+  test('should save when the editor form is submitted', async () => {
+    const wrapper = mountSlots()
+
+    await wrapper.get('[data-testid="range-slot-edit-1"]').trigger('click')
+    await wrapper.get('[data-testid="range-slot-name"]').setValue('Stretch')
+    await wrapper.get('[data-testid="range-slot-form"]').trigger('submit')
+
+    expect(wrapper.find('[data-testid="range-slot-form"]').exists()).toBe(false)
+    expect(slotButton(wrapper, 1).text()).toContain('Stretch')
+    expect(JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]')[0].name).toBe(
+      'Stretch',
+    )
+  })
+
   test('should clear a slot from its editor', async () => {
     const wrapper = mountSlots()
 
