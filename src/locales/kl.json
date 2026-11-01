@@ -268,7 +268,6 @@
   "voiceRangeFinder": {
     "highest": "Highest note",
     "lowest": "Lowest note",
-    "reset": "Reset",
     "findBySinging": "Find it by singing",
     "lowPrompt": "Sing a low note and hold it. Then try a little lower!",
     "highPrompt": "Sing a high note and hold it. Then try a little higher! Only clean notes count.",
@@ -394,7 +393,6 @@
     "songRange": "Nipit annertussusia",
     "pickRangeHeader": "Pick a range that fits your voice",
     "pickRangeFooter": "⭐ = a good place to start",
-    "tune": "Tune",
     "tunePrompt": "Sing a low note that feels easy and hold it",
     "tuned": "Song range: {range}",
     "tuneTooLow": "Very low! Closest range: {range}",

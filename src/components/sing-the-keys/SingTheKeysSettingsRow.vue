@@ -83,15 +83,15 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
           :accidentalStyle="props.accidentalStyle"
           :disabled="props.isRunning"
         />
+        <!-- Says "Sing" rather than show a mic: the mic icon means "See my voice" everywhere else -->
         <PrimeButton
-          icon="pi pi-microphone"
+          :label="t('generic.sing')"
           size="small"
           rounded
           :severity="props.isTuning ? 'primary' : 'secondary'"
           :disabled="props.isTuneDisabled"
-          :aria-label="t('singTheKeys.tune')"
+          :aria-label="`${t('generic.sing')}: ${t('singTheKeys.songRange')}`"
           :aria-pressed="props.isTuning"
-          :title="t('singTheKeys.tune')"
           data-testid="sing-the-keys-tune"
           @click="emit('tune')"
         />

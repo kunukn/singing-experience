@@ -39,7 +39,7 @@ const octaveOptions = [7, 6, 5, 4, 3, 2]
     </h1>
 
     <div
-      class="flex w-full max-w-md flex-wrap items-end gap-4 rounded-lg bg-(--p-content-background) p-4"
+      class="flex w-full flex-wrap items-end gap-4 rounded-lg bg-(--p-content-background) p-4"
     >
       <div class="flex flex-col gap-1">
         <label class="text-xs text-(--p-text-muted-color)">Note</label>

@@ -146,12 +146,21 @@ describe('VoiceTypeComparison', () => {
     })
   })
 
-  test('should mark every C above the tracks', () => {
+  test('should mark the Bass bottom and every C above the tracks', () => {
     expect(
       mountComparison()
         .findAll('[data-testid="voice-type-comparison-tick"]')
         .map((tick) => tick.text()),
-    ).toEqual(['C3', 'C4', 'C5', 'C6'])
+    ).toEqual(['E2', 'C3', 'C4', 'C5', 'C6'])
+  })
+
+  test('should keep the Bass bottom mark when the range runs below it', () => {
+    /* C2–C4: the axis widens to C2, so E2 sits inside it */
+    expect(
+      mountComparison(36, 60)
+        .findAll('[data-testid="voice-type-comparison-tick"]')
+        .map((tick) => tick.text()),
+    ).toEqual(['C2', 'E2', 'C3', 'C4', 'C5', 'C6'])
   })
 
   test('should not label voice ends beside My range', () => {
@@ -253,6 +262,46 @@ describe('VoiceTypeComparison', () => {
           .find('[data-testid="voice-type-comparison-tick"]')
           .exists(),
       ).toBe(false)
+    })
+
+    test.each([null, 79.2])(
+      'should draw every voice bar whole, sung note or not (%s)',
+      (liveMidi) => {
+        const bars = mountExplore(liveMidi).findAll(
+          '[data-testid="voice-type-comparison-bar"]',
+        )
+
+        expect(bars).toHaveLength(6)
+      },
+    )
+
+    describe('with See my voice off', () => {
+      const mountOff = () =>
+        mount(VoiceTypeComparison, {
+          props: { liveMidi: null, isListening: false },
+          global: { plugins: [i18n] },
+        })
+
+      test('should fade every voice bar', () => {
+        const wrapper = mountOff()
+
+        expect(
+          wrapper
+            .findAll('[data-testid="voice-type-comparison-row"]')
+            .map((row) => row.attributes('data-faded')),
+        ).toEqual(Array(6).fill('true'))
+        expect(
+          wrapper.find('[data-testid="voice-type-comparison-bar"]').exists(),
+        ).toBe(false)
+      })
+    })
+
+    test('should not fade the bars while listening', () => {
+      expect(
+        mountExplore(60)
+          .find('[data-testid="voice-type-comparison-row"]')
+          .attributes('data-faded'),
+      ).toBeUndefined()
     })
 
     test('should light up nothing while nothing is sung', () => {

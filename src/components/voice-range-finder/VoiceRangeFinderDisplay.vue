@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useTimeoutFn } from '@vueuse/core'
-import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
 import { MY_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import {
   type MidiRange,
@@ -65,7 +64,7 @@ const activeTab = computed<FinderTab>({
   },
 })
 
-const { myVoiceRange, setMyVoiceRange, resetMyVoiceRange } = useMyVoiceRange()
+const { myVoiceRange, setMyVoiceRange } = useMyVoiceRange()
 
 /* The app-wide range selection every program shares, so a saved range is
  * already picked the next time the singer opens a game. */
@@ -366,7 +365,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="flex w-full max-w-md flex-col items-center gap-4">
+  <div class="flex w-full flex-col items-center gap-4">
     <PrimeTabs
       v-model:value="activeTab"
       class="flex w-full flex-col gap-4"
@@ -384,11 +383,11 @@ onUnmounted(() => {
       <PrimeTabPanels class="w-full p-0">
         <PrimeTabPanel value="range" class="flex flex-col items-center gap-4">
           <section
-            class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
+            class="flex w-full flex-col gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
             data-testid="my-range-card"
           >
-            <!-- Label and range share a line to save height on phones; wraps back to stacked if a translation can't fit -->
-            <div class="flex flex-wrap items-baseline justify-center gap-x-3">
+            <!-- Stat-tile header: small label over the range -->
+            <div class="flex flex-col items-start">
               <h2 class="text-sm font-medium text-(--p-text-muted-color)">
                 {{ t('voiceRanges.myRange') }}
               </h2>
@@ -417,11 +416,21 @@ onUnmounted(() => {
               </p>
             </div>
 
-            <!-- Mic buttons sit outside the labels, so a tap isn't forwarded to the select -->
-            <div class="flex w-full flex-col gap-2">
-              <div class="flex items-center gap-1">
-                <label class="flex flex-1 items-center justify-between gap-3">
-                  <span class="text-sm">{{
+            <!--
+              Sing buttons sit outside the labels, so a tap isn't forwarded to the select.
+              They say "Sing" rather than show a mic: the mic icon means "See my voice"
+              everywhere else. Label | select | Sing columns are shared through subgrid,
+              so both selects line up after the longest label in any language. They are
+              filled pills, as in Sing the Keys: text-only, they read as a caption beside
+              the bordered selects. gap-x-1 keeps each pill tight to its select, so the
+              two read as one control; the label's me-2 gives it the wider gap.
+            -->
+            <div
+              class="grid grid-cols-[auto_auto_auto] items-center gap-x-1 gap-y-2 self-start"
+            >
+              <div class="col-span-3 grid grid-cols-subgrid items-center">
+                <label class="col-span-2 grid grid-cols-subgrid items-center">
+                  <span class="me-2 text-sm">{{
                     t('voiceRangeFinder.highest')
                   }}</span>
                   <PrimeSelect
@@ -436,21 +445,19 @@ onUnmounted(() => {
                   />
                 </label>
                 <PrimeButton
-                  icon="pi pi-microphone"
-                  :pt="LARGE_SMALL_BUTTON_ICON_PT"
+                  :label="t('generic.sing')"
                   severity="secondary"
                   size="small"
                   rounded
-                  text
                   :disabled="isSearching"
-                  :aria-label="`${t('voiceRangeFinder.findBySinging')}: ${t('voiceRangeFinder.highest')}`"
+                  :aria-label="`${t('generic.sing')}: ${t('voiceRangeFinder.highest')}`"
                   data-testid="my-range-sing-highest"
                   @click="startSearch('high')"
                 />
               </div>
-              <div class="flex items-center gap-1">
-                <label class="flex flex-1 items-center justify-between gap-3">
-                  <span class="text-sm">{{
+              <div class="col-span-3 grid grid-cols-subgrid items-center">
+                <label class="col-span-2 grid grid-cols-subgrid items-center">
+                  <span class="me-2 text-sm">{{
                     t('voiceRangeFinder.lowest')
                   }}</span>
                   <PrimeSelect
@@ -465,14 +472,12 @@ onUnmounted(() => {
                   />
                 </label>
                 <PrimeButton
-                  icon="pi pi-microphone"
-                  :pt="LARGE_SMALL_BUTTON_ICON_PT"
+                  :label="t('generic.sing')"
                   severity="secondary"
                   size="small"
                   rounded
-                  text
                   :disabled="isSearching"
-                  :aria-label="`${t('voiceRangeFinder.findBySinging')}: ${t('voiceRangeFinder.lowest')}`"
+                  :aria-label="`${t('generic.sing')}: ${t('voiceRangeFinder.lowest')}`"
                   data-testid="my-range-sing-lowest"
                   @click="startSearch('low')"
                 />
@@ -491,16 +496,6 @@ onUnmounted(() => {
               :liveMidi="chartLiveMidi"
               @selectRange="adoptVoiceType"
             />
-
-            <PrimeButton
-              severity="secondary"
-              size="small"
-              rounded
-              text
-              @click="resetMyVoiceRange"
-            >
-              {{ t('voiceRangeFinder.reset') }}
-            </PrimeButton>
           </section>
 
           <div v-if="step === 'idle'" class="flex items-center gap-2">
@@ -672,7 +667,10 @@ onUnmounted(() => {
         </PrimeTabPanel>
 
         <PrimeTabPanel value="explore" class="flex flex-col items-center gap-4">
-          <VoiceRangeExplorePanel :liveMidi="chartLiveMidi" />
+          <VoiceRangeExplorePanel
+            :liveMidi="chartLiveMidi"
+            :isListening="isPreviewEnabled"
+          />
           <PreviewToggle
             v-model="isPreviewEnabled"
             :disabled="!simulateIdlePreview && micPermission === 'denied'"

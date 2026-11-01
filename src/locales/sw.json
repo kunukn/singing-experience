@@ -325,7 +325,6 @@
   "voiceRangeFinder": {
     "highest": "Noti ya juu kabisa",
     "lowest": "Noti ya chini kabisa",
-    "reset": "Weka upya",
     "findBySinging": "Tafuta kwa kuimba",
     "lowPrompt": "Imba noti ya chini na uishikilie. Kisha jaribu chini kidogo zaidi!",
     "highPrompt": "Imba noti ya juu na uishikilie. Kisha jaribu juu kidogo zaidi! Noti safi tu ndizo zinahesabiwa.",
@@ -505,7 +504,6 @@
     "songRange": "Kiwango cha sauti",
     "pickRangeHeader": "Chagua kiwango kinachofaa sauti yako",
     "pickRangeFooter": "⭐ = mahali pazuri pa kuanzia",
-    "tune": "Tunisha",
     "tunePrompt": "Imba noti ya chini inayokuwia rahisi na uishikilie",
     "tuned": "Kiwango cha sauti: {range}",
     "tuneTooLow": "Chini sana! Kiwango kilicho karibu: {range}",

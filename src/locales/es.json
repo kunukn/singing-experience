@@ -325,7 +325,6 @@
   "voiceRangeFinder": {
     "highest": "Nota más aguda",
     "lowest": "Nota más grave",
-    "reset": "Restablecer",
     "findBySinging": "Encontrarlo cantando",
     "lowPrompt": "Canta una nota grave y mantenla. ¡Luego prueba un poco más grave!",
     "highPrompt": "Canta una nota aguda y mantenla. ¡Luego prueba un poco más aguda! Solo cuentan las notas limpias.",
@@ -505,7 +504,6 @@
     "songRange": "Rango",
     "pickRangeHeader": "Elige un rango que vaya con tu voz",
     "pickRangeFooter": "⭐ = un buen punto de partida",
-    "tune": "Afinar",
     "tunePrompt": "Canta una nota grave que te salga fácil y mantenla",
     "tuned": "Rango: {range}",
     "tuneTooLow": "¡Muy grave! Rango más cercano: {range}",

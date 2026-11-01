@@ -325,7 +325,6 @@
   "voiceRangeFinder": {
     "highest": "Nota mais aguda",
     "lowest": "Nota mais grave",
-    "reset": "Redefinir",
     "findBySinging": "Descobrir cantando",
     "lowPrompt": "Cante uma nota grave e segure. Depois tente um pouco mais grave!",
     "highPrompt": "Cante uma nota aguda e segure. Depois tente um pouco mais aguda! Só contam notas limpas.",
@@ -505,7 +504,6 @@
     "songRange": "Extensão",
     "pickRangeHeader": "Escolha uma extensão que combine com sua voz",
     "pickRangeFooter": "⭐ = um bom começo",
-    "tune": "Afinar",
     "tunePrompt": "Cante uma nota grave que saia fácil e segure",
     "tuned": "Extensão: {range}",
     "tuneTooLow": "Muito grave! Extensão mais próxima: {range}",

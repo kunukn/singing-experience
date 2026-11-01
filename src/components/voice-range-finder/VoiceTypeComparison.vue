@@ -15,9 +15,12 @@ type Props = {
   midiMax?: number
   /* The note being sung right now, fractional so cents move the line; null when silent */
   liveMidi?: number | null
+  /* Exploring only: "See my voice" is on. Off fades every bar, so the chart
+   * reads as asleep rather than as a voice that matches nothing. */
+  isListening?: boolean
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { isListening: true })
 
 const emit = defineEmits<{
   selectRange: [rangeIndex: number]
@@ -60,18 +63,28 @@ const axisMax = computed(() =>
 const toPercent = (midi: number) =>
   ((midi - axisMin.value) / (axisMax.value - axisMin.value)) * 100
 
-/* Every C on the axis, as orientation marks for the tracks */
+/* The lowest note any voice type sings — Bass's E2 (VOICE_TYPES is sorted low first) */
+const LOWEST_VOICE_MIDI = VOICE_TYPES[0]!.range.midiMin
+
+/* Every C on the axis, as orientation marks for the tracks. Beside My range
+ * the Bass bottom joins them, so the chart's low end is named like C6 names
+ * its top. Exploring leaves it out: Bass's own bar-end label names it there. */
 const ticks = computed(() => {
   const firstC = Math.ceil(axisMin.value / 12) * 12
-
-  return Array.from(
+  const cs = Array.from(
     { length: Math.floor((axisMax.value - firstC) / 12) + 1 },
-    (_, index) => {
-      const midi = firstC + index * 12
-
-      return { midi, label: midiToNoteLabel(midi).label, left: toPercent(midi) }
-    },
+    (_, index) => firstC + index * 12,
   )
+  const midis =
+    range.value && !cs.includes(LOWEST_VOICE_MIDI)
+      ? [LOWEST_VOICE_MIDI, ...cs].sort((a, b) => a - b)
+      : cs
+
+  return midis.map((midi) => ({
+    midi,
+    label: midiToNoteLabel(midi).label,
+    left: toPercent(midi),
+  }))
 })
 
 const percentFormat = computed(
@@ -135,8 +148,12 @@ type ChartRow = {
     hint: string
     isBestFit: boolean
   } | null
-  /* Exploring only: the live note sits inside this voice */
+  /* Exploring only: the live note sits inside this voice. The bar stays
+   * solid either way — a bar fading in and out on every note distracted —
+   * so the name and end notes carry the signal instead. */
   isSounding: boolean | null
+  /* Exploring only: listening is off, so the whole bar is drawn faint */
+  isFaded: boolean
   /* Exploring only: the voice's own notes, labelled at each end of its bar */
   ends: {
     startLabel: string
@@ -177,6 +194,7 @@ const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>
         isBestFit: row.isBestFit,
       },
       isSounding: null,
+      isFaded: false,
       ends: null,
     }
   })
@@ -202,7 +220,7 @@ const exploreRows = (): ChartRow[] =>
       name,
       ...rowColors(stopIndex),
       voiceStyle,
-      solidStyle: isSounding ? voiceStyle : null,
+      solidStyle: props.isListening ? voiceStyle : null,
       ariaLabel: t('generic.voiceTypeSpan', {
         name,
         from: formatNote(voice.midiMin),
@@ -210,6 +228,7 @@ const exploreRows = (): ChartRow[] =>
       }),
       comparison: null,
       isSounding,
+      isFaded: !props.isListening,
       ends: {
         startLabel: formatNote(voice.midiMin),
         endLabel: formatNote(voice.midiMax),
@@ -321,26 +340,36 @@ const liveLabel = computed(() => {
         "
         :data-best-fit="row.comparison?.isBestFit"
         :data-sounding="row.isSounding ?? undefined"
+        :data-faded="row.isFaded || undefined"
         :aria-label="row.ariaLabel"
         class="col-span-full grid min-h-6 grid-cols-subgrid items-center rounded border-none bg-transparent p-0 text-start text-(--p-text-color)"
         :class="{ 'cursor-pointer': range }"
         @click="selectRow(row)"
       >
+        <span
+          v-if="row.comparison"
+          aria-hidden="true"
+          class="text-xs whitespace-nowrap"
+          :class="{ 'font-semibold': row.comparison.isBestFit }"
+        >
+          {{ row.name }}
+        </span>
         <!--
-          Exploring lights the name with colour, not weight: the name column is
-          auto-sized, so a bold name changing on every note shifted the bars.
-          Best fit can stay bold — it only changes when the range is edited.
+          Exploring lights the name in its voice's colour and a faux bold. Real
+          bold glyphs are wider, so the word visibly stretched on every note; a
+          text stroke is paint only and thickens each letter in place.
+          0.4px ≈ the stem gain from regular to semibold at 12px.
         -->
         <span
+          v-else
           aria-hidden="true"
           class="text-xs whitespace-nowrap"
           :class="
-            row.comparison
-              ? { 'font-semibold': row.comparison.isBestFit }
-              : row.isSounding
-                ? 'text-(--p-text-color)'
-                : 'text-(--p-text-muted-color)'
+            row.isSounding
+              ? '[-webkit-text-stroke:0.4px_currentColor]'
+              : 'text-(--p-text-muted-color)'
           "
+          :style="row.isSounding ? { color: row.color } : undefined"
         >
           {{ row.name }}
         </span>
@@ -362,6 +391,7 @@ const liveLabel = computed(() => {
           />
           <span
             v-if="row.solidStyle"
+            data-testid="voice-type-comparison-bar"
             class="absolute top-1/2 h-2 -translate-y-1/2 rounded-full"
             :style="{ ...row.solidStyle, backgroundColor: row.color }"
           />
@@ -370,24 +400,22 @@ const liveLabel = computed(() => {
             <span
               data-testid="voice-type-comparison-voice-start"
               class="absolute top-1/2 -translate-x-full -translate-y-1/2 pe-1 text-[10px] whitespace-nowrap tabular-nums"
-              :class="
-                row.isSounding
-                  ? 'text-(--p-text-color)'
-                  : 'text-(--p-text-muted-color)'
-              "
-              :style="{ insetInlineStart: `${row.ends.startLeft}%` }"
+              :class="{ 'text-(--p-text-muted-color)': !row.isSounding }"
+              :style="{
+                insetInlineStart: `${row.ends.startLeft}%`,
+                color: row.isSounding ? row.color : undefined,
+              }"
             >
               {{ row.ends.startLabel }}
             </span>
             <span
               data-testid="voice-type-comparison-voice-end"
               class="absolute top-1/2 -translate-y-1/2 ps-1 text-[10px] whitespace-nowrap tabular-nums"
-              :class="
-                row.isSounding
-                  ? 'text-(--p-text-color)'
-                  : 'text-(--p-text-muted-color)'
-              "
-              :style="{ insetInlineStart: `${row.ends.endLeft}%` }"
+              :class="{ 'text-(--p-text-muted-color)': !row.isSounding }"
+              :style="{
+                insetInlineStart: `${row.ends.endLeft}%`,
+                color: row.isSounding ? row.color : undefined,
+              }"
             >
               {{ row.ends.endLabel }}
             </span>

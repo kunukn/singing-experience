@@ -325,7 +325,6 @@
   "voiceRangeFinder": {
     "highest": "Nada tertinggi",
     "lowest": "Nada terendah",
-    "reset": "Atur ulang",
     "findBySinging": "Cari dengan bernyanyi",
     "lowPrompt": "Nyanyikan nada rendah dan tahan. Lalu coba sedikit lebih rendah!",
     "highPrompt": "Nyanyikan nada tinggi dan tahan. Lalu coba sedikit lebih tinggi! Hanya nada yang bersih yang dihitung.",
@@ -505,7 +504,6 @@
     "songRange": "Rentang nada",
     "pickRangeHeader": "Pilih rentang nada yang pas untuk suaramu",
     "pickRangeFooter": "⭐ = awal yang bagus",
-    "tune": "Setel",
     "tunePrompt": "Nyanyikan nada rendah yang terasa mudah dan tahan",
     "tuned": "Rentang nada: {range}",
     "tuneTooLow": "Rendah sekali! Rentang terdekat: {range}",
