@@ -227,72 +227,16 @@ The app supports RTL languages (Arabic). All spacing, alignment, and positioning
 
 Physical `top`/`bottom` and `mt-*`/`mb-*` are fine — they don't flip in RTL.
 
-### Vertical Ordering — more at the top
+### Product Design Rules
 
-**Anything with a magnitude reads high at the top and low at the bottom.** It starts with pitch, because this is a singing app and every chart draws high notes up top — [midiToChartY](src/utils/chartGrid.ts) inverts the ratio for exactly that reason — but the same mindset carries to every measurable quantity in a vertical list, so a dropdown reads the way the charts do.
+Product and design rules that hold across every program live in [docs/product/design-rules.md](docs/product/design-rules.md), with the reasoning, including rejected options, in [docs/product/decisions/](docs/product/decisions/). Read the matching section before touching its area:
 
-**Pitch**
+- **Vertical Ordering** (any dropdown or list with a magnitude): anything with a magnitude reads high at the top, low at the bottom. Pitch, seconds, BPM, counts. Guarded by `voiceRanges.test.ts`.
+- **Pitch Accuracy Thresholds** (anything judging "how in tune"): import `CLEAN_CENTS` / `CLOSE_CENTS` / `OFF_CENTS` from `pitchColors.ts`; never hardcode 10/20/50¢. Scoring tolerance is a separate concept.
+- **Pitch Colours** (any cents colour): green when clean, yellow → red when sharp, blue when flat, through the `pitchColors.ts` helpers only. Guarded by the "pitch colour rule" tests.
+- **Copy Tone** (any user-facing text): friendly, plain, child-friendly. Per-language rules in `translation.instructions.md`.
 
-- **Order pitch options high to low.** Soprano before Bass, C5 before C3. [NOTE_NAMES_HIGH_TO_LOW and NOTE_OPTIONS_HIGH_TO_LOW](src/utils/noteUtils.ts) already encode this for single notes — reach for them instead of re-sorting by hand.
-- **A range sorts on its midpoint**, `(midiMin + midiMax) / 2` descending, because a span has no single pitch. Sorting a span by its top or bottom note gives a list that reads wrong.
-- **Catch-all options go last**, below the pitch-ordered ones — `choir` and `full` in [VOICE_RANGES](src/constants/voiceRanges.ts).
-
-**Every other quantity — same direction**
-
-Seconds, BPM, counts, semitone steps: the **largest value sits at the top**, the smallest at the bottom. Hold duration runs `1s` down to `0.05s`; Step runs `5` down to `1`. Build the list in whatever order reads best in source, then reverse it at the point of use:
-
-```typescript
-/* ✅ Largest first, matching every other dropdown in the app */
-const durationOptions = [...HOLD_DURATION_OPTIONS].toReversed()
-const bpmOptions = [...ALLOWED_BPMS].sort((a, b) => b - a)
-
-/* ❌ Ascending — reads upside down next to its siblings */
-const durationOptions = [0.05, 0.1, 0.2, 0.5, 1]
-```
-
-Always copy before sorting: `.sort()` mutates, and these option arrays are usually shared module constants.
-
-**What this rule does not cover**
-
-- **Named ordinal scales** keep their conventional order — difficulty stays Easy, Normal, Hard. The rule is about measurable quantities, not every list that happens to have an order.
-- **Pitch _classes_ are not pitches.** [SCALE_ROOT_OPTIONS](src/utils/scaleHighlight.ts) lists keys C → B ascending and stays that way. A key has no octave — picking D highlights every D on the instrument — so the chromatic circle has no top or bottom to sort by, and listing keys from C is the universal convention. Pinned by `scaleHighlight.test.ts`.
-- **Lists with no magnitude at all** — timbres, scale modes, tunings, languages — are ordered however suits them.
-- **A horizontal control flips**: left to right runs low to high, the way a keyboard does. See the comment in [GraceKellyPartLadder.vue](src/components/grace-kelly/GraceKellyPartLadder.vue), which stacks vertically high-first and lays out horizontally low-first.
-
-The pitch half is guarded by [voiceRanges.test.ts](src/constants/voiceRanges.test.ts), which asserts the rule rather than snapshotting today's order. Adding another ordered list? Add a case there too.
-
-### Pitch Accuracy Thresholds
-
-Three shared tiers in [pitchColors.ts](src/utils/pitchColors.ts) define "how in tune" across every program:
-
-| Constant      | Value | Meaning                                                |
-| ------------- | ----- | ------------------------------------------------------ |
-| `CLEAN_CENTS` | 10¢   | Spot on — studio-tight (green)                         |
-| `CLOSE_CENTS` | 20¢   | Clean / on pitch — a trained singer's typical accuracy |
-| `OFF_CENTS`   | 50¢   | Half a semitone — clearly off; colour saturates to red |
-
-- **Import these; never hardcode 10/20/50 or add a feature-local copy.** Colours, the Do-Re-Mi difficulty rules, `isOnPitch()` and the Focus tab bands all read them, so a change moves every program together.
-- **Comments name the constant, not the number** — write "within `CLOSE_CENTS`", not "within ±20¢", so a retune can't leave stale text behind.
-- **Scoring tolerance is a separate concept.** `SCORE_TOLERANCE_CENTS` (±50¢, [useDwellSingScore.ts](src/composables/useDwellSingScore.ts)) decides right note vs wrong note for points and stays forgiving for children. Don't reuse `CLOSE_CENTS` for it, or vice versa.
-
-The tier order is guarded by `pitchColors.test.ts`.
-
-### Pitch Colours
-
-Every cents colour in every program speaks one language, built on the tiers above:
-
-| Pitch                        | Colour                    |
-| ---------------------------- | ------------------------- |
-| Clean (within `CLEAN_CENTS`) | **Green**                 |
-| Sharp (positive cents)       | **Yellow → orange → red** |
-| Flat (negative cents)        | **Blue → deep blue**      |
-
-- **Use the helpers in [pitchColors.ts](src/utils/pitchColors.ts); never hardcode a pitch colour.** `directionalTextColor` for text and thin lines (theme-aware), `directionalCleanColor` / `directionalCleanColorRgb` for canvas trails and bars, `usePitchPreviewColor().colorForCents` for idle "See my voice" previews.
-- **Brightness separates thin lines, not hue.** On a 1–2 px line or a small dot the eye barely tells blue from green, so the clean green stays clearly brighter than every flat blue, and flat never uses sky or cyan (as bright as the green). The 10–20¢ fade is eased, so it is past the teal mix of green and blue within a few cents.
-- **Green also means success.** A game target hit, the Tuner's in-tune ring, a "correct note" line. During a game the singer's preview line stays the neutral orange, so green there only ever means "you hit it".
-- **Other colours keep off the pitch hues.** A colour that says _who_ or _what_ rather than _how in tune_ must avoid green, blue and the yellow → red ramp. The duet high-lane is violet for this reason.
-
-The rule is guarded by the "pitch colour rule" tests in `pitchColors.test.ts`. They assert the hues and the brightness gap, not exact shades, so a retune passes as long as it keeps the rule.
+Changing one of these rules? Update its section in `design-rules.md` and add a decision record.
 
 ### Color Variables
 
@@ -513,8 +457,8 @@ If `.temp/` does not exist, create it first.
 - ✅ Do not manually import `ref`, `computed`, `watch`, etc. from `vue` — they are auto-imported
 - ✅ Co-locate domain-specific composables, types, and tests with their feature folder — only shared composables stay in `src/composables/`
 - ✅ Use CSS logical properties (`ms-*`, `me-*`, `start`, `end`) — never physical `ml-*`/`mr-*`/`left`/`right` for horizontal spacing or alignment
-- ✅ Order dropdowns by magnitude, largest at the top — pitch, seconds, BPM, counts — see "Vertical Ordering"
-- ✅ Pitch thresholds come from `CLEAN_CENTS` / `CLOSE_CENTS` / `OFF_CENTS` — never hardcoded cents (see "Pitch Accuracy Thresholds")
+- ✅ Order dropdowns by magnitude, largest at the top — pitch, seconds, BPM, counts — see "Vertical Ordering" in [design-rules.md](docs/product/design-rules.md)
+- ✅ Pitch thresholds come from `CLEAN_CENTS` / `CLOSE_CENTS` / `OFF_CENTS` — never hardcoded cents; pitch colours come from the `pitchColors.ts` helpers (see [design-rules.md](docs/product/design-rules.md))
 - ✅ Use PrimeVue CSS variables (`--p-*`) for all colors with Tailwind v4 shorthand `text-(--p-*)` — never Tailwind color palette classes (`text-red-400`, `bg-green-500`)
 - ✅ Wrap user-facing strings with `$t()` / `t()` for i18n — never hardcode display text
 - ✅ Keep translated copy informal and child-friendly — see "i18n Copy & Translations"
