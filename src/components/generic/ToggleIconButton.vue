@@ -1,7 +1,11 @@
 <script setup lang="ts">
 import { useBreakpoints, breakpointsTailwind } from '@vueuse/core'
 import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
-import type { ToggleLabelBreakpoint, ToggleLabelFrom } from './toggleIconButton'
+import {
+  TOGGLE_LABEL_XS_PX,
+  type ToggleLabelBreakpoint,
+  type ToggleLabelFrom,
+} from './toggleIconButton'
 
 type Props = {
   iconOn: string
@@ -24,8 +28,12 @@ const modelValue = defineModel<boolean>({ required: true })
  * (rounded + p-button-icon-only), no CSS overrides needed. The media queries
  * are made once here: creating them inside the computed would add listeners
  * on every re-run. */
-const breakpoints = useBreakpoints(breakpointsTailwind)
+const breakpoints = useBreakpoints({
+  ...breakpointsTailwind,
+  xs: TOGGLE_LABEL_XS_PX,
+})
 const isAtLeast: Record<ToggleLabelBreakpoint, Ref<boolean>> = {
+  xs: breakpoints.greaterOrEqual('xs'),
   sm: breakpoints.greaterOrEqual('sm'),
   md: breakpoints.greaterOrEqual('md'),
   lg: breakpoints.greaterOrEqual('lg'),

@@ -40,6 +40,8 @@ describe('ToggleIconButton', () => {
   test.each([
     { labelFrom: undefined, width: 767, isShown: false },
     { labelFrom: undefined, width: 768, isShown: true },
+    { labelFrom: 'xs', width: 479, isShown: false },
+    { labelFrom: 'xs', width: 480, isShown: true },
     { labelFrom: 'sm', width: 639, isShown: false },
     { labelFrom: 'sm', width: 640, isShown: true },
     { labelFrom: 'lg', width: 1023, isShown: false },

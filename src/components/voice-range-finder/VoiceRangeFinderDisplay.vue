@@ -508,11 +508,11 @@ onUnmounted(() => {
             >
               {{ t('voiceRangeFinder.findBySinging') }}
             </PrimeButton>
-            <!-- Only two buttons in this row, so the text fits from sm up -->
+            <!-- Only two buttons in this row, so the text fits from xs up -->
             <PreviewToggle
               v-model="isPreviewEnabled"
               :disabled="!simulateIdlePreview && micPermission === 'denied'"
-              labelFrom="sm"
+              labelFrom="xs"
             />
           </div>
 
@@ -673,9 +673,11 @@ onUnmounted(() => {
             :liveMidi="chartLiveMidi"
             :isListening="isPreviewEnabled"
           />
+          <!-- Same as My range's toggle, so switching tabs doesn't change it -->
           <PreviewToggle
             v-model="isPreviewEnabled"
             :disabled="!simulateIdlePreview && micPermission === 'denied'"
+            labelFrom="xs"
           />
         </PrimeTabPanel>
       </PrimeTabPanels>
