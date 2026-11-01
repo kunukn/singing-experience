@@ -3,9 +3,11 @@ import {
   CLEAN_CENTS,
   CLOSE_CENTS,
   cleanColor,
+  cleanColorRgb,
   cleanTextColor,
   colorAtMidi,
   colorRgbAtMidi,
+  directionalCleanColorRgb,
   directionalTextColor,
   OFF_CENTS,
   textColorAtMidi,
@@ -168,6 +170,27 @@ describe('directionalTextColor', () => {
       expect(
         contrastOnWhite(directionalTextColor(-cents, false)),
       ).toBeGreaterThanOrEqual(contrastOnWhite(cleanTextColor(cents, false)))
+  })
+})
+
+describe('directionalCleanColorRgb', () => {
+  test('sharp keeps the existing trail ramp', () => {
+    for (const cents of [0, 5, CLEAN_CENTS, 15, CLOSE_CENTS, 35, OFF_CENTS])
+      expect(directionalCleanColorRgb(cents)).toEqual(cleanColorRgb(cents))
+  })
+
+  test('flat and sharp share the green within CLEAN_CENTS', () => {
+    expect(directionalCleanColorRgb(-CLEAN_CENTS)).toEqual(
+      directionalCleanColorRgb(CLEAN_CENTS),
+    )
+  })
+
+  test('flat beyond CLEAN_CENTS turns blue', () => {
+    for (const cents of [-CLOSE_CENTS, -OFF_CENTS]) {
+      const [r, g, b] = directionalCleanColorRgb(cents)
+      expect(b).toBeGreaterThan(r)
+      expect(b).toBeGreaterThan(g)
+    }
   })
 })
 

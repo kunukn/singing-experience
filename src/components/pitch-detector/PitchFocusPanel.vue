@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
-import { cleanTextColor } from '@/utils/pitchColors'
+import { directionalTextColor } from '@/utils/pitchColors'
 import PitchFocusLevel from './PitchFocusLevel.vue'
 import PitchFocusStats from './PitchFocusStats.vue'
 import PitchHistoryChart from './PitchHistoryChart.vue'
@@ -133,7 +133,7 @@ const centsLabel = computed(() =>
 const centsColor = computed(() =>
   centsFromFocus.value === null
     ? undefined
-    : cleanTextColor(centsFromFocus.value, isDark.value),
+    : directionalTextColor(centsFromFocus.value, isDark.value),
 )
 </script>
 

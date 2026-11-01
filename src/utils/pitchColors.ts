@@ -186,6 +186,27 @@ export function cleanTextColor(cents: number, isDark = true): string {
   return `rgb(${r}, ${g}, ${b})`
 }
 
+/* Flat-side canvas stops, the neon palette's blue twins */
+const CLOSE_FLAT: Rgb = [56, 189, 248] // sky-400
+const OFF_FLAT: Rgb = [59, 130, 246] // blue-500
+
+/* cleanColorRgb with a direction: flat in blues, sharp unchanged. For trails
+ * measured from a fixed target; see directionalTextColor for why. */
+export function directionalCleanColorRgb(cents: number): Rgb {
+  if (cents >= 0) return cleanColorRgb(cents)
+
+  return lerpThreeStop(
+    { clean: CLEAN_GREEN, close: CLOSE_FLAT, off: OFF_FLAT },
+    cents,
+  )
+}
+
+export function directionalCleanColor(cents: number, opacity = 1): string {
+  const [r, g, b] = directionalCleanColorRgb(cents)
+
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`
+}
+
 /* Flat-side text stops: light blue at CLOSE_CENTS deepening to blue at OFF_CENTS */
 const CLOSE_TEXT_FLAT_DARK: Rgb = [125, 211, 252] // sky-300
 const OFF_TEXT_FLAT_DARK: Rgb = [96, 165, 250] // blue-400

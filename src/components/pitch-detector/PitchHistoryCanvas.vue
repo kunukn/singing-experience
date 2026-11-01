@@ -6,6 +6,8 @@ import {
   cleanColor,
   cleanColorRgb,
   CLEAN_CENTS,
+  directionalCleanColor,
+  directionalCleanColorRgb,
   CLOSE_CENTS,
   OFF_CENTS,
 } from '@/utils/pitchColors'
@@ -82,7 +84,7 @@ const LABEL_COLLISION_Y = 26
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
-const { colorForCents } = usePitchPreviewColor()
+const { colorForCents, directionalColorForCents } = usePitchPreviewColor()
 const { t } = useI18n()
 
 /*
@@ -133,6 +135,20 @@ function centsFor(sample: PitchSample): number {
 
   return (sample.midiNote - props.focusMidi) * 100
 }
+
+/* Focus cents run from one fixed target, so their sign means "below / above
+ * your note" and flat can turn blue. Nearest-note cents flip sign at every
+ * semitone, so elsewhere the trail keeps the size-only ramp — a slide would
+ * otherwise flash blue → red at each half-step. */
+const isFocusMode = () => props.focusMidi != null
+
+const trailColorRgb = (cents: number) =>
+  isFocusMode() ? directionalCleanColorRgb(cents) : cleanColorRgb(cents)
+
+const trailColor = (cents: number, opacity: number) =>
+  isFocusMode()
+    ? directionalCleanColor(cents, opacity)
+    : cleanColor(cents, opacity)
 
 function midiToY(midi: number, height: number): number {
   const usableHeight = height - PADDING_TOP - PADDING_BOTTOM
@@ -228,7 +244,7 @@ function drawPreviewIndicators(
           ? midiToNoteLabel(focusMidi).label
           : lane.previewNoteLabel,
       /* No game here, so the line is always cents-coloured, like the trail. */
-      colorForCents,
+      colorForCents: isFocusMode() ? directionalColorForCents : colorForCents,
       isHighLane: lane.laneId === 'high',
       /* While listening, keep only the dashed reference line: the center dot and
        * label are redundant with the live head dot, which carries the label instead. */
@@ -251,6 +267,7 @@ function drawFocusZone(
 ) {
   const green = resolveCssColor('--p-green-400')
   const red = resolveCssColor('--p-red-400')
+  const blue = resolveCssColor('--p-blue-400')
   const width = geom.chartRightX - geom.chartLeftX
   /* 100 cents per semitone */
   const cleanTop = midiToY(focusMidi + CLEAN_CENTS / 100, height)
@@ -278,8 +295,13 @@ function drawFocusZone(
     { cents: OFF_CENTS, color: withAlpha(red, 0.35) },
   ]
   for (const guide of guides) {
-    ctx.strokeStyle = guide.color
     for (const sign of [1, -1]) {
+      /* Below the note "off" is flat, so its guide is blue like a flat
+       * trail: the two ±50¢ lines double as the colour key */
+      ctx.strokeStyle =
+        guide.cents === OFF_CENTS && sign < 0
+          ? withAlpha(blue, 0.35)
+          : guide.color
       const y = midiToY(focusMidi + (sign * guide.cents) / 100, height)
       ctx.beginPath()
       ctx.moveTo(geom.chartLeftX, y)
@@ -463,8 +485,12 @@ function drawLaneTrail(
         const cp2x = p2.x - (p3.x - p1.x) / 6
         const cp2y = p2.y - (p3.y - p1.y) / 6
 
-        const avgCents = (Math.abs(p1.cents) + Math.abs(p2.cents)) / 2
-        const [r, g, b] = cleanColorRgb(avgCents)
+        /* Signed in focus mode, where cents never wrap; abs elsewhere, where
+         * +50 → −50 at a semitone boundary would average to a green blip */
+        const avgCents = isFocusMode()
+          ? (p1.cents + p2.cents) / 2
+          : (Math.abs(p1.cents) + Math.abs(p2.cents)) / 2
+        const [r, g, b] = trailColorRgb(avgCents)
 
         ctx.beginPath()
         ctx.moveTo(p1.x, p1.y)
@@ -476,7 +502,7 @@ function drawLaneTrail(
       ctx.beginPath()
       ctx.moveTo(points[0].x, points[0].y)
       ctx.lineTo(points[0].x, points[0].y)
-      ctx.strokeStyle = cleanColor(points[0].cents, 0.7)
+      ctx.strokeStyle = trailColor(points[0].cents, 0.7)
       ctx.stroke()
     }
   }
@@ -488,7 +514,7 @@ function drawLaneTrail(
     const age = now - sample.timestamp
     // Fade old samples — 0.15 minimum so the oldest dots are still faintly visible
     const opacity = Math.max(0.15, 1 - age / HISTORY_WINDOW_MS)
-    const color = cleanColor(centsFor(sample), opacity)
+    const color = trailColor(centsFor(sample), opacity)
 
     ctx.beginPath()
     ctx.arc(x, y, style.dotRadius, 0, Math.PI * 2)
@@ -742,7 +768,7 @@ function drawChart() {
     const style = LANE_TRAIL_STYLE[head.laneId]
     const headX = timeToX(sample.timestamp, now, geom)
     const headY = midiToY(sample.midiNote, height)
-    const headColor = cleanColor(centsFor(sample), 1)
+    const headColor = trailColor(centsFor(sample), 1)
 
     // Head dot: outer glow ring (7 px) + solid color center (5 px)
     ctx.beginPath()
