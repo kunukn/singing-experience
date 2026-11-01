@@ -503,12 +503,19 @@ const liveLabel = computed(() => {
             class="absolute inset-y-0 w-px bg-(--p-text-muted-color) opacity-60"
             :style="{ insetInlineStart: `${line.left}%` }"
           />
-          <!-- The live note; 75 ms glide smooths detector jitter without lagging the voice -->
+          <!--
+            The live note; 75 ms glide smooths detector jitter without lagging
+            the voice. Coloured like its cents label: green when clean, yellow
+            → red as it drifts.
+          -->
           <span
-            v-if="liveLeft !== null"
+            v-if="liveLabel"
             data-testid="voice-type-comparison-live-line"
-            class="absolute inset-y-0 w-0.5 -translate-x-1/2 bg-(--p-primary-color) transition-[inset-inline-start] duration-75 ease-linear motion-reduce:transition-none"
-            :style="{ insetInlineStart: `${liveLeft}%` }"
+            class="absolute inset-y-0 w-0.5 -translate-x-1/2 transition-[inset-inline-start] duration-75 ease-linear motion-reduce:transition-none"
+            :style="{
+              insetInlineStart: `${liveLeft}%`,
+              backgroundColor: liveLabel.centsColor,
+            }"
           />
         </span>
         <template v-if="row.comparison">

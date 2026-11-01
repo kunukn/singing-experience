@@ -160,7 +160,7 @@ describe('VoiceTypeComparison', () => {
       mount(VoiceTypeComparison, {
         props: { midiMin: 44, midiMax: 60, liveMidi },
         global: { plugins: [i18n] },
-      }).findAll('[data-testid="voice-type-comparison-live-line"]')
+      }).findAll<HTMLElement>('[data-testid="voice-type-comparison-live-line"]')
 
     test('should not draw a line while nothing is sung', () => {
       expect(liveLinesOf(null)).toHaveLength(0)
@@ -174,6 +174,23 @@ describe('VoiceTypeComparison', () => {
       expect(lines).toHaveLength(6)
       for (const line of lines)
         expect(line.attributes('style')).toContain('inset-inline-start: 50%')
+    })
+
+    test('should colour the line like its cents label', () => {
+      const line = liveLinesOf(52.2)[0]!
+      const centsText = liveLabelOf(52.2).findAll('span')[1]!
+
+      expect(line.element.style.backgroundColor).not.toBe('')
+      expect(line.element.style.backgroundColor).toBe(
+        centsText.element.style.color,
+      )
+    })
+
+    test('should colour a clean note differently from an off one', () => {
+      const colorOf = (liveMidi: number) =>
+        liveLinesOf(liveMidi)[0]!.element.style.backgroundColor
+
+      expect(colorOf(60)).not.toBe(colorOf(60.3))
     })
 
     const liveLabelOf = (liveMidi: number | null) =>
