@@ -170,7 +170,7 @@ describe('singTheKeysSongs', () => {
 
     /* Semitones above the tonic that belong to the major scale. A note outside
      * it is harder to pitch, so such a tune does not belong under Easy. */
-    const MAJOR_SCALE_SEMITONES = [0, 2, 4, 5, 7, 9, 11]
+    const MAJOR_SCALE_SEMITONES = new Set([0, 2, 4, 5, 7, 9, 11])
     const SEMITONES_PER_OCTAVE = 12
 
     test('keeps easy songs inside the major scale', () => {
@@ -184,7 +184,7 @@ describe('singTheKeysSongs', () => {
               ((midiOffset % SEMITONES_PER_OCTAVE) + SEMITONES_PER_OCTAVE) %
               SEMITONES_PER_OCTAVE,
           )
-          .filter((semitone) => !MAJOR_SCALE_SEMITONES.includes(semitone))
+          .filter((semitone) => !MAJOR_SCALE_SEMITONES.has(semitone))
 
         expect(outOfScale, id).toEqual([])
       }

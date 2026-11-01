@@ -4,7 +4,7 @@ const SETTINGS_PREFIX = 'syng.'
 
 /* Survives a reset: dropping back to English could leave someone unable to
  * read the app to set their language again. */
-const KEPT_KEYS = ['syng.locale']
+const KEPT_KEYS = new Set(['syng.locale'])
 
 /*
  * Removes every stored setting, including keys left behind by renames, so the
@@ -19,8 +19,7 @@ export function resetStoredSettings(
   const keys: string[] = []
   for (let index = 0; index < storage.length; index++) {
     const key = storage.key(index)
-    if (key?.startsWith(SETTINGS_PREFIX) && !KEPT_KEYS.includes(key))
-      keys.push(key)
+    if (key?.startsWith(SETTINGS_PREFIX) && !KEPT_KEYS.has(key)) keys.push(key)
   }
 
   for (const key of keys) storage.removeItem(key)

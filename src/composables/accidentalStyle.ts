@@ -11,10 +11,13 @@ import { useLocalStorage } from '@vueuse/core'
  */
 export type AccidentalStyle = 'sharp' | 'flat'
 
-const ACCIDENTAL_STYLES: readonly AccidentalStyle[] = ['sharp', 'flat']
+const ACCIDENTAL_STYLES: ReadonlySet<AccidentalStyle> = new Set([
+  'sharp',
+  'flat',
+])
 
 export function isAccidentalStyle(value: unknown): value is AccidentalStyle {
-  return ACCIDENTAL_STYLES.includes(value as AccidentalStyle)
+  return ACCIDENTAL_STYLES.has(value as AccidentalStyle)
 }
 
 /*

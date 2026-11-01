@@ -19,7 +19,7 @@ const VOICE_TYPES_LOW_TO_HIGH = VOICE_RANGES.filter(
 
 /* Ranges that mean "everything" rather than a particular tessitura. They sit
  * below the pitch-ordered entries instead of competing with them on midpoint. */
-const CATCH_ALL_LABEL_KEYS = ['voiceRanges.choir', 'voiceRanges.full']
+const CATCH_ALL_LABEL_KEYS = new Set(['voiceRanges.choir', 'voiceRanges.full'])
 
 const midpointOf = (range: (typeof VOICE_RANGES)[number]) =>
   (range.midiMin + range.midiMax) / 2
@@ -99,7 +99,7 @@ describe('VOICE_RANGES ordering', () => {
     '%s options run high to low',
     (groupId) => {
       const midpoints = rangesIn(groupId)
-        .filter((range) => !CATCH_ALL_LABEL_KEYS.includes(range.labelKey))
+        .filter((range) => !CATCH_ALL_LABEL_KEYS.has(range.labelKey))
         .map(midpointOf)
 
       expect(midpoints).toEqual([...midpoints].sort((a, b) => b - a))
@@ -110,7 +110,7 @@ describe('VOICE_RANGES ordering', () => {
     '%s catch-alls come after every pitch-ordered option',
     (groupId) => {
       const isCatchAll = rangesIn(groupId).map((range) =>
-        CATCH_ALL_LABEL_KEYS.includes(range.labelKey),
+        CATCH_ALL_LABEL_KEYS.has(range.labelKey),
       )
       const firstCatchAll = isCatchAll.indexOf(true)
       if (firstCatchAll === -1) return

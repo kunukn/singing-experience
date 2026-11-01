@@ -3,10 +3,14 @@ import { useLocalStorage } from '@vueuse/core'
 /* Three-way tone-label display: hidden, plain note name (C), or with octave (C4). */
 export type ToneLabelMode = 'off' | 'simple' | 'advanced'
 
-const TONE_LABEL_MODES: readonly ToneLabelMode[] = ['off', 'simple', 'advanced']
+const TONE_LABEL_MODES: ReadonlySet<ToneLabelMode> = new Set([
+  'off',
+  'simple',
+  'advanced',
+])
 
 export function isToneLabelMode(value: unknown): value is ToneLabelMode {
-  return TONE_LABEL_MODES.includes(value as ToneLabelMode)
+  return TONE_LABEL_MODES.has(value as ToneLabelMode)
 }
 
 /*
