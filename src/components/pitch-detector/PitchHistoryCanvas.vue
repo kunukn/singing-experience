@@ -96,7 +96,7 @@ const recorders: Record<PitchLaneId, PitchLaneRecorder> = {
 }
 
 /*
- * Both voices keep the cents colouring (green, warm when sharp, blue when
+ * Both voices keep the cents colouring (grey, warm when sharp, blue when
  * flat), because each singer still needs to see whether they are in tune.
  * The second voice is told apart by shape instead — a thinner spline and
  * hollow dots — and only its head dot and name pill carry the violet that
@@ -146,7 +146,8 @@ const trailColor = (cents: number, opacity: number) =>
   directionalCleanColor(cents, opacity)
 
 /* Cents jump by about 100 where nearest-note cents wrap (+49 → −49);
- * averaging across that would paint a green blip, so the newer point wins */
+ * averaging across that would paint a clean grey blip, so the newer point
+ * wins */
 const WRAP_JUMP_CENTS = 50
 
 function midiToY(midi: number, height: number): number {

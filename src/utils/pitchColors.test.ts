@@ -2,14 +2,11 @@ import { describe, expect, test } from 'vitest'
 import {
   CLEAN_CENTS,
   CLOSE_CENTS,
-  cleanColor,
-  cleanColorRgb,
-  cleanTextColor,
   colorAtMidi,
   colorRgbAtMidi,
+  directionalCleanColor,
   directionalCleanColorRgb,
   directionalTextColor,
-  neutralDirectionalTextColor,
   OFF_CENTS,
   textColorAtMidi,
   voiceTypeColor,
@@ -25,63 +22,6 @@ describe('pitch accuracy tiers', () => {
 
   test('should cap off at half a semitone, where the nearest note flips', () => {
     expect(OFF_CENTS).toBe(50)
-  })
-})
-
-describe('cleanTextColor', () => {
-  test('returns green-ish color at 0 cents in dark mode (default)', () => {
-    const color = cleanTextColor(0)
-    expect(color).toMatch(/^rgb\(\d+, \d+, \d+\)$/)
-    const [r, g, b] = parseRgb(color)
-    expect(g).toBeGreaterThan(r)
-    expect(g).toBeGreaterThan(b)
-  })
-
-  test('returns neon green at 0 cents in dark mode', () => {
-    const [r, g, b] = parseRgb(cleanTextColor(0, true))
-    expect(r).toBe(57)
-    expect(g).toBe(255)
-    expect(b).toBe(130)
-  })
-
-  test('returns emerald green at 0 cents in light mode', () => {
-    const [r, g, b] = parseRgb(cleanTextColor(0, false))
-    expect(r).toBe(16)
-    expect(g).toBe(185)
-    expect(b).toBe(129)
-  })
-
-  test('light mode green is darker than dark mode green', () => {
-    const [, gDark] = parseRgb(cleanTextColor(0, true))
-    const [, gLight] = parseRgb(cleanTextColor(0, false))
-    expect(gDark).toBeGreaterThan(gLight)
-  })
-
-  test('returns red-ish color at 50 cents (far off pitch)', () => {
-    const color = cleanTextColor(50)
-    const [r, g, b] = parseRgb(color)
-    expect(r).toBeGreaterThan(g)
-    expect(r).toBeGreaterThan(b)
-  })
-
-  test('returns yellow-ish color in the close tier (~18 cents)', () => {
-    const [r, g, b] = parseRgb(cleanTextColor(18))
-    // Yellow has high red AND high green, low blue
-    expect(r).toBeGreaterThan(b)
-    expect(g).toBeGreaterThan(b)
-  })
-
-  test('handles negative cents symmetrically', () => {
-    const positive = cleanTextColor(30)
-    const negative = cleanTextColor(-30)
-    expect(positive).toBe(negative)
-  })
-})
-
-describe('cleanColor', () => {
-  test('returns rgba string', () => {
-    const color = cleanColor(0, 0.5)
-    expect(color).toMatch(/^rgba\(\d+, \d+, \d+, [\d.]+\)$/)
   })
 })
 
@@ -128,6 +68,14 @@ describe('textColorAtMidi', () => {
   })
 })
 
+/* Low saturation: the channels sit close together, so the colour reads grey */
+const isGrey = ([r, g, b]: [number, number, number]) =>
+  Math.max(r, g, b) - Math.min(r, g, b) < 40
+
+const isBlue = ([r, g, b]: [number, number, number]) => b > r && b > g
+
+const isWarm = ([r, g, b]: [number, number, number]) => r > b && r >= g
+
 describe('directionalTextColor', () => {
   const themes = [false, true]
 
@@ -141,28 +89,53 @@ describe('directionalTextColor', () => {
     return 1.05 / (0.2126 * r! + 0.7152 * g! + 0.0722 * b! + 0.05)
   }
 
-  test('sharp keeps the existing ramp', () => {
-    for (const isDark of themes)
-      for (const cents of [0, 5, CLEAN_CENTS, 15, CLOSE_CENTS, 35, OFF_CENTS])
-        expect(directionalTextColor(cents, isDark)).toBe(
-          cleanTextColor(cents, isDark),
-        )
+  test('returns an rgb string', () => {
+    expect(directionalTextColor(0)).toMatch(/^rgb\(\d+, \d+, \d+\)$/)
   })
 
-  test('flat and sharp share the green within CLEAN_CENTS', () => {
-    for (const isDark of themes)
-      expect(directionalTextColor(-CLEAN_CENTS, isDark)).toBe(
-        directionalTextColor(CLEAN_CENTS, isDark),
+  test('should be one grey on both sides within CLEAN_CENTS', () => {
+    for (const isDark of themes) {
+      const grey = directionalTextColor(0, isDark)
+
+      expect(isGrey(parseRgb(grey))).toBe(true)
+      for (const cents of [-CLEAN_CENTS, -1, 1, CLEAN_CENTS])
+        expect(directionalTextColor(cents, isDark)).toBe(grey)
+    }
+  })
+
+  test('should use a different grey per theme', () => {
+    expect(directionalTextColor(0, true)).not.toBe(
+      directionalTextColor(0, false),
+    )
+  })
+
+  test('should lean blue when flat and warm when sharp past CLEAN_CENTS', () => {
+    const midway = (CLEAN_CENTS + CLOSE_CENTS) / 2
+
+    for (const isDark of themes) {
+      expect(isBlue(parseRgb(directionalTextColor(-midway, isDark)))).toBe(true)
+      expect(isWarm(parseRgb(directionalTextColor(midway, isDark)))).toBe(true)
+    }
+  })
+
+  test('should be yellow when close and sharp, red when off', () => {
+    for (const isDark of themes) {
+      const [r, g, b] = parseRgb(directionalTextColor(CLOSE_CENTS, isDark))
+      expect(r).toBeGreaterThan(b)
+      expect(g).toBeGreaterThan(b)
+
+      const [offR, offG, offB] = parseRgb(
+        directionalTextColor(OFF_CENTS, isDark),
       )
+      expect(offR).toBeGreaterThan(offG)
+      expect(offR).toBeGreaterThan(offB)
+    }
   })
 
-  test('flat beyond CLEAN_CENTS turns blue', () => {
+  test('should be blue when flat beyond CLEAN_CENTS', () => {
     for (const isDark of themes)
-      for (const cents of [-CLOSE_CENTS, -OFF_CENTS]) {
-        const [r, g, b] = parseRgb(directionalTextColor(cents, isDark))
-        expect(b).toBeGreaterThan(r)
-        expect(b).toBeGreaterThan(g)
-      }
+      for (const cents of [-CLOSE_CENTS, -OFF_CENTS])
+        expect(isBlue(parseRgb(directionalTextColor(cents, isDark)))).toBe(true)
   })
 
   /* The flat side is never harder to read than the sharp side it mirrors */
@@ -170,74 +143,32 @@ describe('directionalTextColor', () => {
     for (const cents of [CLOSE_CENTS, 35, OFF_CENTS])
       expect(
         contrastOnWhite(directionalTextColor(-cents, false)),
-      ).toBeGreaterThanOrEqual(contrastOnWhite(cleanTextColor(cents, false)))
-  })
-})
-
-describe('neutralDirectionalTextColor', () => {
-  const themes = [false, true]
-
-  test('should be one grey on both sides within CLEAN_CENTS', () => {
-    for (const isDark of themes) {
-      const grey = neutralDirectionalTextColor(0, isDark)
-      const [r, g, b] = parseRgb(grey)
-
-      expect(Math.max(r, g, b) - Math.min(r, g, b)).toBeLessThan(40)
-      for (const cents of [-CLEAN_CENTS, -1, 1, CLEAN_CENTS])
-        expect(neutralDirectionalTextColor(cents, isDark)).toBe(grey)
-    }
-  })
-
-  test('should not use the green of directionalTextColor', () => {
-    for (const isDark of themes)
-      expect(neutralDirectionalTextColor(1, isDark)).not.toBe(
-        directionalTextColor(1, isDark),
+      ).toBeGreaterThanOrEqual(
+        contrastOnWhite(directionalTextColor(cents, false)),
       )
-  })
-
-  test('should end on the same blue and red as directionalTextColor', () => {
-    for (const isDark of themes)
-      for (const cents of [-OFF_CENTS, -CLOSE_CENTS, CLOSE_CENTS, OFF_CENTS])
-        expect(neutralDirectionalTextColor(cents, isDark)).toBe(
-          directionalTextColor(cents, isDark),
-        )
-  })
-
-  test('should lean blue when flat and warm when sharp past CLEAN_CENTS', () => {
-    const midway = (CLEAN_CENTS + CLOSE_CENTS) / 2
-
-    for (const isDark of themes) {
-      const [flatR, , flatB] = parseRgb(
-        neutralDirectionalTextColor(-midway, isDark),
-      )
-      const [sharpR, , sharpB] = parseRgb(
-        neutralDirectionalTextColor(midway, isDark),
-      )
-
-      expect(flatB).toBeGreaterThan(flatR)
-      expect(sharpR).toBeGreaterThan(sharpB)
-    }
   })
 })
 
 describe('directionalCleanColorRgb', () => {
-  test('sharp keeps the existing trail ramp', () => {
-    for (const cents of [0, 5, CLEAN_CENTS, 15, CLOSE_CENTS, 35, OFF_CENTS])
-      expect(directionalCleanColorRgb(cents)).toEqual(cleanColorRgb(cents))
+  test('should be one grey on both sides within CLEAN_CENTS', () => {
+    const grey = directionalCleanColorRgb(0)
+
+    expect(isGrey(grey)).toBe(true)
+    for (const cents of [-CLEAN_CENTS, -1, 1, CLEAN_CENTS])
+      expect(directionalCleanColorRgb(cents)).toEqual(grey)
   })
 
-  test('flat and sharp share the green within CLEAN_CENTS', () => {
-    expect(directionalCleanColorRgb(-CLEAN_CENTS)).toEqual(
-      directionalCleanColorRgb(CLEAN_CENTS),
-    )
-  })
-
-  test('flat beyond CLEAN_CENTS turns blue', () => {
-    for (const cents of [-CLOSE_CENTS, -OFF_CENTS]) {
-      const [r, g, b] = directionalCleanColorRgb(cents)
-      expect(b).toBeGreaterThan(r)
-      expect(b).toBeGreaterThan(g)
+  test('should be blue when flat and warm when sharp beyond CLEAN_CENTS', () => {
+    for (const cents of [CLOSE_CENTS, OFF_CENTS]) {
+      expect(isBlue(directionalCleanColorRgb(-cents))).toBe(true)
+      expect(isWarm(directionalCleanColorRgb(cents))).toBe(true)
     }
+  })
+
+  test('should give the rgba string the requested opacity', () => {
+    expect(directionalCleanColor(0, 0.5)).toMatch(
+      /^rgba\(\d+, \d+, \d+, 0\.5\)$/,
+    )
   })
 })
 

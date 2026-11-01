@@ -291,8 +291,8 @@ function drawPreviewIndicator(
   /* Shared orange/red palette for the approach line, label, and the
    * non-game-active dot; the blue pickup segment and the brighter
    * green/orange game-active dot stay local (game-specific cues). The idle
-   * preview is cents-coloured like every other program's; in a game green
-   * must keep meaning "hit", so it stays orange there. */
+   * preview is cents-coloured like every other program's; in a game it stays
+   * orange, so only the green "hit" says a note counted. */
   const baseColors = pitchLineColors({
     isOutOfRange,
     /* 100 = cents per semitone, measured from the named note */
@@ -554,9 +554,9 @@ function drawChart() {
         const cp2x = p2.x - (p3.x - p1.x) / 6
         const cp2y = p2.y - (p3.y - p1.y) / 6
 
-        /* Warm when sharp, blue when flat. Where nearest-note cents wrap
-         * (+49 → −49) an average would paint a green blip, so the newer
-         * point wins. */
+        /* Grey when clean, warm when sharp, blue when flat. Where
+         * nearest-note cents wrap (+49 → −49) an average would paint a clean
+         * grey blip, so the newer point wins. */
         const avgCents =
           Math.abs(p1.cents - p2.cents) > 50
             ? p2.cents

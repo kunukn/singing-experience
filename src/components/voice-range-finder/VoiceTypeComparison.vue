@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import {
-  neutralDirectionalTextColor,
-  voiceTypeColor,
-} from '@/utils/pitchColors'
+import { directionalTextColor, voiceTypeColor } from '@/utils/pitchColors'
 import { VOICE_TYPES } from '@/utils/voiceRangeSegments'
 import { centsLabel } from './useLiveCents'
 import { centsOffNearest } from './useRangeFinder'
@@ -327,7 +324,7 @@ const liveLabel = computed(() => {
   return {
     note: formatNote(Math.round(props.liveMidi)),
     centsText: centsLabel(cents),
-    centsColor: neutralDirectionalTextColor(cents, isDark.value),
+    centsColor: directionalTextColor(cents, isDark.value),
     side: liveLeft.value < 50 ? 'end' : 'start',
   }
 })

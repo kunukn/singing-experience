@@ -211,8 +211,8 @@ const isRunScored = ref(true)
 const isScoring = computed(() => isPlaying.value && isRunScored.value)
 
 /* The idle preview is cents-coloured like every program's; with Snap on the
- * pitch sits on the key at 0¢, so it reads green. During a run green must keep
- * meaning "hit", so the line keeps the neutral orange. */
+ * pitch sits on the key at 0¢, so it reads clean (grey). During a run the line
+ * keeps the neutral orange, so only the green "hit" says a note counted. */
 const isPreviewColoredByCents = computed(() => !isPlaying.value)
 
 const startLabel = computed(() =>

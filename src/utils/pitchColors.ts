@@ -102,28 +102,14 @@ export function voiceTypeColor(
   return `rgba(${r}, ${g}, ${b}, ${opacity})`
 }
 
-/* Canvas palette — saturated tuples for spline and dots on dark chart bg */
-const CLEAN_GREEN: [number, number, number] = [0, 255, 100] // neon green — on-pitch
-const CLOSE_YELLOW: [number, number, number] = [250, 204, 21] // yellow-400 — slightly off
-const OFF_RED: [number, number, number] = [239, 68, 68] // red-500 — clearly off
-
-/* Text palette (dark mode) — brighter variants for legibility on dark surfaces */
-const CLEAN_TEXT_GREEN_DARK: [number, number, number] = [57, 255, 130]
-const CLOSE_TEXT_YELLOW_DARK: [number, number, number] = [253, 224, 71] // yellow-300
-const OFF_TEXT_RED_DARK: [number, number, number] = [248, 113, 113] // red-400
-
-/* Text palette (light mode) — darker shades legible on light surfaces */
-const CLEAN_TEXT_GREEN_LIGHT: [number, number, number] = [16, 185, 129] // emerald-500
-const CLOSE_TEXT_YELLOW_LIGHT: [number, number, number] = [202, 138, 4] // yellow-600
-const OFF_TEXT_RED_LIGHT: [number, number, number] = [220, 38, 38] // red-600
-
 /*
  * Three-tier feedback thresholds based on psychoacoustic research and
  * industry-standard vocal training tolerances:
- *   ≤10¢  — imperceptible to most listeners (green / "clean").
+ *   ≤10¢  — imperceptible to most listeners (grey / "clean").
  *   ≤20¢  — within a trained singer's typical accuracy; untrained voices
- *           average about 25¢ (yellow / "close").
- *   ≥50¢  — halfway to the next semitone; clearly off-pitch (red, saturation cap).
+ *           average about 25¢ (yellow or light blue / "close").
+ *   ≥50¢  — halfway to the next semitone; clearly off-pitch (red or blue,
+ *           saturation cap).
  * Smoothly interpolated between tiers so the color motion stays continuous.
  */
 export const CLEAN_CENTS = 10
@@ -156,47 +142,46 @@ function lerpThreeStop(
   return mix(stops.close, stops.off, t)
 }
 
-export function cleanColorRgb(cents: number): [number, number, number] {
-  return lerpThreeStop(
-    { clean: CLEAN_GREEN, close: CLOSE_YELLOW, off: OFF_RED },
-    cents,
-  )
-}
+/*
+ * Clean is grey, not green: next to the flat blues a green clean note read
+ * as flat on thin lines and small charts. Green stays the colour of success
+ * ("you hit it": game targets, the tuner's in-tune ring), never of cents.
+ */
 
-export function cleanColor(cents: number, opacity = 1): string {
-  const [r, g, b] = cleanColorRgb(cents)
+/* Canvas palette — saturated tuples for trail splines and dots. The grey is
+ * mid enough to read on both the light and the dark chart background. */
+const CLEAN_GREY: Rgb = [148, 163, 184] // slate-400
+const CLOSE_YELLOW: Rgb = [250, 204, 21] // yellow-400 — slightly sharp
+const OFF_RED: Rgb = [239, 68, 68] // red-500 — clearly sharp
+const CLOSE_FLAT: Rgb = [56, 189, 248] // sky-400 — slightly flat
+const OFF_FLAT: Rgb = [59, 130, 246] // blue-500 — clearly flat
 
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`
-}
+/* Text palette — the clean grey is the theme's muted text colour
+ * (Aura's --p-text-muted-color) */
+const CLEAN_TEXT_GREY_DARK: Rgb = [161, 161, 170] // zinc-400
+const CLOSE_TEXT_YELLOW_DARK: Rgb = [253, 224, 71] // yellow-300
+const OFF_TEXT_RED_DARK: Rgb = [248, 113, 113] // red-400
+const CLOSE_TEXT_FLAT_DARK: Rgb = [125, 211, 252] // sky-300
+const OFF_TEXT_FLAT_DARK: Rgb = [96, 165, 250] // blue-400
 
-export function cleanTextColor(cents: number, isDark = true): string {
-  const stops = isDark
-    ? {
-        clean: CLEAN_TEXT_GREEN_DARK,
-        close: CLOSE_TEXT_YELLOW_DARK,
-        off: OFF_TEXT_RED_DARK,
-      }
-    : {
-        clean: CLEAN_TEXT_GREEN_LIGHT,
-        close: CLOSE_TEXT_YELLOW_LIGHT,
-        off: OFF_TEXT_RED_LIGHT,
-      }
-  const [r, g, b] = lerpThreeStop(stops, cents)
+const CLEAN_TEXT_GREY_LIGHT: Rgb = [100, 116, 139] // slate-500
 
-  return `rgb(${r}, ${g}, ${b})`
-}
+const CLOSE_TEXT_YELLOW_LIGHT: Rgb = [202, 138, 4] // yellow-600
+const OFF_TEXT_RED_LIGHT: Rgb = [220, 38, 38] // red-600
+const CLOSE_TEXT_FLAT_LIGHT: Rgb = [2, 132, 199] // sky-600
+const OFF_TEXT_FLAT_LIGHT: Rgb = [29, 78, 216] // blue-700
 
-/* Flat-side canvas stops, the neon palette's blue twins */
-const CLOSE_FLAT: Rgb = [56, 189, 248] // sky-400
-const OFF_FLAT: Rgb = [59, 130, 246] // blue-500
-
-/* cleanColorRgb with a direction: flat in blues, sharp unchanged. For trails
- * measured from a fixed target; see directionalTextColor for why. */
+/* Trail colour: grey when clean, grey → yellow → red when sharp, grey →
+ * light blue → blue when flat. See directionalTextColor for why. */
 export function directionalCleanColorRgb(cents: number): Rgb {
-  if (cents >= 0) return cleanColorRgb(cents)
+  const isFlat = cents < 0
 
   return lerpThreeStop(
-    { clean: CLEAN_GREEN, close: CLOSE_FLAT, off: OFF_FLAT },
+    {
+      clean: CLEAN_GREY,
+      close: isFlat ? CLOSE_FLAT : CLOSE_YELLOW,
+      off: isFlat ? OFF_FLAT : OFF_RED,
+    },
     cents,
   )
 }
@@ -207,65 +192,24 @@ export function directionalCleanColor(cents: number, opacity = 1): string {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`
 }
 
-/* Flat-side text stops: light blue at CLOSE_CENTS deepening to blue at OFF_CENTS */
-const CLOSE_TEXT_FLAT_DARK: Rgb = [125, 211, 252] // sky-300
-const OFF_TEXT_FLAT_DARK: Rgb = [96, 165, 250] // blue-400
-const CLOSE_TEXT_FLAT_LIGHT: Rgb = [2, 132, 199] // sky-600
-const OFF_TEXT_FLAT_LIGHT: Rgb = [29, 78, 216] // blue-700
-
 /*
- * cleanTextColor with a direction: sharp keeps its green → yellow → red ramp,
- * flat mirrors it in blues. The size of the miss still shows, and now so does
- * its direction, without reading the sign. Blue low, warm high is the
- * language Do-Re-Mi's too low / too high already speaks (directionalColor);
- * blue against orange is also the pair red-green colour-blind singers tell
- * apart best. Within CLEAN_CENTS both sides are the same green.
+ * The cents colour for text and thin lines: grey when clean, grey → yellow →
+ * red when sharp, grey → light blue → blue when flat. The size of the miss
+ * shows, and so does its direction, without reading the sign. Blue low, warm
+ * high is the language Do-Re-Mi's too low / too high already speaks
+ * (directionalColor); blue against orange is also the pair red-green
+ * colour-blind singers tell apart best.
  */
 export function directionalTextColor(cents: number, isDark = true): string {
-  if (cents >= 0) return cleanTextColor(cents, isDark)
-
-  const stops = isDark
-    ? {
-        clean: CLEAN_TEXT_GREEN_DARK,
-        close: CLOSE_TEXT_FLAT_DARK,
-        off: OFF_TEXT_FLAT_DARK,
-      }
-    : {
-        clean: CLEAN_TEXT_GREEN_LIGHT,
-        close: CLOSE_TEXT_FLAT_LIGHT,
-        off: OFF_TEXT_FLAT_LIGHT,
-      }
-  const [r, g, b] = lerpThreeStop(stops, cents)
-
-  return `rgb(${r}, ${g}, ${b})`
-}
-
-/* Clean-side text stops for neutralDirectionalTextColor: the theme's muted
- * text grey (Aura's --p-text-muted-color) */
-const CLEAN_TEXT_GREY_DARK: Rgb = [161, 161, 170] // zinc-400
-const CLEAN_TEXT_GREY_LIGHT: Rgb = [100, 116, 139] // slate-500
-
-/*
- * directionalTextColor with grey for clean, so both ramps start from grey:
- * grey → light blue → blue when flat, grey → yellow → red when sharp. The
- * green read too close to the flat blues: a clean +1¢ looked flat. For pages
- * that show direction only, such as the Voice Range Finder; tuning pages keep
- * the green as their "in tune" reward.
- */
-export function neutralDirectionalTextColor(
-  cents: number,
-  isDark = true,
-): string {
-  const clean = isDark ? CLEAN_TEXT_GREY_DARK : CLEAN_TEXT_GREY_LIGHT
   const isFlat = cents < 0
   const stops = isDark
     ? {
-        clean,
+        clean: CLEAN_TEXT_GREY_DARK,
         close: isFlat ? CLOSE_TEXT_FLAT_DARK : CLOSE_TEXT_YELLOW_DARK,
         off: isFlat ? OFF_TEXT_FLAT_DARK : OFF_TEXT_RED_DARK,
       }
     : {
-        clean,
+        clean: CLEAN_TEXT_GREY_LIGHT,
         close: isFlat ? CLOSE_TEXT_FLAT_LIGHT : CLOSE_TEXT_YELLOW_LIGHT,
         off: isFlat ? OFF_TEXT_FLAT_LIGHT : OFF_TEXT_RED_LIGHT,
       }
@@ -279,8 +223,9 @@ const DIRECTIONAL_BLUE = '#60a5fa' // too low
 const DIRECTIONAL_GREEN = '#4ade80' // in tune
 
 /*
- * Returns a directional color based on cents deviation:
- * green when within threshold, orange when too high, blue when too low.
+ * Returns a directional color based on cents deviation: green when within
+ * threshold, orange when too high, blue when too low. For game targets, where
+ * green means "accepted" (a success colour, not a cents colour).
  */
 export function directionalColor(cents: number, threshold = 50): string {
   if (Math.abs(cents) <= threshold) return DIRECTIONAL_GREEN

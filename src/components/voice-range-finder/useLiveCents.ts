@@ -1,4 +1,4 @@
-import { neutralDirectionalTextColor } from '@/utils/pitchColors'
+import { directionalTextColor } from '@/utils/pitchColors'
 import { centsOffNearest } from './useRangeFinder'
 
 /* Cents within this of the note show as "about zero". A held note jitters
@@ -42,7 +42,7 @@ export function useLiveCents(midi: MaybeRefOrGetter<number | null>) {
   const liveCentsColor = computed(() =>
     liveCents.value === null
       ? undefined
-      : neutralDirectionalTextColor(liveCents.value, isDark.value),
+      : directionalTextColor(liveCents.value, isDark.value),
   )
 
   return { liveCents, liveCentsText, liveCentsColor }

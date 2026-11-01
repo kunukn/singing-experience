@@ -3,9 +3,9 @@ import { directionalTextColor } from '@/utils/pitchColors'
 
 /*
  * The one colour rule for every idle "See your voice" preview, the same as
- * every other cents colour in the app: green when clean, yellow → red when
- * sharp, blue when flat. Uses the theme-aware text shades — the trail's neon
- * green is unreadable on a light surface.
+ * every other cents colour in the app: grey when clean, yellow → red when
+ * sharp, blue when flat. Uses the theme-aware text shades, which read on both
+ * light and dark surfaces.
  *
  * Nearest-note cents flip sign halfway between two notes, so a slide turns
  * from warm to blue there. That is honest — sharp of the lower note, then flat

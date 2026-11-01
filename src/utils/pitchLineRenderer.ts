@@ -116,7 +116,7 @@ export type ColorForCents = (cents: number, opacity: number) => string
  * `colorForCents` (with `cents`) is the idle preview's cents colouring and
  * ranks just above the plain orange, so it never hides any of the above.
  * Callers leave `cents` undefined when there is no measured frequency — a
- * made-up 0¢ would read as a perfect green.
+ * made-up 0¢ would read as perfectly clean.
  *
  * `offChartCents` (with `colorForCents`) replaces the fixed off-chart red
  * where the chart measures from one target (the Focus tab): off the bottom
