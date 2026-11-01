@@ -1,4 +1,4 @@
-import { directionalTextColor } from '@/utils/pitchColors'
+import { neutralDirectionalTextColor } from '@/utils/pitchColors'
 import { centsOffNearest } from './useRangeFinder'
 
 /* Signed whole cents, "+12¢" / "-7¢" / "0¢": the sign says which way to move */
@@ -7,7 +7,8 @@ export const formatSignedCents = (cents: number) =>
 
 /**
  * How far a live, fractional MIDI note sits from its nearest semitone, as the
- * number, its text and its colour (blue when flat, warm when sharp). All three are empty while silent.
+ * number, its text and its colour (grey when clean, blue when flat, warm when
+ * sharp). All three are empty while silent.
  */
 export function useLiveCents(midi: MaybeRefOrGetter<number | null>) {
   const { isDark } = useDarkMode()
@@ -23,7 +24,7 @@ export function useLiveCents(midi: MaybeRefOrGetter<number | null>) {
   const liveCentsColor = computed(() =>
     liveCents.value === null
       ? undefined
-      : directionalTextColor(liveCents.value, isDark.value),
+      : neutralDirectionalTextColor(liveCents.value, isDark.value),
   )
 
   return { liveCents, liveCentsText, liveCentsColor }

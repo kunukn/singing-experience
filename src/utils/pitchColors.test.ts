@@ -9,6 +9,7 @@ import {
   colorRgbAtMidi,
   directionalCleanColorRgb,
   directionalTextColor,
+  neutralDirectionalTextColor,
   OFF_CENTS,
   textColorAtMidi,
   voiceTypeColor,
@@ -170,6 +171,52 @@ describe('directionalTextColor', () => {
       expect(
         contrastOnWhite(directionalTextColor(-cents, false)),
       ).toBeGreaterThanOrEqual(contrastOnWhite(cleanTextColor(cents, false)))
+  })
+})
+
+describe('neutralDirectionalTextColor', () => {
+  const themes = [false, true]
+
+  test('should be one grey on both sides within CLEAN_CENTS', () => {
+    for (const isDark of themes) {
+      const grey = neutralDirectionalTextColor(0, isDark)
+      const [r, g, b] = parseRgb(grey)
+
+      expect(Math.max(r, g, b) - Math.min(r, g, b)).toBeLessThan(40)
+      for (const cents of [-CLEAN_CENTS, -1, 1, CLEAN_CENTS])
+        expect(neutralDirectionalTextColor(cents, isDark)).toBe(grey)
+    }
+  })
+
+  test('should not use the green of directionalTextColor', () => {
+    for (const isDark of themes)
+      expect(neutralDirectionalTextColor(1, isDark)).not.toBe(
+        directionalTextColor(1, isDark),
+      )
+  })
+
+  test('should end on the same blue and red as directionalTextColor', () => {
+    for (const isDark of themes)
+      for (const cents of [-OFF_CENTS, -CLOSE_CENTS, CLOSE_CENTS, OFF_CENTS])
+        expect(neutralDirectionalTextColor(cents, isDark)).toBe(
+          directionalTextColor(cents, isDark),
+        )
+  })
+
+  test('should lean blue when flat and warm when sharp past CLEAN_CENTS', () => {
+    const midway = (CLEAN_CENTS + CLOSE_CENTS) / 2
+
+    for (const isDark of themes) {
+      const [flatR, , flatB] = parseRgb(
+        neutralDirectionalTextColor(-midway, isDark),
+      )
+      const [sharpR, , sharpB] = parseRgb(
+        neutralDirectionalTextColor(midway, isDark),
+      )
+
+      expect(flatB).toBeGreaterThan(flatR)
+      expect(sharpR).toBeGreaterThan(sharpB)
+    }
   })
 })
 

@@ -240,6 +240,40 @@ export function directionalTextColor(cents: number, isDark = true): string {
   return `rgb(${r}, ${g}, ${b})`
 }
 
+/* Clean-side text stops for neutralDirectionalTextColor: the theme's muted
+ * text grey (Aura's --p-text-muted-color) */
+const CLEAN_TEXT_GREY_DARK: Rgb = [161, 161, 170] // zinc-400
+const CLEAN_TEXT_GREY_LIGHT: Rgb = [100, 116, 139] // slate-500
+
+/*
+ * directionalTextColor with grey for clean, so both ramps start from grey:
+ * grey → light blue → blue when flat, grey → yellow → red when sharp. The
+ * green read too close to the flat blues: a clean +1¢ looked flat. For pages
+ * that show direction only, such as the Voice Range Finder; tuning pages keep
+ * the green as their "in tune" reward.
+ */
+export function neutralDirectionalTextColor(
+  cents: number,
+  isDark = true,
+): string {
+  const clean = isDark ? CLEAN_TEXT_GREY_DARK : CLEAN_TEXT_GREY_LIGHT
+  const isFlat = cents < 0
+  const stops = isDark
+    ? {
+        clean,
+        close: isFlat ? CLOSE_TEXT_FLAT_DARK : CLOSE_TEXT_YELLOW_DARK,
+        off: isFlat ? OFF_TEXT_FLAT_DARK : OFF_TEXT_RED_DARK,
+      }
+    : {
+        clean,
+        close: isFlat ? CLOSE_TEXT_FLAT_LIGHT : CLOSE_TEXT_YELLOW_LIGHT,
+        off: isFlat ? OFF_TEXT_FLAT_LIGHT : OFF_TEXT_RED_LIGHT,
+      }
+  const [r, g, b] = lerpThreeStop(stops, cents)
+
+  return `rgb(${r}, ${g}, ${b})`
+}
+
 const DIRECTIONAL_ORANGE = '#fb923c' // too high
 const DIRECTIONAL_BLUE = '#60a5fa' // too low
 const DIRECTIONAL_GREEN = '#4ade80' // in tune
