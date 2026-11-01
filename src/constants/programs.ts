@@ -86,7 +86,6 @@ export const tools: Program[] = [
     key: 'voiceRangeFinder',
     icon: ProgramVoiceRangeFinderIcon,
     route: '/voice-range-finder',
-    stage: 'beta',
   },
   {
     key: 'notes',
