@@ -7,17 +7,13 @@ import {
 } from '@/utils/normalizeVoiceRange'
 import { frequencyToMidi } from '@/utils/noteUtils'
 import { useRangeFinder } from './useRangeFinder'
+import VoiceRangeEndPicker from './VoiceRangeEndPicker.vue'
 import VoiceRangeExplorePanel from './VoiceRangeExplorePanel.vue'
 import VoiceRangeResult from './VoiceRangeResult.vue'
 import VoiceRangeSearchStep from './VoiceRangeSearchStep.vue'
 import VoiceRangeSlots from './VoiceRangeSlots.vue'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
-import {
-  formatRange,
-  VOICE_RANGE_NOTE_OPTIONS,
-  withHighest,
-  withLowest,
-} from './voiceRangeNotes'
+import { formatRange, withHighest, withLowest } from './voiceRangeNotes'
 
 type Props = {
   /* The real mic on the page, simulated input on the test page */
@@ -304,71 +300,25 @@ onUnmounted(() => {
             </div>
 
             <!--
-              Sing buttons sit outside the labels, so a tap isn't forwarded to the select.
-              They say "Sing" rather than show a mic: the mic icon means "See my voice"
-              everywhere else. Label | select | Sing columns are shared through subgrid,
-              so both selects line up after the longest label in any language. They are
-              filled pills, as in Sing the Keys: text-only, they read as a caption beside
-              the bordered selects. gap-x-1 keeps each pill tight to its select, so the
-              two read as one control; the label's me-2 gives it the wider gap.
+              Label | select | Sing columns are shared by both rows through
+              subgrid, so both selects line up after the longest label in any
+              language. gap-x-1 keeps each Sing pill tight to its select.
             -->
             <div
               class="grid grid-cols-[auto_auto_auto] items-center gap-x-1 gap-y-2 self-start"
             >
-              <div class="col-span-3 grid grid-cols-subgrid items-center">
-                <label class="col-span-2 grid grid-cols-subgrid items-center">
-                  <span class="me-2 text-sm">{{
-                    t('voiceRangeFinder.highest')
-                  }}</span>
-                  <PrimeSelect
-                    v-model="highestNote"
-                    :options="VOICE_RANGE_NOTE_OPTIONS"
-                    optionLabel="label"
-                    optionValue="value"
-                    size="small"
-                    scrollHeight="300px"
-                    class="min-w-24"
-                    data-testid="my-range-highest"
-                  />
-                </label>
-                <PrimeButton
-                  :label="t('generic.sing')"
-                  severity="secondary"
-                  size="small"
-                  rounded
-                  :disabled="isSearching"
-                  :aria-label="`${t('generic.sing')}: ${t('voiceRangeFinder.highest')}`"
-                  data-testid="my-range-sing-highest"
-                  @click="startSearch('high')"
-                />
-              </div>
-              <div class="col-span-3 grid grid-cols-subgrid items-center">
-                <label class="col-span-2 grid grid-cols-subgrid items-center">
-                  <span class="me-2 text-sm">{{
-                    t('voiceRangeFinder.lowest')
-                  }}</span>
-                  <PrimeSelect
-                    v-model="lowestNote"
-                    :options="VOICE_RANGE_NOTE_OPTIONS"
-                    optionLabel="label"
-                    optionValue="value"
-                    size="small"
-                    scrollHeight="300px"
-                    class="min-w-24"
-                    data-testid="my-range-lowest"
-                  />
-                </label>
-                <PrimeButton
-                  :label="t('generic.sing')"
-                  severity="secondary"
-                  size="small"
-                  rounded
-                  :disabled="isSearching"
-                  :aria-label="`${t('generic.sing')}: ${t('voiceRangeFinder.lowest')}`"
-                  data-testid="my-range-sing-lowest"
-                  @click="startSearch('low')"
-                />
-              </div>
+              <VoiceRangeEndPicker
+                v-model="highestNote"
+                end="high"
+                :disabled="isSearching"
+                @sing="startSearch('high')"
+              />
+              <VoiceRangeEndPicker
+                v-model="lowestNote"
+                end="low"
+                :disabled="isSearching"
+                @sing="startSearch('low')"
+              />
             </div>
 
             <VoiceRangeSlots

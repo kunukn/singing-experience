@@ -210,6 +210,7 @@ declare module 'vue' {
     TunerReferencePitch: typeof import('./components/tuner/TunerReferencePitch.vue')['default']
     TunerTestPage: typeof import('./components/tuner/TunerTestPage.vue')['default']
     UkuleleDisplay: typeof import('./components/ukulele/UkuleleDisplay.vue')['default']
+    VoiceRangeEndPicker: typeof import('./components/voice-range-finder/VoiceRangeEndPicker.vue')['default']
     VoiceRangeExplorePanel: typeof import('./components/voice-range-finder/VoiceRangeExplorePanel.vue')['default']
     VoiceRangeFinderDisplay: typeof import('./components/voice-range-finder/VoiceRangeFinderDisplay.vue')['default']
     VoiceRangeFinderPage: typeof import('./components/voice-range-finder/VoiceRangeFinderPage.vue')['default']
