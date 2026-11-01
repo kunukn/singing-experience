@@ -14,11 +14,12 @@ const { sungState } = defineProps<{
 
 const { t } = useI18n()
 
-/* Same colours as the too-low / too-high hint arrows beside it */
+/* Same colours as the too-low / too-high hint arrows beside it, and the
+ * app-wide direction rule: too low is blue, too high is orange */
 const SUNG_COLOR: Record<SungState, string> = {
   correct: 'text-(--p-green-500)',
-  low: 'text-(--p-orange-400)',
-  high: 'text-(--p-blue-400)',
+  low: 'text-(--p-blue-400)',
+  high: 'text-(--p-orange-400)',
 }
 
 const sungColor = computed(() =>
@@ -45,7 +46,7 @@ const sungColor = computed(() =>
         <span
           class="col-start-1 row-start-1"
           :class="
-            showTooLow ? 'animate-bounce text-(--p-orange-400)' : 'invisible'
+            showTooLow ? 'animate-bounce text-(--p-blue-400)' : 'invisible'
           "
           :aria-label="t('generic.tooLow')"
           data-testid="circle-target-too-low"
@@ -56,7 +57,7 @@ const sungColor = computed(() =>
         <span
           class="col-start-1 row-start-1"
           :class="
-            showTooHigh ? 'animate-bounce text-(--p-blue-400)' : 'invisible'
+            showTooHigh ? 'animate-bounce text-(--p-orange-400)' : 'invisible'
           "
           :aria-label="t('generic.tooHigh')"
           data-testid="circle-target-too-high"

@@ -15,7 +15,12 @@ import {
   type NoteInfo,
   type NoteName,
 } from '@/utils/noteUtils'
-import { CLEAN_CENTS, cleanColor, cleanTextColor } from '@/utils/pitchColors'
+import {
+  CLEAN_CENTS,
+  cleanTextColor,
+  directionalCleanColor,
+  directionalTextColor,
+} from '@/utils/pitchColors'
 import {
   findNearestString,
   nearestStringBadge,
@@ -237,17 +242,20 @@ const isGuidedStringAlmost = computed(
     Math.abs(guidedString.value.cents) <= CLEAN_CENTS,
 )
 
+/* The guided string is a fixed target, so its colours carry direction: blue
+ * when the string is tuned too low, warm when too high — the app-wide rule.
+ * The main readout measures from the nearest note and stays size-only. */
 const guidedStringRingColor = computed(() => {
   if (!guidedString.value) return undefined
 
   return isGuidedStringAlmost.value
     ? 'var(--p-green-300)'
-    : cleanColor(guidedString.value.cents)
+    : directionalCleanColor(guidedString.value.cents)
 })
 
 const guidedStringTextColor = computed(() =>
   guidedString.value
-    ? cleanTextColor(guidedString.value.cents, isDark.value)
+    ? directionalTextColor(guidedString.value.cents, isDark.value)
     : undefined,
 )
 
