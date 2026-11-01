@@ -70,7 +70,7 @@ export type SongMeter = {
 /* How hard a song is to sing, judged by ear from its span, rhythm and
  * out-of-key notes together. The values match the generic.difficulty_* keys,
  * and keep the conventional easy-first order of a named scale ("Vertical
- * Ordering" in AGENTS.md). */
+ * Ordering" in design-rules.md). */
 export const SONG_DIFFICULTIES = ['easy', 'normal', 'hard'] as const
 
 export type SongDifficulty = (typeof SONG_DIFFICULTIES)[number]
@@ -86,7 +86,7 @@ export type Song = {
 
 export const DEFAULT_SONG_ID: SongId = 'twinkle'
 
-/* Largest first — see "Vertical Ordering" in AGENTS.md. */
+/* Largest first — see "Vertical Ordering" in design-rules.md. */
 export const SPEED_OPTIONS = [1.25, 1, 0.75, 0.5] as const
 
 export type SpeedOption = (typeof SPEED_OPTIONS)[number]

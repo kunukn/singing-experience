@@ -12,7 +12,7 @@ import {
   voiceTypeColor,
 } from './pitchColors'
 
-/* Asserts the rule in AGENTS.md "Pitch Accuracy Thresholds" rather than
+/* Asserts the rule in design-rules.md "Pitch Accuracy Thresholds" rather than
  * pinning today's values, so a deliberate retune only fails if it breaks it */
 describe('pitch accuracy tiers', () => {
   test('should run clean < close < off', () => {
@@ -85,8 +85,8 @@ const luminance = (rgb: [number, number, number]) => {
   return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!
 }
 
-/* Asserts the rule in AGENTS.md "Pitch Colours" rather than pinning today's
- * shades, so a deliberate retune only fails if it breaks the rule */
+/* Asserts the rule in design-rules.md "Pitch Colours" rather than pinning
+ * today's shades, so a deliberate retune only fails if it breaks the rule */
 describe('pitch colour rule', () => {
   const textColorsFor = (cents: number) =>
     [false, true].map((isDark) => parseRgb(directionalTextColor(cents, isDark)))

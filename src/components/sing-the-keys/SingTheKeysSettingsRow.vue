@@ -33,8 +33,8 @@ const speed = defineModel<SpeedOption>('speed', { required: true })
 
 const { t } = useI18n()
 
-/* SPEED_OPTIONS is already largest first ("Vertical Ordering" in AGENTS.md).
- * The × labels are numeric, so they stay untranslated. */
+/* SPEED_OPTIONS is already largest first ("Vertical Ordering" in
+ * design-rules.md). The × labels are numeric, so they stay untranslated. */
 const speedOptions = SPEED_OPTIONS.map((value) => ({
   label: `${value}×`,
   value,

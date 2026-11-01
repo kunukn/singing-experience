@@ -31,7 +31,8 @@ const segments = useVoiceTypeSegments(() => ({
 
 /* getSegmentsForRange returns the lowest voice first, the order the ribbon
  * stacks its columns in. A vertical list reads the other way — see "Vertical
- * Ordering" in AGENTS.md — so Soprano sits on top, as it does on the chart. */
+ * Ordering" in design-rules.md — so Soprano sits on top, as it does on the
+ * chart. */
 const rows = computed(() => segments.value.toReversed())
 
 /*

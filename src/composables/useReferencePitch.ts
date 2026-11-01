@@ -13,7 +13,7 @@ export const REFERENCE_PITCH_STEP = 0.1
 /* −/+ buttons move a whole Hz — the step musicians name (440 → 442) */
 export const REFERENCE_PITCH_BUTTON_STEP = 1
 
-/* Common references, highest first per "Vertical Ordering" in AGENTS.md:
+/* Common references, highest first per "Vertical Ordering" in design-rules.md:
  * 444/442 orchestral, 440 concert, 432 the popular "Verdi" tuning. */
 export const REFERENCE_PITCH_PRESETS = [444, 442, 440, 432] as const
 

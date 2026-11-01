@@ -58,7 +58,7 @@ const startToneOptions = Array.from(
 )
 
 /* Copy before sorting — ALLOWED_BPMS is a shared constant, and sort mutates.
- * Largest first, per "Vertical Ordering" in AGENTS.md. */
+ * Largest first, per "Vertical Ordering" in design-rules.md. */
 const bpmOptions = [...ALLOWED_BPMS]
   .sort((a, b) => b - a)
   .map((value) => ({

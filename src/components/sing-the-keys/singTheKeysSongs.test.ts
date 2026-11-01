@@ -141,7 +141,7 @@ describe('singTheKeysSongs', () => {
 
   describe('difficulty groups', () => {
     /* A named scale keeps its conventional order — "Vertical Ordering" in
-     * AGENTS.md exempts it from largest-first. */
+     * design-rules.md exempts it from largest-first. */
     test('returns the groups easy first', () => {
       const difficulties = groupSongIdsByDifficulty().map(
         (group) => group.difficulty,
@@ -215,7 +215,7 @@ describe('singTheKeysSongs', () => {
     expect(isSpeedOption(3)).toBe(false)
   })
 
-  /* "Vertical Ordering" in AGENTS.md: largest value at the top. */
+  /* "Vertical Ordering" in design-rules.md: largest value at the top. */
   test('SPEED_OPTIONS is listed largest first', () => {
     expect([...SPEED_OPTIONS]).toEqual(
       [...SPEED_OPTIONS].toSorted((a, b) => b - a),
@@ -246,7 +246,7 @@ describe('singTheKeysSongs', () => {
       }
     })
 
-    /* "Vertical Ordering" in AGENTS.md: a range sorts on its midpoint. */
+    /* "Vertical Ordering" in design-rules.md: a range sorts on its midpoint. */
     test.each(SONG_IDS)('%s options run high to low by midpoint', (id) => {
       const midpoints = START_TONE_OPTIONS.map(({ offset }) =>
         rangeMidpoint(id, offset),

@@ -147,7 +147,7 @@ function lerpThreeStop(
 }
 
 /*
- * The pitch colour rule (AGENTS.md "Pitch Colours"): green when clean,
+ * The pitch colour rule (design-rules.md "Pitch Colours"): green when clean,
  * yellow → orange → red when sharp, blue when flat. Thin lines and small
  * marks are told apart by brightness more than by hue, so the flat blues are
  * deep and pure — never sky or cyan, which are as bright as the green — and

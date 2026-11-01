@@ -12,7 +12,7 @@ const difficulty = defineModel<Difficulty>('difficulty', { required: true })
 const { t } = useI18n()
 
 /* Declared ascending for readability, shown largest first — see "Vertical
- * Ordering" in AGENTS.md. */
+ * Ordering" in design-rules.md. */
 const holdDurationOptions = [
   0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
 ]

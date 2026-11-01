@@ -76,7 +76,7 @@ const AUTO_TARGET = 'auto'
 type TargetValue = number | typeof AUTO_TARGET
 
 /* High to low, with the catch-all Auto last — see "Vertical Ordering" in
- * AGENTS.md. A focus outside the range is slotted in by pitch so the select
+ * design-rules.md. A focus outside the range is slotted in by pitch so the select
  * can always show what is locked. */
 const targetOptions = computed(() => {
   const highest = Math.max(props.rangeMidiMax, focusMidi.value ?? -Infinity)

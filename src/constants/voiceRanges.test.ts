@@ -90,9 +90,9 @@ describe('VOICE_RANGES', () => {
 
 /*
  * The selector sits next to a chart that draws high notes at the top, so its
- * options read the same way down the list — see "Pitch Orientation" in
- * AGENTS.md. Asserted as a rule rather than a snapshot of today's order, so a
- * range added in the wrong place fails here instead of shipping.
+ * options read the same way down the list — see "Vertical Ordering" in
+ * design-rules.md. Asserted as a rule rather than a snapshot of today's order,
+ * so a range added in the wrong place fails here instead of shipping.
  */
 describe('VOICE_RANGES ordering', () => {
   test.each(VOICE_RANGE_GROUP_ORDER)(

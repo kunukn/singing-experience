@@ -56,8 +56,8 @@ type PositionedSegment = DecoratedVoiceTypeSegment & {
 /*
  * getSegmentsForRange returns the lowest voice first, which is the order the
  * chart ribbon stacks its columns in. A vertical stack of rows reads the other
- * way — see "Vertical Ordering" in AGENTS.md — so Soprano takes the top row and
- * Bass sits nearest the keys, matching the legend.
+ * way — see "Vertical Ordering" in design-rules.md — so Soprano takes the top
+ * row and Bass sits nearest the keys, matching the legend.
  */
 const positionedSegments = computed<PositionedSegment[]>(() =>
   segments.value.toReversed().map((segment, row) => {

@@ -29,9 +29,9 @@ export const VOICE_RANGE_GROUP_ORDER = [
 /*
  * Ordered for the select: the singer's own range, then everyday picks, then the classical voice types, then
  * the wide spans. Within every group the options run high to low, matching the
- * chart's y-axis — see "Pitch Orientation" in AGENTS.md. A range sorts on its
- * midpoint, since a span has no single pitch; the catch-alls (choir, full) sit
- * below the pitch-ordered entries. Guarded by voiceRanges.test.ts.
+ * chart's y-axis — see "Vertical Ordering" in design-rules.md. A range sorts
+ * on its midpoint, since a span has no single pitch; the catch-alls (choir,
+ * full) sit below the pitch-ordered entries. Guarded by voiceRanges.test.ts.
  *
  * Reordering is safe — selections are persisted by labelKey, not index (see
  * useVoiceRangeIndex).
