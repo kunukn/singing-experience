@@ -1,5 +1,3 @@
-import type { CleanTone } from '@/utils/pitchColors'
-
 /* Interval between consecutive strings in the tuning preview sequence (ms).
  * Shared across instrument tuners so the preview cadence stays consistent. */
 export const PREVIEW_INTERVAL_MS = 400
@@ -8,7 +6,3 @@ export const PREVIEW_INTERVAL_MS = 400
  * Tighter than CLEAN_CENTS (singing), matching clip-on guitar tuners; the
  * CLEAN_CENTS band becomes the pale-green "almost" tier. */
 export const TUNER_IN_TUNE_CENTS = 3
-
-/* The tuner's clean colour: in tune is its goal, so clean reads green like
- * the in-tune ring rather than the grey every singing program uses */
-export const TUNER_CLEAN_TONE = 'green' satisfies CleanTone

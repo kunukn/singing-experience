@@ -4,7 +4,6 @@ import {
   directionalColor,
   OFF_CENTS,
 } from '@/utils/pitchColors'
-import { TUNER_CLEAN_TONE } from './tunerConstants'
 
 type Props = {
   cents: number | null
@@ -36,7 +35,7 @@ const indicatorColor = computed(() => {
 
   return props.colorMode === 'directional'
     ? directionalColor(props.cents, props.threshold)
-    : directionalCleanColor(props.cents, 1, TUNER_CLEAN_TONE)
+    : directionalCleanColor(props.cents)
 })
 
 function toTopPercent(cents: number) {

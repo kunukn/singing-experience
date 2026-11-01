@@ -10,15 +10,13 @@ function parseRgba(color: string) {
 }
 
 describe('usePitchPreviewColor', () => {
-  test('returns grey for an in-tune pitch and red at 50 cents', () => {
+  test('returns green for an in-tune pitch and red at 50 cents', () => {
     const { colorForCents } = usePitchPreviewColor()
     const inTune = parseRgba(colorForCents(0))
     const off = parseRgba(colorForCents(50))
 
-    expect(
-      Math.max(inTune.r, inTune.g, inTune.b) -
-        Math.min(inTune.r, inTune.g, inTune.b),
-    ).toBeLessThan(40)
+    expect(inTune.g).toBeGreaterThan(inTune.r)
+    expect(inTune.g).toBeGreaterThan(inTune.b)
     expect(off.r).toBeGreaterThan(off.g)
   })
 

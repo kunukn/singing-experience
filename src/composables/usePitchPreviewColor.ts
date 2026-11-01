@@ -3,7 +3,7 @@ import { directionalTextColor } from '@/utils/pitchColors'
 
 /*
  * The one colour rule for every idle "See your voice" preview, the same as
- * every other cents colour in the app: grey when clean, yellow → red when
+ * every other cents colour in the app: green when clean, yellow → red when
  * sharp, blue when flat. Uses the theme-aware text shades, which read on both
  * light and dark surfaces.
  *

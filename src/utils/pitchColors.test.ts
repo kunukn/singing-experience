@@ -68,53 +68,92 @@ describe('textColorAtMidi', () => {
   })
 })
 
-/* Low saturation: the channels sit close together, so the colour reads grey */
-const isGrey = ([r, g, b]: [number, number, number]) =>
-  Math.max(r, g, b) - Math.min(r, g, b) < 40
+const isGreen = ([r, g, b]: [number, number, number]) => g > r && g > b
 
 const isBlue = ([r, g, b]: [number, number, number]) => b > r && b > g
 
 const isWarm = ([r, g, b]: [number, number, number]) => r > b && r >= g
 
+/* WCAG relative luminance: how bright a colour reads, 0 (black) to 1 (white) */
+const luminance = (rgb: [number, number, number]) => {
+  const [r, g, b] = rgb.map((channel) => {
+    const c = channel / 255
+
+    return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  })
+
+  return 0.2126 * r! + 0.7152 * g! + 0.0722 * b!
+}
+
+/* Asserts the rule in AGENTS.md "Pitch Colours" rather than pinning today's
+ * shades, so a deliberate retune only fails if it breaks the rule */
+describe('pitch colour rule', () => {
+  const textColorsFor = (cents: number) =>
+    [false, true].map((isDark) => parseRgb(directionalTextColor(cents, isDark)))
+  const allColorsFor = (cents: number) => [
+    ...textColorsFor(cents),
+    directionalCleanColorRgb(cents),
+  ]
+
+  test('should be green within CLEAN_CENTS, on both sides', () => {
+    for (const cents of [-CLEAN_CENTS, -1, 0, 1, CLEAN_CENTS])
+      for (const rgb of allColorsFor(cents)) expect(isGreen(rgb)).toBe(true)
+  })
+
+  test('should be blue when flat beyond CLEAN_CENTS', () => {
+    for (const cents of [-CLOSE_CENTS, -OFF_CENTS])
+      for (const rgb of allColorsFor(cents)) expect(isBlue(rgb)).toBe(true)
+  })
+
+  test('should be warm when sharp beyond CLEAN_CENTS', () => {
+    for (const cents of [CLOSE_CENTS, OFF_CENTS])
+      for (const rgb of allColorsFor(cents)) expect(isWarm(rgb)).toBe(true)
+  })
+
+  /* Thin lines are told apart by brightness more than hue: a flat blue as
+   * bright as the green (the old sky blues were) reads as clean */
+  test('should keep the clean green clearly brighter than any flat blue', () => {
+    for (const [clean, flat] of [
+      [allColorsFor(0), allColorsFor(-CLOSE_CENTS)],
+      [allColorsFor(0), allColorsFor(-OFF_CENTS)],
+    ])
+      clean.forEach((cleanRgb, index) =>
+        expect(luminance(cleanRgb)).toBeGreaterThanOrEqual(
+          1.5 * luminance(flat[index]!),
+        ),
+      )
+  })
+})
+
 describe('directionalTextColor', () => {
   const themes = [false, true]
 
-  const contrastOnWhite = (color: string) => {
-    const [r, g, b] = parseRgb(color).map((channel) => {
-      const c = channel / 255
-
-      return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
-    })
-
-    return 1.05 / (0.2126 * r! + 0.7152 * g! + 0.0722 * b! + 0.05)
-  }
+  const contrastOnWhite = (color: string) =>
+    1.05 / (luminance(parseRgb(color)) + 0.05)
 
   test('returns an rgb string', () => {
     expect(directionalTextColor(0)).toMatch(/^rgb\(\d+, \d+, \d+\)$/)
   })
 
-  test('should be one grey on both sides within CLEAN_CENTS', () => {
-    for (const isDark of themes) {
-      const grey = directionalTextColor(0, isDark)
-
-      expect(isGrey(parseRgb(grey))).toBe(true)
-      for (const cents of [-CLEAN_CENTS, -1, 1, CLEAN_CENTS])
-        expect(directionalTextColor(cents, isDark)).toBe(grey)
-    }
+  test('should use a different shade per theme', () => {
+    for (const cents of [0, -OFF_CENTS, OFF_CENTS])
+      expect(directionalTextColor(cents, true)).not.toBe(
+        directionalTextColor(cents, false),
+      )
   })
 
-  test('should use a different grey per theme', () => {
-    expect(directionalTextColor(0, true)).not.toBe(
-      directionalTextColor(0, false),
-    )
-  })
-
-  test('should lean blue when flat and warm when sharp past CLEAN_CENTS', () => {
+  /* Halfway into the close band the colour has already left green: blue when
+   * flat, turning yellow when sharp (more red than the clean green) */
+  test('should lean blue when flat and yellow when sharp past CLEAN_CENTS', () => {
     const midway = (CLEAN_CENTS + CLOSE_CENTS) / 2
 
     for (const isDark of themes) {
+      const [cleanR] = parseRgb(directionalTextColor(0, isDark))
+      const [sharpR, , sharpB] = parseRgb(directionalTextColor(midway, isDark))
+
       expect(isBlue(parseRgb(directionalTextColor(-midway, isDark)))).toBe(true)
-      expect(isWarm(parseRgb(directionalTextColor(midway, isDark)))).toBe(true)
+      expect(sharpR).toBeGreaterThan(cleanR)
+      expect(sharpR).toBeGreaterThan(sharpB)
     }
   })
 
@@ -132,12 +171,6 @@ describe('directionalTextColor', () => {
     }
   })
 
-  test('should be blue when flat beyond CLEAN_CENTS', () => {
-    for (const isDark of themes)
-      for (const cents of [-CLOSE_CENTS, -OFF_CENTS])
-        expect(isBlue(parseRgb(directionalTextColor(cents, isDark)))).toBe(true)
-  })
-
   /* The flat side is never harder to read than the sharp side it mirrors */
   test('flat reads at least as well as sharp on white', () => {
     for (const cents of [CLOSE_CENTS, 35, OFF_CENTS])
@@ -149,44 +182,7 @@ describe('directionalTextColor', () => {
   })
 })
 
-describe('green clean tone (the Tuner)', () => {
-  const isGreen = ([r, g, b]: [number, number, number]) => g > r && g > b
-
-  test('should be green within CLEAN_CENTS in both themes and on canvas', () => {
-    for (const isDark of [false, true])
-      for (const cents of [-CLEAN_CENTS, 0, CLEAN_CENTS])
-        expect(
-          isGreen(parseRgb(directionalTextColor(cents, isDark, 'green'))),
-        ).toBe(true)
-
-    expect(isGreen(directionalCleanColorRgb(0, 'green'))).toBe(true)
-  })
-
-  test('should end on the same blue and red as the grey tone', () => {
-    for (const isDark of [false, true])
-      for (const cents of [-OFF_CENTS, -CLOSE_CENTS, CLOSE_CENTS, OFF_CENTS])
-        expect(directionalTextColor(cents, isDark, 'green')).toBe(
-          directionalTextColor(cents, isDark),
-        )
-  })
-})
-
-describe('directionalCleanColorRgb', () => {
-  test('should be one grey on both sides within CLEAN_CENTS', () => {
-    const grey = directionalCleanColorRgb(0)
-
-    expect(isGrey(grey)).toBe(true)
-    for (const cents of [-CLEAN_CENTS, -1, 1, CLEAN_CENTS])
-      expect(directionalCleanColorRgb(cents)).toEqual(grey)
-  })
-
-  test('should be blue when flat and warm when sharp beyond CLEAN_CENTS', () => {
-    for (const cents of [CLOSE_CENTS, OFF_CENTS]) {
-      expect(isBlue(directionalCleanColorRgb(-cents))).toBe(true)
-      expect(isWarm(directionalCleanColorRgb(cents))).toBe(true)
-    }
-  })
-
+describe('directionalCleanColor', () => {
   test('should give the rgba string the requested opacity', () => {
     expect(directionalCleanColor(0, 0.5)).toMatch(
       /^rgba\(\d+, \d+, \d+, 0\.5\)$/,

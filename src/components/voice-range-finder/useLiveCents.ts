@@ -24,7 +24,7 @@ export const centsLabel = (cents: number) =>
 
 /**
  * How far a live, fractional MIDI note sits from its nearest semitone, as the
- * number, its text and its colour (grey when clean, blue when flat, warm when
+ * number, its text and its colour (green when clean, blue when flat, warm when
  * sharp). All three are empty while silent. Within 2¢ the text reads ≈0¢,
  * while the number (and the meter it drives) stays exact.
  */

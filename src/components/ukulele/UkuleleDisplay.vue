@@ -10,7 +10,6 @@ import {
 } from '@/components/tuner/nearestString'
 import {
   PREVIEW_INTERVAL_MS,
-  TUNER_CLEAN_TONE,
   TUNER_IN_TUNE_CENTS,
 } from '@/components/tuner/tunerConstants'
 import {
@@ -66,21 +65,13 @@ const formattedReferenceA4 = computed(() =>
 
 const noteColor = computed(() =>
   shownNoteInfo.value && isShownClean.value
-    ? directionalTextColor(
-        shownNoteInfo.value.cents,
-        isDark.value,
-        TUNER_CLEAN_TONE,
-      )
+    ? directionalTextColor(shownNoteInfo.value.cents, isDark.value)
     : null,
 )
 
 const centsColor = computed(() =>
   shownNoteInfo.value && isShownClean.value
-    ? directionalTextColor(
-        shownNoteInfo.value.cents,
-        isDark.value,
-        TUNER_CLEAN_TONE,
-      )
+    ? directionalTextColor(shownNoteInfo.value.cents, isDark.value)
     : null,
 )
 
@@ -259,16 +250,12 @@ const guidedStringRingColor = computed(() => {
 
   return isGuidedStringAlmost.value
     ? 'var(--p-green-300)'
-    : directionalCleanColor(guidedString.value.cents, 1, TUNER_CLEAN_TONE)
+    : directionalCleanColor(guidedString.value.cents)
 })
 
 const guidedStringTextColor = computed(() =>
   guidedString.value
-    ? directionalTextColor(
-        guidedString.value.cents,
-        isDark.value,
-        TUNER_CLEAN_TONE,
-      )
+    ? directionalTextColor(guidedString.value.cents, isDark.value)
     : undefined,
 )
 

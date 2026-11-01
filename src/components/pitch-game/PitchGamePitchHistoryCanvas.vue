@@ -554,9 +554,9 @@ function drawChart() {
         const cp2x = p2.x - (p3.x - p1.x) / 6
         const cp2y = p2.y - (p3.y - p1.y) / 6
 
-        /* Grey when clean, warm when sharp, blue when flat. Where
-         * nearest-note cents wrap (+49 → −49) an average would paint a clean
-         * grey blip, so the newer point wins. */
+        /* Green when clean, warm when sharp, blue when flat. Where
+         * nearest-note cents wrap (+49 → −49) an average would paint a green
+         * blip, so the newer point wins. */
         const avgCents =
           Math.abs(p1.cents - p2.cents) > 50
             ? p2.cents

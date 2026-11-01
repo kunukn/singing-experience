@@ -24,7 +24,7 @@ type Props = {
   highlightedMidi?: number | null
   onTonePlayed?: () => void
   /* Cents-colour the singer's line — the idle preview only; with Snap on it sits
-   * at 0¢ and reads clean (grey). During a game the line keeps the neutral
+   * at 0¢ and reads green. During a game the line keeps the neutral
    * orange, so only the green "on target" says the note counts. */
   shouldColorByCents?: boolean
   /* Note-target overlay props (only used while game is playing) */

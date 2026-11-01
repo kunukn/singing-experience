@@ -65,7 +65,7 @@ const { isPlayingSequence, currentPlayingIndex, playSequence, stopSequence } =
 const { isPreviewEnabled } = useSettings()
 const showDoReMiTarget = useLocalStorage('syng.showDoReMiTarget', true)
 /* Display only. On Easy, scoring's ±50¢ window is the nearest-note rule, so
- * the snapped view reads clean/0¢ exactly when the note counts. Normal and
+ * the snapped view reads green/0¢ exactly when the note counts. Normal and
  * Hard are stricter than the snap, so there 0¢ on the right note can still
  * miss — the solfège only turns green on isSingingCorrectNote. */
 const { isPitchSnapEnabled } = usePitchSnap()
