@@ -171,7 +171,7 @@ describe('VoiceRangeSlots', () => {
       vi.spyOn(window, 'matchMedia').mockImplementation(
         (query) =>
           ({
-            matches: query.includes('max-width'),
+            matches: query.includes('width <'),
             media: query,
             addEventListener: () => {},
             removeEventListener: () => {},
