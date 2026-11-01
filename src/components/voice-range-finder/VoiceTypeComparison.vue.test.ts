@@ -111,6 +111,8 @@ describe('VoiceTypeComparison', () => {
       .map((row) => row.attributes('data-voice-type'))
 
     expect(starredVoices).toEqual(['voiceRanges.bass'])
+    /* After the name, so the names keep their start-aligned column */
+    expect(rowFor(wrapper, 'voiceRanges.bass').text()).toContain('Bass ★')
     expect(
       rowFor(wrapper, 'voiceRanges.bass').attributes('aria-label'),
     ).toMatch(/ Your best fit\.$/)

@@ -380,15 +380,6 @@ const liveLabel = computed(() => {
           class="text-xs whitespace-nowrap"
           :class="{ 'font-semibold': row.comparison.isBestFit }"
         >
-          <!--
-            A shape, not only bold: it reads in dark mode, for colour-blind
-            singers and in a screenshot. The aria label says it in words.
-          -->
-          <span
-            v-if="row.comparison.isBestFit"
-            data-testid="voice-type-comparison-best-fit-mark"
-            >★&nbsp;</span
-          >
           <template v-if="row.shortName === row.name">{{ row.name }}</template>
           <!-- Short on a narrow chart, full once the chart has room (container query) -->
           <template v-else>
@@ -403,6 +394,17 @@ const liveLabel = computed(() => {
               >{{ row.name }}</span
             >
           </template>
+          <!--
+            A shape, not only bold: it reads in dark mode, for colour-blind
+            singers and in a screenshot. The aria label says it in words.
+            After the name, so the names stay aligned at the start of the
+            column and only the star moves when the best fit changes.
+          -->
+          <span
+            v-if="row.comparison.isBestFit"
+            data-testid="voice-type-comparison-best-fit-mark"
+            >&nbsp;★</span
+          >
         </span>
         <!--
           Exploring lights the name in its voice's colour and a faux bold. Real
