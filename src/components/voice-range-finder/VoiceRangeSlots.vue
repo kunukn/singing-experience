@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useLocalStorage, useMediaQuery } from '@vueuse/core'
 import { PHONE_MEDIA_QUERY } from '@/constants/breakpoints'
 import type { MidiRange } from '@/utils/normalizeVoiceRange'
+import { useLocalStorage, useMediaQuery } from '@vueuse/core'
 import {
   useVoiceRangeSlots,
   VOICE_RANGE_SLOT_NAME_MAX_LENGTH,
@@ -179,7 +179,7 @@ function clearEditingSlot() {
     <div
       v-show="isExpanded"
       :id="slotListId"
-      class="flex flex-wrap gap-2"
+      class="flex flex-wrap gap-3"
       data-testid="range-slots-list"
     >
       <!--
