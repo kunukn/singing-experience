@@ -334,6 +334,7 @@
     "highestSoFar": "Tertinggi sejauh ini: {note}",
     "noRecordYet": "Tahan satu nada sampai bilahnya penuh",
     "keepHolding": "Terus tahan {note} untuk menyimpannya",
+    "aboveLimit": "Kami hanya menghitung nada sampai {note}.",
     "done": "Selesai",
     "cancel": "Batal",
     "resultTitle": "Kamu menyanyikan {range}",

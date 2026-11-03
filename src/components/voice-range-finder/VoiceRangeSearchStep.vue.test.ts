@@ -29,6 +29,31 @@ const mountStep = (props: Partial<Props>) =>
   })
 
 describe('VoiceRangeSearchStep', () => {
+  describe('above the top limit', () => {
+    const mountAbove = () =>
+      mountStep({
+        step: 'high',
+        sungMidi: 86, // D6
+        pauseReason: 'aboveLimit',
+      })
+
+    test('should say how high the notes count', () => {
+      const wrapper = mountAbove()
+
+      expect(
+        wrapper.get('[data-testid="voice-range-finder-hold-hint"]').text(),
+      ).toBe('We only count notes up to C6.')
+      wrapper.unmount()
+    })
+
+    test('should not point anywhere with an arrow', () => {
+      const wrapper = mountAbove()
+
+      expect(wrapper.find(CUE).exists()).toBe(false)
+      wrapper.unmount()
+    })
+  })
+
   describe('pause cue', () => {
     test('should point down to the next note below the low record', () => {
       const wrapper = mountStep({

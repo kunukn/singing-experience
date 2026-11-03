@@ -334,6 +334,7 @@
     "highestSoFar": "الأعلى حتى الآن: {note}",
     "noRecordYet": "اثبت على نغمة حتى يمتلئ الشريط",
     "keepHolding": "واصل الثبات على {note} لحفظها",
+    "aboveLimit": "نحسب النغمات حتى {note} فقط.",
     "done": "تم",
     "cancel": "إلغاء",
     "resultTitle": "غنّيت {range}",

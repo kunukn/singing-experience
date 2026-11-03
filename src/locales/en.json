@@ -334,6 +334,7 @@
     "highestSoFar": "Highest so far: {note}",
     "noRecordYet": "Hold a note until the bar fills",
     "keepHolding": "Keep holding {note} to save it",
+    "aboveLimit": "We only count notes up to {note}.",
     "done": "Done",
     "cancel": "Cancel",
     "resultTitle": "You sang {range}",

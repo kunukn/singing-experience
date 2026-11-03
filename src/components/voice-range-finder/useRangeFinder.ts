@@ -23,7 +23,7 @@ export type RangeFinderMode = 'both' | 'low' | 'high'
 
 /* Why a sung note isn't filling the hold, when the singer can do something
  * about it */
-export type RangeFinderPauseReason = 'notPastRecord' | 'offPitch'
+export type RangeFinderPauseReason = 'notPastRecord' | 'offPitch' | 'aboveLimit'
 
 type RangeFinderOptions = {
   /* Fractional MIDI of the live sung pitch, or null for silence */
@@ -116,7 +116,14 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
    * next note to point at. */
   function readPauseReason(): RangeFinderPauseReason | null {
     const midi = toValue(sungMidi)
-    if (midi === null || !isInSpan(midi)) return null
+    if (midi === null) return null
+
+    /* Only reaching up: above the span the note can't count, and without a
+     * reason the bar would sit still as if the app had stopped listening. */
+    if (step.value === 'high' && Math.round(midi) > VOICE_RANGE_HIGHEST_MIDI)
+      return 'aboveLimit'
+
+    if (!isInSpan(midi)) return null
 
     if (!beatsRecord(midi)) {
       const spanEnd =

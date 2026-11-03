@@ -334,6 +334,7 @@
     "highestSoFar": "いままででいちばん高い音：{note}",
     "noRecordYet": "バーがいっぱいになるまで音をのばそう",
     "keepHolding": "{note} をのばしつづけると保存されるよ",
+    "aboveLimit": "{note} までの音だけ数えるよ。",
     "done": "できた",
     "cancel": "キャンセル",
     "resultTitle": "きみが歌ったのは {range}",

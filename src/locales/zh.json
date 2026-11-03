@@ -334,6 +334,7 @@
     "highestSoFar": "目前最高：{note}",
     "noRecordYet": "保持一个音，直到进度条满",
     "keepHolding": "继续保持 {note} 就能存下来",
+    "aboveLimit": "我们只计到 {note} 为止的音。",
     "done": "好了",
     "cancel": "取消",
     "resultTitle": "你唱出了 {range}",

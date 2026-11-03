@@ -334,6 +334,7 @@
     "highestSoFar": "Ya juu kabisa hadi sasa: {note}",
     "noRecordYet": "Shikilia noti hadi upau ujae",
     "keepHolding": "Endelea kushikilia {note} ili kuihifadhi",
+    "aboveLimit": "Tunahesabu noti hadi {note} tu.",
     "done": "Nimemaliza",
     "cancel": "Ghairi",
     "resultTitle": "Uliimba {range}",

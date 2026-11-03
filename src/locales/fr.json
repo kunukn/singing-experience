@@ -334,6 +334,7 @@
     "highestSoFar": "La plus aiguë pour l'instant : {note}",
     "noRecordYet": "Tiens une note jusqu'à ce que la barre soit pleine",
     "keepHolding": "Continue de tenir {note} pour l'enregistrer",
+    "aboveLimit": "On compte seulement les notes jusqu'à {note}.",
     "done": "Fini",
     "cancel": "Annuler",
     "resultTitle": "Tu as chanté {range}",

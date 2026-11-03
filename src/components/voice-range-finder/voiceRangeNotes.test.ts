@@ -14,7 +14,7 @@ const G2 = 43
 const E4 = 64
 
 describe('voiceRangeNotes', () => {
-  test('should list notes high to low, C7 down to C2', () => {
+  test('should list notes high to low, C6 down to C2', () => {
     expect(VOICE_RANGE_NOTE_OPTIONS[0]?.value).toBe(VOICE_RANGE_HIGHEST_MIDI)
     expect(VOICE_RANGE_NOTE_OPTIONS.at(-1)?.value).toBe(VOICE_RANGE_LOWEST_MIDI)
   })

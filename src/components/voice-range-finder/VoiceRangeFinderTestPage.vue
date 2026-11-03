@@ -28,8 +28,8 @@ const isVoiceOn = computed({
   },
 })
 
-/* C2 to C7, the span My range is allowed in */
-const octaveOptions = [7, 6, 5, 4, 3, 2]
+/* C2 and up. My range stops at C6; the rest of octave 6 tests notes past it */
+const octaveOptions = [6, 5, 4, 3, 2]
 </script>
 
 <template>

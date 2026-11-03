@@ -334,6 +334,7 @@
     "highestSoFar": "La más aguda hasta ahora: {note}",
     "noRecordYet": "Mantén una nota hasta que se llene la barra",
     "keepHolding": "Sigue manteniendo {note} para guardarla",
+    "aboveLimit": "Solo contamos notas hasta {note}.",
     "done": "Listo",
     "cancel": "Cancelar",
     "resultTitle": "Cantaste {range}",

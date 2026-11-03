@@ -391,6 +391,44 @@ describe('useRangeFinder', () => {
       scope.stop()
     })
 
+    test('should explain a note above C6 on the high step, without recording it', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start('high')
+      midi.value = 86 // D6
+      vi.advanceTimersByTime(50)
+      expect(finder.pauseReason.value).toBe(null)
+
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+
+      expect(finder.pauseReason.value).toBe('aboveLimit')
+      expect(finder.highestMidi.value).toBe(null)
+      scope.stop()
+    })
+
+    test('should still count C6 itself', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start('high')
+      midi.value = 84 // C6
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+
+      expect(finder.pauseReason.value).toBe(null)
+      expect(finder.highestMidi.value).toBe(84)
+      scope.stop()
+    })
+
+    test('should say nothing about the top limit on the low step', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 86 // D6
+      vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
+
+      expect(finder.pauseReason.value).toBe(null)
+      scope.stop()
+    })
+
     test('should report an out-of-tune note past the high record as off pitch', () => {
       const { midi, finder, scope } = setup()
 
@@ -440,7 +478,7 @@ describe('useRangeFinder', () => {
       scope.stop()
     })
 
-    test('should give no reason for a note outside C2–C7', () => {
+    test('should give no reason for a note outside C2–C6', () => {
       const { midi, finder, scope } = setup()
 
       finder.start()

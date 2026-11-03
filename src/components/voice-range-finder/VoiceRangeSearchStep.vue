@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useTimeoutFn } from '@vueuse/core'
+import { VOICE_RANGE_HIGHEST_MIDI } from '@/utils/normalizeVoiceRange'
 import { useLiveCents } from './useLiveCents'
 import {
   centsOffNearest,
@@ -73,15 +74,23 @@ watch(
   },
 )
 
-/* Names what the filling bar is about to save. Empty on a paused bar — it would
- * claim progress that isn't happening. */
-const holdHint = computed(() =>
-  !isRecordFlash.value && props.isFilling && props.candidateMidi !== null
+/* Names what the filling bar is about to save, or why a note above the span
+ * doesn't count. Otherwise empty on a paused bar — it would claim progress that
+ * isn't happening. */
+const holdHint = computed(() => {
+  if (isRecordFlash.value) return ''
+
+  if (props.pauseReason === 'aboveLimit')
+    return t('voiceRangeFinder.aboveLimit', {
+      note: formatNote(VOICE_RANGE_HIGHEST_MIDI),
+    })
+
+  return props.isFilling && props.candidateMidi !== null
     ? t('voiceRangeFinder.keepHolding', {
         note: formatNote(props.candidateMidi),
       })
-    : '',
-)
+    : ''
+})
 
 /*
  * Which way to go when the bar pauses. Past-the-record uses the ↓G2 form of the
