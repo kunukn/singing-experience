@@ -31,6 +31,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const { t, locale } = useI18n()
 const { isDark } = useDarkMode()
+const { myVoiceRange } = useMyVoiceRange()
 
 /* E2–C6: Bass bottom to Soprano top, so every voice fits whole. Widened when
  * the singer's own range runs past it, so their guide lines stay on screen. */
@@ -157,7 +158,7 @@ const EXPLORE_HEADING = 'text-sm font-semibold text-(--p-text-color)'
 type ChartRow = {
   /* The voice's labelKey, or the singer's id */
   id: string
-  isSinger: boolean
+  kind: 'voice' | 'singer' | 'myRange'
   name: string
   /* Shown instead of `name` while the chart is narrow */
   shortName: string
@@ -165,7 +166,8 @@ type ChartRow = {
   faintColor: string
   /* The name and end notes while the live note sits inside this row */
   soundingColor: string
-  voiceStyle: ReturnType<typeof trackStyle>
+  /* Only My range draws its span striped rather than in a colour */
+  voiceStyle: ReturnType<typeof trackStyle> & { backgroundImage?: string }
   /* The solid part of the bar, or null when the whole bar is faint */
   solidStyle: ReturnType<typeof trackStyle> | null
   ariaLabel: string
@@ -188,6 +190,8 @@ type ChartRow = {
     endLabel: string
     startLeft: number
     endLeft: number
+    /* Below E2 there's no room beside the bar, so the note sits inside it */
+    isStartInside: boolean
   } | null
 }
 
@@ -217,7 +221,7 @@ const compareRows = (midiMin: number, midiMax: number): ChartRow[] =>
 
     return {
       id: row.labelKey,
-      isSinger: false,
+      kind: 'voice',
       name,
       shortName: shortName(row.labelKey),
       ...rowColors(row.stopIndex),
@@ -262,7 +266,7 @@ const exploreRow = (
   row: Pick<
     ChartRow,
     | 'id'
-    | 'isSinger'
+    | 'kind'
     | 'name'
     | 'shortName'
     | 'color'
@@ -292,6 +296,7 @@ const exploreRow = (
       endLabel: formatNote(midiMax),
       startLeft: toPercent(midiMin),
       endLeft: toPercent(midiMax),
+      isStartInside: false,
     },
   }
 }
@@ -301,7 +306,7 @@ const exploreVoiceRows = (): ChartRow[] =>
   VOICE_TYPES.map(({ range: voice }, stopIndex) =>
     exploreRow(voice.midiMin, voice.midiMax, {
       id: voice.labelKey,
-      isSinger: false,
+      kind: 'voice',
       name: t(voice.labelKey),
       shortName: shortName(voice.labelKey),
       ...rowColors(stopIndex),
@@ -312,24 +317,57 @@ const exploreSingerRows = (): ChartRow[] =>
   FAMOUS_SINGERS.map(({ id, name, shortName, midiMin, midiMax }) =>
     exploreRow(midiMin, midiMax, {
       id,
-      isSinger: true,
+      kind: 'singer',
       name,
       shortName,
       ...SINGER_COLORS,
     }),
   )
 
+/* The singer's own range, to hold up against the famous singers. Striped and
+ * never faded, like its bar beside My range. Its low end can pass the axis (C2,
+ * the axis starts on C♯2), so that's clipped: widening the axis would rescale
+ * every bar on a toggle. The label keeps the real note. */
+const exploreMyRangeRow = (): ChartRow => {
+  const { midiMin, midiMax } = myVoiceRange.value
+  const clippedMin = Math.max(axisMin.value, midiMin)
+  const name = t('voiceRanges.myRange')
+  const row = exploreRow(midiMin, midiMax, {
+    id: 'myRange',
+    kind: 'myRange',
+    name,
+    shortName: name,
+    ...SINGER_COLORS,
+    faintColor: 'transparent',
+  })
+
+  return {
+    ...row,
+    voiceStyle: {
+      ...trackStyle(clippedMin, midiMax),
+      backgroundImage: RANGE_BAR_STRIPES,
+    },
+    solidStyle: null,
+    isFaded: false,
+    ends: row.ends && {
+      ...row.ends,
+      startLeft: toPercent(clippedMin),
+      isStartInside: midiMin < AXIS_MIN_MIDI,
+    },
+  }
+}
+
 const rows = computed(() => {
   if (range.value) return compareRows(range.value.midiMin, range.value.midiMax)
 
   return props.showSingers
-    ? [...exploreVoiceRows(), ...exploreSingerRows()]
+    ? [...exploreVoiceRows(), ...exploreSingerRows(), exploreMyRangeRow()]
     : exploreVoiceRows()
 })
 
 /* The singers' subheading sits above the first singer, as a grid row of its own */
 const firstSingerId = computed(
-  () => rows.value.find((row) => row.isSinger)?.id ?? null,
+  () => rows.value.find((row) => row.kind === 'singer')?.id ?? null,
 )
 
 /* The live label's grid area. With singers it takes the subheading's row, the
@@ -338,7 +376,7 @@ const firstSingerId = computed(
  * header beside My range. Inline because Tailwind can't see a class built at
  * runtime. */
 const liveLabelGridRow = computed(() => {
-  const firstSingerIndex = rows.value.findIndex((row) => row.isSinger)
+  const firstSingerIndex = rows.value.findIndex((row) => row.kind === 'singer')
 
   if (firstSingerIndex !== -1) return `${firstSingerIndex + 1} / span 1`
 
@@ -479,8 +517,9 @@ const liveLabel = computed(() => {
         <div
           role="img"
           data-testid="voice-type-comparison-row"
-          :data-voice-type="row.isSinger ? undefined : row.id"
-          :data-singer="row.isSinger ? row.id : undefined"
+          :data-voice-type="row.kind === 'voice' ? row.id : undefined"
+          :data-singer="row.kind === 'singer' ? row.id : undefined"
+          :data-my-range="row.kind === 'myRange' || undefined"
           :data-coverage="
             row.comparison
               ? Math.round(row.comparison.coverage * 100)
@@ -584,12 +623,19 @@ const liveLabel = computed(() => {
               class="absolute top-1/2 h-2 -translate-y-1/2 rounded-full"
               :style="{ ...row.solidStyle, backgroundColor: row.color }"
             />
-            <!-- Each note on the outer side of its end, so it never sits on the bar -->
+            <!-- Each note on the outer side of its end, so it never sits on the bar,
+                 unless the chart has no room there (see isStartInside) -->
             <template v-if="row.ends">
               <span
                 data-testid="voice-type-comparison-voice-start"
-                class="absolute top-1/2 -translate-x-full -translate-y-1/2 pe-1 text-[10px] whitespace-nowrap tabular-nums"
-                :class="{ 'text-(--p-text-muted-color)': !row.isSounding }"
+                class="absolute top-1/2 -translate-y-1/2 text-[10px] whitespace-nowrap tabular-nums"
+                :class="[
+                  { 'text-(--p-text-muted-color)': !row.isSounding },
+                  row.ends.isStartInside
+                    ? 'bg-(--p-content-background) px-1'
+                    : '-translate-x-full pe-1',
+                ]"
+                :data-inside="row.ends.isStartInside || undefined"
                 :style="{
                   insetInlineStart: `${row.ends.startLeft}%`,
                   color: row.isSounding ? row.soundingColor : undefined,
@@ -744,6 +790,7 @@ const liveLabel = computed(() => {
         {{ t('voiceRangeFinder.compare.exploreExplainer') }}
         <template v-if="showSingers">
           {{ t('voiceRangeFinder.compare.famousSingersLegend') }}
+          {{ t('voiceRangeFinder.compare.rangeLegend') }}
         </template>
       </template>
       <template v-if="hasBestFit">

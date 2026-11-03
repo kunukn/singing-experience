@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
@@ -553,7 +553,8 @@ describe('VoiceTypeComparison', () => {
           mountSingers(60).findAll(
             '[data-testid="voice-type-comparison-live-line"]',
           ),
-        ).toHaveLength(6 + FAMOUS_SINGERS.length)
+          /* The six voices, the singers and My range */
+        ).toHaveLength(6 + FAMOUS_SINGERS.length + 1)
       })
 
       /* Six voice rows above it, so the subheading is grid row 7 */
@@ -582,6 +583,109 @@ describe('VoiceTypeComparison', () => {
             .attributes('style')
 
         expect(styleOf(mountSingers())).toBe(styleOf(mountExplore()))
+      })
+
+      describe('My range bar', () => {
+        const { setMyVoiceRange } = useMyVoiceRange()
+
+        const myRangeOf = (wrapper: ReturnType<typeof mountSingers>) =>
+          wrapper.get('[data-my-range]')
+
+        const endsOf = (wrapper: ReturnType<typeof mountSingers>) => {
+          const row = myRangeOf(wrapper)
+
+          return [
+            row.get('[data-testid="voice-type-comparison-voice-start"]').text(),
+            row.get('[data-testid="voice-type-comparison-voice-end"]').text(),
+          ]
+        }
+
+        beforeEach(() => {
+          setMyVoiceRange(41, 67) // F2–G4
+        })
+
+        test('should stay hidden without the singers', () => {
+          expect(mountExplore().find('[data-my-range]').exists()).toBe(false)
+        })
+
+        test('should sit below the last singer, named and with both ends labelled', () => {
+          const wrapper = mountSingers()
+          const rows = wrapper.findAll(
+            '[data-testid="voice-type-comparison-row"]',
+          )
+
+          expect(rows.at(-1)!.attributes('data-my-range')).toBeDefined()
+          expect(myRangeOf(wrapper).attributes('aria-label')).toBe(
+            'My range, F2–G4',
+          )
+          expect(endsOf(wrapper)).toEqual(['F2', 'G4'])
+        })
+
+        test.each([
+          { midiMin: 36, inside: 'true' }, // C2
+          { midiMin: 39, inside: 'true' }, // D♯2
+          { midiMin: 40, inside: undefined }, // E2
+        ])(
+          'should put the low note inside the bar only below E2 ($midiMin)',
+          ({ midiMin, inside }) => {
+            setMyVoiceRange(midiMin, 84) // C6
+            const start = myRangeOf(mountSingers()).get(
+              '[data-testid="voice-type-comparison-voice-start"]',
+            )
+
+            expect(start.attributes('data-inside')).toBe(inside)
+          },
+        )
+
+        test('should explain the stripes', () => {
+          expect(
+            mountSingers()
+              .get('[data-testid="voice-type-comparison-legend"]')
+              .text(),
+          ).toContain(en.voiceRangeFinder.compare.rangeLegend)
+        })
+
+        test('should light up while the live note is inside the range', () => {
+          /* C4 is inside F2–G4; C5 is above it */
+          expect(myRangeOf(mountSingers(60)).attributes('data-sounding')).toBe(
+            'true',
+          )
+          expect(myRangeOf(mountSingers(72)).attributes('data-sounding')).toBe(
+            'false',
+          )
+        })
+
+        test('should keep its bar when See my voice is off', () => {
+          const row = myRangeOf(
+            mount(VoiceTypeComparison, {
+              props: { liveMidi: null, showSingers: true, isListening: false },
+              global: { plugins: [i18n] },
+            }),
+          )
+
+          expect(row.attributes('data-faded')).toBeUndefined()
+        })
+
+        test('should clip a low end past the chart, name its real note and leave the axis alone', () => {
+          const bassStyle = (wrapper: ReturnType<typeof mountSingers>) =>
+            wrapper
+              .get(
+                '[data-voice-type="voiceRanges.bass"] [data-testid="voice-type-comparison-bar"]',
+              )
+              .attributes('style')
+          const before = bassStyle(mountSingers())
+
+          setMyVoiceRange(36, 84) // C2–C6, the widest allowed
+          const wrapper = mountSingers()
+
+          expect(endsOf(wrapper)).toEqual(['C2', 'C6'])
+          expect(
+            myRangeOf(wrapper)
+              .get('[data-testid="voice-type-comparison-voice-start"]')
+              .attributes('style'),
+          ).toContain('inset-inline-start: 0%')
+          expect(bassStyle(wrapper)).toBe(before)
+        })
       })
 
       test('should ignore the singers beside My range', () => {
