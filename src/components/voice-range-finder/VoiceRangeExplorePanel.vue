@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useLocalStorage } from '@vueuse/core'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { useLiveCents } from './useLiveCents'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
@@ -24,7 +25,7 @@ const { liveCents, liveCentsText, liveCentsColor } = useLiveCents(
 
 const { t } = useI18n()
 
-const areSingersShown = ref(false)
+const areSingersShown = useLocalStorage('syng.voiceRangeFamousSingers', false)
 </script>
 
 <template>

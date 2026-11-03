@@ -78,6 +78,7 @@ const STORAGE_KEYS = [
   'syng.startOffset',
   'syng.toneMode',
   'syng.tunerReferencePitch',
+  'syng.voiceRangeFamousSingers',
   'syng.voiceRangeSlots',
   'syng.voiceRangeSlotsExpanded',
   'syng.voiceTypeRibbon',
