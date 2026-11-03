@@ -95,6 +95,7 @@ const {
   candidateMidi,
   progress,
   isFilling,
+  pauseReason,
 } = finder
 
 const isSearching = computed(
@@ -395,6 +396,7 @@ onUnmounted(() => {
         :candidateMidi="candidateMidi"
         :progress="progress"
         :isFilling="isFilling"
+        :pauseReason="pauseReason"
         :lowestMidi="lowestMidi"
         :highestMidi="highestMidi"
         @cancel="cancelSearch"

@@ -334,7 +334,6 @@
     "highestSoFar": "Highest so far: {note}",
     "noRecordYet": "Hold a note until the bar fills",
     "keepHolding": "Keep holding {note} to save it",
-    "notCleanYet": "Not clean yet — get within {cents}¢",
     "done": "Done",
     "cancel": "Cancel",
     "resultTitle": "You sang {range}",

@@ -334,7 +334,6 @@
     "highestSoFar": "Bisher am höchsten: {note}",
     "noRecordYet": "Halte einen Ton, bis der Balken voll ist",
     "keepHolding": "Halte {note} weiter, um ihn zu speichern",
-    "notCleanYet": "Noch nicht sauber — komm auf {cents}¢ heran",
     "done": "Fertig",
     "cancel": "Abbrechen",
     "resultTitle": "Du hast {range} gesungen",

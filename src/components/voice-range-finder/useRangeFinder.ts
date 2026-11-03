@@ -5,7 +5,7 @@ import {
   VOICE_RANGE_LOWEST_MIDI,
 } from '@/utils/normalizeVoiceRange'
 import { CLOSE_CENTS } from '@/utils/pitchColors'
-import { createTuningHold } from '@/utils/tuningHold'
+import { createTuningHold, TUNING_STRAY_MS } from '@/utils/tuningHold'
 
 /* Shorter than Sing the Keys' 1.5 s tune: a record attempt is repeated many
  * times while the singer creeps lower or higher, and the extremes of a voice
@@ -16,6 +16,10 @@ export type RangeFinderStep = 'idle' | 'low' | 'high' | 'result'
 
 /* Which ends a search covers: both (low then high) or just one */
 export type RangeFinderMode = 'both' | 'low' | 'high'
+
+/* Why a sung note isn't filling the hold, when the singer can do something
+ * about it */
+export type RangeFinderPauseReason = 'notPastRecord' | 'offPitch'
 
 type RangeFinderOptions = {
   /* Fractional MIDI of the live sung pitch, or null for silence */
@@ -58,19 +62,31 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
   const progress = ref(0)
   /* Whether the bar is moving right now, as opposed to paused on a candidate */
   const isFilling = ref(false)
+  const pauseReason = ref<RangeFinderPauseReason | null>(null)
+  /* The reason on the latest frame and when it began, before it has lasted
+   * long enough to show */
+  let latestPauseReason: RangeFinderPauseReason | null = null
+  let latestPauseReasonSince = 0
 
-  /*
-   * Past the current record and inside the C2–C7 span My range can hold —
-   * the only notes worth holding for. A note outside that span would only be
-   * clamped on save; at the bottom it is usually rumble or an octave slip near
-   * the detector's frequency floor.
-   */
-  function beatsRecord(midi: number): boolean {
+  /* The span My range can hold. A note outside it would only be clamped on
+   * save; at the bottom it is usually rumble or an octave slip near the
+   * detector's frequency floor. */
+  function isInSpan(midi: number): boolean {
     const note = Math.round(midi)
-    if (note < VOICE_RANGE_LOWEST_MIDI || note > VOICE_RANGE_HIGHEST_MIDI)
-      return false
 
-    const record = step.value === 'low' ? lowestMidi.value : highestMidi.value
+    return note >= VOICE_RANGE_LOWEST_MIDI && note <= VOICE_RANGE_HIGHEST_MIDI
+  }
+
+  function currentRecord(): number | null {
+    return step.value === 'low' ? lowestMidi.value : highestMidi.value
+  }
+
+  /* Past the current record and in span — the only notes worth holding for */
+  function beatsRecord(midi: number): boolean {
+    if (!isInSpan(midi)) return false
+
+    const note = Math.round(midi)
+    const record = currentRecord()
     if (record === null) return true
 
     return step.value === 'low' ? note < record : note > record
@@ -90,6 +106,44 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
     return midi
   }
 
+  /* Mirrors readFrame. The record comes first: a cleaner note still wouldn't
+   * count if it isn't past the record. A record at the end of the span has no
+   * next note to point at. */
+  function readPauseReason(): RangeFinderPauseReason | null {
+    const midi = toValue(sungMidi)
+    if (midi === null || !isInSpan(midi)) return null
+
+    if (!beatsRecord(midi)) {
+      const spanEnd =
+        step.value === 'low'
+          ? VOICE_RANGE_LOWEST_MIDI
+          : VOICE_RANGE_HIGHEST_MIDI
+
+      return currentRecord() === spanEnd ? null : 'notPastRecord'
+    }
+
+    return step.value === 'high' && !isCleanEnough(midi) ? 'offPitch' : null
+  }
+
+  /* A reason shows once it has lasted TUNING_STRAY_MS, so sliding through the
+   * record or a wobble across the clean limit doesn't flash a cue. It clears
+   * at once, because the bar is already moving again. */
+  function updatePauseReason(timestamp: number) {
+    const reason = readPauseReason()
+    if (reason !== latestPauseReason) {
+      latestPauseReason = reason
+      latestPauseReasonSince = timestamp
+    }
+
+    pauseReason.value =
+      timestamp - latestPauseReasonSince >= TUNING_STRAY_MS ? reason : null
+  }
+
+  function clearPauseReason() {
+    latestPauseReason = null
+    pauseReason.value = null
+  }
+
   function recordHeld(heldMidi: number) {
     if (step.value === 'low') {
       lowestMidi.value = Math.min(lowestMidi.value ?? heldMidi, heldMidi)
@@ -107,6 +161,7 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
       progress.value = hold.progress
       isFilling.value =
         frame !== null && Math.round(frame) === hold.candidateMidi
+      updatePauseReason(timestamp)
 
       if (hold.heldMidi !== null) recordHeld(hold.heldMidi)
     },
@@ -118,6 +173,7 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
     candidateMidi.value = null
     progress.value = 0
     isFilling.value = false
+    clearPauseReason()
     step.value = nextStep
     resume()
   }
@@ -127,6 +183,7 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
     candidateMidi.value = null
     progress.value = 0
     isFilling.value = false
+    clearPauseReason()
   }
 
   /* Omit `only` for the full low → high search; pass an end to sing just that
@@ -165,6 +222,7 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
     candidateMidi: readonly(candidateMidi),
     progress: readonly(progress),
     isFilling: readonly(isFilling),
+    pauseReason: readonly(pauseReason),
     start,
     next,
     cancel,

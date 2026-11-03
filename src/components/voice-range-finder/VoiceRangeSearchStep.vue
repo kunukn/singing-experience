@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useTimeoutFn } from '@vueuse/core'
-import { CLOSE_CENTS } from '@/utils/pitchColors'
 import { useLiveCents } from './useLiveCents'
 import {
-  isCleanEnough,
+  centsOffNearest,
   type RangeFinderMode,
+  type RangeFinderPauseReason,
   type RangeFinderStep,
 } from './useRangeFinder'
 import { formatNote } from './voiceRangeNotes'
@@ -20,6 +20,7 @@ type Props = {
   /* The hold bar, 0–1 */
   progress: number
   isFilling: boolean
+  pauseReason: RangeFinderPauseReason | null
   lowestMidi: number | null
   highestMidi: number | null
 }
@@ -42,11 +43,6 @@ const liveMidi = computed(() =>
 /* How far the live note sits from its semitone, in the tuner's colours */
 const { liveCents, liveCentsText, liveCentsColor } = useLiveCents(
   () => props.sungMidi,
-)
-
-/* The high step only counts clean notes, so say which kind this one is */
-const isLiveClean = computed(
-  () => props.sungMidi !== null && isCleanEnough(props.sungMidi),
 )
 
 const stepRecord = computed(() =>
@@ -77,25 +73,45 @@ watch(
   },
 )
 
-/* One line for what to do next. An out-of-tune high note pauses the bar, so
- * that warning wins; otherwise name what the filling bar is about to save.
- * Empty on a paused bar — it would claim progress that isn't happening. */
-const isOffPitchWarning = computed(
-  () =>
-    !isRecordFlash.value &&
-    props.step === 'high' &&
-    props.sungMidi !== null &&
-    !isLiveClean.value,
-)
-const holdHint = computed(() => {
-  if (isOffPitchWarning.value)
-    return t('voiceRangeFinder.notCleanYet', { cents: CLOSE_CENTS })
-
-  return !isRecordFlash.value && props.isFilling && props.candidateMidi !== null
+/* Names what the filling bar is about to save. Empty on a paused bar — it would
+ * claim progress that isn't happening. */
+const holdHint = computed(() =>
+  !isRecordFlash.value && props.isFilling && props.candidateMidi !== null
     ? t('voiceRangeFinder.keepHolding', {
         note: formatNote(props.candidateMidi),
       })
-    : ''
+    : '',
+)
+
+/*
+ * Which way to go when the bar pauses. Past-the-record uses the ↓G2 form of the
+ * voice type chart's hints, in a neutral colour: it also shows right after each
+ * new record, where it means "next, go here", and pitch hues are for tuning
+ * (design-rules.md). Out of tune has no note to name, only a direction back to
+ * the centre, in the cents colour.
+ */
+const pauseCue = computed(() => {
+  if (isRecordFlash.value || props.sungMidi === null) return null
+
+  if (props.pauseReason === 'notPastRecord' && stepRecord.value !== null) {
+    const isLowStep = props.step === 'low'
+
+    return {
+      arrow: isLowStep ? '↓' : '↑',
+      note: formatNote(stepRecord.value + (isLowStep ? -1 : 1)),
+      color: undefined,
+    }
+  }
+
+  if (props.pauseReason === 'offPitch') {
+    return {
+      arrow: centsOffNearest(props.sungMidi) > 0 ? '↓' : '↑',
+      note: '',
+      color: liveCentsColor.value,
+    }
+  }
+
+  return null
 })
 
 /* What the bar and readout show: the win while it flashes, then live again */
@@ -148,21 +164,40 @@ const canFinishStep = computed(() =>
       The meter has its own column and the note a fixed, start-aligned one
       sized for the widest label (D♯3), so neither the bar nor the meter
       moves as the label changes width. A paused bar dims, so a kept-but-idle
-      hold doesn't look like progress. PrimeVue's 1 s width transition is
+      hold doesn't look like progress; the cue sits beside the bar in a shared
+      box, so it doesn't dim with it. PrimeVue's 1 s width transition is
       switched off: progress already moves every frame, and the transition
       made the bar trail the real hold (never visibly full) and drain on
       reset, which read as failure.
     -->
     <div class="grid w-full grid-cols-[1fr_auto_3rem] items-center gap-x-2">
-      <PrimeProgressBar
-        class="h-2 transition-opacity"
-        :class="{ 'opacity-40': !isFilling && !isRecordFlash }"
-        :pt="{ value: { style: { transition: 'none' } } }"
-        data-testid="voice-range-finder-hold-bar"
-        :data-filling="isFilling"
-        :value="barPercent"
-        :showValue="false"
-      />
+      <div class="relative">
+        <PrimeProgressBar
+          class="h-2 transition-opacity"
+          :class="{ 'opacity-40': !isFilling && !isRecordFlash }"
+          :pt="{
+            value: {
+              style: { transition: 'none', background: pauseCue?.color },
+            },
+          }"
+          data-testid="voice-range-finder-hold-bar"
+          :data-filling="isFilling"
+          :data-pause-reason="pauseReason"
+          :value="barPercent"
+          :showValue="false"
+        />
+        <span
+          v-if="pauseCue"
+          class="pointer-events-none absolute inset-0 flex items-center justify-center text-base font-semibold text-(--p-text-color)"
+          :style="{ color: pauseCue.color }"
+          dir="ltr"
+          aria-hidden="true"
+          data-testid="voice-range-finder-pause-cue"
+        >
+          <span class="motion-safe:animate-pulse">{{ pauseCue.arrow }}</span>
+          {{ pauseCue.note }}
+        </span>
+      </div>
       <CentsMeter
         class="text-xl"
         :cents="isRecordFlash ? null : liveCents"
@@ -196,9 +231,7 @@ const canFinishStep = computed(() =>
     <!-- Always rendered so the card keeps its height as the hint comes and goes -->
     <p
       class="min-h-5 text-sm font-medium"
-      :class="{ 'text-(--p-orange-400)': isOffPitchWarning }"
       data-testid="voice-range-finder-hold-hint"
-      :data-off-pitch="isOffPitchWarning"
     >
       {{ holdHint }}
     </p>

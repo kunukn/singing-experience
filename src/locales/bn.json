@@ -334,7 +334,6 @@
     "highestSoFar": "এখন পর্যন্ত সবচেয়ে উঁচু: {note}",
     "noRecordYet": "বার ভরা পর্যন্ত একটা সুর ধরে রাখো",
     "keepHolding": "{note} ধরে রাখো, তাহলে এটা সেভ হবে",
-    "notCleanYet": "এখনও পরিষ্কার না — {cents}¢ এর মধ্যে আসো",
     "done": "হয়ে গেছে",
     "cancel": "বাতিল",
     "resultTitle": "তুমি গেয়েছ {range}",

@@ -334,7 +334,6 @@
     "highestSoFar": "La más aguda hasta ahora: {note}",
     "noRecordYet": "Mantén una nota hasta que se llene la barra",
     "keepHolding": "Sigue manteniendo {note} para guardarla",
-    "notCleanYet": "Todavía no está limpia: acércate a {cents}¢",
     "done": "Listo",
     "cancel": "Cancelar",
     "resultTitle": "Cantaste {range}",

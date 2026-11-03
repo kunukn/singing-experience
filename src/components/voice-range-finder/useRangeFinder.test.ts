@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { effectScope, ref } from 'vue'
 import { CLOSE_CENTS } from '@/utils/pitchColors'
+import { TUNING_STRAY_MS } from '@/utils/tuningHold'
 import { RANGE_FINDER_HOLD_MS, useRangeFinder } from './useRangeFinder'
 
 /* A little past the hold, so the last frame lands after it completes */
@@ -229,5 +230,117 @@ describe('useRangeFinder', () => {
     expect(finder.step.value).toBe('low')
     expect(finder.lowestMidi.value).toBe(null)
     scope.stop()
+  })
+
+  describe('pause reason', () => {
+    /* A little past the delay, so a frame lands after it */
+    const CUE_DELAY_WITH_SLACK_MS = TUNING_STRAY_MS + 50
+    const OUT_OF_TUNE_CENTS = (CLOSE_CENTS + 10) / 100
+
+    test('should report a note not past the low record only after the delay', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 44 // G♯2 — becomes the record
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      midi.value = 46 // A♯2 — in tune, but higher
+      vi.advanceTimersByTime(50)
+      midi.value = 48 // C3 — same reason, so the delay keeps running
+      expect(finder.pauseReason.value).toBe(null)
+
+      vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
+
+      expect(finder.pauseReason.value).toBe('notPastRecord')
+      scope.stop()
+    })
+
+    test('should report an out-of-tune note past the high record as off pitch', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start('high')
+      midi.value = 72 + OUT_OF_TUNE_CENTS
+      vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
+
+      expect(finder.pauseReason.value).toBe('offPitch')
+      scope.stop()
+    })
+
+    test('should put the record before tuning on the high step', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start('high')
+      midi.value = 72
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      midi.value = 69 + OUT_OF_TUNE_CENTS
+      vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
+
+      expect(finder.pauseReason.value).toBe('notPastRecord')
+      scope.stop()
+    })
+
+    test('should give no reason for an out-of-tune note filling the low step', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 43 + OUT_OF_TUNE_CENTS
+      vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
+
+      expect(finder.isFilling.value).toBe(true)
+      expect(finder.pauseReason.value).toBe(null)
+      scope.stop()
+    })
+
+    test('should clear at once when the singer falls silent', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start('high')
+      midi.value = 72 + OUT_OF_TUNE_CENTS
+      vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
+      midi.value = null
+      vi.advanceTimersByTime(20)
+
+      expect(finder.pauseReason.value).toBe(null)
+      scope.stop()
+    })
+
+    test('should give no reason for a note outside C2–C7', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 35 // B1
+      vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
+
+      expect(finder.pauseReason.value).toBe(null)
+      scope.stop()
+    })
+
+    test('should give no reason once the record is at the end of the span', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 36 // C2 — nothing below it counts
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      midi.value = 40
+      vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
+
+      expect(finder.lowestMidi.value).toBe(36)
+      expect(finder.pauseReason.value).toBe(null)
+      scope.stop()
+    })
+
+    test('should clear when moving on to the next step', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 44
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      midi.value = 46
+      vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
+      finder.next()
+
+      expect(finder.step.value).toBe('high')
+      expect(finder.pauseReason.value).toBe(null)
+      scope.stop()
+    })
   })
 })
