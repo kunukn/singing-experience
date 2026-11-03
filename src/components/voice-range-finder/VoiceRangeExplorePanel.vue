@@ -21,6 +21,10 @@ const liveNote = computed(() =>
 const { liveCents, liveCentsText, liveCentsColor } = useLiveCents(
   () => props.liveMidi,
 )
+
+const { t } = useI18n()
+
+const areSingersShown = ref(false)
 </script>
 
 <template>
@@ -56,6 +60,27 @@ const { liveCents, liveCentsText, liveCentsColor } = useLiveCents(
       </span>
     </div>
 
-    <VoiceTypeComparison :liveMidi="liveMidi" :isListening="isListening" />
+    <VoiceTypeComparison
+      :liveMidi="liveMidi"
+      :isListening="isListening"
+      :showSingers="areSingersShown"
+    >
+      <!-- In the header, above the rows it adds, so it stays under the finger -->
+      <template #headerEnd>
+        <div class="flex items-center gap-2">
+          <label
+            for="voice-range-famous-singers"
+            class="text-xs text-(--p-text-muted-color)"
+          >
+            {{ t('voiceRangeFinder.compare.famousSingers') }}
+          </label>
+          <PrimeToggleSwitch
+            v-model="areSingersShown"
+            inputId="voice-range-famous-singers"
+            data-testid="voice-range-famous-singers-toggle"
+          />
+        </div>
+      </template>
+    </VoiceTypeComparison>
   </section>
 </template>

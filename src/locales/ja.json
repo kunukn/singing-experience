@@ -352,7 +352,9 @@
       "bestFit": "いちばん合う声だよ。",
       "bestFitLegend": "★＝いちばん合う声。",
       "exploreTitle": "声の種類",
-      "exploreExplainer": "音をひとつ歌ってみて。その音を歌える声が光るよ。"
+      "exploreExplainer": "音をひとつ歌ってみて。その音を歌える声が光るよ。",
+      "famousSingers": "有名な歌手",
+      "famousSingersLegend": "ふだんの音域をだいたいで見積もったものだよ。ファルセットとホイッスルボイスは入っていないよ。この歌手たちはこのアプリとは関係ないよ。"
     },
     "slots": {
       "title": "保存した声域",

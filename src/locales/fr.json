@@ -352,7 +352,9 @@
       "bestFit": "C'est celle qui te va le mieux.",
       "bestFitLegend": "★ = celle qui te va le mieux.",
       "exploreTitle": "Types de voix",
-      "exploreExplainer": "Chante une note. Les voix qui peuvent la chanter s'allument."
+      "exploreExplainer": "Chante une note. Les voix qui peuvent la chanter s'allument.",
+      "famousSingers": "Chanteurs célèbres",
+      "famousSingersLegend": "Estimations approximatives de leur tessiture habituelle. Le falsetto et les notes sifflées ne sont pas affichés. Ces artistes n'ont aucun lien avec cette appli."
     },
     "slots": {
       "title": "Tessitures enregistrées",

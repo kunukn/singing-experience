@@ -352,7 +352,9 @@
       "bestFit": "Passer bedst til dig.",
       "bestFitLegend": "★ = passer bedst til dig.",
       "exploreTitle": "Stemmetyper",
-      "exploreExplainer": "Syng en tone. De stemmer, der kan synge den, lyser op."
+      "exploreExplainer": "Syng en tone. De stemmer, der kan synge den, lyser op.",
+      "famousSingers": "Kendte sangere",
+      "famousSingersLegend": "Omtrentlige skøn over deres sædvanlige toneomfang. Falset og fløjtetoner er ikke med. Sangerne har ikke noget med denne app at gøre."
     },
     "slots": {
       "title": "Gemte lejer",

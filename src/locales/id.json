@@ -352,7 +352,9 @@
       "bestFit": "Paling cocok untukmu.",
       "bestFitLegend": "★ = paling cocok untukmu.",
       "exploreTitle": "Jenis suara",
-      "exploreExplainer": "Nyanyikan satu nada. Suara yang bisa menyanyikannya akan menyala."
+      "exploreExplainer": "Nyanyikan satu nada. Suara yang bisa menyanyikannya akan menyala.",
+      "famousSingers": "Penyanyi terkenal",
+      "famousSingersLegend": "Perkiraan kasar rentang suara mereka yang biasa. Falsetto dan nada siulan tidak ditampilkan. Para penyanyi ini tidak terkait dengan aplikasi ini."
     },
     "slots": {
       "title": "Jangkauan tersimpan",

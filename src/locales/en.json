@@ -352,7 +352,9 @@
       "bestFit": "Your best fit.",
       "bestFitLegend": "★ = your best fit.",
       "exploreTitle": "Voice types",
-      "exploreExplainer": "Sing a note. The voices that can sing it light up."
+      "exploreExplainer": "Sing a note. The voices that can sing it light up.",
+      "famousSingers": "Famous singers",
+      "famousSingersLegend": "Rough estimates of their usual range. Falsetto and whistle notes aren't shown. These singers aren't connected with this app."
     },
     "slots": {
       "title": "Saved ranges",

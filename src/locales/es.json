@@ -352,7 +352,9 @@
       "bestFit": "Es la que mejor te queda.",
       "bestFitLegend": "★ = la que mejor te queda.",
       "exploreTitle": "Tipos de voz",
-      "exploreExplainer": "Canta una nota. Las voces que pueden cantarla se iluminan."
+      "exploreExplainer": "Canta una nota. Las voces que pueden cantarla se iluminan.",
+      "famousSingers": "Cantantes famosos",
+      "famousSingersLegend": "Estimaciones aproximadas de su rango habitual. No aparecen el falsete ni las notas de silbido. Estos cantantes no tienen relación con esta app."
     },
     "slots": {
       "title": "Rangos guardados",

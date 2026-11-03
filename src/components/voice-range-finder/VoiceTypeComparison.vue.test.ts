@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
+import { FAMOUS_SINGERS } from './famousSingers'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
@@ -460,6 +461,137 @@ describe('VoiceTypeComparison', () => {
       await wrapper.get('[data-voice-type="voiceRanges.alto"]').trigger('click')
 
       expect(wrapper.emitted('selectRange')).toBeUndefined()
+    })
+
+    describe('famous singers', () => {
+      const mountSingers = (liveMidi: number | null = null) =>
+        mount(VoiceTypeComparison, {
+          props: { liveMidi, showSingers: true },
+          global: { plugins: [i18n] },
+        })
+
+      const singersOf = (wrapper: ReturnType<typeof mountSingers>) =>
+        wrapper
+          .findAll('[data-singer]')
+          .map((row) => row.attributes('data-singer'))
+
+      test('should leave singers out by default', () => {
+        const wrapper = mountExplore()
+
+        expect(wrapper.find('[data-singer]').exists()).toBe(false)
+        expect(
+          wrapper
+            .find('[data-testid="voice-type-comparison-singers-title"]')
+            .exists(),
+        ).toBe(false)
+        expect(wrapper.text()).not.toContain(
+          en.voiceRangeFinder.compare.famousSingersLegend,
+        )
+      })
+
+      test('should list every singer below the voice types, high to low', () => {
+        const wrapper = mountSingers()
+
+        expect(singersOf(wrapper)).toEqual(FAMOUS_SINGERS.map(({ id }) => id))
+        expect(
+          wrapper
+            .findAll('[data-testid="voice-type-comparison-row"]')
+            .slice(0, 6)
+            .every((row) => row.attributes('data-voice-type')),
+        ).toBe(true)
+      })
+
+      test('should head the singers and explain their ranges', () => {
+        const wrapper = mountSingers()
+
+        expect(
+          wrapper
+            .get('[data-testid="voice-type-comparison-singers-title"]')
+            .text(),
+        ).toBe('Famous singers')
+        expect(
+          wrapper.get('[data-testid="voice-type-comparison-legend"]').text(),
+        ).toContain(en.voiceRangeFinder.compare.famousSingersLegend)
+      })
+
+      test('should read out and label a singer by their range', () => {
+        const row = mountSingers().get('[data-singer="johnnyCash"]')
+
+        expect(row.attributes('aria-label')).toBe('Johnny Cash, E2–D4')
+        expect(
+          row.get('[data-testid="voice-type-comparison-voice-start"]').text(),
+        ).toBe('E2')
+        expect(
+          row.get('[data-testid="voice-type-comparison-voice-end"]').text(),
+        ).toBe('D4')
+      })
+
+      /* Which of the two shows is a container query, so the DOM shim sees both */
+      test('should give a singer a short and a full name', () => {
+        const row = mountSingers().get('[data-singer="elvisPresley"]')
+
+        expect(
+          row.get('[data-testid="voice-type-comparison-short-name"]').text(),
+        ).toBe('Presley')
+        expect(
+          row.get('[data-testid="voice-type-comparison-full-name"]').text(),
+        ).toBe('Elvis Presley')
+      })
+
+      test('should light up the singers who sing the live note, and only them', () => {
+        /* A♯5: only Mariah Carey (to C6) and Whitney Houston (to A♯5) reach it */
+        const sounding = mountSingers(82)
+          .findAll('[data-singer]')
+          .filter((row) => row.attributes('data-sounding') === 'true')
+          .map((row) => row.attributes('data-singer'))
+
+        expect(sounding).toEqual(['mariahCarey', 'whitneyHouston'])
+      })
+
+      test('should draw the live line through the singers too', () => {
+        expect(
+          mountSingers(60).findAll(
+            '[data-testid="voice-type-comparison-live-line"]',
+          ),
+        ).toHaveLength(6 + FAMOUS_SINGERS.length)
+      })
+
+      /* Six voice rows above it, so the subheading is grid row 7 */
+      test('should put the live label on the subheading row, clear of every bar', () => {
+        expect(
+          mountSingers(60)
+            .get('[data-testid="voice-type-comparison-live-label-area"]')
+            .attributes('style'),
+        ).toContain('grid-row: 7 / span 1')
+      })
+
+      test('should centre the live label on the voice rows without singers', () => {
+        expect(
+          mountExplore(60)
+            .get('[data-testid="voice-type-comparison-live-label-area"]')
+            .attributes('style'),
+        ).toContain('grid-row: 1 / span 6')
+      })
+
+      test('should keep the voice bars in place when the singers appear', () => {
+        const styleOf = (wrapper: ReturnType<typeof mountSingers>) =>
+          wrapper
+            .get(
+              '[data-voice-type="voiceRanges.bass"] [data-testid="voice-type-comparison-bar"]',
+            )
+            .attributes('style')
+
+        expect(styleOf(mountSingers())).toBe(styleOf(mountExplore()))
+      })
+
+      test('should ignore the singers beside My range', () => {
+        const wrapper = mount(VoiceTypeComparison, {
+          props: { midiMin: 44, midiMax: 60, showSingers: true },
+          global: { plugins: [i18n] },
+        })
+
+        expect(wrapper.find('[data-singer]').exists()).toBe(false)
+      })
     })
 
     test('should show no best fit while exploring', () => {

@@ -352,7 +352,9 @@
       "bestFit": "É a que mais combina com você.",
       "bestFitLegend": "★ = a que mais combina com você.",
       "exploreTitle": "Tipos de voz",
-      "exploreExplainer": "Cante uma nota. As vozes que conseguem cantá-la acendem."
+      "exploreExplainer": "Cante uma nota. As vozes que conseguem cantá-la acendem.",
+      "famousSingers": "Cantores famosos",
+      "famousSingersLegend": "Estimativas aproximadas da extensão habitual. O falsete e as notas de assobio não aparecem. Esses cantores não têm ligação com este app."
     },
     "slots": {
       "title": "Extensões salvas",

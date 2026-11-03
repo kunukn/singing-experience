@@ -352,7 +352,9 @@
       "bestFit": "Passt am besten zu dir.",
       "bestFitLegend": "★ = passt am besten zu dir.",
       "exploreTitle": "Stimmlagen",
-      "exploreExplainer": "Sing einen Ton. Die Stimmlagen, die ihn singen können, leuchten auf."
+      "exploreExplainer": "Sing einen Ton. Die Stimmlagen, die ihn singen können, leuchten auf.",
+      "famousSingers": "Berühmte Sänger",
+      "famousSingersLegend": "Grobe Schätzungen ihres üblichen Stimmumfangs. Falsett und Pfeiftöne sind nicht dabei. Diese Sänger haben nichts mit dieser App zu tun."
     },
     "slots": {
       "title": "Gespeicherte Umfänge",

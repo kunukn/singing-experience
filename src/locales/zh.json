@@ -352,7 +352,9 @@
       "bestFit": "最适合你。",
       "bestFitLegend": "★ = 最适合你。",
       "exploreTitle": "声部",
-      "exploreExplainer": "唱一个音，能唱这个音的声部会亮起来。"
+      "exploreExplainer": "唱一个音，能唱这个音的声部会亮起来。",
+      "famousSingers": "著名歌手",
+      "famousSingersLegend": "对他们常用音域的粗略估计。不显示假声和哨音。这些歌手与本应用没有关联。"
     },
     "slots": {
       "title": "保存的音域",

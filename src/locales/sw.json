@@ -352,7 +352,9 @@
       "bestFit": "Inakufaa zaidi.",
       "bestFitLegend": "★ = inayokufaa zaidi.",
       "exploreTitle": "Aina za sauti",
-      "exploreExplainer": "Imba noti moja. Sauti zinazoweza kuiimba zitawaka."
+      "exploreExplainer": "Imba noti moja. Sauti zinazoweza kuiimba zitawaka.",
+      "famousSingers": "Waimbaji maarufu",
+      "famousSingersLegend": "Makadirio ya jumla ya masafa yao ya kawaida. Falseto na noti za mluzi hazionyeshwi. Waimbaji hawa hawahusiani na programu hii."
     },
     "slots": {
       "title": "Viwango vilivyohifadhiwa",
