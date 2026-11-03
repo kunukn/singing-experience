@@ -232,6 +232,143 @@ describe('useRangeFinder', () => {
     scope.stop()
   })
 
+  describe('unbroken hold', () => {
+    /* Long enough that the slips alone would fill the hold several times */
+    const SLIP_COUNT = 30
+
+    function singWithSlips(
+      midi: { value: number | null },
+      sungNote: number,
+      slipNote: number,
+    ) {
+      for (let slip = 0; slip < SLIP_COUNT; slip++) {
+        midi.value = slipNote
+        vi.advanceTimersByTime(100)
+        midi.value = sungNote
+        vi.advanceTimersByTime(50)
+      }
+    }
+
+    test('should not build a low record from octave slips', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 44 // G♯2 — becomes the record
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      singWithSlips(midi, 48, 36) // C3 that now and then reads as C2
+
+      expect(finder.lowestMidi.value).toBe(44)
+      scope.stop()
+    })
+
+    test('should not build a high record from octave slips', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start('high')
+      midi.value = 74 // D5 — becomes the record
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      singWithSlips(midi, 72, 84) // C5 that now and then reads as C6
+
+      expect(finder.highestMidi.value).toBe(74)
+      scope.stop()
+    })
+
+    test('should still accept a real leap held to the end', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 44
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      midi.value = 48
+      vi.advanceTimersByTime(500)
+      midi.value = 36 // C2
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+
+      expect(finder.lowestMidi.value).toBe(36)
+      scope.stop()
+    })
+
+    test('should empty the bar on a note far from the held one', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 44
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      midi.value = 43
+      vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS / 2)
+      expect(finder.progress.value).toBeGreaterThan(0)
+
+      midi.value = 48 // Too short for a pause reason, but far off
+      vi.advanceTimersByTime(50)
+
+      expect(finder.progress.value).toBe(0)
+      scope.stop()
+    })
+
+    test('should keep the hold through a vibrato blip onto the record', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 44
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      midi.value = 43
+      vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS / 2)
+      midi.value = 44 // Under TUNING_STRAY_MS, and only a semitone off
+      vi.advanceTimersByTime(50)
+      midi.value = 43
+      vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS / 2 + 100)
+
+      expect(finder.lowestMidi.value).toBe(43)
+      scope.stop()
+    })
+
+    test('should empty the bar once a nearby note has lasted', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 44
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      midi.value = 43
+      vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS / 2)
+      midi.value = 44
+      vi.advanceTimersByTime(TUNING_STRAY_MS + 50)
+
+      expect(finder.progress.value).toBe(0)
+      scope.stop()
+    })
+
+    test('should keep the hold through silence', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start()
+      midi.value = 44
+      vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
+      midi.value = 43
+      vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS / 2)
+      const progressBefore = finder.progress.value
+      midi.value = null
+      vi.advanceTimersByTime(500)
+
+      expect(finder.progress.value).toBe(progressBefore)
+      scope.stop()
+    })
+
+    test('should keep the hold through an out-of-tune high note', () => {
+      const { midi, finder, scope } = setup()
+
+      finder.start('high')
+      midi.value = 72
+      vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS / 2)
+      const progressBefore = finder.progress.value
+      midi.value = 72 + (CLOSE_CENTS + 10) / 100
+      vi.advanceTimersByTime(500)
+
+      expect(finder.pauseReason.value).toBe('offPitch')
+      expect(finder.progress.value).toBe(progressBefore)
+      scope.stop()
+    })
+  })
+
   describe('pause reason', () => {
     /* A little past the delay, so a frame lands after it */
     const CUE_DELAY_WITH_SLACK_MS = TUNING_STRAY_MS + 50

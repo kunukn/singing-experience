@@ -12,6 +12,10 @@ import { createTuningHold, TUNING_STRAY_MS } from '@/utils/tuningHold'
  * are tiring to sustain. Still long enough to rule out a passing slide. */
 export const RANGE_FINDER_HOLD_MS = 1000
 
+/* How far from the held note a voice can wobble and come back. Vibrato stays
+ * within this; a reading further off is another note or a detector slip. */
+const HOLD_WOBBLE_SEMITONES = 1
+
 export type RangeFinderStep = 'idle' | 'low' | 'high' | 'result'
 
 /* Which ends a search covers: both (low then high) or just one */
@@ -42,7 +46,8 @@ export const isCleanEnough = (midi: number) =>
  *
  * Any distance past the record counts: the singer is in control, and a leap
  * from a comfortable note straight down to the bottom is normal. The clarity
- * gate and the steady hold already keep brief detector slips out.
+ * gate and the unbroken hold keep detector slips out, such as a C3 that reads
+ * as C2 now and then (see breaksHold).
  *
  * The low step only asks for a steady hold. The high step also asks for the
  * note to sit within CLOSE_CENTS: a strained top note wobbles out of tune, and
@@ -94,9 +99,9 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
 
   /*
    * Frames that can't change the result count as silence, which pauses the
-   * hold rather than resetting it. So the bar only ever fills toward a new
-   * record: re-singing the record, going the wrong way, or (on the high step)
-   * singing out of tune leaves it still.
+   * hold. So the bar only ever fills toward a new record: re-singing the
+   * record, going the wrong way, or (on the high step) singing out of tune
+   * leaves it still. breaksHold decides when a pause becomes a reset.
    */
   function readFrame(): number | null {
     const midi = toValue(sungMidi)
@@ -144,6 +149,26 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
     pauseReason.value = null
   }
 
+  /*
+   * Singing a note that isn't past the record ends the hold, so a record takes
+   * one unbroken stretch. Otherwise a singer on C3 with a G♯2 record builds a
+   * C2 record out of the moments the detector reads an octave low, however far
+   * apart they are. A far note ends it at once, as the jump gate leaves it on
+   * screen only briefly between slips; a near one must last, as vibrato crosses
+   * into it. Silence and an out-of-tune high note only pause: breathy dropouts
+   * and strained top notes are part of a real attempt.
+   */
+  function breaksHold(): boolean {
+    if (pauseReason.value === 'notPastRecord') return true
+
+    const midi = toValue(sungMidi)
+    const candidate = hold.candidateMidi
+    if (midi === null || candidate === null) return false
+    if (!isInSpan(midi) || beatsRecord(midi)) return false
+
+    return Math.abs(Math.round(midi) - candidate) > HOLD_WOBBLE_SEMITONES
+  }
+
   function recordHeld(heldMidi: number) {
     if (step.value === 'low') {
       lowestMidi.value = Math.min(lowestMidi.value ?? heldMidi, heldMidi)
@@ -156,12 +181,14 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
   const { pause, resume } = useRafFn(
     ({ timestamp }) => {
       const frame = readFrame()
+      updatePauseReason(timestamp)
+      if (breaksHold()) hold.reset()
+
       hold.push(frame, timestamp)
       candidateMidi.value = hold.candidateMidi
       progress.value = hold.progress
       isFilling.value =
         frame !== null && Math.round(frame) === hold.candidateMidi
-      updatePauseReason(timestamp)
 
       if (hold.heldMidi !== null) recordHeld(hold.heldMidi)
     },
