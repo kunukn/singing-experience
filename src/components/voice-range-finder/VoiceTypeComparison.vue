@@ -150,6 +150,10 @@ const shortName = (labelKey: string) =>
  * Same trick and weight as exploring's lit name (see the template). */
 const BEST_FIT_EMPHASIS = '[-webkit-text-stroke:0.4px_currentColor]'
 
+/* Exploring's group headings. Colour and size carry it, not only weight, so they
+ * don't read as one more row of muted names. */
+const EXPLORE_HEADING = 'text-sm font-semibold text-(--p-text-color)'
+
 type ChartRow = {
   /* The voice's labelKey, or the singer's id */
   id: string
@@ -411,7 +415,13 @@ const liveLabel = computed(() => {
     data-testid="voice-type-comparison"
   >
     <div class="flex flex-wrap items-center justify-between gap-2">
-      <h3 class="text-xs font-medium text-(--p-text-muted-color)">
+      <h3
+        :class="
+          range
+            ? 'text-xs font-medium text-(--p-text-muted-color)'
+            : EXPLORE_HEADING
+        "
+      >
         {{
           range
             ? t('voiceRangeFinder.compare.title')
@@ -459,7 +469,8 @@ const liveLabel = computed(() => {
       <template v-for="row in rows" :key="row.id">
         <h3
           v-if="row.id === firstSingerId"
-          class="col-span-full mt-2 text-xs font-medium text-(--p-text-muted-color)"
+          class="col-span-full mt-4"
+          :class="EXPLORE_HEADING"
           data-testid="voice-type-comparison-singers-title"
         >
           {{ t('voiceRangeFinder.compare.famousSingers') }}
@@ -669,8 +680,9 @@ const liveLabel = computed(() => {
           :class="[
             liveLabel.side === 'start' ? '-ms-1 -translate-x-full' : 'ms-1',
             /* The subheading's row includes its top margin, so centring would
-             * sit above the text; the bottom edge lines the two up. */
-            firstSingerId === null ? 'top-1/2 -translate-y-1/2' : 'bottom-0',
+             * sit above the text. 2px up from the bottom centres the label's
+             * 16px line on the heading's 20px line. */
+            firstSingerId === null ? 'top-1/2 -translate-y-1/2' : 'bottom-0.5',
           ]"
           :style="{ insetInlineStart: `${liveLeft}%` }"
         >
