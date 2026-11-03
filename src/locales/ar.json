@@ -344,7 +344,6 @@
     "compare": {
       "title": "أنت وأنواع الأصوات",
       "rangeLegend": "المخطط = نطاقك.",
-      "solidLegend": "الممتلئ = الجزء الذي تستطيع غناءه من كل صوت.",
       "reachLegend": "↑ ↓ يوضح إلى أين تتجه لتغطي الصوت كله.",
       "rowLabel": "{name}، {from}–{to}. أنت تغطي {percent}.",
       "reachUp": "غنِّ صعودًا حتى {note}.",

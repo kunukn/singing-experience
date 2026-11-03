@@ -344,7 +344,6 @@
     "compare": {
       "title": "Toi et les types de voix",
       "rangeLegend": "Rayé = ta tessiture.",
-      "solidLegend": "Plein = la partie de chaque voix que tu peux chanter.",
       "reachLegend": "↑ ↓ montre où aller pour couvrir toute la voix.",
       "rowLabel": "{name}, {from}–{to}. Tu couvres {percent}.",
       "reachUp": "Monte jusqu'à {note}.",

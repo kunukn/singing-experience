@@ -344,7 +344,6 @@
     "compare": {
       "title": "Wewe na aina za sauti",
       "rangeLegend": "Yenye mistari = kiwango chako.",
-      "solidLegend": "Imejaa = sehemu ya kila sauti unayoweza kuimba.",
       "reachLegend": "↑ ↓ inaonyesha uelekee wapi ili kufikia sauti nzima.",
       "rowLabel": "{name}, {from}–{to}. Unafikia {percent}.",
       "reachUp": "Imba juu hadi {note}.",

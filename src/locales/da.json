@@ -344,7 +344,6 @@
     "compare": {
       "title": "Dig og stemmetyperne",
       "rangeLegend": "Stribet = dit leje.",
-      "solidLegend": "Fyldt = den del af hver stemme, du kan synge.",
       "reachLegend": "↑ ↓ viser, hvor du skal hen for at dække hele stemmen.",
       "rowLabel": "{name}, {from}–{to}. Du dækker {percent}.",
       "reachUp": "Syng op til {note}.",

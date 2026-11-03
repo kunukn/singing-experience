@@ -344,7 +344,6 @@
     "compare": {
       "title": "Tú y los tipos de voz",
       "rangeLegend": "Rayado = tu rango.",
-      "solidLegend": "Relleno = la parte de cada voz que puedes cantar.",
       "reachLegend": "↑ ↓ muestra hacia dónde ir para cubrir toda la voz.",
       "rowLabel": "{name}, {from}–{to}. Cubres {percent}.",
       "reachUp": "Canta hasta {note} hacia arriba.",
