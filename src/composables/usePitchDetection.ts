@@ -238,7 +238,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
       mediaStream = await acquireMicStream({ audio: resolveAudioConstraints() })
       audioContext = new AudioContext()
       analyserNode = audioContext.createAnalyser()
-      // 2048-sample FFT: ~23 ms window at 44.1 kHz — good pitch resolution with low latency
+      // 2048-sample FFT: ~46 ms window at 44.1 kHz — good pitch resolution with low latency
       analyserNode.fftSize = 2048
 
       let micNode: AudioNode = audioContext.createMediaStreamSource(mediaStream)
