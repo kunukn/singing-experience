@@ -830,7 +830,7 @@
     }
   },
   "voiceRecorder": {
-    "hint": "Sing ohne Hintergrundmusik. Du kannst bis zu {minutes} Minuten aufnehmen, und die Aufnahme bleibt auf diesem Gerät.",
+    "hint": "Sing ohne Hintergrundmusik. Du kannst bis zu {minutes} Minuten aufnehmen. Deine Aufnahme bleibt auf diesem Gerät, bis du sie löschst oder neu aufnimmst.",
     "record": "Aufnehmen",
     "recordAgain": "Nochmal aufnehmen",
     "download": "Herunterladen",

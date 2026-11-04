@@ -830,7 +830,7 @@
     }
   },
   "voiceRecorder": {
-    "hint": "Imba bila muziki wa nyuma. Unaweza kurekodi hadi dakika {minutes}, na rekodi inabaki kwenye kifaa hiki.",
+    "hint": "Imba bila muziki wa nyuma. Unaweza kurekodi hadi dakika {minutes}. Rekodi yako inabaki kwenye kifaa hiki hadi uifute au urekodi tena.",
     "record": "Rekodi",
     "recordAgain": "Rekodi tena",
     "download": "Pakua",

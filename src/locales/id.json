@@ -830,7 +830,7 @@
     }
   },
   "voiceRecorder": {
-    "hint": "Bernyanyilah tanpa musik latar. Kamu bisa merekam sampai {minutes} menit, dan rekamannya tetap di perangkat ini.",
+    "hint": "Bernyanyilah tanpa musik latar. Kamu bisa merekam sampai {minutes} menit. Rekamanmu tetap di perangkat ini sampai kamu menghapusnya atau merekam lagi.",
     "record": "Rekam",
     "recordAgain": "Rekam lagi",
     "download": "Unduh",

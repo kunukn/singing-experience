@@ -830,7 +830,7 @@
     }
   },
   "voiceRecorder": {
-    "hint": "Syng uden baggrundsmusik. Du kan optage op til {minutes} minutter, og optagelsen bliver på denne enhed.",
+    "hint": "Syng uden baggrundsmusik. Du kan optage op til {minutes} minutter. Din optagelse bliver på denne enhed, indtil du rydder den eller optager igen.",
     "record": "Optag",
     "recordAgain": "Optag igen",
     "download": "Hent",
