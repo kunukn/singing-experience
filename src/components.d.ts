@@ -67,6 +67,7 @@ declare module 'vue' {
     LandingFooter: typeof import('./components/LandingFooter.vue')['default']
     LandingPage: typeof import('./components/LandingPage.vue')['default']
     LanguageSwitcher: typeof import('./components/generic/LanguageSwitcher.vue')['default']
+    LiveWaveform: typeof import('./components/voice-recorder/LiveWaveform.vue')['default']
     MelodyGuideToggle: typeof import('./components/grace-kelly/MelodyGuideToggle.vue')['default']
     MelodyMap: typeof import('./components/voice-recorder/MelodyMap.vue')['default']
     MetronomeToggle: typeof import('./components/grace-kelly/MetronomeToggle.vue')['default']

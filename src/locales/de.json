@@ -905,6 +905,8 @@
         "key": "Hör nach Tönen, die aus der Melodie fallen, und sing genau die nochmal.",
         "keepGoing": "Schön und sicher. Sing weiter!"
       }
-    }
+    },
+    "waveformLabel": "Live-Ton von deinem Mikro",
+    "noSoundYet": "Wir hören dich noch nicht. Prüf dein Mikro und sing ein bisschen."
   }
 }

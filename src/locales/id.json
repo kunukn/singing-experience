@@ -905,6 +905,8 @@
         "key": "Dengarkan lagi nada yang menjauh dari lagu, lalu nyanyikan bagian itu lagi.",
         "keepGoing": "Indah dan stabil. Terus bernyanyi!"
       }
-    }
+    },
+    "waveformLabel": "Suara langsung dari mikrofonmu",
+    "noSoundYet": "Kami belum mendengarmu. Periksa mikrofonmu dan bernyanyilah sedikit."
   }
 }

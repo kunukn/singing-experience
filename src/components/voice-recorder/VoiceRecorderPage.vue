@@ -29,6 +29,7 @@ function handleRecord() {
     :elapsedMs="recorder.elapsedMs.value"
     :take="takeStore.take"
     :errorKey="recorder.errorKey.value"
+    :liveStream="recorder.liveStream.value"
     :savedAnalysis="takeStore.analysis"
     @record="handleRecord"
     @stop="recorder.stop()"

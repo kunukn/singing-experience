@@ -905,6 +905,8 @@
         "key": "Réécoute les notes qui s'éloignent de la mélodie, puis rechante juste celles-là.",
         "keepGoing": "Joli et stable. Continue de chanter !"
       }
-    }
+    },
+    "waveformLabel": "Le son de ton micro en direct",
+    "noSoundYet": "On ne t'entend pas encore. Vérifie ton micro et chante un peu."
   }
 }

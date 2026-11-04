@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { TakeAnalysis } from './analyzeTake'
+import LiveWaveform from './LiveWaveform.vue'
 import TakeAnalysisPanel from './TakeAnalysisPanel.vue'
 import TakePlayer from './TakePlayer.vue'
 import {
@@ -14,6 +15,7 @@ type Props = {
   elapsedMs: number
   take: Take | null
   errorKey: RecorderErrorKey | null
+  liveStream?: MediaStream | null
   /* The test page supplies takes itself and never touches the microphone. */
   isSimulated?: boolean
   /* Results from an earlier visit to the page, restored with the take. */
@@ -83,7 +85,6 @@ function formatClock(ms: number): string {
       <PrimeButton
         v-if="isRecording"
         :label="t('generic.stop')"
-        icon="pi pi-stop"
         size="small"
         severity="danger"
         data-testid="recorder-stop"
@@ -111,12 +112,18 @@ function formatClock(ms: number): string {
       <span
         v-if="isRecording"
         role="timer"
-        class="text-sm text-(--p-text-muted-color) tabular-nums"
+        class="flex items-center gap-2 text-sm text-(--p-text-muted-color) tabular-nums"
         data-testid="recorder-time-left"
       >
+        <span
+          class="size-2.5 rounded-full bg-(--p-red-500) motion-safe:animate-pulse"
+          aria-hidden="true"
+        />
         {{ t('voiceRecorder.timeLeft', { time: timeLeft }) }}
       </span>
     </div>
+
+    <LiveWaveform v-if="isRecording && liveStream" :stream="liveStream" />
 
     <p
       v-if="errorKey"

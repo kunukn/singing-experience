@@ -905,6 +905,8 @@
         "key": "Listen back for notes that wander away from the tune, then sing just those again.",
         "keepGoing": "Lovely and steady. Keep singing!"
       }
-    }
+    },
+    "waveformLabel": "Live sound from your mic",
+    "noSoundYet": "We can't hear you yet. Check your mic and sing a little."
   }
 }

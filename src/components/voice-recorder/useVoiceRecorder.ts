@@ -44,6 +44,9 @@ export function useVoiceRecorder() {
   const status = ref<RecorderStatus>('idle')
   const elapsedMs = ref(0)
   const errorKey = ref<RecorderErrorKey | null>(null)
+  /* The open mic, for live feedback while recording. Not wrapped in readonly():
+   * Web Audio refuses a proxied MediaStream. */
+  const liveStream = shallowRef<MediaStream | null>(null)
 
   const takeStore = useVoiceTakeStore()
   const wakeLock = useWakeLock()
@@ -72,6 +75,7 @@ export function useVoiceRecorder() {
     if (stream) releaseMicStream(stream)
 
     stream = null
+    liveStream.value = null
     recorder = null
   }
 
@@ -189,6 +193,7 @@ export function useVoiceRecorder() {
     startedAtMs = performance.now()
     elapsedMs.value = 0
     status.value = 'recording'
+    liveStream.value = stream
     clock.resume()
     /* Long takes would otherwise end when the phone's screen sleeps. Best
      * effort: some browsers refuse, and recording still works. */
@@ -218,6 +223,7 @@ export function useVoiceRecorder() {
     status: readonly(status),
     elapsedMs: readonly(elapsedMs),
     errorKey: readonly(errorKey),
+    liveStream,
     start,
     stop,
   }

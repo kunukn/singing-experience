@@ -905,6 +905,8 @@
         "key": "Lyt efter toner, der glider væk fra melodien, og syng så bare dem igen.",
         "keepGoing": "Flot og stabilt. Bliv ved med at synge!"
       }
-    }
+    },
+    "waveformLabel": "Lyd fra din mikrofon lige nu",
+    "noSoundYet": "Vi kan ikke høre dig endnu. Tjek din mikrofon, og syng lidt."
   }
 }
