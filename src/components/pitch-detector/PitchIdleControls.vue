@@ -32,26 +32,6 @@ const { t } = useI18n()
   >
     <div class="flex items-stretch gap-4">
       <button
-        data-testid="btn-play-sequence"
-        class="grid place-items-center rounded-xl border border-(--p-content-border-color) px-6 py-2 font-bold tracking-tight transition-transform hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
-        :disabled="isReplaying"
-        :aria-label="isPlayingSequence ? undefined : t('generic.previewButton')"
-        @click="emit('playSequence')"
-      >
-        <!-- Stays in the grid while hidden so the button keeps its size when the mute text shows -->
-        <NoteIcon
-          class="size-20 text-(--p-surface-500) [grid-area:1/1]"
-          :class="{ invisible: isPlayingSequence }"
-        />
-        <span
-          v-if="isPlayingSequence"
-          class="text-base text-(--p-orange-400) [grid-area:1/1]"
-        >
-          {{ t('generic.muteButton') }}
-        </span>
-      </button>
-
-      <button
         v-if="hasSamples"
         data-testid="btn-replay-sound"
         class="flex flex-col items-center justify-center rounded-xl border border-(--p-content-border-color) px-4 py-2 text-sm font-medium text-(--p-text-muted-color) transition-transform hover:scale-105 hover:text-(--p-text-color) active:scale-95"
@@ -93,6 +73,26 @@ const { t } = useI18n()
         <i class="pi pi-trash text-sm" aria-hidden="true" />
         <span class="mt-1 block text-xs whitespace-pre-line">
           {{ t('generic.clear') }}
+        </span>
+      </button>
+
+      <button
+        data-testid="btn-play-sequence"
+        class="grid place-items-center rounded-xl border border-(--p-content-border-color) px-6 py-2 font-bold tracking-tight transition-transform hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+        :disabled="isReplaying"
+        :aria-label="isPlayingSequence ? undefined : t('generic.previewButton')"
+        @click="emit('playSequence')"
+      >
+        <!-- Stays in the grid while hidden so the button keeps its size when the mute text shows -->
+        <NoteIcon
+          class="size-20 text-(--p-surface-500) [grid-area:1/1]"
+          :class="{ invisible: isPlayingSequence }"
+        />
+        <span
+          v-if="isPlayingSequence"
+          class="text-base text-(--p-orange-400) [grid-area:1/1]"
+        >
+          {{ t('generic.muteButton') }}
         </span>
       </button>
     </div>
