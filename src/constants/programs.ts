@@ -111,6 +111,12 @@ export const tools: Program[] = [
     stage: 'beta',
   },
   {
+    key: 'voiceRecorder',
+    icon: ProgramVoiceRecorderIcon,
+    route: '/voice-recorder',
+    stage: 'beta',
+  },
+  {
     key: 'songRecorder',
     icon: ProgramSongRecorderIcon,
     route: '/song-recorder',
@@ -142,19 +148,6 @@ export const programs: Program[] = [
   },
 ]
 
-/*
- * Reachable by URL only: no card on the home, tools or games pages, no sitemap
- * entry and no README row. Listed here so the top bar still shows the icon.
- * Guarded by hiddenPrograms.test.ts.
- */
-export const hiddenPrograms: Program[] = [
-  {
-    key: 'voiceRecorder',
-    icon: ProgramVoiceRecorderIcon,
-    route: '/voice-recorder',
-  },
-]
-
 export const programStageByRoute = new Map(
   [...games, ...tools].flatMap((program) =>
     program.stage ? [[program.route, program.stage] as const] : [],
@@ -162,7 +155,7 @@ export const programStageByRoute = new Map(
 )
 
 export const programByRoute = new Map(
-  [...programs, ...games, ...tools, ...hiddenPrograms].map(
+  [...programs, ...games, ...tools].map(
     (program) => [program.route, program] as const,
   ),
 )

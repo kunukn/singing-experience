@@ -169,7 +169,8 @@
         "description": "Syng DO og så SO for at hoppe fra toneart til toneart. Tænd alle 12 tonearter i kvintcirklen."
       },
       "voiceRecorder": {
-        "name": "Stemmeoptager"
+        "name": "Stemmeoptager",
+        "description": "Optag din sang, hør den igen, og se de toner, du sang."
       }
     },
     "privacy": "Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
@@ -761,6 +762,11 @@
       "step1": "Vælg et værktøj eller et spil for at åbne det.",
       "step2": "Sig ja til mikrofonen, når browseren spørger. Ellers kan programmerne ikke høre dig synge.",
       "step3": "Ny her? Start med Tonemåleren."
+    },
+    "voiceRecorder": {
+      "step1": "Tryk på Optag, og syng. Den bevægelige streg viser, at mikrofonen kan høre dig.",
+      "step2": "Tryk på Stop, og afspil så din optagelse, eller hent den.",
+      "step3": "Tryk på \"Se, hvad du sang\" for at se dine toner, og hvordan det lyder."
     }
   },
   "glossary": {

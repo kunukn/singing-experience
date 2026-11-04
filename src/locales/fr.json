@@ -169,7 +169,8 @@
         "description": "Chante DO puis SO pour sauter de tonalité en tonalité. Allume les 12 tonalités du cycle des quintes."
       },
       "voiceRecorder": {
-        "name": "Enregistreur vocal"
+        "name": "Enregistreur vocal",
+        "description": "Enregistre ton chant, réécoute-le et regarde les notes que tu as chantées."
       }
     },
     "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Aucun son n'est enregistré ni envoyé."
@@ -761,6 +762,11 @@
       "step1": "Choisis un outil ou un jeu pour l'ouvrir.",
       "step2": "Autorise le micro quand ton navigateur te le demande. Sans lui, les programmes ne peuvent pas t'entendre chanter.",
       "step3": "Tu débutes ? Commence par le Détecteur de hauteur."
+    },
+    "voiceRecorder": {
+      "step1": "Appuie sur Enregistrer et chante. La ligne qui bouge montre que le micro t'entend.",
+      "step2": "Appuie sur Arrêter, puis écoute ton enregistrement ou télécharge-le.",
+      "step3": "Touche \"Regarde ce que tu as chanté\" pour voir tes notes et comment ça sonne."
     }
   },
   "glossary": {

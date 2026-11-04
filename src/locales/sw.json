@@ -169,7 +169,8 @@
         "description": "Imba DO, kisha SO, kuruka kutoka ufunguo mmoja hadi mwingine. Washa funguo zote 12 za mzunguko wa tano."
       },
       "voiceRecorder": {
-        "name": "Kinasa Sauti"
+        "name": "Kinasa Sauti",
+        "description": "Rekodi uimbaji wako, usikilize tena na uone noti ulizoimba."
       }
     },
     "privacy": "Faragha yako ni salama — programu hii inafanya kazi 100% kwenye kivinjari chako. Hakuna sauti inayorekodiwa au kutumwa popote."
@@ -761,6 +762,11 @@
       "step1": "Chagua zana au mchezo ili uufungue.",
       "step2": "Ruhusu maikrofoni kivinjari kinapouliza. Bila hiyo, programu haziwezi kukusikia ukiimba.",
       "step3": "Mgeni hapa? Anza na Kipimo cha Sauti."
+    },
+    "voiceRecorder": {
+      "step1": "Bonyeza Rekodi na uimbe. Mstari unaosogea unaonyesha kwamba maikrofoni inakusikia.",
+      "step2": "Bonyeza Simamisha, kisha cheza rekodi yako au uipakue.",
+      "step3": "Gusa \"Tazama ulichoimba\" kuona noti zako na inavyosikika."
     }
   },
   "glossary": {

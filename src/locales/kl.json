@@ -154,6 +154,10 @@
       "circleOfFifths": {
         "name": "Circle of Fifths",
         "description": "Sing DO, then SO, to hop from key to key. Light up all 12 keys of the circle of fifths."
+      },
+      "voiceRecorder": {
+        "name": "Voice Recorder",
+        "description": "Record your singing, play it back and see the notes you sang."
       }
     },
     "privacy": "Nammineersinnaassuseq illersorneqarpoq — app tamaat browserimi suliassarineqarpoq. Nipeqarneq nassiunnissaq pilersitsinaveersaarneqarpoq."
@@ -617,6 +621,11 @@
       "step1": "Pick a tool or a game to open it.",
       "step2": "Allow the microphone when your browser asks. Without it, the programs can't hear you sing.",
       "step3": "New here? Start with the Pitch Detector."
+    },
+    "voiceRecorder": {
+      "step1": "Press Record and sing. The moving line shows the mic can hear you.",
+      "step2": "Press Stop, then play your recording or download it.",
+      "step3": "Tap \"See what you sang\" to see your notes and how it sounds."
     }
   },
   "glossary": {

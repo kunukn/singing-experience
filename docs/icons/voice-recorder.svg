@@ -1,0 +1,11 @@
+<svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <style>
+    svg { --icon-strong: #dc2626; --icon-accent: #ef4444; --icon-light: #ffffff; }
+    @media (prefers-color-scheme: dark) { svg { --icon-strong: #f87171; --icon-accent: #f87171; --icon-light: #f4f4f5; } }
+  </style>
+  <rect x="1" y="1" width="38" height="38" rx="10" fill="var(--icon-strong)" fill-opacity="0.16"></rect>
+  <rect x="13.5" y="7" width="10" height="16" rx="5" fill="var(--icon-strong)"></rect>
+  <path d="M16.5 12h4M16.5 15.5h4" stroke="var(--icon-light)" stroke-width="1.5" opacity="0.75"></path>
+  <path d="M9.5 19.5a9 9 0 0 0 18 0M18.5 28.5V33M14 33h9" stroke="var(--icon-strong)" stroke-width="2.5"></path>
+  <circle cx="30" cy="10.5" r="3.5" fill="var(--icon-strong)" stroke="var(--icon-light)" stroke-width="1.5"></circle>
+</svg>

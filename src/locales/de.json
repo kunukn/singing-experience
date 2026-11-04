@@ -169,7 +169,8 @@
         "description": "Sing DO und dann SO, um von Tonart zu Tonart zu hüpfen. Bring alle 12 Tonarten des Quintenzirkels zum Leuchten."
       },
       "voiceRecorder": {
-        "name": "Stimmrekorder"
+        "name": "Stimmrekorder",
+        "description": "Nimm deinen Gesang auf, hör ihn dir an und sieh, welche Töne du gesungen hast."
       }
     },
     "privacy": "Deine Privatsphäre ist geschützt – diese App läuft vollständig im Browser. Kein Audio wird aufgezeichnet oder übertragen."
@@ -761,6 +762,11 @@
       "step1": "Wähl ein Werkzeug oder ein Spiel aus, um es zu öffnen.",
       "step2": "Erlaube das Mikrofon, wenn dein Browser fragt. Sonst können die Programme dich nicht singen hören.",
       "step3": "Neu hier? Fang mit der Tonhöhenerkennung an."
+    },
+    "voiceRecorder": {
+      "step1": "Drück auf Aufnehmen und sing. Die bewegte Linie zeigt, dass das Mikro dich hört.",
+      "step2": "Drück auf Stopp und spiel deine Aufnahme ab oder lade sie herunter.",
+      "step3": "Tippe auf \"Sieh dir an, was du gesungen hast\", um deine Töne zu sehen und wie es klingt."
     }
   },
   "glossary": {

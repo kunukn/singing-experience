@@ -169,7 +169,8 @@
         "description": "Nyanyikan DO, lalu SO, untuk melompat dari nada dasar ke nada dasar. Nyalakan semua 12 nada dasar di lingkaran kuint."
       },
       "voiceRecorder": {
-        "name": "Perekam Suara"
+        "name": "Perekam Suara",
+        "description": "Rekam nyanyianmu, putar lagi, dan lihat nada yang kamu nyanyikan."
       }
     },
     "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Tidak ada audio yang direkam atau dikirim ke mana pun."
@@ -761,6 +762,11 @@
       "step1": "Pilih alat atau permainan untuk membukanya.",
       "step2": "Izinkan mikrofon saat browser bertanya. Tanpa itu, program tidak bisa mendengar kamu bernyanyi.",
       "step3": "Baru di sini? Mulai dengan Detektor Nada."
+    },
+    "voiceRecorder": {
+      "step1": "Tekan Rekam dan bernyanyilah. Garis yang bergerak menunjukkan mikrofon bisa mendengarmu.",
+      "step2": "Tekan Berhenti, lalu putar rekamanmu atau unduh.",
+      "step3": "Ketuk \"Lihat apa yang kamu nyanyikan\" untuk melihat nadamu dan seperti apa kedengarannya."
     }
   },
   "glossary": {

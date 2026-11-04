@@ -169,7 +169,8 @@
         "description": "Canta DO y luego SO para saltar de tonalidad en tonalidad. Enciende las 12 tonalidades del círculo de quintas."
       },
       "voiceRecorder": {
-        "name": "Grabadora de voz"
+        "name": "Grabadora de voz",
+        "description": "Graba tu canto, escúchalo y mira las notas que cantaste."
       }
     },
     "privacy": "Tu privacidad está segura — esta aplicación funciona 100% en tu navegador. No se graba ni envía ningún audio."
@@ -761,6 +762,11 @@
       "step1": "Elige una herramienta o un juego para abrirlo.",
       "step2": "Permite el micrófono cuando tu navegador te lo pida. Sin él, los programas no pueden oírte cantar.",
       "step3": "¿Eres nuevo? Empieza con el Detector de tono."
+    },
+    "voiceRecorder": {
+      "step1": "Pulsa Grabar y canta. La línea que se mueve muestra que el micrófono te oye.",
+      "step2": "Pulsa Detener y luego reproduce tu grabación o descárgala.",
+      "step3": "Toca \"Mira lo que cantaste\" para ver tus notas y cómo suena."
     }
   },
   "glossary": {

@@ -27,7 +27,7 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
   '/tools': {
     title: 'Music Tools',
     description:
-      'Pitch detector, vocal warm-up, notes on the staff, guitar and ukulele tuner, playable piano and guitar, scale detector, song recorder and polyphonic tone detector. Free, runs in your browser.',
+      'Pitch detector, vocal warm-up, notes on the staff, guitar and ukulele tuner, playable piano and guitar, scale detector, song recorder, voice recorder and polyphonic tone detector. Free, runs in your browser.',
   },
   '/games': {
     title: 'Singing Games',
@@ -78,6 +78,11 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
     title: 'Song Recorder — Sing to Sheet Music',
     description:
       'Sing a melody to a metronome and see it written as sheet music. Play it back and copy the ABC notation.',
+  },
+  '/voice-recorder': {
+    title: 'Voice Recorder — Record and See Your Singing',
+    description:
+      'Record your singing, play it back and download it. See the notes you sang over time, the likely key and how steady your notes were. Your recording stays on your device.',
   },
   '/tone-detector': {
     title: 'Polyphonic Tone Detector',

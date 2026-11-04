@@ -169,7 +169,8 @@
         "description": "Cante DO e depois SO para pular de tom em tom. Acenda os 12 tons do círculo das quintas."
       },
       "voiceRecorder": {
-        "name": "Gravador de voz"
+        "name": "Gravador de voz",
+        "description": "Grave seu canto, ouça de novo e veja as notas que você cantou."
       }
     },
     "privacy": "Sua privacidade está segura — este aplicativo funciona 100% no seu navegador. Nenhum áudio é gravado ou enviado."
@@ -761,6 +762,11 @@
       "step1": "Escolha uma ferramenta ou um jogo para abrir.",
       "step2": "Permita o microfone quando o navegador perguntar. Sem ele, os programas não conseguem ouvir você cantar.",
       "step3": "É novo aqui? Comece pelo Detector de afinação."
+    },
+    "voiceRecorder": {
+      "step1": "Aperte Gravar e cante. A linha em movimento mostra que o microfone ouve você.",
+      "step2": "Aperte Parar e depois ouça sua gravação ou baixe.",
+      "step3": "Toque em \"Veja o que você cantou\" para ver suas notas e como soa."
     }
   },
   "glossary": {
