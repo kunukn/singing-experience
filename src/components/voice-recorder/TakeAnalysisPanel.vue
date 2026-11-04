@@ -59,8 +59,8 @@ async function analyse() {
     <PrimeButton
       v-if="status === 'idle' || status === 'failed'"
       :label="t('voiceRecorder.analysis.analyse')"
-      icon="pi pi-chart-line"
       size="small"
+      rounded
       class="self-start"
       data-testid="take-analyse"
       @click="analyse"

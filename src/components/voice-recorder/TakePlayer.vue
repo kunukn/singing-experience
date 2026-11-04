@@ -91,6 +91,7 @@ defineExpose({ seekTo })
       icon="pi pi-download"
       size="small"
       severity="secondary"
+      rounded
       data-testid="take-download"
     />
   </div>

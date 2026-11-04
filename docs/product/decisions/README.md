@@ -10,6 +10,7 @@ Records are append-only. To change a decision, add a new record and mark the old
 | [0002](0002-vertical-ordering.md)    | More at the top                    | Accepted |
 | [0003](0003-pitch-colours.md)        | Green clean, warm sharp, blue flat | Accepted |
 | [0004](0004-copy-tone.md)            | Child-friendly copy                | Accepted |
+| [0005](0005-button-conventions.md)   | Button conventions                 | Accepted |
 
 ## Template
 

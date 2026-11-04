@@ -87,6 +87,7 @@ function formatClock(ms: number): string {
         :label="t('generic.stop')"
         size="small"
         severity="danger"
+        rounded
         data-testid="recorder-stop"
         @click="emit('stop')"
       />
@@ -95,6 +96,8 @@ function formatClock(ms: number): string {
         :label="t(take ? 'voiceRecorder.recordAgain' : 'voiceRecorder.record')"
         icon="pi pi-circle-fill"
         size="small"
+        severity="danger"
+        rounded
         :loading="isBusy"
         :disabled="isBusy"
         data-testid="recorder-record"
@@ -106,6 +109,7 @@ function formatClock(ms: number): string {
         icon="pi pi-trash"
         size="small"
         severity="secondary"
+        rounded
         data-testid="recorder-clear"
         @click="emit('clear')"
       />

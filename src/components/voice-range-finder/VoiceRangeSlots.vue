@@ -320,6 +320,7 @@ function clearEditingSlot() {
         <div class="flex w-full items-center gap-2">
           <PrimeButton
             v-if="isEditingFilledSlot"
+            icon="pi pi-trash"
             :label="t('generic.clear')"
             severity="danger"
             size="small"

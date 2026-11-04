@@ -85,3 +85,23 @@ The app is used by children as well as adults. Every user-facing string reads as
 - Wrap every user-facing string with `$t()` / `t()`; never hardcode display text.
 
 Why: [0004 — Child-friendly copy](decisions/0004-copy-tone.md)
+
+## Button Conventions
+
+Buttons that do the same job look the same in every program, so nobody has to relearn them. All use `size="small"` (see [AGENTS.md](../../AGENTS.md)).
+
+| Button                        | Severity                 | Shape              | Icon                |
+| ----------------------------- | ------------------------ | ------------------ | ------------------- |
+| Start, or another main action | `success` or the default | `rounded`          | None                |
+| Stop                          | `danger`                 | `rounded`          | None                |
+| Record, Record again          | `danger`                 | `rounded`          | `pi pi-circle-fill` |
+| Clear                         | Suits its setting        | Matches neighbours | `pi pi-trash`       |
+| Download, Copy and similar    | `secondary`              | Matches neighbours | Names the action    |
+
+- **Main actions have no icon.** The label is enough. Record is the one exception, because the red dot is the universal sign for recording.
+- **Clear always has the bin**, with the `generic.clear` label. Its colour can suit where it sits: `secondary` beside other actions, or `text` in a toolbar or dialog footer.
+- **Buttons in a row share a shape.** A secondary button matches the buttons or controls beside it, so it's `rounded` next to a rounded main action or a pill-shaped audio player.
+
+This rule has no automated guard, so check a similar button in another program before adding one.
+
+Why: [0005 — Button conventions](decisions/0005-button-conventions.md)
