@@ -1,9 +1,14 @@
+import { percentile } from './takeStats'
+
 /* About 12 s across a phone, with 200 ms notes still wide enough to tap. */
 const PIXELS_PER_SECOND = 60
 /* Room above and below the outermost notes so their blocks aren't cut off. */
 const PITCH_PADDING_SEMITONES = 2
 /* A one-note take would otherwise fill the chart with a single huge block. */
 const MIN_PITCH_SPAN_SEMITONES = 12
+/* Slides can run well past the notes, so they count towards the range. This share
+ * is ignored at each end, so one wild reading can't squash the whole chart. */
+const PITCH_LINE_OUTLIER_SHARE = 0.01
 /* Round steps a reader can count along, smallest first. */
 const TIME_TICK_STEPS_MS = [1000, 2000, 5000, 10_000, 15_000, 30_000, 60_000]
 /* Keeps "0:00" labels well apart, with room to read each at a glance. */
@@ -85,6 +90,21 @@ export function scrollLeftToReveal(
     0,
     isRtl ? contentX - viewportWidth + leadIn : contentX - leadIn,
   )
+}
+
+/* The notes plus where the sung line actually went. NaN marks unvoiced frames. */
+export function pitchRangeForTake(
+  noteMidis: number[],
+  tunedMidi: Float32Array,
+): { midiMin: number; midiMax: number } {
+  const voiced = tunedMidi.filter((midi) => !Number.isNaN(midi))
+  if (voiced.length === 0) return pitchRangeFor(noteMidis)
+
+  return pitchRangeFor([
+    ...noteMidis,
+    Math.floor(percentile(voiced, PITCH_LINE_OUTLIER_SHARE)),
+    Math.ceil(percentile(voiced, 1 - PITCH_LINE_OUTLIER_SHARE)),
+  ])
 }
 
 export function pitchRangeFor(midis: number[]): {

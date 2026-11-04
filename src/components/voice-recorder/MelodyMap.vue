@@ -10,7 +10,7 @@ import type { TakeAnalysis } from './analyzeTake'
 import {
   contentWidthFor,
   contentXToTime,
-  pitchRangeFor,
+  pitchRangeForTake,
   scrollLeftToReveal,
   startScrollLeft,
   timeTickStepMs,
@@ -67,7 +67,10 @@ const timeAxis = computed<TimeAxis>(() => ({
   isRtl: isRtl.value,
 }))
 const pitchRange = computed(() =>
-  pitchRangeFor(props.analysis.notes.map((note) => note.midi)),
+  pitchRangeForTake(
+    props.analysis.notes.map((note) => note.midi),
+    props.analysis.tunedMidi,
+  ),
 )
 
 const hoverLabel = computed(() => {
@@ -312,8 +315,17 @@ function draw() {
   const { scrollLeft } = scroller
 
   drawGrid(context, width)
+
+  /* A rare reading outside the range stops at the plot's edge, so it can never
+   * run through the time labels. */
+  context.save()
+  context.beginPath()
+  context.rect(0, 0, width, MAP_HEIGHT_PX - TIME_AXIS_HEIGHT_PX)
+  context.clip()
   drawNotes(context, scrollLeft, width)
   drawPitchLine(context, scrollLeft, width)
+  context.restore()
+
   drawTimeAxis(context, scrollLeft, width)
   drawPlayhead(context, scrollLeft, width)
   drawNoteLabels(context, width)

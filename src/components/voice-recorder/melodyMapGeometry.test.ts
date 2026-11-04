@@ -4,6 +4,7 @@ import {
   contentWidthFor,
   contentXToTime,
   pitchRangeFor,
+  pitchRangeForTake,
   scrollLeftToReveal,
   startScrollLeft,
   timeToContentX,
@@ -64,6 +65,32 @@ describe('melodyMapGeometry', () => {
     expect(scrollLeftToReveal(600, 100, 400, false)).toBe(550)
     expect(scrollLeftToReveal(450, 0, 400, true)).toBe(100)
     expect(scrollLeftToReveal(50, 100, 400, true)).toBe(0)
+  })
+
+  test('widens the range for a slide that runs past the notes', () => {
+    const notes = [60, 72]
+    const lineFallingBelowTheNotes = Float32Array.from(
+      { length: 100 },
+      (_, i) => (i < 80 ? 66 : 50),
+    )
+
+    expect(pitchRangeForTake(notes, lineFallingBelowTheNotes).midiMin).toBe(48)
+  })
+
+  test('ignores a single wild reading', () => {
+    const notes = [60, 72]
+    const steadyLine = new Float32Array(1000).fill(66)
+    steadyLine[500] = 20
+
+    expect(pitchRangeForTake(notes, steadyLine)).toEqual(pitchRangeFor(notes))
+  })
+
+  test('uses the notes alone when nothing was voiced', () => {
+    const silence = new Float32Array(10).fill(Number.NaN)
+
+    expect(pitchRangeForTake([60, 72], silence)).toEqual(
+      pitchRangeFor([60, 72]),
+    )
   })
 
   test('keeps at least an octave of pitch on screen', () => {
