@@ -836,7 +836,7 @@
     }
   },
   "voiceRecorder": {
-    "hint": "Chante sans musique de fond. Tu peux enregistrer jusqu'à {minutes} minutes. Ton enregistrement reste sur cet appareil jusqu'à ce que tu l'effaces ou que tu enregistres à nouveau.",
+    "hint": "Chante sans musique de fond. Tu peux enregistrer jusqu'à {minutes} minutes.\nTon enregistrement reste sur cet appareil jusqu'à ce que tu l'effaces ou que tu enregistres à nouveau.",
     "record": "Enregistrer",
     "recordAgain": "Enregistrer encore",
     "download": "Télécharger",

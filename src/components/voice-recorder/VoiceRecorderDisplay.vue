@@ -77,7 +77,10 @@ function formatClock(ms: number): string {
     data-testid="voice-recorder-display"
     :data-status="status"
   >
-    <p v-if="!isSimulated" class="text-sm text-(--p-text-muted-color)">
+    <p
+      v-if="!isSimulated"
+      class="text-sm whitespace-pre-line text-(--p-text-muted-color)"
+    >
       {{ t('voiceRecorder.hint', { minutes: maxMinutes }) }}
     </p>
 

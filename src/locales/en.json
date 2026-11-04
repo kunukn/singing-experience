@@ -836,7 +836,7 @@
     }
   },
   "voiceRecorder": {
-    "hint": "Sing without backing music. You can record up to {minutes} minutes. Your recording stays on this device until you clear it or record again.",
+    "hint": "Sing without backing music. You can record up to {minutes} minutes.\nYour recording stays on this device until you clear it or record again.",
     "record": "Record",
     "recordAgain": "Record again",
     "download": "Download",
