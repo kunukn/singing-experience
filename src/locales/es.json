@@ -167,6 +167,9 @@
       "circleOfFifths": {
         "name": "Círculo de quintas",
         "description": "Canta DO y luego SO para saltar de tonalidad en tonalidad. Enciende las 12 tonalidades del círculo de quintas."
+      },
+      "voiceRecorder": {
+        "name": "Grabadora de voz"
       }
     },
     "privacy": "Tu privacidad está segura — esta aplicación funciona 100% en tu navegador. No se graba ni envía ningún audio."
@@ -824,6 +827,86 @@
     "bpm": {
       "name": "BPM",
       "description": "Pulsaciones por minuto: lo rápido que va la música."
+    }
+  },
+  "voiceRecorder": {
+    "hint": "Canta sin música de fondo. Puedes grabar hasta {minutes} minutos y todo se queda en este dispositivo.",
+    "record": "Grabar",
+    "recordAgain": "Grabar otra vez",
+    "download": "Descargar",
+    "timeLeft": "Quedan {time}",
+    "notSupported": "Este navegador no puede grabar sonido",
+    "emptyTake": "No se grabó nada. Inténtalo otra vez.",
+    "confirmLeave": "Tu grabación aún no está descargada y se perderá. ¿Quieres salir igual?",
+    "confirmReplace": "Esto reemplaza tu grabación, que aún no está descargada. ¿Grabar otra vez?",
+    "stopped": {
+      "limit": "Es la grabación más larga posible, así que se paró aquí.",
+      "interrupted": "La grabación se paró antes, pero guardamos lo que cantaste."
+    },
+    "analysis": {
+      "analyse": "Mira lo que cantaste",
+      "analyzing": "Escuchando tu grabación…",
+      "failed": "No se pudo leer la grabación. Aún puedes reproducirla y descargarla.",
+      "empty": "No pudimos oír notas claras en esta grabación.",
+      "warnings": {
+        "tooQuiet": "Esta grabación suena muy bajo. Acércate al micrófono.",
+        "clipped": "Algunas partes sonaron demasiado fuerte y se cortaron. Aléjate un poco del micrófono.",
+        "unclear": "Cuesta oír una melodía clara. Puede deberse a que hablas o a la música de fondo."
+      }
+    },
+    "melody": {
+      "title": "Tu melodía",
+      "ariaLabel": "Mapa de las notas que cantaste a lo largo del tiempo",
+      "hint": "Toca el mapa para saltar a ese momento. Los bloques verdes están afinados, de amarillo a rojo van altos y los azules van bajos."
+    },
+    "notes": {
+      "title": "Notas que usaste",
+      "likelyKey": "Tonalidad probable: {key}"
+    },
+    "profile": {
+      "title": "Cómo suena",
+      "sounds": "Suena…",
+      "range": "Rango usado",
+      "phrase": "Frase típica",
+      "vibrato": "Notas con vibrato",
+      "guess": "Una suposición divertida a partir del tono y el ritmo, no un juicio.",
+      "labels": {
+        "slow": "Lento",
+        "fast": "Rápido",
+        "steady": "Estable",
+        "leaping": "Con saltos",
+        "smooth": "Suave",
+        "choppy": "Entrecortado",
+        "free": "Libre",
+        "rhythmic": "Rítmico",
+        "sung": "Cantado",
+        "spoken": "Hablado",
+        "even": "Parejo",
+        "dramatic": "Dramático",
+        "familiar": "Conocido",
+        "colourful": "Colorido",
+        "melodic": "Melódico",
+        "monotonic": "Monótono",
+        "energetic": "Enérgico",
+        "rapLike": "Como rap",
+        "romantic": "Romántico",
+        "exotic": "Exótico"
+      }
+    },
+    "rating": {
+      "title": "Qué tan estable fue",
+      "centring": "Centro de la nota",
+      "steadiness": "Notas estables",
+      "key": "Seguir en el tono",
+      "cleanStarts": "Comienzos limpios",
+      "tooShort": "Canta varias notas distintas durante al menos {seconds} segundos para tener una valoración.",
+      "note": "Esto mira lo estables que son tus notas, no lo buena que es tu voz.",
+      "tips": {
+        "centring": "Prueba a tararear la nota primero y luego cae justo en el centro.",
+        "steadiness": "Respira más hondo para que las notas largas se mantengan estables.",
+        "key": "Vuelve a escuchar las notas que se alejan de la melodía y canta solo esas otra vez.",
+        "keepGoing": "Bonito y estable. ¡Sigue cantando!"
+      }
     }
   }
 }

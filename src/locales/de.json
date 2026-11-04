@@ -167,6 +167,9 @@
       "circleOfFifths": {
         "name": "Quintenzirkel",
         "description": "Sing DO und dann SO, um von Tonart zu Tonart zu hüpfen. Bring alle 12 Tonarten des Quintenzirkels zum Leuchten."
+      },
+      "voiceRecorder": {
+        "name": "Stimmrekorder"
       }
     },
     "privacy": "Deine Privatsphäre ist geschützt – diese App läuft vollständig im Browser. Kein Audio wird aufgezeichnet oder übertragen."
@@ -824,6 +827,86 @@
     "bpm": {
       "name": "BPM",
       "description": "Schläge pro Minute: wie schnell die Musik ist."
+    }
+  },
+  "voiceRecorder": {
+    "hint": "Sing ohne Hintergrundmusik. Du kannst bis zu {minutes} Minuten aufnehmen, und die Aufnahme bleibt auf diesem Gerät.",
+    "record": "Aufnehmen",
+    "recordAgain": "Nochmal aufnehmen",
+    "download": "Herunterladen",
+    "timeLeft": "Noch {time}",
+    "notSupported": "Dieser Browser kann keinen Ton aufnehmen",
+    "emptyTake": "Es wurde nichts aufgenommen. Versuch es nochmal.",
+    "confirmLeave": "Deine Aufnahme ist noch nicht heruntergeladen und geht verloren. Trotzdem gehen?",
+    "confirmReplace": "Das ersetzt deine Aufnahme, die noch nicht heruntergeladen ist. Nochmal aufnehmen?",
+    "stopped": {
+      "limit": "Länger kann eine Aufnahme nicht sein, deshalb hat sie hier gestoppt.",
+      "interrupted": "Die Aufnahme hat früher gestoppt, aber was du gesungen hast, ist noch da."
+    },
+    "analysis": {
+      "analyse": "Sieh dir an, was du gesungen hast",
+      "analyzing": "Wir hören uns deine Aufnahme an …",
+      "failed": "Die Aufnahme konnte nicht gelesen werden. Du kannst sie trotzdem abspielen und herunterladen.",
+      "empty": "Wir konnten in dieser Aufnahme keine klaren Töne hören.",
+      "warnings": {
+        "tooQuiet": "Diese Aufnahme ist sehr leise. Geh näher ans Mikro.",
+        "clipped": "Manche Stellen waren zu laut und wurden abgeschnitten. Geh ein Stück vom Mikro weg.",
+        "unclear": "Eine klare Melodie ist schwer zu hören. Das kann an Sprechen oder Hintergrundmusik liegen."
+      }
+    },
+    "melody": {
+      "title": "Deine Melodie",
+      "ariaLabel": "Karte der Töne, die du im Lauf der Zeit gesungen hast",
+      "hint": "Tippe auf die Karte, um zu dieser Stelle zu springen. Grüne Blöcke sind sauber, gelbe bis rote zu hoch, blaue zu tief."
+    },
+    "notes": {
+      "title": "Deine Töne",
+      "likelyKey": "Wahrscheinliche Tonart: {key}"
+    },
+    "profile": {
+      "title": "So klingt es",
+      "sounds": "Klingt …",
+      "range": "Genutzter Tonumfang",
+      "phrase": "Typische Phrase",
+      "vibrato": "Töne mit Vibrato",
+      "guess": "Eine lustige Schätzung aus Tonhöhe und Rhythmus, keine Bewertung.",
+      "labels": {
+        "slow": "Langsam",
+        "fast": "Schnell",
+        "steady": "Gleichmäßig",
+        "leaping": "Sprunghaft",
+        "smooth": "Fließend",
+        "choppy": "Abgehackt",
+        "free": "Frei",
+        "rhythmic": "Rhythmisch",
+        "sung": "Gesungen",
+        "spoken": "Gesprochen",
+        "even": "Ausgeglichen",
+        "dramatic": "Dramatisch",
+        "familiar": "Vertraut",
+        "colourful": "Farbenreich",
+        "melodic": "Melodisch",
+        "monotonic": "Monoton",
+        "energetic": "Energiegeladen",
+        "rapLike": "Wie Rap",
+        "romantic": "Romantisch",
+        "exotic": "Exotisch"
+      }
+    },
+    "rating": {
+      "title": "So sicher war es",
+      "centring": "Mitte des Tons",
+      "steadiness": "Ruhige Töne",
+      "key": "In der Tonart bleiben",
+      "cleanStarts": "Saubere Einsätze",
+      "tooShort": "Sing ein paar verschiedene Töne für mindestens {seconds} Sekunden, um eine Bewertung zu bekommen.",
+      "note": "Das zeigt, wie sicher deine Töne sind, nicht wie gut deine Stimme ist.",
+      "tips": {
+        "centring": "Summ den Ton erst, und triff dann genau seine Mitte.",
+        "steadiness": "Atme tiefer ein, damit lange Töne ruhig bleiben.",
+        "key": "Hör nach Tönen, die aus der Melodie fallen, und sing genau die nochmal.",
+        "keepGoing": "Schön und sicher. Sing weiter!"
+      }
     }
   }
 }

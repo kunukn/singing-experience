@@ -167,6 +167,9 @@
       "circleOfFifths": {
         "name": "Mzunguko wa Tano",
         "description": "Imba DO, kisha SO, kuruka kutoka ufunguo mmoja hadi mwingine. Washa funguo zote 12 za mzunguko wa tano."
+      },
+      "voiceRecorder": {
+        "name": "Kinasa Sauti"
       }
     },
     "privacy": "Faragha yako ni salama — programu hii inafanya kazi 100% kwenye kivinjari chako. Hakuna sauti inayorekodiwa au kutumwa popote."
@@ -824,6 +827,86 @@
     "bpm": {
       "name": "BPM",
       "description": "Mipigo kwa dakika: jinsi muziki unavyokwenda kwa kasi."
+    }
+  },
+  "voiceRecorder": {
+    "hint": "Imba bila muziki wa nyuma. Unaweza kurekodi hadi dakika {minutes}, na rekodi inabaki kwenye kifaa hiki.",
+    "record": "Rekodi",
+    "recordAgain": "Rekodi tena",
+    "download": "Pakua",
+    "timeLeft": "Zimebaki {time}",
+    "notSupported": "Kivinjari hiki hakiwezi kurekodi sauti",
+    "emptyTake": "Hakuna kilichorekodiwa. Jaribu tena.",
+    "confirmLeave": "Rekodi yako bado haijapakuliwa na itapotea. Uondoke hata hivyo?",
+    "confirmReplace": "Hii itabadilisha rekodi yako ambayo bado haijapakuliwa. Urekodi tena?",
+    "stopped": {
+      "limit": "Rekodi haiwezi kuwa ndefu zaidi, kwa hiyo imesimama hapa.",
+      "interrupted": "Kurekodi kumesimama mapema, lakini tumehifadhi ulichoimba."
+    },
+    "analysis": {
+      "analyse": "Tazama ulichoimba",
+      "analyzing": "Tunasikiliza rekodi yako…",
+      "failed": "Imeshindikana kusoma rekodi. Bado unaweza kuicheza na kuipakua.",
+      "empty": "Hatukusikia noti zilizo wazi kwenye rekodi hii.",
+      "warnings": {
+        "tooQuiet": "Rekodi hii ina sauti ndogo sana. Sogea karibu na maikrofoni.",
+        "clipped": "Sehemu fulani zilikuwa na sauti kubwa mno zikakatika. Rudi nyuma kidogo kutoka kwenye maikrofoni.",
+        "unclear": "Ni vigumu kusikia wimbo ulio wazi. Kuongea au muziki wa nyuma kunaweza kusababisha hivi."
+      }
+    },
+    "melody": {
+      "title": "Wimbo wako",
+      "ariaLabel": "Ramani ya noti ulizoimba kwa muda",
+      "hint": "Gusa ramani kuruka hadi wakati huo. Vitalu vya kijani viko sawa, njano hadi nyekundu ni juu, buluu ni chini."
+    },
+    "notes": {
+      "title": "Noti ulizotumia",
+      "likelyKey": "Skeli inayowezekana: {key}"
+    },
+    "profile": {
+      "title": "Inavyosikika",
+      "sounds": "Inasikika…",
+      "range": "Masafa yaliyotumika",
+      "phrase": "Kifungu cha kawaida",
+      "vibrato": "Noti zenye vibrato",
+      "guess": "Kisio la kufurahisha kutoka kwa sauti na mdundo, si hukumu.",
+      "labels": {
+        "slow": "Polepole",
+        "fast": "Haraka",
+        "steady": "Tulivu",
+        "leaping": "Kurukaruka",
+        "smooth": "Laini",
+        "choppy": "Kukatikakatika",
+        "free": "Huru",
+        "rhythmic": "Yenye mdundo",
+        "sung": "Kuimbwa",
+        "spoken": "Kuongewa",
+        "even": "Sawasawa",
+        "dramatic": "Yenye msisimko",
+        "familiar": "Inayojulikana",
+        "colourful": "Yenye rangi",
+        "melodic": "Yenye melodi",
+        "monotonic": "Sauti moja",
+        "energetic": "Yenye nguvu",
+        "rapLike": "Kama rap",
+        "romantic": "Ya kimapenzi",
+        "exotic": "Ya kigeni"
+      }
+    },
+    "rating": {
+      "title": "Ilikuwa thabiti kiasi gani",
+      "centring": "Katikati ya noti",
+      "steadiness": "Noti thabiti",
+      "key": "Kubaki kwenye skeli",
+      "cleanStarts": "Mianzo safi",
+      "tooShort": "Imba noti chache tofauti kwa angalau sekunde {seconds} ili upate tathmini.",
+      "note": "Hii inaangalia uthabiti wa noti zako, si uzuri wa sauti yako.",
+      "tips": {
+        "centring": "Jaribu kuvuma noti kwanza, kisha ifikie katikati kabisa.",
+        "steadiness": "Vuta pumzi ndefu zaidi ili noti ndefu zibaki thabiti.",
+        "key": "Sikiliza tena noti zinazotoka kwenye wimbo, kisha imba hizo tu tena.",
+        "keepGoing": "Nzuri na thabiti. Endelea kuimba!"
+      }
     }
   }
 }

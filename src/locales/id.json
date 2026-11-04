@@ -167,6 +167,9 @@
       "circleOfFifths": {
         "name": "Lingkaran Kuint",
         "description": "Nyanyikan DO, lalu SO, untuk melompat dari nada dasar ke nada dasar. Nyalakan semua 12 nada dasar di lingkaran kuint."
+      },
+      "voiceRecorder": {
+        "name": "Perekam Suara"
       }
     },
     "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Tidak ada audio yang direkam atau dikirim ke mana pun."
@@ -824,6 +827,86 @@
     "bpm": {
       "name": "BPM",
       "description": "Ketukan per menit: seberapa cepat musiknya."
+    }
+  },
+  "voiceRecorder": {
+    "hint": "Bernyanyilah tanpa musik latar. Kamu bisa merekam sampai {minutes} menit, dan rekamannya tetap di perangkat ini.",
+    "record": "Rekam",
+    "recordAgain": "Rekam lagi",
+    "download": "Unduh",
+    "timeLeft": "Sisa {time}",
+    "notSupported": "Browser ini tidak bisa merekam suara",
+    "emptyTake": "Tidak ada yang terekam. Coba lagi.",
+    "confirmLeave": "Rekamanmu belum diunduh dan akan hilang. Tetap keluar?",
+    "confirmReplace": "Ini akan mengganti rekamanmu yang belum diunduh. Rekam lagi?",
+    "stopped": {
+      "limit": "Rekaman tidak bisa lebih panjang lagi, jadi berhenti di sini.",
+      "interrupted": "Rekaman berhenti lebih awal, tapi yang kamu nyanyikan tetap tersimpan."
+    },
+    "analysis": {
+      "analyse": "Lihat apa yang kamu nyanyikan",
+      "analyzing": "Mendengarkan rekamanmu…",
+      "failed": "Rekaman tidak bisa dibaca. Kamu tetap bisa memutar dan mengunduhnya.",
+      "empty": "Kami tidak mendengar nada yang jelas di rekaman ini.",
+      "warnings": {
+        "tooQuiet": "Rekaman ini sangat pelan. Mendekatlah ke mikrofon.",
+        "clipped": "Beberapa bagian terlalu keras dan terpotong. Mundur sedikit dari mikrofon.",
+        "unclear": "Sulit mendengar nada yang jelas. Ini bisa karena bicara atau musik latar."
+      }
+    },
+    "melody": {
+      "title": "Melodimu",
+      "ariaLabel": "Peta nada yang kamu nyanyikan dari waktu ke waktu",
+      "hint": "Ketuk peta untuk melompat ke saat itu. Blok hijau pas, kuning sampai merah terlalu tinggi, biru terlalu rendah."
+    },
+    "notes": {
+      "title": "Nada yang kamu pakai",
+      "likelyKey": "Kemungkinan kunci: {key}"
+    },
+    "profile": {
+      "title": "Seperti apa kedengarannya",
+      "sounds": "Terdengar…",
+      "range": "Rentang yang dipakai",
+      "phrase": "Frasa biasa",
+      "vibrato": "Nada dengan vibrato",
+      "guess": "Tebakan seru dari nada dan irama, bukan penilaian.",
+      "labels": {
+        "slow": "Lambat",
+        "fast": "Cepat",
+        "steady": "Datar",
+        "leaping": "Melompat",
+        "smooth": "Mulus",
+        "choppy": "Terputus-putus",
+        "free": "Bebas",
+        "rhythmic": "Berirama",
+        "sung": "Dinyanyikan",
+        "spoken": "Diucapkan",
+        "even": "Merata",
+        "dramatic": "Dramatis",
+        "familiar": "Akrab",
+        "colourful": "Berwarna",
+        "melodic": "Melodis",
+        "monotonic": "Monoton",
+        "energetic": "Energik",
+        "rapLike": "Seperti rap",
+        "romantic": "Romantis",
+        "exotic": "Eksotis"
+      }
+    },
+    "rating": {
+      "title": "Seberapa stabil",
+      "centring": "Tengah nada",
+      "steadiness": "Nada stabil",
+      "key": "Tetap di kunci",
+      "cleanStarts": "Awal yang bersih",
+      "tooShort": "Nyanyikan beberapa nada berbeda minimal {seconds} detik untuk dapat penilaian.",
+      "note": "Ini melihat seberapa stabil nadamu, bukan seberapa bagus suaramu.",
+      "tips": {
+        "centring": "Coba senandungkan nadanya dulu, lalu mendarat tepat di tengahnya.",
+        "steadiness": "Tarik napas lebih dalam supaya nada panjang tetap stabil.",
+        "key": "Dengarkan lagi nada yang menjauh dari lagu, lalu nyanyikan bagian itu lagi.",
+        "keepGoing": "Indah dan stabil. Terus bernyanyi!"
+      }
     }
   }
 }

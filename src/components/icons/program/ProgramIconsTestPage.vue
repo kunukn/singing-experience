@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { games, programs, tools } from '@/constants/programs'
+import { games, hiddenPrograms, programs, tools } from '@/constants/programs'
 
 const { t } = useI18n()
 
@@ -7,6 +7,7 @@ const sections = [
   { title: 'Hubs', items: programs },
   { title: 'Tools', items: tools },
   { title: 'Games', items: games },
+  { title: 'Hidden', items: hiddenPrograms },
 ]
 
 /* Detail check, card size, tile list size, landing-page list size */

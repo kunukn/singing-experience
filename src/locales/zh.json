@@ -167,6 +167,9 @@
       "circleOfFifths": {
         "name": "五度圈",
         "description": "先唱 DO，再唱 SO，从一个调跳到下一个调。点亮五度圈的全部 12 个调。"
+      },
+      "voiceRecorder": {
+        "name": "录音机"
       }
     },
     "privacy": "你的隐私是安全的 — 此应用完全在浏览器中运行。不会录制或发送任何音频。"
@@ -824,6 +827,86 @@
     "bpm": {
       "name": "BPM",
       "description": "每分钟的拍数：音乐有多快。"
+    }
+  },
+  "voiceRecorder": {
+    "hint": "不要放伴奏，直接唱。最多可以录 {minutes} 分钟，录音只保存在这台设备上。",
+    "record": "录音",
+    "recordAgain": "再录一次",
+    "download": "下载",
+    "timeLeft": "还剩 {time}",
+    "notSupported": "这个浏览器不能录音",
+    "emptyTake": "什么都没录到，再试一次吧。",
+    "confirmLeave": "录音还没下载，离开就没了。还是要离开吗？",
+    "confirmReplace": "这会替换还没下载的录音。要再录一次吗？",
+    "stopped": {
+      "limit": "录音最长就到这里，所以停了。",
+      "interrupted": "录音提前停了，不过你唱的部分还在。"
+    },
+    "analysis": {
+      "analyse": "看看你唱了什么",
+      "analyzing": "正在听你的录音…",
+      "failed": "读取录音失败。你还是可以播放和下载它。",
+      "empty": "这段录音里没听到清楚的音。",
+      "warnings": {
+        "tooQuiet": "这段录音很小声。靠近麦克风一点。",
+        "clipped": "有些地方太大声，被削掉了。离麦克风远一点。",
+        "unclear": "很难听出清楚的旋律。说话或伴奏都可能造成这样。"
+      }
+    },
+    "melody": {
+      "title": "你的旋律",
+      "ariaLabel": "你随时间唱出的音的地图",
+      "hint": "点地图可以跳到那个时刻。绿色是音准，黄到红是偏高，蓝色是偏低。"
+    },
+    "notes": {
+      "title": "你用到的音",
+      "likelyKey": "可能的调：{key}"
+    },
+    "profile": {
+      "title": "听起来怎么样",
+      "sounds": "听起来…",
+      "range": "用到的音域",
+      "phrase": "一般乐句长度",
+      "vibrato": "带颤音的音",
+      "guess": "根据音高和节奏做的有趣猜测，不是评判。",
+      "labels": {
+        "slow": "慢",
+        "fast": "快",
+        "steady": "平稳",
+        "leaping": "跳跃",
+        "smooth": "流畅",
+        "choppy": "断续",
+        "free": "自由",
+        "rhythmic": "有节奏",
+        "sung": "唱",
+        "spoken": "说",
+        "even": "均匀",
+        "dramatic": "戏剧性",
+        "familiar": "熟悉",
+        "colourful": "多彩",
+        "melodic": "悦耳",
+        "monotonic": "单调",
+        "energetic": "有活力",
+        "rapLike": "像说唱",
+        "romantic": "浪漫",
+        "exotic": "异域"
+      }
+    },
+    "rating": {
+      "title": "唱得有多稳",
+      "centring": "音的中心",
+      "steadiness": "音的稳定",
+      "key": "保持在调上",
+      "cleanStarts": "干净的起音",
+      "tooShort": "唱几个不同的音，至少 {seconds} 秒，才能得到评价。",
+      "note": "这里看的是音有多稳，不是你的嗓音有多好。",
+      "tips": {
+        "centring": "先哼一下这个音，再唱到它的正中间。",
+        "steadiness": "吸一口更深的气，长音就能更稳。",
+        "key": "回听一下跑开旋律的音，然后单独再唱几遍。",
+        "keepGoing": "好听又稳定，继续唱吧！"
+      }
     }
   }
 }

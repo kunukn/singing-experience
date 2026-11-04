@@ -54,6 +54,13 @@ function notePitch(frames: Frame[], startMs: number, endMs: number): number {
   return Math.round(median)
 }
 
+type NoteSegmenterOptions = {
+  /* Pass 0 for both when timestamps are already exact, as in offline analysis:
+   * the defaults compensate for live detection delay. */
+  onsetLatencyMs?: number
+  releaseLatencyMs?: number
+}
+
 /*
  * Turns a stream of per-frame pitch readings into discrete notes. Feed it one
  * reading per animation frame: fractional MIDI while a clean pitch is heard,
@@ -61,7 +68,10 @@ function notePitch(frames: Frame[], startMs: number, endMs: number): number {
  * semitone holds PITCH_CHANGE_HOLD_MS. Notes are only emitted once closed, so
  * the sheet trails the singer slightly — accuracy over immediacy.
  */
-export function createNoteSegmenter() {
+export function createNoteSegmenter({
+  onsetLatencyMs = ONSET_LATENCY_MS,
+  releaseLatencyMs = RELEASE_LATENCY_MS,
+}: NoteSegmenterOptions = {}) {
   const events: NoteEvent[] = []
   let open: OpenNote | null = null
   let pending: PendingChange | null = null
@@ -72,7 +82,7 @@ export function createNoteSegmenter() {
 
     events.push({
       startMs: note.startMs - note.startLatencyMs,
-      endMs: endMs - RELEASE_LATENCY_MS,
+      endMs: endMs - releaseLatencyMs,
       midi: notePitch(frames, note.startMs, endMs),
     })
   }
@@ -116,7 +126,7 @@ export function createNoteSegmenter() {
     const frame = { timeMs, midi }
 
     if (!open) {
-      openAt(timeMs, [frame], semitone, ONSET_LATENCY_MS)
+      openAt(timeMs, [frame], semitone, onsetLatencyMs)
 
       return
     }
@@ -127,7 +137,7 @@ export function createNoteSegmenter() {
       silenceSinceMs = null
       if (semitone !== open.semitone) {
         closeOpen()
-        openAt(timeMs, [frame], semitone, ONSET_LATENCY_MS)
+        openAt(timeMs, [frame], semitone, onsetLatencyMs)
 
         return
       }
@@ -166,7 +176,7 @@ export function createNoteSegmenter() {
     const before = open.frames.slice(0, pending.frameIndex)
     const after = open.frames.slice(pending.frameIndex)
     emit(open, before, pending.sinceMs)
-    openAt(pending.sinceMs, after, semitone, RELEASE_LATENCY_MS)
+    openAt(pending.sinceMs, after, semitone, releaseLatencyMs)
   }
 
   /* Closes any note still sounding (recording stopped) and returns all notes. */

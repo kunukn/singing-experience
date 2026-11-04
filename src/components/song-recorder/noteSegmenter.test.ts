@@ -126,3 +126,29 @@ describe('noteSegmenter', () => {
     expect(segmenter.flush()).toHaveLength(0)
   })
 })
+
+describe('createNoteSegmenter - latency options', () => {
+  const sing = (segmenter: ReturnType<typeof createNoteSegmenter>) => {
+    for (let timeMs = 1000; timeMs <= 1300; timeMs += 20) {
+      segmenter.push(timeMs, 60)
+    }
+
+    return segmenter.flush()
+  }
+
+  test('should keep exact times when offline analysis passes zero latency', () => {
+    const [note] = sing(
+      createNoteSegmenter({ onsetLatencyMs: 0, releaseLatencyMs: 0 }),
+    )
+
+    expect(note.startMs).toBe(1000)
+    expect(note.endMs).toBe(1300)
+  })
+
+  test('should compensate for live detection delay by default', () => {
+    const [note] = sing(createNoteSegmenter())
+
+    expect(note.startMs).toBeLessThan(1000)
+    expect(note.endMs).toBeLessThan(1300)
+  })
+})

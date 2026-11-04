@@ -167,6 +167,9 @@
       "circleOfFifths": {
         "name": "Circle of Fifths",
         "description": "Sing DO, then SO, to hop from key to key. Light up all 12 keys of the circle of fifths."
+      },
+      "voiceRecorder": {
+        "name": "Voice Recorder"
       }
     },
     "privacy": "Your privacy is safe — this app runs 100% in your browser. No audio is recorded or sent anywhere."
@@ -824,6 +827,86 @@
     "bpm": {
       "name": "BPM",
       "description": "Beats per minute: how fast the music goes."
+    }
+  },
+  "voiceRecorder": {
+    "hint": "Sing without backing music. You can record up to {minutes} minutes, and it stays on this device.",
+    "record": "Record",
+    "recordAgain": "Record again",
+    "download": "Download",
+    "timeLeft": "{time} left",
+    "notSupported": "This browser can't record sound",
+    "emptyTake": "Nothing was recorded. Try again.",
+    "confirmLeave": "Your recording isn't downloaded yet and will be lost. Leave anyway?",
+    "confirmReplace": "This replaces your recording, which isn't downloaded yet. Record again?",
+    "stopped": {
+      "limit": "That's the longest recording that fits, so it stopped here.",
+      "interrupted": "Recording stopped early, but we kept what you sang."
+    },
+    "analysis": {
+      "analyse": "See what you sang",
+      "analyzing": "Listening to your recording…",
+      "failed": "Failed to read the recording. You can still play and download it.",
+      "empty": "We couldn't hear any clear notes in this recording.",
+      "warnings": {
+        "tooQuiet": "This recording is very quiet. Move closer to the mic.",
+        "clipped": "Some parts were too loud and got cut off. Move back from the mic a little.",
+        "unclear": "It's hard to hear a clear tune. Talking or backing music can cause this."
+      }
+    },
+    "melody": {
+      "title": "Your melody",
+      "ariaLabel": "Map of the notes you sang over time",
+      "hint": "Tap the map to jump to that moment. Green blocks are in tune, yellow to red are sharp, blue are flat."
+    },
+    "notes": {
+      "title": "Notes you used",
+      "likelyKey": "Likely key: {key}"
+    },
+    "profile": {
+      "title": "What it sounds like",
+      "sounds": "Sounds…",
+      "range": "Range used",
+      "phrase": "Typical phrase",
+      "vibrato": "Notes with vibrato",
+      "guess": "A fun guess from pitch and rhythm, not a judgement.",
+      "labels": {
+        "slow": "Slow",
+        "fast": "Fast",
+        "steady": "Steady",
+        "leaping": "Leaping",
+        "smooth": "Smooth",
+        "choppy": "Choppy",
+        "free": "Free",
+        "rhythmic": "Rhythmic",
+        "sung": "Sung",
+        "spoken": "Spoken",
+        "even": "Even",
+        "dramatic": "Dramatic",
+        "familiar": "Familiar",
+        "colourful": "Colourful",
+        "melodic": "Melodic",
+        "monotonic": "Monotone",
+        "energetic": "Energetic",
+        "rapLike": "Rap-like",
+        "romantic": "Romantic",
+        "exotic": "Exotic"
+      }
+    },
+    "rating": {
+      "title": "How steady it was",
+      "centring": "Middle of the note",
+      "steadiness": "Steady notes",
+      "key": "Staying in key",
+      "cleanStarts": "Clean starts",
+      "tooShort": "Sing a few different notes for at least {seconds} seconds to get a rating.",
+      "note": "This looks at how steady your notes are, not how good your voice is.",
+      "tips": {
+        "centring": "Try humming a note first, then land right in the middle of it.",
+        "steadiness": "Take a deeper breath so long notes stay steady.",
+        "key": "Listen back for notes that wander away from the tune, then sing just those again.",
+        "keepGoing": "Lovely and steady. Keep singing!"
+      }
     }
   }
 }

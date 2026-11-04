@@ -167,6 +167,9 @@
       "circleOfFifths": {
         "name": "Kvintcirklen",
         "description": "Syng DO og så SO for at hoppe fra toneart til toneart. Tænd alle 12 tonearter i kvintcirklen."
+      },
+      "voiceRecorder": {
+        "name": "Stemmeoptager"
       }
     },
     "privacy": "Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
@@ -824,6 +827,86 @@
     "bpm": {
       "name": "BPM",
       "description": "Slag i minuttet: hvor hurtigt musikken går."
+    }
+  },
+  "voiceRecorder": {
+    "hint": "Syng uden baggrundsmusik. Du kan optage op til {minutes} minutter, og optagelsen bliver på denne enhed.",
+    "record": "Optag",
+    "recordAgain": "Optag igen",
+    "download": "Hent",
+    "timeLeft": "{time} tilbage",
+    "notSupported": "Denne browser kan ikke optage lyd",
+    "emptyTake": "Der blev ikke optaget noget. Prøv igen.",
+    "confirmLeave": "Din optagelse er ikke hentet endnu og forsvinder. Vil du gå alligevel?",
+    "confirmReplace": "Det erstatter din optagelse, som ikke er hentet endnu. Vil du optage igen?",
+    "stopped": {
+      "limit": "Længere kan en optagelse ikke være, så den stoppede her.",
+      "interrupted": "Optagelsen stoppede tidligt, men vi har gemt det, du sang."
+    },
+    "analysis": {
+      "analyse": "Se, hvad du sang",
+      "analyzing": "Lytter til din optagelse …",
+      "failed": "Optagelsen kunne ikke læses. Du kan stadig afspille og hente den.",
+      "empty": "Vi kunne ikke høre nogen tydelige toner i denne optagelse.",
+      "warnings": {
+        "tooQuiet": "Optagelsen er meget svag. Gå tættere på mikrofonen.",
+        "clipped": "Nogle steder var for høje og blev klippet. Gå lidt væk fra mikrofonen.",
+        "unclear": "Det er svært at høre en tydelig melodi. Det kan skyldes tale eller baggrundsmusik."
+      }
+    },
+    "melody": {
+      "title": "Din melodi",
+      "ariaLabel": "Kort over de toner, du sang undervejs",
+      "hint": "Tryk på kortet for at hoppe til det sted. Grønne blokke er rene, gule til røde er for høje, blå er for lave."
+    },
+    "notes": {
+      "title": "Toner, du brugte",
+      "likelyKey": "Sandsynlig toneart: {key}"
+    },
+    "profile": {
+      "title": "Sådan lyder det",
+      "sounds": "Lyder …",
+      "range": "Brugt toneomfang",
+      "phrase": "Typisk frase",
+      "vibrato": "Toner med vibrato",
+      "guess": "Et sjovt gæt ud fra tonehøjde og rytme, ikke en bedømmelse.",
+      "labels": {
+        "slow": "Langsom",
+        "fast": "Hurtig",
+        "steady": "Jævn",
+        "leaping": "Springende",
+        "smooth": "Blød",
+        "choppy": "Hakkende",
+        "free": "Fri",
+        "rhythmic": "Rytmisk",
+        "sung": "Sunget",
+        "spoken": "Talt",
+        "even": "Ensartet",
+        "dramatic": "Dramatisk",
+        "familiar": "Velkendt",
+        "colourful": "Farverig",
+        "melodic": "Melodisk",
+        "monotonic": "Monoton",
+        "energetic": "Energisk",
+        "rapLike": "Rap-agtig",
+        "romantic": "Romantisk",
+        "exotic": "Eksotisk"
+      }
+    },
+    "rating": {
+      "title": "Så stabilt var det",
+      "centring": "Midt på tonen",
+      "steadiness": "Stabile toner",
+      "key": "Holder tonearten",
+      "cleanStarts": "Rene starter",
+      "tooShort": "Syng et par forskellige toner i mindst {seconds} sekunder for at få en vurdering.",
+      "note": "Det her ser på, hvor stabile dine toner er, ikke hvor god din stemme er.",
+      "tips": {
+        "centring": "Prøv at nynne tonen først, og ram så lige midt på den.",
+        "steadiness": "Tag en dybere vejrtrækning, så lange toner holder sig stabile.",
+        "key": "Lyt efter toner, der glider væk fra melodien, og syng så bare dem igen.",
+        "keepGoing": "Flot og stabilt. Bliv ved med at synge!"
+      }
     }
   }
 }

@@ -167,6 +167,9 @@
       "circleOfFifths": {
         "name": "Cycle des quintes",
         "description": "Chante DO puis SO pour sauter de tonalité en tonalité. Allume les 12 tonalités du cycle des quintes."
+      },
+      "voiceRecorder": {
+        "name": "Enregistreur vocal"
       }
     },
     "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Aucun son n'est enregistré ni envoyé."
@@ -824,6 +827,86 @@
     "bpm": {
       "name": "BPM",
       "description": "Battements par minute : la vitesse de la musique."
+    }
+  },
+  "voiceRecorder": {
+    "hint": "Chante sans musique de fond. Tu peux enregistrer jusqu'à {minutes} minutes, et tout reste sur cet appareil.",
+    "record": "Enregistrer",
+    "recordAgain": "Enregistrer encore",
+    "download": "Télécharger",
+    "timeLeft": "Encore {time}",
+    "notSupported": "Ce navigateur ne peut pas enregistrer le son",
+    "emptyTake": "Rien n'a été enregistré. Réessaie.",
+    "confirmLeave": "Ton enregistrement n'est pas encore téléchargé et sera perdu. Tu pars quand même ?",
+    "confirmReplace": "Ça remplace ton enregistrement, qui n'est pas encore téléchargé. Enregistrer encore ?",
+    "stopped": {
+      "limit": "C'est l'enregistrement le plus long possible, alors il s'est arrêté ici.",
+      "interrupted": "L'enregistrement s'est arrêté plus tôt, mais on a gardé ce que tu as chanté."
+    },
+    "analysis": {
+      "analyse": "Regarde ce que tu as chanté",
+      "analyzing": "On écoute ton enregistrement…",
+      "failed": "Impossible de lire l'enregistrement. Tu peux quand même l'écouter et le télécharger.",
+      "empty": "On n'a pas entendu de notes claires dans cet enregistrement.",
+      "warnings": {
+        "tooQuiet": "Cet enregistrement est très faible. Rapproche-toi du micro.",
+        "clipped": "Certains passages étaient trop forts et ont été coupés. Recule un peu du micro.",
+        "unclear": "On entend mal une mélodie claire. Ça peut venir de la parole ou d'une musique de fond."
+      }
+    },
+    "melody": {
+      "title": "Ta mélodie",
+      "ariaLabel": "Carte des notes que tu as chantées au fil du temps",
+      "hint": "Touche la carte pour aller à ce moment. Les blocs verts sont justes, du jaune au rouge trop hauts, les bleus trop bas."
+    },
+    "notes": {
+      "title": "Les notes que tu as utilisées",
+      "likelyKey": "Tonalité probable : {key}"
+    },
+    "profile": {
+      "title": "Comment ça sonne",
+      "sounds": "Ça sonne…",
+      "range": "Tessiture utilisée",
+      "phrase": "Phrase typique",
+      "vibrato": "Notes avec vibrato",
+      "guess": "Une estimation amusante d'après la hauteur et le rythme, pas un jugement.",
+      "labels": {
+        "slow": "Lent",
+        "fast": "Rapide",
+        "steady": "Régulier",
+        "leaping": "Bondissant",
+        "smooth": "Lié",
+        "choppy": "Haché",
+        "free": "Libre",
+        "rhythmic": "Rythmé",
+        "sung": "Chanté",
+        "spoken": "Parlé",
+        "even": "Égal",
+        "dramatic": "Dramatique",
+        "familiar": "Familier",
+        "colourful": "Coloré",
+        "melodic": "Mélodique",
+        "monotonic": "Sur une seule note",
+        "energetic": "Énergique",
+        "rapLike": "Façon rap",
+        "romantic": "Romantique",
+        "exotic": "Exotique"
+      }
+    },
+    "rating": {
+      "title": "À quel point c'était stable",
+      "centring": "Milieu de la note",
+      "steadiness": "Notes stables",
+      "key": "Rester dans le ton",
+      "cleanStarts": "Attaques nettes",
+      "tooShort": "Chante quelques notes différentes pendant au moins {seconds} secondes pour avoir une note.",
+      "note": "Ça regarde la stabilité de tes notes, pas la qualité de ta voix.",
+      "tips": {
+        "centring": "Fredonne d'abord la note, puis pose-toi pile au milieu.",
+        "steadiness": "Respire plus profondément pour garder les longues notes stables.",
+        "key": "Réécoute les notes qui s'éloignent de la mélodie, puis rechante juste celles-là.",
+        "keepGoing": "Joli et stable. Continue de chanter !"
+      }
     }
   }
 }

@@ -18,6 +18,7 @@ import ProgramSongRecorderIcon from '@/components/icons/program/ProgramSongRecor
 import ProgramToneDetectorIcon from '@/components/icons/program/ProgramToneDetectorIcon.vue'
 import ProgramTunerIcon from '@/components/icons/program/ProgramTunerIcon.vue'
 import ProgramVoiceRangeFinderIcon from '@/components/icons/program/ProgramVoiceRangeFinderIcon.vue'
+import ProgramVoiceRecorderIcon from '@/components/icons/program/ProgramVoiceRecorderIcon.vue'
 import ProgramWarmUpIcon from '@/components/icons/program/ProgramWarmUpIcon.vue'
 
 /* Maturity of an unfinished program — shown as a tag on its card and in the top bar */
@@ -141,6 +142,19 @@ export const programs: Program[] = [
   },
 ]
 
+/*
+ * Reachable by URL only: no card on the home, tools or games pages, no sitemap
+ * entry and no README row. Listed here so the top bar still shows the icon.
+ * Guarded by hiddenPrograms.test.ts.
+ */
+export const hiddenPrograms: Program[] = [
+  {
+    key: 'voiceRecorder',
+    icon: ProgramVoiceRecorderIcon,
+    route: '/voice-recorder',
+  },
+]
+
 export const programStageByRoute = new Map(
   [...games, ...tools].flatMap((program) =>
     program.stage ? [[program.route, program.stage] as const] : [],
@@ -148,7 +162,7 @@ export const programStageByRoute = new Map(
 )
 
 export const programByRoute = new Map(
-  [...programs, ...games, ...tools].map(
+  [...programs, ...games, ...tools, ...hiddenPrograms].map(
     (program) => [program.route, program] as const,
   ),
 )

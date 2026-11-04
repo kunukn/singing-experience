@@ -290,6 +290,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/voice-recorder': RouteRecordInfo<
+      '/voice-recorder',
+      '/voice-recorder',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/voice-recorder-test': RouteRecordInfo<
+      '/voice-recorder-test',
+      '/voice-recorder-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/warm-up': RouteRecordInfo<
       '/warm-up',
       '/warm-up',
@@ -608,6 +622,22 @@ declare module 'vue-router/auto-routes' {
     'src/pages/voice-range-finder-test.vue': {
       routes:
         | '/voice-range-finder-test'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/voice-recorder.vue': {
+      routes:
+        | '/voice-recorder'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/voice-recorder-test.vue': {
+      routes:
+        | '/voice-recorder-test'
       views:
         | never
       pathParamNames:

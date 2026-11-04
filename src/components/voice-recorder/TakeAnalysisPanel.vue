@@ -1,0 +1,133 @@
+<script setup lang="ts">
+import MelodyMap from './MelodyMap.vue'
+import NotesUsedChart from './NotesUsedChart.vue'
+import SongProfile from './SongProfile.vue'
+import TakeRatingCard from './TakeRatingCard.vue'
+import TakeReadout from './TakeReadout.vue'
+import { decodeTake } from './decodeTake'
+import { useTakeAnalysis } from './useTakeAnalysis'
+
+type Props = {
+  blob: Blob
+  hasAutoGain: boolean
+  playheadMs: number
+  /* Raw numbers for calibrating the scores, on the test page only. */
+  showReadout?: boolean
+}
+
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  seek: [timeMs: number]
+}>()
+
+const { t } = useI18n()
+const { status, progress, analysis, run } = useTakeAnalysis()
+
+const progressPercent = computed(() => Math.round(progress.value * 100))
+const warningKeys = computed(() => {
+  const quality = analysis.value?.quality
+  if (!quality) return []
+
+  return [
+    quality.isTooQuiet ? 'voiceRecorder.analysis.warnings.tooQuiet' : null,
+    quality.isClipped ? 'voiceRecorder.analysis.warnings.clipped' : null,
+    quality.isUnclear ? 'voiceRecorder.analysis.warnings.unclear' : null,
+  ].filter((key) => key !== null)
+})
+
+/* On tap, not automatic: if decoding runs a phone out of memory, the take hasn't
+ * been lost before there was a chance to download it. */
+function analyse() {
+  void run(() => decodeTake(props.blob), { hasAutoGain: props.hasAutoGain })
+}
+</script>
+
+<template>
+  <div
+    class="flex flex-col gap-5"
+    data-testid="take-analysis"
+    :data-status="status"
+  >
+    <PrimeButton
+      v-if="status === 'idle' || status === 'failed'"
+      :label="t('voiceRecorder.analysis.analyse')"
+      icon="pi pi-chart-line"
+      size="small"
+      class="self-start"
+      data-testid="take-analyse"
+      @click="analyse"
+    />
+
+    <p
+      v-if="status === 'failed'"
+      class="text-sm text-(--p-red-400)"
+      data-testid="take-analysis-error"
+    >
+      {{ t('voiceRecorder.analysis.failed') }}
+    </p>
+
+    <div v-if="status === 'analyzing'" class="flex flex-col gap-2">
+      <p class="text-sm text-(--p-text-muted-color)">
+        {{ t('voiceRecorder.analysis.analyzing') }}
+      </p>
+      <PrimeProgressBar
+        :value="progressPercent"
+        :showValue="false"
+        class="h-2"
+      />
+    </div>
+
+    <template v-if="analysis">
+      <p
+        v-for="warningKey in warningKeys"
+        :key="warningKey"
+        class="text-sm text-(--p-orange-400)"
+        data-testid="take-analysis-warning"
+      >
+        {{ t(warningKey) }}
+      </p>
+
+      <p
+        v-if="analysis.notes.length === 0"
+        class="text-sm text-(--p-text-muted-color)"
+        data-testid="take-analysis-empty"
+      >
+        {{ t('voiceRecorder.analysis.empty') }}
+      </p>
+
+      <template v-else>
+        <section class="flex flex-col gap-2">
+          <h2 class="text-sm font-semibold">
+            {{ t('voiceRecorder.melody.title') }}
+          </h2>
+          <MelodyMap
+            :analysis="analysis"
+            :playheadMs="playheadMs"
+            @seek="emit('seek', $event)"
+          />
+          <p class="text-xs text-(--p-text-muted-color)">
+            {{ t('voiceRecorder.melody.hint') }}
+          </p>
+        </section>
+
+        <NotesUsedChart
+          :notesUsed="analysis.notesUsed"
+          :takeKey="analysis.key"
+        />
+      </template>
+
+      <SongProfile
+        v-if="analysis.profile && analysis.notes.length > 0"
+        :profile="analysis.profile"
+      />
+
+      <TakeReadout v-if="showReadout" :analysis="analysis" />
+
+      <TakeRatingCard
+        v-if="analysis.notes.length > 0"
+        :rating="analysis.rating"
+      />
+    </template>
+  </div>
+</template>
