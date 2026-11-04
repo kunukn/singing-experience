@@ -15,7 +15,6 @@ type Props = {
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
-  download: []
   playheadChange: [playheadMs: number]
 }>()
 
@@ -93,7 +92,6 @@ defineExpose({ seekTo })
       size="small"
       severity="secondary"
       data-testid="take-download"
-      @click="emit('download')"
     />
   </div>
 </template>

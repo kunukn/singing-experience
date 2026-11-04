@@ -837,7 +837,6 @@
     "timeLeft": "Zimebaki {time}",
     "notSupported": "Kivinjari hiki hakiwezi kurekodi sauti",
     "emptyTake": "Hakuna kilichorekodiwa. Jaribu tena.",
-    "confirmLeave": "Rekodi yako bado haijapakuliwa na itapotea. Uondoke hata hivyo?",
     "stopped": {
       "limit": "Rekodi haiwezi kuwa ndefu zaidi, kwa hiyo imesimama hapa.",
       "interrupted": "Kurekodi kumesimama mapema, lakini tumehifadhi ulichoimba."

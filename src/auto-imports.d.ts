@@ -158,6 +158,7 @@ declare global {
   const useTonePlayer: typeof import('./composables/useTonePlayer').useTonePlayer
   const useVoiceRangeGroups: typeof import('./composables/useVoiceRangeGroups').useVoiceRangeGroups
   const useVoiceRangeIndex: typeof import('./composables/useVoiceRangeIndex').useVoiceRangeIndex
+  const useVoiceTakeStore: typeof import('./stores/useVoiceTakeStore').useVoiceTakeStore
   const useVoiceTypeRibbon: typeof import('./composables/useVoiceTypeRibbon').useVoiceTypeRibbon
   const useVoiceTypeSegments: typeof import('./composables/useVoiceTypeSegments').useVoiceTypeSegments
   const watch: typeof import('vue').watch
@@ -332,6 +333,7 @@ declare module 'vue' {
     readonly useTonePlayer: UnwrapRef<typeof import('./composables/useTonePlayer')['useTonePlayer']>
     readonly useVoiceRangeGroups: UnwrapRef<typeof import('./composables/useVoiceRangeGroups')['useVoiceRangeGroups']>
     readonly useVoiceRangeIndex: UnwrapRef<typeof import('./composables/useVoiceRangeIndex')['useVoiceRangeIndex']>
+    readonly useVoiceTakeStore: UnwrapRef<typeof import('./stores/useVoiceTakeStore')['useVoiceTakeStore']>
     readonly useVoiceTypeRibbon: UnwrapRef<typeof import('./composables/useVoiceTypeRibbon')['useVoiceTypeRibbon']>
     readonly useVoiceTypeSegments: UnwrapRef<typeof import('./composables/useVoiceTypeSegments')['useVoiceTypeSegments']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>

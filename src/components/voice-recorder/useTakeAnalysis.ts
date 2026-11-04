@@ -3,17 +3,18 @@ import type { TakeSource } from './pitchTrack'
 
 export type TakeAnalysisStatus = 'idle' | 'analyzing' | 'ready' | 'failed'
 
-export function useTakeAnalysis() {
-  const status = ref<TakeAnalysisStatus>('idle')
+/* savedAnalysis restores results from an earlier visit without re-reading audio. */
+export function useTakeAnalysis(savedAnalysis: TakeAnalysis | null = null) {
+  const status = ref<TakeAnalysisStatus>(savedAnalysis ? 'ready' : 'idle')
   const progress = ref(0)
-  const analysis = shallowRef<TakeAnalysis | null>(null)
+  const analysis = shallowRef<TakeAnalysis | null>(savedAnalysis)
 
   let controller: AbortController | null = null
 
   async function run(
     loadSource: () => Promise<TakeSource>,
     options: { hasAutoGain?: boolean } = {},
-  ) {
+  ): Promise<TakeAnalysis | null> {
     controller?.abort()
     const current = new AbortController()
     controller = current
@@ -32,14 +33,18 @@ export function useTakeAnalysis() {
         },
       })
 
-      if (current.signal.aborted) return
+      if (current.signal.aborted) return null
 
       analysis.value = result
       status.value = 'ready'
+
+      return result
     } catch {
       /* Decoding can fail on a damaged or unusual file. Playback still works, so
        * the take isn't lost. */
       if (!current.signal.aborted) status.value = 'failed'
+
+      return null
     }
   }
 

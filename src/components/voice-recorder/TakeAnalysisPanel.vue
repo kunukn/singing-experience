@@ -4,6 +4,7 @@ import NotesUsedChart from './NotesUsedChart.vue'
 import SongProfile from './SongProfile.vue'
 import TakeRatingCard from './TakeRatingCard.vue'
 import TakeReadout from './TakeReadout.vue'
+import type { TakeAnalysis } from './analyzeTake'
 import { decodeTake } from './decodeTake'
 import { useTakeAnalysis } from './useTakeAnalysis'
 
@@ -13,16 +14,18 @@ type Props = {
   playheadMs: number
   /* Raw numbers for calibrating the scores, on the test page only. */
   showReadout?: boolean
+  savedAnalysis?: TakeAnalysis | null
 }
 
 const props = defineProps<Props>()
 
 const emit = defineEmits<{
   seek: [timeMs: number]
+  analyzed: [analysis: TakeAnalysis]
 }>()
 
 const { t } = useI18n()
-const { status, progress, analysis, run } = useTakeAnalysis()
+const { status, progress, analysis, run } = useTakeAnalysis(props.savedAnalysis)
 
 const progressPercent = computed(() => Math.round(progress.value * 100))
 const warningKeys = computed(() => {
@@ -38,8 +41,12 @@ const warningKeys = computed(() => {
 
 /* On tap, not automatic: if decoding runs a phone out of memory, the take hasn't
  * been lost before there was a chance to download it. */
-function analyse() {
-  void run(() => decodeTake(props.blob), { hasAutoGain: props.hasAutoGain })
+async function analyse() {
+  const result = await run(() => decodeTake(props.blob), {
+    hasAutoGain: props.hasAutoGain,
+  })
+
+  if (result) emit('analyzed', result)
 }
 </script>
 

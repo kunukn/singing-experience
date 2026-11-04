@@ -837,7 +837,6 @@
     "timeLeft": "Noch {time}",
     "notSupported": "Dieser Browser kann keinen Ton aufnehmen",
     "emptyTake": "Es wurde nichts aufgenommen. Versuch es nochmal.",
-    "confirmLeave": "Deine Aufnahme ist noch nicht heruntergeladen und geht verloren. Trotzdem gehen?",
     "stopped": {
       "limit": "Länger kann eine Aufnahme nicht sein, deshalb hat sie hier gestoppt.",
       "interrupted": "Die Aufnahme hat früher gestoppt, aber was du gesungen hast, ist noch da."

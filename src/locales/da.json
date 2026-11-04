@@ -837,7 +837,6 @@
     "timeLeft": "{time} tilbage",
     "notSupported": "Denne browser kan ikke optage lyd",
     "emptyTake": "Der blev ikke optaget noget. Prøv igen.",
-    "confirmLeave": "Din optagelse er ikke hentet endnu og forsvinder. Vil du gå alligevel?",
     "stopped": {
       "limit": "Længere kan en optagelse ikke være, så den stoppede her.",
       "interrupted": "Optagelsen stoppede tidligt, men vi har gemt det, du sang."

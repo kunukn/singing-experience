@@ -837,7 +837,6 @@
     "timeLeft": "Sisa {time}",
     "notSupported": "Browser ini tidak bisa merekam suara",
     "emptyTake": "Tidak ada yang terekam. Coba lagi.",
-    "confirmLeave": "Rekamanmu belum diunduh dan akan hilang. Tetap keluar?",
     "stopped": {
       "limit": "Rekaman tidak bisa lebih panjang lagi, jadi berhenti di sini.",
       "interrupted": "Rekaman berhenti lebih awal, tapi yang kamu nyanyikan tetap tersimpan."

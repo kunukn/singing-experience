@@ -837,7 +837,6 @@
     "timeLeft": "{time} left",
     "notSupported": "This browser can't record sound",
     "emptyTake": "Nothing was recorded. Try again.",
-    "confirmLeave": "Your recording isn't downloaded yet and will be lost. Leave anyway?",
     "stopped": {
       "limit": "That's the longest recording that fits, so it stopped here.",
       "interrupted": "Recording stopped early, but we kept what you sang."

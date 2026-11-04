@@ -1,6 +1,8 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { effectScope, type EffectScope } from 'vue'
+import { createPinia, setActivePinia } from 'pinia'
 
+import { useVoiceTakeStore } from '@/stores/useVoiceTakeStore'
 import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
 
 import { MAX_RECORDING_MS, useVoiceRecorder } from './useVoiceRecorder'
@@ -55,6 +57,7 @@ function createRecorder() {
 }
 
 beforeEach(() => {
+  setActivePinia(createPinia())
   vi.useFakeTimers()
   vi.stubGlobal('MediaRecorder', FakeMediaRecorder)
   vi.mocked(acquireMicStream).mockReset().mockResolvedValue(stream)
@@ -89,9 +92,9 @@ describe('useVoiceRecorder', () => {
 
     expect(releaseMicStream).toHaveBeenCalledWith(stream)
     expect(recorder.status.value).toBe('idle')
-    expect(recorder.take.value?.blob.size).toBe(100)
-    expect(recorder.take.value?.mimeType).toBe('audio/webm;codecs=opus')
-    expect(recorder.take.value?.stopReason).toBe('user')
+    expect(useVoiceTakeStore().take?.blob.size).toBe(100)
+    expect(useVoiceTakeStore().take?.mimeType).toBe('audio/webm;codecs=opus')
+    expect(useVoiceTakeStore().take?.stopReason).toBe('user')
   })
 
   test('should stop itself at the time limit', async () => {
@@ -100,7 +103,7 @@ describe('useVoiceRecorder', () => {
     await recorder.start()
     vi.advanceTimersByTime(MAX_RECORDING_MS + 500)
 
-    expect(recorder.take.value?.stopReason).toBe('limit')
+    expect(useVoiceTakeStore().take?.stopReason).toBe('limit')
   })
 
   test('should stop itself when the file grows past the size limit', async () => {
@@ -109,7 +112,7 @@ describe('useVoiceRecorder', () => {
     await recorder.start()
     FakeMediaRecorder.latest.deliver(8 * 1024 * 1024)
 
-    expect(recorder.take.value?.stopReason).toBe('limit')
+    expect(useVoiceTakeStore().take?.stopReason).toBe('limit')
   })
 
   test.each(['ended', 'mute'])(
@@ -120,7 +123,7 @@ describe('useVoiceRecorder', () => {
       await recorder.start()
       track.dispatchEvent(new Event(eventName))
 
-      expect(recorder.take.value?.stopReason).toBe('interrupted')
+      expect(useVoiceTakeStore().take?.stopReason).toBe('interrupted')
       expect(recorder.status.value).toBe('idle')
     },
   )
@@ -147,13 +150,27 @@ describe('useVoiceRecorder', () => {
     expect(acquireMicStream).not.toHaveBeenCalled()
   })
 
-  test('should release the mic when leaving the page mid-take', async () => {
+  test('should keep the take and release the mic when leaving mid-take', async () => {
     const recorder = createRecorder()
 
     await recorder.start()
     scope.stop()
 
     expect(releaseMicStream).toHaveBeenCalledWith(stream)
-    expect(recorder.take.value).toBeNull()
+    expect(useVoiceTakeStore().take?.stopReason).toBe('interrupted')
+  })
+
+  test('should replace the previous take when a new one stops', async () => {
+    const recorder = createRecorder()
+
+    await recorder.start()
+    recorder.stop()
+    const firstTake = useVoiceTakeStore().take
+
+    await recorder.start()
+    recorder.stop()
+
+    expect(useVoiceTakeStore().take).not.toBe(firstTake)
+    expect(useVoiceTakeStore().take?.stopReason).toBe('user')
   })
 })

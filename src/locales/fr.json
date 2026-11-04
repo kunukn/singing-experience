@@ -837,7 +837,6 @@
     "timeLeft": "Encore {time}",
     "notSupported": "Ce navigateur ne peut pas enregistrer le son",
     "emptyTake": "Rien n'a été enregistré. Réessaie.",
-    "confirmLeave": "Ton enregistrement n'est pas encore téléchargé et sera perdu. Tu pars quand même ?",
     "stopped": {
       "limit": "C'est l'enregistrement le plus long possible, alors il s'est arrêté ici.",
       "interrupted": "L'enregistrement s'est arrêté plus tôt, mais on a gardé ce que tu as chanté."

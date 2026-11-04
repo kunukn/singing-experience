@@ -43,9 +43,9 @@ export type Take = {
 export function useVoiceRecorder() {
   const status = ref<RecorderStatus>('idle')
   const elapsedMs = ref(0)
-  const take = shallowRef<Take | null>(null)
   const errorKey = ref<RecorderErrorKey | null>(null)
 
+  const takeStore = useVoiceTakeStore()
   const wakeLock = useWakeLock()
 
   let recorder: MediaRecorder | null = null
@@ -85,21 +85,19 @@ export function useVoiceRecorder() {
     releaseResources()
     status.value = 'idle'
 
-    if (isDisposed) return
-
     if (blob.size === 0) {
       errorKey.value = 'voiceRecorder.emptyTake'
 
       return
     }
 
-    take.value = {
+    takeStore.setTake({
       blob,
       mimeType,
       recordedAt: new Date(),
       stopReason,
       hasAutoGain,
-    }
+    })
   }
 
   function requestStop(reason: RecordingStopReason) {
@@ -201,16 +199,14 @@ export function useVoiceRecorder() {
     requestStop('user')
   }
 
-  function clearTake() {
-    take.value = null
-  }
-
   useEventListener(window, 'pagehide', () => requestStop('interrupted'))
 
   onScopeDispose(() => {
     isDisposed = true
-    if (recorder && recorder.state !== 'inactive') {
-      recorder.stop()
+    /* Leaving mid-take keeps what was sung: the stop event still fires after
+     * this page is gone, saves the take and releases the mic. */
+    if (recorder) {
+      requestStop('interrupted')
 
       return
     }
@@ -221,10 +217,8 @@ export function useVoiceRecorder() {
   return {
     status: readonly(status),
     elapsedMs: readonly(elapsedMs),
-    take,
     errorKey: readonly(errorKey),
     start,
     stop,
-    clearTake,
   }
 }

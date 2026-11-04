@@ -837,7 +837,6 @@
     "timeLeft": "Quedan {time}",
     "notSupported": "Este navegador no puede grabar sonido",
     "emptyTake": "No se grabó nada. Inténtalo otra vez.",
-    "confirmLeave": "Tu grabación aún no está descargada y se perderá. ¿Quieres salir igual?",
     "stopped": {
       "limit": "Es la grabación más larga posible, así que se paró aquí.",
       "interrupted": "La grabación se paró antes, pero guardamos lo que cantaste."

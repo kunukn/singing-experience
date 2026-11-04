@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { TakeAnalysis } from './analyzeTake'
 import TakeAnalysisPanel from './TakeAnalysisPanel.vue'
 import TakePlayer from './TakePlayer.vue'
 import {
@@ -15,6 +16,8 @@ type Props = {
   errorKey: RecorderErrorKey | null
   /* The test page supplies takes itself and never touches the microphone. */
   isSimulated?: boolean
+  /* Results from an earlier visit to the page, restored with the take. */
+  savedAnalysis?: TakeAnalysis | null
 }
 
 const props = defineProps<Props>()
@@ -22,7 +25,8 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   record: []
   stop: []
-  download: []
+  clear: []
+  analyzed: [analysis: TakeAnalysis]
 }>()
 
 const { t } = useI18n()
@@ -95,6 +99,15 @@ function formatClock(ms: number): string {
         data-testid="recorder-record"
         @click="emit('record')"
       />
+      <PrimeButton
+        v-if="take && !isRecording && !isBusy"
+        :label="t('generic.clear')"
+        icon="pi pi-trash"
+        size="small"
+        severity="secondary"
+        data-testid="recorder-clear"
+        @click="emit('clear')"
+      />
       <span
         v-if="isRecording"
         role="timer"
@@ -127,7 +140,6 @@ function formatClock(ms: number): string {
         :blob="take.blob"
         :mimeType="take.mimeType"
         :recordedAt="take.recordedAt"
-        @download="emit('download')"
         @playheadChange="playheadMs = $event"
       />
       <TakeAnalysisPanel
@@ -136,6 +148,8 @@ function formatClock(ms: number): string {
         :hasAutoGain="take.hasAutoGain"
         :playheadMs="playheadMs"
         :showReadout="isSimulated"
+        :savedAnalysis="savedAnalysis"
+        @analyzed="emit('analyzed', $event)"
         @seek="playerElement?.seekTo($event)"
       />
     </template>
