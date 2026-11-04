@@ -20,20 +20,16 @@ const hasUnsavedTake = computed(
   () => recorder.take.value !== null && !isDownloaded.value,
 )
 
-/* A take only lives in memory, so these are the moments it could be lost. */
+/* Recording again replaces the take without asking: most takes are quick tries
+ * that nobody means to keep. */
 function handleRecord() {
-  if (
-    hasUnsavedTake.value &&
-    !window.confirm(t('voiceRecorder.confirmReplace'))
-  ) {
-    return
-  }
-
   recorder.clearTake()
   isDownloaded.value = false
   void recorder.start()
 }
 
+/* A take only lives in memory, so leaving the page is the moment it could be
+ * lost by accident. */
 onBeforeRouteLeave(() => {
   if (!hasUnsavedTake.value) return true
 

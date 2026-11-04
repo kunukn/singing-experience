@@ -838,7 +838,6 @@
     "notSupported": "Kivinjari hiki hakiwezi kurekodi sauti",
     "emptyTake": "Hakuna kilichorekodiwa. Jaribu tena.",
     "confirmLeave": "Rekodi yako bado haijapakuliwa na itapotea. Uondoke hata hivyo?",
-    "confirmReplace": "Hii itabadilisha rekodi yako ambayo bado haijapakuliwa. Urekodi tena?",
     "stopped": {
       "limit": "Rekodi haiwezi kuwa ndefu zaidi, kwa hiyo imesimama hapa.",
       "interrupted": "Kurekodi kumesimama mapema, lakini tumehifadhi ulichoimba."

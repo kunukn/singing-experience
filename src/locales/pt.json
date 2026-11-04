@@ -838,7 +838,6 @@
     "notSupported": "Este navegador não consegue gravar som",
     "emptyTake": "Nada foi gravado. Tente de novo.",
     "confirmLeave": "Sua gravação ainda não foi baixada e vai se perder. Sair mesmo assim?",
-    "confirmReplace": "Isso substitui sua gravação, que ainda não foi baixada. Gravar de novo?",
     "stopped": {
       "limit": "Essa é a gravação mais longa possível, então parou aqui.",
       "interrupted": "A gravação parou antes, mas guardamos o que você cantou."

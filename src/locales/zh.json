@@ -838,7 +838,6 @@
     "notSupported": "这个浏览器不能录音",
     "emptyTake": "什么都没录到，再试一次吧。",
     "confirmLeave": "录音还没下载，离开就没了。还是要离开吗？",
-    "confirmReplace": "这会替换还没下载的录音。要再录一次吗？",
     "stopped": {
       "limit": "录音最长就到这里，所以停了。",
       "interrupted": "录音提前停了，不过你唱的部分还在。"
