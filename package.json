@@ -35,6 +35,7 @@
     "abcjs": "6.7.2",
     "canvas-confetti": "1.9.4",
     "dayjs": "1.11.23",
+    "idb-keyval": "6.3.0",
     "pinia": "4.1.0",
     "pitchy": "4.1.0",
     "primeicons": "8.0.2",

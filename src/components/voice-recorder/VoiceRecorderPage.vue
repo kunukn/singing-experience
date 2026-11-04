@@ -15,6 +15,8 @@ useHead({
 const recorder = useVoiceRecorder()
 const takeStore = useVoiceTakeStore()
 
+void takeStore.restore()
+
 /* Recording again replaces the take without asking: most takes are quick tries
  * that nobody means to keep. */
 function handleRecord() {

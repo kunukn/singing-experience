@@ -7,6 +7,12 @@ import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
 
 import { MAX_RECORDING_MS, useVoiceRecorder } from './useVoiceRecorder'
 
+vi.mock('@/components/voice-recorder/takePersistence', () => ({
+  saveTake: vi.fn(() => Promise.resolve()),
+  loadTake: vi.fn(() => Promise.resolve(null)),
+  deleteSavedTake: vi.fn(() => Promise.resolve()),
+}))
+
 vi.mock('@/utils/microphoneStream', () => ({
   acquireMicStream: vi.fn(),
   releaseMicStream: vi.fn(),
