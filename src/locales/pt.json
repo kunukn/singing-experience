@@ -806,6 +806,14 @@
       "name": "Extensão vocal",
       "description": "As notas da sua mais grave até a sua mais aguda. Escolha uma que seja confortável."
     },
+    "myRange": {
+      "name": "Minha extensão",
+      "description": "As notas da sua mais grave até a sua mais aguda. Todos os jogos podem usá-la."
+    },
+    "songRange": {
+      "name": "Extensão",
+      "description": "As notas da música, da mais grave até a mais aguda. Escolha uma que seja confortável."
+    },
     "yourMelody": {
       "name": "Sua melodia",
       "description": "A linha é a sua voz. Os blocos são as notas que ouvimos."

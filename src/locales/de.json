@@ -806,6 +806,14 @@
       "name": "Stimmumfang",
       "description": "Die Töne von deinem tiefsten bis zu deinem höchsten. Wähl einen, der sich gut anfühlt."
     },
+    "myRange": {
+      "name": "Mein Umfang",
+      "description": "Die Töne von deinem tiefsten bis zu deinem höchsten. Jedes Spiel kann ihn nutzen."
+    },
+    "songRange": {
+      "name": "Tonbereich",
+      "description": "Die Töne des Lieds vom tiefsten bis zum höchsten. Wähl einen, der sich gut anfühlt."
+    },
     "yourMelody": {
       "name": "Deine Melodie",
       "description": "Die Linie ist deine Stimme. Die Blöcke sind die Töne, die wir gehört haben."

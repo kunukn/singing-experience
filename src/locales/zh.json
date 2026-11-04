@@ -806,6 +806,14 @@
       "name": "音域",
       "description": "从你最低的音到最高的音。选一个让你唱着舒服的。"
     },
+    "myRange": {
+      "name": "我的音域",
+      "description": "从你最低的音到最高的音。所有游戏都能用它。"
+    },
+    "songRange": {
+      "name": "音域",
+      "description": "这首歌从最低到最高的音。选一个让你唱着舒服的。"
+    },
     "yourMelody": {
       "name": "你的旋律",
       "description": "线条是你的声音。色块是我们听到的音。"

@@ -806,6 +806,14 @@
       "name": "Jangkauan suara",
       "description": "Nada-nada dari yang paling rendah sampai paling tinggi yang bisa kamu nyanyikan. Pilih yang terasa nyaman."
     },
+    "myRange": {
+      "name": "Jangkauanku",
+      "description": "Nada-nada dari yang paling rendah sampai paling tinggi yang bisa kamu nyanyikan. Semua permainan bisa memakainya."
+    },
+    "songRange": {
+      "name": "Rentang nada",
+      "description": "Nada-nada lagu dari yang paling rendah sampai paling tinggi. Pilih yang terasa nyaman."
+    },
     "yourMelody": {
       "name": "Melodimu",
       "description": "Garis itu suaramu. Blok-bloknya adalah nada yang kami dengar."

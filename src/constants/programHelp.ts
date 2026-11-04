@@ -9,6 +9,8 @@ export type GlossaryTerm =
   | 'clarity'
   | 'voiceParts'
   | 'voiceRange'
+  | 'myRange'
+  | 'songRange'
   | 'yourMelody'
   | 'notesUsed'
   | 'likelyKey'
@@ -49,7 +51,7 @@ export const programHelpByKey: Record<string, ProgramHelp> = {
   warmUp: { stepCount: 3, terms: ['note', 'semitone', 'voiceRange'] },
   voiceRangeFinder: {
     stepCount: 3,
-    terms: ['note', 'octave', 'voiceRange', 'voiceParts'],
+    terms: ['note', 'octave', 'myRange', 'voiceParts'],
   },
   notes: { stepCount: 3, terms: ['note', 'octave', 'sharpFlat', 'staff'] },
   piano: { stepCount: 3, terms: ['note', 'octave', 'scale', 'key'] },
@@ -75,8 +77,8 @@ export const programHelpByKey: Record<string, ProgramHelp> = {
     terms: ['note', 'sharpFlat', 'cents', 'semitone', 'hz', 'clarity'],
   },
   singTone: { stepCount: 3, terms: ['note', 'cents', 'voiceRange'] },
-  doReMi: { stepCount: 3, terms: ['solfege', 'note', 'cents', 'voiceRange'] },
-  singTheKeys: { stepCount: 3, terms: ['note', 'voiceRange'] },
+  doReMi: { stepCount: 3, terms: ['solfege', 'note', 'cents'] },
+  singTheKeys: { stepCount: 3, terms: ['note', 'songRange'] },
   graceKelly: { stepCount: 3, terms: ['harmony', 'note', 'bpm'] },
   singFly: { stepCount: 3, terms: ['note', 'voiceRange'] },
   pitchGame: { stepCount: 3, terms: ['note', 'voiceRange'] },

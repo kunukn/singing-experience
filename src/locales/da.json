@@ -806,6 +806,14 @@
       "name": "Stemmeleje",
       "description": "Tonerne fra din dybeste til din højeste. Vælg et, der føles behageligt."
     },
+    "myRange": {
+      "name": "Mit leje",
+      "description": "Tonerne fra din dybeste til din højeste. Alle spil kan bruge det."
+    },
+    "songRange": {
+      "name": "Toneområde",
+      "description": "Sangens toner fra den dybeste til den højeste. Vælg et, der føles behageligt."
+    },
     "yourMelody": {
       "name": "Din melodi",
       "description": "Linjen er din stemme. Blokkene er de toner, vi hørte."

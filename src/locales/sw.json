@@ -806,6 +806,14 @@
       "name": "Kiwango cha sauti",
       "description": "Noti kutoka ya chini kabisa hadi ya juu kabisa unayoweza kuimba. Chagua inayokufaa vizuri."
     },
+    "myRange": {
+      "name": "Kiwango changu",
+      "description": "Noti kutoka ya chini kabisa hadi ya juu kabisa unayoweza kuimba. Kila mchezo unaweza kukitumia."
+    },
+    "songRange": {
+      "name": "Kiwango cha sauti",
+      "description": "Noti za wimbo kutoka ya chini kabisa hadi ya juu kabisa. Chagua inayokufaa vizuri."
+    },
     "yourMelody": {
       "name": "Wimbo wako",
       "description": "Mstari ni sauti yako. Vitalu ni noti tulizosikia."

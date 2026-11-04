@@ -806,6 +806,14 @@
       "name": "Rango vocal",
       "description": "Las notas desde la más grave hasta la más aguda que cantas. Elige uno que te resulte cómodo."
     },
+    "myRange": {
+      "name": "Mi rango",
+      "description": "Las notas desde la más grave hasta la más aguda que cantas. Todos los juegos pueden usarlo."
+    },
+    "songRange": {
+      "name": "Rango",
+      "description": "Las notas de la canción, de la más grave a la más aguda. Elige uno que te resulte cómodo."
+    },
     "yourMelody": {
       "name": "Tu melodía",
       "description": "La línea es tu voz. Los bloques son las notas que oímos."

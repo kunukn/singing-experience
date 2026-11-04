@@ -806,6 +806,14 @@
       "name": "Tessiture",
       "description": "Les notes de ta plus grave à ta plus aiguë. Choisis celle où tu es à l'aise."
     },
+    "myRange": {
+      "name": "Ma tessiture",
+      "description": "Les notes de ta plus grave à ta plus aiguë. Tous les jeux peuvent l'utiliser."
+    },
+    "songRange": {
+      "name": "Tessiture",
+      "description": "Les notes de la chanson, de la plus grave à la plus aiguë. Choisis celle où tu es à l'aise."
+    },
     "yourMelody": {
       "name": "Ta mélodie",
       "description": "La ligne, c'est ta voix. Les blocs sont les notes qu'on a entendues."

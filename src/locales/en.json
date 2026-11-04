@@ -806,6 +806,14 @@
       "name": "Voice range",
       "description": "The notes from your lowest to your highest. Pick one that feels comfy."
     },
+    "myRange": {
+      "name": "My range",
+      "description": "The notes from your lowest to your highest. Every game can use it."
+    },
+    "songRange": {
+      "name": "Song range",
+      "description": "The song's lowest to highest notes. Pick one that feels comfy."
+    },
     "yourMelody": {
       "name": "Your melody",
       "description": "The line is your voice. The blocks are the notes we heard."
