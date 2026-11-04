@@ -4,6 +4,10 @@ const PIXELS_PER_SECOND = 60
 const PITCH_PADDING_SEMITONES = 2
 /* A one-note take would otherwise fill the chart with a single huge block. */
 const MIN_PITCH_SPAN_SEMITONES = 12
+/* Round steps a reader can count along, smallest first. */
+const TIME_TICK_STEPS_MS = [1000, 2000, 5000, 10_000, 15_000, 30_000, 60_000]
+/* Keeps "0:00" labels well apart, with room to read each at a glance. */
+const MIN_TIME_TICK_SPACING_PX = 80
 
 export type TimeAxis = {
   durationMs: number
@@ -17,6 +21,16 @@ export function contentWidthFor(
   viewportWidth: number,
 ): number {
   return Math.max(viewportWidth, (durationMs / 1000) * PIXELS_PER_SECOND)
+}
+
+/* The smallest round step whose labels don't crowd each other at this scale. */
+export function timeTickStepMs({ durationMs, contentWidth }: TimeAxis): number {
+  const pixelsPerMs = durationMs > 0 ? contentWidth / durationMs : 0
+  const roomyStep = TIME_TICK_STEPS_MS.find(
+    (step) => step * pixelsPerMs >= MIN_TIME_TICK_SPACING_PX,
+  )
+
+  return roomyStep ?? TIME_TICK_STEPS_MS[TIME_TICK_STEPS_MS.length - 1]
 }
 
 /*

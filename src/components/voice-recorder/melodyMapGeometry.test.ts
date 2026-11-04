@@ -7,6 +7,7 @@ import {
   scrollLeftToReveal,
   startScrollLeft,
   timeToContentX,
+  timeTickStepMs,
 } from './melodyMapGeometry'
 
 const axis = { durationMs: 10_000, contentWidth: 600, isRtl: false }
@@ -20,6 +21,19 @@ describe('melodyMapGeometry', () => {
   test('scales with duration for a long take', () => {
     expect(contentWidthFor(60_000, 400)).toBe(3600)
   })
+
+  test.each([
+    { durationMs: 4000, contentWidth: 730, expected: 1000 },
+    { durationMs: 60_000, contentWidth: 3600, expected: 2000 },
+    { durationMs: 1000, contentWidth: 730, expected: 1000 },
+  ])(
+    'labels a $durationMs ms take every $expected ms',
+    ({ durationMs, contentWidth, expected }) => {
+      expect(timeTickStepMs({ durationMs, contentWidth, isRtl: false })).toBe(
+        expected,
+      )
+    },
+  )
 
   test('runs time left to right in LTR', () => {
     expect(timeToContentX(0, axis)).toBe(0)

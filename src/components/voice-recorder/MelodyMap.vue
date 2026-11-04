@@ -13,6 +13,7 @@ import {
   pitchRangeFor,
   scrollLeftToReveal,
   startScrollLeft,
+  timeTickStepMs,
   timeToContentX,
   type TimeAxis,
 } from './melodyMapGeometry'
@@ -25,7 +26,9 @@ const TIME_AXIS_HEIGHT_PX = 22
 const PADDING_TOP_PX = 8
 /* Enough for "C#4" at the label size without touching the first note. */
 const NOTE_LABEL_WIDTH_PX = 34
-const TIME_TICK_MS = 5000
+/* Half a "10:00" label, so the first and last labels aren't cut off at the edge. */
+const TIME_LABEL_HALF_WIDTH_PX = 14
+const TIME_TICK_MARK_HEIGHT_PX = 4
 const NOTE_FILL_OPACITY = 0.6
 /* Blocks stay visible even in a wide range, where a semitone is only a few px. */
 const MIN_NOTE_HEIGHT_PX = 4
@@ -163,22 +166,36 @@ function drawTimeAxis(
   width: number,
 ) {
   const axis = timeAxis.value
-  const labelY = MAP_HEIGHT_PX - TIME_AXIS_HEIGHT_PX / 2
+  const axisTop = MAP_HEIGHT_PX - TIME_AXIS_HEIGHT_PX
+  const labelY = axisTop + TIME_AXIS_HEIGHT_PX / 2 + 2
+  const step = timeTickStepMs(axis)
 
   context.fillStyle = resolveCssColor('--p-text-muted-color', '#888888')
+  context.strokeStyle = resolveCssColor('--p-content-border-color', '#888888')
+  context.lineWidth = 1
   context.font = LABEL_FONT
   context.textBaseline = 'middle'
   context.textAlign = 'center'
 
-  for (
-    let timeMs = TIME_TICK_MS;
-    timeMs < axis.durationMs;
-    timeMs += TIME_TICK_MS
-  ) {
+  for (let timeMs = 0; timeMs <= axis.durationMs; timeMs += step) {
     const x = timeToContentX(timeMs, axis) - scrollLeft
-    if (x > NOTE_LABEL_WIDTH_PX && x < width - NOTE_LABEL_WIDTH_PX) {
-      context.fillText(formatTime(timeMs), x, labelY)
+    if (x < -TIME_LABEL_HALF_WIDTH_PX || x > width + TIME_LABEL_HALF_WIDTH_PX) {
+      continue
     }
+
+    context.beginPath()
+    context.moveTo(x, axisTop)
+    context.lineTo(x, axisTop + TIME_TICK_MARK_HEIGHT_PX)
+    context.stroke()
+
+    context.fillText(
+      formatTime(timeMs),
+      Math.max(
+        TIME_LABEL_HALF_WIDTH_PX,
+        Math.min(width - TIME_LABEL_HALF_WIDTH_PX, x),
+      ),
+      labelY,
+    )
   }
 }
 
