@@ -824,7 +824,7 @@
     },
     "likelyKey": {
       "name": "Wahrscheinliche Tonart",
-      "description": "Die Tonart, zu der deine Töne am besten passen. Das ist eine Schätzung."
+      "description": "Die Tonart, zu der deine Töne am besten passen. Das ist eine Schätzung. Tippe auf \"Tonleiter spielen\", um sie zu hören."
     },
     "soundProfile": {
       "name": "So klingt es",
@@ -897,7 +897,9 @@
     },
     "notes": {
       "title": "Deine Töne",
-      "likelyKey": "Wahrscheinliche Tonart: {key}"
+      "likelyKey": "Wahrscheinliche Tonart: {key}",
+      "playScale": "Tonleiter spielen",
+      "sungHint": "Die farbigen Töne hast du gesungen."
     },
     "profile": {
       "title": "So klingt es",

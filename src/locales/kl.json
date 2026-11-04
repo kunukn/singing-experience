@@ -683,7 +683,7 @@
     },
     "likelyKey": {
       "name": "Likely key",
-      "description": "The key your notes fit best. It's a guess."
+      "description": "The key your notes fit best. It's a guess. Press \"Play scale\" to hear it."
     },
     "soundProfile": {
       "name": "What it sounds like",

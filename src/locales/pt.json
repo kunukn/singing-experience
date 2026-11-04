@@ -824,7 +824,7 @@
     },
     "likelyKey": {
       "name": "Tom provável",
-      "description": "O tom que melhor combina com as suas notas. É um palpite."
+      "description": "O tom que melhor combina com as suas notas. É um palpite. Toque em \"Tocar escala\" para ouvir."
     },
     "soundProfile": {
       "name": "Como soa",
@@ -897,7 +897,9 @@
     },
     "notes": {
       "title": "Notas que você usou",
-      "likelyKey": "Tom provável: {key}"
+      "likelyKey": "Tom provável: {key}",
+      "playScale": "Tocar escala",
+      "sungHint": "As notas coloridas são as que você cantou."
     },
     "profile": {
       "title": "Como soa",

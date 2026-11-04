@@ -65,7 +65,11 @@ function seekTo(playheadMs: number) {
   emitPlayhead()
 }
 
-defineExpose({ seekTo })
+function pause() {
+  audioElement.value?.pause()
+}
+
+defineExpose({ seekTo, pause })
 </script>
 
 <template>

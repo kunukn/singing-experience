@@ -824,7 +824,7 @@
     },
     "likelyKey": {
       "name": "Tonalidad probable",
-      "description": "La tonalidad que mejor encaja con tus notas. Es una suposición."
+      "description": "La tonalidad que mejor encaja con tus notas. Es una suposición. Pulsa \"Tocar escala\" para oírla."
     },
     "soundProfile": {
       "name": "Cómo suena",
@@ -897,7 +897,9 @@
     },
     "notes": {
       "title": "Notas que usaste",
-      "likelyKey": "Tonalidad probable: {key}"
+      "likelyKey": "Tonalidad probable: {key}",
+      "playScale": "Tocar escala",
+      "sungHint": "Las notas de color son las que cantaste."
     },
     "profile": {
       "title": "Cómo suena",

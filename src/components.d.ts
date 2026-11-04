@@ -204,6 +204,7 @@ declare module 'vue' {
     SongSelect: typeof import('./components/sing-the-keys/SongSelect.vue')['default']
     StartToneSelect: typeof import('./components/generic/StartToneSelect.vue')['default']
     TakeAnalysisPanel: typeof import('./components/voice-recorder/TakeAnalysisPanel.vue')['default']
+    TakeKeyScale: typeof import('./components/voice-recorder/TakeKeyScale.vue')['default']
     TakePlayer: typeof import('./components/voice-recorder/TakePlayer.vue')['default']
     TakeRatingCard: typeof import('./components/voice-recorder/TakeRatingCard.vue')['default']
     TakeReadout: typeof import('./components/voice-recorder/TakeReadout.vue')['default']

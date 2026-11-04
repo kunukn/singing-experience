@@ -824,7 +824,7 @@
     },
     "likelyKey": {
       "name": "たぶんこの調",
-      "description": "きみの音にいちばん合う調だよ。これは予想だよ。"
+      "description": "きみの音にいちばん合う調だよ。これは予想だよ。「スケールを再生」をタップすると聞けるよ。"
     },
     "soundProfile": {
       "name": "どんな感じに聞こえるか",
@@ -897,7 +897,9 @@
     },
     "notes": {
       "title": "使った音",
-      "likelyKey": "たぶんこの調: {key}"
+      "likelyKey": "たぶんこの調: {key}",
+      "playScale": "スケールを再生",
+      "sungHint": "色のついた音が、きみが歌った音だよ。"
     },
     "profile": {
       "title": "どんな感じに聞こえるか",

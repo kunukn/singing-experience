@@ -824,7 +824,7 @@
     },
     "likelyKey": {
       "name": "Kemungkinan kunci",
-      "description": "Kunci yang paling cocok dengan nadamu. Ini cuma tebakan."
+      "description": "Kunci yang paling cocok dengan nadamu. Ini cuma tebakan. Ketuk \"Mainkan tangga nada\" untuk mendengarnya."
     },
     "soundProfile": {
       "name": "Seperti apa kedengarannya",
@@ -897,7 +897,9 @@
     },
     "notes": {
       "title": "Nada yang kamu pakai",
-      "likelyKey": "Kemungkinan kunci: {key}"
+      "likelyKey": "Kemungkinan kunci: {key}",
+      "playScale": "Mainkan tangga nada",
+      "sungHint": "Nada berwarna adalah yang kamu nyanyikan."
     },
     "profile": {
       "title": "Seperti apa kedengarannya",

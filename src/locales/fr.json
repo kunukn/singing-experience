@@ -824,7 +824,7 @@
     },
     "likelyKey": {
       "name": "Tonalité probable",
-      "description": "La tonalité qui va le mieux avec tes notes. C'est une estimation."
+      "description": "La tonalité qui va le mieux avec tes notes. C'est une estimation. Touche \"Jouer la gamme\" pour l'entendre."
     },
     "soundProfile": {
       "name": "Comment ça sonne",
@@ -897,7 +897,9 @@
     },
     "notes": {
       "title": "Les notes que tu as utilisées",
-      "likelyKey": "Tonalité probable : {key}"
+      "likelyKey": "Tonalité probable : {key}",
+      "playScale": "Jouer la gamme",
+      "sungHint": "Les notes en couleur sont celles que tu as chantées."
     },
     "profile": {
       "title": "Comment ça sonne",

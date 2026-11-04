@@ -824,7 +824,7 @@
     },
     "likelyKey": {
       "name": "Sandsynlig toneart",
-      "description": "Den toneart, dine toner passer bedst til. Det er et gæt."
+      "description": "Den toneart, dine toner passer bedst til. Det er et gæt. Tryk på \"Spil skalaen\" for at høre den."
     },
     "soundProfile": {
       "name": "Sådan lyder det",
@@ -897,7 +897,9 @@
     },
     "notes": {
       "title": "Toner, du brugte",
-      "likelyKey": "Sandsynlig toneart: {key}"
+      "likelyKey": "Sandsynlig toneart: {key}",
+      "playScale": "Spil skalaen",
+      "sungHint": "De farvede toner er dem, du sang."
     },
     "profile": {
       "title": "Sådan lyder det",

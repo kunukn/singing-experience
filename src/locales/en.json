@@ -824,7 +824,7 @@
     },
     "likelyKey": {
       "name": "Likely key",
-      "description": "The key your notes fit best. It's a guess."
+      "description": "The key your notes fit best. It's a guess. Press \"Play scale\" to hear it."
     },
     "soundProfile": {
       "name": "What it sounds like",
@@ -897,7 +897,9 @@
     },
     "notes": {
       "title": "Notes you used",
-      "likelyKey": "Likely key: {key}"
+      "likelyKey": "Likely key: {key}",
+      "playScale": "Play scale",
+      "sungHint": "Coloured notes are the ones you sang."
     },
     "profile": {
       "title": "What it sounds like",

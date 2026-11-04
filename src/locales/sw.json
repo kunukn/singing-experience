@@ -824,7 +824,7 @@
     },
     "likelyKey": {
       "name": "Skeli inayowezekana",
-      "description": "Skeli inayolingana zaidi na noti zako. Ni kisio tu."
+      "description": "Skeli inayolingana zaidi na noti zako. Ni kisio tu. Gusa \"Cheza mizani\" kuisikia."
     },
     "soundProfile": {
       "name": "Inavyosikika",
@@ -897,7 +897,9 @@
     },
     "notes": {
       "title": "Noti ulizotumia",
-      "likelyKey": "Skeli inayowezekana: {key}"
+      "likelyKey": "Skeli inayowezekana: {key}",
+      "playScale": "Cheza mizani",
+      "sungHint": "Noti zenye rangi ndizo ulizoimba."
     },
     "profile": {
       "title": "Inavyosikika",

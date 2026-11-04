@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useScaleName } from '@/components/scale-detector/useScaleName'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 
+import TakeKeyScale from './TakeKeyScale.vue'
 import type { NoteUse, TakeKey } from './analyzeTake'
 
 type Props = {
@@ -11,8 +11,11 @@ type Props = {
 
 const props = defineProps<Props>()
 
+const emit = defineEmits<{
+  scalePlay: []
+}>()
+
 const { t, locale } = useI18n()
-const { scaleName } = useScaleName()
 
 const longestMs = computed(() =>
   Math.max(1, ...props.notesUsed.map((use) => use.totalMs)),
@@ -41,17 +44,12 @@ const rows = computed(() =>
     <h2 class="text-sm font-semibold">
       {{ t('voiceRecorder.notes.title') }}
     </h2>
-    <p
+    <TakeKeyScale
       v-if="takeKey"
-      class="text-sm text-(--p-text-muted-color)"
-      data-testid="notes-used-key"
-    >
-      {{
-        t('voiceRecorder.notes.likelyKey', {
-          key: scaleName(takeKey.root, takeKey.mode),
-        })
-      }}
-    </p>
+      :takeKey="takeKey"
+      :notesUsed="notesUsed"
+      @play="emit('scalePlay')"
+    />
     <ul class="flex flex-col gap-0.5">
       <li
         v-for="row in rows"

@@ -22,6 +22,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   seek: [timeMs: number]
   analyzed: [analysis: TakeAnalysis]
+  scalePlay: []
 }>()
 
 const { t } = useI18n()
@@ -121,6 +122,7 @@ async function analyse() {
         <NotesUsedChart
           :notesUsed="analysis.notesUsed"
           :takeKey="analysis.key"
+          @scalePlay="emit('scalePlay')"
         />
       </template>
 

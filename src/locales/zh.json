@@ -824,7 +824,7 @@
     },
     "likelyKey": {
       "name": "可能的调",
-      "description": "和你唱的音最搭的调。这只是猜测。"
+      "description": "和你唱的音最搭的调。这只是猜测。点“播放音阶”就能听到。"
     },
     "soundProfile": {
       "name": "听起来怎么样",
@@ -897,7 +897,9 @@
     },
     "notes": {
       "title": "你用到的音",
-      "likelyKey": "可能的调：{key}"
+      "likelyKey": "可能的调：{key}",
+      "playScale": "播放音阶",
+      "sungHint": "有颜色的音是你唱过的。"
     },
     "profile": {
       "title": "听起来怎么样",
