@@ -45,12 +45,17 @@ export function useGuitarFretPlayback(options: GuitarFretPlaybackOptions = {}) {
     return stringPressCounts.get(stringIndex) ?? 0
   }
 
-  async function playFret(stringIndex: number, fret: number, midi: number) {
+  /* The glow and the string's shiver, without the note. */
+  function showFretPress(stringIndex: number, fret: number) {
     pressCounts.set(
       cellKey(stringIndex, fret),
       pressCountFor(stringIndex, fret) + 1,
     )
     stringPressCounts.set(stringIndex, stringPressCountFor(stringIndex) + 1)
+  }
+
+  async function playFret(stringIndex: number, fret: number, midi: number) {
+    showFretPress(stringIndex, fret)
 
     /*
      * The sampler is keyed by note name, so `.note` — the raw name, 'C#'. Not
@@ -85,5 +90,11 @@ export function useGuitarFretPlayback(options: GuitarFretPlaybackOptions = {}) {
     void playFret(stringIndex, fret, midi)
   }
 
-  return { pressCountFor, stringPressCountFor, playFret, handleKeyDown }
+  return {
+    pressCountFor,
+    stringPressCountFor,
+    showFretPress,
+    playFret,
+    handleKeyDown,
+  }
 }

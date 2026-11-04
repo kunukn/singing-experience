@@ -7,11 +7,14 @@ type GuitarStrumOptions = {
   stringWidth: MaybeRefOrGetter<number>
   rowHeight: MaybeRefOrGetter<number>
   /* A pointermove is not a user gesture, so it cannot start suspended audio.
-   * Plucks are dropped until this is true, or each one would wait on the resume
+   * Sound is held back until this is true, or each pluck would wait on the resume
    * and they could all sound together when it finally lands. */
   isAudioRunning: () => boolean
   unlockAudio: () => void
   onPluck: (stringIndex: number, fret: number) => void
+  /* A pluck while audio is locked: the visuals alone, so a swipe before the first
+   * tap does not look like the board ignored it. */
+  onSilentPluck: (stringIndex: number, fret: number) => void
 }
 
 type StrumPointer = {
@@ -67,9 +70,16 @@ export function useGuitarStrum(options: GuitarStrumOptions) {
       ) {
         continue
       }
-      if (!options.isAudioRunning()) continue
 
       lastPluckTimes.set(stringIndex, now)
+
+      /* Not counted as a strum: a click that follows should still play, since a
+       * tap is what can unlock the audio. */
+      if (!options.isAudioRunning()) {
+        options.onSilentPluck(stringIndex, pointer.fret)
+        continue
+      }
+
       hasStrummed = true
       options.onPluck(stringIndex, pointer.fret)
     }
@@ -117,8 +127,9 @@ export function useGuitarStrum(options: GuitarStrumOptions) {
   useEventListener(options.target, 'pointerup', (event: PointerEvent) => {
     if (!pointers.delete(event.pointerId)) return
 
-    /* The lift is the first moment a fresh page lets audio start, so a first
-     * swipe can be silent. This is what makes the next one sound. */
+    /* Worth trying, but no guarantee: an iPhone does not accept the lift of a
+     * swipe, so there audio stays locked until a tap. See the page-wide unlock in
+     * GuitarDisplay. */
     options.unlockAudio()
   })
 

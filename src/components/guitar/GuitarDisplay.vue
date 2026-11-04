@@ -11,7 +11,12 @@ import {
   type ScaleHighlightMode,
   type ScaleRole,
 } from '@/utils/scaleHighlight'
-import { useMediaQuery, useResizeObserver, useWindowSize } from '@vueuse/core'
+import {
+  useEventListener,
+  useMediaQuery,
+  useResizeObserver,
+  useWindowSize,
+} from '@vueuse/core'
 import type { AccidentalStyle } from '@/composables/accidentalStyle'
 import {
   GUITAR_INLAY_DOT_CLASS,
@@ -92,15 +97,34 @@ const props = defineProps<Props>()
  * (stops the guitar's own tone registering as sung pitch). */
 const emit = defineEmits<{ tonePlayed: [] }>()
 
-const { pressCountFor, stringPressCountFor, playFret, handleKeyDown } =
-  useGuitarFretPlayback({
-    onTonePlayed: () => emit('tonePlayed'),
-  })
+const {
+  pressCountFor,
+  stringPressCountFor,
+  showFretPress,
+  playFret,
+  handleKeyDown,
+} = useGuitarFretPlayback({
+  onTonePlayed: () => emit('tonePlayed'),
+})
 
 /* Fetch and decode the guitar samples up front so the first fret press sounds
  * immediately rather than waiting on the network. */
 onMounted(() => {
   void prewarmGuitarFretboard()
+})
+
+/*
+ * Any tap on the page unlocks the audio, not only a tap on a fret, because a swipe
+ * cannot: on an iPhone it stays silent until the first tap. Left on rather than
+ * removed after one success, since iOS can interrupt the audio again later.
+ *
+ * touchend as well as click because iOS fires no click for a tap on a plain,
+ * non-interactive part of the page. Capture so that nothing stopping propagation
+ * can hide the tap.
+ */
+useEventListener(document, ['touchend', 'click'], unlockGuitarAudio, {
+  capture: true,
+  passive: true,
 })
 
 const accidentalStyle = computed<AccidentalStyle>(
@@ -461,6 +485,7 @@ const { consumeStrumClick } = useGuitarStrum({
       guitarFretMidi(props.tuningMidi, stringIndex, fret),
     )
   },
+  onSilentPluck: showFretPress,
 })
 
 function handlePointerDown(cell: GuitarCell) {

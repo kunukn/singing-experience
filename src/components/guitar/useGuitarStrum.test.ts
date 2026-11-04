@@ -29,6 +29,7 @@ describe('useGuitarStrum', () => {
   let scope: EffectScope
   let isAudioRunning: boolean
   let onPluck: Mock<(stringIndex: number, fret: number) => void>
+  let onSilentPluck: Mock<(stringIndex: number, fret: number) => void>
   let unlockAudio: Mock<() => void>
   let consumeStrumClick: () => boolean
 
@@ -62,6 +63,7 @@ describe('useGuitarStrum', () => {
     document.body.append(board)
     isAudioRunning = true
     onPluck = vi.fn<(stringIndex: number, fret: number) => void>()
+    onSilentPluck = vi.fn<(stringIndex: number, fret: number) => void>()
     unlockAudio = vi.fn<() => void>()
 
     scope = effectScope()
@@ -73,6 +75,7 @@ describe('useGuitarStrum', () => {
         isAudioRunning: () => isAudioRunning,
         unlockAudio,
         onPluck,
+        onSilentPluck,
       }))
     })
   })
@@ -184,15 +187,33 @@ describe('useGuitarStrum', () => {
     ])
   })
 
-  test('should drop plucks while audio is not running, then sound again', () => {
+  test('should pluck silently while audio is not running, then sound again', () => {
     isAudioRunning = false
     swipe(0, 360)
     expect(onPluck).not.toHaveBeenCalled()
-    expect(consumeStrumClick()).toBe(false)
+    expect(onSilentPluck).toHaveBeenCalledTimes(6)
+    expect(onSilentPluck).toHaveBeenLastCalledWith(5, 3)
 
     isAudioRunning = true
     swipe(0, 360)
     expect(onPluck).toHaveBeenCalledTimes(6)
+    expect(onSilentPluck).toHaveBeenCalledTimes(6)
+  })
+
+  test('should not swallow the click after a silent swipe, so it can unlock', () => {
+    isAudioRunning = false
+    swipe(0, 360)
+
+    expect(consumeStrumClick()).toBe(false)
+  })
+
+  test('should apply the cooldown to silent plucks too', () => {
+    isAudioRunning = false
+    firePointer('pointerdown', { clientX: lineX(1) - 10 })
+    firePointer('pointermove', { clientX: lineX(1) + 10 })
+    firePointer('pointermove', { clientX: lineX(1) - 10 })
+
+    expect(onSilentPluck).toHaveBeenCalledOnce()
   })
 
   test('should try to unlock audio on press and on lift', () => {
