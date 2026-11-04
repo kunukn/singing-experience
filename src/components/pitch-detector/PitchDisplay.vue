@@ -295,6 +295,7 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
       </div>
 
       <PitchIdleControls
+        :class="isVoiceTypeRibbonVisible ? 'min-[716px]:ps-48 md:ps-56' : ''"
         :showReadout="showReadout"
         :isPlayingSequence="isPlayingSequence"
         :hasSamples="hasSamples"
@@ -315,16 +316,14 @@ defineExpose({ stopSequence, stopReplay, isPlayingSequence })
       </span>
 
       <!--
-        Names the ribbon's colours in the space the centred controls leave
-        empty, on the same inline-start edge the bars themselves run down, so
-        the eye travels straight from a row to its bar, flush with the note
-        labels below it.
+        Names the ribbon's colours beside the controls, on the same inline-start
+        edge the bars themselves run down, so the eye travels straight from a
+        row to its bar, flush with the note labels below it.
 
-        716px is the floor, measured rather than picked: the centred controls
-        reach 368px once a recording exists, leaving (panel - 368) / 2 free on
-        each side — 158px at a 684px panel. Between 716px and md the key drops
-        its note spans to fit that in 108px with room to breathe; the full
-        154px rows return at md. sm would leave 120px and collide either way.
+        The readouts and idle controls both pad their inline-start by the key's
+        width, which keeps them clear of it in any locale. Below 716px there's
+        too little room left for both, so the key is hidden. Between 716px and
+        md it drops its note spans; the full rows return at md.
       -->
       <VoiceRangeLegend
         v-if="isVoiceTypeRibbonVisible"

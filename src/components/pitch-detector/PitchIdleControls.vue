@@ -30,71 +30,68 @@ const { t } = useI18n()
     :class="[showReadout ? 'pointer-events-none invisible' : 'visible']"
     class="grid place-items-center [grid-area:1/1]"
   >
-    <div class="flex items-stretch gap-4">
-      <button
+    <div class="flex flex-wrap items-center justify-center gap-2 max-xs:w-full">
+      <PrimeButton
         v-if="hasSamples"
         data-testid="btn-replay-sound"
-        class="flex flex-col items-center justify-center rounded-xl border border-(--p-content-border-color) px-4 py-2 text-sm font-medium text-(--p-text-muted-color) transition-transform hover:scale-105 hover:text-(--p-text-color) active:scale-95"
-        :class="[
-          isReplaying
-            ? 'border-(--p-button-success-background) text-(--p-button-success-background)'
-            : '',
-        ]"
+        class="max-xs:w-full"
+        :severity="isReplaying ? 'danger' : 'success'"
+        size="small"
+        rounded
         @click="emit('toggleReplay')"
       >
-        <span class="mt-1 block text-xs whitespace-pre-line">{{
-          t('pitchDetector.replaySound')
-        }}</span>
-      </button>
+        <!-- The hidden label holds the button's width, so nothing moves under
+             the pointer when it turns into Stop -->
+        <span class="grid place-items-center">
+          <span class="[grid-area:1/1]" :class="{ invisible: isReplaying }">
+            {{ t('pitchDetector.replaySound') }}
+          </span>
+          <span v-if="isReplaying" class="[grid-area:1/1]">
+            {{ t('generic.stop') }}
+          </span>
+        </span>
+      </PrimeButton>
 
-      <button
+      <PrimeButton
         v-if="hasSamples"
         data-testid="btn-replay-speed"
-        class="flex min-w-[4rem] flex-col items-center justify-center rounded-xl border border-(--p-content-border-color) px-3 py-2 text-sm font-medium text-(--p-text-muted-color) transition-transform hover:scale-105 hover:text-(--p-text-color) active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 disabled:hover:text-(--p-text-muted-color)"
-        type="button"
+        class="tabular-nums"
+        severity="secondary"
+        size="small"
+        rounded
         :disabled="isReplaying"
         @click="toggleSpeed"
       >
-        <span class="block text-xs font-semibold tabular-nums">
-          {{ replaySpeed }}×
-        </span>
-      </button>
+        {{ replaySpeed }}×
+      </PrimeButton>
 
-      <button
+      <PrimeButton
         v-if="hasSamples"
         data-testid="btn-clear-recording"
-        class="flex min-w-[4rem] flex-col items-center justify-center rounded-xl border border-(--p-content-border-color) px-3 py-2 text-sm font-medium text-(--p-text-muted-color) transition-transform hover:scale-105 hover:text-(--p-text-color) active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100 disabled:hover:text-(--p-text-muted-color)"
-        type="button"
+        severity="secondary"
+        size="small"
+        rounded
+        icon="pi pi-trash"
+        :label="t('generic.clear')"
         :disabled="isReplaying"
         @click="emit('clearRecording')"
-      >
-        <!-- Same trash icon as every other Clear in the app (piano note log,
-             song recorder, the focus tab); the label already names it -->
-        <i class="pi pi-trash text-sm" aria-hidden="true" />
-        <span class="mt-1 block text-xs whitespace-pre-line">
-          {{ t('generic.clear') }}
-        </span>
-      </button>
+      />
 
-      <button
+      <PrimeButton
         data-testid="btn-play-sequence"
-        class="grid place-items-center rounded-xl border border-(--p-content-border-color) px-6 py-2 font-bold tracking-tight transition-transform hover:scale-110 active:scale-95 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
+        class="min-w-20"
+        :severity="isPlayingSequence ? 'warn' : 'secondary'"
+        size="small"
+        rounded
         :disabled="isReplaying"
         :aria-label="isPlayingSequence ? undefined : t('generic.previewButton')"
         @click="emit('playSequence')"
       >
-        <!-- Stays in the grid while hidden so the button keeps its size when the mute text shows -->
-        <NoteIcon
-          class="size-20 text-(--p-surface-500) [grid-area:1/1]"
-          :class="{ invisible: isPlayingSequence }"
-        />
-        <span
-          v-if="isPlayingSequence"
-          class="text-base text-(--p-orange-400) [grid-area:1/1]"
-        >
+        <template v-if="isPlayingSequence">
           {{ t('generic.muteButton') }}
-        </span>
-      </button>
+        </template>
+        <NoteIcon v-else class="size-5" />
+      </PrimeButton>
     </div>
   </div>
 </template>
