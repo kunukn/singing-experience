@@ -175,6 +175,29 @@ export function createPitchLaneRecorder(): PitchLaneRecorder {
   return { samples, noteMarkers, push, reset, restore }
 }
 
+/* Index of the first item later than timestampMs, or items.length if none is.
+ * Items must be in time order, as recording leaves them. A binary search, since
+ * the render loop calls this every frame on minutes of samples. */
+export function findFirstIndexAfter(
+  items: readonly { timestamp: number }[],
+  timestampMs: number,
+): number {
+  let low = 0
+  let high = items.length
+
+  while (low < high) {
+    const middle = (low + high) >>> 1
+
+    if (items[middle].timestamp <= timestampMs) {
+      low = middle + 1
+    } else {
+      high = middle
+    }
+  }
+
+  return low
+}
+
 /* The wall-clock span covered by every lane that recorded anything, so the
  * replay scrub and the recorded-duration readout agree across both voices.
  * Null when nothing was recorded at all. */

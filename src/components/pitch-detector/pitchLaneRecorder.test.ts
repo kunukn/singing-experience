@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest'
 import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { HISTORY_RETENTION_MS, PAUSE_GAP_MS } from './pitchConstants'
-import { createPitchLaneRecorder, pitchLaneExtent } from './pitchLaneRecorder'
+import {
+  createPitchLaneRecorder,
+  findFirstIndexAfter,
+  pitchLaneExtent,
+} from './pitchLaneRecorder'
 
 /* A clean detection frame at an exact semitone, the shape usePitchDetection
  * and useDuetPitchDetection both hand over. */
@@ -225,5 +229,30 @@ describe('recorder.restore', () => {
     expect(recorder.samples).toHaveLength(2)
     expect(recorder.noteMarkers).toHaveLength(1)
     expect(recorder.noteMarkers[0].midiNote).toBe(62)
+  })
+})
+
+describe('findFirstIndexAfter', () => {
+  const items = [100, 200, 200, 300].map((timestamp) => ({ timestamp }))
+
+  it('returns 0 for an empty list', () => {
+    expect(findFirstIndexAfter([], 100)).toBe(0)
+  })
+
+  it('returns 0 for a time before the first item', () => {
+    expect(findFirstIndexAfter(items, 50)).toBe(0)
+  })
+
+  it('returns the length for a time at or past the last item', () => {
+    expect(findFirstIndexAfter(items, 300)).toBe(4)
+    expect(findFirstIndexAfter(items, 999)).toBe(4)
+  })
+
+  it('skips every item at exactly that time', () => {
+    expect(findFirstIndexAfter(items, 200)).toBe(3)
+  })
+
+  it('finds the next item for a time between two items', () => {
+    expect(findFirstIndexAfter(items, 150)).toBe(1)
   })
 })

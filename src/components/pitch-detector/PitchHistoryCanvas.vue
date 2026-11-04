@@ -13,6 +13,7 @@ import { drawPitchLine, resolveEffectiveMidi } from '@/utils/pitchLineRenderer'
 
 import {
   createPitchLaneRecorder,
+  findFirstIndexAfter,
   pitchLaneExtent,
   type PitchLaneRecorder,
   type PitchSample,
@@ -420,6 +421,36 @@ function drawLabelPill(
   return { x: bgX, y: bgY, w: bgW, h: bgH }
 }
 
+/*
+ * Drawn past each edge of the chart so nothing on it changes at the edge. A
+ * spline's tangents reach two samples out, at most 2 × PAUSE_GAP_MS away within
+ * a segment, and a marker's label can straddle the edge: about 20 px, and this
+ * is 34 px on the narrowest phone chart (320 px wide).
+ */
+const VISIBLE_MARGIN_MS = 1000
+
+type VisibleTimeRange = { fromMs: number; toMs: number }
+
+/*
+ * What the render loop draws. Only about 5 s of a take fits on the chart, so
+ * limiting the draw here is what keeps frame cost independent of how much
+ * history is retained.
+ */
+function getVisibleTimeRange(
+  now: number,
+  geom: ChartGeometry,
+): VisibleTimeRange {
+  const pxPerMs = Math.abs(geom.labelAxisX - geom.nowEdgeX) / HISTORY_WINDOW_MS
+  /* Replay and scroll-back show later samples in the gap past the now edge */
+  const aheadOfNowMs =
+    pxPerMs > 0 ? Math.abs(geom.farAxisX - geom.nowEdgeX) / pxPerMs : 0
+
+  return {
+    fromMs: now - HISTORY_WINDOW_MS - VISIBLE_MARGIN_MS,
+    toMs: now + aheadOfNowMs + VISIBLE_MARGIN_MS,
+  }
+}
+
 /* The spline and dots for one voice. */
 function drawLaneTrail(
   ctx: CanvasRenderingContext2D,
@@ -428,8 +459,11 @@ function drawLaneTrail(
   now: number,
   geom: ChartGeometry,
   height: number,
+  visibleRange: VisibleTimeRange,
 ) {
-  if (samples.length === 0) return
+  const startIndex = findFirstIndexAfter(samples, visibleRange.fromMs)
+  const endIndex = findFirstIndexAfter(samples, visibleRange.toMs)
+  if (startIndex >= endIndex) return
 
   const style = LANE_TRAIL_STYLE[laneId]
 
@@ -453,9 +487,9 @@ function drawLaneTrail(
   const topY = PADDING_TOP
   const bottomY = height - PADDING_BOTTOM
 
-  for (let i = 0; i < samples.length; i++) {
+  for (let i = startIndex; i < endIndex; i++) {
     if (
-      i > 0 &&
+      i > startIndex &&
       samples[i].timestamp - samples[i - 1].timestamp > PAUSE_GAP_MS
     ) {
       if (currentSegment.length > 0) segments.push(currentSegment)
@@ -510,7 +544,8 @@ function drawLaneTrail(
   }
 
   // Draw dots
-  for (const sample of samples) {
+  for (let i = startIndex; i < endIndex; i++) {
+    const sample = samples[i]
     const x = timeToX(sample.timestamp, now, geom)
     const y = midiToY(sample.midiNote, height)
     const age = now - sample.timestamp
@@ -696,9 +731,19 @@ function drawChart() {
   )
   ctx.clip()
 
+  const visibleRange = getVisibleTimeRange(now, geom)
+
   /* Low voice first so the high one's thinner trail stays legible on top. */
   for (const laneId of PITCH_LANE_IDS) {
-    drawLaneTrail(ctx, laneId, recorders[laneId].samples, now, geom, height)
+    drawLaneTrail(
+      ctx,
+      laneId,
+      recorders[laneId].samples,
+      now,
+      geom,
+      height,
+      visibleRange,
+    )
   }
 
   // Draw sustained-note markers (dot + label)
@@ -707,7 +752,15 @@ function drawChart() {
    * the focus label along the row */
   const markerLaneIds = props.focusMidi == null ? PITCH_LANE_IDS : []
   for (const laneId of markerLaneIds) {
-    for (const marker of recorders[laneId].noteMarkers) {
+    const markers = recorders[laneId].noteMarkers
+    const endIndex = findFirstIndexAfter(markers, visibleRange.toMs)
+
+    for (
+      let i = findFirstIndexAfter(markers, visibleRange.fromMs);
+      i < endIndex;
+      i++
+    ) {
+      const marker = markers[i]
       const x = timeToX(marker.timestamp, now, geom)
       const y = midiToY(marker.midiNote, height)
 
@@ -740,12 +793,7 @@ function drawChart() {
     let latest: PitchSample | null = null
 
     if (isReplaying || isScrolledBack) {
-      for (let i = samples.length - 1; i >= 0; i--) {
-        if (samples[i].timestamp <= now) {
-          latest = samples[i]
-          break
-        }
-      }
+      latest = samples[findFirstIndexAfter(samples, now) - 1] ?? null
     } else {
       latest = samples[samples.length - 1] ?? null
     }

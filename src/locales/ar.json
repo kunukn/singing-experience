@@ -252,7 +252,7 @@
     "clarity": "الوضوح",
     "lowVoice": "صوت منخفض",
     "highVoice": "صوت عالٍ",
-    "replaySound": "إعادة تشغيل الصوت\n(آخر 30 ثانية)",
+    "replaySound": "إعادة تشغيل الصوت\n(آخر دقيقتين)",
     "scrollHistory": "تصفّح غناءك",
     "tabs": {
       "overview": "نظرة عامة",

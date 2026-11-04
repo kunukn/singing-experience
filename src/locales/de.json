@@ -252,7 +252,7 @@
     "clarity": "Klarheit",
     "lowVoice": "Tiefe Stimme",
     "highVoice": "Hohe Stimme",
-    "replaySound": "Ton wiederholen\n(letzte 30 Sek.)",
+    "replaySound": "Ton wiederholen\n(letzte 2 Min.)",
     "scrollHistory": "Scroll durch deinen Gesang",
     "tabs": {
       "overview": "Übersicht",

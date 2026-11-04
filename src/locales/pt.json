@@ -252,7 +252,7 @@
     "clarity": "Clareza",
     "lowVoice": "Voz grave",
     "highVoice": "Voz aguda",
-    "replaySound": "Reproduzir som\n(últimos 30 s)",
+    "replaySound": "Reproduzir som\n(últimos 2 min)",
     "scrollHistory": "Role pelo seu canto",
     "tabs": {
       "overview": "Visão geral",

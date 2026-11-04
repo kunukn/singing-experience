@@ -181,7 +181,7 @@ onUnmounted(() => {
 
 /*
  * Scrolling back through a stopped take. The canvas shows a 5 s window but
- * keeps 30 s, so a long take's start would otherwise be out of reach. Native
+ * keeps much more, so a long take's start would otherwise be out of reach. Native
  * scrolling, as in SingTheKeysLane: an invisible scroller over the canvas
  * gives touch momentum, trackpad, shift-wheel and arrow keys, and its
  * scrollLeft drives viewOffsetMs, which the canvas draws from.

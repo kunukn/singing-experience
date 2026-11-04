@@ -252,7 +252,7 @@
     "clarity": "Klarhed",
     "lowVoice": "Dyb stemme",
     "highVoice": "Lys stemme",
-    "replaySound": "Hør igen\n(seneste 30 sek.)",
+    "replaySound": "Hør igen\n(seneste 2 min.)",
     "scrollHistory": "Rul gennem din sang",
     "tabs": {
       "overview": "Overblik",

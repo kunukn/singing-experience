@@ -252,7 +252,7 @@
     "clarity": "Clarté",
     "lowVoice": "Voix grave",
     "highVoice": "Voix aiguë",
-    "replaySound": "Rejouer le son\n(30 dernières s)",
+    "replaySound": "Rejouer le son\n(2 dernières min)",
     "scrollHistory": "Fais défiler ton chant",
     "tabs": {
       "overview": "Vue d'ensemble",
