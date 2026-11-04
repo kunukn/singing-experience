@@ -806,6 +806,30 @@
       "name": "声域",
       "description": "きみのいちばん低い音から、いちばん高い音まで。らくに歌えるものを選ぼう。"
     },
+    "yourMelody": {
+      "name": "きみのメロディー",
+      "description": "線はきみの声だよ。ブロックは聞き取れた音だよ。"
+    },
+    "notesUsed": {
+      "name": "使った音",
+      "description": "歌った音と、それぞれを歌った長さだよ。"
+    },
+    "likelyKey": {
+      "name": "たぶんこの調",
+      "description": "きみの音にいちばん合う調だよ。これは予想だよ。"
+    },
+    "soundProfile": {
+      "name": "どんな感じに聞こえるか",
+      "description": "どのスライダーも、きみの歌にどちらの言葉が合うかを示しているよ。"
+    },
+    "rangeUsed": {
+      "name": "使った音域",
+      "description": "いちばん低い音から高い音まで。一瞬のズレは入れていないよ。マップの目盛りは少し広いことがあるよ。"
+    },
+    "howSteady": {
+      "name": "どれくらい安定していたか",
+      "description": "音をどれくらい保てて、調から外れなかったかを見ているよ。声の良さではないよ。"
+    },
     "solfege": {
       "name": "DO RE MI",
       "description": "音階の音の名前：DO RE MI FA SO LA TI DO（ドレミファソラシド）。"

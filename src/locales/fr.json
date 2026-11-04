@@ -806,6 +806,30 @@
       "name": "Tessiture",
       "description": "Les notes de ta plus grave à ta plus aiguë. Choisis celle où tu es à l'aise."
     },
+    "yourMelody": {
+      "name": "Ta mélodie",
+      "description": "La ligne, c'est ta voix. Les blocs sont les notes qu'on a entendues."
+    },
+    "notesUsed": {
+      "name": "Les notes que tu as utilisées",
+      "description": "Les notes que tu as chantées et combien de temps tu as chanté chacune."
+    },
+    "likelyKey": {
+      "name": "Tonalité probable",
+      "description": "La tonalité qui va le mieux avec tes notes. C'est une estimation."
+    },
+    "soundProfile": {
+      "name": "Comment ça sonne",
+      "description": "Chaque curseur montre quel mot correspond le mieux à ton chant."
+    },
+    "rangeUsed": {
+      "name": "Tessiture utilisée",
+      "description": "Tes notes de la plus grave à la plus aiguë, sans les petits dérapages. L'échelle de la carte peut aller un peu plus loin."
+    },
+    "howSteady": {
+      "name": "À quel point c'était stable",
+      "description": "À quel point tu as tenu tes notes et suivi la tonalité, pas la qualité de ta voix."
+    },
     "solfege": {
       "name": "DO RÉ MI",
       "description": "Les noms des notes d'une gamme : DO RE MI FA SO LA TI DO. Ici, SO veut dire SOL et TI veut dire SI."

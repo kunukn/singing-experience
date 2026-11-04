@@ -806,6 +806,30 @@
       "name": "Voice range",
       "description": "The notes from your lowest to your highest. Pick one that feels comfy."
     },
+    "yourMelody": {
+      "name": "Your melody",
+      "description": "The line is your voice. The blocks are the notes we heard."
+    },
+    "notesUsed": {
+      "name": "Notes you used",
+      "description": "The notes you sang and how long you sang each one."
+    },
+    "likelyKey": {
+      "name": "Likely key",
+      "description": "The key your notes fit best. It's a guess."
+    },
+    "soundProfile": {
+      "name": "What it sounds like",
+      "description": "Each slider shows which word fits your singing better."
+    },
+    "rangeUsed": {
+      "name": "Range used",
+      "description": "Your lowest to highest notes, leaving out quick slips. The map's scale can reach a bit further."
+    },
+    "howSteady": {
+      "name": "How steady it was",
+      "description": "How well you held your notes and stayed in key, not how good your voice is."
+    },
     "solfege": {
       "name": "DO RE MI",
       "description": "Names for the notes of a scale: DO RE MI FA SO LA TI DO."

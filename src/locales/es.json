@@ -806,6 +806,30 @@
       "name": "Rango vocal",
       "description": "Las notas desde la más grave hasta la más aguda que cantas. Elige uno que te resulte cómodo."
     },
+    "yourMelody": {
+      "name": "Tu melodía",
+      "description": "La línea es tu voz. Los bloques son las notas que oímos."
+    },
+    "notesUsed": {
+      "name": "Notas que usaste",
+      "description": "Las notas que cantaste y cuánto tiempo cantaste cada una."
+    },
+    "likelyKey": {
+      "name": "Tonalidad probable",
+      "description": "La tonalidad que mejor encaja con tus notas. Es una suposición."
+    },
+    "soundProfile": {
+      "name": "Cómo suena",
+      "description": "Cada barra muestra qué palabra encaja mejor con tu canto."
+    },
+    "rangeUsed": {
+      "name": "Rango usado",
+      "description": "Tus notas de la más grave a la más aguda, sin los pequeños deslices. La escala del mapa puede llegar un poco más lejos."
+    },
+    "howSteady": {
+      "name": "Qué tan estable fue",
+      "description": "Lo bien que mantuviste tus notas y te quedaste en la tonalidad, no lo buena que es tu voz."
+    },
     "solfege": {
       "name": "DO RE MI",
       "description": "Nombres de las notas de una escala: DO RE MI FA SO LA TI DO."

@@ -806,6 +806,30 @@
       "name": "Extensão vocal",
       "description": "As notas da sua mais grave até a sua mais aguda. Escolha uma que seja confortável."
     },
+    "yourMelody": {
+      "name": "Sua melodia",
+      "description": "A linha é a sua voz. Os blocos são as notas que ouvimos."
+    },
+    "notesUsed": {
+      "name": "Notas que você usou",
+      "description": "As notas que você cantou e por quanto tempo cantou cada uma."
+    },
+    "likelyKey": {
+      "name": "Tom provável",
+      "description": "O tom que melhor combina com as suas notas. É um palpite."
+    },
+    "soundProfile": {
+      "name": "Como soa",
+      "description": "Cada barra mostra qual palavra combina mais com o seu canto."
+    },
+    "rangeUsed": {
+      "name": "Extensão usada",
+      "description": "Suas notas da mais grave à mais aguda, sem os deslizes rápidos. A escala do mapa pode ir um pouco além."
+    },
+    "howSteady": {
+      "name": "Quão estável foi",
+      "description": "Como você segurou as notas e ficou no tom, não a qualidade da sua voz."
+    },
     "solfege": {
       "name": "DÓ RÉ MI",
       "description": "Nomes das notas de uma escala: DÓ RÉ MI FÁ SOL LÁ SI DÓ."

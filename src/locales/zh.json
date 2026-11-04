@@ -806,6 +806,30 @@
       "name": "音域",
       "description": "从你最低的音到最高的音。选一个让你唱着舒服的。"
     },
+    "yourMelody": {
+      "name": "你的旋律",
+      "description": "线条是你的声音。色块是我们听到的音。"
+    },
+    "notesUsed": {
+      "name": "你用到的音",
+      "description": "你唱过的音，以及每个音唱了多久。"
+    },
+    "likelyKey": {
+      "name": "可能的调",
+      "description": "和你唱的音最搭的调。这只是猜测。"
+    },
+    "soundProfile": {
+      "name": "听起来怎么样",
+      "description": "每个滑块显示哪个词更符合你的演唱。"
+    },
+    "rangeUsed": {
+      "name": "用到的音域",
+      "description": "从你最低到最高的音，不算一闪而过的小偏差。地图的刻度可能会稍宽一些。"
+    },
+    "howSteady": {
+      "name": "唱得有多稳",
+      "description": "看你把音唱得多稳、有没有跑调，不是你的嗓音有多好。"
+    },
     "solfege": {
       "name": "DO RE MI",
       "description": "音阶里各个音的名字：DO RE MI FA SO LA TI DO。"

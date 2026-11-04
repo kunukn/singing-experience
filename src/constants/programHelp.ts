@@ -9,6 +9,12 @@ export type GlossaryTerm =
   | 'clarity'
   | 'voiceParts'
   | 'voiceRange'
+  | 'yourMelody'
+  | 'notesUsed'
+  | 'likelyKey'
+  | 'soundProfile'
+  | 'rangeUsed'
+  | 'howSteady'
   | 'solfege'
   | 'scale'
   | 'key'
@@ -52,7 +58,16 @@ export const programHelpByKey: Record<string, ProgramHelp> = {
   songRecorder: { stepCount: 3, terms: ['note', 'staff', 'bpm'] },
   voiceRecorder: {
     stepCount: 3,
-    terms: ['note', 'cents', 'key', 'voiceRange'],
+    terms: [
+      'yourMelody',
+      'note',
+      'sharpFlat',
+      'notesUsed',
+      'likelyKey',
+      'soundProfile',
+      'rangeUsed',
+      'howSteady',
+    ],
   },
   toneDetector: { stepCount: 3, terms: ['note', 'octave', 'chord', 'harmony'] },
   tuner: {

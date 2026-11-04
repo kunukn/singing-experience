@@ -806,6 +806,30 @@
       "name": "Jangkauan suara",
       "description": "Nada-nada dari yang paling rendah sampai paling tinggi yang bisa kamu nyanyikan. Pilih yang terasa nyaman."
     },
+    "yourMelody": {
+      "name": "Melodimu",
+      "description": "Garis itu suaramu. Blok-bloknya adalah nada yang kami dengar."
+    },
+    "notesUsed": {
+      "name": "Nada yang kamu pakai",
+      "description": "Nada yang kamu nyanyikan dan berapa lama kamu menyanyikan masing-masing."
+    },
+    "likelyKey": {
+      "name": "Kemungkinan kunci",
+      "description": "Kunci yang paling cocok dengan nadamu. Ini cuma tebakan."
+    },
+    "soundProfile": {
+      "name": "Seperti apa kedengarannya",
+      "description": "Setiap penggeser menunjukkan kata mana yang lebih cocok dengan nyanyianmu."
+    },
+    "rangeUsed": {
+      "name": "Rentang yang dipakai",
+      "description": "Nadamu dari yang terendah sampai tertinggi, tanpa meleset sekejap. Skala peta bisa sedikit lebih jauh."
+    },
+    "howSteady": {
+      "name": "Seberapa stabil",
+      "description": "Seberapa baik kamu menahan nada dan tetap di kunci, bukan seberapa bagus suaramu."
+    },
     "solfege": {
       "name": "DO RE MI",
       "description": "Nama-nama nada dalam tangga nada: DO RE MI FA SO LA TI DO."

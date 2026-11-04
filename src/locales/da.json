@@ -806,6 +806,30 @@
       "name": "Stemmeleje",
       "description": "Tonerne fra din dybeste til din højeste. Vælg et, der føles behageligt."
     },
+    "yourMelody": {
+      "name": "Din melodi",
+      "description": "Linjen er din stemme. Blokkene er de toner, vi hørte."
+    },
+    "notesUsed": {
+      "name": "Toner, du brugte",
+      "description": "De toner, du sang, og hvor længe du sang hver af dem."
+    },
+    "likelyKey": {
+      "name": "Sandsynlig toneart",
+      "description": "Den toneart, dine toner passer bedst til. Det er et gæt."
+    },
+    "soundProfile": {
+      "name": "Sådan lyder det",
+      "description": "Hver skyder viser, hvilket ord der passer bedst til din sang."
+    },
+    "rangeUsed": {
+      "name": "Brugt toneomfang",
+      "description": "Dine toner fra dybeste til højeste, uden hurtige smutter. Kortets skala kan nå lidt længere."
+    },
+    "howSteady": {
+      "name": "Så stabilt var det",
+      "description": "Hvor godt du holdt dine toner og blev i tonearten, ikke hvor god din stemme er."
+    },
     "solfege": {
       "name": "DO RE MI",
       "description": "Navne på tonerne i en skala: DO RE MI FA SO LA TI DO."

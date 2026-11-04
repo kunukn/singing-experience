@@ -806,6 +806,30 @@
       "name": "Kiwango cha sauti",
       "description": "Noti kutoka ya chini kabisa hadi ya juu kabisa unayoweza kuimba. Chagua inayokufaa vizuri."
     },
+    "yourMelody": {
+      "name": "Wimbo wako",
+      "description": "Mstari ni sauti yako. Vitalu ni noti tulizosikia."
+    },
+    "notesUsed": {
+      "name": "Noti ulizotumia",
+      "description": "Noti ulizoimba na muda ulioimba kila moja."
+    },
+    "likelyKey": {
+      "name": "Skeli inayowezekana",
+      "description": "Skeli inayolingana zaidi na noti zako. Ni kisio tu."
+    },
+    "soundProfile": {
+      "name": "Inavyosikika",
+      "description": "Kila kitelezi kinaonyesha neno linalofaa zaidi uimbaji wako."
+    },
+    "rangeUsed": {
+      "name": "Masafa yaliyotumika",
+      "description": "Noti zako kutoka ya chini hadi ya juu, bila makosa ya haraka. Kipimo cha ramani kinaweza kwenda mbali kidogo."
+    },
+    "howSteady": {
+      "name": "Ilikuwa thabiti kiasi gani",
+      "description": "Jinsi ulivyoshikilia noti zako na kubaki kwenye skeli, si uzuri wa sauti yako."
+    },
     "solfege": {
       "name": "DO RE MI",
       "description": "Majina ya noti za mizani: DO RE MI FA SO LA TI DO."

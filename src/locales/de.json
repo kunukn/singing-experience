@@ -806,6 +806,30 @@
       "name": "Stimmumfang",
       "description": "Die Töne von deinem tiefsten bis zu deinem höchsten. Wähl einen, der sich gut anfühlt."
     },
+    "yourMelody": {
+      "name": "Deine Melodie",
+      "description": "Die Linie ist deine Stimme. Die Blöcke sind die Töne, die wir gehört haben."
+    },
+    "notesUsed": {
+      "name": "Deine Töne",
+      "description": "Die Töne, die du gesungen hast, und wie lange du jeden gesungen hast."
+    },
+    "likelyKey": {
+      "name": "Wahrscheinliche Tonart",
+      "description": "Die Tonart, zu der deine Töne am besten passen. Das ist eine Schätzung."
+    },
+    "soundProfile": {
+      "name": "So klingt es",
+      "description": "Jeder Regler zeigt, welches Wort besser zu deinem Gesang passt."
+    },
+    "rangeUsed": {
+      "name": "Genutzter Tonumfang",
+      "description": "Deine Töne vom tiefsten bis zum höchsten, ohne kurze Ausrutscher. Die Skala der Karte kann etwas weiter reichen."
+    },
+    "howSteady": {
+      "name": "So sicher war es",
+      "description": "Wie gut du deine Töne gehalten hast und in der Tonart geblieben bist, nicht wie gut deine Stimme ist."
+    },
     "solfege": {
       "name": "DO RE MI",
       "description": "Namen für die Töne einer Tonleiter: DO RE MI FA SO LA TI DO."
