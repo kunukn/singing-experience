@@ -61,6 +61,7 @@ declare global {
   const h: typeof import('vue').h
   const inject: typeof import('vue').inject
   const isAccidentalStyle: typeof import('./composables/accidentalStyle').isAccidentalStyle
+  const isGuitarAudioRunning: typeof import('./composables/useGuitarSampler').isGuitarAudioRunning
   const isProxy: typeof import('vue').isProxy
   const isReactive: typeof import('vue').isReactive
   const isReadonly: typeof import('vue').isReadonly
@@ -103,6 +104,7 @@ declare global {
   const toValue: typeof import('vue').toValue
   const toneLabelModeToFlags: typeof import('./composables/toneLabelMode').toneLabelModeToFlags
   const triggerRef: typeof import('vue').triggerRef
+  const unlockGuitarAudio: typeof import('./composables/useGuitarSampler').unlockGuitarAudio
   const unref: typeof import('vue').unref
   const useAccidentalStyle: typeof import('./composables/accidentalStyle').useAccidentalStyle
   const useAttrs: typeof import('vue').useAttrs
@@ -240,6 +242,7 @@ declare module 'vue' {
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly isAccidentalStyle: UnwrapRef<typeof import('./composables/accidentalStyle')['isAccidentalStyle']>
+    readonly isGuitarAudioRunning: UnwrapRef<typeof import('./composables/useGuitarSampler')['isGuitarAudioRunning']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
@@ -281,6 +284,7 @@ declare module 'vue' {
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
     readonly toneLabelModeToFlags: UnwrapRef<typeof import('./composables/toneLabelMode')['toneLabelModeToFlags']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
+    readonly unlockGuitarAudio: UnwrapRef<typeof import('./composables/useGuitarSampler')['unlockGuitarAudio']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAccidentalStyle: UnwrapRef<typeof import('./composables/accidentalStyle')['useAccidentalStyle']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>

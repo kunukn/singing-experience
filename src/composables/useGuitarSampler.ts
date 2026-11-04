@@ -217,6 +217,26 @@ export async function prewarmGuitarFretboard(): Promise<void> {
   await Promise.all([loadStandard(), loadExtra()])
 }
 
+/*
+ * Whether a note triggered now would actually sound. Anything but 'running' is
+ * no: iOS adds an 'interrupted' state beyond the spec's 'suspended' (see
+ * toneEngine.ts).
+ */
+export function isGuitarAudioRunning(): boolean {
+  return toneModule?.getContext().state === 'running'
+}
+
+/*
+ * Best-effort, fire-and-forget resume for gestures that cannot wait on it. The
+ * browser may refuse or leave it pending outside a user gesture, which is why
+ * nothing here awaits it: the next attempt, or a tap, gets another go.
+ */
+export function unlockGuitarAudio(): void {
+  if (!toneModule || isGuitarAudioRunning()) return
+
+  toneModule.start().catch(() => {})
+}
+
 type UseGuitarSamplerOptions = {
   /* Frequency of A4 the samples are retuned to. Defaults to 440 (as recorded).
    * Tone.Sampler repitches fractionally, so 432 plays every string 32¢ flat. */

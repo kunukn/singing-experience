@@ -16,10 +16,12 @@ import {
   buildGuitarLayout,
   guitarBoardAvailableHeight,
   guitarDuetMidiMax,
+  guitarFretAtY,
   guitarFretMidi,
   guitarFretY,
   guitarMidiMax,
   guitarMidiMin,
+  stringsCrossedBetween,
 } from './guitarLayout'
 
 /* String 6 is index 0 (leftmost), string 1 is index 5. */
@@ -444,5 +446,59 @@ describe('buildGuitarBoardScale', () => {
 
       expect(scale.gutterFontSize).toBeLessThan(scale.labelFontSize)
     }
+  })
+})
+
+describe('stringsCrossedBetween', () => {
+  /* Lines sit at 30, 90, 150, 210, 270 and 330. */
+  const STRING_WIDTH = 60
+
+  it('returns every string on a full swipe, in travel order', () => {
+    expect(stringsCrossedBetween(0, 360, STRING_WIDTH)).toEqual([
+      0, 1, 2, 3, 4, 5,
+    ])
+    expect(stringsCrossedBetween(360, 0, STRING_WIDTH)).toEqual([
+      5, 4, 3, 2, 1, 0,
+    ])
+  })
+
+  it('returns only the strings inside the segment', () => {
+    expect(stringsCrossedBetween(80, 160, STRING_WIDTH)).toEqual([1, 2])
+  })
+
+  it('returns nothing when no line lies between the two positions', () => {
+    expect(stringsCrossedBetween(35, 85, STRING_WIDTH)).toEqual([])
+    expect(stringsCrossedBetween(50, 50, STRING_WIDTH)).toEqual([])
+  })
+
+  it('counts a line once when the finger lands on it and moves on', () => {
+    expect(stringsCrossedBetween(20, 30, STRING_WIDTH)).toEqual([0])
+    expect(stringsCrossedBetween(30, 40, STRING_WIDTH)).toEqual([])
+    expect(stringsCrossedBetween(40, 30, STRING_WIDTH)).toEqual([0])
+    expect(stringsCrossedBetween(30, 20, STRING_WIDTH)).toEqual([])
+  })
+
+  it('ignores positions past the edges of the board', () => {
+    expect(stringsCrossedBetween(-100, 40, STRING_WIDTH)).toEqual([0])
+    expect(stringsCrossedBetween(320, 900, STRING_WIDTH)).toEqual([5])
+  })
+})
+
+describe('guitarFretAtY', () => {
+  it('returns the row under the position', () => {
+    expect(guitarFretAtY(0, 30)).toBe(0)
+    expect(guitarFretAtY(29, 30)).toBe(0)
+    expect(guitarFretAtY(30, 30)).toBe(1)
+  })
+
+  it('agrees with the centre guitarFretY draws a fret at', () => {
+    for (let fret = 0; fret <= GUITAR_MAX_FRET; fret++) {
+      expect(guitarFretAtY(guitarFretY(fret, 37), 37)).toBe(fret)
+    }
+  })
+
+  it('clamps to the board', () => {
+    expect(guitarFretAtY(-10, 30)).toBe(0)
+    expect(guitarFretAtY(100000, 30)).toBe(GUITAR_MAX_FRET)
   })
 })

@@ -386,6 +386,44 @@ export function guitarFretY(
   return (fretPosition + 0.5) * rowHeight
 }
 
+/** The fret row under a y position, in px from the top of the board. */
+export function guitarFretAtY(y: number, rowHeight: number): number {
+  return Math.min(Math.max(Math.floor(y / rowHeight), 0), GUITAR_MAX_FRET)
+}
+
+/**
+ * Strings whose line lies between two x positions, in px from the board's
+ * inline-start edge, ordered by direction of travel so an upstroke plays
+ * high-to-low.
+ *
+ * Works on the whole segment rather than on where the finger is now: a fast
+ * swipe moves further than a column between two pointermoves, and asking only
+ * which string is under the finger would skip the ones it flew over.
+ *
+ * Half-open, so a finger landing exactly on a line crosses it once rather than
+ * once on arrival and again on leaving. The line is the column's centre, the
+ * same place buildGuitarStringLines draws it.
+ */
+export function stringsCrossedBetween(
+  fromX: number,
+  toX: number,
+  stringWidth: number,
+): number[] {
+  const crossed: number[] = []
+
+  for (let stringIndex = 0; stringIndex < GUITAR_STRING_COUNT; stringIndex++) {
+    const lineX = (stringIndex + 0.5) * stringWidth
+    const isCrossed =
+      fromX < toX
+        ? fromX < lineX && lineX <= toX
+        : toX <= lineX && lineX < fromX
+
+    if (isCrossed) crossed.push(stringIndex)
+  }
+
+  return fromX < toX ? crossed : crossed.toReversed()
+}
+
 /*
  * Every cell of the board, built once per width change rather than once per
  * render — 6 strings × 23 rows is 138 of them.

@@ -45,6 +45,7 @@ import {
   buildGuitarBoardScale,
   buildGuitarLayout,
   guitarBoardAvailableHeight,
+  guitarFretMidi,
   isGuitarMarkerFret,
   type GuitarCell,
 } from './guitarLayout'
@@ -54,6 +55,7 @@ import {
   type GuitarPreviewLaneView,
 } from './guitarPreview'
 import { useGuitarFretPlayback } from './useGuitarFretPlayback'
+import { useGuitarStrum } from './useGuitarStrum'
 
 type Props = {
   midiMin: number
@@ -440,7 +442,27 @@ function previewCentsStyle(
  * @pointerdown would sound a note on the first touch of every such drag. `click` does not fire on a scroll gesture,
  * so touch plays on click; a mouse keeps pointerdown's instant response, where
  * the scrollbar makes drag-panning unnecessary anyway.
+ *
+ * Sideways is the third case: a swipe across the strings strums them. See
+ * useGuitarStrum, which also says whether a click is that swipe's leftover.
  */
+const board = useTemplateRef<HTMLElement>('board')
+
+const { consumeStrumClick } = useGuitarStrum({
+  target: board,
+  stringWidth: () => layout.value.stringWidth,
+  rowHeight: () => layout.value.rowHeight,
+  isAudioRunning: isGuitarAudioRunning,
+  unlockAudio: unlockGuitarAudio,
+  onPluck: (stringIndex, fret) => {
+    void playFret(
+      stringIndex,
+      fret,
+      guitarFretMidi(props.tuningMidi, stringIndex, fret),
+    )
+  },
+})
+
 function handlePointerDown(cell: GuitarCell) {
   if (isCoarsePointer.value) return
 
@@ -448,6 +470,7 @@ function handlePointerDown(cell: GuitarCell) {
 }
 
 function handleClick(cell: GuitarCell) {
+  if (consumeStrumClick()) return
   if (!isCoarsePointer.value) return
 
   void playFret(cell.stringIndex, cell.fret, cell.midi)
@@ -627,8 +650,12 @@ function handleClick(cell: GuitarCell) {
               </div>
             </div>
 
+            <!-- touch-pan-y: vertical pans stay the browser's, sideways swipes
+                 reach useGuitarStrum. The cells' touch-manipulation intersects
+                 with this, so it needs no change of its own. -->
             <div
-              class="guitar-board relative shrink-0"
+              ref="board"
+              class="guitar-board relative shrink-0 touch-pan-y touch-pinch-zoom"
               :style="{
                 width: `${layout.boardWidth}px`,
                 height: `${layout.boardHeight}px`,
