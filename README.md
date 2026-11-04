@@ -71,6 +71,7 @@ Available in 15 languages, covering roughly 68% of the world's population:
 - Your voice data is **never sent anywhere**
 - Most programs analyze your voice in real time and keep no audio
 - Voice Recorder saves your recording on your device until you clear it or record again
+- Pitch Detector saves the pitch line of your last recording, without audio, on your device until you clear it or record again
 
 You'll be asked to allow microphone access when you start a program. That's a standard browser permission, and you can revoke it any time in your browser settings.
 

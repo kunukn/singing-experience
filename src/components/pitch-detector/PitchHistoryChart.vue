@@ -18,7 +18,7 @@ import {
   scrollLeftToOffsetMs,
   type PitchHistoryTimeScale,
 } from './pitchHistoryScroll'
-import type { PitchSample } from './pitchLaneRecorder'
+import type { PitchSample, PitchTake } from './pitchLaneRecorder'
 import type {
   PitchLaneDetection,
   PitchLaneId,
@@ -316,7 +316,15 @@ function clearSamples() {
   canvasComponentRef.value?.clearSamples()
 }
 
-defineExpose({ gridNoteCount, getSamples, clearSamples })
+function getTake(): PitchTake | null {
+  return canvasComponentRef.value?.getTake() ?? null
+}
+
+function loadTake(take: PitchTake) {
+  canvasComponentRef.value?.loadTake(take)
+}
+
+defineExpose({ gridNoteCount, getSamples, clearSamples, getTake, loadTake })
 </script>
 
 <template>

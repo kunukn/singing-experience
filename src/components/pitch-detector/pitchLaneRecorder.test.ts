@@ -171,3 +171,59 @@ describe('pitchLaneExtent', () => {
     ).toBeNull()
   })
 })
+
+describe('recorder.restore', () => {
+  function recordingOf(midi: number) {
+    const source = createPitchLaneRecorder()
+    source.push(noteAt(midi), 100)
+    source.push(noteAt(midi), 100 + SUSTAIN_MS)
+
+    return { samples: source.samples, noteMarkers: source.noteMarkers }
+  }
+
+  it('fills the arrays the render loop already holds', () => {
+    const recorder = createPitchLaneRecorder()
+    const { samples, noteMarkers } = recorder
+
+    recorder.restore(recordingOf(60))
+
+    expect(recorder.samples).toBe(samples)
+    expect(recorder.noteMarkers).toBe(noteMarkers)
+    expect(samples).toHaveLength(2)
+    expect(noteMarkers).toHaveLength(1)
+  })
+
+  it('leaves the restored recording alone when the buffers change', () => {
+    const recording = recordingOf(60)
+    const recorder = createPitchLaneRecorder()
+
+    recorder.restore(recording)
+    recorder.reset()
+
+    expect(recording.samples).toHaveLength(2)
+  })
+
+  it('replaces whatever was there', () => {
+    const recorder = createPitchLaneRecorder()
+    recorder.push(noteAt(72), 50)
+
+    recorder.restore(recordingOf(60))
+
+    expect(recorder.samples.every((s) => Math.round(s.midiNote) === 60)).toBe(
+      true,
+    )
+  })
+
+  it('records normally after a restore and a reset', () => {
+    const recorder = createPitchLaneRecorder()
+    recorder.restore(recordingOf(60))
+    recorder.reset()
+
+    recorder.push(noteAt(62), 1000)
+    recorder.push(noteAt(62), 1000 + SUSTAIN_MS)
+
+    expect(recorder.samples).toHaveLength(2)
+    expect(recorder.noteMarkers).toHaveLength(1)
+    expect(recorder.noteMarkers[0].midiNote).toBe(62)
+  })
+})

@@ -467,7 +467,9 @@ export function useDuetPitchDetection(options: DuetPitchDetectionOptions) {
       }
     } else if (wasListeningBeforeHidden) {
       wasListeningBeforeHidden = false
-      void start()
+      /* The caller may have turned it off while hidden. Resuming anyway would
+       * open the microphone with nothing using it. */
+      if (shouldListen.value) void start()
     }
   }
 

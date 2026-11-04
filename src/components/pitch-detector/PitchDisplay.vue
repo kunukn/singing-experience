@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDoReMiPlaySequence } from '@/components/do-re-mi/useDoReMiPlaySequence'
 import { midiRangeToScaleNotes, NOTE_NAMES } from '@/utils/noteUtils'
+import { useEventListener } from '@vueuse/core'
 import PitchHistoryChart from './PitchHistoryChart.vue'
 import PitchIdleControls from './PitchIdleControls.vue'
 import PitchReadout from './PitchReadout.vue'
@@ -26,6 +27,9 @@ type Props = {
   rangeIndex?: number
   isPreviewEnabled?: boolean
   isMicPermissionGranted?: boolean
+  /* Save the recording and bring it back after a reload. Off by default, so test
+   * pages never touch a singer's saved take. */
+  persistTake?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -36,6 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
   rangeIndex: -1,
   isPreviewEnabled: false,
   isMicPermissionGranted: true,
+  persistTake: false,
 })
 
 const emit = defineEmits<{
@@ -99,10 +104,48 @@ function recordedSpanMs(
   return last - first
 }
 
+/* Shows the controls for whatever the chart now holds. */
+function refreshRecordingSummary() {
+  const lanes = pitchChartRef.value?.getSamples() ?? { low: [], high: [] }
+  const spanMs = recordedSpanMs(lanes)
+  hasSamples.value = spanMs !== null
+  recordedDurationSeconds.value =
+    spanMs === null ? null : (spanMs / 1000).toFixed(1)
+}
+
+const takeStore = props.persistTake ? usePitchTakeStore() : null
+
+function saveTake() {
+  const take = pitchChartRef.value?.getTake()
+  if (take) takeStore?.setTake(take)
+}
+
+/* Reloading or leaving mid-recording ends the take here, because neither gives
+ * the stop path below a chance to run. */
+function saveTakeIfRecording() {
+  if (props.isListening) saveTake()
+}
+
+useEventListener(window, 'pagehide', saveTakeIfRecording)
+onBeforeUnmount(saveTakeIfRecording)
+
+/* The take may already be in memory from an earlier visit. A recording started
+ * or finished while storage was loading is newer, so it stays. */
+onMounted(async () => {
+  if (!takeStore) return
+
+  await takeStore.restore()
+  if (props.isListening || hasSamples.value || !takeStore.take) return
+
+  pitchChartRef.value?.loadTake(takeStore.take)
+  refreshRecordingSummary()
+})
+
 watch(
   () => props.isListening,
   (listening) => {
     if (listening) {
+      takeStore?.clear()
       hasSamples.value = false
       recordedDurationSeconds.value = null
       stopReplay()
@@ -114,11 +157,8 @@ watch(
       stopListenTimer()
       listenElapsedSeconds.value = null
       nextTick(() => {
-        const lanes = pitchChartRef.value?.getSamples() ?? { low: [], high: [] }
-        const spanMs = recordedSpanMs(lanes)
-        hasSamples.value = spanMs !== null
-        recordedDurationSeconds.value =
-          spanMs === null ? null : (spanMs / 1000).toFixed(1)
+        refreshRecordingSummary()
+        saveTake()
       })
     }
   },
@@ -154,6 +194,7 @@ const timerLabel = computed<string | null>(() => {
 function clearRecording() {
   stopReplay()
   pitchChartRef.value?.clearSamples()
+  takeStore?.clear()
   hasSamples.value = false
   recordedDurationSeconds.value = null
 }

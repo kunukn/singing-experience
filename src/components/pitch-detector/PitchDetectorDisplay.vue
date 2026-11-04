@@ -2,7 +2,7 @@
 import type { ToneMode } from '@/composables/toneEngine'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { midiToNoteLabel, type NoteInfo } from '@/utils/noteUtils'
-import { useLocalStorage } from '@vueuse/core'
+import { useEventListener, useLocalStorage } from '@vueuse/core'
 import PitchDisplay from './PitchDisplay.vue'
 import PitchFocusPanel from './PitchFocusPanel.vue'
 import type { PitchLaneDetection, PitchPreviewLane } from './pitchLanes'
@@ -26,6 +26,9 @@ type Props = {
   /* Simulated test pages set this to keep every real-mic path shut — the idle
    * preview and, with it, the duet detector, which has no simulated source. */
   disableIdlePreview?: boolean
+  /* Keeps the Overview recording across reloads. Only the real page sets it, so
+   * test pages never touch a singer's saved take. */
+  persistTake?: boolean
 }
 
 const props = defineProps<Props>()
@@ -336,6 +339,13 @@ watch(effectiveDuetEnabled, () => {
   if (props.detection.isListening.value) stop()
 })
 
+/* A hidden tab ends a duet recording, as it does a single voice's. The duet
+ * detector only pauses its microphone, so without this the take would never
+ * stop, and so never be saved. */
+useEventListener(document, 'visibilitychange', () => {
+  if (document.hidden) isDuetRecording.value = false
+})
+
 /* The overview panel stays mounted behind the focus tab, so its replay and
  * reference sequence would keep sounding there — stop them on the way out. */
 watch(activeTab, (tab) => {
@@ -441,6 +451,7 @@ onUnmounted(() => {
           :rangeIndex="rangeIndex"
           :isPreviewEnabled="effectivePreviewEnabled"
           :isMicPermissionGranted="micPermission === 'granted'"
+          :persistTake="persistTake"
           @tonePlayed="handleTonePlayed"
           @selectRange="rangeIndex = $event"
         />

@@ -1,6 +1,7 @@
 import type { NoteInfo } from '@/utils/noteUtils'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { HISTORY_RETENTION_MS, PAUSE_GAP_MS } from './pitchConstants'
+import type { PitchLaneId } from './pitchLanes'
 
 /*
  * The recording state machine for ONE singing voice: the sample buffer that
@@ -35,11 +36,28 @@ export type NoteMarker = {
   showLabel: boolean
 }
 
+export type PitchLaneRecording = {
+  samples: PitchSample[]
+  noteMarkers: NoteMarker[]
+}
+
+/*
+ * A finished recording, in a form that can be stored and drawn again later.
+ * stoppedAtMs is on the same clock as the timestamps, and a stopped chart draws
+ * from it rather than from performance.now(). So the numbers stay correct after
+ * a reload, even though that clock has restarted.
+ */
+export type PitchTake = {
+  lanes: Record<PitchLaneId, PitchLaneRecording>
+  stoppedAtMs: number
+}
+
 export type PitchLaneRecorder = {
   readonly samples: PitchSample[]
   readonly noteMarkers: NoteMarker[]
   push: (noteInfo: NoteInfo, timestampMs: number) => void
   reset: () => void
+  restore: (recording: PitchLaneRecording) => void
 }
 
 /* How long a note must be held before a label marker appears on the chart */
@@ -145,7 +163,16 @@ export function createPitchLaneRecorder(): PitchLaneRecorder {
     wasTransition = false
   }
 
-  return { samples, noteMarkers, push, reset }
+  /* Fills the existing arrays, since the render loop holds on to them. The
+   * marker state stays reset: a restored take is only drawn, and the next
+   * recording starts with its own reset. */
+  function restore(recording: PitchLaneRecording) {
+    reset()
+    samples.push(...recording.samples)
+    noteMarkers.push(...recording.noteMarkers)
+  }
+
+  return { samples, noteMarkers, push, reset, restore }
 }
 
 /* The wall-clock span covered by every lane that recorded anything, so the

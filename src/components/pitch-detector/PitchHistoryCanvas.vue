@@ -16,6 +16,7 @@ import {
   pitchLaneExtent,
   type PitchLaneRecorder,
   type PitchSample,
+  type PitchTake,
 } from './pitchLaneRecorder'
 import {
   PITCH_LANE_IDS,
@@ -982,7 +983,36 @@ function clearSamples() {
   drawChart()
 }
 
-defineExpose({ getSamples, clearSamples, handlePointerAt })
+/* The recording as it can be saved, or null when nothing was recorded. Copies,
+ * because the live buffers are mutated in place. Called mid-recording when the
+ * page is going away, before pausedAt is set, so that moment counts as the stop. */
+function getTake(): PitchTake | null {
+  if (PITCH_LANE_IDS.every((id) => recorders[id].samples.length === 0)) {
+    return null
+  }
+
+  const copyLane = (id: PitchLaneId) => ({
+    samples: [...recorders[id].samples],
+    noteMarkers: [...recorders[id].noteMarkers],
+  })
+
+  return {
+    lanes: { low: copyLane('low'), high: copyLane('high') },
+    stoppedAtMs: pausedAt ?? performance.now(),
+  }
+}
+
+/* Setting pausedAt is what lets this draw without a microphone: a stopped chart
+ * reads its time from there, on the same clock as the restored timestamps. */
+function loadTake(take: PitchTake) {
+  for (const laneId of PITCH_LANE_IDS) {
+    recorders[laneId].restore(take.lanes[laneId])
+  }
+  pausedAt = take.stoppedAtMs
+  drawChart()
+}
+
+defineExpose({ getSamples, clearSamples, getTake, loadTake, handlePointerAt })
 
 onUnmounted(() => {
   stopRendering()

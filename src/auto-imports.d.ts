@@ -138,6 +138,7 @@ declare global {
   const usePitchDetection: typeof import('./composables/usePitchDetection').usePitchDetection
   const usePitchPreviewColor: typeof import('./composables/usePitchPreviewColor').usePitchPreviewColor
   const usePitchSnap: typeof import('./composables/usePitchSnap').usePitchSnap
+  const usePitchTakeStore: typeof import('./stores/usePitchTakeStore').usePitchTakeStore
   const useReferencePitch: typeof import('./composables/useReferencePitch').useReferencePitch
   const useRoute: typeof import('vue-router').useRoute
   const useRouter: typeof import('vue-router').useRouter
@@ -315,6 +316,7 @@ declare module 'vue' {
     readonly usePitchDetection: UnwrapRef<typeof import('./composables/usePitchDetection')['usePitchDetection']>
     readonly usePitchPreviewColor: UnwrapRef<typeof import('./composables/usePitchPreviewColor')['usePitchPreviewColor']>
     readonly usePitchSnap: UnwrapRef<typeof import('./composables/usePitchSnap')['usePitchSnap']>
+    readonly usePitchTakeStore: UnwrapRef<typeof import('./stores/usePitchTakeStore')['usePitchTakeStore']>
     readonly useReferencePitch: UnwrapRef<typeof import('./composables/useReferencePitch')['useReferencePitch']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>

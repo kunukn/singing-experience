@@ -1,10 +1,24 @@
-import { describe, expect, test } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { flushPromises, mount } from '@vue/test-utils'
+import { createPinia, setActivePinia } from 'pinia'
+import { nextTick } from 'vue'
 import { createI18n } from 'vue-i18n'
+import {
+  deleteSavedPitchTake,
+  loadPitchTake,
+  savePitchTake,
+} from '@/components/pitch-detector/pitchTakePersistence'
 import en from '@/locales/en.json'
 import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
 import PitchDisplay from './PitchDisplay.vue'
+import type { PitchTake } from './pitchLaneRecorder'
 import type { PitchLaneDetection, PitchLaneId } from './pitchLanes'
+
+vi.mock('@/components/pitch-detector/pitchTakePersistence', () => ({
+  savePitchTake: vi.fn(),
+  loadPitchTake: vi.fn(),
+  deleteSavedPitchTake: vi.fn(),
+}))
 
 function createTestI18n() {
   return createI18n({ legacy: false, locale: 'en', messages: { en } })
@@ -64,5 +78,142 @@ describe('PitchDisplay', () => {
     /* The octave digits are what separate C4 from G5 in the rendered text. */
     expect(wrapper.text()).toContain('4')
     expect(wrapper.text()).toContain('5')
+  })
+})
+
+describe('PitchDisplay recording persistence', () => {
+  /* 1.5 s from the first sample to the last, shown as the recording's length. */
+  const createTake = (): PitchTake => ({
+    lanes: {
+      low: {
+        samples: [
+          { midiNote: C4, timestamp: 1000, isClean: true, cents: 0 },
+          { midiNote: C4, timestamp: 2500, isClean: true, cents: 0 },
+        ],
+        noteMarkers: [],
+      },
+      high: { samples: [], noteMarkers: [] },
+    },
+    stoppedAtMs: 2600,
+  })
+
+  function mountPersisted(persistTake = true) {
+    return mount(PitchDisplay, {
+      global: { plugins: [createTestI18n()] },
+      props: {
+        laneDetections: [laneDetection('low', C4)],
+        isListening: false,
+        persistTake,
+      },
+    })
+  }
+
+  beforeEach(() => {
+    setActivePinia(createPinia())
+    vi.mocked(savePitchTake).mockReset().mockResolvedValue()
+    vi.mocked(deleteSavedPitchTake).mockReset().mockResolvedValue()
+    vi.mocked(loadPitchTake).mockReset().mockResolvedValue(null)
+  })
+
+  test('should show a saved take with its controls after a reload', async () => {
+    vi.mocked(loadPitchTake).mockResolvedValue(createTake())
+
+    const wrapper = mountPersisted()
+    await flushPromises()
+
+    expect(wrapper.find('[data-testid="btn-replay-sound"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="btn-clear-recording"]').exists()).toBe(
+      true,
+    )
+    expect(wrapper.find('[data-testid="pitch-timer"]').text()).toContain('1.5s')
+  })
+
+  test('should delete the saved take when Clear is pressed', async () => {
+    vi.mocked(loadPitchTake).mockResolvedValue(createTake())
+
+    const wrapper = mountPersisted()
+    await flushPromises()
+    await wrapper.find('[data-testid="btn-clear-recording"]').trigger('click')
+
+    expect(deleteSavedPitchTake).toHaveBeenCalledOnce()
+    expect(wrapper.find('[data-testid="btn-clear-recording"]').exists()).toBe(
+      false,
+    )
+  })
+
+  test('should delete the saved take when a new recording starts', async () => {
+    vi.mocked(loadPitchTake).mockResolvedValue(createTake())
+
+    const wrapper = mountPersisted()
+    await flushPromises()
+    await wrapper.setProps({ isListening: true })
+
+    expect(deleteSavedPitchTake).toHaveBeenCalledOnce()
+    expect(wrapper.find('[data-testid="btn-replay-sound"]').exists()).toBe(
+      false,
+    )
+  })
+
+  test('should save the take when recording stops', async () => {
+    const wrapper = mountPersisted()
+    await flushPromises()
+
+    await wrapper.setProps({ isListening: true })
+    await wrapper.setProps({
+      laneDetections: [laneDetection('low', C4)],
+    })
+    await wrapper.setProps({ isListening: false })
+    await nextTick()
+
+    expect(savePitchTake).toHaveBeenCalledOnce()
+    const saved = vi.mocked(savePitchTake).mock.calls[0][0]
+    expect(saved.lanes.low.samples).toHaveLength(1)
+  })
+
+  test('should save nothing when a recording caught no pitch', async () => {
+    const wrapper = mountPersisted()
+    await flushPromises()
+
+    await wrapper.setProps({ isListening: true })
+    await wrapper.setProps({ isListening: false })
+    await nextTick()
+
+    expect(savePitchTake).not.toHaveBeenCalled()
+  })
+
+  test('should save a recording still running when the page reloads', async () => {
+    const wrapper = mountPersisted()
+    await flushPromises()
+
+    await wrapper.setProps({ isListening: true })
+    await wrapper.setProps({ laneDetections: [laneDetection('low', C4)] })
+    window.dispatchEvent(new Event('pagehide'))
+
+    expect(savePitchTake).toHaveBeenCalledOnce()
+  })
+
+  test('should save a recording still running when leaving the page', async () => {
+    const wrapper = mountPersisted()
+    await flushPromises()
+
+    await wrapper.setProps({ isListening: true })
+    await wrapper.setProps({ laneDetections: [laneDetection('low', C4)] })
+    wrapper.unmount()
+
+    expect(savePitchTake).toHaveBeenCalledOnce()
+  })
+
+  test('should leave storage alone without persistTake', async () => {
+    const wrapper = mountPersisted(false)
+    await flushPromises()
+
+    await wrapper.setProps({ isListening: true })
+    await wrapper.setProps({ laneDetections: [laneDetection('low', C4)] })
+    await wrapper.setProps({ isListening: false })
+    await nextTick()
+
+    expect(loadPitchTake).not.toHaveBeenCalled()
+    expect(savePitchTake).not.toHaveBeenCalled()
+    expect(deleteSavedPitchTake).not.toHaveBeenCalled()
   })
 })

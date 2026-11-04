@@ -65,6 +65,10 @@ type UsePitchDetectionOptions = {
    * semitone, which background noise causes and a voice can't make (see
    * JUMP_CONFIRM_MS). A real jump shows once it holds, a little later. */
   rejectSpikes?: boolean
+  /* Listening always stops while the tab is hidden. Defaults to true: it starts
+   * again on return. The Pitch Detector turns this off, because starting again
+   * would replace the singer's saved recording without them asking. */
+  resumeOnVisible?: boolean
 }
 
 /* Linear Q of the two stages of a 4th-order Butterworth low-pass: flat below
@@ -109,7 +113,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
   function handleVisibilityChange() {
     if (document.hidden) {
       if (isListening.value) {
-        wasListeningBeforeHidden = true
+        wasListeningBeforeHidden = options.resumeOnVisible ?? true
         stop()
       }
     } else {
