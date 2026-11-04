@@ -173,7 +173,7 @@
         "description": "Enregistre ton chant, réécoute-le et regarde les notes que tu as chantées."
       }
     },
-    "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Aucun son n'est enregistré ni envoyé."
+    "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Ta voix n'est jamais envoyée nulle part. Tes enregistrements restent sur ton appareil."
   },
   "tools": {
     "subtitle": "Choisis un outil"

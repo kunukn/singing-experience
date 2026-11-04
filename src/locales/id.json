@@ -173,7 +173,7 @@
         "description": "Rekam nyanyianmu, putar lagi, dan lihat nada yang kamu nyanyikan."
       }
     },
-    "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Tidak ada audio yang direkam atau dikirim ke mana pun."
+    "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Suaramu tidak pernah dikirim ke mana pun. Rekaman yang kamu buat tetap di perangkatmu."
   },
   "tools": {
     "subtitle": "Pilih alat"

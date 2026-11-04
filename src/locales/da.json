@@ -173,7 +173,7 @@
         "description": "Optag din sang, hør den igen, og se de toner, du sang."
       }
     },
-    "privacy": "Dit privatliv er sikkert — denne app kører 100% i din browser. Ingen lyd optages eller sendes nogen steder."
+    "privacy": "Dit privatliv er sikkert — denne app kører 100% i din browser. Din stemme sendes aldrig nogen steder hen. Optagelser, du laver, bliver på din enhed."
   },
   "tools": {
     "subtitle": "Vælg et værktøj"

@@ -173,7 +173,7 @@
         "description": "Nimm deinen Gesang auf, hör ihn dir an und sieh, welche Töne du gesungen hast."
       }
     },
-    "privacy": "Deine Privatsphäre ist geschützt – diese App läuft vollständig im Browser. Kein Audio wird aufgezeichnet oder übertragen."
+    "privacy": "Deine Privatsphäre ist geschützt – diese App läuft vollständig im Browser. Deine Stimme wird nirgendwohin gesendet. Aufnahmen, die du machst, bleiben auf deinem Gerät."
   },
   "tools": {
     "subtitle": "Wähl ein Werkzeug"

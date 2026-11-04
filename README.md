@@ -31,8 +31,8 @@ Everything is reachable from the home screen, split into <img src="docs/icons/to
 | <img src="docs/icons/piano.svg" width="20" height="20" align="absmiddle" alt="" /> Piano `beta`                           | Play the keys and watch your voice land on the keyboard                                                                          |
 | <img src="docs/icons/guitar.svg" width="20" height="20" align="absmiddle" alt="" /> Guitar `beta`                         | Play the fretboard and watch your voice land on it                                                                               |
 | <img src="docs/icons/scale-detector.svg" width="20" height="20" align="absmiddle" alt="" /> Chord & Scale Detector `beta` | Sing or play a few notes and see which chords and scales fit — plus twins with the same notes                                    |
-| <img src="docs/icons/song-recorder.svg" width="20" height="20" align="absmiddle" alt="" /> Song Recorder `alpha`          | Sing a tune to a metronome and see it as sheet music; copy the ABC notation                                                      |
 | <img src="docs/icons/voice-recorder.svg" width="20" height="20" align="absmiddle" alt="" /> Voice Recorder `beta`         | Record your singing, play it back and download it; see the notes you sang and how steady they were                               |
+| <img src="docs/icons/song-recorder.svg" width="20" height="20" align="absmiddle" alt="" /> Song Recorder `alpha`          | Sing a tune to a metronome and see it as sheet music; copy the ABC notation                                                      |
 | <img src="docs/icons/tone-detector.svg" width="20" height="20" align="absmiddle" alt="" /> Tone Detector `alpha`          | Picks up several notes at once — sing or play a harmony and see every tone                                                       |
 | <img src="docs/icons/tuner.svg" width="20" height="20" align="absmiddle" alt="" /> Instrument Tuner                       | Guitar and ukulele tunings with a cents bar and an in-tune chime                                                                 |
 
@@ -68,9 +68,9 @@ Available in 15 languages, covering roughly 68% of the world's population:
 
 **Everything happens on your device.** This is a static app — there is no server and no backend.
 
-- Your microphone audio is **never recorded**
 - Your voice data is **never sent anywhere**
-- The app analyzes your voice in real time and shows the result on screen, nothing more
+- Most programs analyze your voice in real time and keep no audio
+- Voice Recorder saves your recording on your device until you clear it or record again
 
 You'll be asked to allow microphone access when you start a program. That's a standard browser permission, and you can revoke it any time in your browser settings.
 
