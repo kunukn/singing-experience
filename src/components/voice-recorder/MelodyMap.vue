@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useEventListener, useResizeObserver } from '@vueuse/core'
+import { useEventListener, useResizeObserver, useTimeoutFn } from '@vueuse/core'
 
 import { getGridMidis } from '@/utils/chartGrid'
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
@@ -36,6 +36,17 @@ const NOTE_CORNER_RADIUS_PX = 4
 const LABEL_FONT = '11px system-ui, sans-serif'
 const LABEL_HEIGHT_PX = 16
 const LABEL_BACKING_OPACITY = 0.85
+/* Gap between the pointer and the note label beside it. */
+const HOVER_LABEL_GAP_PX = 8
+/* Puts the label just above a mouse pointer. */
+const MOUSE_LABEL_OFFSET_Y_PX = 30
+/* Clears a fingertip, which would otherwise cover a label beside the tap. */
+const TOUCH_LABEL_OFFSET_Y_PX = 48
+/* A fingertip is about 10 mm across, and note blocks can be 4 px tall, so a tap
+ * this close to a note counts as on it. */
+const TOUCH_HIT_TOLERANCE_PX = 16
+/* Long enough to read, gone before it gets in the way. */
+const TAP_LABEL_MS = 3000
 
 type Props = {
   analysis: TakeAnalysis
@@ -56,7 +67,20 @@ const scrollerElement = useTemplateRef<HTMLDivElement>('scrollerElement')
 const canvasElement = useTemplateRef<HTMLCanvasElement>('canvasElement')
 
 const viewportWidth = ref(0)
-const hover = shallowRef<{ note: TakeNote; x: number; y: number } | null>(null)
+type NoteHit = { note: TakeNote; x: number; y: number }
+
+/* Touch has no hover, so a tap shows the label for a moment instead. */
+const hover = shallowRef<(NoteHit & { isTouch: boolean }) | null>(null)
+/* Read at pointerdown: Safari's click doesn't reliably say what was used. */
+let lastPointerType = 'mouse'
+
+const { start: startTapLabelTimer, stop: stopTapLabelTimer } = useTimeoutFn(
+  () => {
+    hover.value = null
+  },
+  TAP_LABEL_MS,
+  { immediate: false },
+)
 
 const contentWidth = computed(() =>
   contentWidthFor(props.analysis.durationMs, viewportWidth.value),
@@ -81,6 +105,21 @@ const hoverLabel = computed(() => {
   const sign = cents > 0 ? '+' : ''
 
   return `${midiToNoteLabel(note.midi).label} ${sign}${cents}¢`
+})
+
+/* A tap's label flips to the left in the right half, so it stays on a phone's
+ * screen. */
+const hoverLabelStyle = computed(() => {
+  if (!hover.value) return {}
+
+  const { x, y, isTouch } = hover.value
+  const isFlipped = isTouch && x > viewportWidth.value / 2
+
+  return {
+    left: `${isFlipped ? x - HOVER_LABEL_GAP_PX : x + HOVER_LABEL_GAP_PX}px`,
+    top: `${y - (isTouch ? TOUCH_LABEL_OFFSET_Y_PX : MOUSE_LABEL_OFFSET_Y_PX)}px`,
+    transform: isFlipped ? 'translateX(-100%)' : undefined,
+  }
 })
 
 function midiToY(midi: number): number {
@@ -338,26 +377,91 @@ function pointerToContentX(event: MouseEvent): number {
   return event.clientX - bounds.left + scroller.scrollLeft
 }
 
+/* The note nearest the pointer in pitch, among those within the given distances
+ * of it in pitch and time. */
+function findNoteAt(
+  event: MouseEvent,
+  tolerance: { pitchPx: number; timePx: number },
+): NoteHit | null {
+  const scroller = scrollerElement.value
+  if (!scroller) return null
+
+  const contentX = pointerToContentX(event)
+  const timeMs = contentXToTime(contentX, timeAxis.value)
+  const slackMs = Math.abs(
+    contentXToTime(contentX + tolerance.timePx, timeAxis.value) - timeMs,
+  )
+  const bounds = scroller.getBoundingClientRect()
+  const y = event.clientY - bounds.top
+
+  let nearest: TakeNote | null = null
+  let nearestDistance = tolerance.pitchPx
+  for (const candidate of props.analysis.notes) {
+    if (
+      timeMs < candidate.startMs - slackMs ||
+      timeMs > candidate.endMs + slackMs
+    ) {
+      continue
+    }
+
+    const distance = Math.abs(midiToY(candidate.midi) - y)
+    if (distance <= nearestDistance) {
+      nearest = candidate
+      nearestDistance = distance
+    }
+  }
+
+  return nearest ? { note: nearest, x: event.clientX - bounds.left, y } : null
+}
+
+function halfNoteRowPx(): number {
+  return Math.max(MIN_NOTE_HEIGHT_PX, semitoneHeight()) / 2
+}
+
+function handlePointerDown(event: PointerEvent) {
+  lastPointerType = event.pointerType
+}
+
 function handleClick(event: MouseEvent) {
   emit('seek', contentXToTime(pointerToContentX(event), timeAxis.value))
+
+  if (lastPointerType !== 'touch') return
+
+  const hit = findNoteAt(event, {
+    pitchPx: Math.max(halfNoteRowPx(), TOUCH_HIT_TOLERANCE_PX),
+    timePx: TOUCH_HIT_TOLERANCE_PX,
+  })
+  if (!hit) {
+    stopTapLabelTimer()
+    hover.value = null
+
+    return
+  }
+
+  /* Above the note's block rather than the fingertip, which may sit beside it. */
+  hover.value = { ...hit, y: midiToY(hit.note.midi), isTouch: true }
+  startTapLabelTimer()
 }
 
 function handlePointerMove(event: PointerEvent) {
-  const scroller = scrollerElement.value
-  if (!scroller || event.pointerType === 'touch') return
+  if (event.pointerType === 'touch') return
 
-  const timeMs = contentXToTime(pointerToContentX(event), timeAxis.value)
-  const bounds = scroller.getBoundingClientRect()
-  const y = event.clientY - bounds.top
-  const halfRow = Math.max(MIN_NOTE_HEIGHT_PX, semitoneHeight()) / 2
-  const note = props.analysis.notes.find(
-    (candidate) =>
-      timeMs >= candidate.startMs &&
-      timeMs <= candidate.endMs &&
-      Math.abs(midiToY(candidate.midi) - y) <= halfRow,
-  )
+  const hit = findNoteAt(event, { pitchPx: halfNoteRowPx(), timePx: 0 })
+  hover.value = hit ? { ...hit, isTouch: false } : null
+}
 
-  hover.value = note ? { note, x: event.clientX - bounds.left, y } : null
+/* A finger "leaves" as it lifts, just before the tap's click. */
+function handlePointerLeave(event: PointerEvent) {
+  if (event.pointerType !== 'touch') hover.value = null
+}
+
+function handleScroll() {
+  requestDraw()
+  /* The label is placed against the viewport, so it would drift off its note. */
+  if (hover.value?.isTouch) {
+    stopTapLabelTimer()
+    hover.value = null
+  }
 }
 
 useResizeObserver(scrollerElement, ([entry]) => {
@@ -365,7 +469,7 @@ useResizeObserver(scrollerElement, ([entry]) => {
   requestDraw()
 })
 
-useEventListener(scrollerElement, 'scroll', requestDraw, { passive: true })
+useEventListener(scrollerElement, 'scroll', handleScroll, { passive: true })
 
 onMounted(() => {
   const scroller = scrollerElement.value
@@ -417,8 +521,9 @@ watch([() => props.analysis, isRtl, isDark], requestDraw)
       :aria-label="t('voiceRecorder.melody.ariaLabel')"
       class="cursor-pointer overflow-x-auto overflow-y-hidden rounded-lg border border-(--p-content-border-color) bg-(--p-content-background)"
       @click="handleClick"
+      @pointerdown="handlePointerDown"
       @pointermove="handlePointerMove"
-      @pointerleave="hover = null"
+      @pointerleave="handlePointerLeave"
     >
       <div
         :style="{ width: `${contentWidth}px`, height: `${MAP_HEIGHT_PX}px` }"
@@ -434,8 +539,9 @@ watch([() => props.analysis, isRtl, isDark], requestDraw)
       v-if="hover"
       dir="ltr"
       class="pointer-events-none absolute z-10 rounded bg-(--p-content-background) px-2 py-1 text-xs whitespace-nowrap text-(--p-text-color) shadow-md"
-      :style="{ left: `${hover.x + 8}px`, top: `${hover.y - 30}px` }"
+      :style="hoverLabelStyle"
       data-testid="melody-map-tooltip"
+      :data-touch="hover.isTouch"
     >
       {{ hoverLabel }}
     </div>
