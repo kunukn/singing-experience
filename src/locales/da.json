@@ -161,7 +161,7 @@
         "description": "Se hver node på nodelinjen og lær dens navn."
       },
       "songRecorder": {
-        "name": "Sangoptager",
+        "name": "Melodiskriver",
         "description": "Syng en melodi og se den blive til noder."
       },
       "circleOfFifths": {

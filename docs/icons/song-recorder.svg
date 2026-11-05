@@ -1,7 +1,7 @@
 <svg width="40" height="40" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
   <style>
-    svg { --icon-strong: #e11d48; --icon-accent: #f43f5e; --icon-light: #ffffff; }
-    @media (prefers-color-scheme: dark) { svg { --icon-strong: #fb7185; --icon-accent: #fb7185; --icon-light: #f4f4f5; } }
+    svg { --icon-strong: #4f46e5; --icon-accent: #6366f1; --icon-light: #ffffff; }
+    @media (prefers-color-scheme: dark) { svg { --icon-strong: #818cf8; --icon-accent: #818cf8; --icon-light: #f4f4f5; } }
   </style>
   <rect x="1" y="1" width="38" height="38" rx="10" fill="var(--icon-strong)" fill-opacity="0.16"></rect>
   <path d="M7 17v6M10.5 12.5v15M14 15.5v9M17.5 18.5v3" stroke="var(--icon-strong)" stroke-width="2.5"></path>

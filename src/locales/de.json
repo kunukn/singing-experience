@@ -161,7 +161,7 @@
         "description": "Sieh jede Note im Notensystem und lerne ihren Namen."
       },
       "songRecorder": {
-        "name": "Song-Rekorder",
+        "name": "Melodie-Schreiber",
         "description": "Sing eine Melodie und sieh, wie sie zu Noten wird."
       },
       "circleOfFifths": {

@@ -161,7 +161,7 @@
         "description": "看看五线谱上的每个音符，学会它的名字。"
       },
       "songRecorder": {
-        "name": "歌曲录音机",
+        "name": "旋律记谱",
         "description": "唱一段旋律，看它变成乐谱。"
       },
       "circleOfFifths": {

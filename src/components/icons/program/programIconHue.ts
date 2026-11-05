@@ -5,6 +5,7 @@ export type ProgramIconHue =
   | 'teal'
   | 'blue'
   | 'sky'
+  | 'indigo'
   | 'purple'
   | 'rose'
   | 'red'

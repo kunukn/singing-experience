@@ -161,7 +161,7 @@
         "description": "Ve cada nota en el pentagrama y aprende su nombre."
       },
       "songRecorder": {
-        "name": "Grabadora de canciones",
+        "name": "Escritor de melodías",
         "description": "Canta una melodía y mírala convertirse en partitura."
       },
       "circleOfFifths": {

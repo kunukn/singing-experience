@@ -75,7 +75,7 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
       'Sing or play a few notes and see which chord they spell, from triads to 9th chords, or which scales fit — major, minor, pentatonic, blues and the church modes — plus the twins that share the same notes.',
   },
   '/song-recorder': {
-    title: 'Song Recorder — Sing to Sheet Music',
+    title: 'Melody Writer — Sing to Sheet Music',
     description:
       'Sing a melody to a metronome and see it written as sheet music. Play it back and copy the ABC notation.',
   },

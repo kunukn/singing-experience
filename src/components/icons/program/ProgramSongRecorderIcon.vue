@@ -1,5 +1,5 @@
 <template>
-  <ProgramIconTile hue="rose">
+  <ProgramIconTile hue="indigo">
     <!-- A sung waveform turning into written notes -->
     <path
       d="M7 17v6M10.5 12.5v15M14 15.5v9M17.5 18.5v3"

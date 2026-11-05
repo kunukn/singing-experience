@@ -161,7 +161,7 @@
         "description": "五線の上のすべての音符を見て、名前をおぼえよう。"
       },
       "songRecorder": {
-        "name": "うたレコーダー",
+        "name": "メロディーライター",
         "description": "メロディを歌うと、楽譜になるよ。"
       },
       "circleOfFifths": {
