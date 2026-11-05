@@ -16,6 +16,7 @@ import {
   type PitchTrack,
   type TakeSource,
 } from './pitchTrack'
+import { findSoundGateDb } from './soundGate'
 import { familiarTwins } from './takeKeyScale'
 import { buildTakeNotes, type TakeNote } from './takeNotes'
 import { buildTakeProfile, type TakeProfile } from './takeProfile'
@@ -32,15 +33,6 @@ const MIN_CLARITY = 0.9
 /* Same voice limits as the live detector in usePitchDetection.ts. */
 const MIN_PITCH_HZ = 60
 const MAX_PITCH_HZ = 1500
-
-/* Quietest level treated as sound, whatever the room's noise floor. */
-const ABSOLUTE_FLOOR_DB = -50
-/* Sound starts this far above the quietest 10% of frames... */
-const NOISE_MARGIN_DB = 10
-/* ...unless that would cut into the singing: a take with no silence has its
- * "noise floor" at the quiet end of the voice, and a whisper can sit about 30 dB
- * below a belt. */
-const SINGING_RANGE_DB = 35
 
 /* A sample this close to full scale has probably been cut off by the mic. */
 const CLIPPING_LEVEL = 0.99
@@ -121,16 +113,6 @@ async function fillPitchTrack(
       batchStartedAt = performance.now()
     }
   }
-}
-
-function findSoundGateDb(rmsDb: Float32Array): number {
-  const quietEnd = percentile(rmsDb, 0.1)
-  const loudEnd = percentile(rmsDb, 0.9)
-
-  return Math.max(
-    ABSOLUTE_FLOOR_DB,
-    Math.min(quietEnd + NOISE_MARGIN_DB, loudEnd - SINGING_RANGE_DB),
-  )
 }
 
 function extractVoicedMidi(track: PitchTrack, soundGateDb: number) {

@@ -1,22 +1,5 @@
-/*
- * Tried in order. MP4/AAC first because the download then opens in every music
- * app; a bare 'audio/mp4' comes after WebM because Chromium can satisfy it with
- * Opus inside MP4, which many players refuse.
- */
-const PREFERRED_MIME_TYPES = [
-  'audio/mp4;codecs=mp4a.40.2',
-  'audio/webm;codecs=opus',
-  'audio/mp4',
-  'audio/ogg;codecs=opus',
-]
-
-/* undefined lets the browser use its own default. */
-export function pickRecorderMimeType(
-  isSupported: (mimeType: string) => boolean,
-): string | undefined {
-  return PREFERRED_MIME_TYPES.find(isSupported)
-}
-
+/* New takes are WAV. The other types are takes saved by the earlier
+ * MediaRecorder version, which still reload from storage. */
 export function fileExtensionFor(mimeType: string): string {
   if (mimeType.startsWith('audio/mp4')) return 'm4a'
   if (mimeType.startsWith('audio/webm')) return 'webm'

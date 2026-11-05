@@ -2,20 +2,20 @@ import { useEventListener, useIntervalFn, useWakeLock } from '@vueuse/core'
 
 import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
 
-import { pickRecorderMimeType } from './recorderFormat'
+import {
+  createSampleCollector,
+  loadPcmCaptureProcessor,
+  PCM_CAPTURE_PROCESSOR,
+  type SampleCollector,
+} from './pcmCapture'
+import { trimSilence } from './trimSilence'
+import { encodeWav } from './wavEncoder'
 
-/* Most takes are a few seconds; two minutes still fits a verse and chorus. */
-export const MAX_RECORDING_MS = 2 * 60 * 1000
-/*
- * Short takes leave room for top-end AAC/Opus quality: 256 kbps is about
- * 1.9 MB a minute, 3.8 MB at the cap. Encoders with a lower ceiling clamp it
- * (Chrome's Windows AAC tops out at 192 kbps).
- */
-const RECORDING_BITS_PER_SECOND = 256_000
-/* Browsers treat the bitrate as a hint, so size gets its own limit. */
-const MAX_RECORDING_BYTES = 8 * 1024 * 1024
-/* Delivers bytes once a second so the size limit can be checked as we go. */
-const RECORDER_TIMESLICE_MS = 1000
+/* Most takes are a few seconds, so the cap pays for lossless 24-bit WAV:
+ * about 8.6 MB a minute at 48 kHz. */
+export const MAX_RECORDING_MS = 60 * 1000
+/* Studio depth: room for quiet singing, since auto gain is off. */
+const WAV_BITS_PER_SAMPLE = 24
 const CLOCK_TICK_MS = 200
 
 /* Nothing plays while recording, so the voice can be captured unprocessed:
@@ -27,7 +27,7 @@ const RECORDING_CONSTRAINTS: MediaTrackConstraints = {
   autoGainControl: false,
 }
 
-export type RecorderStatus = 'idle' | 'starting' | 'recording' | 'stopping'
+export type RecorderStatus = 'idle' | 'starting' | 'recording'
 export type RecordingStopReason = 'user' | 'limit' | 'interrupted'
 export type RecorderErrorKey =
   | 'errors.microphoneDenied'
@@ -44,6 +44,13 @@ export type Take = {
   hasAutoGain: boolean
 }
 
+function isCaptureSupported() {
+  return (
+    typeof AudioContext !== 'undefined' &&
+    typeof AudioWorkletNode !== 'undefined'
+  )
+}
+
 export function useVoiceRecorder() {
   const status = ref<RecorderStatus>('idle')
   const elapsedMs = ref(0)
@@ -55,12 +62,12 @@ export function useVoiceRecorder() {
   const takeStore = useVoiceTakeStore()
   const wakeLock = useWakeLock()
 
-  let recorder: MediaRecorder | null = null
+  let audioContext: AudioContext | null = null
+  let micSource: MediaStreamAudioSourceNode | null = null
+  let captureNode: AudioWorkletNode | null = null
   let stream: MediaStream | null = null
-  let chunks: Blob[] = []
-  let recordedBytes = 0
+  let collector: SampleCollector | null = null
   let startedAtMs = 0
-  let stopReason: RecordingStopReason = 'user'
   let hasAutoGain = false
   let isDisposed = false
 
@@ -76,55 +83,63 @@ export function useVoiceRecorder() {
   function releaseResources() {
     clock.pause()
     void wakeLock.release().catch(() => {})
+    if (captureNode) {
+      captureNode.port.onmessage = null
+      captureNode.disconnect()
+    }
+    micSource?.disconnect()
+    if (audioContext) void audioContext.close().catch(() => {})
     if (stream) releaseMicStream(stream)
 
+    audioContext = null
+    micSource = null
+    captureNode = null
     stream = null
+    collector = null
     liveStream.value = null
-    recorder = null
   }
 
-  function handleRecorderStop(finishedRecorder: MediaRecorder) {
-    const mimeType = finishedRecorder.mimeType
-    const blob = new Blob(chunks, { type: mimeType })
+  /*
+   * Finishes at once: the samples are already here, so unlike MediaRecorder
+   * there is no stop event to wait for. The last few milliseconds still in
+   * flight from the audio thread are dropped, inside the trimmed tail.
+   */
+  function requestStop(reason: RecordingStopReason) {
+    if (status.value !== 'recording' || !collector || !audioContext) return
 
-    chunks = []
-    /* Only after the stop event: the last bytes are delivered just before it,
-     * and iOS plays back at quiet call level until the mic is released. */
+    elapsedMs.value = performance.now() - startedAtMs
+    const samples = collector.join()
+    const { sampleRate } = audioContext
+
+    /* Before the take is set: iOS plays back at quiet call level until the mic
+     * is released. */
     releaseResources()
     status.value = 'idle'
 
-    if (blob.size === 0) {
+    if (samples.length === 0) {
       errorKey.value = 'voiceRecorder.emptyTake'
 
       return
     }
 
     takeStore.setTake({
-      blob,
-      mimeType,
+      blob: encodeWav(
+        trimSilence(samples, sampleRate),
+        sampleRate,
+        WAV_BITS_PER_SAMPLE,
+      ),
+      mimeType: 'audio/wav',
       recordedAt: new Date(),
-      stopReason,
+      stopReason: reason,
       hasAutoGain,
     })
-  }
-
-  function requestStop(reason: RecordingStopReason) {
-    if (status.value !== 'recording' || !recorder) return
-
-    status.value = 'stopping'
-    stopReason = reason
-    elapsedMs.value = performance.now() - startedAtMs
-    clock.pause()
-
-    /* Already inactive when every track ended; its stop event is on the way. */
-    if (recorder.state !== 'inactive') recorder.stop()
   }
 
   async function start() {
     if (status.value !== 'idle') return
 
     errorKey.value = null
-    if (typeof MediaRecorder === 'undefined') {
+    if (!isCaptureSupported()) {
       errorKey.value = 'voiceRecorder.notSupported'
 
       return
@@ -132,9 +147,19 @@ export function useVoiceRecorder() {
 
     status.value = 'starting'
 
+    /* Created before awaiting the mic, so iOS counts it as started by the tap
+     * on Record and lets it run. */
+    const context = new AudioContext()
+    audioContext = context
+    const processorReady = loadPcmCaptureProcessor(context).then(
+      () => true,
+      () => false,
+    )
+
     try {
       stream = await acquireMicStream({ audio: RECORDING_CONSTRAINTS })
     } catch (error) {
+      releaseResources()
       errorKey.value =
         error instanceof DOMException && error.name === 'NotAllowedError'
           ? 'errors.microphoneDenied'
@@ -144,6 +169,13 @@ export function useVoiceRecorder() {
       return
     }
 
+    /* Opening the mic can pause the context on iOS while its audio session
+     * switches to recording. */
+    const [isProcessorReady] = await Promise.all([
+      processorReady,
+      context.resume().catch(() => {}),
+    ])
+
     /* Left the page while the permission prompt was open. */
     if (isDisposed) {
       releaseResources()
@@ -151,16 +183,7 @@ export function useVoiceRecorder() {
       return
     }
 
-    const mimeType = pickRecorderMimeType((candidate) =>
-      MediaRecorder.isTypeSupported(candidate),
-    )
-
-    try {
-      recorder = new MediaRecorder(stream, {
-        ...(mimeType ? { mimeType } : {}),
-        audioBitsPerSecond: RECORDING_BITS_PER_SECOND,
-      })
-    } catch {
+    if (!isProcessorReady) {
       releaseResources()
       errorKey.value = 'voiceRecorder.notSupported'
       status.value = 'idle'
@@ -168,32 +191,37 @@ export function useVoiceRecorder() {
       return
     }
 
-    const activeRecorder = recorder
     const [track] = stream.getAudioTracks()
-
-    chunks = []
-    recordedBytes = 0
-    stopReason = 'user'
     hasAutoGain = track?.getSettings().autoGainControl === true
 
-    activeRecorder.addEventListener('dataavailable', (event) => {
-      if (event.data.size === 0) return
-
-      chunks.push(event.data)
-      recordedBytes += event.data.size
-      if (recordedBytes >= MAX_RECORDING_BYTES) requestStop('limit')
-    })
-    activeRecorder.addEventListener('stop', () =>
-      handleRecorderStop(activeRecorder),
+    const activeCollector = createSampleCollector(
+      Math.round((context.sampleRate * MAX_RECORDING_MS) / 1000),
     )
-    activeRecorder.addEventListener('error', () => requestStop('interrupted'))
+    collector = activeCollector
+    micSource = context.createMediaStreamSource(stream)
+    /* One explicit input channel: Web Audio mixes a stereo mic down to mono. */
+    captureNode = new AudioWorkletNode(context, PCM_CAPTURE_PROCESSOR, {
+      channelCount: 1,
+      channelCountMode: 'explicit',
+    })
+    captureNode.port.onmessage = (event: MessageEvent<Float32Array>) => {
+      if (!activeCollector.append(event.data)) requestStop('limit')
+    }
+    captureNode.addEventListener('processorerror', () =>
+      requestStop('interrupted'),
+    )
+    micSource.connect(captureNode)
+    /* Silent, but a node must lead to the destination to be sure it runs. */
+    captureNode.connect(context.destination)
 
-    /* A call, Siri or backgrounding on iOS silences or ends the track. Keep what
-     * was sung rather than carrying on recording silence. */
+    /* A call, Siri or backgrounding on iOS silences or ends the track, or
+     * suspends the context. Keep what was sung rather than recording a gap. */
     track?.addEventListener('ended', () => requestStop('interrupted'))
     track?.addEventListener('mute', () => requestStop('interrupted'))
+    context.addEventListener('statechange', () => {
+      if (context.state !== 'running') requestStop('interrupted')
+    })
 
-    activeRecorder.start(RECORDER_TIMESLICE_MS)
     startedAtMs = performance.now()
     elapsedMs.value = 0
     status.value = 'recording'
@@ -212,14 +240,8 @@ export function useVoiceRecorder() {
 
   onScopeDispose(() => {
     isDisposed = true
-    /* Leaving mid-take keeps what was sung: the stop event still fires after
-     * this page is gone, saves the take and releases the mic. */
-    if (recorder) {
-      requestStop('interrupted')
-
-      return
-    }
-
+    /* Leaving mid-take keeps what was sung. */
+    requestStop('interrupted')
     releaseResources()
   })
 

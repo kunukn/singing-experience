@@ -4,7 +4,7 @@ import { PitchDetector } from 'pitchy'
 export type TakeSource = { samples: Float32Array; sampleRate: number }
 
 /* Pitch stays accurate up to the voice's 1500 Hz ceiling at this rate, and it
- * keeps a 5-minute take to about 26 MB during analysis. */
+ * keeps a minute-long take to about 5 MB during analysis. */
 export const ANALYSIS_SAMPLE_RATE = 22050
 /* 46 ms at 22.05 kHz: holds two full periods of the lowest detectable pitch. */
 const WINDOW_SAMPLES = 1024

@@ -2,8 +2,8 @@ import { ANALYSIS_SAMPLE_RATE, type TakeSource } from './pitchTrack'
 
 /*
  * decodeAudioData resamples to its context's rate, so decoding through a small
- * offline context costs about 26 MB for 5 minutes instead of 115 MB at 48 kHz
- * stereo. The context never renders: it's only here for that decoder.
+ * offline context costs about 5 MB a minute instead of 23 MB at 48 kHz stereo.
+ * The context never renders: it's only here for that decoder.
  */
 export async function decodeTake(blob: Blob): Promise<TakeSource> {
   const context = new OfflineAudioContext(1, 1, ANALYSIS_SAMPLE_RATE)

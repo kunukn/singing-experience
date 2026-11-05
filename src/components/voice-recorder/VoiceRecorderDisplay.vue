@@ -53,10 +53,8 @@ watch(
   },
 )
 
-const maxMinutes = MAX_RECORDING_MS / 60_000
-const isBusy = computed(
-  () => props.status === 'starting' || props.status === 'stopping',
-)
+const maxSeconds = MAX_RECORDING_MS / 1000
+const isBusy = computed(() => props.status === 'starting')
 const isRecording = computed(() => props.status === 'recording')
 const showTake = computed(() => props.status === 'idle' && props.take !== null)
 const canPreview = computed(
@@ -93,7 +91,7 @@ function formatClock(ms: number): string {
       v-if="!isSimulated"
       class="text-sm whitespace-pre-line text-(--p-text-muted-color)"
     >
-      {{ t('voiceRecorder.hint', { minutes: maxMinutes }) }}
+      {{ t('voiceRecorder.hint', { seconds: maxSeconds }) }}
     </p>
 
     <div v-if="!isSimulated" class="flex flex-wrap items-center gap-3">
