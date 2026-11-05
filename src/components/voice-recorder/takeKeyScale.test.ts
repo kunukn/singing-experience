@@ -1,10 +1,18 @@
 import { describe, expect, test } from 'vitest'
 
+import { detectScales } from '@/utils/scaleDetection'
+
 import type { NoteUse } from './analyzeTake'
-import { scaleNoteChips, scalePreviewRootMidi } from './takeKeyScale'
+import {
+  familiarTwins,
+  scaleNoteChips,
+  scalePreviewRootMidi,
+} from './takeKeyScale'
 
 const C_SHARP = 1
 const F = 5
+const G = 7
+const B_FLAT = 10
 
 const C_SHARP_3_MIDI = 49
 const D3_MIDI = 50
@@ -15,6 +23,32 @@ const C_SHARP_4_MIDI = 61
 function notesUsedAt(...midis: number[]): NoteUse[] {
   return midis.map((midi) => ({ midi, totalMs: 200 }))
 }
+
+describe('familiarTwins', () => {
+  const twinsOf = (...midis: number[]) =>
+    familiarTwins(
+      detectScales(midis.map((midi) => ({ midi, durationMs: 500 }))).families[0]
+        .candidates,
+    ).map(({ root, mode }) => ({ root, mode }))
+
+  test('names the major and minor scales for a church mode home', () => {
+    /* F G A B♭ C D E♭ F */
+    expect(twinsOf(65, 67, 69, 70, 72, 74, 75, 77)).toEqual([
+      { root: B_FLAT, mode: 'ionian' },
+      { root: G, mode: 'aeolian' },
+    ])
+  })
+
+  test.each([
+    { name: 'major', midis: [60, 62, 64, 65, 67, 69, 71, 72] },
+    { name: 'minor', midis: [57, 59, 60, 62, 64, 65, 67, 69] },
+    { name: 'pentatonic', midis: [60, 62, 64, 67, 69] },
+    /* F G♭ A B♭ C D♭ E♭ F */
+    { name: 'Phrygian Dominant', midis: [65, 66, 69, 70, 72, 73, 75, 77] },
+  ])('returns nothing for a $name home', ({ midis }) => {
+    expect(twinsOf(...midis)).toEqual([])
+  })
+})
 
 describe('scalePreviewRootMidi', () => {
   test('returns the highest root below the lowest sung note', () => {

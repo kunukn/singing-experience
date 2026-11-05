@@ -20,7 +20,7 @@ const emit = defineEmits<{
   play: []
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { scaleName } = useScaleName()
 const { isPlayingSequence, currentPlayingIndex, playSequence, stopSequence } =
   useDoReMiPlaySequence()
@@ -30,6 +30,11 @@ const { toneMode } = storeToRefs(useToneModeStore())
 setToneMode(toneMode.value)
 
 const chips = computed(() => scaleNoteChips(props.takeKey, props.notesUsed))
+const sameNotesNames = computed(() =>
+  new Intl.ListFormat(locale.value, { type: 'unit' }).format(
+    props.takeKey.familiarTwins.map(({ root, mode }) => scaleName(root, mode)),
+  ),
+)
 /* The closing root is the eighth note played, and it lights the first tag again. */
 const soundingChipIndex = computed(() =>
   currentPlayingIndex.value < 0
@@ -66,16 +71,23 @@ function toggleScale() {
     :data-playing="isPlayingSequence"
   >
     <div class="flex flex-wrap items-center justify-between gap-2">
-      <p
-        class="text-sm text-(--p-text-muted-color)"
-        data-testid="notes-used-key"
-      >
-        {{
-          t('voiceRecorder.notes.likelyKey', {
-            key: scaleName(takeKey.root, takeKey.mode),
-          })
-        }}
-      </p>
+      <div class="flex flex-col gap-1 text-(--p-text-muted-color)">
+        <p class="text-sm" data-testid="notes-used-key">
+          {{
+            t('voiceRecorder.notes.likelyKey', {
+              key: scaleName(takeKey.root, takeKey.mode),
+            })
+          }}
+        </p>
+        <p
+          v-if="sameNotesNames"
+          class="flex flex-wrap gap-1 text-xs"
+          data-testid="notes-used-same-notes"
+        >
+          <span>{{ t('scaleDetector.sameNotes') }}</span>
+          <span>{{ sameNotesNames }}</span>
+        </p>
+      </div>
       <PrimeButton
         v-if="isPlayingSequence"
         :label="t('generic.stop')"

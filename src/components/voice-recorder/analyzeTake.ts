@@ -16,6 +16,7 @@ import {
   type PitchTrack,
   type TakeSource,
 } from './pitchTrack'
+import { familiarTwins } from './takeKeyScale'
 import { buildTakeNotes, type TakeNote } from './takeNotes'
 import { buildTakeProfile, type TakeProfile } from './takeProfile'
 import { buildTakeRating, type TakeRating } from './takeRating'
@@ -70,6 +71,7 @@ export type NoteUse = { midi: number; totalMs: number }
 
 export type TakeKey = ScaleCandidate & {
   pitchClasses: ReadonlySet<number>
+  familiarTwins: ScaleCandidate[]
 }
 
 export type TakeAnalysis = {
@@ -222,7 +224,11 @@ function detectKey(notes: TakeNote[]): TakeKey | null {
     return null
   }
 
-  return { ...family.candidates[0], pitchClasses: family.pitchClasses }
+  return {
+    ...family.candidates[0],
+    pitchClasses: family.pitchClasses,
+    familiarTwins: familiarTwins(family.candidates),
+  }
 }
 
 /* Share of note time inside the best-fitting major or natural minor scale. Those
