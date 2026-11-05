@@ -143,28 +143,31 @@ defineExpose({ seekTo, pause })
       @ended="playheadLoop.pause()"
       @seeked="emitPlayhead"
     />
-    <PrimeButton
-      as="a"
-      :href="audioUrl"
-      :download="fileName"
-      :label="t('voiceRecorder.download')"
-      icon="pi pi-download"
-      size="small"
-      severity="secondary"
-      rounded
-      data-testid="take-download"
-    />
-    <PrimeButton
-      v-if="canMakeSmallFile"
-      :label="t('voiceRecorder.smallFile')"
-      icon="pi pi-download"
-      size="small"
-      severity="secondary"
-      rounded
-      :loading="isMakingSmallFile"
-      data-testid="take-download-small"
-      @click="downloadSmallFile"
-    />
+    <!-- One wrap unit: the two downloads move to the next line together -->
+    <div class="flex items-center gap-3" data-testid="take-downloads">
+      <PrimeButton
+        as="a"
+        :href="audioUrl"
+        :download="fileName"
+        :label="t('voiceRecorder.download')"
+        icon="pi pi-download"
+        size="small"
+        severity="secondary"
+        rounded
+        data-testid="take-download"
+      />
+      <PrimeButton
+        v-if="canMakeSmallFile"
+        :label="t('voiceRecorder.smallFile')"
+        icon="pi pi-download"
+        size="small"
+        severity="secondary"
+        rounded
+        :loading="isMakingSmallFile"
+        data-testid="take-download-small"
+        @click="downloadSmallFile"
+      />
+    </div>
     <p
       v-if="hasSmallFileFailed"
       role="alert"
