@@ -909,6 +909,7 @@
       "title": "Nada yang kamu pakai",
       "likelyKey": "Kemungkinan kunci: {key}",
       "playScale": "Mainkan tangga nada",
+      "playNote": "Mainkan {note}",
       "sungHint": "Nada berwarna adalah yang kamu nyanyikan."
     },
     "profile": {

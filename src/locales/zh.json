@@ -909,6 +909,7 @@
       "title": "你用到的音",
       "likelyKey": "可能的调：{key}",
       "playScale": "播放音阶",
+      "playNote": "播放 {note}",
       "sungHint": "有颜色的音是你唱过的。"
     },
     "profile": {

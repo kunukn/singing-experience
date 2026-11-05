@@ -909,6 +909,7 @@
       "title": "使った音",
       "likelyKey": "たぶんこの調: {key}",
       "playScale": "スケールを再生",
+      "playNote": "{note}を再生",
       "sungHint": "色のついた音が、きみが歌った音だよ。"
     },
     "profile": {

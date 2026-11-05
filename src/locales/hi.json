@@ -909,6 +909,7 @@
       "title": "तुम्हारे गाए सुर",
       "likelyKey": "संभावित स्केल: {key}",
       "playScale": "स्केल चलाओ",
+      "playNote": "{note} चलाओ",
       "sungHint": "रंगीन सुर वे हैं जो तुमने गाए।"
     },
     "profile": {

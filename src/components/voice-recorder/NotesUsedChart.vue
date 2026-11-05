@@ -1,5 +1,8 @@
 <script setup lang="ts">
-import { midiToNoteLabel } from '@/utils/noteUtils'
+import { useTimeoutFn } from '@vueuse/core'
+
+import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
+import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
 
 import TakeKeyScale from './TakeKeyScale.vue'
 import type { NoteUse, TakeKey } from './analyzeTake'
@@ -11,11 +14,34 @@ type Props = {
 
 const props = defineProps<Props>()
 
+/* A note or the scale is about to sound, so the take should stop playing. */
 const emit = defineEmits<{
-  scalePlay: []
+  tonePlay: []
 }>()
 
 const { t, locale } = useI18n()
+
+/* Set here too: without a likely key there's no TakeKeyScale to set it. */
+const { playTone, setToneMode } = useTonePlayer()
+const { toneMode } = storeToRefs(useToneModeStore())
+setToneMode(toneMode.value)
+
+const soundingMidi = ref<number | null>(null)
+const { start: startHighlightTimer } = useTimeoutFn(
+  () => {
+    soundingMidi.value = null
+  },
+  TONE_CLICK_HIGHLIGHT_DURATION_MS,
+  { immediate: false },
+)
+
+/* "I sang G3 most — what does G3 sound like?" */
+function playNote(midi: number) {
+  emit('tonePlay')
+  soundingMidi.value = midi
+  startHighlightTimer()
+  void playTone(midiToFrequency(midi))
+}
 
 const longestMs = computed(() =>
   Math.max(1, ...props.notesUsed.map((use) => use.totalMs)),
@@ -48,7 +74,7 @@ const rows = computed(() =>
       v-if="takeKey"
       :takeKey="takeKey"
       :notesUsed="notesUsed"
-      @play="emit('scalePlay')"
+      @play="emit('tonePlay')"
     />
     <ul class="flex flex-col gap-0.5">
       <li
@@ -56,8 +82,27 @@ const rows = computed(() =>
         :key="row.midi"
         class="grid grid-cols-[3rem_1fr_3.5rem] items-center gap-2 text-xs"
         data-testid="notes-used-row"
+        :data-playing="soundingMidi === row.midi"
       >
-        <span class="tabular-nums" dir="ltr">{{ row.label }}</span>
+        <!-- A plain button, as the pitch charts' note labels are: it has to stay
+             text-sized inside the row, which PrimeButton would fight. The dotted
+             underline says it can be tapped -->
+        <button
+          type="button"
+          :aria-label="t('voiceRecorder.notes.playNote', { note: row.label })"
+          :title="t('voiceRecorder.notes.playNote', { note: row.label })"
+          class="cursor-pointer justify-self-start tabular-nums underline decoration-dotted underline-offset-2"
+          :class="
+            soundingMidi === row.midi
+              ? 'font-semibold text-(--p-primary-color)'
+              : 'text-(--p-text-color)'
+          "
+          dir="ltr"
+          data-testid="notes-used-play"
+          @click="playNote(row.midi)"
+        >
+          {{ row.label }}
+        </button>
         <span class="h-2.5">
           <span
             class="block h-full rounded-e bg-(--p-primary-color)"

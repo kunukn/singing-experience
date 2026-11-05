@@ -909,6 +909,7 @@
       "title": "Toner, du brugte",
       "likelyKey": "Sandsynlig toneart: {key}",
       "playScale": "Spil skalaen",
+      "playNote": "Spil {note}",
       "sungHint": "De farvede toner er dem, du sang."
     },
     "profile": {

@@ -65,6 +65,8 @@ Let me take a look at the code and suggest a fix for you."
 - Use `<PrimeDialog />` for modals and overlays
 - Use `<PrimeSlider />` for range inputs
 
+**Exception: text-sized buttons inside text.** A control that must look and size like the text around it — a tappable note name in a list, a chart axis label — is a plain `<button type="button">`. Tailwind's reset already makes it bare, while a `PrimeButton` would need its height, padding, border, font and colour all overridden back. Keep the PrimeVue rule for every real button. Examples: [NotesUsedChart.vue](src/components/voice-recorder/NotesUsedChart.vue), [PitchHistoryChart.vue](src/components/pitch-detector/PitchHistoryChart.vue).
+
 PrimeVue components are **auto-imported** via `PrimeVueResolver({ prefix: 'Prime' })` in `vite.config.ts` — no manual imports needed, just use them in templates.
 
 **Control height is global.** Buttons, selects, select buttons and text inputs share a 35px minimum height (`--app-control-height` in [style.css](src/style.css)), so controls in one row line up on their own. Don't add `min-h-*` to individual controls to align them; if one control is deliberately smaller, opt out with `min-h-0`.

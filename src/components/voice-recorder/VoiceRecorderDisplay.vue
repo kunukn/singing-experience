@@ -236,7 +236,7 @@ function formatClock(ms: number): string {
         :savedAnalysis="savedAnalysis"
         @analyzed="emit('analyzed', $event)"
         @seek="playerElement?.seekTo($event)"
-        @scalePlay="playerElement?.pause()"
+        @tonePlay="playerElement?.pause()"
       />
     </template>
   </div>

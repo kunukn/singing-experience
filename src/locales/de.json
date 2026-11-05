@@ -909,6 +909,7 @@
       "title": "Deine Töne",
       "likelyKey": "Wahrscheinliche Tonart: {key}",
       "playScale": "Tonleiter spielen",
+      "playNote": "{note} spielen",
       "sungHint": "Die farbigen Töne hast du gesungen."
     },
     "profile": {

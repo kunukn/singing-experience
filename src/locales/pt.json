@@ -909,6 +909,7 @@
       "title": "Notas que você usou",
       "likelyKey": "Tom provável: {key}",
       "playScale": "Tocar escala",
+      "playNote": "Tocar {note}",
       "sungHint": "As notas coloridas são as que você cantou."
     },
     "profile": {

@@ -909,6 +909,7 @@
       "title": "Noti ulizotumia",
       "likelyKey": "Skeli inayowezekana: {key}",
       "playScale": "Cheza mizani",
+      "playNote": "Cheza {note}",
       "sungHint": "Noti zenye rangi ndizo ulizoimba."
     },
     "profile": {

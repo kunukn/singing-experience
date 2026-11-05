@@ -909,6 +909,7 @@
       "title": "Notes you used",
       "likelyKey": "Likely key: {key}",
       "playScale": "Play scale",
+      "playNote": "Play {note}",
       "sungHint": "Coloured notes are the ones you sang."
     },
     "profile": {
