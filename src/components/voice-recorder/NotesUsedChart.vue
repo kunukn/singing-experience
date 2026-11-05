@@ -86,15 +86,16 @@ const rows = computed(() =>
       >
         <!-- A plain button, as the pitch charts' note labels are: it has to stay
              text-sized inside the row, which PrimeButton would fight. The dotted
-             underline says it can be tapped -->
+             underline says it can be tapped. text-sm's 20px line height makes the
+             tap area 20px tall; -my-0.5 keeps the row laid out at 16px -->
         <button
           type="button"
           :aria-label="t('voiceRecorder.notes.playNote', { note: row.label })"
           :title="t('voiceRecorder.notes.playNote', { note: row.label })"
-          class="cursor-pointer justify-self-start tabular-nums underline decoration-dotted underline-offset-2"
+          class="-my-0.5 cursor-pointer justify-self-start text-sm tabular-nums underline decoration-dotted underline-offset-2"
           :class="
             soundingMidi === row.midi
-              ? 'font-semibold text-(--p-primary-color)'
+              ? 'text-(--p-primary-color)'
               : 'text-(--p-text-color)'
           "
           dir="ltr"
