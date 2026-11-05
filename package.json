@@ -21,6 +21,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "check": "node scripts/check.js",
+    "licenses": "node scripts/third-party-licenses.js",
     "check:fix": "npm run format && npm run check",
     "prepare": "husky"
   },
