@@ -56,6 +56,7 @@ export type PitchLaneRecorder = {
   readonly samples: PitchSample[]
   readonly noteMarkers: NoteMarker[]
   push: (noteInfo: NoteInfo, timestampMs: number) => void
+  prune: (nowMs: number) => void
   reset: () => void
   restore: (recording: PitchLaneRecording) => void
 }
@@ -172,7 +173,7 @@ export function createPitchLaneRecorder(): PitchLaneRecorder {
     noteMarkers.push(...recording.noteMarkers)
   }
 
-  return { samples, noteMarkers, push, reset, restore }
+  return { samples, noteMarkers, push, prune, reset, restore }
 }
 
 /* Index of the first item later than timestampMs, or items.length if none is.

@@ -905,10 +905,20 @@ watch(
     if (!props.isListening) return
 
     const now = performance.now()
+    let hasNewSample = false
     for (const lane of lanes) {
       if (!lane.isClean || !lane.noteInfo) continue
 
       recorders[lane.laneId].push(lane.noteInfo, now)
+      hasNewSample = true
+    }
+    if (!hasNewSample) return
+
+    /* A voice that has gone quiet gets no push of its own, so it prunes here.
+     * Otherwise its old samples stretch the duet's replay far past the retention
+     * window. Silence alone prunes nothing, so a quiet room keeps the take. */
+    for (const laneId of PITCH_LANE_IDS) {
+      recorders[laneId].prune(now)
     }
   },
 )
