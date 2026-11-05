@@ -869,6 +869,10 @@
     "recordingQuality": {
       "name": "Standard ou Studio",
       "description": "Standard donne un son clair et convient à presque tous les enregistrements. Studio garde plus de détails quand tu chantes très doucement, mais le fichier est une fois et demie plus gros."
+    },
+    "smallFile": {
+      "name": "Petit fichier",
+      "description": "Une copie plus légère de ton enregistrement, environ 1 Mo par minute, facile à envoyer dans un message. Télécharger garde toute la qualité."
     }
   },
   "voiceRecorder": {
@@ -876,6 +880,8 @@
     "record": "Enregistrer",
     "recordAgain": "Enregistrer encore",
     "download": "Télécharger",
+    "smallFile": "Petit fichier",
+    "smallFileFailed": "Impossible de créer le petit fichier. Tu peux quand même télécharger l'enregistrement complet.",
     "timeLeft": "Encore {time}",
     "notSupported": "Ce navigateur ne peut pas enregistrer le son",
     "emptyTake": "Rien n'a été enregistré. Réessaie.",

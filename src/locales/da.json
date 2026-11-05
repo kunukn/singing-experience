@@ -869,6 +869,10 @@
     "recordingQuality": {
       "name": "Standard eller Studie",
       "description": "Standard lyder klart og passer til næsten alle optagelser. Studie gemmer flere detaljer, når du synger meget stille, men filen bliver halvanden gang så stor."
+    },
+    "smallFile": {
+      "name": "Lille fil",
+      "description": "En mindre kopi af din optagelse, cirka 1 MB i minuttet, som er nem at sende i en besked. Hent beholder den fulde kvalitet."
     }
   },
   "voiceRecorder": {
@@ -876,6 +880,8 @@
     "record": "Optag",
     "recordAgain": "Optag igen",
     "download": "Hent",
+    "smallFile": "Lille fil",
+    "smallFileFailed": "Den lille fil kunne ikke laves. Du kan stadig hente den fulde optagelse.",
     "timeLeft": "{time} tilbage",
     "notSupported": "Denne browser kan ikke optage lyd",
     "emptyTake": "Der blev ikke optaget noget. Prøv igen.",

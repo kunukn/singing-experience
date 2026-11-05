@@ -869,6 +869,10 @@
     "recordingQuality": {
       "name": "Standard oder Studio",
       "description": "Standard klingt klar und passt für fast jede Aufnahme. Studio hält mehr Details fest, wenn du sehr leise singst, aber die Datei wird anderthalbmal so groß."
+    },
+    "smallFile": {
+      "name": "Kleine Datei",
+      "description": "Eine kleinere Kopie deiner Aufnahme, etwa 1 MB pro Minute, die sich leicht in einer Nachricht verschicken lässt. Herunterladen behält die volle Qualität."
     }
   },
   "voiceRecorder": {
@@ -876,6 +880,8 @@
     "record": "Aufnehmen",
     "recordAgain": "Nochmal aufnehmen",
     "download": "Herunterladen",
+    "smallFile": "Kleine Datei",
+    "smallFileFailed": "Die kleine Datei konnte nicht erstellt werden. Du kannst trotzdem die ganze Aufnahme herunterladen.",
     "timeLeft": "Noch {time}",
     "notSupported": "Dieser Browser kann keinen Ton aufnehmen",
     "emptyTake": "Es wurde nichts aufgenommen. Versuch es nochmal.",

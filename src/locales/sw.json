@@ -869,6 +869,10 @@
     "recordingQuality": {
       "name": "Kawaida au Studio",
       "description": "Kawaida inasikika wazi na inafaa karibu kila rekodi. Studio inahifadhi maelezo zaidi unapoimba kwa sauti ya chini sana, lakini faili linakuwa kubwa mara moja na nusu."
+    },
+    "smallFile": {
+      "name": "Faili ndogo",
+      "description": "Nakala ndogo ya rekodi yako, takriban MB 1 kwa dakika, rahisi kutuma kwenye ujumbe. Pakua inahifadhi ubora kamili."
     }
   },
   "voiceRecorder": {
@@ -876,6 +880,8 @@
     "record": "Rekodi",
     "recordAgain": "Rekodi tena",
     "download": "Pakua",
+    "smallFile": "Faili ndogo",
+    "smallFileFailed": "Imeshindikana kutengeneza faili ndogo. Bado unaweza kupakua rekodi kamili.",
     "timeLeft": "Zimebaki {time}",
     "notSupported": "Kivinjari hiki hakiwezi kurekodi sauti",
     "emptyTake": "Hakuna kilichorekodiwa. Jaribu tena.",

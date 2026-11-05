@@ -728,6 +728,10 @@
     "recordingQuality": {
       "name": "Standard or Studio",
       "description": "Standard sounds clear and is right for almost every recording. Studio keeps more detail when you sing very softly, but the file is 1.5 times bigger."
+    },
+    "smallFile": {
+      "name": "Small file",
+      "description": "A smaller copy of your recording, about 1 MB a minute, that is easy to send in a message. Download keeps the full quality."
     }
   }
 }

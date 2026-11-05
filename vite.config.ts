@@ -200,6 +200,10 @@ export default defineConfig(({ command, mode }) => {
         },
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
+          /* The WASM AAC encoder (~1.1 MB) only runs for a voice recorder
+           * "Small file" in browsers without native AAC, mainly Firefox, so
+           * it's fetched on demand instead of by every visitor. */
+          globIgnores: ['**/mediabunny-aac-encoder-*.js'],
           additionalManifestEntries: allSampleUrls.map((url) => ({
             url,
             revision: null,
@@ -227,10 +231,11 @@ export default defineConfig(({ command, mode }) => {
       },
     },
     build: {
-      /* abcjs (~500 kB) is the largest chunk; it's a lazy-loaded vendor lib
-       * (see GraceKellySheet.vue) so it never bloats the initial load. Raise
-       * the warning ceiling above it while still catching new regressions. */
-      chunkSizeWarningLimit: 600,
+      /* The largest chunks are lazy-loaded vendor libs that never bloat the
+       * initial load: the WASM AAC encoder (~1.1 MB, see compressTake.ts) and
+       * abcjs (~500 kB, see GraceKellySheet.vue). Raise the warning ceiling
+       * above them while still catching new regressions. */
+      chunkSizeWarningLimit: 1200,
       rollupOptions: {
         /*
          * @vueuse/core's published dist places a couple of #__PURE__

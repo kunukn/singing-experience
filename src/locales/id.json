@@ -869,6 +869,10 @@
     "recordingQuality": {
       "name": "Standar atau Studio",
       "description": "Standar terdengar jernih dan cocok untuk hampir semua rekaman. Studio menyimpan lebih banyak detail saat kamu bernyanyi sangat pelan, tapi filenya 1,5 kali lebih besar."
+    },
+    "smallFile": {
+      "name": "File kecil",
+      "description": "Salinan rekamanmu yang lebih kecil, sekitar 1 MB per menit, mudah dikirim lewat pesan. Unduh menyimpan kualitas penuh."
     }
   },
   "voiceRecorder": {
@@ -876,6 +880,8 @@
     "record": "Rekam",
     "recordAgain": "Rekam lagi",
     "download": "Unduh",
+    "smallFile": "File kecil",
+    "smallFileFailed": "File kecil tidak bisa dibuat. Kamu tetap bisa mengunduh rekaman lengkapnya.",
     "timeLeft": "Sisa {time}",
     "notSupported": "Browser ini tidak bisa merekam suara",
     "emptyTake": "Tidak ada yang terekam. Coba lagi.",

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useObjectUrl, useRafFn } from '@vueuse/core'
 
+import { compressTake, SMALL_FILE_MIME_TYPE } from './compressTake'
 import { takeFileName } from './recorderFormat'
 
 /* Past any real recording, so the browser has to work out where the end is. */
@@ -23,6 +24,61 @@ const { t } = useI18n()
 const audioElement = useTemplateRef<HTMLAudioElement>('audioElement')
 const audioUrl = useObjectUrl(() => props.blob)
 const fileName = computed(() => takeFileName(props.mimeType, props.recordedAt))
+
+/* Takes from the older MediaRecorder version are already compressed. */
+const canMakeSmallFile = computed(() => props.mimeType.startsWith('audio/wav'))
+const smallFile = shallowRef<Blob | null>(null)
+const smallFileUrl = useObjectUrl(smallFile)
+const isMakingSmallFile = ref(false)
+const hasSmallFileFailed = ref(false)
+
+watch(
+  () => props.blob,
+  () => {
+    smallFile.value = null
+    hasSmallFileFailed.value = false
+  },
+)
+
+function saveFile(url: string, name: string) {
+  const link = document.createElement('a')
+  link.href = url
+  link.download = name
+  link.click()
+}
+
+/* Encoded on first tap, then reused for this take. */
+async function downloadSmallFile() {
+  if (isMakingSmallFile.value) return
+
+  hasSmallFileFailed.value = false
+  if (!smallFile.value) {
+    const sourceBlob = props.blob
+    isMakingSmallFile.value = true
+    try {
+      const compressed = await compressTake(sourceBlob)
+      /* A new take arrived while this one was encoding. */
+      if (sourceBlob !== props.blob) return
+
+      smallFile.value = compressed
+    } catch {
+      hasSmallFileFailed.value = true
+
+      return
+    } finally {
+      isMakingSmallFile.value = false
+    }
+
+    await nextTick()
+  }
+
+  if (smallFileUrl.value) {
+    saveFile(
+      smallFileUrl.value,
+      takeFileName(SMALL_FILE_MIME_TYPE, props.recordedAt),
+    )
+  }
+}
 
 let isFindingDuration = false
 
@@ -98,5 +154,24 @@ defineExpose({ seekTo, pause })
       rounded
       data-testid="take-download"
     />
+    <PrimeButton
+      v-if="canMakeSmallFile"
+      :label="t('voiceRecorder.smallFile')"
+      icon="pi pi-download"
+      size="small"
+      severity="secondary"
+      rounded
+      :loading="isMakingSmallFile"
+      data-testid="take-download-small"
+      @click="downloadSmallFile"
+    />
+    <p
+      v-if="hasSmallFileFailed"
+      role="alert"
+      class="basis-full text-sm text-(--p-red-400)"
+      data-testid="take-download-small-error"
+    >
+      {{ t('voiceRecorder.smallFileFailed') }}
+    </p>
   </div>
 </template>

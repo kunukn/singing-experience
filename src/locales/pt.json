@@ -869,6 +869,10 @@
     "recordingQuality": {
       "name": "Padrão ou Estúdio",
       "description": "Padrão tem som claro e serve para quase toda gravação. Estúdio guarda mais detalhes quando você canta bem baixinho, mas o arquivo fica 1,5 vez maior."
+    },
+    "smallFile": {
+      "name": "Arquivo pequeno",
+      "description": "Uma cópia menor da sua gravação, cerca de 1 MB por minuto, fácil de mandar numa mensagem. Baixar mantém a qualidade total."
     }
   },
   "voiceRecorder": {
@@ -876,6 +880,8 @@
     "record": "Gravar",
     "recordAgain": "Gravar de novo",
     "download": "Baixar",
+    "smallFile": "Arquivo pequeno",
+    "smallFileFailed": "Não deu para criar o arquivo pequeno. Você ainda pode baixar a gravação completa.",
     "timeLeft": "Faltam {time}",
     "notSupported": "Este navegador não consegue gravar som",
     "emptyTake": "Nada foi gravado. Tente de novo.",

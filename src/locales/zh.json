@@ -869,6 +869,10 @@
     "recordingQuality": {
       "name": "标准还是录音棚",
       "description": "标准音质清晰，几乎所有录音都适用。录音棚在你唱得很轻时能留下更多细节，但文件大小是标准的 1.5 倍。"
+    },
+    "smallFile": {
+      "name": "小文件",
+      "description": "录音的小副本，每分钟约 1 MB，方便用消息发送。“下载”会保留完整音质。"
     }
   },
   "voiceRecorder": {
@@ -876,6 +880,8 @@
     "record": "录音",
     "recordAgain": "再录一次",
     "download": "下载",
+    "smallFile": "小文件",
+    "smallFileFailed": "生成小文件失败。你还是可以下载完整的录音。",
     "timeLeft": "还剩 {time}",
     "notSupported": "这个浏览器不能录音",
     "emptyTake": "什么都没录到，再试一次吧。",

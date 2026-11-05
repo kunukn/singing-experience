@@ -25,6 +25,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@mediabunny/aac-encoder": "1.65.1",
     "@primeuix/themes": "3.1.0",
     "@tailwindcss/vite": "4.3.4",
     "@unhead/vue": "3.4.3",
@@ -36,6 +37,7 @@
     "canvas-confetti": "1.9.4",
     "dayjs": "1.11.23",
     "idb-keyval": "6.3.0",
+    "mediabunny": "1.65.1",
     "pinia": "4.1.0",
     "pitchy": "4.1.0",
     "primeicons": "8.0.2",
