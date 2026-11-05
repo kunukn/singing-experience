@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useLocalStorage } from '@vueuse/core'
+
 import type { TakeAnalysis } from './analyzeTake'
 import LiveWaveform from './LiveWaveform.vue'
 import TakeAnalysisPanel from './TakeAnalysisPanel.vue'
@@ -36,6 +38,7 @@ const { t } = useI18n()
 const playerElement =
   useTemplateRef<InstanceType<typeof TakePlayer>>('playerElement')
 const playheadMs = ref(0)
+const showLiveNotes = useLocalStorage('syng.voiceRecorderLiveNotes', true)
 
 watch(
   () => props.take,
@@ -128,9 +131,21 @@ function formatClock(ms: number): string {
         />
         {{ t('voiceRecorder.timeLeft', { time: timeLeft }) }}
       </span>
+      <ToggleIconButton
+        v-model="showLiveNotes"
+        iconOn="pi pi-hashtag"
+        iconOff="pi pi-hashtag"
+        :label="t('voiceRecorder.liveNotes')"
+        labelFrom="xs"
+        data-testid="recorder-live-notes"
+      />
     </div>
 
-    <LiveWaveform v-if="isRecording && liveStream" :stream="liveStream" />
+    <LiveWaveform
+      v-if="isRecording && liveStream"
+      :stream="liveStream"
+      :showNotes="showLiveNotes"
+    />
 
     <p
       v-if="errorKey"

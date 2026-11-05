@@ -76,11 +76,11 @@ type UsePitchDetectionOptions = {
 const LOW_PASS_STAGE_QS = [0.5412, 1.3066]
 
 /* Practical singing range: ~B1 (60 Hz) to ~F#6 (1500 Hz), covering bass to soprano. */
-const MIN_FREQUENCY = 60
-const MAX_FREQUENCY = 1500
+export const MIN_FREQUENCY = 60
+export const MAX_FREQUENCY = 1500
 
 /* ms to hold a clean signal before reporting onset — avoids transient flicker on note attacks */
-const ONSET_DEBOUNCE_MS = 40
+export const ONSET_DEBOUNCE_MS = 40
 
 export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
   const { clarityThreshold: globalClarity } = useSettings()

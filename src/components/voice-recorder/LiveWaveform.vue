@@ -3,7 +3,10 @@ import { useRafFn, useResizeObserver } from '@vueuse/core'
 
 import { resolveCssColor } from '@/utils/cssColor'
 import { rootMeanSquare } from '@/utils/duetBandSplit'
+import type { NoteInfo } from '@/utils/noteUtils'
 
+import LiveNoteReadout from './LiveNoteReadout.vue'
+import { createLivePitchReader } from './livePitch'
 import {
   createNoSoundWatch,
   findRisingZeroCrossing,
@@ -21,16 +24,19 @@ const AMPLITUDE_RATIO = 0.45
 
 type Props = {
   stream: MediaStream
+  showNotes: boolean
 }
 
 const props = defineProps<Props>()
 
 const { t } = useI18n()
+const { clarityThreshold } = useSettings()
 
 const canvasElement = useTemplateRef<HTMLCanvasElement>('canvasElement')
 const width = ref(0)
 const hasNoSound = ref(false)
 const isHearingSound = ref(false)
+const noteInfo = shallowRef<NoteInfo | null>(null)
 
 /* Only ever read, never connected to the speakers, so singers don't hear
  * themselves back and it can't reach the recording. */
@@ -44,6 +50,16 @@ void audioContext.resume().catch(() => {})
 
 const samples = new Float32Array(ANALYSER_SAMPLES)
 const noSoundWatch = createNoSoundWatch(performance.now())
+const pitchReader = createLivePitchReader(ANALYSER_SAMPLES)
+
+/* Turning notes back on must not start from the note shown before. */
+watch(
+  () => props.showNotes,
+  () => {
+    pitchReader.reset()
+    noteInfo.value = null
+  },
+)
 
 function draw() {
   const canvas = canvasElement.value
@@ -55,6 +71,15 @@ function draw() {
   const rms = rootMeanSquare(samples)
   hasNoSound.value = noSoundWatch.update(rms, performance.now())
   isHearingSound.value = isSoundLevel(rms)
+
+  if (props.showNotes) {
+    noteInfo.value = pitchReader.read(
+      samples,
+      audioContext.sampleRate,
+      clarityThreshold.value,
+      performance.now(),
+    )
+  }
 
   const dpr = window.devicePixelRatio || 1
   const pixelWidth = Math.round(width.value * dpr)
@@ -120,6 +145,7 @@ onBeforeUnmount(() => {
       data-testid="live-waveform"
       :data-hearing="isHearingSound"
     />
+    <LiveNoteReadout v-if="showNotes" :noteInfo="noteInfo" />
     <p
       v-if="hasNoSound"
       role="status"

@@ -946,6 +946,7 @@
         "keepGoing": "Lovely and steady. Keep singing!"
       }
     },
+    "liveNotes": "Show notes",
     "waveformLabel": "Live sound from your mic",
     "noSoundYet": "We can't hear you yet. Check your mic and sing a little."
   }

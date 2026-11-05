@@ -946,6 +946,7 @@
         "keepGoing": "Schön und sicher. Sing weiter!"
       }
     },
+    "liveNotes": "Töne anzeigen",
     "waveformLabel": "Live-Ton von deinem Mikro",
     "noSoundYet": "Wir hören dich noch nicht. Prüf dein Mikro und sing ein bisschen."
   }

@@ -81,6 +81,7 @@ const STORAGE_KEYS = [
   'syng.voiceRangeFamousSingers',
   'syng.voiceRangeSlots',
   'syng.voiceRangeSlotsExpanded',
+  'syng.voiceRecorderLiveNotes',
   'syng.voiceTypeRibbon',
   'syng.warmup.durationSec',
   'syng.warmup.patternId',

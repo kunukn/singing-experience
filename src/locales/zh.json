@@ -946,6 +946,7 @@
         "keepGoing": "好听又稳定，继续唱吧！"
       }
     },
+    "liveNotes": "显示音符",
     "waveformLabel": "麦克风的实时声音",
     "noSoundYet": "还听不到你的声音。检查一下麦克风，再唱几句。"
   }

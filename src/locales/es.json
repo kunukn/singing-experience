@@ -946,6 +946,7 @@
         "keepGoing": "Bonito y estable. ¡Sigue cantando!"
       }
     },
+    "liveNotes": "Mostrar notas",
     "waveformLabel": "Sonido en directo de tu micrófono",
     "noSoundYet": "Aún no te oímos. Revisa tu micrófono y canta un poco."
   }

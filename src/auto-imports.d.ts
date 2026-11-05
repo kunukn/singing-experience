@@ -20,10 +20,13 @@ declare global {
   const HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').HOLD_DURATION_MS
   const MAX_CENTS_DEVIATION: typeof import('./composables/useDoReMiGame').MAX_CENTS_DEVIATION
   const MAX_CLARITY_THRESHOLD: typeof import('./composables/useSettings').MAX_CLARITY_THRESHOLD
+  const MAX_FREQUENCY: typeof import('./composables/usePitchDetection').MAX_FREQUENCY
   const MAX_REFERENCE_PITCH: typeof import('./composables/useReferencePitch').MAX_REFERENCE_PITCH
   const MIN_CLARITY_THRESHOLD: typeof import('./composables/useSettings').MIN_CLARITY_THRESHOLD
+  const MIN_FREQUENCY: typeof import('./composables/usePitchDetection').MIN_FREQUENCY
   const MIN_REFERENCE_PITCH: typeof import('./composables/useReferencePitch').MIN_REFERENCE_PITCH
   const NOTE_INTERVAL_MS: typeof import('./composables/useDoReMiPlaySequence').NOTE_INTERVAL_MS
+  const ONSET_DEBOUNCE_MS: typeof import('./composables/usePitchDetection').ONSET_DEBOUNCE_MS
   const REFERENCE_PITCH_BUTTON_STEP: typeof import('./composables/useReferencePitch').REFERENCE_PITCH_BUTTON_STEP
   const REFERENCE_PITCH_PRESETS: typeof import('./composables/useReferencePitch').REFERENCE_PITCH_PRESETS
   const REFERENCE_PITCH_STEP: typeof import('./composables/useReferencePitch').REFERENCE_PITCH_STEP
@@ -209,9 +212,12 @@ declare module 'vue' {
     readonly DEFAULT_PREVIEW_ENABLED: UnwrapRef<typeof import('./composables/useSettings')['DEFAULT_PREVIEW_ENABLED']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly MAX_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['MAX_CLARITY_THRESHOLD']>
+    readonly MAX_FREQUENCY: UnwrapRef<typeof import('./composables/usePitchDetection')['MAX_FREQUENCY']>
     readonly MAX_REFERENCE_PITCH: UnwrapRef<typeof import('./composables/useReferencePitch')['MAX_REFERENCE_PITCH']>
     readonly MIN_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['MIN_CLARITY_THRESHOLD']>
+    readonly MIN_FREQUENCY: UnwrapRef<typeof import('./composables/usePitchDetection')['MIN_FREQUENCY']>
     readonly MIN_REFERENCE_PITCH: UnwrapRef<typeof import('./composables/useReferencePitch')['MIN_REFERENCE_PITCH']>
+    readonly ONSET_DEBOUNCE_MS: UnwrapRef<typeof import('./composables/usePitchDetection')['ONSET_DEBOUNCE_MS']>
     readonly REFERENCE_PITCH_BUTTON_STEP: UnwrapRef<typeof import('./composables/useReferencePitch')['REFERENCE_PITCH_BUTTON_STEP']>
     readonly REFERENCE_PITCH_PRESETS: UnwrapRef<typeof import('./composables/useReferencePitch')['REFERENCE_PITCH_PRESETS']>
     readonly REFERENCE_PITCH_STEP: UnwrapRef<typeof import('./composables/useReferencePitch')['REFERENCE_PITCH_STEP']>
