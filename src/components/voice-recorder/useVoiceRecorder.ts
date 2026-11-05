@@ -4,10 +4,14 @@ import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
 
 import { pickRecorderMimeType } from './recorderFormat'
 
-/* A whole song, and the length phone analysis memory comfortably handles. */
-export const MAX_RECORDING_MS = 5 * 60 * 1000
-/* Voice stays clean at 128 kbps: about 0.96 MB a minute, 4.8 MB at the cap. */
-const RECORDING_BITS_PER_SECOND = 128_000
+/* Most takes are a few seconds; two minutes still fits a verse and chorus. */
+export const MAX_RECORDING_MS = 2 * 60 * 1000
+/*
+ * Short takes leave room for top-end AAC/Opus quality: 256 kbps is about
+ * 1.9 MB a minute, 3.8 MB at the cap. Encoders with a lower ceiling clamp it
+ * (Chrome's Windows AAC tops out at 192 kbps).
+ */
+const RECORDING_BITS_PER_SECOND = 256_000
 /* Browsers treat the bitrate as a hint, so size gets its own limit. */
 const MAX_RECORDING_BYTES = 8 * 1024 * 1024
 /* Delivers bytes once a second so the size limit can be checked as we go. */
