@@ -76,7 +76,8 @@ const rows = computed(() =>
       :notesUsed="notesUsed"
       @play="emit('tonePlay')"
     />
-    <ul class="flex flex-col gap-0.5">
+    <!-- gap-1: rows 20px apart, so each note's 20px tap area just meets the next -->
+    <ul class="flex flex-col gap-1">
       <li
         v-for="row in rows"
         :key="row.midi"
