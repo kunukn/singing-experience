@@ -865,6 +865,10 @@
     "bpm": {
       "name": "BPM",
       "description": "Slag i minuttet: hvor hurtigt musikken går."
+    },
+    "recordingQuality": {
+      "name": "Standard eller Studie",
+      "description": "Standard lyder klart og passer til næsten alle optagelser. Studie gemmer flere detaljer, når du synger meget stille, men filen bliver halvanden gang så stor."
     }
   },
   "voiceRecorder": {
@@ -947,6 +951,12 @@
       }
     },
     "liveNotes": "Vis toner",
+    "quality": {
+      "label": "Optagekvalitet",
+      "standard": "Standard",
+      "studio": "Studie",
+      "detail": "{bits}-bit, cirka {megabytes} MB i minuttet"
+    },
     "waveformLabel": "Lyd fra din mikrofon lige nu",
     "noSoundYet": "Vi kan ikke høre dig endnu. Tjek din mikrofon, og syng lidt."
   }

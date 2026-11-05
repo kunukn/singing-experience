@@ -4,6 +4,7 @@ import { createI18n } from 'vue-i18n'
 import { useSettings } from '@/composables/useSettings'
 import en from '@/locales/en.json'
 import { frequencyToNote } from '@/utils/noteUtils'
+import { useRecordingBitDepth } from './recordingQuality'
 import type { RecorderStatus, Take } from './useVoiceRecorder'
 import VoiceRecorderDisplay from './VoiceRecorderDisplay.vue'
 
@@ -20,6 +21,7 @@ const TAKE: Take = {
 const PREVIEW_TOGGLE = '[data-testid="recorder-preview"]'
 const NOTES_TOGGLE = '[data-testid="recorder-live-notes"]'
 const READOUT = '[data-testid="live-note"]'
+const QUALITY_TOGGLE = '[data-testid="recorder-quality"]'
 
 function mountDisplay({
   status = 'idle',
@@ -61,6 +63,7 @@ describe('VoiceRecorderDisplay toggles', () => {
     take: Take | null
     hasPreview: boolean
     hasNotes: boolean
+    hasQuality: boolean
   }>([
     {
       state: 'idle with no take',
@@ -68,6 +71,7 @@ describe('VoiceRecorderDisplay toggles', () => {
       take: null,
       hasPreview: true,
       hasNotes: false,
+      hasQuality: true,
     },
     {
       state: 'starting',
@@ -75,6 +79,7 @@ describe('VoiceRecorderDisplay toggles', () => {
       take: null,
       hasPreview: false,
       hasNotes: false,
+      hasQuality: false,
     },
     {
       state: 'recording',
@@ -82,6 +87,7 @@ describe('VoiceRecorderDisplay toggles', () => {
       take: null,
       hasPreview: false,
       hasNotes: true,
+      hasQuality: false,
     },
     {
       state: 'showing a take',
@@ -89,14 +95,16 @@ describe('VoiceRecorderDisplay toggles', () => {
       take: TAKE,
       hasPreview: false,
       hasNotes: false,
+      hasQuality: true,
     },
   ])(
     'should offer the toggle that has an effect when $state',
-    ({ status, take, hasPreview, hasNotes }) => {
+    ({ status, take, hasPreview, hasNotes, hasQuality }) => {
       const wrapper = mountDisplay({ status, take })
 
       expect(wrapper.find(PREVIEW_TOGGLE).exists()).toBe(hasPreview)
       expect(wrapper.find(NOTES_TOGGLE).exists()).toBe(hasNotes)
+      expect(wrapper.find(QUALITY_TOGGLE).exists()).toBe(hasQuality)
     },
   )
 
@@ -123,5 +131,44 @@ describe('VoiceRecorderDisplay toggles', () => {
 
     expect(wrapper.find(PREVIEW_TOGGLE).exists()).toBe(false)
     expect(wrapper.find(READOUT).exists()).toBe(false)
+  })
+})
+
+describe('VoiceRecorderDisplay - recording quality', () => {
+  afterEach(() => {
+    useRecordingBitDepth().value = 16
+  })
+
+  test('should start on Standard and switch to Studio when picked', async () => {
+    const wrapper = mountDisplay()
+    const toggle = wrapper.get(QUALITY_TOGGLE)
+
+    expect(toggle.attributes('data-bit-depth')).toBe('16')
+
+    const studio = toggle
+      .findAll('button')
+      .find((button) => button.text().startsWith('Studio'))
+    await studio!.trigger('click')
+
+    expect(useRecordingBitDepth().value).toBe(24)
+    expect(toggle.attributes('data-bit-depth')).toBe('24')
+  })
+
+  test('should describe each option with its bit depth and size', () => {
+    const descriptions = mountDisplay()
+      .get(QUALITY_TOGGLE)
+      .findAll('[data-testid="recorder-quality-description"]')
+      .map((description) => description.text())
+
+    expect(descriptions).toEqual([
+      'Standard, 16-bit, about 6 MB a minute',
+      'Studio, 24-bit, about 9 MB a minute',
+    ])
+  })
+
+  test('should offer no quality choice on the test page', () => {
+    const wrapper = mountDisplay({ isSimulated: true })
+
+    expect(wrapper.find(QUALITY_TOGGLE).exists()).toBe(false)
   })
 })

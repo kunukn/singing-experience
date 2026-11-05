@@ -724,6 +724,10 @@
     "bpm": {
       "name": "BPM",
       "description": "Beats per minute: how fast the music goes."
+    },
+    "recordingQuality": {
+      "name": "Standard or Studio",
+      "description": "Standard sounds clear and is right for almost every recording. Studio keeps more detail when you sing very softly, but the file is 1.5 times bigger."
     }
   }
 }

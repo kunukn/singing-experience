@@ -865,6 +865,10 @@
     "bpm": {
       "name": "BPM",
       "description": "Mipigo kwa dakika: jinsi muziki unavyokwenda kwa kasi."
+    },
+    "recordingQuality": {
+      "name": "Kawaida au Studio",
+      "description": "Kawaida inasikika wazi na inafaa karibu kila rekodi. Studio inahifadhi maelezo zaidi unapoimba kwa sauti ya chini sana, lakini faili linakuwa kubwa mara moja na nusu."
     }
   },
   "voiceRecorder": {
@@ -947,6 +951,12 @@
       }
     },
     "liveNotes": "Onyesha noti",
+    "quality": {
+      "label": "Ubora wa rekodi",
+      "standard": "Kawaida",
+      "studio": "Studio",
+      "detail": "biti {bits}, takriban MB {megabytes} kwa dakika"
+    },
     "waveformLabel": "Sauti ya moja kwa moja kutoka kwenye maikrofoni yako",
     "noSoundYet": "Bado hatukusikii. Angalia maikrofoni yako na uimbe kidogo."
   }

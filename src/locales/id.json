@@ -865,6 +865,10 @@
     "bpm": {
       "name": "BPM",
       "description": "Ketukan per menit: seberapa cepat musiknya."
+    },
+    "recordingQuality": {
+      "name": "Standar atau Studio",
+      "description": "Standar terdengar jernih dan cocok untuk hampir semua rekaman. Studio menyimpan lebih banyak detail saat kamu bernyanyi sangat pelan, tapi filenya 1,5 kali lebih besar."
     }
   },
   "voiceRecorder": {
@@ -947,6 +951,12 @@
       }
     },
     "liveNotes": "Tampilkan nada",
+    "quality": {
+      "label": "Kualitas rekaman",
+      "standard": "Standar",
+      "studio": "Studio",
+      "detail": "{bits}-bit, sekitar {megabytes} MB per menit"
+    },
     "waveformLabel": "Suara langsung dari mikrofonmu",
     "noSoundYet": "Kami belum mendengarmu. Periksa mikrofonmu dan bernyanyilah sedikit."
   }

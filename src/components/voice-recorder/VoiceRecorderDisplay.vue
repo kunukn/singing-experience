@@ -6,6 +6,7 @@ import type { NoteInfo } from '@/utils/noteUtils'
 import type { TakeAnalysis } from './analyzeTake'
 import LiveNoteReadout from './LiveNoteReadout.vue'
 import LiveWaveform from './LiveWaveform.vue'
+import { megabytesPerMinute, useRecordingBitDepth } from './recordingQuality'
 import TakeAnalysisPanel from './TakeAnalysisPanel.vue'
 import TakePlayer from './TakePlayer.vue'
 import {
@@ -45,6 +46,21 @@ const playerElement =
   useTemplateRef<InstanceType<typeof TakePlayer>>('playerElement')
 const playheadMs = ref(0)
 const showLiveNotes = useLocalStorage('syng.voiceRecorderLiveNotes', true)
+const bitDepth = useRecordingBitDepth()
+const qualityOptions = computed(() =>
+  (
+    [
+      { value: 16, label: t('voiceRecorder.quality.standard') },
+      { value: 24, label: t('voiceRecorder.quality.studio') },
+    ] as const
+  ).map((option) => ({
+    ...option,
+    detail: t('voiceRecorder.quality.detail', {
+      bits: option.value,
+      megabytes: megabytesPerMinute(option.value),
+    }),
+  })),
+)
 
 watch(
   () => props.take,
@@ -153,6 +169,27 @@ function formatClock(ms: number): string {
         labelFrom="xs"
         data-testid="recorder-live-notes"
       />
+      <PrimeSelectButton
+        v-if="status === 'idle'"
+        v-model="bitDepth"
+        :options="qualityOptions"
+        optionLabel="label"
+        optionValue="value"
+        :allowEmpty="false"
+        size="small"
+        :aria-label="t('voiceRecorder.quality.label')"
+        data-testid="recorder-quality"
+        :data-bit-depth="bitDepth"
+      >
+        <template #option="{ option }">
+          <span :title="option.detail" aria-hidden="true">
+            {{ option.label }}
+          </span>
+          <span class="sr-only" data-testid="recorder-quality-description">
+            {{ option.label }}, {{ option.detail }}
+          </span>
+        </template>
+      </PrimeSelectButton>
     </div>
 
     <LiveNoteReadout

@@ -6,6 +6,7 @@ import { useVoiceTakeStore } from '@/stores/useVoiceTakeStore'
 import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
 
 import { loadPcmCaptureProcessor } from './pcmCapture'
+import { useRecordingBitDepth } from './recordingQuality'
 import { MAX_RECORDING_MS, useVoiceRecorder } from './useVoiceRecorder'
 
 vi.mock('@/components/voice-recorder/takePersistence', () => ({
@@ -27,7 +28,8 @@ vi.mock('./pcmCapture', async (importOriginal) => ({
 /* Low, so a test can hand over a whole minute of samples cheaply. */
 const SAMPLE_RATE = 1000
 const WAV_HEADER_BYTES = 44
-const BYTES_PER_SAMPLE = 3
+/* The 1 s tone plus 150 ms lead-in and 250 ms tail; the silence is gone. */
+const TRIMMED_SAMPLES = 1400
 
 class FakeAudioContext extends EventTarget {
   static latest: FakeAudioContext
@@ -106,6 +108,7 @@ function createRecorder() {
 
 beforeEach(() => {
   setActivePinia(createPinia())
+  useRecordingBitDepth().value = 16
   vi.useFakeTimers()
   vi.stubGlobal('AudioContext', FakeAudioContext)
   vi.stubGlobal('AudioWorkletNode', FakeAudioWorkletNode)
@@ -121,7 +124,7 @@ afterEach(() => {
 })
 
 describe('useVoiceRecorder', () => {
-  test('should save a trimmed 24-bit WAV and release the mic on stop', async () => {
+  test('should save a trimmed 16-bit WAV and release the mic on stop', async () => {
     const recorder = createRecorder()
 
     await recorder.start()
@@ -138,8 +141,24 @@ describe('useVoiceRecorder', () => {
     expect(FakeAudioContext.latest.state).toBe('closed')
     expect(take?.mimeType).toBe('audio/wav')
     expect(take?.stopReason).toBe('user')
-    /* The 1 s tone plus 150 ms lead-in and 250 ms tail; the silence is gone. */
-    expect(take?.blob.size).toBe(WAV_HEADER_BYTES + 1400 * BYTES_PER_SAMPLE)
+    expect(take?.blob.size).toBe(WAV_HEADER_BYTES + TRIMMED_SAMPLES * 2)
+  })
+
+  test('should save 24-bit when Studio quality was picked before the take', async () => {
+    const recorder = createRecorder()
+    useRecordingBitDepth().value = 24
+
+    await recorder.start()
+    /* Changing it mid-take must not affect this take. */
+    useRecordingBitDepth().value = 16
+    FakeAudioWorkletNode.latest.deliver(createSilence(1))
+    FakeAudioWorkletNode.latest.deliver(createTone(1))
+    FakeAudioWorkletNode.latest.deliver(createSilence(1))
+    recorder.stop()
+
+    expect(useVoiceTakeStore().take?.blob.size).toBe(
+      WAV_HEADER_BYTES + TRIMMED_SAMPLES * 3,
+    )
   })
 
   test('should stop itself at the time limit', async () => {

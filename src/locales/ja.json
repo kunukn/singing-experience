@@ -865,6 +865,10 @@
     "bpm": {
       "name": "BPM",
       "description": "1分間の拍の数。音楽の速さのことだよ。"
+    },
+    "recordingQuality": {
+      "name": "スタンダードとスタジオ",
+      "description": "スタンダードはクリアな音で、ほとんどの録音にぴったり。スタジオはとても小さな声で歌うときに細かい音まで残せるけど、ファイルが1.5倍の大きさになるよ。"
     }
   },
   "voiceRecorder": {
@@ -947,6 +951,12 @@
       }
     },
     "liveNotes": "音名を表示",
+    "quality": {
+      "label": "録音の音質",
+      "standard": "スタンダード",
+      "studio": "スタジオ",
+      "detail": "{bits}ビット、1分で約{megabytes}MB"
+    },
     "waveformLabel": "マイクからのライブ音声",
     "noSoundYet": "まだ声が聞こえないよ。マイクを確認して、少し歌ってみてね。"
   }

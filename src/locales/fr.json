@@ -865,6 +865,10 @@
     "bpm": {
       "name": "BPM",
       "description": "Battements par minute : la vitesse de la musique."
+    },
+    "recordingQuality": {
+      "name": "Standard ou Studio",
+      "description": "Standard donne un son clair et convient à presque tous les enregistrements. Studio garde plus de détails quand tu chantes très doucement, mais le fichier est une fois et demie plus gros."
     }
   },
   "voiceRecorder": {
@@ -947,6 +951,12 @@
       }
     },
     "liveNotes": "Afficher les notes",
+    "quality": {
+      "label": "Qualité d'enregistrement",
+      "standard": "Standard",
+      "studio": "Studio",
+      "detail": "{bits} bits, environ {megabytes} Mo par minute"
+    },
     "waveformLabel": "Le son de ton micro en direct",
     "noSoundYet": "On ne t'entend pas encore. Vérifie ton micro et chante un peu."
   }

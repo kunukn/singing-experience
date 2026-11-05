@@ -865,6 +865,10 @@
     "bpm": {
       "name": "BPM",
       "description": "Pulsaciones por minuto: lo rápido que va la música."
+    },
+    "recordingQuality": {
+      "name": "Estándar o Estudio",
+      "description": "Estándar suena claro y sirve para casi cualquier grabación. Estudio guarda más detalles cuando cantas muy bajito, pero el archivo es una vez y media más grande."
     }
   },
   "voiceRecorder": {
@@ -947,6 +951,12 @@
       }
     },
     "liveNotes": "Mostrar notas",
+    "quality": {
+      "label": "Calidad de grabación",
+      "standard": "Estándar",
+      "studio": "Estudio",
+      "detail": "{bits} bits, unos {megabytes} MB por minuto"
+    },
     "waveformLabel": "Sonido en directo de tu micrófono",
     "noSoundYet": "Aún no te oímos. Revisa tu micrófono y canta un poco."
   }

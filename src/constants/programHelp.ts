@@ -24,6 +24,7 @@ export type GlossaryTerm =
   | 'harmony'
   | 'staff'
   | 'bpm'
+  | 'recordingQuality'
 
 export type ProgramHelp = {
   /* How many `programHelp.<key>.stepN` strings exist, starting at step1 */
@@ -69,6 +70,7 @@ export const programHelpByKey: Record<string, ProgramHelp> = {
       'soundProfile',
       'rangeUsed',
       'howSteady',
+      'recordingQuality',
     ],
   },
   toneDetector: { stepCount: 3, terms: ['note', 'octave', 'chord', 'harmony'] },

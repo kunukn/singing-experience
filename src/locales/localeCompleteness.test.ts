@@ -43,6 +43,7 @@ const LANGUAGE_NEUTRAL_PREFIXES = ['singTheKeys.songs.']
 /* Words a language spells exactly like English — cognates and music terms */
 const COGNATES_BY_LOCALE: Record<string, string[]> = {
   da: [
+    'voiceRecorder.quality.standard',
     'generic.start',
     'generic.stop',
     'generic.pause',
@@ -64,6 +65,8 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'voiceRanges.mezzoSopranoShort',
   ],
   de: [
+    'voiceRecorder.quality.standard',
+    'voiceRecorder.quality.studio',
     'generic.start',
     'generic.pause',
     'generic.difficulty_normal',
@@ -102,6 +105,8 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'voiceRanges.mezzoSopranoShort',
   ],
   fr: [
+    'voiceRecorder.quality.standard',
+    'voiceRecorder.quality.studio',
     'generic.pause',
     'generic.difficulty_normal',
     'generic.octave',
@@ -131,6 +136,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'voiceRanges.mezzoSopranoShort',
   ],
   id: [
+    'voiceRecorder.quality.studio',
     'generic.difficulty_normal',
     'generic.tempo',
     'sounds.keyboard',
@@ -175,6 +181,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'voiceRanges.mezzoSopranoShort',
   ],
   sw: [
+    'voiceRecorder.quality.studio',
     'generic.tempo',
     'home.programs.piano.name',
     'warmUp.patterns.yodel',

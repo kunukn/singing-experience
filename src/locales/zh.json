@@ -865,6 +865,10 @@
     "bpm": {
       "name": "BPM",
       "description": "每分钟的拍数：音乐有多快。"
+    },
+    "recordingQuality": {
+      "name": "标准还是录音棚",
+      "description": "标准音质清晰，几乎所有录音都适用。录音棚在你唱得很轻时能留下更多细节，但文件大小是标准的 1.5 倍。"
     }
   },
   "voiceRecorder": {
@@ -947,6 +951,12 @@
       }
     },
     "liveNotes": "显示音符",
+    "quality": {
+      "label": "录音音质",
+      "standard": "标准",
+      "studio": "录音棚",
+      "detail": "{bits} 位，每分钟约 {megabytes} MB"
+    },
     "waveformLabel": "麦克风的实时声音",
     "noSoundYet": "还听不到你的声音。检查一下麦克风，再唱几句。"
   }

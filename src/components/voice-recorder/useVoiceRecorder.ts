@@ -8,14 +8,13 @@ import {
   PCM_CAPTURE_PROCESSOR,
   type SampleCollector,
 } from './pcmCapture'
+import { useRecordingBitDepth } from './recordingQuality'
 import { trimSilence } from './trimSilence'
-import { encodeWav } from './wavEncoder'
+import { encodeWav, type WavBitDepth } from './wavEncoder'
 
-/* Most takes are a few seconds, so the cap pays for lossless 24-bit WAV:
- * about 8.6 MB a minute at 48 kHz. */
+/* Most takes are a few seconds, so the cap pays for lossless WAV: at 48 kHz
+ * about 5.8 MB a minute at 16-bit, 8.6 MB at 24-bit. */
 export const MAX_RECORDING_MS = 60 * 1000
-/* Studio depth: room for quiet singing, since auto gain is off. */
-const WAV_BITS_PER_SAMPLE = 24
 const CLOCK_TICK_MS = 200
 
 /* Nothing plays while recording, so the voice can be captured unprocessed:
@@ -61,6 +60,7 @@ export function useVoiceRecorder() {
 
   const takeStore = useVoiceTakeStore()
   const wakeLock = useWakeLock()
+  const bitDepth = useRecordingBitDepth()
 
   let audioContext: AudioContext | null = null
   let micSource: MediaStreamAudioSourceNode | null = null
@@ -69,6 +69,8 @@ export function useVoiceRecorder() {
   let collector: SampleCollector | null = null
   let startedAtMs = 0
   let hasAutoGain = false
+  /* Read when the take starts, so the setting can't change one mid-take. */
+  let takeBitDepth: WavBitDepth = bitDepth.value
   let isDisposed = false
 
   const clock = useIntervalFn(
@@ -126,7 +128,7 @@ export function useVoiceRecorder() {
       blob: encodeWav(
         trimSilence(samples, sampleRate),
         sampleRate,
-        WAV_BITS_PER_SAMPLE,
+        takeBitDepth,
       ),
       mimeType: 'audio/wav',
       recordedAt: new Date(),
@@ -193,6 +195,7 @@ export function useVoiceRecorder() {
 
     const [track] = stream.getAudioTracks()
     hasAutoGain = track?.getSettings().autoGainControl === true
+    takeBitDepth = bitDepth.value
 
     const activeCollector = createSampleCollector(
       Math.round((context.sampleRate * MAX_RECORDING_MS) / 1000),

@@ -865,6 +865,10 @@
     "bpm": {
       "name": "BPM",
       "description": "Batidas por minuto: a velocidade da música."
+    },
+    "recordingQuality": {
+      "name": "Padrão ou Estúdio",
+      "description": "Padrão tem som claro e serve para quase toda gravação. Estúdio guarda mais detalhes quando você canta bem baixinho, mas o arquivo fica 1,5 vez maior."
     }
   },
   "voiceRecorder": {
@@ -947,6 +951,12 @@
       }
     },
     "liveNotes": "Mostrar notas",
+    "quality": {
+      "label": "Qualidade da gravação",
+      "standard": "Padrão",
+      "studio": "Estúdio",
+      "detail": "{bits} bits, cerca de {megabytes} MB por minuto"
+    },
     "waveformLabel": "Som ao vivo do seu microfone",
     "noSoundYet": "Ainda não ouvimos você. Confira seu microfone e cante um pouco."
   }
