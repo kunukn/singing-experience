@@ -948,6 +948,7 @@
       "key": "Holder tonearten",
       "cleanStarts": "Rene starter",
       "tooShort": "Syng et par forskellige toner i mindst {seconds} sekunder for at få en vurdering.",
+      "notEnoughSinging": "Tydelig sang hørt: {heard} af {seconds} sekunder. Syng lidt længere for at få en vurdering. Pauser og vejrtrækninger tæller ikke.",
       "note": "Det her ser på, hvor stabile dine toner er, ikke hvor god din stemme er.",
       "tips": {
         "centring": "Prøv at nynne tonen først, og ram så lige midt på den.",

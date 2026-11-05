@@ -948,6 +948,7 @@
       "key": "Rester dans le ton",
       "cleanStarts": "Attaques nettes",
       "tooShort": "Chante quelques notes différentes pendant au moins {seconds} secondes pour avoir une note.",
+      "notEnoughSinging": "Chant clair entendu : {heard} sur {seconds} secondes. Chante un peu plus longtemps pour avoir une note. Les pauses et les respirations ne comptent pas.",
       "note": "Ça regarde la stabilité de tes notes, pas la qualité de ta voix.",
       "tips": {
         "centring": "Fredonne d'abord la note, puis pose-toi pile au milieu.",

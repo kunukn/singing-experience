@@ -948,6 +948,7 @@
       "key": "In der Tonart bleiben",
       "cleanStarts": "Saubere Einsätze",
       "tooShort": "Sing ein paar verschiedene Töne für mindestens {seconds} Sekunden, um eine Bewertung zu bekommen.",
+      "notEnoughSinging": "Klar gesungen: {heard} von {seconds} Sekunden. Sing etwas länger, um eine Bewertung zu bekommen. Pausen und Atmen zählen nicht.",
       "note": "Das zeigt, wie sicher deine Töne sind, nicht wie gut deine Stimme ist.",
       "tips": {
         "centring": "Summ den Ton erst, und triff dann genau seine Mitte.",

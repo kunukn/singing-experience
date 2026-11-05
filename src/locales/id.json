@@ -948,6 +948,7 @@
       "key": "Tetap di kunci",
       "cleanStarts": "Awal yang bersih",
       "tooShort": "Nyanyikan beberapa nada berbeda minimal {seconds} detik untuk dapat penilaian.",
+      "notEnoughSinging": "Nyanyian jelas terdengar: {heard} dari {seconds} detik. Bernyanyilah sedikit lebih lama untuk dapat penilaian. Jeda dan tarikan napas tidak dihitung.",
       "note": "Ini melihat seberapa stabil nadamu, bukan seberapa bagus suaramu.",
       "tips": {
         "centring": "Coba senandungkan nadanya dulu, lalu mendarat tepat di tengahnya.",

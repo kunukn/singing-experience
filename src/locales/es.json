@@ -948,6 +948,7 @@
       "key": "Seguir en el tono",
       "cleanStarts": "Comienzos limpios",
       "tooShort": "Canta varias notas distintas durante al menos {seconds} segundos para tener una valoración.",
+      "notEnoughSinging": "Canto claro escuchado: {heard} de {seconds} segundos. Canta un poco más para tener una valoración. Las pausas y respiraciones no cuentan.",
       "note": "Esto mira lo estables que son tus notas, no lo buena que es tu voz.",
       "tips": {
         "centring": "Prueba a tararear la nota primero y luego cae justo en el centro.",

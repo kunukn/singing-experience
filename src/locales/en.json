@@ -948,6 +948,7 @@
       "key": "Staying in key",
       "cleanStarts": "Clean starts",
       "tooShort": "Sing a few different notes for at least {seconds} seconds to get a rating.",
+      "notEnoughSinging": "Clear singing heard: {heard} of {seconds} seconds. Sing a bit longer to get a rating. Pauses and breaths don't count.",
       "note": "This looks at how steady your notes are, not how good your voice is.",
       "tips": {
         "centring": "Try humming a note first, then land right in the middle of it.",

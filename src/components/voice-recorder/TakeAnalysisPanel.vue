@@ -136,6 +136,7 @@ async function analyse() {
       <TakeRatingCard
         v-if="analysis.notes.length > 0"
         :rating="analysis.rating"
+        :voicedMs="analysis.quality.voicedMs"
       />
     </template>
   </div>

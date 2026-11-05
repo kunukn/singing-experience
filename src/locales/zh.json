@@ -948,6 +948,7 @@
       "key": "保持在调上",
       "cleanStarts": "干净的起音",
       "tooShort": "唱几个不同的音，至少 {seconds} 秒，才能得到评价。",
+      "notEnoughSinging": "听到的清晰歌声：{heard} / {seconds} 秒。再多唱一会儿才能得到评价。停顿和换气不算。",
       "note": "这里看的是音有多稳，不是你的嗓音有多好。",
       "tips": {
         "centring": "先哼一下这个音，再唱到它的正中间。",

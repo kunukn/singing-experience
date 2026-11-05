@@ -948,6 +948,7 @@
       "key": "Kubaki kwenye skeli",
       "cleanStarts": "Mianzo safi",
       "tooShort": "Imba noti chache tofauti kwa angalau sekunde {seconds} ili upate tathmini.",
+      "notEnoughSinging": "Uimbaji wazi uliosikika: {heard} kati ya sekunde {seconds}. Imba kwa muda mrefu kidogo ili upate tathmini. Mapumziko na kupumua havihesabiwi.",
       "note": "Hii inaangalia uthabiti wa noti zako, si uzuri wa sauti yako.",
       "tips": {
         "centring": "Jaribu kuvuma noti kwanza, kisha ifikie katikati kabisa.",
