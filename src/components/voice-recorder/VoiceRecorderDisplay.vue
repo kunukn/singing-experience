@@ -157,7 +157,7 @@ function formatClock(ms: number): string {
       <PreviewToggle
         v-if="canPreview"
         v-model="isPreviewEnabled"
-        labelFrom="xs"
+        labelFrom="always"
         data-testid="recorder-preview"
       />
       <ToggleIconButton
