@@ -42,10 +42,11 @@ const inputOptions = computed(() =>
   INPUT_OPTIONS.map((value) => ({ label: t(inputLabelKeys[value]), value })),
 )
 
-/* Same treble/bass switch and labels as the /notes settings row. */
+/* Same treble/bass switch as the /notes settings row. */
 const clefOptions = computed(() =>
   CLEF_LABEL_KEYS.map((key) => ({
     label: t(`notes.clefLabels.${key}`),
+    clef: key,
     value: key,
   })),
 )
@@ -98,7 +99,11 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         :allowEmpty="false"
         size="small"
         data-testid="melody-writer-clef"
-      />
+      >
+        <template #option="{ option }">
+          <ClefOption :clef="option.clef" :label="option.label" />
+        </template>
+      </PrimeSelectButton>
     </div>
 
     <div class="settings-item">
@@ -150,8 +155,9 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 
 /* One row from md up: five items (each col-span-2) side by side. All auto,
  * not 1fr: in this content-sized grid, 1fr tracks all grow to the widest
- * one, which stretched short selects like Shortest note to Tempo's width. */
+ * one, which stretched short selects like Shortest note to Tempo's width.
+ * gap-3, not the shared gap-4: five items only fit a 768px viewport with it. */
 .settings-row {
-  @apply md:grid-cols-[repeat(10,auto)];
+  @apply md:grid-cols-[repeat(10,auto)] md:gap-3;
 }
 </style>

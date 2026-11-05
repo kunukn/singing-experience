@@ -18,6 +18,7 @@ const { t } = useI18n()
 const clefOptions = computed(() =>
   CLEF_LABEL_KEYS.map((key, index) => ({
     label: t(`notes.clefLabels.${key}`),
+    clef: key,
     value: index,
   })),
 )
@@ -66,7 +67,11 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         :allowEmpty="false"
         :disabled="props.isRunning"
         size="small"
-      />
+      >
+        <template #option="{ option }">
+          <ClefOption :clef="option.clef" :label="option.label" />
+        </template>
+      </PrimeSelectButton>
     </div>
 
     <div class="settings-item">
