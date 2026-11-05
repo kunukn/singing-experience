@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
 
+import type { NoteInfo } from '@/utils/noteUtils'
+
 import type { TakeAnalysis } from './analyzeTake'
+import LiveNoteReadout from './LiveNoteReadout.vue'
 import LiveWaveform from './LiveWaveform.vue'
 import TakeAnalysisPanel from './TakeAnalysisPanel.vue'
 import TakePlayer from './TakePlayer.vue'
@@ -22,6 +25,8 @@ type Props = {
   isSimulated?: boolean
   /* Results from an earlier visit to the page, restored with the take. */
   savedAnalysis?: TakeAnalysis | null
+  /* The note heard by "See my voice" before recording. */
+  previewNote?: NoteInfo | null
 }
 
 const props = defineProps<Props>()
@@ -34,6 +39,7 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { isPreviewEnabled } = useSettings()
 
 const playerElement =
   useTemplateRef<InstanceType<typeof TakePlayer>>('playerElement')
@@ -53,6 +59,9 @@ const isBusy = computed(
 )
 const isRecording = computed(() => props.status === 'recording')
 const showTake = computed(() => props.status === 'idle' && props.take !== null)
+const canPreview = computed(
+  () => !props.isSimulated && props.status === 'idle' && props.take === null,
+)
 const timeLeft = computed(() =>
   formatClock(Math.max(0, MAX_RECORDING_MS - props.elapsedMs)),
 )
@@ -131,7 +140,14 @@ function formatClock(ms: number): string {
         />
         {{ t('voiceRecorder.timeLeft', { time: timeLeft }) }}
       </span>
+      <PreviewToggle
+        v-if="canPreview"
+        v-model="isPreviewEnabled"
+        labelFrom="xs"
+        data-testid="recorder-preview"
+      />
       <ToggleIconButton
+        v-if="isRecording"
         v-model="showLiveNotes"
         iconOn="pi pi-hashtag"
         iconOff="pi pi-hashtag"
@@ -140,6 +156,11 @@ function formatClock(ms: number): string {
         data-testid="recorder-live-notes"
       />
     </div>
+
+    <LiveNoteReadout
+      v-if="canPreview && isPreviewEnabled"
+      :noteInfo="previewNote ?? null"
+    />
 
     <LiveWaveform
       v-if="isRecording && liveStream"
