@@ -2,8 +2,8 @@ import { useRafFn } from '@vueuse/core'
 import {
   createNoteSegmenter,
   type NoteEvent,
-} from '@/components/song-recorder/noteSegmenter'
-import type { PitchDetectionInput } from '@/components/song-recorder/useSongRecorder'
+} from '@/components/melody-writer/noteSegmenter'
+import type { PitchDetectionInput } from '@/components/melody-writer/useMelodyWriter'
 import { detectChords, type ChordCandidate } from '@/utils/chordDetection'
 import { frequencyToMidi } from '@/utils/noteUtils'
 import {
@@ -31,7 +31,7 @@ const PIANO_MIN_NOTE_MS = 300
 /*
  * A sung note must last this long to count. Matching is strict — one stray
  * note removes the right scale — so the segmenter's 80 ms floor (tuned for
- * Song Recorder, where every note is written down) lets through too many
+ * Melody Writer, where every note is written down) lets through too many
  * blips: a scoop or wobble that settles a semitone off for ~100 ms. A sung
  * note meant as a note is ~300 ms or more.
  */

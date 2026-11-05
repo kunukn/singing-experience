@@ -3,7 +3,7 @@
 </route>
 
 <template>
-  <div data-page="song-recorder" class="p-0">
-    <SongRecorderPage />
+  <div data-page="melody-writer-test" class="p-0">
+    <MelodyWriterTestPage />
   </div>
 </template>

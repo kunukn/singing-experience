@@ -1,4 +1,4 @@
-import { createNoteSegmenter } from '@/components/song-recorder/noteSegmenter'
+import { createNoteSegmenter } from '@/components/melody-writer/noteSegmenter'
 import { frequencyToMidi } from '@/utils/noteUtils'
 import {
   detectScales,

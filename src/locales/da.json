@@ -160,7 +160,7 @@
         "name": "Noder",
         "description": "Se hver node på nodelinjen og lær dens navn."
       },
-      "songRecorder": {
+      "melodyWriter": {
         "name": "Melodiskriver",
         "description": "Syng en melodi og se den blive til noder."
       },
@@ -570,7 +570,7 @@
       "heading": "Toner uden for linjerne"
     }
   },
-  "songRecorder": {
+  "melodyWriter": {
     "record": "Optag",
     "newRecording": "Ny optagelse",
     "grid": "Korteste node",
@@ -698,7 +698,7 @@
       "step2": "Se, hvilke skalaer eller akkorder der passer til dine toner.",
       "step3": "Tryk på Start forfra for at prøve nye toner."
     },
-    "songRecorder": {
+    "melodyWriter": {
       "step1": "Vælg et tempo, og tryk på Optag.",
       "step2": "Begynd at synge efter 4 klik.",
       "step3": "Se din melodi blive til noder på nodelinjen."

@@ -1,4 +1,4 @@
-import type { NoteEvent } from '@/components/song-recorder/noteSegmenter'
+import type { NoteEvent } from '@/components/melody-writer/noteSegmenter'
 
 type PianoChordCaptureOptions = {
   /* A released note lasts at least this long, so a quick tap still carries

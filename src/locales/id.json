@@ -160,7 +160,7 @@
         "name": "Not",
         "description": "Lihat setiap not di paranada dan pelajari namanya."
       },
-      "songRecorder": {
+      "melodyWriter": {
         "name": "Penulis Melodi",
         "description": "Nyanyikan sebuah lagu dan lihat jadi not balok."
       },
@@ -570,7 +570,7 @@
       "heading": "Not di luar garis"
     }
   },
-  "songRecorder": {
+  "melodyWriter": {
     "record": "Rekam",
     "newRecording": "Rekaman baru",
     "grid": "Not terpendek",
@@ -698,7 +698,7 @@
       "step2": "Lihat tangga nada atau akor mana yang cocok dengan nadamu.",
       "step3": "Tekan Mulai lagi untuk mencoba nada baru."
     },
-    "songRecorder": {
+    "melodyWriter": {
       "step1": "Pilih tempo lalu tekan Rekam.",
       "step2": "Mulai bernyanyi setelah 4 klik.",
       "step3": "Lihat melodimu berubah jadi not di paranada."

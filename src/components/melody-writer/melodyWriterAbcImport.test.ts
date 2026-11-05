@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest'
 import { quantizeNotes } from './quantizeNotes'
-import { buildRecordingAbc } from './songRecorderAbc'
-import { parseAbcImport } from './songRecorderAbcImport'
-import type { Grid } from './songRecorderConstants'
+import { buildRecordingAbc } from './melodyWriterAbc'
+import { parseAbcImport } from './melodyWriterAbcImport'
+import type { Grid } from './melodyWriterConstants'
 
 type ImportOptions = { bpm: number; grid: Grid }
 

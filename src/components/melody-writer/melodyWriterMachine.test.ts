@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'vitest'
 import { createActor } from 'xstate'
-import { songRecorderMachine } from './songRecorderMachine'
+import { melodyWriterMachine } from './melodyWriterMachine'
 
 function startActor() {
-  const actor = createActor(songRecorderMachine)
+  const actor = createActor(melodyWriterMachine)
   actor.start()
 
   return actor
@@ -18,7 +18,7 @@ function toReview() {
   return actor
 }
 
-describe('songRecorderMachine', () => {
+describe('melodyWriterMachine', () => {
   test('starts idle', () => {
     expect(startActor().getSnapshot().value).toBe('idle')
   })

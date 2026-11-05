@@ -1,8 +1,8 @@
-import type { NoteEvent } from '@/components/song-recorder/noteSegmenter'
+import type { NoteEvent } from '@/components/melody-writer/noteSegmenter'
 import {
   PITCH_TRIM_HEAD,
   PITCH_TRIM_TAIL,
-} from '@/components/song-recorder/songRecorderConstants'
+} from '@/components/melody-writer/melodyWriterConstants'
 
 import { CLOSE_CENTS } from '@/utils/pitchColors'
 

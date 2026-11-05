@@ -1,5 +1,5 @@
 import type { QuantizedNote } from './quantizeNotes'
-import type { SheetPiece } from './songRecorderAbc'
+import type { SheetPiece } from './melodyWriterAbc'
 
 /* captured: already on the sheet (closed notes, silence that has passed).
  * ghost: the note still sounding, drawn up to the current slot.

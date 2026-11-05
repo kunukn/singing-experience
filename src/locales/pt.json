@@ -160,7 +160,7 @@
         "name": "Notas",
         "description": "Vê cada nota na pauta e aprende o seu nome."
       },
-      "songRecorder": {
+      "melodyWriter": {
         "name": "Escritor de melodias",
         "description": "Cante uma melodia e veja ela virar partitura."
       },
@@ -570,7 +570,7 @@
       "heading": "Notas fora das linhas"
     }
   },
-  "songRecorder": {
+  "melodyWriter": {
     "record": "Gravar",
     "newRecording": "Nova gravação",
     "grid": "Nota mais curta",
@@ -698,7 +698,7 @@
       "step2": "Veja quais escalas ou acordes combinam com suas notas.",
       "step3": "Aperte Começar de novo para tentar outras notas."
     },
-    "songRecorder": {
+    "melodyWriter": {
       "step1": "Escolha o tempo e aperte Gravar.",
       "step2": "Comece a cantar depois de 4 cliques.",
       "step3": "Veja sua melodia virar notas na pauta."

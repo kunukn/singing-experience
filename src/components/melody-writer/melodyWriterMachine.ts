@@ -1,12 +1,12 @@
 import { setup } from 'xstate'
 
-export type SongRecorderPhase =
+export type MelodyWriterPhase =
   | 'idle'
   | 'countIn'
   | 'recording'
   | { review: 'stopped' | 'playing' | 'paused' }
 
-type SongRecorderEvent =
+type MelodyWriterEvent =
   | { type: 'RECORD' }
   | { type: 'COUNT_IN_DONE' }
   | { type: 'STOP' }
@@ -20,8 +20,8 @@ type SongRecorderEvent =
   | { type: 'RESET' }
   | { type: 'IMPORT' }
 
-/* Lifecycle for /song-recorder. Pure state chart — mic, metronome and playback
- * scheduling live in useSongRecorder.
+/* Lifecycle for /melody-writer. Pure state chart — mic, metronome and playback
+ * scheduling live in useMelodyWriter.
  *
  * idle → countIn (one bar of clicks) → recording → review. STOP during the
  * count-in abandons the take; STOP or LIMIT_REACHED while recording keeps it.
@@ -29,12 +29,12 @@ type SongRecorderEvent =
  * throws the take away for a new one. ERROR (mic refused) returns to idle.
  * IMPORT (ABC pasted in) replaces the take: from idle, or from review where it
  * lands on a stopped transport. Never mid-take. */
-export const songRecorderMachine = setup({
+export const melodyWriterMachine = setup({
   types: {
-    events: {} as SongRecorderEvent,
+    events: {} as MelodyWriterEvent,
   },
 }).createMachine({
-  id: 'songRecorder',
+  id: 'melodyWriter',
   initial: 'idle',
   states: {
     idle: {

@@ -59,7 +59,7 @@ export const programHelpByKey: Record<string, ProgramHelp> = {
   piano: { stepCount: 3, terms: ['note', 'octave', 'scale', 'key'] },
   guitar: { stepCount: 3, terms: ['note', 'scale', 'key'] },
   scaleDetector: { stepCount: 3, terms: ['note', 'scale', 'key', 'chord'] },
-  songRecorder: { stepCount: 3, terms: ['note', 'staff', 'bpm'] },
+  melodyWriter: { stepCount: 3, terms: ['note', 'staff', 'bpm'] },
   voiceRecorder: {
     stepCount: 3,
     terms: [

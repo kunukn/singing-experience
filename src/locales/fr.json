@@ -160,7 +160,7 @@
         "name": "Notes",
         "description": "Vois chaque note sur la portée et apprends son nom."
       },
-      "songRecorder": {
+      "melodyWriter": {
         "name": "Créateur de partitions",
         "description": "Chante un air et regarde-le devenir une partition."
       },
@@ -570,7 +570,7 @@
       "heading": "Notes au-delà des lignes"
     }
   },
-  "songRecorder": {
+  "melodyWriter": {
     "record": "Enregistrer",
     "newRecording": "Nouvel enregistrement",
     "grid": "Note la plus courte",
@@ -698,7 +698,7 @@
       "step2": "Regarde quelles gammes ou quels accords collent à tes notes.",
       "step3": "Appuie sur Recommencer pour essayer de nouvelles notes."
     },
-    "songRecorder": {
+    "melodyWriter": {
       "step1": "Choisis un tempo et appuie sur Enregistrer.",
       "step2": "Commence à chanter après 4 clics.",
       "step3": "Regarde ton air se transformer en notes sur la portée."

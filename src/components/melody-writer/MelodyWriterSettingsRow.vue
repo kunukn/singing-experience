@@ -8,8 +8,8 @@ import {
   GRID_OPTIONS,
   INPUT_OPTIONS,
   type Grid,
-  type SongRecorderInput,
-} from './songRecorderConstants'
+  type MelodyWriterInput,
+} from './melodyWriterConstants'
 
 type Props = {
   /* What the take records — fixed from count-in until the take stops. */
@@ -22,7 +22,7 @@ type Props = {
 
 const props = defineProps<Props>()
 
-const input = defineModel<SongRecorderInput>('input', { required: true })
+const input = defineModel<MelodyWriterInput>('input', { required: true })
 const bpm = defineModel<number>('bpm', { required: true })
 const grid = defineModel<Grid>('grid', { required: true })
 /* Display only — redraws the same take, so it stays unlocked throughout. */
@@ -33,9 +33,9 @@ const isClickEnabled = defineModel<boolean>('isClickEnabled', {
 
 const { t } = useI18n()
 
-const inputLabelKeys: Record<SongRecorderInput, string> = {
-  voice: 'songRecorder.inputVoice',
-  piano: 'songRecorder.inputPiano',
+const inputLabelKeys: Record<MelodyWriterInput, string> = {
+  voice: 'melodyWriter.inputVoice',
+  piano: 'melodyWriter.inputPiano',
 }
 
 const inputOptions = computed(() =>
@@ -83,8 +83,8 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         :allowEmpty="false"
         size="small"
         :disabled="props.isInputLocked"
-        :aria-label="t('songRecorder.inputLabel')"
-        data-testid="song-recorder-input"
+        :aria-label="t('melodyWriter.inputLabel')"
+        data-testid="melody-writer-input"
       />
     </div>
 
@@ -97,7 +97,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         optionValue="value"
         :allowEmpty="false"
         size="small"
-        data-testid="song-recorder-clef"
+        data-testid="melody-writer-clef"
       />
     </div>
 
@@ -112,13 +112,13 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         optionValue="value"
         size="small"
         :disabled="props.isTempoLocked"
-        data-testid="song-recorder-bpm"
+        data-testid="melody-writer-bpm"
       />
     </div>
 
     <div class="settings-item">
       <label class="text-sm text-(--p-text-muted-color) md:block">{{
-        t('songRecorder.grid')
+        t('melodyWriter.grid')
       }}</label>
       <PrimeSelect
         v-model="grid"
@@ -127,7 +127,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         optionValue="value"
         size="small"
         :disabled="props.isGridLocked"
-        data-testid="song-recorder-grid"
+        data-testid="melody-writer-grid"
       />
     </div>
 

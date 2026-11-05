@@ -101,6 +101,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/melody-writer': RouteRecordInfo<
+      '/melody-writer',
+      '/melody-writer',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/melody-writer-test': RouteRecordInfo<
+      '/melody-writer-test',
+      '/melody-writer-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/notes': RouteRecordInfo<
       '/notes',
       '/notes',
@@ -216,20 +230,6 @@ declare module 'vue-router/auto-routes' {
     '/singfly-test': RouteRecordInfo<
       '/singfly-test',
       '/singfly-test',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/song-recorder': RouteRecordInfo<
-      '/song-recorder',
-      '/song-recorder',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/song-recorder-test': RouteRecordInfo<
-      '/song-recorder-test',
-      '/song-recorder-test',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -411,6 +411,22 @@ declare module 'vue-router/auto-routes' {
       pathParamNames:
         | never
     }
+    'src/pages/melody-writer.vue': {
+      routes:
+        | '/melody-writer'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/melody-writer-test.vue': {
+      routes:
+        | '/melody-writer-test'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
     'src/pages/notes.vue': {
       routes:
         | '/notes'
@@ -542,22 +558,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/singfly-test.vue': {
       routes:
         | '/singfly-test'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/pages/song-recorder.vue': {
-      routes:
-        | '/song-recorder'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/pages/song-recorder-test.vue': {
-      routes:
-        | '/song-recorder-test'
       views:
         | never
       pathParamNames:

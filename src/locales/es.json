@@ -160,7 +160,7 @@
         "name": "Notas",
         "description": "Ve cada nota en el pentagrama y aprende su nombre."
       },
-      "songRecorder": {
+      "melodyWriter": {
         "name": "Escritor de melodías",
         "description": "Canta una melodía y mírala convertirse en partitura."
       },
@@ -570,7 +570,7 @@
       "heading": "Notas fuera de las líneas"
     }
   },
-  "songRecorder": {
+  "melodyWriter": {
     "record": "Grabar",
     "newRecording": "Nueva grabación",
     "grid": "Nota más corta",
@@ -698,7 +698,7 @@
       "step2": "Mira qué escalas o acordes encajan con tus notas.",
       "step3": "Pulsa Empezar de nuevo para probar notas nuevas."
     },
-    "songRecorder": {
+    "melodyWriter": {
       "step1": "Elige un tempo y pulsa Grabar.",
       "step2": "Empieza a cantar después de 4 clics.",
       "step3": "Mira cómo tu melodía se convierte en notas en el pentagrama."

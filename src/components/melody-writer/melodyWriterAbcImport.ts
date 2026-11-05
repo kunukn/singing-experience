@@ -1,7 +1,7 @@
 import type { ClefKey } from '@/components/notes/notesConstants'
 import { parseOnly, type AudioTrackNoteItem } from 'abcjs'
 import type { NoteEvent } from './noteSegmenter'
-import { ALLOWED_BPMS, type Grid } from './songRecorderConstants'
+import { ALLOWED_BPMS, type Grid } from './melodyWriterConstants'
 
 /* Things the import had to simplify; the editor shows each as a translated
  * notice next to a successful import. */

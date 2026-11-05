@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { createNoteSegmenter } from './noteSegmenter'
-import { ONSET_LATENCY_MS, RELEASE_LATENCY_MS } from './songRecorderConstants'
+import { ONSET_LATENCY_MS, RELEASE_LATENCY_MS } from './melodyWriterConstants'
 
 /* ~60 fps, like the rAF-driven detector. */
 const FRAME_MS = 16

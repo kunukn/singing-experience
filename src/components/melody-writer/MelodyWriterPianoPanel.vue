@@ -22,7 +22,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 
-const isExpanded = useLocalStorage('syng.songRecorderPianoExpanded', false)
+const isExpanded = useLocalStorage('syng.melodyWriterPianoExpanded', false)
 
 watch(
   () => props.isPianoInput,
@@ -50,25 +50,25 @@ const isCoarsePointer = useMediaQuery('(pointer: coarse)')
         text
         size="small"
         :icon="isExpanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-        :label="t('songRecorder.pianoLabel')"
+        :label="t('melodyWriter.pianoLabel')"
         :aria-expanded="isExpanded"
-        aria-controls="song-recorder-piano-body"
+        aria-controls="melody-writer-piano-body"
         class="self-start"
-        data-testid="song-recorder-piano-toggle"
+        data-testid="melody-writer-piano-toggle"
         @click="isExpanded = !isExpanded"
       />
     </div>
 
     <div
       v-show="isExpanded"
-      id="song-recorder-piano-body"
+      id="melody-writer-piano-body"
       class="flex w-full flex-col gap-2"
     >
       <div class="flex items-center justify-center gap-2">
         <VoiceRangeSelect
           v-model:rangeIndex="rangeIndex"
-          :headerLabel="t('songRecorder.pianoRange')"
-          data-testid="song-recorder-piano-range"
+          :headerLabel="t('melodyWriter.pianoRange')"
+          data-testid="melody-writer-piano-range"
         />
         <KeyboardHintsToggle
           v-if="!isCoarsePointer"

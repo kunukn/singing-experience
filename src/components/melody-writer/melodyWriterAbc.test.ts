@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import type { QuantizedNote } from './quantizeNotes'
-import { buildRecordingAbc, writableLengths } from './songRecorderAbc'
+import { buildRecordingAbc, writableLengths } from './melodyWriterAbc'
 
 const OPTIONS = { bpm: 90, grid: 8, beatsPerBar: 4, clef: 'treble' } as const
 
@@ -8,7 +8,7 @@ function body(notes: QuantizedNote[], options = OPTIONS) {
   return buildRecordingAbc(notes, options).abc.split('\n').at(-1)
 }
 
-describe('songRecorderAbc', () => {
+describe('melodyWriterAbc', () => {
   test('lists writable lengths longest first', () => {
     expect(writableLengths(8)).toEqual([8, 6, 4, 3, 2, 1])
     expect(writableLengths(16)).toEqual([16, 12, 8, 6, 4, 3, 2, 1])

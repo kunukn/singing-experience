@@ -8,7 +8,7 @@ type PianoKeyPlaybackOptions = {
    * note that played. */
   onTonePlayed?: (midi: number) => void
   /* Key down and key up with the event's timeStamp, for callers that record
-   * how long a key is held (Song Recorder). The tone itself stays a fixed
+   * how long a key is held (Melody Writer). The tone itself stays a fixed
    * length either way. */
   onNotePressed?: (midi: number, timeStamp: number) => void
   onNoteReleased?: (midi: number, timeStamp: number) => void

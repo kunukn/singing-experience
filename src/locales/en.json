@@ -160,7 +160,7 @@
         "name": "Notes",
         "description": "See every note on the staff and learn its name."
       },
-      "songRecorder": {
+      "melodyWriter": {
         "name": "Melody Writer",
         "description": "Sing a tune and see it turn into sheet music."
       },
@@ -570,7 +570,7 @@
       "heading": "Notes beyond the lines"
     }
   },
-  "songRecorder": {
+  "melodyWriter": {
     "record": "Record",
     "newRecording": "New recording",
     "grid": "Shortest note",
@@ -698,7 +698,7 @@
       "step2": "Watch which scales or chords fit your notes.",
       "step3": "Press Start over to try new notes."
     },
-    "songRecorder": {
+    "melodyWriter": {
       "step1": "Pick a tempo and press Record.",
       "step2": "Start singing after 4 clicks.",
       "step3": "Watch your tune turn into notes on the staff."

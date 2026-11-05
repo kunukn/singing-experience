@@ -349,7 +349,7 @@ watch(
     <div
       ref="scrollRef"
       class="w-full overflow-x-auto rounded border border-(--p-content-border-color)"
-      data-testid="song-recorder-sheet"
+      data-testid="melody-writer-sheet"
       :data-piece-count="pieceElements.length"
       :data-active-piece="activePieceIndex ?? ''"
     >
@@ -361,7 +361,7 @@ watch(
           :key="index"
           class="pointer-events-none absolute z-20 -translate-x-1/2 -translate-y-full rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold text-(--p-text-muted-color) tabular-nums"
           :style="toneLabelStyle(label)"
-          data-testid="song-recorder-tone-label"
+          data-testid="melody-writer-tone-label"
         >
           {{ label.text }}
         </span>
@@ -386,7 +386,7 @@ watch(
       v-if="pitchLineTop !== null"
       class="pointer-events-none absolute inset-x-2 h-0 border-t-3 border-dashed border-(--p-orange-400)/50 transition-colors duration-100"
       :style="{ top: `${pitchLineTop}px`, ...pitchLineStyle?.line }"
-      data-testid="song-recorder-pitch-line"
+      data-testid="melody-writer-pitch-line"
     />
 
     <div

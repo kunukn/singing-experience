@@ -4,7 +4,7 @@ import {
   findPieceAtUnit,
   type LiveNote,
 } from './liveRecordingNotes'
-import { buildRecordingAbc } from './songRecorderAbc'
+import { buildRecordingAbc } from './melodyWriterAbc'
 
 /* 60 BPM on a 1/8 grid: a step is 500 ms, a 4/4 bar is 8 steps. */
 const BASE = {

@@ -160,7 +160,7 @@
         "name": "音符",
         "description": "五線の上のすべての音符を見て、名前をおぼえよう。"
       },
-      "songRecorder": {
+      "melodyWriter": {
         "name": "メロディーライター",
         "description": "メロディを歌うと、楽譜になるよ。"
       },
@@ -570,7 +570,7 @@
       "heading": "線の外の音符"
     }
   },
-  "songRecorder": {
+  "melodyWriter": {
     "record": "録音",
     "newRecording": "新しく録音",
     "grid": "いちばん短い音符",
@@ -698,7 +698,7 @@
       "step2": "きみの音に合うスケールやコードを見てみよう。",
       "step3": "「やり直す」を押すと、新しい音でためせるよ。"
     },
-    "songRecorder": {
+    "melodyWriter": {
       "step1": "テンポを選んで「録音」を押そう。",
       "step2": "4回クリックが鳴ったら歌い始めてね。",
       "step3": "きみのメロディが五線の上の音符になるよ。"

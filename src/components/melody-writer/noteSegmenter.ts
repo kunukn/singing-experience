@@ -6,7 +6,7 @@ import {
   PITCH_TRIM_HEAD,
   PITCH_TRIM_TAIL,
   RELEASE_LATENCY_MS,
-} from './songRecorderConstants'
+} from './melodyWriterConstants'
 
 /* One played or sung note in recording time (ms from beat 1 of bar 1). This is
  * the input seam: the voice segmenter produces these from pitch frames, and a

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { PianoPreviewLaneId } from '@/components/piano/pianoPreview'
-import type { PitchDetectionInput } from '@/components/song-recorder/useSongRecorder'
+import type { PitchDetectionInput } from '@/components/melody-writer/useMelodyWriter'
 import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { chordAccidentalStyle, chordPitchClasses } from '@/utils/chordDetection'

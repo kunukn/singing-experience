@@ -1,6 +1,6 @@
 import type { ClefKey } from '@/components/notes/notesConstants'
 
-/* Tempo list for the song recorder. BPM = quarter note (the 4/4 beat unit).
+/* Tempo list for the melody writer. BPM = quarter note (the 4/4 beat unit).
  * Starts lower than /notes (50) so slow ballads fit. "BPM" kept untranslated. */
 export const ALLOWED_BPMS = [
   50, 60, 70, 80, 90, 100, 110, 120, 130, 140, 150, 160,
@@ -58,8 +58,8 @@ export const PITCH_TRIM_TAIL = 0.1
 
 /* What a take records: the mic (singing) or the on-screen piano. */
 export const INPUT_OPTIONS = ['voice', 'piano'] as const
-export type SongRecorderInput = (typeof INPUT_OPTIONS)[number]
-export const DEFAULT_INPUT: SongRecorderInput = 'voice'
+export type MelodyWriterInput = (typeof INPUT_OPTIONS)[number]
+export const DEFAULT_INPUT: MelodyWriterInput = 'voice'
 
 /* Players anticipate beat 1 slightly; a piano press up to this early in the
  * count-in still lands on it. Earlier presses only sound. */

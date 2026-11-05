@@ -21,7 +21,7 @@ describe('resetStoredSettings', () => {
     const storage = createStorage({
       'syng.rangeIndex': 'voiceRanges.bass',
       'syng.darkMode': 'true',
-      'syng.songRecorderPianoRange': 'voiceRanges.choir',
+      'syng.melodyWriterPianoRange': 'voiceRanges.choir',
     })
 
     resetStoredSettings(storage)

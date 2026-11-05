@@ -160,7 +160,7 @@
         "name": "Noti",
         "description": "Ona kila noti kwenye mistari ya noti na ujifunze jina lake."
       },
-      "songRecorder": {
+      "melodyWriter": {
         "name": "Mwandishi wa Melodi",
         "description": "Imba wimbo na uone ukigeuka kuwa noti za muziki."
       },
@@ -570,7 +570,7 @@
       "heading": "Noti nje ya mistari"
     }
   },
-  "songRecorder": {
+  "melodyWriter": {
     "record": "Rekodi",
     "newRecording": "Rekodi mpya",
     "grid": "Noti fupi zaidi",
@@ -698,7 +698,7 @@
       "step2": "Angalia ni mizani au kodi gani zinazolingana na noti zako.",
       "step3": "Bonyeza “Anza upya” ili kujaribu noti mpya."
     },
-    "songRecorder": {
+    "melodyWriter": {
       "step1": "Chagua tempo na ubonyeze “Rekodi”.",
       "step2": "Anza kuimba baada ya milio 4.",
       "step3": "Tazama wimbo wako ukigeuka kuwa noti kwenye mistari ya noti."

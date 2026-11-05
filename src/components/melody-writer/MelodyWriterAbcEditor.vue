@@ -33,7 +33,7 @@ const editorRef = ref<HTMLElement | null>(null)
 
 /* Most singers never touch ABC, so the box starts folded away; anyone who
  * opens it keeps it open on later visits. */
-const isExpanded = useLocalStorage('syng.songRecorderAbcExpanded', false)
+const isExpanded = useLocalStorage('syng.melodyWriterAbcExpanded', false)
 
 /* Opening the box is usually a step towards pasting, so land the caret there. */
 async function toggleExpanded() {
@@ -85,30 +85,30 @@ const isFromSheetDisabled = computed(
       text
       size="small"
       :icon="isExpanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
-      :label="t('songRecorder.abcLabel')"
+      :label="t('melodyWriter.abcLabel')"
       :aria-expanded="isExpanded"
-      aria-controls="song-recorder-abc-body"
+      aria-controls="melody-writer-abc-body"
       class="self-start"
-      data-testid="song-recorder-abc-toggle"
+      data-testid="melody-writer-abc-toggle"
       @click="toggleExpanded"
     />
 
     <div
       v-show="isExpanded"
-      id="song-recorder-abc-body"
+      id="melody-writer-abc-body"
       class="flex flex-col gap-2"
     >
       <PrimeTextarea
-        id="song-recorder-abc"
+        id="melody-writer-abc"
         v-model="text"
         rows="7"
         class="w-full font-mono text-sm"
         spellcheck="false"
         autocapitalize="off"
         autocorrect="off"
-        :aria-label="t('songRecorder.abcLabel')"
-        :placeholder="t('songRecorder.abcPlaceholder')"
-        data-testid="song-recorder-abc"
+        :aria-label="t('melodyWriter.abcLabel')"
+        :placeholder="t('melodyWriter.abcPlaceholder')"
+        data-testid="melody-writer-abc"
         @input="emit('edit')"
       />
 
@@ -124,7 +124,7 @@ const isFromSheetDisabled = computed(
           icon="pi pi-trash"
           :label="t('generic.clear')"
           :disabled="isEmpty"
-          data-testid="song-recorder-abc-clear"
+          data-testid="melody-writer-abc-clear"
           @click="clearText"
         />
         <div class="flex flex-wrap items-center gap-2">
@@ -132,10 +132,10 @@ const isFromSheetDisabled = computed(
             severity="secondary"
             size="small"
             icon="pi pi-replay"
-            :label="t('songRecorder.fromSheet')"
-            :title="t('songRecorder.fromSheetHint')"
+            :label="t('melodyWriter.fromSheet')"
+            :title="t('melodyWriter.fromSheetHint')"
             :disabled="isFromSheetDisabled"
-            data-testid="song-recorder-abc-from-sheet"
+            data-testid="melody-writer-abc-from-sheet"
             @click="restoreFromSheet"
           />
           <PrimeButton
@@ -144,15 +144,15 @@ const isFromSheetDisabled = computed(
             :icon="isCopied ? 'pi pi-check' : 'pi pi-copy'"
             :label="isCopied ? t('generic.copied') : t('generic.copy')"
             :disabled="isEmpty"
-            data-testid="song-recorder-abc-copy"
+            data-testid="melody-writer-abc-copy"
             @click="copyAbc"
           />
           <PrimeButton
             size="small"
             icon="pi pi-upload"
-            :label="t('songRecorder.import')"
+            :label="t('melodyWriter.import')"
             :disabled="props.isImportDisabled || isEmpty"
-            data-testid="song-recorder-abc-import"
+            data-testid="melody-writer-abc-import"
             @click="emit('import')"
           />
         </div>
@@ -162,7 +162,7 @@ const isFromSheetDisabled = computed(
         v-if="props.message"
         :severity="props.message.severity"
         size="small"
-        data-testid="song-recorder-abc-message"
+        data-testid="melody-writer-abc-message"
         :data-severity="props.message.severity"
       >
         {{ props.message.text }}

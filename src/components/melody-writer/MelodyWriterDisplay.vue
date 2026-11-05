@@ -8,19 +8,19 @@ import {
   midiToNoteLabel,
   type NoteInfo,
 } from '@/utils/noteUtils'
-import SongRecorderAbcEditor, {
+import MelodyWriterAbcEditor, {
   type AbcEditorMessage,
-} from './SongRecorderAbcEditor.vue'
-import SongRecorderPianoPanel from './SongRecorderPianoPanel.vue'
-import SongRecorderSettingsRow from './SongRecorderSettingsRow.vue'
-import SongRecorderSheet from './SongRecorderSheet.vue'
-import { parseAbcImport } from './songRecorderAbcImport'
+} from './MelodyWriterAbcEditor.vue'
+import MelodyWriterPianoPanel from './MelodyWriterPianoPanel.vue'
+import MelodyWriterSettingsRow from './MelodyWriterSettingsRow.vue'
+import MelodyWriterSheet from './MelodyWriterSheet.vue'
+import { parseAbcImport } from './melodyWriterAbcImport'
 import {
   BEATS_PER_BAR,
   type Grid,
-  type SongRecorderInput,
-} from './songRecorderConstants'
-import { useSongRecorder, type PitchDetectionInput } from './useSongRecorder'
+  type MelodyWriterInput,
+} from './melodyWriterConstants'
+import { useMelodyWriter, type PitchDetectionInput } from './useMelodyWriter'
 
 type Props = {
   detection: PitchDetectionInput & {
@@ -40,7 +40,7 @@ const clef = defineModel<ClefKey>('clef', { required: true })
 const isClickEnabled = defineModel<boolean>('isClickEnabled', {
   required: true,
 })
-const input = defineModel<SongRecorderInput>('input', { required: true })
+const input = defineModel<MelodyWriterInput>('input', { required: true })
 /* Optional so the test page can leave it local. */
 const toneLabelMode = defineModel<ToneLabelMode>('toneLabelMode', {
   default: 'simple',
@@ -50,7 +50,7 @@ const labelFlags = computed(() => toneLabelModeToFlags(toneLabelMode.value))
 
 const { t } = useI18n()
 
-const recorder = useSongRecorder({
+const recorder = useMelodyWriter({
   detection: props.detection,
   bpm,
   grid,
@@ -286,7 +286,7 @@ function importAbc() {
   if (!result.ok) {
     abcMessage.value = {
       severity: 'error',
-      text: t(`songRecorder.importErrors.${result.error}`, {
+      text: t(`melodyWriter.importErrors.${result.error}`, {
         detail: result.detail ?? '',
       }),
     }
@@ -306,7 +306,7 @@ function importAbc() {
       ? {
           severity: 'warn',
           text: result.notices
-            .map((notice) => t(`songRecorder.importNotices.${notice}`))
+            .map((notice) => t(`melodyWriter.importNotices.${notice}`))
             .join(' '),
         }
       : null
@@ -319,7 +319,7 @@ defineExpose({ recorder })
 <template>
   <div
     class="mx-auto flex w-full max-w-400 flex-1 flex-col items-center gap-4 px-2 pb-4"
-    data-testid="song-recorder-display"
+    data-testid="melody-writer-display"
     :data-input="input"
     :data-phase="
       isIdle
@@ -331,7 +331,7 @@ defineExpose({ recorder })
             : 'review'
     "
   >
-    <SongRecorderSettingsRow
+    <MelodyWriterSettingsRow
       v-model:bpm="bpm"
       v-model:grid="grid"
       v-model:clef="clef"
@@ -349,9 +349,9 @@ defineExpose({ recorder })
         size="small"
         rounded
         icon="pi pi-circle-fill"
-        :label="t('songRecorder.record')"
+        :label="t('melodyWriter.record')"
         class="min-w-24"
-        data-testid="song-recorder-record"
+        data-testid="melody-writer-record"
         @click="record"
       />
 
@@ -362,7 +362,7 @@ defineExpose({ recorder })
         rounded
         :label="t('generic.stop')"
         class="min-w-24"
-        data-testid="song-recorder-stop"
+        data-testid="melody-writer-stop"
         @click="stop"
       />
 
@@ -375,7 +375,7 @@ defineExpose({ recorder })
           :label="t('generic.play')"
           :disabled="!hasNotes"
           class="min-w-20"
-          data-testid="song-recorder-play"
+          data-testid="melody-writer-play"
           @click="play"
         />
         <PrimeButton
@@ -385,7 +385,7 @@ defineExpose({ recorder })
           rounded
           :label="t('generic.pause')"
           class="min-w-20"
-          data-testid="song-recorder-pause"
+          data-testid="melody-writer-pause"
           @click="pause"
         />
         <PrimeButton
@@ -395,7 +395,7 @@ defineExpose({ recorder })
           rounded
           :label="t('generic.resume')"
           class="min-w-20"
-          data-testid="song-recorder-resume"
+          data-testid="melody-writer-resume"
           @click="resume"
         />
         <PrimeButton
@@ -405,7 +405,7 @@ defineExpose({ recorder })
           rounded
           :label="t('generic.stop')"
           class="min-w-20"
-          data-testid="song-recorder-stop-playback"
+          data-testid="melody-writer-stop-playback"
           @click="stopPlayback"
         />
         <PrimeButton
@@ -413,8 +413,8 @@ defineExpose({ recorder })
           size="small"
           rounded
           icon="pi pi-refresh"
-          :label="t('songRecorder.newRecording')"
-          data-testid="song-recorder-reset"
+          :label="t('melodyWriter.newRecording')"
+          data-testid="melody-writer-reset"
           @click="reset"
         />
       </template>
@@ -440,7 +440,7 @@ defineExpose({ recorder })
           :allowEmpty="false"
           size="small"
           :aria-label="t('generic.toneLabels')"
-          data-testid="song-recorder-tone-labels"
+          data-testid="melody-writer-tone-labels"
         />
       </div>
     </div>
@@ -450,7 +450,7 @@ defineExpose({ recorder })
       class="max-w-prose text-center text-sm text-(--p-text-muted-color)"
     >
       {{
-        t(isPianoInput ? 'songRecorder.hintPiano' : 'songRecorder.hint', {
+        t(isPianoInput ? 'melodyWriter.hintPiano' : 'melodyWriter.hint', {
           seconds: Math.round(limitMs / 1000),
         })
       }}
@@ -459,7 +459,7 @@ defineExpose({ recorder })
     <div
       v-if="isCountingIn"
       class="text-5xl font-bold text-(--p-primary-color) tabular-nums"
-      data-testid="song-recorder-count-in"
+      data-testid="melody-writer-count-in"
     >
       {{ countInBeat ?? '' }}
     </div>
@@ -467,7 +467,7 @@ defineExpose({ recorder })
     <div
       v-if="isRecording"
       class="flex items-center gap-4"
-      data-testid="song-recorder-status"
+      data-testid="melody-writer-status"
     >
       <div class="flex gap-1.5" aria-hidden="true">
         <span
@@ -486,7 +486,7 @@ defineExpose({ recorder })
       </span>
       <span
         class="min-w-10 text-center font-semibold text-(--p-primary-color) tabular-nums"
-        data-testid="song-recorder-live-note"
+        data-testid="melody-writer-live-note"
       >
         {{ liveNoteLabel ?? '–' }}
       </span>
@@ -494,12 +494,12 @@ defineExpose({ recorder })
 
     <p v-if="isReview && !hasNotes" class="text-sm text-(--p-text-muted-color)">
       {{
-        t(isPianoInput ? 'songRecorder.noNotesPiano' : 'songRecorder.noNotes')
+        t(isPianoInput ? 'melodyWriter.noNotesPiano' : 'melodyWriter.noNotes')
       }}
     </p>
 
     <div class="w-full max-w-full">
-      <SongRecorderSheet
+      <MelodyWriterSheet
         :abc="displaySheet.abc"
         :activePieceIndex="activePieceIndex"
         :pieceKinds="pieceKinds"
@@ -516,7 +516,7 @@ defineExpose({ recorder })
       />
     </div>
 
-    <SongRecorderPianoPanel
+    <MelodyWriterPianoPanel
       :isPianoInput="isPianoInput"
       :previewLanes="pianoPreviewLanes"
       :isPreviewEnabled="isPreviewEnabled"
@@ -525,7 +525,7 @@ defineExpose({ recorder })
       @tonePlayed="handlePianoTonePlayed"
     />
 
-    <SongRecorderAbcEditor
+    <MelodyWriterAbcEditor
       v-model="abcText"
       :isImportDisabled="isTaking || isPlaybackRunning"
       :message="abcMessage"

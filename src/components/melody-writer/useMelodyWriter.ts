@@ -16,7 +16,7 @@ import {
   type LiveNoteKind,
   type OpenNote,
 } from './liveRecordingNotes'
-import { buildRecordingAbc } from './songRecorderAbc'
+import { buildRecordingAbc } from './melodyWriterAbc'
 import {
   BEATS_PER_BAR,
   COUNT_IN_BARS,
@@ -24,9 +24,9 @@ import {
   MAX_RECORDING_SECONDS,
   PIANO_EARLY_PRESS_MS,
   type Grid,
-  type SongRecorderInput,
-} from './songRecorderConstants'
-import { songRecorderMachine } from './songRecorderMachine'
+  type MelodyWriterInput,
+} from './melodyWriterConstants'
+import { melodyWriterMachine } from './melodyWriterMachine'
 
 export type PitchDetectionInput = {
   frequency: Readonly<Ref<number | null>>
@@ -44,7 +44,7 @@ type Options = {
   /* Click on every beat while recording. The count-in always clicks. */
   isClickEnabled: Ref<boolean>
   /* Voice records the mic; piano records pressPianoKey / releasePianoKey. */
-  input: Ref<SongRecorderInput>
+  input: Ref<MelodyWriterInput>
 }
 
 /* Lead time before the first count-in click so the scheduler isn't late. */
@@ -54,7 +54,7 @@ const SCHEDULE_AHEAD_S = 0.1
  * audibly separate. */
 const ARTICULATION = 0.92
 
-export type SongRecorderResult = ReturnType<typeof useSongRecorder>
+export type MelodyWriterResult = ReturnType<typeof useMelodyWriter>
 
 /*
  * Records a sung melody against a metronome and turns it into a sheet: a
@@ -63,9 +63,9 @@ export type SongRecorderResult = ReturnType<typeof useSongRecorder>
  * (grid change) without singing again. Also plays the result back with the
  * active sheet element highlighted.
  */
-export function useSongRecorder(options: Options) {
+export function useMelodyWriter(options: Options) {
   const { detection, bpm, grid, clef, isClickEnabled, input } = options
-  const { snapshot, send } = useMachine(songRecorderMachine)
+  const { snapshot, send } = useMachine(melodyWriterMachine)
   const {
     warmUp,
     playToneAt,
@@ -108,7 +108,7 @@ export function useSongRecorder(options: Options) {
   let segmenter = createNoteSegmenter()
   let pianoCapture = createPianoNoteCapture({ minNoteMs: 0 })
   /* Fixed for the whole take, so switching the input mid-take can't mix them. */
-  let takeInput: SongRecorderInput = 'voice'
+  let takeInput: MelodyWriterInput = 'voice'
   /* performance.now() at beat 1 of bar 1. */
   let originPerfMs = 0
 

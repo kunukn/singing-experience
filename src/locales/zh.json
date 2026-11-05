@@ -160,7 +160,7 @@
         "name": "音符",
         "description": "看看五线谱上的每个音符，学会它的名字。"
       },
-      "songRecorder": {
+      "melodyWriter": {
         "name": "旋律记谱",
         "description": "唱一段旋律，看它变成乐谱。"
       },
@@ -570,7 +570,7 @@
       "heading": "线外的音符"
     }
   },
-  "songRecorder": {
+  "melodyWriter": {
     "record": "录音",
     "newRecording": "重新录音",
     "grid": "最短音符",
@@ -698,7 +698,7 @@
       "step2": "看看哪些音阶或和弦适合你的音。",
       "step3": "点“重新开始”试试新的音。"
     },
-    "songRecorder": {
+    "melodyWriter": {
       "step1": "选一个速度，然后点“录音”。",
       "step2": "听到 4 下咔嗒声后开始唱。",
       "step3": "看你的旋律变成五线谱上的音符。"

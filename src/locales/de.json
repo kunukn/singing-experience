@@ -160,7 +160,7 @@
         "name": "Noten",
         "description": "Sieh jede Note im Notensystem und lerne ihren Namen."
       },
-      "songRecorder": {
+      "melodyWriter": {
         "name": "Melodie-Schreiber",
         "description": "Sing eine Melodie und sieh, wie sie zu Noten wird."
       },
@@ -570,7 +570,7 @@
       "heading": "Töne außerhalb der Linien"
     }
   },
-  "songRecorder": {
+  "melodyWriter": {
     "record": "Aufnehmen",
     "newRecording": "Neue Aufnahme",
     "grid": "Kürzeste Note",
@@ -698,7 +698,7 @@
       "step2": "Schau, welche Tonleitern oder Akkorde zu deinen Tönen passen.",
       "step3": "Drück auf Neu anfangen, um neue Töne auszuprobieren."
     },
-    "songRecorder": {
+    "melodyWriter": {
       "step1": "Wähl ein Tempo und drück auf Aufnehmen.",
       "step2": "Fang nach 4 Klicks an zu singen.",
       "step3": "Sieh, wie deine Melodie zu Noten im Notensystem wird."

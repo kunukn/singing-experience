@@ -14,7 +14,7 @@ import ProgramSingTheKeysIcon from '@/components/icons/program/ProgramSingTheKey
 import ProgramSingToneIcon from '@/components/icons/program/ProgramSingToneIcon.vue'
 import ProgramSingingGamesIcon from '@/components/icons/program/ProgramSingingGamesIcon.vue'
 import ProgramSingingToolsIcon from '@/components/icons/program/ProgramSingingToolsIcon.vue'
-import ProgramSongRecorderIcon from '@/components/icons/program/ProgramSongRecorderIcon.vue'
+import ProgramMelodyWriterIcon from '@/components/icons/program/ProgramMelodyWriterIcon.vue'
 import ProgramToneDetectorIcon from '@/components/icons/program/ProgramToneDetectorIcon.vue'
 import ProgramTunerIcon from '@/components/icons/program/ProgramTunerIcon.vue'
 import ProgramVoiceRangeFinderIcon from '@/components/icons/program/ProgramVoiceRangeFinderIcon.vue'
@@ -117,9 +117,9 @@ export const tools: Program[] = [
     stage: 'beta',
   },
   {
-    key: 'songRecorder',
-    icon: ProgramSongRecorderIcon,
-    route: '/song-recorder',
+    key: 'melodyWriter',
+    icon: ProgramMelodyWriterIcon,
+    route: '/melody-writer',
     stage: 'alpha',
   },
   {

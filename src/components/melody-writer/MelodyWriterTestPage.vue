@@ -4,7 +4,7 @@ import {
   NOTE_OPTIONS_HIGH_TO_LOW,
   type NoteName,
 } from '@/utils/noteUtils'
-import SongRecorderDisplay from './SongRecorderDisplay.vue'
+import MelodyWriterDisplay from './MelodyWriterDisplay.vue'
 import type { ClefKey } from '@/components/notes/notesConstants'
 import {
   DEFAULT_BPM,
@@ -12,8 +12,8 @@ import {
   DEFAULT_GRID,
   DEFAULT_INPUT,
   type Grid,
-  type SongRecorderInput,
-} from './songRecorderConstants'
+  type MelodyWriterInput,
+} from './melodyWriterConstants'
 
 /* Simulated voice only — test pages never open the microphone (AGENTS.md). */
 
@@ -38,7 +38,7 @@ const bpm = ref(DEFAULT_BPM)
 const grid = ref<Grid>(DEFAULT_GRID)
 const clef = ref<ClefKey>(DEFAULT_CLEF)
 const isClickEnabled = ref(true)
-const input = ref<SongRecorderInput>(DEFAULT_INPUT)
+const input = ref<MelodyWriterInput>(DEFAULT_INPUT)
 
 const isVoiceOn = computed({
   get: () => selectedClarity.value >= VOICE_ON_CLARITY,
@@ -47,7 +47,7 @@ const isVoiceOn = computed({
   },
 })
 
-const displayRef = ref<InstanceType<typeof SongRecorderDisplay> | null>(null)
+const displayRef = ref<InstanceType<typeof MelodyWriterDisplay> | null>(null)
 
 /* Twinkle Twinkle, first two phrases: [MIDI, beats]. Sung legato-ish — the
  * voice drops out for the last 15% of each note so repeated pitches split. */
@@ -83,7 +83,7 @@ function setSimulatedMidi(midi: number) {
 
 /* Starts a take and, once recording begins after the count-in, sings (or
  * plays, on the piano input) the demo melody on the beat, then stops. */
-async function recordDemo(demoInput: SongRecorderInput) {
+async function recordDemo(demoInput: MelodyWriterInput) {
   const recorder = displayRef.value?.recorder
   if (!recorder) return
 
@@ -146,7 +146,7 @@ onUnmounted(clearDemo)
 </script>
 
 <template>
-  <SongRecorderDisplay
+  <MelodyWriterDisplay
     ref="displayRef"
     :detection="detection"
     :simulateIdlePreview="true"
@@ -163,7 +163,7 @@ onUnmounted(clearDemo)
         size="small"
         severity="secondary"
         label="Record demo melody"
-        data-testid="song-recorder-demo"
+        data-testid="melody-writer-demo"
         @click="recordDemo('voice')"
       />
 
@@ -171,7 +171,7 @@ onUnmounted(clearDemo)
         size="small"
         severity="secondary"
         label="Record demo melody (piano)"
-        data-testid="song-recorder-demo-piano"
+        data-testid="melody-writer-demo-piano"
         @click="recordDemo('piano')"
       />
 
@@ -220,7 +220,7 @@ onUnmounted(clearDemo)
     <pre
       v-if="rawEventRows.length > 0"
       class="w-full rounded-lg bg-(--p-content-background) p-4 text-xs"
-      data-testid="song-recorder-raw-events"
+      data-testid="melody-writer-raw-events"
       >{{ rawEventRows.join('\n') }}</pre>
-  </SongRecorderDisplay>
+  </MelodyWriterDisplay>
 </template>
