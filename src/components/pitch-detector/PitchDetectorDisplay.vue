@@ -2,7 +2,7 @@
 import type { ToneMode } from '@/composables/toneEngine'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { midiToNoteLabel, type NoteInfo } from '@/utils/noteUtils'
-import { useEventListener, useLocalStorage } from '@vueuse/core'
+import { useEventListener, useLocalStorage, useWakeLock } from '@vueuse/core'
 import PitchDisplay from './PitchDisplay.vue'
 import PitchFocusPanel from './PitchFocusPanel.vue'
 import type { PitchLaneDetection, PitchPreviewLane } from './pitchLanes'
@@ -344,6 +344,17 @@ watch(effectiveDuetEnabled, () => {
  * stop, and so never be saved. */
 useEventListener(document, 'visibilitychange', () => {
   if (document.hidden) isDuetRecording.value = false
+})
+
+/* Nobody touches the screen while singing, and a phone's auto-lock would hide
+ * the page and so end the recording. useWakeLock releases itself on unmount. */
+const wakeLock = useWakeLock()
+watch(isListening, (listening) => {
+  const wakeLockChange = listening
+    ? wakeLock.request('screen')
+    : wakeLock.release()
+  /* Refused on low battery or by browser policy: recording still works. */
+  void wakeLockChange.catch(() => {})
 })
 
 /* The overview panel stays mounted behind the focus tab, so its replay and
