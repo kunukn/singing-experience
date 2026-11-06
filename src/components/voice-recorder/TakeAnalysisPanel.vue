@@ -119,7 +119,11 @@ async function analyse() {
           </p>
         </section>
 
+        <!-- max-w-sm here and on SongProfile: at full width the right-hand
+             word (Fast, Leaping…) drifts so far off that the pairs read as one
+             list. The melody map above stays full width. -->
         <NotesUsedChart
+          class="max-w-sm"
           :notesUsed="analysis.notesUsed"
           :takeKey="analysis.key"
           @tonePlay="emit('tonePlay')"
@@ -128,6 +132,7 @@ async function analyse() {
 
       <SongProfile
         v-if="analysis.profile && analysis.notes.length > 0"
+        class="max-w-sm"
         :profile="analysis.profile"
       />
 
