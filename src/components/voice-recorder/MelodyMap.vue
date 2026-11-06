@@ -322,7 +322,11 @@ function drawPlayhead(
   width: number,
 ) {
   const x = timeToContentX(props.playheadMs, timeAxis.value) - scrollLeft
-  if (x < 0 || x > width) return
+  /* The note labels are painted over the playhead, so inside their column it
+   * would show only as short bars between the labels. */
+  const plotLeft = isRtl.value ? 0 : NOTE_LABEL_WIDTH_PX
+  const plotRight = isRtl.value ? width - NOTE_LABEL_WIDTH_PX : width
+  if (x < plotLeft || x > plotRight) return
 
   context.strokeStyle = resolveCssColor('--p-primary-color', '#888888')
   context.lineWidth = 2
