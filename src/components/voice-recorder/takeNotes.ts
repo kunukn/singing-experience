@@ -31,6 +31,9 @@ const CLEAN_START_MS = 120
  * anything wider is a real interval sung legato. */
 const SLIDE_JOIN_MAX_GAP_MS = 60
 const SLIDE_MAX_SEMITONES = 4
+/* A merged note still has to sit on its label: past half a semitone the slide
+ * outweighs the note it joined, so it was the main event and stays separate. */
+const MERGED_MAX_CENTS_FROM_GRID = 50
 
 /* Matches the rolling mean in focusToneTracker.ts: long enough to average out a
  * vibrato cycle, short enough to keep slower wander. */
@@ -150,6 +153,8 @@ function measureWobble(
 
 type SegmentedNote = NoteEvent & { hasSlideIn?: boolean }
 
+type IsCentredOn = (startMs: number, endMs: number, midi: number) => boolean
+
 /*
  * A slide crosses semitones, so the segmenter reports each one it holds long
  * enough as its own note. Fold those back into the note the singer was heading
@@ -158,6 +163,7 @@ type SegmentedNote = NoteEvent & { hasSlideIn?: boolean }
  */
 function mergeSlides(
   notes: (TakeNote & { direction: number })[],
+  isCentredOn: IsCentredOn,
 ): SegmentedNote[] {
   const merged: SegmentedNote[] = []
 
@@ -169,7 +175,8 @@ function mergeSlides(
       next !== undefined &&
       next.startMs - note.endMs <= SLIDE_JOIN_MAX_GAP_MS &&
       Math.abs(next.midi - note.midi) <= SLIDE_MAX_SEMITONES &&
-      Math.sign(next.midi - note.midi) === note.direction
+      Math.sign(next.midi - note.midi) === note.direction &&
+      isCentredOn(note.startMs, next.endMs, next.midi)
 
     if (isHeadingIntoNext) {
       next.startMs = note.startMs
@@ -195,7 +202,8 @@ function mergeSlides(
       previous !== undefined &&
       note.startMs - previous.endMs <= SLIDE_JOIN_MAX_GAP_MS &&
       Math.abs(note.midi - previous.midi) <= SLIDE_MAX_SEMITONES &&
-      Math.sign(note.midi - previous.midi) === source.direction
+      Math.sign(note.midi - previous.midi) === source.direction &&
+      isCentredOn(previous.startMs, note.endMs, previous.midi)
 
     if (isFallingOff) {
       previous.endMs = note.endMs
@@ -217,15 +225,16 @@ export function buildTakeNotes(
   hopMs: number,
   frameIndexAt: (timeMs: number) => number,
 ): TakeNote[] {
-  function measure(event: SegmentedNote) {
-    const span = event.endMs - event.startMs
+  /* Voiced pitch with the attack and release trimmed off. */
+  function coreOf(startMs: number, endMs: number) {
+    const span = endMs - startMs
     const firstFrame = Math.max(
       0,
-      frameIndexAt(event.startMs + span * PITCH_TRIM_HEAD),
+      frameIndexAt(startMs + span * PITCH_TRIM_HEAD),
     )
     const lastFrame = Math.min(
       tunedMidi.length - 1,
-      frameIndexAt(event.endMs - span * PITCH_TRIM_TAIL),
+      frameIndexAt(endMs - span * PITCH_TRIM_TAIL),
     )
 
     const core: number[] = []
@@ -233,6 +242,21 @@ export function buildTakeNotes(
       if (!Number.isNaN(tunedMidi[frame])) core.push(tunedMidi[frame])
     }
 
+    return core
+  }
+
+  const isCentredOn: IsCentredOn = (startMs, endMs, midi) => {
+    const core = coreOf(startMs, endMs)
+
+    return (
+      core.length === 0 ||
+      Math.abs(median(core) - midi) * 100 <= MERGED_MAX_CENTS_FROM_GRID
+    )
+  }
+
+  function measure(event: SegmentedNote) {
+    const span = event.endMs - event.startMs
+    const core = coreOf(event.startMs, event.endMs)
     const centerMidi = core.length > 0 ? median(core) : event.midi
     const coreCents = Float32Array.from(
       core,
@@ -268,7 +292,7 @@ export function buildTakeNotes(
     }
   }
 
-  return mergeSlides(events.map(measure)).map((event) => {
+  return mergeSlides(events.map(measure), isCentredOn).map((event) => {
     const { direction: _direction, ...note } = measure(event)
 
     return note
