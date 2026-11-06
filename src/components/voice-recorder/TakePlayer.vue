@@ -1,8 +1,12 @@
 <script setup lang="ts">
 import { useObjectUrl, useRafFn } from '@vueuse/core'
 
-import { compressTake, SMALL_FILE_MIME_TYPE } from './compressTake'
-import { takeFileName } from './recorderFormat'
+import {
+  compressTake,
+  estimateSmallFileBytes,
+  SMALL_FILE_MIME_TYPE,
+} from './compressTake'
+import { formatFileSize, takeFileName } from './recorderFormat'
 
 /* Past any real recording, so the browser has to work out where the end is. */
 const SEEK_PAST_END_SECONDS = 1e101
@@ -19,7 +23,7 @@ const emit = defineEmits<{
   playheadChange: [playheadMs: number]
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const audioElement = useTemplateRef<HTMLAudioElement>('audioElement')
 const audioUrl = useObjectUrl(() => props.blob)
@@ -31,12 +35,40 @@ const smallFile = shallowRef<Blob | null>(null)
 const smallFileUrl = useObjectUrl(smallFile)
 const isMakingSmallFile = ref(false)
 const hasSmallFileFailed = ref(false)
+/* Known once the browser has read the file, for the small-file estimate. */
+const durationSeconds = ref<number | null>(null)
+
+const downloadLabel = computed(() =>
+  t('voiceRecorder.downloadWithSize', {
+    size: formatFileSize(props.blob.size, locale.value),
+  }),
+)
+
+/* An estimate until the file is made, then its real size. */
+const smallFileLabel = computed(() => {
+  if (smallFile.value) {
+    return t('voiceRecorder.smallFileWithSize', {
+      size: formatFileSize(smallFile.value.size, locale.value),
+    })
+  }
+  if (durationSeconds.value !== null) {
+    return t('voiceRecorder.smallFileEstimate', {
+      size: formatFileSize(
+        estimateSmallFileBytes(durationSeconds.value),
+        locale.value,
+      ),
+    })
+  }
+
+  return t('voiceRecorder.smallFile')
+})
 
 watch(
   () => props.blob,
   () => {
     smallFile.value = null
     hasSmallFileFailed.value = false
+    durationSeconds.value = null
   },
 )
 
@@ -97,7 +129,10 @@ function handleLoadedMetadata() {
 
 function handleDurationChange() {
   const audio = audioElement.value
-  if (!audio || !isFindingDuration || !Number.isFinite(audio.duration)) return
+  if (!audio || !Number.isFinite(audio.duration)) return
+
+  durationSeconds.value = audio.duration
+  if (!isFindingDuration) return
 
   isFindingDuration = false
   audio.currentTime = 0
@@ -149,7 +184,7 @@ defineExpose({ seekTo, pause })
         as="a"
         :href="audioUrl"
         :download="fileName"
-        :label="t('voiceRecorder.download')"
+        :label="downloadLabel"
         icon="pi pi-download"
         size="small"
         severity="secondary"
@@ -158,7 +193,7 @@ defineExpose({ seekTo, pause })
       />
       <PrimeButton
         v-if="canMakeSmallFile"
-        :label="t('voiceRecorder.smallFile')"
+        :label="smallFileLabel"
         icon="pi pi-download"
         size="small"
         severity="secondary"

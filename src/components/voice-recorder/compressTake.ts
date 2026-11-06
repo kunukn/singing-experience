@@ -9,6 +9,12 @@ export const SMALL_FILE_MIME_TYPE = 'audio/mp4'
  * the WAV. */
 const SMALL_FILE_BITS_PER_SECOND = 128_000
 
+/* For the button label before the file exists. The MP4 wrapper adds only a
+ * few kB on top. */
+export function estimateSmallFileBytes(durationSeconds: number): number {
+  return (durationSeconds * SMALL_FILE_BITS_PER_SECOND) / 8
+}
+
 let isAacEncoderRegistered = false
 
 /*

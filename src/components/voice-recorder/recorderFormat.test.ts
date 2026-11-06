@@ -1,6 +1,10 @@
 import { describe, expect, test } from 'vitest'
 
-import { fileExtensionFor, takeFileName } from './recorderFormat'
+import {
+  fileExtensionFor,
+  formatFileSize,
+  takeFileName,
+} from './recorderFormat'
 
 describe('recorderFormat', () => {
   test.each([
@@ -19,4 +23,19 @@ describe('recorderFormat', () => {
       'voice-recording-2026-11-04-1530.wav',
     )
   })
+})
+
+describe('formatFileSize', () => {
+  test.each([
+    { bytes: 300, locale: 'en', expected: '1 kB' },
+    { bytes: 576_000, locale: 'en', expected: '576 kB' },
+    { bytes: 999_600, locale: 'en', expected: '1 MB' },
+    { bytes: 5_760_000, locale: 'en', expected: '5.8 MB' },
+    { bytes: 5_760_000, locale: 'de', expected: '5,8 MB' },
+  ])(
+    'formats $bytes bytes in $locale as "$expected"',
+    ({ bytes, locale, expected }) => {
+      expect(formatFileSize(bytes, locale)).toBe(expected)
+    },
+  )
 })

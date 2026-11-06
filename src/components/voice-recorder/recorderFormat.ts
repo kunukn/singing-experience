@@ -22,3 +22,17 @@ export function takeFileName(mimeType: string, recordedAt: Date): string {
 
   return `voice-recording-${date}-${time}.${fileExtensionFor(mimeType)}`
 }
+
+/* "576 kB" / "5.8 MB", in decimal units like the "MB a minute" copy. */
+export function formatFileSize(bytes: number, locale: string): string {
+  const kilobytes = Math.max(1, Math.round(bytes / 1e3))
+  /* Decided after rounding, so 999.6 kB reads "1 MB" and not "1,000 kB". */
+  const isUnderMegabyte = kilobytes < 1000
+
+  return new Intl.NumberFormat(locale, {
+    style: 'unit',
+    unit: isUnderMegabyte ? 'kilobyte' : 'megabyte',
+    unitDisplay: 'short',
+    maximumFractionDigits: isUnderMegabyte ? 0 : 1,
+  }).format(isUnderMegabyte ? kilobytes : bytes / 1e6)
+}
