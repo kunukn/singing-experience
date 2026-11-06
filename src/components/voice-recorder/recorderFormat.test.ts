@@ -26,16 +26,18 @@ describe('recorderFormat', () => {
 })
 
 describe('formatFileSize', () => {
+  /* The value and unit are joined by a no-break space. */
   test.each([
-    { bytes: 300, locale: 'en', expected: '1 kB' },
-    { bytes: 576_000, locale: 'en', expected: '576 kB' },
-    { bytes: 999_600, locale: 'en', expected: '1 MB' },
-    { bytes: 5_760_000, locale: 'en', expected: '5.8 MB' },
-    { bytes: 5_760_000, locale: 'de', expected: '5,8 MB' },
-  ])(
-    'formats $bytes bytes in $locale as "$expected"',
-    ({ bytes, locale, expected }) => {
-      expect(formatFileSize(bytes, locale)).toBe(expected)
-    },
-  )
+    { bytes: 300, locale: 'en', expected: '1 kB' },
+    { bytes: 576_000, locale: 'en', expected: '576 kB' },
+    { bytes: 999_600, locale: 'en', expected: '1 MB' },
+    { bytes: 5_760_000, locale: 'en', expected: '5.8 MB' },
+    { bytes: 5_760_000, locale: 'de', expected: '5,8 MB' },
+  ])('formats $bytes bytes in $locale', ({ bytes, locale, expected }) => {
+    expect(formatFileSize(bytes, locale)).toBe(expected)
+  })
+
+  test('never leaves a breakable space', () => {
+    expect(formatFileSize(348_000, 'en')).not.toContain(' ')
+  })
 })

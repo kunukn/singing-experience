@@ -111,7 +111,7 @@ describe('TakePlayer - file sizes', () => {
   test('should show the size of the full download', () => {
     const wrapper = mountPlayer(bytes(576_000, 'audio/wav'))
 
-    expect(wrapper.get(DOWNLOAD_BUTTON).text()).toBe('Download · 576 kB')
+    expect(wrapper.get(DOWNLOAD_BUTTON).text()).toBe('Download · 576 kB')
   })
 
   test('should estimate the small file once the length is known', async () => {
@@ -122,7 +122,7 @@ describe('TakePlayer - file sizes', () => {
     Object.defineProperty(audio.element, 'duration', { value: 3 })
     await audio.trigger('durationchange')
 
-    expect(wrapper.get(SMALL_BUTTON).text()).toBe('Small file · ~48 kB')
+    expect(wrapper.get(SMALL_BUTTON).text()).toBe('Small file · ~48 kB')
   })
 
   test('should show the real small file size once it is made', async () => {
@@ -132,6 +132,6 @@ describe('TakePlayer - file sizes', () => {
     await wrapper.get(SMALL_BUTTON).trigger('click')
     await flushPromises()
 
-    expect(wrapper.get(SMALL_BUTTON).text()).toBe('Small file · 51 kB')
+    expect(wrapper.get(SMALL_BUTTON).text()).toBe('Small file · 51 kB')
   })
 })

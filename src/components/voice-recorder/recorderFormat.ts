@@ -29,10 +29,14 @@ export function formatFileSize(bytes: number, locale: string): string {
   /* Decided after rounding, so 999.6 kB reads "1 MB" and not "1,000 kB". */
   const isUnderMegabyte = kilobytes < 1000
 
-  return new Intl.NumberFormat(locale, {
+  const size = new Intl.NumberFormat(locale, {
     style: 'unit',
     unit: isUnderMegabyte ? 'kilobyte' : 'megabyte',
     unitDisplay: 'short',
     maximumFractionDigits: isUnderMegabyte ? 0 : 1,
   }).format(isUnderMegabyte ? kilobytes : bytes / 1e6)
+
+  /* No-break space, so a wrapping button never splits "348" from "kB". Some
+   * locales (fr) already use one. */
+  return size.replaceAll(' ', ' ')
 }
