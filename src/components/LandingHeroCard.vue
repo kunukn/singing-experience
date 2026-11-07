@@ -25,7 +25,7 @@ const moreCount = computed(
   <CardLink :to="group.route" :data-group="group.key">
     <PrimeCard class="hero-card h-full">
       <template #content>
-        <div class="flex items-center gap-4">
+        <div class="flex items-start gap-4">
           <component :is="group.icon" class="size-14 shrink-0" />
           <div class="min-w-0 grow">
             <h2 class="text-2xl font-semibold">
