@@ -777,7 +777,7 @@
     "home": {
       "step1": "Choisis un outil ou un jeu pour l'ouvrir.",
       "step2": "Autorise le micro quand ton navigateur te le demande. Sans lui, les programmes ne peuvent pas t'entendre chanter.",
-      "step3": "Tu débutes ? Commence par le Détecteur de hauteur."
+      "step3": "Première fois ? Essaie les premières étapes : échauffe-toi, trouve ta tessiture, puis chante une note."
     },
     "voiceRecorder": {
       "step1": "Appuie sur Enregistrer et chante. La ligne qui bouge montre que le micro t'entend.",
