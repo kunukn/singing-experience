@@ -35,3 +35,25 @@ export function guitarFretLabel(
     preferFlats,
   }).label
 }
+
+/*
+ * The open-string name split into letter and octave, so 'off' can draw it like
+ * the tuner's pegs: most players know the strings as E A D G B E, and the digit
+ * only tells the low E from the high one. Null for every other cell, which
+ * keeps its plain label from guitarFretLabel.
+ */
+export function guitarOpenStringNote(
+  midi: number,
+  fret: number,
+  mode: ToneLabelMode,
+  accidentalStyle: AccidentalStyle,
+): { note: string; octave: number } | null {
+  if (mode !== 'off' || fret !== 0) return null
+
+  const { label: note, octave } = midiToNoteLabel(midi, {
+    showOctave: false,
+    preferFlats: accidentalStyle === 'flat',
+  })
+
+  return { note, octave }
+}

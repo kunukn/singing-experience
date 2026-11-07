@@ -31,7 +31,7 @@ import {
   guitarScaleLabelClass,
   isGuitarAccidentalMidi,
 } from './guitarBoardDecorations'
-import { guitarFretLabel } from './guitarLabels'
+import { guitarFretLabel, guitarOpenStringNote } from './guitarLabels'
 import {
   BOARD_BOTTOM_CHROME,
   BOARD_VERTICAL_CHROME,
@@ -133,6 +133,15 @@ const accidentalStyle = computed<AccidentalStyle>(
 
 function cellLabel(cell: GuitarCell): string | null {
   return guitarFretLabel(
+    cell.midi,
+    cell.fret,
+    props.toneLabelMode ?? 'off',
+    accidentalStyle.value,
+  )
+}
+
+function cellOpenStringNote(cell: GuitarCell) {
+  return guitarOpenStringNote(
     cell.midi,
     cell.fret,
     props.toneLabelMode ?? 'off',
@@ -755,6 +764,7 @@ function handleClick(cell: GuitarCell) {
                   width: `${layout.stringWidth}px`,
                   height: `${layout.rowHeight}px`,
                   fontSize: `${boardScale.labelFontSize}px`,
+                  '--guitar-scale-dot-size': `${boardScale.scaleDotSize}px`,
                 }"
                 :data-testid="`guitar-fret-${cell.stringIndex}-${cell.fret}`"
                 :data-scale-role="scaleRole(cell) ?? undefined"
@@ -802,7 +812,13 @@ function handleClick(cell: GuitarCell) {
                   class="guitar-fret-label relative leading-none"
                   :class="[scaleLabelClass(cell), labelToneClass(cell)]"
                 >
-                  {{ cellLabel(cell) }}
+                  <!-- Tones off: open strings read like the tuner's pegs,
+                       letter first and the octave quieter -->
+                  <NoteWithOctave
+                    v-if="cellOpenStringNote(cell)"
+                    v-bind="cellOpenStringNote(cell)!"
+                  />
+                  <template v-else>{{ cellLabel(cell) }}</template>
                 </span>
               </button>
 
@@ -1226,11 +1242,47 @@ function handleClick(cell: GuitarCell) {
   paint-order: stroke fill;
 }
 
+/*
+ * Open-string names with Tones off (NoteWithOctave). Out of flow, the octave
+ * still sits beside the letter (no horizontal offset, so it keeps its static
+ * x) but takes no width: the letter centres on its string and its halo hides
+ * the line, while the digit hangs off to the side. In flow, the string showed
+ * through the gap between the two and through the faded digit's halo.
+ * bottom: 0 sets it on the letter's baseline; left to its static y it rides
+ * high and reads like a power (E²). 1em is the board's own label size: the
+ * digit is never smaller than the plain "E2" was before.
+ */
+.guitar-fret-label :deep(.note-octave) {
+  position: absolute;
+  bottom: 0;
+  font-size: 1em;
+}
+
 /* A highlighted cell needs none of this: the scale dot behind the name already
  * hides the string, and a halo in the board's colour would ring the name with a
  * colour the dot is not. */
 .guitar-fret[data-scale-role] .guitar-fret-label {
   -webkit-text-stroke-width: 0;
+}
+
+/*
+ * A highlighted open string: the letter sits in the dot, but the octave would
+ * hang over the dot's edge in the dot's text colour (white on the root, so it
+ * vanished against the board). Move it just clear of the dot, in the board's
+ * own text colour, with the board halo back on so a ring or string behind it
+ * cannot strike through. left is from the label's start, and the label is
+ * centred on the string, so 50% is the dot's centre; 100% is the letter's end,
+ * which wins for a wide name like A♭ that already spills past the dot.
+ */
+.guitar-fret[data-scale-role] .guitar-fret-label :deep(.note-octave) {
+  left: max(
+    calc(50% + var(--guitar-scale-dot-size) / 2 + 1px),
+    calc(100% + 2px)
+  );
+  margin-inline-start: 0;
+  color: var(--p-text-muted-color);
+  opacity: 1;
+  -webkit-text-stroke-width: 3px;
 }
 
 /* Solid for the first beat (so the press reads as a hit), then out. */

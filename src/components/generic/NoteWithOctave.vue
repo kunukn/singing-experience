@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { toAccidentalGlyph, type NoteName } from '@/utils/noteUtils'
+import { toAccidentalGlyph } from '@/utils/noteUtils'
 
 type Props = {
-  note: NoteName
+  /* Spelled name, ASCII or glyph ('C#', 'D♭'): callers that honour the
+   * flat-spelling setting already hold the glyph, and re-glyphing is a no-op. */
+  note: string
   octave: number
 }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { guitarFretLabel } from './guitarLabels'
+import { guitarFretLabel, guitarOpenStringNote } from './guitarLabels'
 
 const E2_MIDI = 40 // open 6th string
 const C3_MIDI = 48 // string 5, fret 3
@@ -51,5 +51,32 @@ describe('guitarFretLabel', () => {
     it('still hides the fretted cells in off mode', () => {
       expect(guitarFretLabel(A_SHARP_2_MIDI, 6, 'off', 'flat')).toBeNull()
     })
+  })
+})
+
+describe('guitarOpenStringNote', () => {
+  it('splits an open string into letter and octave in off mode', () => {
+    expect(guitarOpenStringNote(E2_MIDI, 0, 'off', 'sharp')).toEqual({
+      note: 'E',
+      octave: 2,
+    })
+  })
+
+  it('follows the chosen accidental spelling', () => {
+    /* Open A♯2 / B♭2, as in a tuning a few semitones down */
+    expect(guitarOpenStringNote(A_SHARP_2_MIDI, 0, 'off', 'sharp')).toEqual({
+      note: 'A♯',
+      octave: 2,
+    })
+    expect(guitarOpenStringNote(A_SHARP_2_MIDI, 0, 'off', 'flat')).toEqual({
+      note: 'B♭',
+      octave: 2,
+    })
+  })
+
+  it('is null for fretted cells and the labelled modes', () => {
+    expect(guitarOpenStringNote(C3_MIDI, 3, 'off', 'sharp')).toBeNull()
+    expect(guitarOpenStringNote(E2_MIDI, 0, 'simple', 'sharp')).toBeNull()
+    expect(guitarOpenStringNote(E2_MIDI, 0, 'advanced', 'sharp')).toBeNull()
   })
 })
