@@ -1,0 +1,1 @@
+var e={icon:{class:`text-xl! -my-1`}};export{e as t};
