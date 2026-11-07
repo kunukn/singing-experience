@@ -92,7 +92,8 @@
     "title": "歌唱体验",
     "subtitle": "用工具和游戏练习你的声音",
     "startHere": {
-      "title": "第一次来？从这里开始"
+      "title": "第一次来？从这里开始",
+      "returningTitle": "每日热身"
     },
     "morePrograms": "还有 {count} 个",
     "programs": {

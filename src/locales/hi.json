@@ -92,7 +92,8 @@
     "title": "गायन अनुभव",
     "subtitle": "टूल और खेल से अपनी आवाज़ को निखारो",
     "startHere": {
-      "title": "पहली बार? यहाँ से शुरू करो"
+      "title": "पहली बार? यहाँ से शुरू करो",
+      "returningTitle": "रोज़ का वार्म-अप"
     },
     "morePrograms": "+{count} और",
     "programs": {

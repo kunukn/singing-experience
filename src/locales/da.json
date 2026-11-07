@@ -92,7 +92,8 @@
     "title": "Sangoplevelse",
     "subtitle": "Træn din stemme med værktøjer og spil",
     "startHere": {
-      "title": "Ny her? Start her"
+      "title": "Ny her? Start her",
+      "returningTitle": "Daglig opvarmning"
     },
     "morePrograms": "+{count} mere",
     "programs": {

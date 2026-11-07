@@ -92,7 +92,8 @@
     "title": "Experiencia de Canto",
     "subtitle": "Entrena tu voz con herramientas y juegos",
     "startHere": {
-      "title": "¿Primera vez? Empieza aquí"
+      "title": "¿Primera vez? Empieza aquí",
+      "returningTitle": "Calentamiento diario"
     },
     "morePrograms": "+{count} más",
     "programs": {

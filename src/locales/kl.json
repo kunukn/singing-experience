@@ -87,7 +87,8 @@
     "title": "Erinarsornermik misigisaq",
     "subtitle": "Atortussamik toqqaruk aallartinniarlutit",
     "startHere": {
-      "title": "New here? Start here"
+      "title": "New here? Start here",
+      "returningTitle": "Daily warm-up"
     },
     "morePrograms": "+{count} more",
     "programs": {

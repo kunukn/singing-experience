@@ -92,7 +92,8 @@
     "title": "Uzoefu wa Kuimba",
     "subtitle": "Fanya mazoezi ya sauti yako kwa zana na michezo",
     "startHere": {
-      "title": "Mgeni hapa? Anza hapa"
+      "title": "Mgeni hapa? Anza hapa",
+      "returningTitle": "Kuipasha sauti kila siku"
     },
     "morePrograms": "+{count} zaidi",
     "programs": {

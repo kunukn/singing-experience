@@ -92,7 +92,8 @@
     "title": "تجربة الغناء",
     "subtitle": "درّب صوتك بالأدوات والألعاب",
     "startHere": {
-      "title": "جديد هنا؟ ابدأ من هنا"
+      "title": "جديد هنا؟ ابدأ من هنا",
+      "returningTitle": "إحماء يومي"
     },
     "morePrograms": "+{count} أخرى",
     "programs": {

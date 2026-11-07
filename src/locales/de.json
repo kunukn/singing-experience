@@ -92,7 +92,8 @@
     "title": "Gesangserlebnis",
     "subtitle": "Trainiere deine Stimme mit Werkzeugen und Spielen",
     "startHere": {
-      "title": "Neu hier? Fang hier an"
+      "title": "Neu hier? Fang hier an",
+      "returningTitle": "Tägliches Aufwärmen"
     },
     "morePrograms": "+{count} weitere",
     "programs": {

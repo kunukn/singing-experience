@@ -15,12 +15,22 @@ const myRangeLabel = computed(() => {
 </script>
 
 <template>
-  <section class="w-full" aria-labelledby="start-here-title">
+  <section
+    class="w-full"
+    aria-labelledby="start-here-title"
+    :data-returning="hasFoundVoiceRange"
+  >
     <h2
       id="start-here-title"
       class="mb-3 text-lg font-semibold text-(--p-text-muted-color)"
     >
-      {{ t('home.startHere.title') }}
+      {{
+        t(
+          hasFoundVoiceRange
+            ? 'home.startHere.returningTitle'
+            : 'home.startHere.title',
+        )
+      }}
     </h2>
     <ol class="grid gap-3 sm:grid-cols-3">
       <li v-for="program in startHerePrograms" :key="program.route">

@@ -92,7 +92,8 @@
     "title": "歌唱体験",
     "subtitle": "ツールとゲームで声をきたえよう",
     "startHere": {
-      "title": "はじめて？ここからスタート"
+      "title": "はじめて？ここからスタート",
+      "returningTitle": "毎日のウォームアップ"
     },
     "morePrograms": "ほか{count}こ",
     "programs": {

@@ -92,7 +92,8 @@
     "title": "Singing Experience",
     "subtitle": "Train your voice with tools and games",
     "startHere": {
-      "title": "New here? Start here"
+      "title": "New here? Start here",
+      "returningTitle": "Daily warm-up"
     },
     "morePrograms": "+{count} more",
     "programs": {

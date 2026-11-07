@@ -92,7 +92,8 @@
     "title": "Expérience de Chant",
     "subtitle": "Entraîne ta voix avec des outils et des jeux",
     "startHere": {
-      "title": "Première fois ? Commence ici"
+      "title": "Première fois ? Commence ici",
+      "returningTitle": "Échauffement du jour"
     },
     "morePrograms": "+{count} de plus",
     "programs": {

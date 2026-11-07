@@ -92,7 +92,8 @@
     "title": "Pengalaman Bernyanyi",
     "subtitle": "Latih suaramu dengan alat dan permainan",
     "startHere": {
-      "title": "Baru di sini? Mulai dari sini"
+      "title": "Baru di sini? Mulai dari sini",
+      "returningTitle": "Pemanasan harian"
     },
     "morePrograms": "+{count} lagi",
     "programs": {
