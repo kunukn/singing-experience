@@ -4,8 +4,9 @@
  * A canvas needs a real colour string; it cannot read a CSS custom property. The
  * obvious route — getComputedStyle(document.documentElement).getPropertyValue(name)
  * — does NOT work here: the computed value of a custom property is its *specified*
- * value, so nothing inside it is evaluated. Since @primeuix/themes v3, the Aura
- * semantic tokens are written with the CSS light-dark() function, and that is
+ * value, so nothing inside it is evaluated. The pinned @primeuix/themes 2.x (MIT)
+ * writes plain values that .p-dark swaps, but v3 (PrimeUI-licensed, not used here)
+ * writes the Aura semantic tokens with the CSS light-dark() function, and that is
  * exactly what comes back, sometimes nested:
  *
  *   --p-text-color -> "light-dark(light-dark(#334155,#3f3f46),#ffffff)"
