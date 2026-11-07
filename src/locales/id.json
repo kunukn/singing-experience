@@ -727,7 +727,7 @@
     },
     "tuner": {
       "step1": "Pilih alat musik dan penalaanmu, lalu tekan Mulai.",
-      "step2": "Petik satu senar dan biarkan berbunyi.",
+      "step2": "Petik satu senar dan biarkan berbunyi. Angka kecil membedakan dua E: E2 senar tebal yang rendah, E4 senar tipis yang tinggi.",
       "step3": "Putar pasaknya sampai jarumnya ada di tengah dan kamu dengar dentingan."
     },
     "singTone": {

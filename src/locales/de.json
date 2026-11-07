@@ -727,7 +727,7 @@
     },
     "tuner": {
       "step1": "Wähl dein Instrument und die Stimmung und drück dann auf Start.",
-      "step2": "Zupf eine Saite und lass sie klingen.",
+      "step2": "Zupf eine Saite und lass sie klingen. Die kleine Zahl unterscheidet die beiden E: E2 ist die dicke, tiefe Saite, E4 die dünne, hohe.",
       "step3": "Dreh am Wirbel, bis die Nadel in der Mitte steht und du einen Glockenton hörst."
     },
     "singTone": {

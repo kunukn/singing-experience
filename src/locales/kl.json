@@ -586,7 +586,7 @@
     },
     "tuner": {
       "step1": "Pick your instrument and tuning, then press Aallartitsit.",
-      "step2": "Pluck one string and let it ring.",
+      "step2": "Pluck one string and let it ring. The small number tells the two E's apart: E2 is the thick, deep string, E4 the thin, high one.",
       "step3": "Turn the peg until the needle sits in the middle and you hear a chime."
     },
     "singTone": {

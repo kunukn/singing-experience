@@ -389,7 +389,7 @@ watch(
               : undefined
           "
           @click="playGuitarString(s.note, s.octave)"
-          >{{ toAccidentalGlyph(s.note) }}{{ s.octave }}
+          ><NoteWithOctave :note="s.note" :octave="s.octave" />
           <span
             v-if="guidedString && isGuidedString(s)"
             class="string-near-badge"
@@ -434,7 +434,7 @@ watch(
               : undefined
           "
           @click="playGuitarString(s.note, s.octave)"
-          >{{ toAccidentalGlyph(s.note) }}{{ s.octave }}
+          ><NoteWithOctave :note="s.note" :octave="s.octave" />
           <span
             v-if="guidedString && isGuidedString(s)"
             class="string-near-badge"
@@ -511,8 +511,11 @@ watch(
             data-testid="nearest-string-target"
           >
             →
-            {{ toAccidentalGlyph(guidedString.string.note)
-            }}{{ guidedString.string.octave }} ·
+            <NoteWithOctave
+              :note="guidedString.string.note"
+              :octave="guidedString.string.octave"
+            />
+            ·
             {{
               t(
                 guidedString.cents > 0

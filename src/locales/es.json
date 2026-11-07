@@ -727,7 +727,7 @@
     },
     "tuner": {
       "step1": "Elige tu instrumento y la afinación, y luego pulsa Iniciar.",
-      "step2": "Puntea una cuerda y déjala sonar.",
+      "step2": "Puntea una cuerda y déjala sonar. El número pequeño distingue las dos E: E2 es la cuerda gruesa y grave, E4 la fina y aguda.",
       "step3": "Gira la clavija hasta que la aguja quede en el centro y oigas un timbre."
     },
     "singTone": {

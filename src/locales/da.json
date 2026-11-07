@@ -727,7 +727,7 @@
     },
     "tuner": {
       "step1": "Vælg dit instrument og din stemning, og tryk så på Start.",
-      "step2": "Knips på én streng, og lad den klinge.",
+      "step2": "Knips på én streng, og lad den klinge. Det lille tal skiller de to E'er ad: E2 er den tykke, dybe streng, E4 den tynde, lyse.",
       "step3": "Drej på stemmeskruen, indtil viseren står i midten, og du hører en klokke."
     },
     "singTone": {

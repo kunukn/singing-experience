@@ -727,7 +727,7 @@
     },
     "tuner": {
       "step1": "Escolha seu instrumento e a afinação, depois aperte Iniciar.",
-      "step2": "Toque uma corda e deixe ela soar.",
+      "step2": "Toque uma corda e deixe ela soar. O número pequeno diferencia os dois E: E2 é a corda grossa e grave, E4 a fina e aguda.",
       "step3": "Gire a tarraxa até o ponteiro ficar no meio e você ouvir um sino."
     },
     "singTone": {

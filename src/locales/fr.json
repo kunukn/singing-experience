@@ -727,7 +727,7 @@
     },
     "tuner": {
       "step1": "Choisis ton instrument et ton accord, puis appuie sur Démarrer.",
-      "step2": "Pince une seule corde et laisse-la sonner.",
+      "step2": "Pince une seule corde et laisse-la sonner. Le petit chiffre distingue les deux E : E2 est la corde épaisse et grave, E4 la fine et aiguë.",
       "step3": "Tourne la cheville jusqu'à ce que l'aiguille soit au milieu et que tu entendes un carillon."
     },
     "singTone": {

@@ -78,7 +78,15 @@ export const programHelpByKey: Record<string, ProgramHelp> = {
   toneDetector: { stepCount: 3, terms: ['note', 'octave', 'chord', 'harmony'] },
   tuner: {
     stepCount: 3,
-    terms: ['note', 'sharpFlat', 'cents', 'semitone', 'hz', 'clarity'],
+    terms: [
+      'note',
+      'octave',
+      'sharpFlat',
+      'cents',
+      'semitone',
+      'hz',
+      'clarity',
+    ],
   },
   singTone: { stepCount: 3, terms: ['note', 'cents', 'voiceRange'] },
   doReMi: { stepCount: 3, terms: ['solfege', 'note', 'cents'] },
