@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "Expérience de Chant",
-    "subtitle": "Choisis un programme pour commencer",
+    "subtitle": "Entraîne ta voix avec des outils et des jeux",
+    "startHere": {
+      "title": "Première fois ? Commence ici"
+    },
+    "morePrograms": "+{count} de plus",
     "programs": {
       "pitchDetector": {
         "name": "Détecteur de hauteur",
@@ -176,10 +180,22 @@
     "privacy": "Ta vie privée est protégée — cette appli fonctionne à 100 % dans ton navigateur. Ta voix n'est jamais envoyée nulle part. Tes enregistrements restent sur ton appareil."
   },
   "tools": {
-    "subtitle": "Choisis un outil"
+    "subtitle": "Choisis un outil",
+    "sections": {
+      "getReady": "Prépare-toi",
+      "seeYourVoice": "Vois ta voix",
+      "instruments": "Instruments",
+      "learnMusic": "Apprends la musique",
+      "experimental": "Expérimental"
+    }
   },
   "games": {
-    "subtitle": "Choisis un jeu"
+    "subtitle": "Choisis un jeu",
+    "sections": {
+      "startHere": "Pour commencer",
+      "challenges": "Défis",
+      "experimental": "Expérimental"
+    }
   },
   "warmUp": {
     "title": "Échauffement",

@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import type { ProgramIconHue } from '@/components/icons/program/programIconHue'
-import { games, programs, tools } from '@/constants/programs'
+import { games, programs, tools, type Program } from '@/constants/programs'
+
+const programsByGroup: Record<string, Program[]> = {
+  singingTools: tools,
+  singingGames: games,
+}
 
 const { t } = useI18n()
 const { state: micPermission } = useMicrophonePermission()
 const { warmUp: warmUpAudio } = useTonePlayer()
+/* New singers see the first steps above the catalogue; once they have a range, the catalogue leads */
+const { hasFoundVoiceRange } = useMyVoiceRange()
 
 function prewarmAudio() {
   warmUpAudio().catch(() => {})
@@ -29,49 +36,22 @@ const logoHue = computed<ProgramIconHue>(() => {
       {{ t('home.subtitle') }}
     </p>
 
-    <div class="grid w-full max-w-lg gap-4" @click="prewarmAudio">
-      <CardLink
-        v-for="program in programs"
-        :key="program.route"
-        :to="program.route"
-      >
-        <PrimeCard>
-          <template #content>
-            <div class="flex items-start gap-3 sm:gap-4">
-              <div class="flex w-12 shrink-0 justify-center">
-                <component :is="program.icon" class="size-10" />
-              </div>
-              <div class="min-w-0 grow">
-                <h2 class="mb-1 text-xl font-semibold">
-                  {{ t(`home.programs.${program.key}.name`) }}
-                </h2>
-                <p class="mb-4 text-sm text-(--p-text-muted-color)">
-                  {{ t(`home.programs.${program.key}.description`) }}
-                </p>
+    <div
+      class="flex w-full max-w-lg flex-col gap-6 md:max-w-3xl"
+      @click="prewarmAudio"
+    >
+      <LandingStartHere v-if="!hasFoundVoiceRange" />
 
-                <ul
-                  v-if="
-                    program.key === 'singingTools' ||
-                    program.key === 'singingGames'
-                  "
-                  class="mt-3 grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2"
-                >
-                  <li
-                    v-for="item in program.key === 'singingTools'
-                      ? tools
-                      : games"
-                    :key="item.key"
-                    class="flex items-center gap-2 text-sm text-(--p-text-muted-color)"
-                  >
-                    <component :is="item.icon" class="size-5 shrink-0" />
-                    <span>{{ t(`home.programs.${item.key}.name`) }}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </template>
-        </PrimeCard>
-      </CardLink>
+      <div class="grid gap-4 md:grid-cols-2">
+        <LandingHeroCard
+          v-for="group in programs"
+          :key="group.route"
+          :group
+          :programs="programsByGroup[group.key] ?? []"
+        />
+      </div>
+
+      <LandingStartHere v-if="hasFoundVoiceRange" />
     </div>
 
     <LandingFooter />

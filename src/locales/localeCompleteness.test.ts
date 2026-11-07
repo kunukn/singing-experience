@@ -89,6 +89,8 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'voiceRanges.mezzoSopranoShort',
   ],
   es: [
+    'tools.sections.experimental',
+    'games.sections.experimental',
     'generic.difficulty_normal',
     'generic.cents',
     'generic.tempo',
@@ -105,6 +107,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'voiceRanges.mezzoSopranoShort',
   ],
   fr: [
+    'tools.sections.instruments',
     'voiceRecorder.quality.standard',
     'voiceRecorder.quality.studio',
     'generic.pause',
@@ -164,6 +167,8 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'voiceRanges.mezzoSopranoShort',
   ],
   pt: [
+    'tools.sections.experimental',
+    'games.sections.experimental',
     'generic.difficulty_normal',
     'generic.cents',
     'generic.tempo',

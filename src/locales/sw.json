@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "Uzoefu wa Kuimba",
-    "subtitle": "Chagua programu ili kuanza",
+    "subtitle": "Fanya mazoezi ya sauti yako kwa zana na michezo",
+    "startHere": {
+      "title": "Mgeni hapa? Anza hapa"
+    },
+    "morePrograms": "+{count} zaidi",
     "programs": {
       "pitchDetector": {
         "name": "Kipimo cha Sauti",
@@ -176,10 +180,22 @@
     "privacy": "Faragha yako ni salama — programu hii inafanya kazi 100% kwenye kivinjari chako. Sauti yako haitumwi popote. Rekodi unazofanya zinabaki kwenye kifaa chako."
   },
   "tools": {
-    "subtitle": "Chagua zana"
+    "subtitle": "Chagua zana",
+    "sections": {
+      "getReady": "Jiandae",
+      "seeYourVoice": "Ona sauti yako",
+      "instruments": "Ala za muziki",
+      "learnMusic": "Jifunze muziki",
+      "experimental": "Majaribio"
+    }
   },
   "games": {
-    "subtitle": "Chagua mchezo"
+    "subtitle": "Chagua mchezo",
+    "sections": {
+      "startHere": "Mwanzo rahisi",
+      "challenges": "Changamoto",
+      "experimental": "Majaribio"
+    }
   },
   "warmUp": {
     "title": "Kuipasha sauti",

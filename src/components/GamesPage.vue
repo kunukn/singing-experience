@@ -1,54 +1,12 @@
 <script setup lang="ts">
-import { games } from '@/constants/programs'
-
-const { t } = useI18n()
-const { warmUp: warmUpAudio } = useTonePlayer()
-
-function prewarmAudio() {
-  warmUpAudio().catch(() => {})
-}
+import { gameSections, games } from '@/constants/programs'
 </script>
 
 <template>
-  <div class="flex grow flex-col items-center pt-1 pb-4">
-    <h2 class="product-title mb-2 font-bold">
-      {{ t('home.programs.singingGames.name') }}
-    </h2>
-
-    <p class="mb-4 text-(--p-text-muted-color)">
-      {{ t('games.subtitle') }}
-    </p>
-
-    <div
-      class="grid w-full max-w-lg gap-4 md:max-w-none md:grid-cols-2"
-      @click="prewarmAudio"
-    >
-      <CardLink v-for="game in games" :key="game.route" :to="game.route">
-        <PrimeCard class="h-full">
-          <template #content>
-            <div class="flex items-start gap-3 sm:gap-4">
-              <component :is="game.icon" class="size-10 shrink-0" />
-              <div>
-                <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <h2 class="text-xl font-semibold">
-                    {{ t(`home.programs.${game.key}.name`) }}
-                  </h2>
-                  <ProgramStageTag v-if="game.stage" :stage="game.stage" />
-                </div>
-                <p class="mt-1 text-sm text-(--p-text-muted-color)">
-                  {{ t(`home.programs.${game.key}.description`) }}
-                </p>
-              </div>
-            </div>
-          </template>
-        </PrimeCard>
-      </CardLink>
-    </div>
-  </div>
+  <ProgramCatalogPage
+    catalogKey="games"
+    titleKey="home.programs.singingGames.name"
+    :programs="games"
+    :sectionOrder="gameSections"
+  />
 </template>
-
-<style scoped lang="css">
-.product-title {
-  font-size: clamp(1.5rem, 5cqi, 2.5rem);
-}
-</style>

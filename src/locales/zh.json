@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "歌唱体验",
-    "subtitle": "选择一个程序开始",
+    "subtitle": "用工具和游戏练习你的声音",
+    "startHere": {
+      "title": "第一次来？从这里开始"
+    },
+    "morePrograms": "还有 {count} 个",
     "programs": {
       "pitchDetector": {
         "name": "音高检测器",
@@ -176,10 +180,22 @@
     "privacy": "你的隐私是安全的 — 此应用完全在浏览器中运行。你的声音绝不会被发送到任何地方。你录下的内容只保存在你的设备上。"
   },
   "tools": {
-    "subtitle": "选个工具用"
+    "subtitle": "选个工具用",
+    "sections": {
+      "getReady": "准备一下",
+      "seeYourVoice": "看看你的声音",
+      "instruments": "乐器",
+      "learnMusic": "学音乐",
+      "experimental": "实验中"
+    }
   },
   "games": {
-    "subtitle": "选个游戏玩"
+    "subtitle": "选个游戏玩",
+    "sections": {
+      "startHere": "轻松开始",
+      "challenges": "挑战",
+      "experimental": "实验中"
+    }
   },
   "warmUp": {
     "title": "热身",

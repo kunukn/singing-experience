@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "Gesangserlebnis",
-    "subtitle": "Wähle ein Programm, um zu beginnen",
+    "subtitle": "Trainiere deine Stimme mit Werkzeugen und Spielen",
+    "startHere": {
+      "title": "Neu hier? Fang hier an"
+    },
+    "morePrograms": "+{count} weitere",
     "programs": {
       "pitchDetector": {
         "name": "Tonhöhenerkennung",
@@ -176,10 +180,22 @@
     "privacy": "Deine Privatsphäre ist geschützt – diese App läuft vollständig im Browser. Deine Stimme wird nirgendwohin gesendet. Aufnahmen, die du machst, bleiben auf deinem Gerät."
   },
   "tools": {
-    "subtitle": "Wähl ein Werkzeug"
+    "subtitle": "Wähl ein Werkzeug",
+    "sections": {
+      "getReady": "Mach dich bereit",
+      "seeYourVoice": "Sieh deine Stimme",
+      "instruments": "Instrumente",
+      "learnMusic": "Musik lernen",
+      "experimental": "Experimentell"
+    }
   },
   "games": {
-    "subtitle": "Wähl ein Spiel"
+    "subtitle": "Wähl ein Spiel",
+    "sections": {
+      "startHere": "Leichter Start",
+      "challenges": "Herausforderungen",
+      "experimental": "Experimentell"
+    }
   },
   "warmUp": {
     "title": "Aufwärmen",

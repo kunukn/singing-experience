@@ -24,11 +24,33 @@ import ProgramWarmUpIcon from '@/components/icons/program/ProgramWarmUpIcon.vue'
 /* Maturity of an unfinished program — shown as a tag on its card and in the top bar */
 export type ProgramStage = 'alpha' | 'beta'
 
+/* Section headings on the Tools and Games pages, in display order */
+export const toolSections = [
+  'getReady',
+  'seeYourVoice',
+  'instruments',
+  'learnMusic',
+] as const
+export const gameSections = ['startHere', 'challenges'] as const
+
+/* Alpha programs gather here, below every other section, whatever their own section says */
+export const EXPERIMENTAL_SECTION = 'experimental'
+
+export type ProgramSection =
+  | (typeof toolSections)[number]
+  | (typeof gameSections)[number]
+
 export type Program = {
   key: string
   icon: Component
   route: string
   stage?: ProgramStage
+  section?: ProgramSection
+}
+
+export type ProgramGroup = {
+  key: ProgramSection | typeof EXPERIMENTAL_SECTION
+  programs: Program[]
 }
 
 export const games: Program[] = [
@@ -36,38 +58,45 @@ export const games: Program[] = [
     key: 'singTone',
     icon: ProgramSingToneIcon,
     route: '/sing-tone',
+    section: 'startHere',
   },
   {
     key: 'doReMi',
     icon: ProgramDoReMiIcon,
     route: '/do-re-mi',
+    section: 'startHere',
   },
   {
     key: 'singTheKeys',
     icon: ProgramSingTheKeysIcon,
     route: '/sing-the-keys',
+    section: 'challenges',
     stage: 'beta',
   },
   {
     key: 'graceKelly',
     icon: ProgramGraceKellyIcon,
     route: '/grace-kelly-challenge',
+    section: 'challenges',
   },
   {
     key: 'singFly',
     icon: ProgramSingFlyIcon,
     route: '/singfly',
+    section: 'startHere',
   },
   {
     key: 'pitchGame',
     icon: ProgramPitchGameIcon,
     route: '/pitch-game',
+    section: 'challenges',
     stage: 'beta',
   },
   {
     key: 'circleOfFifths',
     icon: ProgramCircleOfFifthsIcon,
     route: '/circle-of-fifths',
+    section: 'challenges',
     stage: 'beta',
   },
 ]
@@ -77,61 +106,72 @@ export const tools: Program[] = [
     key: 'pitchDetector',
     icon: ProgramPitchDetectorIcon,
     route: '/pitch-detector',
+    section: 'seeYourVoice',
   },
   {
     key: 'warmUp',
     icon: ProgramWarmUpIcon,
     route: '/warm-up',
+    section: 'getReady',
   },
   {
     key: 'voiceRangeFinder',
     icon: ProgramVoiceRangeFinderIcon,
     route: '/voice-range-finder',
+    section: 'getReady',
   },
   {
     key: 'notes',
     icon: ProgramNotesIcon,
     route: '/notes',
+    section: 'learnMusic',
   },
 
   {
     key: 'piano',
     icon: ProgramPianoIcon,
     route: '/piano',
+    section: 'instruments',
   },
   {
     key: 'guitar',
     icon: ProgramGuitarIcon,
     route: '/guitar',
+    section: 'instruments',
   },
   {
     key: 'scaleDetector',
     icon: ProgramScaleDetectorIcon,
     route: '/scale-detector',
+    section: 'learnMusic',
     stage: 'beta',
   },
   {
     key: 'voiceRecorder',
     icon: ProgramVoiceRecorderIcon,
     route: '/voice-recorder',
+    section: 'seeYourVoice',
     stage: 'beta',
   },
   {
     key: 'melodyWriter',
     icon: ProgramMelodyWriterIcon,
     route: '/melody-writer',
+    section: 'seeYourVoice',
     stage: 'alpha',
   },
   {
     key: 'toneDetector',
     icon: ProgramToneDetectorIcon,
     route: '/tone-detector',
+    section: 'seeYourVoice',
     stage: 'alpha',
   },
   {
     key: 'tuner',
     icon: ProgramTunerIcon,
     route: '/tuner',
+    section: 'instruments',
   },
 ]
 
@@ -159,3 +199,33 @@ export const programByRoute = new Map(
     (program) => [program.route, program] as const,
   ),
 )
+
+/**
+ * Splits programs into their sections, in `sectionOrder`. Alpha programs go
+ * to a trailing experimental group, so promoting one out of alpha moves it
+ * back to its own section. Empty sections are left out.
+ */
+export function groupProgramsBySection(
+  programList: readonly Program[],
+  sectionOrder: readonly ProgramSection[],
+): ProgramGroup[] {
+  const groups: ProgramGroup[] = sectionOrder.map((section) => ({
+    key: section,
+    programs: programList.filter(
+      (program) => program.stage !== 'alpha' && program.section === section,
+    ),
+  }))
+  groups.push({
+    key: EXPERIMENTAL_SECTION,
+    programs: programList.filter((program) => program.stage === 'alpha'),
+  })
+
+  return groups.filter((group) => group.programs.length > 0)
+}
+
+/* The first programs a new singer should try, in order — shown on the landing page */
+export const startHerePrograms: Program[] = [
+  '/warm-up',
+  '/voice-range-finder',
+  '/sing-tone',
+].map((route) => programByRoute.get(route)!)

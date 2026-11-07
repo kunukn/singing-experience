@@ -86,6 +86,10 @@
   "home": {
     "title": "Erinarsornermik misigisaq",
     "subtitle": "Atortussamik toqqaruk aallartinniarlutit",
+    "startHere": {
+      "title": "New here? Start here"
+    },
+    "morePrograms": "+{count} more",
     "programs": {
       "pitchDetector": {
         "name": "Nipip Qaffassusia",
@@ -163,10 +167,22 @@
     "privacy": "Your privacy is safe — this app runs 100% in your browser. Your voice is never sent anywhere. Recordings you make stay on your device."
   },
   "tools": {
-    "subtitle": "Atortoq toqqaruk"
+    "subtitle": "Atortoq toqqaruk",
+    "sections": {
+      "getReady": "Get ready",
+      "seeYourVoice": "See your voice",
+      "instruments": "Instruments",
+      "learnMusic": "Learn music",
+      "experimental": "Experimental"
+    }
   },
   "games": {
-    "subtitle": "Pinnguarneq toqqaruk"
+    "subtitle": "Pinnguarneq toqqaruk",
+    "sections": {
+      "startHere": "Easy start",
+      "challenges": "Challenges",
+      "experimental": "Experimental"
+    }
   },
   "warmUp": {
     "title": "Nipersiorneq",

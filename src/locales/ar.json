@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "تجربة الغناء",
-    "subtitle": "اختر برنامجاً للبدء",
+    "subtitle": "درّب صوتك بالأدوات والألعاب",
+    "startHere": {
+      "title": "جديد هنا؟ ابدأ من هنا"
+    },
+    "morePrograms": "+{count} أخرى",
     "programs": {
       "pitchDetector": {
         "name": "كاشف النغمة",
@@ -176,10 +180,22 @@
     "privacy": "خصوصيتك آمنة — يعمل هذا التطبيق بالكامل في متصفحك. لا يُرسَل صوتك إلى أي مكان. وتبقى التسجيلات التي تجريها على جهازك."
   },
   "tools": {
-    "subtitle": "اختر أداة"
+    "subtitle": "اختر أداة",
+    "sections": {
+      "getReady": "استعد",
+      "seeYourVoice": "شاهد صوتك",
+      "instruments": "الآلات الموسيقية",
+      "learnMusic": "تعلّم الموسيقى",
+      "experimental": "تجريبي"
+    }
   },
   "games": {
-    "subtitle": "اختر لعبة"
+    "subtitle": "اختر لعبة",
+    "sections": {
+      "startHere": "بداية سهلة",
+      "challenges": "تحديات",
+      "experimental": "تجريبي"
+    }
   },
   "warmUp": {
     "title": "إحماء",

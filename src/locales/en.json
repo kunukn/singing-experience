@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "Singing Experience",
-    "subtitle": "Choose a program to get started",
+    "subtitle": "Train your voice with tools and games",
+    "startHere": {
+      "title": "New here? Start here"
+    },
+    "morePrograms": "+{count} more",
     "programs": {
       "pitchDetector": {
         "name": "Pitch Detector",
@@ -176,10 +180,22 @@
     "privacy": "Your privacy is safe — this app runs 100% in your browser. Your voice is never sent anywhere. Recordings you make stay on your device."
   },
   "tools": {
-    "subtitle": "Pick a tool to use"
+    "subtitle": "Pick a tool to use",
+    "sections": {
+      "getReady": "Get ready",
+      "seeYourVoice": "See your voice",
+      "instruments": "Instruments",
+      "learnMusic": "Learn music",
+      "experimental": "Experimental"
+    }
   },
   "games": {
-    "subtitle": "Pick a game to play"
+    "subtitle": "Pick a game to play",
+    "sections": {
+      "startHere": "Easy start",
+      "challenges": "Challenges",
+      "experimental": "Experimental"
+    }
   },
   "warmUp": {
     "title": "Warm-up",

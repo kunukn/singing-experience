@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "गायन अनुभव",
-    "subtitle": "शुरू करने के लिए एक कार्यक्रम चुनें",
+    "subtitle": "टूल और खेल से अपनी आवाज़ को निखारो",
+    "startHere": {
+      "title": "पहली बार? यहाँ से शुरू करो"
+    },
+    "morePrograms": "+{count} और",
     "programs": {
       "pitchDetector": {
         "name": "पिच डिटेक्टर",
@@ -176,10 +180,22 @@
     "privacy": "आपकी गोपनीयता सुरक्षित है — यह ऐप 100% आपके ब्राउज़र में चलता है। आपकी आवाज़ कभी कहीं नहीं भेजी जाती। आपकी रिकॉर्डिंग आपके डिवाइस पर ही रहती है।"
   },
   "tools": {
-    "subtitle": "एक टूल चुनो"
+    "subtitle": "एक टूल चुनो",
+    "sections": {
+      "getReady": "तैयार हो जाओ",
+      "seeYourVoice": "अपनी आवाज़ देखो",
+      "instruments": "वाद्य यंत्र",
+      "learnMusic": "संगीत सीखो",
+      "experimental": "प्रयोग में"
+    }
   },
   "games": {
-    "subtitle": "एक खेल चुनो"
+    "subtitle": "एक खेल चुनो",
+    "sections": {
+      "startHere": "आसान शुरुआत",
+      "challenges": "चुनौतियाँ",
+      "experimental": "प्रयोग में"
+    }
   },
   "warmUp": {
     "title": "वार्म-अप",

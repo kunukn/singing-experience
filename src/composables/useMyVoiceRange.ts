@@ -30,10 +30,18 @@ const myVoiceRange = computed<MidiRange>(() =>
  * Always whole semitones inside C2–C6 and at least an octave wide (see
  * normalizeVoiceRange), so every range-driven program can use it as-is.
  */
+/* The stored range always has a value (VueUse writes the default on first
+ * read), so a range counts as found once it differs from the default. */
+const hasFoundVoiceRange = computed(
+  () =>
+    myVoiceRange.value.midiMin !== DEFAULT_MY_VOICE_RANGE.midiMin ||
+    myVoiceRange.value.midiMax !== DEFAULT_MY_VOICE_RANGE.midiMax,
+)
+
 export function useMyVoiceRange() {
   function setMyVoiceRange(midiMin: number, midiMax: number) {
     storedRange.value = normalizeVoiceRange(midiMin, midiMax)
   }
 
-  return { myVoiceRange, setMyVoiceRange }
+  return { myVoiceRange, hasFoundVoiceRange, setMyVoiceRange }
 }

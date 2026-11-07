@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "歌唱体験",
-    "subtitle": "始めるプログラムを選んでください",
+    "subtitle": "ツールとゲームで声をきたえよう",
+    "startHere": {
+      "title": "はじめて？ここからスタート"
+    },
+    "morePrograms": "ほか{count}こ",
     "programs": {
       "pitchDetector": {
         "name": "ピッチ検出",
@@ -176,10 +180,22 @@
     "privacy": "プライバシーは守られます。このアプリは100%ブラウザ内で動作します。声がどこかに送信されることはありません。録音した内容はお使いの端末に残ります。"
   },
   "tools": {
-    "subtitle": "ツールを選んでね"
+    "subtitle": "ツールを選んでね",
+    "sections": {
+      "getReady": "じゅんび",
+      "seeYourVoice": "声を見てみよう",
+      "instruments": "楽器",
+      "learnMusic": "音楽を学ぼう",
+      "experimental": "実験中"
+    }
   },
   "games": {
-    "subtitle": "ゲームを選んでね"
+    "subtitle": "ゲームを選んでね",
+    "sections": {
+      "startHere": "かんたんスタート",
+      "challenges": "チャレンジ",
+      "experimental": "実験中"
+    }
   },
   "warmUp": {
     "title": "ウォームアップ",

@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "Pengalaman Bernyanyi",
-    "subtitle": "Pilih program untuk memulai",
+    "subtitle": "Latih suaramu dengan alat dan permainan",
+    "startHere": {
+      "title": "Baru di sini? Mulai dari sini"
+    },
+    "morePrograms": "+{count} lagi",
     "programs": {
       "pitchDetector": {
         "name": "Detektor Nada",
@@ -176,10 +180,22 @@
     "privacy": "Privasimu aman — aplikasi ini berjalan 100% di browser-mu. Suaramu tidak pernah dikirim ke mana pun. Rekaman yang kamu buat tetap di perangkatmu."
   },
   "tools": {
-    "subtitle": "Pilih alat"
+    "subtitle": "Pilih alat",
+    "sections": {
+      "getReady": "Bersiap",
+      "seeYourVoice": "Lihat suaramu",
+      "instruments": "Instrumen",
+      "learnMusic": "Belajar musik",
+      "experimental": "Percobaan"
+    }
   },
   "games": {
-    "subtitle": "Pilih permainan"
+    "subtitle": "Pilih permainan",
+    "sections": {
+      "startHere": "Mulai dengan mudah",
+      "challenges": "Tantangan",
+      "experimental": "Percobaan"
+    }
   },
   "warmUp": {
     "title": "Pemanasan",

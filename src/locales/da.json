@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "Sangoplevelse",
-    "subtitle": "Vælg et program for at komme i gang",
+    "subtitle": "Træn din stemme med værktøjer og spil",
+    "startHere": {
+      "title": "Ny her? Start her"
+    },
+    "morePrograms": "+{count} mere",
     "programs": {
       "pitchDetector": {
         "name": "Tonemåler",
@@ -176,10 +180,22 @@
     "privacy": "Dit privatliv er sikkert — denne app kører 100% i din browser. Din stemme sendes aldrig nogen steder hen. Optagelser, du laver, bliver på din enhed."
   },
   "tools": {
-    "subtitle": "Vælg et værktøj"
+    "subtitle": "Vælg et værktøj",
+    "sections": {
+      "getReady": "Gør dig klar",
+      "seeYourVoice": "Se din stemme",
+      "instruments": "Instrumenter",
+      "learnMusic": "Lær musik",
+      "experimental": "Eksperimentelt"
+    }
   },
   "games": {
-    "subtitle": "Vælg et spil"
+    "subtitle": "Vælg et spil",
+    "sections": {
+      "startHere": "Nem start",
+      "challenges": "Udfordringer",
+      "experimental": "Eksperimentelt"
+    }
   },
   "warmUp": {
     "title": "Opvarmning",

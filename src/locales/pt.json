@@ -90,7 +90,11 @@
   },
   "home": {
     "title": "Experiência de Canto",
-    "subtitle": "Escolha um programa para começar",
+    "subtitle": "Treine sua voz com ferramentas e jogos",
+    "startHere": {
+      "title": "Primeira vez? Comece aqui"
+    },
+    "morePrograms": "+{count} a mais",
     "programs": {
       "pitchDetector": {
         "name": "Detector de afinação",
@@ -176,10 +180,22 @@
     "privacy": "Sua privacidade está segura — este aplicativo funciona 100% no seu navegador. Sua voz nunca é enviada a lugar nenhum. As gravações que você faz ficam no seu aparelho."
   },
   "tools": {
-    "subtitle": "Escolha uma ferramenta"
+    "subtitle": "Escolha uma ferramenta",
+    "sections": {
+      "getReady": "Prepare-se",
+      "seeYourVoice": "Veja sua voz",
+      "instruments": "Instrumentos",
+      "learnMusic": "Aprenda música",
+      "experimental": "Experimental"
+    }
   },
   "games": {
-    "subtitle": "Escolha um jogo"
+    "subtitle": "Escolha um jogo",
+    "sections": {
+      "startHere": "Para começar",
+      "challenges": "Desafios",
+      "experimental": "Experimental"
+    }
   },
   "warmUp": {
     "title": "Aquecimento",
