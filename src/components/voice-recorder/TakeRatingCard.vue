@@ -14,10 +14,10 @@ const props = defineProps<Props>()
 const { t, locale } = useI18n()
 
 const minSeconds = MIN_RATED_VOICED_MS / 1000
-/* Rounded down, so it never shows "15 of 15" for a take that fell short. */
+/* Rounded down, so it never shows "10 of 10" for a take that fell short. */
 const heardSeconds = computed(() => Math.floor(props.voicedMs / 1000))
 /* No rating can also mean too few notes; the time is only shown when it's the
- * reason, since "17 of 15 seconds" would contradict itself. */
+ * reason, since "12 of 10 seconds" would contradict itself. */
 const isShortOfSinging = computed(() => props.voicedMs < MIN_RATED_VOICED_MS)
 const percentFormat = computed(
   () => new Intl.NumberFormat(locale.value, { style: 'percent' }),

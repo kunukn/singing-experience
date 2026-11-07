@@ -71,7 +71,7 @@ export function createClearSingingCounter() {
 }
 
 /* Whole seconds towards the rating's minimum, scaled so the count reaches it
- * exactly when the live count is ready: never "16 of 15" while not ready. */
+ * exactly when the live count is ready: never "11 of 10" while not ready. */
 export function displaySeconds(clearMs: number): number {
   const share = Math.min(1, clearMs / LIVE_READY_MS)
 

@@ -5,8 +5,13 @@ import type { PitchTrack } from './pitchTrack'
 import type { TakeNote } from './takeNotes'
 import { clamp01, median, ramp } from './takeStats'
 
-/* Below these a rating would say more about luck than about the singing. */
-export const MIN_RATED_VOICED_MS = 15_000
+/*
+ * Below these a rating would say more about luck than about the singing. At 10 s
+ * the overall score varied about ±0.07 between slices of the same take, under
+ * half a level; at 8 s it doubled. See
+ * docs/research/take-rating-minimum-length-2026-11-07.md.
+ */
+export const MIN_RATED_VOICED_MS = 10_000
 const MIN_NOTES = 8
 /* Shorter notes are passing tones, too brief to settle on a centre. */
 const MIN_RATED_NOTE_MS = 250
@@ -30,6 +35,14 @@ const SPOT_ON_PART = 0.3
 const IN_KEY_FLOOR = 0.7
 /* A full semitone of drift across the take costs the whole key score. */
 const FULL_PENALTY_DRIFT_CENTS = 100
+/*
+ * Drift fitted over a short take is mostly noise (estimates of 4+ semitones on
+ * 10 s slices of a take that drifted 8¢), so the penalty phases in with clear
+ * singing time. A ramp rather than a switch, so singing longer never drops the
+ * score a whole level at once.
+ */
+const DRIFT_PENALTY_FROM_MS = 15_000
+const DRIFT_PENALTY_FULL_MS = 30_000
 
 /*
  * Overall score needed for each label, highest first. Starting values: these
@@ -147,9 +160,14 @@ export function buildTakeRating({
   const steadiness =
     wobbles.length > 0 ? ramp(median(wobbles), OFF_CENTS, CLEAN_CENTS) : null
 
+  const driftWeight = ramp(
+    voicedMs,
+    DRIFT_PENALTY_FROM_MS,
+    DRIFT_PENALTY_FULL_MS,
+  )
   const stayInKey = clamp01(
     ramp(inScaleShare, IN_KEY_FLOOR, 1) -
-      Math.abs(driftCents) / FULL_PENALTY_DRIFT_CENTS,
+      (driftWeight * Math.abs(driftCents)) / FULL_PENALTY_DRIFT_CENTS,
   )
 
   /* Without held notes, steadiness's share of the score moves to the others. */
