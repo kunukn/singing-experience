@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "सुर दिखाओ",
+    "clearSinging": {
+      "progress": "साफ़ गाना {heard}/{seconds} सेकंड",
+      "ready": "अब रेटिंग मिल सकती है"
+    },
     "quality": {
       "label": "रिकॉर्डिंग की क्वालिटी",
       "standard": "मानक",

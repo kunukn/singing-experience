@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "Показать ноты",
+    "clearSinging": {
+      "progress": "Чистое пение {heard}/{seconds} с",
+      "ready": "Можно получить оценку"
+    },
     "quality": {
       "label": "Качество записи",
       "standard": "Стандарт",

@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "Onyesha noti",
+    "clearSinging": {
+      "progress": "Uimbaji wazi {heard}/{seconds} s",
+      "ready": "Tayari kupata tathmini"
+    },
     "quality": {
       "label": "Ubora wa rekodi",
       "standard": "Kawaida",

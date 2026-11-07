@@ -29,6 +29,7 @@ declare module 'vue' {
     CircleOfFifthsTarget: typeof import('./components/circle-of-fifths/CircleOfFifthsTarget.vue')['default']
     CircleOfFifthsTestPage: typeof import('./components/circle-of-fifths/CircleOfFifthsTestPage.vue')['default']
     CircleOfFifthsWheel: typeof import('./components/circle-of-fifths/CircleOfFifthsWheel.vue')['default']
+    ClearSingingProgress: typeof import('./components/voice-recorder/ClearSingingProgress.vue')['default']
     ClefIcon: typeof import('./components/icons/ClefIcon.vue')['default']
     ClefOption: typeof import('./components/generic/ClefOption.vue')['default']
     DetectedToneCard: typeof import('./components/tone-detector/DetectedToneCard.vue')['default']

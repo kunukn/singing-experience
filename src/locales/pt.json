@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "Mostrar notas",
+    "clearSinging": {
+      "progress": "Canto claro {heard}/{seconds} s",
+      "ready": "Já dá para ter uma avaliação"
+    },
     "quality": {
       "label": "Qualidade da gravação",
       "standard": "Padrão",

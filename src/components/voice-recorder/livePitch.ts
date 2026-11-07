@@ -31,13 +31,28 @@ export function createLivePitchReader(windowSamples: number) {
     heldNote = null
   }
 
+  /* Split from reading, so one detection per frame can feed other readers. */
+  function detect(samples: Float32Array, sampleRate: number) {
+    return detector.findPitch(samples, sampleRate)
+  }
+
   function read(
     samples: Float32Array,
     sampleRate: number,
     clarityThreshold: number,
     nowMs: number,
   ): NoteInfo | null {
-    const [pitchHz, clarity] = detector.findPitch(samples, sampleRate)
+    const [pitchHz, clarity] = detect(samples, sampleRate)
+
+    return readDetected(pitchHz, clarity, clarityThreshold, nowMs)
+  }
+
+  function readDetected(
+    pitchHz: number,
+    clarity: number,
+    clarityThreshold: number,
+    nowMs: number,
+  ): NoteInfo | null {
     const isUsable =
       clarity >= clarityThreshold &&
       pitchHz >= MIN_FREQUENCY &&
@@ -62,5 +77,5 @@ export function createLivePitchReader(windowSamples: number) {
     return heldNote
   }
 
-  return { read, reset }
+  return { detect, read, readDetected, reset }
 }

@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "Show notes",
+    "clearSinging": {
+      "progress": "Clear singing {heard}/{seconds} s",
+      "ready": "Ready for a rating"
+    },
     "quality": {
       "label": "Recording quality",
       "standard": "Standard",

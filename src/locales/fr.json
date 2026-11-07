@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "Afficher les notes",
+    "clearSinging": {
+      "progress": "Chant clair {heard}/{seconds} s",
+      "ready": "C'est bon pour avoir une note"
+    },
     "quality": {
       "label": "Qualité d'enregistrement",
       "standard": "Standard",

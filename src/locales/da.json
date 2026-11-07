@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "Vis toner",
+    "clearSinging": {
+      "progress": "Tydelig sang {heard}/{seconds} s",
+      "ready": "Klar til en vurdering"
+    },
     "quality": {
       "label": "Optagekvalitet",
       "standard": "Standard",

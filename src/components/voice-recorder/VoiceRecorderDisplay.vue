@@ -4,11 +4,13 @@ import { useLocalStorage } from '@vueuse/core'
 import type { NoteInfo } from '@/utils/noteUtils'
 
 import type { TakeAnalysis } from './analyzeTake'
+import ClearSingingProgress from './ClearSingingProgress.vue'
 import LiveNoteReadout from './LiveNoteReadout.vue'
 import LiveWaveform from './LiveWaveform.vue'
 import { megabytesPerMinute, useRecordingBitDepth } from './recordingQuality'
 import TakeAnalysisPanel from './TakeAnalysisPanel.vue'
 import TakePlayer from './TakePlayer.vue'
+import { MIN_RATED_VOICED_MS } from './takeRating'
 import {
   MAX_RECORDING_MS,
   type RecorderErrorKey,
@@ -70,8 +72,16 @@ watch(
 )
 
 const maxSeconds = MAX_RECORDING_MS / 1000
+const ratedSeconds = MIN_RATED_VOICED_MS / 1000
 const isBusy = computed(() => props.status === 'starting')
 const isRecording = computed(() => props.status === 'recording')
+/* Clear singing heard in this recording, so singers know when a rating is
+ * possible before they stop. */
+const clearSingingSeconds = ref(0)
+
+watch(isRecording, (recording) => {
+  if (recording) clearSingingSeconds.value = 0
+})
 const showTake = computed(() => props.status === 'idle' && props.take !== null)
 const canPreview = computed(
   () => !props.isSimulated && props.status === 'idle' && props.take === null,
@@ -154,6 +164,11 @@ function formatClock(ms: number): string {
         />
         {{ t('voiceRecorder.timeLeft', { time: timeLeft }) }}
       </span>
+      <ClearSingingProgress
+        v-if="isRecording && liveStream"
+        :seconds="clearSingingSeconds"
+        :targetSeconds="ratedSeconds"
+      />
       <PreviewToggle
         v-if="canPreview"
         v-model="isPreviewEnabled"
@@ -199,6 +214,7 @@ function formatClock(ms: number): string {
 
     <LiveWaveform
       v-if="isRecording && liveStream"
+      v-model:clearSingingSeconds="clearSingingSeconds"
       :stream="liveStream"
       :showNotes="showLiveNotes"
     />

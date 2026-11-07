@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "显示音符",
+    "clearSinging": {
+      "progress": "清晰歌声 {heard}/{seconds} 秒",
+      "ready": "可以得到评价了"
+    },
     "quality": {
       "label": "录音音质",
       "standard": "标准",

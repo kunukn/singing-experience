@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "音名を表示",
+    "clearSinging": {
+      "progress": "はっきりした歌 {heard}/{seconds}秒",
+      "ready": "評価できるよ"
+    },
     "quality": {
       "label": "録音の音質",
       "standard": "スタンダード",

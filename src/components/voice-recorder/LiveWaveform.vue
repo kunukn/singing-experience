@@ -7,6 +7,7 @@ import type { NoteInfo } from '@/utils/noteUtils'
 
 import LiveNoteReadout from './LiveNoteReadout.vue'
 import { createLivePitchReader } from './livePitch'
+import { createClearSingingCounter, displaySeconds } from './liveSingingTime'
 import {
   createNoSoundWatch,
   findRisingZeroCrossing,
@@ -28,6 +29,10 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+/* Whole seconds only, so the parent isn't updated on every frame. */
+const clearSingingSeconds = defineModel<number>('clearSingingSeconds', {
+  default: 0,
+})
 
 const { t } = useI18n()
 const { clarityThreshold } = useSettings()
@@ -51,6 +56,7 @@ void audioContext.resume().catch(() => {})
 const samples = new Float32Array(ANALYSER_SAMPLES)
 const noSoundWatch = createNoSoundWatch(performance.now())
 const pitchReader = createLivePitchReader(ANALYSER_SAMPLES)
+const singingCounter = createClearSingingCounter()
 
 /* Turning notes back on must not start from the note shown before. */
 watch(
@@ -61,25 +67,43 @@ watch(
   },
 )
 
+function listen() {
+  analyser.getFloatTimeDomainData(samples)
+
+  const nowMs = performance.now()
+  const rms = rootMeanSquare(samples)
+  hasNoSound.value = noSoundWatch.update(rms, nowMs)
+  isHearingSound.value = isSoundLevel(rms)
+
+  /* Detected even with notes hidden: the singing time still counts. */
+  const [pitchHz, clarity] = pitchReader.detect(
+    samples,
+    audioContext.sampleRate,
+  )
+  singingCounter.push(
+    { pitchHz, clarity, isSound: isHearingSound.value },
+    nowMs,
+  )
+  const seconds = displaySeconds(singingCounter.clearMs)
+  if (seconds !== clearSingingSeconds.value) clearSingingSeconds.value = seconds
+
+  if (props.showNotes) {
+    noteInfo.value = pitchReader.readDetected(
+      pitchHz,
+      clarity,
+      clarityThreshold.value,
+      nowMs,
+    )
+  }
+}
+
 function draw() {
+  /* Before the canvas check, so a hidden or unsized canvas can't stop the count. */
+  listen()
+
   const canvas = canvasElement.value
   const context = canvas?.getContext('2d')
   if (!canvas || !context || width.value === 0) return
-
-  analyser.getFloatTimeDomainData(samples)
-
-  const rms = rootMeanSquare(samples)
-  hasNoSound.value = noSoundWatch.update(rms, performance.now())
-  isHearingSound.value = isSoundLevel(rms)
-
-  if (props.showNotes) {
-    noteInfo.value = pitchReader.read(
-      samples,
-      audioContext.sampleRate,
-      clarityThreshold.value,
-      performance.now(),
-    )
-  }
 
   const dpr = window.devicePixelRatio || 1
   const pixelWidth = Math.round(width.value * dpr)

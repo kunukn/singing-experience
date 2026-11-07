@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "Tampilkan nada",
+    "clearSinging": {
+      "progress": "Nyanyian jelas {heard}/{seconds} dtk",
+      "ready": "Siap dapat penilaian"
+    },
     "quality": {
       "label": "Kualitas rekaman",
       "standard": "Standar",

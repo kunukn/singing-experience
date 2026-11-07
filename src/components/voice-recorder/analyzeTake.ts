@@ -29,10 +29,10 @@ import {
 } from './takeTuning'
 
 /* Fixed rather than the user's setting, so scores don't change with it. */
-const MIN_CLARITY = 0.9
+export const MIN_CLARITY = 0.9
 /* Same voice limits as the live detector in usePitchDetection.ts. */
-const MIN_PITCH_HZ = 60
-const MAX_PITCH_HZ = 1500
+export const MIN_PITCH_HZ = 60
+export const MAX_PITCH_HZ = 1500
 
 /* A sample this close to full scale has probably been cut off by the mic. */
 const CLIPPING_LEVEL = 0.99

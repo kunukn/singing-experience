@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "إظهار النغمات",
+    "clearSinging": {
+      "progress": "غناء واضح {heard}/{seconds} ث",
+      "ready": "يمكنك الآن الحصول على تقييم"
+    },
     "quality": {
       "label": "جودة التسجيل",
       "standard": "قياسي",

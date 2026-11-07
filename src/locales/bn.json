@@ -979,6 +979,10 @@
       }
     },
     "liveNotes": "নোট দেখাও",
+    "clearSinging": {
+      "progress": "পরিষ্কার গান {heard}/{seconds} সে.",
+      "ready": "এবার রেটিং পাওয়া যাবে"
+    },
     "quality": {
       "label": "রেকর্ডিংয়ের মান",
       "standard": "স্ট্যান্ডার্ড",
