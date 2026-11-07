@@ -40,6 +40,10 @@ const toneLabelMode = useToneLabelMode('syng.guitarToneLabelMode', 'off')
  * apart from the piano's own style, like every other per-page board setting. */
 const accidentalStyle = useAccidentalStyle('syng.guitarAccidentals', 'sharp')
 
+/* "Same tones" — a pressed fret rings every other place its exact pitch sits.
+ * Off by default: it adds rings the board doesn't need until someone asks. */
+const shouldShowSameTones = useLocalStorage('syng.guitarSameTones', false)
+
 /* Scale highlight — tints the notes of one musical key/mode so the singer sees
  * the shape on the fretboard. Off by default: no root picked, nothing tinted.
  * PrimeSelect's clear button writes null, but -1 is what gets persisted so
@@ -153,6 +157,7 @@ function handleTonePlayed() {
       v-model:accidentalStyle="accidentalStyle"
       v-model:isPreviewEnabled="isPreviewEnabled"
       v-model:isDuetEnabled="isDuetEnabled"
+      v-model:shouldShowSameTones="shouldShowSameTones"
       :micPermission="micPermission"
     />
 
@@ -177,6 +182,7 @@ function handleTonePlayed() {
         :accidentalStyle="accidentalStyle"
         :scaleRoot="scaleRoot"
         :scaleMode="scaleMode"
+        :shouldShowSameTones="shouldShowSameTones"
         @tonePlayed="handleTonePlayed"
       />
     </div>

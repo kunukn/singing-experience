@@ -30,6 +30,7 @@ import {
   guitarScaleDotClass,
   guitarScaleLabelClass,
   isGuitarAccidentalMidi,
+  isGuitarSameTone,
 } from './guitarBoardDecorations'
 import { guitarFretLabel, guitarOpenStringNote } from './guitarLabels'
 import {
@@ -87,6 +88,8 @@ type Props = {
   /* Root pitch class (0–11) of the scale to tint, or null for no highlighting. */
   scaleRoot?: number | null
   scaleMode?: ScaleHighlightMode
+  /* Ring every cell sharing the last pressed fret's exact pitch. */
+  shouldShowSameTones?: boolean
   /* px of extra chrome stacked above the board by the host page, beyond what
    * BOARD_VERTICAL_CHROME accounts for. Only /guitar-test needs it. */
   extraVerticalChrome?: number
@@ -196,6 +199,32 @@ function labelToneClass(cell: GuitarCell): string | null {
       isGuitarAccidentalMidi(cell.midi),
     ),
   )
+}
+
+/*
+ * Same tones: the pitch of the last fret pressed directly, pinned until another
+ * pitch is pressed — on a phone there is no hover to hold it, and the rings have
+ * to outlast the press glow long enough to look across the neck. Pressing one of
+ * the ringed frets keeps the pin, so the unisons can be played side by side.
+ * Not persisted: it is a moment's question, not a setting.
+ */
+const pinnedMidi = ref<number | null>(null)
+
+watch(
+  () => props.shouldShowSameTones,
+  (isEnabled) => {
+    if (!isEnabled) pinnedMidi.value = null
+  },
+)
+
+function pinSameTone(cell: GuitarCell) {
+  if (!props.shouldShowSameTones) return
+
+  pinnedMidi.value = cell.midi
+}
+
+function isSameTone(cell: GuitarCell): boolean {
+  return isGuitarSameTone(cell.midi, pinnedMidi.value)
 }
 
 /* A pressed fret washes green, then fades back out. Same timing as the piano so
@@ -497,17 +526,32 @@ const { consumeStrumClick } = useGuitarStrum({
   onSilentPluck: showFretPress,
 })
 
+/* A direct press of one fret — the only kind that pins a same-tone pitch. A
+ * strum (onPluck above) sounds up to six pitches at once, so it has no single
+ * pitch to pin and goes straight to playFret. */
+function pressCell(cell: GuitarCell) {
+  pinSameTone(cell)
+  void playFret(cell.stringIndex, cell.fret, cell.midi)
+}
+
 function handlePointerDown(cell: GuitarCell) {
   if (isCoarsePointer.value) return
 
-  void playFret(cell.stringIndex, cell.fret, cell.midi)
+  pressCell(cell)
 }
 
 function handleClick(cell: GuitarCell) {
   if (consumeStrumClick()) return
   if (!isCoarsePointer.value) return
 
-  void playFret(cell.stringIndex, cell.fret, cell.midi)
+  pressCell(cell)
+}
+
+/* handleKeyDown plays, and prevents the default, only on a fresh Enter/Space —
+ * so defaultPrevented is exactly "a key just pressed this fret". */
+function handleCellKeyDown(event: KeyboardEvent, cell: GuitarCell) {
+  handleKeyDown(event, cell.stringIndex, cell.fret, cell.midi)
+  if (event.defaultPrevented) pinSameTone(cell)
 }
 </script>
 
@@ -769,12 +813,11 @@ function handleClick(cell: GuitarCell) {
                 :data-testid="`guitar-fret-${cell.stringIndex}-${cell.fret}`"
                 :data-scale-role="scaleRole(cell) ?? undefined"
                 :data-scale-emphasis="labelEmphasis(cell)"
+                :data-same-tone="isSameTone(cell) || undefined"
                 :aria-label="cellAriaLabel(cell)"
                 @pointerdown="handlePointerDown(cell)"
                 @click="handleClick(cell)"
-                @keydown="
-                  handleKeyDown($event, cell.stringIndex, cell.fret, cell.midi)
-                "
+                @keydown="handleCellKeyDown($event, cell)"
               >
                 <!-- Scale highlight. Decorative reinforcement of a filter the user
                  set themselves, so it stays out of the cell's aria-label —
@@ -921,6 +964,11 @@ function handleClick(cell: GuitarCell) {
   --guitar-headstock-surface: var(--p-surface-100);
   --guitar-peg-high: #f4f6f8;
   --guitar-peg-low: #9aa1a8;
+
+  /* Same-tone ring. Pink because every other hue on the board already means
+   * something: blue the scale, green a press, orange/violet the voice lanes,
+   * and green/yellow/red/blue the cents. */
+  --guitar-same-tone-color: var(--p-pink-500);
 }
 
 .p-dark .guitar-board-root {
@@ -943,6 +991,8 @@ function handleClick(cell: GuitarCell) {
   --guitar-headstock-surface: var(--p-surface-700);
   --guitar-peg-high: #e8ebee;
   --guitar-peg-low: #7d848b;
+
+  --guitar-same-tone-color: var(--p-pink-400);
 }
 
 /*
@@ -1206,6 +1256,15 @@ function handleClick(cell: GuitarCell) {
 }
 
 .guitar-fret:focus-visible::after {
+  opacity: 1;
+}
+
+/* Same tones reuses the hover ring rather than adding a node to all 138 cells:
+ * same footprint, so it clears the fret wires and shows around a scale dot,
+ * held on and recoloured. The colour is set on the ::after itself, so it beats
+ * the value inherited from .guitar-fret in either theme. */
+.guitar-fret[data-same-tone]::after {
+  --guitar-fret-ring-color: var(--guitar-same-tone-color);
   opacity: 1;
 }
 

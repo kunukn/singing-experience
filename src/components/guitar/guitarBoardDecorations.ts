@@ -246,3 +246,16 @@ export function guitarLabelToneClass(tone: GuitarLabelTone): string | null {
 
   return 'font-normal text-(--p-text-muted-color)'
 }
+
+/*
+ * "Same tones": with the toggle on, the last fret pressed pins its pitch and
+ * every cell sounding that exact pitch is ringed — the unisons a guitarist can
+ * move a phrase to. Exact MIDI, not pitch class: C3 and C4 sit in different
+ * places and are different notes to sing.
+ */
+export function isGuitarSameTone(
+  cellMidi: number,
+  pinnedMidi: number | null,
+): boolean {
+  return pinnedMidi !== null && cellMidi === pinnedMidi
+}

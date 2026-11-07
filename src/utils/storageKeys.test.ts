@@ -31,6 +31,7 @@ const STORAGE_KEYS = [
   'syng.graceKellyToneLabels',
   'syng.graceKellyVozIndex',
   'syng.guitarAccidentals',
+  'syng.guitarSameTones',
   'syng.guitarScaleMode',
   'syng.guitarScaleRoot',
   'syng.guitarToneLabelMode',

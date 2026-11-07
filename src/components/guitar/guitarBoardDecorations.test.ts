@@ -9,6 +9,7 @@ import {
   guitarScaleDotClass,
   guitarScaleLabelClass,
   isGuitarAccidentalMidi,
+  isGuitarSameTone,
 } from './guitarBoardDecorations'
 import {
   DOUBLE_INLAY_FRET,
@@ -17,7 +18,9 @@ import {
   GUITAR_FRET_ROW_COUNT,
   GUITAR_STRING_COUNT,
   SINGLE_INLAY_FRETS,
+  buildGuitarLayout,
 } from './guitarLayout'
+import { GUITAR_TUNINGS } from '@/utils/guitarTunings'
 
 /* A wire is centred on its fret boundary, so it rides this far above it. */
 const WIRE_RISE = Math.floor(FRET_WIRE_HEIGHT / 2)
@@ -271,5 +274,37 @@ describe('isGuitarAccidentalMidi', () => {
     expect(isGuitarAccidentalMidi(41)).toBe(false) // F2 — a natural
     expect(isGuitarAccidentalMidi(42)).toBe(true)
     expect(isGuitarAccidentalMidi(0)).toBe(false)
+  })
+})
+
+describe('isGuitarSameTone', () => {
+  const { cells } = buildGuitarLayout(
+    STRING_WIDTH,
+    GUITAR_TUNINGS.standard.midi,
+  )
+  const C4 = 60
+
+  it('rings every place C4 sits in standard tuning — one per string that reaches it', () => {
+    const positions = cells
+      .filter((cell) => isGuitarSameTone(cell.midi, C4))
+      .map((cell) => [cell.stringIndex, cell.fret])
+
+    /* stringIndex 0 is string 6 (low E). String 1 starts at E4, above C4. */
+    expect(positions).toEqual([
+      [0, 20],
+      [1, 15],
+      [2, 10],
+      [3, 5],
+      [4, 1],
+    ])
+  })
+
+  it('matches the exact pitch, not the pitch class', () => {
+    expect(isGuitarSameTone(48, C4)).toBe(false) // C3
+    expect(isGuitarSameTone(72, C4)).toBe(false) // C5
+  })
+
+  it('rings nothing while no pitch is pinned', () => {
+    expect(cells.some((cell) => isGuitarSameTone(cell.midi, null))).toBe(false)
   })
 })

@@ -26,6 +26,7 @@ const accidentalStyle = ref<AccidentalStyle>('sharp')
 const scaleRoot = ref<number | null>(null)
 const scaleMode = ref<ScaleHighlightMode>(DEFAULT_SCALE_HIGHLIGHT_MODE)
 const isDuetEnabled = ref(false)
+const shouldShowSameTones = ref(false)
 
 const tuningMidi = computed(() => GUITAR_TUNINGS[tuningId.value].midi)
 const midiMin = computed(() => guitarMidiMin(tuningMidi.value))
@@ -78,6 +79,7 @@ const extraVerticalChrome = computed(() =>
       v-model:accidentalStyle="accidentalStyle"
       v-model:isPreviewEnabled="isPreviewEnabled"
       v-model:isDuetEnabled="isDuetEnabled"
+      v-model:shouldShowSameTones="shouldShowSameTones"
       :micPermission="null"
     />
 
@@ -109,6 +111,7 @@ const extraVerticalChrome = computed(() =>
         :accidentalStyle="accidentalStyle"
         :scaleRoot="scaleRoot"
         :scaleMode="scaleMode"
+        :shouldShowSameTones="shouldShowSameTones"
         :extraVerticalChrome="extraVerticalChrome"
         @tonePlayed="armDeafPeriod"
       />

@@ -25,6 +25,9 @@ const isPreviewEnabled = defineModel<boolean>('isPreviewEnabled', {
   required: true,
 })
 const isDuetEnabled = defineModel<boolean>('isDuetEnabled', { required: true })
+const shouldShowSameTones = defineModel<boolean>('shouldShowSameTones', {
+  required: true,
+})
 
 const { t } = useI18n()
 
@@ -52,9 +55,11 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <GuitarTuningSelect v-model:tuningId="tuningId" />
     </div>
 
-    <!-- Both toggles share one item: ToggleIconButton prints its own label from
+    <!-- The toggles share one item: ToggleIconButton prints its own label from
          md up (icon-only below), so the item's label track stays empty — the
-         placeholder div keeps the subgrid pairs aligned with the other items. -->
+         placeholder div keeps the subgrid pairs aligned with the other items.
+         Same tones joins them here rather than as a fifth item, which would
+         break the 2×2 md grid below. -->
     <div class="settings-item">
       <div />
       <div class="flex items-center gap-2">
@@ -66,6 +71,14 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         <DuetToggle
           v-model="isDuetEnabled"
           :disabled="!isPreviewEnabled || micPermission === 'denied'"
+        />
+
+        <ToggleIconButton
+          v-model="shouldShowSameTones"
+          iconOn="pi pi-clone"
+          iconOff="pi pi-clone"
+          :label="t('generic.sameTonesLabel')"
+          data-testid="guitar-same-tones"
         />
       </div>
     </div>
@@ -109,10 +122,11 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 @reference '@/style.css';
 
 /*
- * Four items (each col-span-2). All four side by side need ~810px, which does
- * not fit the content area until about lg — at md the row would push the whole
- * document into a horizontal scrollbar. So: 2×2 at md, like the piano row's four
- * items, then one row from lg up.
+ * Four items (each col-span-2). All four side by side need ~1100px since the
+ * toggle item gained Same tones — at lg they still fit the content area only by
+ * wrapping the Sharps & flats label onto two lines, and at md the row would push
+ * the whole document into a horizontal scrollbar. So: 2×2 at md, like the piano
+ * row's four items, then one row from xl up.
  *
  * Every track is `auto`, never `1fr`: the row is content-sized (md:w-auto), so a
  * grid of `1fr` tracks resolves one shared flex fraction from the widest control
@@ -123,6 +137,6 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
  */
 .settings-row {
   @apply md:grid-cols-[repeat(4,auto)];
-  @apply lg:grid-cols-[repeat(8,auto)];
+  @apply xl:grid-cols-[repeat(8,auto)];
 }
 </style>
