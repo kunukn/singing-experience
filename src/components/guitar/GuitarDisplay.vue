@@ -1279,7 +1279,7 @@ function handleClick(cell: GuitarCell) {
     calc(50% + var(--guitar-scale-dot-size) / 2 + 1px),
     calc(100% + 2px)
   );
-  margin-inline-start: 0;
+  margin-left: 0;
   color: var(--p-text-muted-color);
   opacity: 1;
   -webkit-text-stroke-width: 3px;

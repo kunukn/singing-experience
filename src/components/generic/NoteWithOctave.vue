@@ -32,7 +32,10 @@ defineProps<Props>()
 /* Baseline, not raised: on a small pill a raised number reads like a power (E²).
  * Opacity rather than a fixed colour, so it follows the button's state colours. */
 .note-octave {
-  margin-inline-start: 2px; /* Keeps the bold letter from touching the number */
+  /* Keeps the bold letter from touching the number. Physical left, not
+   * inline-start: "E2" is Latin, so it reads left to right even on an RTL page,
+   * and inline-start would put the gap after the number there. */
+  margin-left: 2px;
   font-size: 0.9em;
   font-weight: 400;
   opacity: 0.7;
