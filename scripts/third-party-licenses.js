@@ -7,6 +7,9 @@
  * Vite's build.license finds the bundled packages. Two need adding by hand:
  * FFmpeg ships as WASM inside @mediabunny/aac-encoder, and fft.js keeps its
  * license in its README, so Vite finds no text for it.
+ *
+ * It also fails on any license missing from ALLOWED_LICENSES. CI runs it, so a
+ * dependency update that pulls in a non-open-source license is caught there.
  */
 import { execFileSync } from 'node:child_process'
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
@@ -93,6 +96,35 @@ const missingText = libraries.filter((library) => !library.text)
 if (missingText.length > 0) {
   throw new Error(
     `No license text for: ${missingText.map((library) => library.name).join(', ')}`,
+  )
+}
+
+/*
+ * The open-source licenses we accept, as package.json identifiers. PrimeTek's
+ * newer releases (primevue 5, @primeuix/themes 3, primeicons 8) say
+ * "SEE LICENSE IN LICENSE.md": the PrimeUI license, which needs a key — hence
+ * the pins on the last MIT versions. Add an identifier only after reading it.
+ */
+const ALLOWED_LICENSES = new Set([
+  '0BSD',
+  'Apache-2.0',
+  'ISC',
+  'LGPL-2.1-or-later',
+  'MIT',
+  'MPL-2.0',
+])
+
+const disallowed = libraries.filter(
+  (library) => !ALLOWED_LICENSES.has(library.identifier),
+)
+if (disallowed.length > 0) {
+  throw new Error(
+    `License not in ALLOWED_LICENSES (scripts/third-party-licenses.js):\n${disallowed
+      .map(
+        ({ name, version, identifier }) =>
+          `  ${name} ${version}: ${identifier}`,
+      )
+      .join('\n')}`,
   )
 }
 

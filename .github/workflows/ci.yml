@@ -26,6 +26,13 @@ jobs:
       - name: Audit dependencies
         run: npm audit --audit-level=high
 
+      # Fails on a bundled library outside ALLOWED_LICENSES in the script,
+      # or when THIRD-PARTY-LICENSES.md wasn't regenerated after a dependency change.
+      - name: License check
+        run: |
+          npm run licenses
+          git diff --exit-code THIRD-PARTY-LICENSES.md
+
       - name: Type check
         run: |
           npx --no-install vue-tsgo --project tsconfig.app.json
