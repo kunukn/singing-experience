@@ -20,6 +20,7 @@ const createTake = (overrides: Partial<Take> = {}): Take => ({
   recordedAt: new Date(2026, 10, 4, 15, 30),
   stopReason: 'interrupted',
   hasAutoGain: false,
+  source: 'recorded',
   ...overrides,
 })
 
@@ -57,6 +58,23 @@ describe('takePersistence', () => {
     await saveTake(createTake({ stopReason: 'interrupted' }))
 
     expect((await loadTake())?.stopReason).toBe('user')
+  })
+
+  test('should remember that a take was uploaded', async () => {
+    await saveTake(createTake({ source: 'uploaded' }))
+
+    expect((await loadTake())?.source).toBe('uploaded')
+  })
+
+  test('should treat a take saved before uploads existed as recorded', async () => {
+    database.set('current', {
+      bytes: new ArrayBuffer(3),
+      mimeType: 'audio/webm',
+      recordedAtMs: 0,
+      hasAutoGain: false,
+    })
+
+    expect((await loadTake())?.source).toBe('recorded')
   })
 
   test('should return null when nothing is saved', async () => {

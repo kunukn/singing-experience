@@ -897,6 +897,13 @@
     "hint": "Sing ohne Hintergrundmusik. Du kannst bis zu {seconds} Sekunden aufnehmen.\nDeine Aufnahme bleibt auf diesem Gerät, bis du sie löschst oder neu aufnimmst.",
     "record": "Aufnehmen",
     "recordAgain": "Nochmal aufnehmen",
+    "upload": {
+      "choose": "Aufnahme öffnen",
+      "hint": "Oder öffne eine Aufnahme von deinem Gesang, bis zu {minutes} Minuten.",
+      "notAudio": "Die Datei konnte nicht geöffnet werden. Probier eine Audiodatei wie MP3, M4A oder WAV.",
+      "tooLong": "Diese Aufnahme ist länger als {minutes} Minuten. Wähl eine kürzere.",
+      "tooBig": "Diese Datei ist zu groß. Wähl eine unter {megabytes} MB."
+    },
     "smallFile": "Kleine Datei",
     "downloadWithSize": "Herunterladen · {size}",
     "smallFileWithSize": "Kleine Datei · {size}",
@@ -916,7 +923,9 @@
       "empty": "Wir konnten in dieser Aufnahme keine klaren Töne hören.",
       "warnings": {
         "tooQuiet": "Diese Aufnahme ist sehr leise. Geh näher ans Mikro.",
+        "tooQuietFile": "Diese Aufnahme ist sehr leise.",
         "clipped": "Manche Stellen waren zu laut und wurden abgeschnitten. Geh ein Stück vom Mikro weg.",
+        "clippedFile": "Manche Stellen waren zu laut und wurden abgeschnitten.",
         "unclear": "Eine klare Melodie ist schwer zu hören. Das kann an Sprechen oder Hintergrundmusik liegen."
       }
     },

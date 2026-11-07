@@ -7,10 +7,12 @@ import TakeReadout from './TakeReadout.vue'
 import type { TakeAnalysis } from './analyzeTake'
 import { decodeTake } from './decodeTake'
 import { useTakeAnalysis } from './useTakeAnalysis'
+import type { TakeOrigin } from './useVoiceRecorder'
 
 type Props = {
   blob: Blob
   hasAutoGain: boolean
+  source: TakeOrigin
   playheadMs: number
   /* Raw numbers for calibrating the scores, on the test page only. */
   showReadout?: boolean
@@ -29,13 +31,23 @@ const { t } = useI18n()
 const { status, progress, analysis, run } = useTakeAnalysis(props.savedAnalysis)
 
 const progressPercent = computed(() => Math.round(progress.value * 100))
+const isUploaded = computed(() => props.source === 'uploaded')
+/* A file was made elsewhere, so advice about this mic would be wrong. */
 const warningKeys = computed(() => {
   const quality = analysis.value?.quality
   if (!quality) return []
 
   return [
-    quality.isTooQuiet ? 'voiceRecorder.analysis.warnings.tooQuiet' : null,
-    quality.isClipped ? 'voiceRecorder.analysis.warnings.clipped' : null,
+    quality.isTooQuiet
+      ? isUploaded.value
+        ? 'voiceRecorder.analysis.warnings.tooQuietFile'
+        : 'voiceRecorder.analysis.warnings.tooQuiet'
+      : null,
+    quality.isClipped
+      ? isUploaded.value
+        ? 'voiceRecorder.analysis.warnings.clippedFile'
+        : 'voiceRecorder.analysis.warnings.clipped'
+      : null,
     quality.isUnclear ? 'voiceRecorder.analysis.warnings.unclear' : null,
   ].filter((key) => key !== null)
 })
@@ -44,7 +56,10 @@ const warningKeys = computed(() => {
  * been lost before there was a chance to download it. */
 async function analyse() {
   const result = await run(() => decodeTake(props.blob), {
-    hasAutoGain: props.hasAutoGain,
+    /* How an uploaded file was processed is unknown: phone apps often keep
+     * auto gain on, and finished songs are compressed. Either way its loudness
+     * says nothing about the singing, so it is treated like auto gain. */
+    hasAutoGain: props.hasAutoGain || isUploaded.value,
   })
 
   if (result) emit('analyzed', result)

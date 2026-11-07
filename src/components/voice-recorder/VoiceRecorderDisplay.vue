@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useLocalStorage } from '@vueuse/core'
+import { useFileDialog, useLocalStorage } from '@vueuse/core'
 
 import type { NoteInfo } from '@/utils/noteUtils'
 
@@ -12,6 +12,11 @@ import TakeAnalysisPanel from './TakeAnalysisPanel.vue'
 import TakePlayer from './TakePlayer.vue'
 import { MIN_RATED_VOICED_MS } from './takeRating'
 import {
+  MAX_UPLOAD_BYTES,
+  MAX_UPLOAD_MS,
+  type UploadErrorKey,
+} from './uploadedTake'
+import {
   MAX_RECORDING_MS,
   type RecorderErrorKey,
   type RecorderStatus,
@@ -22,7 +27,9 @@ type Props = {
   status: RecorderStatus
   elapsedMs: number
   take: Take | null
-  errorKey: RecorderErrorKey | null
+  errorKey: RecorderErrorKey | UploadErrorKey | null
+  /* A picked file is being checked before it replaces the take. */
+  isOpeningFile?: boolean
   liveStream?: MediaStream | null
   /* The test page supplies takes itself and never touches the microphone. */
   isSimulated?: boolean
@@ -38,6 +45,7 @@ const emit = defineEmits<{
   record: []
   stop: []
   clear: []
+  upload: [file: File]
   analyzed: [analysis: TakeAnalysis]
 }>()
 
@@ -72,6 +80,29 @@ watch(
 )
 
 const maxSeconds = MAX_RECORDING_MS / 1000
+const maxUploadMinutes = MAX_UPLOAD_MS / 60_000
+/* Only the upload errors use these; other messages ignore them. */
+const errorParams = {
+  minutes: maxUploadMinutes,
+  megabytes: MAX_UPLOAD_BYTES / 1_000_000,
+}
+const hint = computed(() =>
+  [
+    t('voiceRecorder.hint', { seconds: maxSeconds }),
+    t('voiceRecorder.upload.hint', { minutes: maxUploadMinutes }),
+  ].join('\n'),
+)
+
+/* The browser's own file picker; reset lets the same file be picked again. */
+const fileDialog = useFileDialog({
+  accept: 'audio/*',
+  multiple: false,
+  reset: true,
+})
+fileDialog.onChange((files) => {
+  const file = files?.[0]
+  if (file) emit('upload', file)
+})
 const ratedSeconds = MIN_RATED_VOICED_MS / 1000
 const isBusy = computed(() => props.status === 'starting')
 const isRecording = computed(() => props.status === 'recording')
@@ -117,7 +148,7 @@ function formatClock(ms: number): string {
       v-if="!isSimulated"
       class="text-sm whitespace-pre-line text-(--p-text-muted-color)"
     >
-      {{ t('voiceRecorder.hint', { seconds: maxSeconds }) }}
+      {{ hint }}
     </p>
 
     <div v-if="!isSimulated" class="flex flex-wrap items-center gap-3">
@@ -138,10 +169,32 @@ function formatClock(ms: number): string {
         severity="danger"
         rounded
         :loading="isBusy"
-        :disabled="isBusy"
+        :disabled="isBusy || isOpeningFile"
         data-testid="recorder-record"
         @click="emit('record')"
       />
+      <!-- Next to Record: the quality applies only to the next recording -->
+      <PrimeSelectButton
+        v-if="status === 'idle'"
+        v-model="bitDepth"
+        :options="qualityOptions"
+        optionLabel="label"
+        optionValue="value"
+        :allowEmpty="false"
+        size="small"
+        :aria-label="t('voiceRecorder.quality.label')"
+        data-testid="recorder-quality"
+        :data-bit-depth="bitDepth"
+      >
+        <template #option="{ option }">
+          <span :title="option.detail" aria-hidden="true">
+            {{ option.label }}
+          </span>
+          <span class="sr-only" data-testid="recorder-quality-description">
+            {{ option.label }}, {{ option.detail }}
+          </span>
+        </template>
+      </PrimeSelectButton>
       <PrimeButton
         v-if="take && !isRecording && !isBusy"
         :label="t('generic.clear')"
@@ -184,27 +237,18 @@ function formatClock(ms: number): string {
         labelFrom="xs"
         data-testid="recorder-live-notes"
       />
-      <PrimeSelectButton
-        v-if="status === 'idle'"
-        v-model="bitDepth"
-        :options="qualityOptions"
-        optionLabel="label"
-        optionValue="value"
-        :allowEmpty="false"
+      <PrimeButton
+        v-if="!isRecording"
+        :label="t('voiceRecorder.upload.choose')"
+        icon="pi pi-upload"
         size="small"
-        :aria-label="t('voiceRecorder.quality.label')"
-        data-testid="recorder-quality"
-        :data-bit-depth="bitDepth"
-      >
-        <template #option="{ option }">
-          <span :title="option.detail" aria-hidden="true">
-            {{ option.label }}
-          </span>
-          <span class="sr-only" data-testid="recorder-quality-description">
-            {{ option.label }}, {{ option.detail }}
-          </span>
-        </template>
-      </PrimeSelectButton>
+        severity="secondary"
+        rounded
+        :loading="isOpeningFile"
+        :disabled="isBusy || isOpeningFile"
+        data-testid="recorder-upload"
+        @click="fileDialog.open()"
+      />
     </div>
 
     <LiveNoteReadout
@@ -224,7 +268,7 @@ function formatClock(ms: number): string {
       class="text-sm text-(--p-red-400)"
       data-testid="recorder-error"
     >
-      {{ t(errorKey) }}
+      {{ t(errorKey, errorParams) }}
     </p>
 
     <template v-if="showTake && take">
@@ -247,6 +291,7 @@ function formatClock(ms: number): string {
         :key="`analysis-${take.recordedAt.getTime()}`"
         :blob="take.blob"
         :hasAutoGain="take.hasAutoGain"
+        :source="take.source"
         :playheadMs="playheadMs"
         :showReadout="isSimulated"
         :savedAnalysis="savedAnalysis"

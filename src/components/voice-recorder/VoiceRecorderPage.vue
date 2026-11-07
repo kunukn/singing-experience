@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { frequencyToNote } from '@/utils/noteUtils'
 
+import { createUploadedTake, type UploadErrorKey } from './uploadedTake'
 import VoiceRecorderDisplay from './VoiceRecorderDisplay.vue'
 import { useVoiceRecorder } from './useVoiceRecorder'
 
@@ -10,6 +11,8 @@ const { isPreviewEnabled } = useSettings()
 
 const isTakeRestored = ref(false)
 const isPreparingToRecord = ref(false)
+const isOpeningFile = ref(false)
+const uploadErrorKey = ref<UploadErrorKey | null>(null)
 
 void takeStore.restore().finally(() => {
   isTakeRestored.value = true
@@ -45,11 +48,29 @@ const previewNote = computed(() =>
  * with different constraints, and any resulting mute ends the take.
  */
 async function handleRecord() {
+  uploadErrorKey.value = null
   takeStore.clear()
   isPreparingToRecord.value = true
   await nextTick()
   await recorder.start()
   isPreparingToRecord.value = false
+}
+
+/* A file that can't be used leaves the current take alone, unlike recording
+ * again. A recording started while the file was checked wins. */
+async function handleUpload(file: File) {
+  uploadErrorKey.value = null
+  isOpeningFile.value = true
+  const result = await createUploadedTake(file)
+  isOpeningFile.value = false
+
+  if ('errorKey' in result) {
+    uploadErrorKey.value = result.errorKey
+
+    return
+  }
+
+  if (recorder.status.value === 'idle') takeStore.setTake(result.take)
 }
 </script>
 
@@ -58,12 +79,14 @@ async function handleRecord() {
     :status="recorder.status.value"
     :elapsedMs="recorder.elapsedMs.value"
     :take="takeStore.take"
-    :errorKey="recorder.errorKey.value"
+    :errorKey="uploadErrorKey ?? recorder.errorKey.value"
+    :isOpeningFile="isOpeningFile"
     :liveStream="recorder.liveStream.value"
     :savedAnalysis="takeStore.analysis"
     :previewNote="previewNote"
     @record="handleRecord"
     @stop="recorder.stop()"
+    @upload="handleUpload"
     @clear="takeStore.clear()"
     @analyzed="takeStore.setAnalysis($event)"
   />

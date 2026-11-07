@@ -897,6 +897,13 @@
     "hint": "Bernyanyilah tanpa musik latar. Kamu bisa merekam sampai {seconds} detik.\nRekamanmu tetap di perangkat ini sampai kamu menghapusnya atau merekam lagi.",
     "record": "Rekam",
     "recordAgain": "Rekam lagi",
+    "upload": {
+      "choose": "Buka rekaman",
+      "hint": "Atau buka rekaman nyanyianmu, sampai {minutes} menit.",
+      "notAudio": "Gagal membuka file ini. Coba file suara seperti MP3, M4A, atau WAV.",
+      "tooLong": "Rekaman ini lebih dari {minutes} menit. Pilih yang lebih pendek.",
+      "tooBig": "File ini terlalu besar. Pilih yang di bawah {megabytes} MB."
+    },
     "smallFile": "File kecil",
     "downloadWithSize": "Unduh · {size}",
     "smallFileWithSize": "File kecil · {size}",
@@ -916,7 +923,9 @@
       "empty": "Kami tidak mendengar nada yang jelas di rekaman ini.",
       "warnings": {
         "tooQuiet": "Rekaman ini sangat pelan. Mendekatlah ke mikrofon.",
+        "tooQuietFile": "Rekaman ini sangat pelan.",
         "clipped": "Beberapa bagian terlalu keras dan terpotong. Mundur sedikit dari mikrofon.",
+        "clippedFile": "Beberapa bagian terlalu keras dan terpotong.",
         "unclear": "Sulit mendengar nada yang jelas. Ini bisa karena bicara atau musik latar."
       }
     },

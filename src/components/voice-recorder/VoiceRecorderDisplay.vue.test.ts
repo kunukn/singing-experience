@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from 'vitest'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import { useSettings } from '@/composables/useSettings'
@@ -8,6 +8,21 @@ import { useRecordingBitDepth } from './recordingQuality'
 import type { RecorderStatus, Take } from './useVoiceRecorder'
 import VoiceRecorderDisplay from './VoiceRecorderDisplay.vue'
 
+const fileDialog = vi.hoisted(() => ({
+  open: vi.fn(),
+  onChange: null as ((files: FileList | null) => void) | null,
+}))
+
+vi.mock('@vueuse/core', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@vueuse/core')>()),
+  useFileDialog: () => ({
+    open: fileDialog.open,
+    onChange: (handler: (files: FileList | null) => void) => {
+      fileDialog.onChange = handler
+    },
+  }),
+}))
+
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
 
 const TAKE: Take = {
@@ -16,6 +31,7 @@ const TAKE: Take = {
   recordedAt: new Date(0),
   stopReason: 'user',
   hasAutoGain: false,
+  source: 'recorded',
 }
 
 const PREVIEW_TOGGLE = '[data-testid="recorder-preview"]'
@@ -28,11 +44,13 @@ function mountDisplay({
   take = null,
   isSimulated = false,
   isPreviewOn = true,
+  isOpeningFile = false,
 }: {
   status?: RecorderStatus
   take?: Take | null
   isSimulated?: boolean
   isPreviewOn?: boolean
+  isOpeningFile?: boolean
 } = {}) {
   useSettings().isPreviewEnabled.value = isPreviewOn
 
@@ -41,6 +59,7 @@ function mountDisplay({
       status,
       take,
       isSimulated,
+      isOpeningFile,
       elapsedMs: 0,
       errorKey: null,
       previewNote: frequencyToNote(155.56),
@@ -170,5 +189,62 @@ describe('VoiceRecorderDisplay - recording quality', () => {
     const wrapper = mountDisplay({ isSimulated: true })
 
     expect(wrapper.find(QUALITY_TOGGLE).exists()).toBe(false)
+  })
+})
+
+describe('VoiceRecorderDisplay - opening a file', () => {
+  const UPLOAD_BUTTON = '[data-testid="recorder-upload"]'
+  const RECORD_BUTTON = '[data-testid="recorder-record"]'
+
+  beforeEach(() => {
+    fileDialog.open.mockReset()
+    fileDialog.onChange = null
+  })
+
+  test.each<{ state: string; status: RecorderStatus; take: Take | null }>([
+    { state: 'idle with no take', status: 'idle', take: null },
+    { state: 'showing a take', status: 'idle', take: TAKE },
+  ])('should offer to open a file when $state', ({ status, take }) => {
+    const wrapper = mountDisplay({ status, take })
+
+    expect(wrapper.find(UPLOAD_BUTTON).exists()).toBe(true)
+  })
+
+  test('should not offer to open a file while recording', () => {
+    const wrapper = mountDisplay({ status: 'recording' })
+
+    expect(wrapper.find(UPLOAD_BUTTON).exists()).toBe(false)
+  })
+
+  test('should not offer to open a file on the test page', () => {
+    const wrapper = mountDisplay({ isSimulated: true })
+
+    expect(wrapper.find(UPLOAD_BUTTON).exists()).toBe(false)
+  })
+
+  test('should open the file picker and pass on the picked file', async () => {
+    const wrapper = mountDisplay()
+    const file = new File(['song'], 'song.mp3', { type: 'audio/mpeg' })
+
+    await wrapper.get(UPLOAD_BUTTON).trigger('click')
+    fileDialog.onChange?.([file] as unknown as FileList)
+
+    expect(fileDialog.open).toHaveBeenCalledOnce()
+    expect(wrapper.emitted('upload')).toEqual([[file]])
+  })
+
+  test('should not record while a picked file is being checked', () => {
+    const wrapper = mountDisplay({ isOpeningFile: true })
+
+    expect(wrapper.get(RECORD_BUTTON).attributes('disabled')).toBeDefined()
+    expect(wrapper.get(UPLOAD_BUTTON).attributes('disabled')).toBeDefined()
+  })
+
+  test('should say how long an opened recording can be', () => {
+    const wrapper = mountDisplay()
+
+    expect(wrapper.text()).toContain(
+      'Or open a recording of your singing, up to 5 minutes.',
+    )
   })
 })

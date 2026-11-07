@@ -897,6 +897,13 @@
     "hint": "Sing without backing music. You can record up to {seconds} seconds.\nYour recording stays on this device until you clear it or record again.",
     "record": "Record",
     "recordAgain": "Record again",
+    "upload": {
+      "choose": "Open a recording",
+      "hint": "Or open a recording of your singing, up to {minutes} minutes.",
+      "notAudio": "Failed to open this file. Try a sound file like MP3, M4A or WAV.",
+      "tooLong": "This recording is longer than {minutes} minutes. Pick a shorter one.",
+      "tooBig": "This file is too big. Pick one under {megabytes} MB."
+    },
     "smallFile": "Small file",
     "downloadWithSize": "Download · {size}",
     "smallFileWithSize": "Small file · {size}",
@@ -916,7 +923,9 @@
       "empty": "We couldn't hear any clear notes in this recording.",
       "warnings": {
         "tooQuiet": "This recording is very quiet. Move closer to the mic.",
+        "tooQuietFile": "This recording is very quiet.",
         "clipped": "Some parts were too loud and got cut off. Move back from the mic a little.",
+        "clippedFile": "Some parts were too loud and got cut off.",
         "unclear": "It's hard to hear a clear tune. Talking or backing music can cause this."
       }
     },

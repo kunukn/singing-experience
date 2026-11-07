@@ -897,6 +897,13 @@
     "hint": "Imba bila muziki wa nyuma. Unaweza kurekodi hadi sekunde {seconds}.\nRekodi yako inabaki kwenye kifaa hiki hadi uifute au urekodi tena.",
     "record": "Rekodi",
     "recordAgain": "Rekodi tena",
+    "upload": {
+      "choose": "Fungua rekodi",
+      "hint": "Au fungua rekodi ya uimbaji wako, hadi dakika {minutes}.",
+      "notAudio": "Imeshindikana kufungua faili hii. Jaribu faili ya sauti kama MP3, M4A au WAV.",
+      "tooLong": "Rekodi hii ni ndefu kuliko dakika {minutes}. Chagua fupi zaidi.",
+      "tooBig": "Faili hii ni kubwa mno. Chagua iliyo chini ya MB {megabytes}."
+    },
     "smallFile": "Faili ndogo",
     "downloadWithSize": "Pakua · {size}",
     "smallFileWithSize": "Faili ndogo · {size}",
@@ -916,7 +923,9 @@
       "empty": "Hatukusikia noti zilizo wazi kwenye rekodi hii.",
       "warnings": {
         "tooQuiet": "Rekodi hii ina sauti ndogo sana. Sogea karibu na maikrofoni.",
+        "tooQuietFile": "Rekodi hii ina sauti ndogo sana.",
         "clipped": "Sehemu fulani zilikuwa na sauti kubwa mno zikakatika. Rudi nyuma kidogo kutoka kwenye maikrofoni.",
+        "clippedFile": "Sehemu fulani zilikuwa na sauti kubwa mno zikakatika.",
         "unclear": "Ni vigumu kusikia wimbo ulio wazi. Kuongea au muziki wa nyuma kunaweza kusababisha hivi."
       }
     },

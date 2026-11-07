@@ -4,7 +4,7 @@ import {
   SYNTHETIC_PRESET_NAMES,
   type SyntheticPresetName,
 } from './syntheticTake'
-import type { Take } from './useVoiceRecorder'
+import type { Take, TakeOrigin } from './useVoiceRecorder'
 import VoiceRecorderDisplay from './VoiceRecorderDisplay.vue'
 import { encodeWav } from './wavEncoder'
 
@@ -12,26 +12,28 @@ const presetOptions = [...SYNTHETIC_PRESET_NAMES]
 const presetName = ref<SyntheticPresetName>('steadyScale')
 const take = shallowRef<Take | null>(null)
 
-function createTake(blob: Blob): Take {
+function createTake(blob: Blob, source: TakeOrigin): Take {
   return {
     blob,
     mimeType: blob.type,
     recordedAt: new Date(),
     stopReason: 'user',
     hasAutoGain: false,
+    source,
   }
 }
 
 function loadPreset(name: SyntheticPresetName) {
   const { samples, sampleRate } = createSyntheticTake(name)
 
-  take.value = createTake(encodeWav(samples, sampleRate))
+  take.value = createTake(encodeWav(samples, sampleRate), 'recorded')
 }
 
-/* For calibrating the scores against real singing, with no microphone. */
+/* For calibrating the scores against real singing, with no microphone. Marked
+ * as uploaded so the analysis matches what a singer opening a file sees. */
 function handleFileSelect(event: { files: File[] }) {
   const [file] = event.files
-  if (file) take.value = createTake(file)
+  if (file) take.value = createTake(file, 'uploaded')
 }
 
 watch(presetName, loadPreset, { immediate: true })

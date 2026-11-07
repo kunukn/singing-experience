@@ -23,6 +23,7 @@ const createTake = (): Take => ({
   recordedAt: new Date(),
   stopReason: 'user',
   hasAutoGain: false,
+  source: 'recorded',
 })
 const analysis = { durationMs: 1000 } as TakeAnalysis
 

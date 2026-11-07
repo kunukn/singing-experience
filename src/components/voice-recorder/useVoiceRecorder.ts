@@ -28,6 +28,8 @@ const RECORDING_CONSTRAINTS: MediaTrackConstraints = {
 
 export type RecorderStatus = 'idle' | 'starting' | 'recording'
 export type RecordingStopReason = 'user' | 'limit' | 'interrupted'
+/* Uploaded takes come from a file of unknown origin, not this recorder. */
+export type TakeOrigin = 'recorded' | 'uploaded'
 export type RecorderErrorKey =
   | 'errors.microphoneDenied'
   | 'errors.microphoneAccess'
@@ -41,6 +43,7 @@ export type Take = {
   stopReason: RecordingStopReason
   /* The browser kept auto gain on, so loudness can't be trusted in analysis. */
   hasAutoGain: boolean
+  source: TakeOrigin
 }
 
 function isCaptureSupported() {
@@ -134,6 +137,7 @@ export function useVoiceRecorder() {
       recordedAt: new Date(),
       stopReason: reason,
       hasAutoGain,
+      source: 'recorded',
     })
   }
 

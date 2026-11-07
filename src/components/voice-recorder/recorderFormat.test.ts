@@ -12,6 +12,12 @@ describe('recorderFormat', () => {
     { mimeType: 'audio/webm;codecs=opus', expected: 'webm' },
     { mimeType: 'audio/ogg;codecs=opus', expected: 'ogg' },
     { mimeType: 'audio/wav', expected: 'wav' },
+    { mimeType: 'audio/x-wav', expected: 'wav' },
+    { mimeType: 'audio/x-m4a', expected: 'm4a' },
+    { mimeType: 'audio/mpeg', expected: 'mp3' },
+    { mimeType: 'audio/flac', expected: 'flac' },
+    { mimeType: 'audio/x-flac', expected: 'flac' },
+    { mimeType: 'audio/aac', expected: 'aac' },
   ])('maps $mimeType to .$expected', ({ mimeType, expected }) => {
     expect(fileExtensionFor(mimeType)).toBe(expected)
   })

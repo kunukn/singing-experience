@@ -1,10 +1,17 @@
-/* New takes are WAV. The other types are takes saved by the earlier
- * MediaRecorder version, which still reload from storage. */
+/* Recorded takes are WAV. WebM, Ogg and MP4 also cover takes saved by the
+ * earlier MediaRecorder version, which still reload from storage; the rest are
+ * common types of uploaded files. */
 export function fileExtensionFor(mimeType: string): string {
   if (mimeType.startsWith('audio/mp4')) return 'm4a'
+  if (mimeType.startsWith('audio/x-m4a')) return 'm4a'
   if (mimeType.startsWith('audio/webm')) return 'webm'
   if (mimeType.startsWith('audio/ogg')) return 'ogg'
   if (mimeType.startsWith('audio/wav')) return 'wav'
+  if (mimeType.startsWith('audio/x-wav')) return 'wav'
+  if (mimeType.startsWith('audio/mpeg')) return 'mp3'
+  if (mimeType.startsWith('audio/flac')) return 'flac'
+  if (mimeType.startsWith('audio/x-flac')) return 'flac'
+  if (mimeType.startsWith('audio/aac')) return 'aac'
 
   /* Audio-only WebM is the common default when a browser names no type. */
   return 'webm'

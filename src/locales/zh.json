@@ -897,6 +897,13 @@
     "hint": "不要放伴奏，直接唱。最多可以录 {seconds} 秒。\n录音会一直保存在这台设备上，直到你清除或重新录制。",
     "record": "录音",
     "recordAgain": "再录一次",
+    "upload": {
+      "choose": "打开录音",
+      "hint": "也可以打开一段你唱歌的录音，最长{minutes}分钟。",
+      "notAudio": "打开这个文件失败。试试 MP3、M4A 或 WAV 这样的音频文件。",
+      "tooLong": "这段录音超过{minutes}分钟了。选一段短一点的。",
+      "tooBig": "这个文件太大了。选一个小于 {megabytes} MB 的。"
+    },
     "smallFile": "小文件",
     "downloadWithSize": "下载 · {size}",
     "smallFileWithSize": "小文件 · {size}",
@@ -916,7 +923,9 @@
       "empty": "这段录音里没听到清楚的音。",
       "warnings": {
         "tooQuiet": "这段录音很小声。靠近麦克风一点。",
+        "tooQuietFile": "这段录音很小声。",
         "clipped": "有些地方太大声，被削掉了。离麦克风远一点。",
+        "clippedFile": "有些地方太大声，被削掉了。",
         "unclear": "很难听出清楚的旋律。说话或伴奏都可能造成这样。"
       }
     },

@@ -897,6 +897,13 @@
     "hint": "Syng uden baggrundsmusik. Du kan optage op til {seconds} sekunder.\nDin optagelse bliver på denne enhed, indtil du rydder den eller optager igen.",
     "record": "Optag",
     "recordAgain": "Optag igen",
+    "upload": {
+      "choose": "Åbn en optagelse",
+      "hint": "Eller åbn en optagelse af din sang, op til {minutes} minutter.",
+      "notAudio": "Filen kunne ikke åbnes. Prøv en lydfil som MP3, M4A eller WAV.",
+      "tooLong": "Optagelsen er længere end {minutes} minutter. Vælg en kortere.",
+      "tooBig": "Filen er for stor. Vælg en under {megabytes} MB."
+    },
     "smallFile": "Lille fil",
     "downloadWithSize": "Hent · {size}",
     "smallFileWithSize": "Lille fil · {size}",
@@ -916,7 +923,9 @@
       "empty": "Vi kunne ikke høre nogen tydelige toner i denne optagelse.",
       "warnings": {
         "tooQuiet": "Optagelsen er meget svag. Gå tættere på mikrofonen.",
+        "tooQuietFile": "Optagelsen er meget svag.",
         "clipped": "Nogle steder var for høje og blev klippet. Gå lidt væk fra mikrofonen.",
+        "clippedFile": "Nogle steder var for høje og blev klippet.",
         "unclear": "Det er svært at høre en tydelig melodi. Det kan skyldes tale eller baggrundsmusik."
       }
     },

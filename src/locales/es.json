@@ -897,6 +897,13 @@
     "hint": "Canta sin música de fondo. Puedes grabar hasta {seconds} segundos.\nTu grabación se queda en este dispositivo hasta que la borres o grabes otra vez.",
     "record": "Grabar",
     "recordAgain": "Grabar otra vez",
+    "upload": {
+      "choose": "Abrir una grabación",
+      "hint": "O abre una grabación de tu canto, de hasta {minutes} minutos.",
+      "notAudio": "No se pudo abrir este archivo. Prueba con un archivo de sonido como MP3, M4A o WAV.",
+      "tooLong": "Esta grabación dura más de {minutes} minutos. Elige una más corta.",
+      "tooBig": "Este archivo es demasiado grande. Elige uno de menos de {megabytes} MB."
+    },
     "smallFile": "Archivo pequeño",
     "downloadWithSize": "Descargar · {size}",
     "smallFileWithSize": "Archivo pequeño · {size}",
@@ -916,7 +923,9 @@
       "empty": "No pudimos oír notas claras en esta grabación.",
       "warnings": {
         "tooQuiet": "Esta grabación suena muy bajo. Acércate al micrófono.",
+        "tooQuietFile": "Esta grabación suena muy bajo.",
         "clipped": "Algunas partes sonaron demasiado fuerte y se cortaron. Aléjate un poco del micrófono.",
+        "clippedFile": "Algunas partes sonaron demasiado fuerte y se cortaron.",
         "unclear": "Cuesta oír una melodía clara. Puede deberse a que hablas o a la música de fondo."
       }
     },

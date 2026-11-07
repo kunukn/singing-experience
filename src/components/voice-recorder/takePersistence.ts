@@ -1,6 +1,6 @@
 import { createStore, del, get, set } from 'idb-keyval'
 
-import type { Take } from './useVoiceRecorder'
+import type { Take, TakeOrigin } from './useVoiceRecorder'
 
 /*
  * Keeps the current take across reloads, as a best-effort extra. Nothing here
@@ -24,6 +24,8 @@ type SavedTake = {
   mimeType: string
   recordedAtMs: number
   hasAutoGain: boolean
+  /* Missing on takes saved before uploads existed: those were all recorded. */
+  source?: TakeOrigin
 }
 
 /* Opens nothing until first used, so a browser without IndexedDB fails inside
@@ -64,7 +66,10 @@ function isSavedTake(value: unknown): value is SavedTake {
     saved.bytes.byteLength > 0 &&
     typeof saved.mimeType === 'string' &&
     Number.isFinite(saved.recordedAtMs) &&
-    typeof saved.hasAutoGain === 'boolean'
+    typeof saved.hasAutoGain === 'boolean' &&
+    (saved.source === undefined ||
+      saved.source === 'recorded' ||
+      saved.source === 'uploaded')
   )
 }
 
@@ -76,6 +81,7 @@ export function saveTake(take: Take): Promise<void> {
         mimeType: take.mimeType,
         recordedAtMs: take.recordedAt.getTime(),
         hasAutoGain: take.hasAutoGain,
+        source: take.source,
       }
 
       await set(CURRENT_TAKE_KEY, saved, takeStore)
@@ -104,6 +110,7 @@ export function loadTake(): Promise<Take | null> {
         recordedAt: new Date(saved.recordedAtMs),
         stopReason: 'user',
         hasAutoGain: saved.hasAutoGain,
+        source: saved.source ?? 'recorded',
       }
     } catch {
       return null
