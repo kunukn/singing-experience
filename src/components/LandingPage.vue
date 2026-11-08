@@ -29,7 +29,7 @@ const logoHue = computed<ProgramIconHue>(() => {
   <div class="flex grow flex-col items-center pt-1">
     <div class="flex flex-wrap items-center gap-2">
       <MusicNoteIcon :hue="logoHue" class="size-9" />
-      <h2 class="product-title mb-2 font-bold">{{ t('home.title') }}</h2>
+      <h1 class="product-title mb-2 font-bold">{{ t('home.title') }}</h1>
     </div>
 
     <p class="mb-4 text-(--p-text-muted-color)">
