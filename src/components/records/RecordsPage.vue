@@ -21,8 +21,17 @@ const groups = computed(() =>
   }),
 )
 
+/* Month as a word, never all digits: 11/8/26 reads as 8 November in the US
+ * and 11 August almost everywhere else. Intl still orders the parts per
+ * language ("Nov 8, 2026", "8. nov. 2026", "2026年11月8日"). dateStyle
+ * 'medium' isn't enough — German, Arabic and Japanese stay numeric. */
 const dateFormat = computed(
-  () => new Intl.DateTimeFormat(locale.value, { dateStyle: 'short' }),
+  () =>
+    new Intl.DateTimeFormat(locale.value, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }),
 )
 
 function clearScores() {
