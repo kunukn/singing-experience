@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProgramIconHue } from '@/components/icons/program/programIconHue'
+import { directionalTextColor } from '@/utils/pitchColors'
 import {
   WAVE_VIEWBOX_HEIGHT,
   WAVE_VIEWBOX_WIDTH,
@@ -11,7 +11,9 @@ import {
  * compositor runs it without a JS loop; browsers throttle it in hidden tabs. */
 
 interface Wave {
-  hue: ProgramIconHue
+  /* Pitch offset the wave stands for; its colour comes from the app's pitch
+   * palette (design-rules.md "Pitch Colours"), never a hardcoded hue. */
+  cents: number
   periods: number
   amplitude: number
   top: string
@@ -20,13 +22,15 @@ interface Wave {
   reverse?: boolean
 }
 
-/* Stacked like the app's pitch colours: sharp (orange) on top, clean (green)
- * in the middle, flat (blue) at the bottom. Higher waves are also busier —
- * more periods — the way a higher pitch is a faster wave. The middle wave
- * drifts the other way so neighbours never move in lockstep. */
+/* Stacked like the app's pitch colours: sharp on top, clean in the middle,
+ * flat at the bottom. ±35¢ sits halfway along each off-pitch ramp, so sharp
+ * reads orange (between yellow and red) and flat a mid-deep blue. Higher
+ * waves are also busier — more periods — the way a higher pitch is a faster
+ * wave. The middle wave drifts the other way so neighbours never move in
+ * lockstep. */
 const waves: Wave[] = [
   {
-    hue: 'orange',
+    cents: 35,
     periods: 5,
     amplitude: 16,
     top: '22%',
@@ -34,7 +38,7 @@ const waves: Wave[] = [
     breathSeconds: 11,
   },
   {
-    hue: 'green',
+    cents: 0,
     periods: 3,
     amplitude: 22,
     top: '52%',
@@ -43,7 +47,7 @@ const waves: Wave[] = [
     reverse: true,
   },
   {
-    hue: 'blue',
+    cents: -35,
     periods: 2,
     amplitude: 30,
     top: '82%',
@@ -54,11 +58,12 @@ const waves: Wave[] = [
 
 const viewBox = `0 0 ${WAVE_VIEWBOX_WIDTH} ${WAVE_VIEWBOX_HEIGHT}`
 
+const { isDark } = useDarkMode()
+
 function waveStyle(wave: Wave) {
   return {
     top: wave.top,
-    '--wave-light': `var(--p-${wave.hue}-500)`,
-    '--wave-dark': `var(--p-${wave.hue}-400)`,
+    '--wave-color': directionalTextColor(wave.cents, isDark.value),
     '--wave-drift': `${wave.driftSeconds}s`,
     '--wave-breath': `${wave.breathSeconds}s`,
     '--wave-direction': wave.reverse ? 'reverse' : 'normal',
@@ -74,7 +79,7 @@ function waveStyle(wave: Wave) {
   >
     <div
       v-for="wave in waves"
-      :key="wave.hue"
+      :key="wave.cents"
       class="ambient-wave"
       :style="waveStyle(wave)"
     >
@@ -92,7 +97,6 @@ function waveStyle(wave: Wave) {
 
 <style lang="css">
 .ambient-wave {
-  --wave-color: var(--wave-light);
   --wave-opacity: 0.16;
 
   position: absolute;
@@ -105,7 +109,6 @@ function waveStyle(wave: Wave) {
 }
 
 .p-dark .ambient-wave {
-  --wave-color: var(--wave-dark);
   --wave-opacity: 0.24;
 }
 
