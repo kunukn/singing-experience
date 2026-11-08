@@ -20,17 +20,21 @@ interface Wave {
   reverse?: boolean
 }
 
+/* Stacked like the app's pitch colours: sharp (orange) on top, clean (green)
+ * in the middle, flat (blue) at the bottom. Higher waves are also busier —
+ * more periods — the way a higher pitch is a faster wave. The middle wave
+ * drifts the other way so neighbours never move in lockstep. */
 const waves: Wave[] = [
   {
-    hue: 'green',
-    periods: 2,
-    amplitude: 30,
+    hue: 'orange',
+    periods: 5,
+    amplitude: 16,
     top: '22%',
-    driftSeconds: 70,
-    breathSeconds: 14,
+    driftSeconds: 60,
+    breathSeconds: 11,
   },
   {
-    hue: 'blue',
+    hue: 'green',
     periods: 3,
     amplitude: 22,
     top: '52%',
@@ -39,12 +43,12 @@ const waves: Wave[] = [
     reverse: true,
   },
   {
-    hue: 'orange',
-    periods: 5,
-    amplitude: 16,
+    hue: 'blue',
+    periods: 2,
+    amplitude: 30,
     top: '82%',
-    driftSeconds: 60,
-    breathSeconds: 11,
+    driftSeconds: 70,
+    breathSeconds: 14,
   },
 ]
 
