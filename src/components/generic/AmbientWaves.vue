@@ -102,7 +102,7 @@ function waveStyle(wave: Wave) {
 
 .p-dark .ambient-wave {
   --wave-color: var(--wave-dark);
-  --wave-opacity: 0.24;
+  --wave-opacity: 0.14;
 }
 
 .ambient-wave-svg {
