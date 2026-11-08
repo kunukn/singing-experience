@@ -25,9 +25,9 @@ interface Wave {
 /* Stacked like the app's pitch colours: sharp on top, clean in the middle,
  * flat at the bottom. ±35¢ sits halfway along each off-pitch ramp, so sharp
  * reads orange (between yellow and red) and flat a mid-deep blue. Higher
- * waves are also busier — more periods — the way a higher pitch is a faster
- * wave. The middle wave drifts the other way so neighbours never move in
- * lockstep. */
+ * waves are also busier and quicker — more periods, faster drift and breath —
+ * the way a higher pitch is a faster wave. The middle wave drifts the other
+ * way so neighbours never move in lockstep. */
 const waves: Wave[] = [
   {
     cents: 35,
@@ -42,8 +42,8 @@ const waves: Wave[] = [
     periods: 3,
     amplitude: 22,
     top: '52%',
-    driftSeconds: 90,
-    breathSeconds: 18,
+    driftSeconds: 75,
+    breathSeconds: 14,
     reverse: true,
   },
   {
@@ -51,8 +51,8 @@ const waves: Wave[] = [
     periods: 2,
     amplitude: 30,
     top: '82%',
-    driftSeconds: 70,
-    breathSeconds: 14,
+    driftSeconds: 90,
+    breathSeconds: 18,
   },
 ]
 
