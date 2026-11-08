@@ -19,6 +19,8 @@ interface Wave {
   top: string
   driftSeconds: number
   breathSeconds: number
+  /* Smallest vertical scale of the breath swell (1 = no swell) */
+  breathMinScale: number
   reverse?: boolean
 }
 
@@ -26,8 +28,10 @@ interface Wave {
  * flat at the bottom. ±35¢ sits halfway along each off-pitch ramp, so sharp
  * reads orange (between yellow and red) and flat a mid-deep blue. Higher
  * waves are also busier and quicker — more periods, faster drift and breath —
- * the way a higher pitch is a faster wave. The middle wave drifts the other
- * way so neighbours never move in lockstep. */
+ * the way a higher pitch is a faster wave. The clean wave barely breathes
+ * while the off-pitch ones swell, so off pitch reads as wobbling and clean as
+ * settled. The middle wave drifts the other way so neighbours never move in
+ * lockstep. */
 const waves: Wave[] = [
   {
     cents: 35,
@@ -36,6 +40,7 @@ const waves: Wave[] = [
     top: '22%',
     driftSeconds: 60,
     breathSeconds: 11,
+    breathMinScale: 0.6,
   },
   {
     cents: 0,
@@ -44,6 +49,7 @@ const waves: Wave[] = [
     top: '52%',
     driftSeconds: 75,
     breathSeconds: 14,
+    breathMinScale: 0.85,
     reverse: true,
   },
   {
@@ -53,6 +59,7 @@ const waves: Wave[] = [
     top: '82%',
     driftSeconds: 90,
     breathSeconds: 18,
+    breathMinScale: 0.6,
   },
 ]
 
@@ -66,6 +73,7 @@ function waveStyle(wave: Wave) {
     '--wave-color': directionalTextColor(wave.cents, isDark.value),
     '--wave-drift': `${wave.driftSeconds}s`,
     '--wave-breath': `${wave.breathSeconds}s`,
+    '--wave-breath-min': wave.breathMinScale,
     '--wave-direction': wave.reverse ? 'reverse' : 'normal',
   }
 }
@@ -136,7 +144,7 @@ function waveStyle(wave: Wave) {
 
 @keyframes ambient-wave-breath {
   from {
-    scale: 1 0.6;
+    scale: 1 var(--wave-breath-min);
   }
   to {
     scale: 1 1;
