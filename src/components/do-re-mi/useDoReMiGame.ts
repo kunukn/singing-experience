@@ -30,6 +30,11 @@ type PitchDetectionProvider = {
 }
 
 const DEFAULT_HOLD_DURATION_MS = 750
+/* Hold durations (seconds) offered in the settings row and accepted from
+ * localStorage. One list for both, so a pick always survives a reload. */
+const HOLD_DURATION_OPTIONS: readonly number[] = [
+  0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+]
 /* Brief pitch-loss tolerance — lets singers breathe or wobble without resetting hold progress */
 const GRACE_PERIOD_MS = 250
 const DEFAULT_STARTING_SEMITONE_OFFSET = 7 // G3
@@ -65,6 +70,7 @@ export {
   DEFAULT_STARTING_SEMITONE_OFFSET,
   DIFFICULTY_MAX_CENTS,
   GRACE_PERIOD_MS,
+  HOLD_DURATION_OPTIONS,
   SCALE_MODE_OPTIONS,
   START_TONE_GROUPS,
   START_TONE_OPTIONS,

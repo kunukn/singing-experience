@@ -8,12 +8,12 @@ import {
   DEFAULT_HOLD_DURATION_MS,
   DEFAULT_SCALE_MODE,
   DEFAULT_STARTING_SEMITONE_OFFSET,
+  HOLD_DURATION_OPTIONS,
   SCALE_MODE_OPTIONS,
   START_TONE_OPTIONS,
   useDoReMiGame,
 } from './useDoReMiGame'
 
-const holdDurationOptions = [0.1, 0.3, 0.5, 1, 2, 3, 4, 5, 6, 7, 10]
 const VALID_SCALE_MODES = SCALE_MODE_OPTIONS.map((o) => o.id)
 
 const defaultDurationSec = DEFAULT_HOLD_DURATION_MS / 1000
@@ -21,7 +21,7 @@ const selectedDurationSec = useLocalStorage(
   'syng.durationSec',
   defaultDurationSec,
 )
-if (!holdDurationOptions.includes(selectedDurationSec.value)) {
+if (!HOLD_DURATION_OPTIONS.includes(selectedDurationSec.value)) {
   selectedDurationSec.value = defaultDurationSec
 }
 

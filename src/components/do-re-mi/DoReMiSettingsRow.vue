@@ -2,7 +2,10 @@
 import type { ToneMode } from '@/composables/toneEngine'
 import { DIFFICULTY_OPTIONS, type Difficulty } from '@/constants/difficulty'
 import type { ScaleMode } from '@/utils/noteUtils'
-import { DEFAULT_STARTING_SEMITONE_OFFSET } from './useDoReMiGame'
+import {
+  DEFAULT_STARTING_SEMITONE_OFFSET,
+  HOLD_DURATION_OPTIONS,
+} from './useDoReMiGame'
 
 const startOffset = defineModel<number>('startOffset', { required: true })
 const scaleMode = defineModel<ScaleMode>('scaleMode', { required: true })
@@ -13,10 +16,7 @@ const { t } = useI18n()
 
 /* Declared ascending for readability, shown largest first — see "Vertical
  * Ordering" in design-rules.md. */
-const holdDurationOptions = [
-  0.05, 0.1, 0.2, 0.3, 0.5, 0.75, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-]
-const durationOptions = holdDurationOptions.toReversed().map((sec) => ({
+const durationOptions = HOLD_DURATION_OPTIONS.toReversed().map((sec) => ({
   label: `${sec}s`,
   value: sec,
 }))

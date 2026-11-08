@@ -15,6 +15,8 @@ import {
   DEFAULT_DIFFICULTY,
   DEFAULT_STARTING_SEMITONE_OFFSET,
   DIFFICULTY_MAX_CENTS,
+  DEFAULT_HOLD_DURATION_MS,
+  HOLD_DURATION_OPTIONS,
 } from './useDoReMiGame'
 
 /* useDoReMiGame owns an XState actor via @xstate/vue's useMachine, which
@@ -101,6 +103,10 @@ function simulateSingingNote(
 function advanceRAF(ms: number) {
   vi.advanceTimersByTime(ms)
 }
+
+test('HOLD_DURATION_OPTIONS includes the default hold duration', () => {
+  expect(HOLD_DURATION_OPTIONS).toContain(DEFAULT_HOLD_DURATION_MS / 1000)
+})
 
 describe('useDoReMiGame', () => {
   const scaleSteps = buildMajorScale(C3_MIDI + DEFAULT_STARTING_SEMITONE_OFFSET)
