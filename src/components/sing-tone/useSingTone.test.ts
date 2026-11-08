@@ -10,8 +10,14 @@ import {
   MAX_CENTS_DEVIATION,
   SKIP_UNLOCK_MS,
   DEFAULT_TOTAL_ROUNDS,
+  DEFAULT_HOLD_DURATION_MS,
+  HOLD_DURATION_OPTIONS,
   useSingTone,
 } from './useSingTone'
+
+test('HOLD_DURATION_OPTIONS includes the default hold duration', () => {
+  expect(HOLD_DURATION_OPTIONS).toContain(DEFAULT_HOLD_DURATION_MS / 1000)
+})
 
 /* useSingTone owns an XState actor via @xstate/vue's useMachine, which starts
  * the actor in onMounted — so the composable must run inside a mounted

@@ -20,6 +20,11 @@ type PitchDetectionProvider = {
 }
 
 const DEFAULT_HOLD_DURATION_MS = 750
+/* Hold durations (seconds) offered in the settings row and accepted from
+ * localStorage. One list for both, so a pick always survives a reload. */
+const HOLD_DURATION_OPTIONS: readonly number[] = [
+  0.1, 0.3, 0.5, 0.75, 1, 2, 3, 4, 5, 6, 7, 10,
+]
 /* Brief pitch-loss tolerance — lets singers breathe or wobble without resetting hold progress */
 const GRACE_PERIOD_MS = 250
 const DEFAULT_TOTAL_ROUNDS = 5
@@ -68,6 +73,7 @@ export {
   DEFAULT_HOLD_DURATION_MS,
   DEFAULT_TOTAL_ROUNDS,
   GRACE_PERIOD_MS,
+  HOLD_DURATION_OPTIONS,
   MAX_CENTS_DEVIATION,
   SKIP_UNLOCK_MS,
   TOO_LOW_OR_HIGH_HINT_MS,
