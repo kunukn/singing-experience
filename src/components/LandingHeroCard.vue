@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Program } from '@/constants/programs'
+import { startHerePrograms, type Program } from '@/constants/programs'
 
 const props = defineProps<{
   group: Program
@@ -8,12 +8,19 @@ const props = defineProps<{
 
 /* Icons only, so 4 stay recognisable at phone width */
 const PREVIEW_COUNT = 4
+/* The start-here tiles already show these on the same page, so the preview spends its slots on the rest */
+const startHereRoutes = new Set(
+  startHerePrograms.map((program) => program.route),
+)
 
 const { t } = useI18n()
 
 const previewPrograms = computed(() =>
   props.programs
-    .filter((program) => program.stage !== 'alpha')
+    .filter(
+      (program) =>
+        program.stage !== 'alpha' && !startHereRoutes.has(program.route),
+    )
     .slice(0, PREVIEW_COUNT),
 )
 const moreCount = computed(

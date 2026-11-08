@@ -32,14 +32,12 @@ const myRangeLabel = computed(() => {
         )
       }}
     </h2>
-    <ol class="grid gap-3 sm:grid-cols-3">
+    <ol class="grid gap-3 md:grid-cols-3">
       <li v-for="program in startHerePrograms" :key="program.route">
         <CardLink :to="program.route" class="h-full">
           <PrimeCard class="start-here-card h-full">
             <template #content>
-              <div
-                class="flex items-center gap-3 sm:flex-col sm:gap-2 sm:text-center"
-              >
+              <div class="flex items-center gap-3">
                 <component :is="program.icon" class="size-12 shrink-0" />
                 <div class="min-w-0">
                   <div class="text-base font-semibold">
@@ -63,7 +61,7 @@ const myRangeLabel = computed(() => {
 </template>
 
 <style scoped lang="css">
-/* Tighter than a full program card: three of these share one row from sm up */
+/* Tighter than a full program card: three of these share one row from md up */
 .start-here-card :deep(.p-card-body) {
   padding: 0.75rem 1rem;
 }
