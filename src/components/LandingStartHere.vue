@@ -38,7 +38,10 @@ const myRangeLabel = computed(() => {
           <PrimeCard class="start-here-card h-full">
             <template #content>
               <div class="flex items-center gap-3">
-                <component :is="program.icon" class="size-12 shrink-0" />
+                <component
+                  :is="program.icon"
+                  class="size-12 shrink-0 self-start"
+                />
                 <div class="min-w-0">
                   <div class="text-base font-semibold">
                     {{ t(`home.programs.${program.key}.name`) }}
