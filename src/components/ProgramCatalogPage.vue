@@ -27,7 +27,7 @@ function prewarmAudio() {
 
 <template>
   <div class="flex grow flex-col items-center pt-1 pb-4">
-    <h2 class="product-title mb-2 font-bold">{{ t(titleKey) }}</h2>
+    <h1 class="product-title mb-2 font-bold">{{ t(titleKey) }}</h1>
 
     <p class="mb-4 text-(--p-text-muted-color)">
       {{ t(`${catalogKey}.subtitle`) }}
@@ -43,12 +43,12 @@ function prewarmAudio() {
         :data-section="group.key"
         :aria-labelledby="`section-${group.key}`"
       >
-        <h3
+        <h2
           :id="`section-${group.key}`"
           class="mb-3 text-lg font-semibold text-(--p-text-muted-color)"
         >
           {{ t(`${catalogKey}.sections.${group.key}`) }}
-        </h3>
+        </h2>
         <div class="grid gap-4 md:grid-cols-2">
           <ProgramCard
             v-for="program in group.programs"
