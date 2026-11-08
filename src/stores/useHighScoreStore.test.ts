@@ -104,6 +104,16 @@ describe('useHighScoreStore', () => {
     expect(store.bestFor('singTone', createInput().config)?.correct).toBe(4)
   })
 
+  test('should save the time in whole milliseconds', () => {
+    const store = useHighScoreStore()
+
+    const result = store.recordScore(
+      createInput({ elapsedMs: 1583.2999999999884 }),
+    )
+
+    expect(result.best?.elapsedMs).toBe(1583)
+  })
+
   test('should not save a run with nothing correct', () => {
     const store = useHighScoreStore()
 

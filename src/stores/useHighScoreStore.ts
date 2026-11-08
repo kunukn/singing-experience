@@ -108,7 +108,12 @@ export const useHighScoreStore = defineStore('highScores', () => {
       return { isNewRecord: false, previous, best: previous }
     }
 
-    const candidate: HighScore = { ...input, achievedAt: Date.now() }
+    const candidate: HighScore = {
+      ...input,
+      /* Whole ms: frame-by-frame timers add up float noise (1583.2999999999884) */
+      elapsedMs: input.elapsedMs === null ? null : Math.round(input.elapsedMs),
+      achievedAt: Date.now(),
+    }
     if (previous && !isBetter(candidate, previous)) {
       return { isNewRecord: false, previous, best: previous }
     }
