@@ -6,8 +6,8 @@ const props = defineProps<{
   programs: readonly Program[]
 }>()
 
-/* Icons only, so 4 stay recognisable at phone width */
-const PREVIEW_COUNT = 4
+/* 3 keeps the strip calm and inside a 360px phone, even with longer "+N more" translations */
+const PREVIEW_COUNT = 3
 /* The start-here tiles already show these on the same page, so the preview spends its slots on the rest */
 const startHereRoutes = new Set(
   startHerePrograms.map((program) => program.route),
