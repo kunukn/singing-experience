@@ -555,10 +555,17 @@ onUnmounted(() => {
       <template v-if="isTuning">
         <p class="text-center text-sm">🎤 {{ t('singTheKeys.tunePrompt') }}</p>
         <div class="flex w-full items-center gap-3">
+          <!--
+            PrimeVue's 1 s width transition is switched off inline (a Tailwind
+            class loses to its unlayered style): progress already moves every
+            frame, and the transition made the bar trail the real hold, never
+            visibly full, and drain on reset.
+          -->
           <PrimeProgressBar
             class="h-2 flex-1"
             :value="Math.round(tuning.progress.value * 100)"
             :showValue="false"
+            :pt="{ value: { style: { transition: 'none' } } }"
           />
           <span
             class="min-w-10 text-end font-semibold tabular-nums"
