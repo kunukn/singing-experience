@@ -80,10 +80,13 @@ function waveStyle(wave: Wave) {
 </script>
 
 <template>
+  <!-- From md (768px, iPad portrait) up: on a phone the cards fill the width,
+       so only stray fragments of the waves show at the edges and read as a
+       rendering glitch. display:none also stops the animations there. -->
   <div
     aria-hidden="true"
     data-testid="ambient-waves"
-    class="ambient-waves pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+    class="ambient-waves pointer-events-none fixed inset-0 -z-10 overflow-hidden max-md:hidden"
   >
     <div
       v-for="wave in waves"
