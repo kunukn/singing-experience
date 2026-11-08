@@ -1,5 +1,5 @@
 <route lang="json">
-{ "meta": { "isLandingPage": true } }
+{ "meta": { "isLandingPage": true, "ambientBackground": true } }
 </route>
 
 <script setup lang="ts"></script>

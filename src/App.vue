@@ -29,7 +29,9 @@ const contentClass = computed(() =>
 </script>
 
 <template>
-  <div class="relative flex w-full flex-1 grow flex-col px-0 py-0">
+  <!-- isolate: the -z-10 wave backdrop paints above the body background but below the page -->
+  <div class="relative isolate flex w-full flex-1 grow flex-col px-0 py-0">
+    <AmbientWaves v-if="route.meta.ambientBackground" />
     <canvas
       ref="confettiCanvas"
       data-confetti-canvas

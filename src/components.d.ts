@@ -12,6 +12,7 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     ActiveBarHighlight: typeof import('./components/grace-kelly/ActiveBarHighlight.vue')['default']
+    AmbientWaves: typeof import('./components/generic/AmbientWaves.vue')['default']
     ArrowUpIcon: typeof import('./components/icons/ArrowUpIcon.vue')['default']
     BackIcon: typeof import('./components/icons/BackIcon.vue')['default']
     BarHighlightToggle: typeof import('./components/grace-kelly/BarHighlightToggle.vue')['default']

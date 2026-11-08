@@ -13,5 +13,8 @@ declare module 'vue-router' {
      * initial START_LOCATION render, so the switcher stays hidden until the route
      * resolves rather than flashing on non-landing pages. */
     isLandingPage?: boolean
+    /* Draw the drifting sound-wave backdrop (AmbientWaves) behind the page
+     * (read in App.vue). Used by the landing and catalogue pages. */
+    ambientBackground?: boolean
   }
 }
