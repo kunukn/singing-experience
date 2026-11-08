@@ -89,7 +89,7 @@ function waveStyle(wave: Wave) {
 <style lang="css">
 .ambient-wave {
   --wave-color: var(--wave-light);
-  --wave-opacity: 0.22;
+  --wave-opacity: 0.12;
 
   position: absolute;
   left: 0;
