@@ -229,3 +229,10 @@ export const startHerePrograms: Program[] = [
   '/voice-range-finder',
   '/sing-tone',
 ].map((route) => programByRoute.get(route)!)
+
+/* The same programs for a returning singer's daily warm-up — the range is already known, so the finder goes last */
+export const dailyWarmUpPrograms: Program[] = [
+  '/warm-up',
+  '/sing-tone',
+  '/voice-range-finder',
+].map((route) => programByRoute.get(route)!)

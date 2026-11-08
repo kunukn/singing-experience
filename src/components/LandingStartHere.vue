@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { startHerePrograms } from '@/constants/programs'
+import { dailyWarmUpPrograms, startHerePrograms } from '@/constants/programs'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 
 const { t } = useI18n()
@@ -12,6 +12,10 @@ const myRangeLabel = computed(() => {
 
   return `${midiToNoteLabel(midiMin).label}–${midiToNoteLabel(midiMax).label}`
 })
+
+const shownPrograms = computed(() =>
+  hasFoundVoiceRange.value ? dailyWarmUpPrograms : startHerePrograms,
+)
 </script>
 
 <template>
@@ -33,7 +37,7 @@ const myRangeLabel = computed(() => {
       }}
     </h2>
     <ol class="grid gap-3 md:grid-cols-3">
-      <li v-for="program in startHerePrograms" :key="program.route">
+      <li v-for="program in shownPrograms" :key="program.route">
         <CardLink :to="program.route" class="h-full">
           <PrimeCard class="start-here-card h-full">
             <template #content>

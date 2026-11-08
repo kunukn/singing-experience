@@ -6,6 +6,7 @@ import {
   games,
   groupProgramsBySection,
   startHerePrograms,
+  dailyWarmUpPrograms,
   toolSections,
   tools,
 } from './programs'
@@ -74,6 +75,14 @@ describe('programs', () => {
       'warmUp',
       'voiceRangeFinder',
       'singTone',
+    ])
+  })
+
+  test('orders the daily warm-up with the range finder last', () => {
+    expect(dailyWarmUpPrograms.map((program) => program.key)).toEqual([
+      'warmUp',
+      'singTone',
+      'voiceRangeFinder',
     ])
   })
 })
