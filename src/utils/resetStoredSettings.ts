@@ -2,9 +2,10 @@
  * enforces it, so clearing by prefix reaches all of them and nothing else. */
 const SETTINGS_PREFIX = 'syng.'
 
-/* Survives a reset: dropping back to English could leave someone unable to
- * read the app to set their language again. */
-const KEPT_KEYS = new Set(['syng.locale'])
+/* Survive a reset. The language: dropping back to English could leave someone
+ * unable to read the app to set it again. Best scores: they are progress, not
+ * a setting, and have their own Clear button on the records page. */
+const KEPT_KEYS = new Set(['syng.locale', 'syng.highScores'])
 
 /*
  * Removes every stored setting, including keys left behind by renames, so the

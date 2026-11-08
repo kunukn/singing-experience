@@ -1000,5 +1000,10 @@
     },
     "waveformLabel": "Sauti ya moja kwa moja kutoka kwenye maikrofoni yako",
     "noSoundYet": "Bado hatukusikii. Angalia maikrofoni yako na uimbe kidogo."
+  },
+  "records": {
+    "title": "Alama bora",
+    "newRecord": "Rekodi mpya!",
+    "clearConfirm": "Futa alama bora zote?"
   }
 }

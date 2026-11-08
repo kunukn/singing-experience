@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PianoPreviewLaneId } from '@/components/piano/pianoPreview'
 import type { DuetLane } from '@/composables/useDuetPitchDetection'
+import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { NoteInfo } from '@/utils/noteUtils'
 import {
   frequencyToMidi,
@@ -490,16 +491,28 @@ watch(
 )
 
 const { fireConfetti, fireFireworks } = useConfettiStore()
+const { recordScore } = useHighScoreStore()
+const recordResult = ref<RecordResult | null>(null)
 
 /* Reveal the result on a natural finish (never a manual stop) and celebrate
  * when enough notes were correct: confetti from the threshold up, fireworks
- * for every note. */
+ * for every note or a new best. */
 watch(isDone, (done) => {
   if (!done || !isRunScored.value) return
 
   showResult.value = true
-  if (onPitchRatio.value === 1) fireFireworks()
-  else if (reachedThreshold.value) fireConfetti()
+  recordResult.value = recordScore({
+    game: 'singTheKeys',
+    config: { songId: songId.value, speed: speed.value },
+    correct: hitCount.value,
+    total: timeline.value.notes.length,
+    /* The song sets the run length, so time isn't the singer's speed */
+    elapsedMs: null,
+  })
+
+  if (onPitchRatio.value === 1 || recordResult.value.isNewRecord) {
+    fireFireworks()
+  } else if (reachedThreshold.value) fireConfetti()
 })
 
 onUnmounted(() => {
@@ -589,6 +602,7 @@ onUnmounted(() => {
       >
         {{ t('generic.scoreCorrect', { percent: scorePercent }) }}
       </p>
+      <HighScoreBadge :result="recordResult" />
     </div>
 
     <!-- Centred, with a little top padding: the scroller clips vertically too,

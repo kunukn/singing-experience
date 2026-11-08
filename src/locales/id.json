@@ -1000,5 +1000,10 @@
     },
     "waveformLabel": "Suara langsung dari mikrofonmu",
     "noSoundYet": "Kami belum mendengarmu. Periksa mikrofonmu dan bernyanyilah sedikit."
+  },
+  "records": {
+    "title": "Skor terbaik",
+    "newRecord": "Rekor baru!",
+    "clearConfirm": "Hapus semua skor terbaik?"
   }
 }

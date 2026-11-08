@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Difficulty } from '@/constants/difficulty'
+import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { ScaleMode } from '@/utils/noteUtils'
 import {
   NOTE_NAMES,
@@ -190,7 +191,7 @@ const displayedCentsFromTarget = computed(() => {
   return frequencyToCents(displayedFrequency.value, targetFrequency.value)
 })
 
-const { fireConfetti } = useConfettiStore()
+const { fireConfetti, fireFireworks } = useConfettiStore()
 
 /* Debug-only: log every new detected tone during a playing run on the
  * [DoReMiTones] channel. No-op unless VITE_DEBUG_LOG=1. */
@@ -250,10 +251,27 @@ watch(
   { immediate: true },
 )
 
+const { recordScore } = useHighScoreStore()
+const recordResult = ref<RecordResult | null>(null)
+
 watch(isComplete, (complete) => {
-  if (complete) {
-    fireConfetti()
-  }
+  if (!complete) return
+
+  /* Every note must be held to finish, so the time is what tells runs apart. */
+  recordResult.value = recordScore({
+    game: 'doReMi',
+    config: {
+      difficulty: difficulty.value,
+      holdSec: durationSec.value,
+      scaleMode: scaleMode.value,
+    },
+    correct: scaleSteps.value.length,
+    total: scaleSteps.value.length,
+    elapsedMs: elapsedMs.value,
+  })
+
+  if (recordResult.value.isNewRecord) fireFireworks()
+  else fireConfetti()
 })
 
 function handleStart() {
@@ -368,6 +386,7 @@ onUnmounted(() => {
         :elapsedSeconds="elapsedSeconds"
         :selectedScaleModeLabel="selectedScaleModeLabel"
         :startToneLabel="startToneLabel"
+        :recordResult="recordResult"
         @playAgain="handleStart"
         @settings="handleReset"
       />

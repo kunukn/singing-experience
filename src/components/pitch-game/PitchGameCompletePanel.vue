@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { GameSummary } from './usePitchGame'
 
 type Props = {
@@ -9,9 +10,10 @@ type Props = {
   voiceRangeLabel: string
   voiceRangeNoteRange: string
   endReason: GameSummary['endReason']
+  recordResult?: RecordResult | null
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), { recordResult: null })
 
 const emit = defineEmits<{
   playAgain: []
@@ -57,6 +59,8 @@ const isCelebrated = computed(
         {{ voiceRangeLabel }} ({{ voiceRangeNoteRange }})
       </span>
     </p>
+
+    <HighScoreBadge :result="recordResult" />
 
     <GameEndActions
       @playAgain="emit('playAgain')"

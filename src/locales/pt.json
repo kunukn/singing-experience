@@ -1000,5 +1000,10 @@
     },
     "waveformLabel": "Som ao vivo do seu microfone",
     "noSoundYet": "Ainda não ouvimos você. Confira seu microfone e cante um pouco."
+  },
+  "records": {
+    "title": "Melhores pontuações",
+    "newRecord": "Novo recorde!",
+    "clearConfirm": "Apagar todas as melhores pontuações?"
   }
 }

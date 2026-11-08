@@ -29,15 +29,20 @@ describe('resetStoredSettings', () => {
     expect(storage.keys()).toEqual([])
   })
 
-  test('keeps the language and anything the app does not own', () => {
+  test('keeps the language, best scores and anything the app does not own', () => {
     const storage = createStorage({
       'syng.locale': 'ar',
+      'syng.highScores': '{}',
       'syng.bpm': '90',
       'other.app': 'x',
     })
 
     resetStoredSettings(storage)
 
-    expect(storage.keys()).toEqual(['other.app', 'syng.locale'])
+    expect(storage.keys()).toEqual([
+      'other.app',
+      'syng.highScores',
+      'syng.locale',
+    ])
   })
 })

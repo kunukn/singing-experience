@@ -1000,5 +1000,10 @@
     },
     "waveformLabel": "Live sound from your mic",
     "noSoundYet": "We can't hear you yet. Check your mic and sing a little."
+  },
+  "records": {
+    "title": "Best scores",
+    "newRecord": "New best!",
+    "clearConfirm": "Clear all best scores?"
   }
 }

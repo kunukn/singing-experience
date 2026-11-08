@@ -751,5 +751,10 @@
       "name": "Small file",
       "description": "A smaller copy of your recording, about 1 MB a minute, that is easy to send in a message. Download keeps the full quality."
     }
+  },
+  "records": {
+    "title": "Best scores",
+    "newRecord": "New best!",
+    "clearConfirm": "Clear all best scores?"
   }
 }

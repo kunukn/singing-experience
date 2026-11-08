@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { RecordResult } from '@/stores/useHighScoreStore'
 import {
   frequencyToMidi,
   midiToFrequency,
@@ -288,15 +289,32 @@ const resultNoteIndices = computed(() =>
   showResult.value || isRunning.value ? correctNoteIndices.value : [],
 )
 
-const { fireConfetti } = useConfettiStore()
+const { fireConfetti, fireFireworks } = useConfettiStore()
+const { recordScore } = useHighScoreStore()
+const recordResult = ref<RecordResult | null>(null)
 
 /* Reveal the result on a natural finish (singIsDone, never a manual stop) and
- * celebrate when enough notes were correct. */
+ * celebrate when enough notes were correct, bigger for a new best. */
 watch(singIsDone, (done) => {
   if (!done) return
 
   showResult.value = true
-  if (reachedThreshold.value) fireConfetti()
+  recordResult.value = recordScore({
+    game: 'graceKelly',
+    config: {
+      vozIndex: vozIndex.value,
+      bpm: bpm.value,
+      /* The guide leaks into the mic and helps the score, so it splits records */
+      melodyGuide: isMelodyGuideEnabled.value,
+    },
+    correct: correctNoteIndices.value.length,
+    total: noteDurationsMs.value.length,
+    /* The tempo sets the run length, so time isn't the singer's speed */
+    elapsedMs: null,
+  })
+
+  if (recordResult.value.isNewRecord) fireFireworks()
+  else if (reachedThreshold.value) fireConfetti()
 })
 
 watch([vozIndex, startToneMidi, bpm], () => {
@@ -355,6 +373,7 @@ const vozLabel = computed(() =>
       >
         {{ t('generic.scoreCorrect', { percent: scorePercent }) }}
       </p>
+      <HighScoreBadge :result="recordResult" />
     </div>
 
     <EdgeFadeScroller

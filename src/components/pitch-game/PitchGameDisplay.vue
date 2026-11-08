@@ -2,6 +2,7 @@
 import { useDoReMiPlaySequence } from '@/components/do-re-mi/useDoReMiPlaySequence'
 import type { ToneMode } from '@/composables/toneEngine'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
+import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import PitchGamePitchDisplay from './PitchGamePitchDisplay.vue'
@@ -106,7 +107,9 @@ const pitchDisplayRef = ref<InstanceType<typeof PitchGamePitchDisplay> | null>(
   null,
 )
 const { fireMicroConfetti } = useConfetti()
-const { fireConfetti } = useConfettiStore()
+const { fireConfetti, fireFireworks } = useConfettiStore()
+const { recordScore } = useHighScoreStore()
+const recordResult = ref<RecordResult | null>(null)
 
 const isGameActive = computed(() => gameState.value !== 'idle')
 
@@ -139,8 +142,26 @@ watch(
   () => gameState.value,
   (state) => {
     if (state === 'complete') {
-      /* Only celebrate a natural finish — a manual Stop must not fire confetti. */
-      if (score.value >= 1 && summary.value?.endReason === 'natural') {
+      /* Only a natural finish counts — a manual Stop must not fire confetti
+       * or touch the best scores. */
+      const finished = summary.value
+      recordResult.value =
+        finished?.endReason === 'natural'
+          ? recordScore({
+              game: 'pitchGame',
+              config: {
+                durationSec: finished.durationMs / 1000,
+                holdSec: holdDurationSec.value,
+              },
+              correct: finished.score,
+              total: finished.totalTargets,
+              /* Targets arrive on a random schedule, so time isn't the singer's speed */
+              elapsedMs: null,
+            })
+          : null
+
+      if (recordResult.value?.isNewRecord) fireFireworks()
+      else if (score.value >= 1 && finished?.endReason === 'natural') {
         fireConfetti()
       }
 
@@ -347,6 +368,7 @@ onUnmounted(() => {
         :voiceRangeLabel="t(summary.voiceRangeLabelKey)"
         :voiceRangeNoteRange="summary.voiceRangeNoteRange"
         :endReason="summary.endReason"
+        :recordResult="recordResult"
         @playAgain="handlePlayAgain"
         @settings="handleReset"
       />

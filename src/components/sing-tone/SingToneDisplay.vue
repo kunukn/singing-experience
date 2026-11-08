@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDoReMiPlaySequence } from '@/components/do-re-mi/useDoReMiPlaySequence'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
+import type { RecordResult } from '@/stores/useHighScoreStore'
 import {
   NOTE_NAMES,
   frequencyToCents,
@@ -158,7 +159,7 @@ const displayedCentsFromTarget = computed(() => {
 
 const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
-const { fireConfetti } = useConfettiStore()
+const { fireConfetti, fireFireworks } = useConfettiStore()
 
 /* Use the chart's visible grid notes for sequence playback */
 const rangeNotes = computed(() => {
@@ -220,10 +221,22 @@ watch(
   { immediate: true },
 )
 
+const { recordScore } = useHighScoreStore()
+const recordResult = ref<RecordResult | null>(null)
+
 watch(isComplete, (complete) => {
-  if (complete) {
-    fireConfetti()
-  }
+  if (!complete) return
+
+  recordResult.value = recordScore({
+    game: 'singTone',
+    config: { rounds: gameTotalRounds.value, holdSec: durationSec.value },
+    correct: matchedCount.value,
+    total: gameTotalRounds.value,
+    elapsedMs: elapsedMs.value,
+  })
+
+  if (recordResult.value.isNewRecord) fireFireworks()
+  else fireConfetti()
 })
 
 const chartRef = ref<InstanceType<typeof SingToneChart> | null>(null)
@@ -459,6 +472,7 @@ onUnmounted(() => {
           >{{ elapsedSeconds }}s</span
         >
       </p>
+      <HighScoreBadge :result="recordResult" />
       <GameEndActions @playAgain="handleStart" @settings="handleReset" />
     </div>
 

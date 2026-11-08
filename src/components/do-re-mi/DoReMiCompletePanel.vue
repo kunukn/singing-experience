@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import type { RecordResult } from '@/stores/useHighScoreStore'
+
 type Props = {
   durationSec: number
   elapsedSeconds: string
   selectedScaleModeLabel: string
   startToneLabel: string
+  recordResult: RecordResult | null
 }
 
 defineProps<Props>()
@@ -36,6 +39,7 @@ const { t } = useI18n()
         >{{ elapsedSeconds }}s</span
       >
     </p>
+    <HighScoreBadge :result="recordResult" />
     <GameEndActions
       @playAgain="emit('playAgain')"
       @settings="emit('settings')"

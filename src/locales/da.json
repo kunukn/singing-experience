@@ -1000,5 +1000,10 @@
     },
     "waveformLabel": "Lyd fra din mikrofon lige nu",
     "noSoundYet": "Vi kan ikke høre dig endnu. Tjek din mikrofon, og syng lidt."
+  },
+  "records": {
+    "title": "Bedste resultater",
+    "newRecord": "Ny rekord!",
+    "clearConfirm": "Slet alle bedste resultater?"
   }
 }

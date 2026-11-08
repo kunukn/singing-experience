@@ -1,13 +1,15 @@
 <script setup lang="ts">
+import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { GameSummary } from './useSingFly'
 
 type Props = {
   summary: GameSummary
   elapsedSeconds: string
   micPermission: PermissionState | null
+  recordResult?: RecordResult | null
 }
 
-defineProps<Props>()
+withDefaults(defineProps<Props>(), { recordResult: null })
 
 const emit = defineEmits<{
   playAgain: []
@@ -56,6 +58,8 @@ const isPitchSnapEnabled = defineModel<boolean>('isPitchSnapEnabled', {
         {{ $t(summary.voiceRangeLabelKey) }} ({{ summary.voiceRangeNoteRange }})
       </span>
     </p>
+
+    <HighScoreBadge :result="recordResult" />
 
     <GameEndActions
       class="w-full"

@@ -2,6 +2,7 @@
 import { LARGE_SMALL_BUTTON_ICON_PT } from '@/constants/buttonStyles'
 import type { Difficulty } from '@/constants/difficulty'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
+import type { RecordResult } from '@/stores/useHighScoreStore'
 import { pitchClassOf } from '@/utils/scaleHighlight'
 import type {
   CircleDirection,
@@ -349,9 +350,30 @@ watch(
 )
 watch(mode, () => stop())
 
-const { fireConfetti } = useConfettiStore()
+const { fireConfetti, fireFireworks } = useConfettiStore()
+const { recordScore } = useHighScoreStore()
+const recordResult = ref<RecordResult | null>(null)
+
 watch(isWalkComplete, (complete) => {
-  if (complete) fireConfetti()
+  if (!complete) return
+
+  /* A walk only moves on when the note is held, so every walk ends fully
+   * correct and the time is what tells walks apart. */
+  const walkLength = game.targets.value.length
+  recordResult.value = recordScore({
+    game: 'circleOfFifths',
+    config: {
+      direction: direction.value,
+      difficulty: difficulty.value,
+      holdSec: holdDurationSec.value,
+    },
+    correct: walkLength,
+    total: walkLength,
+    elapsedMs: elapsedMs.value,
+  })
+
+  if (recordResult.value.isNewRecord) fireFireworks()
+  else fireConfetti()
 })
 
 function handleSing(patternId: 'doMiSo' | 'doLa') {
@@ -458,6 +480,7 @@ onUnmounted(() => stop())
             >{{ elapsedSeconds }}s</span
           >
         </p>
+        <HighScoreBadge :result="recordResult" />
         <GameEndActions @playAgain="startWalk()" @settings="stop()" />
       </template>
 

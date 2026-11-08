@@ -8,6 +8,9 @@ const isHome = computed(() => route.path === '/')
 const stage = computed(() => programStageByRoute.get(route.path))
 const program = computed(() => programByRoute.get(route.path))
 const isLandingPage = computed(() => route.meta.isLandingPage === true)
+const shouldShowRecords = computed(
+  () => isLandingPage.value || route.path === '/games',
+)
 
 function goBack() {
   /* Follow real browser history when we have a previous in-app entry; otherwise fall back to home (covers deep links). */
@@ -36,6 +39,7 @@ function goBack() {
     </div>
     <div class="flex items-center gap-2">
       <LanguageSwitcher v-if="isLandingPage" class="me-2" />
+      <RecordsButton v-if="shouldShowRecords" />
       <ProgramHelpButton v-if="program" :programKey="program.key" />
       <ProgramHelpButton v-else-if="isLandingPage" programKey="home" />
       <SettingsPanel />

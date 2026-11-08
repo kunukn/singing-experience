@@ -1000,5 +1000,10 @@
     },
     "waveformLabel": "Le son de ton micro en direct",
     "noSoundYet": "On ne t'entend pas encore. Vérifie ton micro et chante un peu."
+  },
+  "records": {
+    "title": "Meilleurs scores",
+    "newRecord": "Nouveau record !",
+    "clearConfirm": "Effacer tous les meilleurs scores ?"
   }
 }

@@ -1000,5 +1000,10 @@
     },
     "waveformLabel": "マイクからのライブ音声",
     "noSoundYet": "まだ声が聞こえないよ。マイクを確認して、少し歌ってみてね。"
+  },
+  "records": {
+    "title": "ベストスコア",
+    "newRecord": "新記録!",
+    "clearConfirm": "ベストスコアをぜんぶ消す?"
   }
 }

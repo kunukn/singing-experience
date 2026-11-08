@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { VOICE_RANGES } from '@/constants/voiceRanges'
+import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { NoteInfo } from '@/utils/noteUtils'
 import SingFlyCanvas from './SingFlyCanvas.vue'
 import SingFlyCompletePanel from './SingFlyCompletePanel.vue'
@@ -124,7 +125,7 @@ const { stableNoteInfo } = useStablePitch({
   isSnapped: isPitchSnapEnabled,
 })
 
-const { fireConfetti } = useConfettiStore()
+const { fireConfetti, fireFireworks } = useConfettiStore()
 
 const manualClock = toRef(props, 'manualClock')
 
@@ -235,10 +236,50 @@ const canvasNowOverride = computed(() =>
 
 const isGameActive = computed(() => !isIdle.value)
 
+const { recordScore } = useHighScoreStore()
+const recordResult = ref<RecordResult | null>(null)
+
+/* stopGame() can't tell a Stop press from the clock running out — both end
+ * as 'won' or 'crashed' — so the Stop button marks the run here instead.
+ * A crash is a real result (pipes passed so far); a Stop is not. */
+let wasStoppedManually = false
+
+function handleStop() {
+  wasStoppedManually = true
+  stopGame()
+}
+
 /* Singfly is all-or-nothing: 'won' already means every pipe was scored
  * (the machine only enters it on a clean run), so confetti fires on entry. */
 watch(phase, (name) => {
-  if (name === 'won') fireConfetti()
+  if (name === 'playing') {
+    wasStoppedManually = false
+
+    return
+  }
+
+  if (name !== 'won' && name !== 'crashed') return
+
+  const finished = summary.value
+  recordResult.value =
+    finished && !wasStoppedManually
+      ? recordScore({
+          game: 'singFly',
+          config: {
+            difficulty: finished.difficulty,
+            durationSec: finished.durationMs / 1000,
+            /* Snapping widens the gap, so it changes how hard the run is */
+            pitchSnap: isPitchSnapEnabled.value,
+          },
+          correct: finished.score,
+          total: finished.totalTargets,
+          /* The course runs at a fixed speed, so time isn't the singer's speed */
+          elapsedMs: null,
+        })
+      : null
+
+  if (recordResult.value?.isNewRecord) fireFireworks()
+  else if (name === 'won') fireConfetti()
 })
 
 /* `isPreviewEnabled` (raw localStorage ref) is the user-facing preview toggle.
@@ -468,7 +509,7 @@ defineExpose({
         :score="score"
         :totalTargets="targets.length"
         :elapsedSeconds="liveElapsedSeconds"
-        @stop="stopGame"
+        @stop="handleStop"
       />
 
       <!-- `&& summary` is load-bearing for the type narrowing that lets
@@ -479,6 +520,7 @@ defineExpose({
         v-else-if="gameState === 'complete' && summary"
         :summary="summary"
         :elapsedSeconds="elapsedSeconds"
+        :recordResult="recordResult"
         v-model:isPreviewEnabled="isPreviewEnabled"
         v-model:isPitchSnapEnabled="isPitchSnapEnabled"
         :micPermission="panelMicPermission"

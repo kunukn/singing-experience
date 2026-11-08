@@ -17,6 +17,7 @@ declare global {
   const DEFAULT_STARTING_SEMITONE_OFFSET: typeof import('./composables/useDoReMiGame').DEFAULT_STARTING_SEMITONE_OFFSET
   const EffectScope: typeof import('vue').EffectScope
   const GRACE_PERIOD_MS: typeof import('./composables/useDoReMiGame').GRACE_PERIOD_MS
+  const HIGH_SCORE_GAMES: typeof import('./stores/useHighScoreStore').HIGH_SCORE_GAMES
   const HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').HOLD_DURATION_MS
   const MAX_CENTS_DEVIATION: typeof import('./composables/useDoReMiGame').MAX_CENTS_DEVIATION
   const MAX_CLARITY_THRESHOLD: typeof import('./composables/useSettings').MAX_CLARITY_THRESHOLD
@@ -62,8 +63,10 @@ declare global {
   const getCurrentScope: typeof import('vue').getCurrentScope
   const getCurrentWatcher: typeof import('vue').getCurrentWatcher
   const h: typeof import('vue').h
+  const highScoreKey: typeof import('./stores/useHighScoreStore').highScoreKey
   const inject: typeof import('vue').inject
   const isAccidentalStyle: typeof import('./composables/accidentalStyle').isAccidentalStyle
+  const isBetter: typeof import('./stores/useHighScoreStore').isBetter
   const isGuitarAudioRunning: typeof import('./composables/useGuitarSampler').isGuitarAudioRunning
   const isProxy: typeof import('vue').isProxy
   const isReactive: typeof import('vue').isReactive
@@ -127,6 +130,7 @@ declare global {
   const useFaviconPermissionColor: typeof import('./composables/useFaviconPermissionColor').useFaviconPermissionColor
   const useFireConfetti: typeof import('./composables/useConfetti').useFireConfetti
   const useGuitarSampler: typeof import('./composables/useGuitarSampler').useGuitarSampler
+  const useHighScoreStore: typeof import('./stores/useHighScoreStore').useHighScoreStore
   const useI18n: typeof import('vue-i18n').useI18n
   const useId: typeof import('vue').useId
   const useIdlePreview: typeof import('./composables/useIdlePreview').useIdlePreview
@@ -199,6 +203,9 @@ declare global {
   // @ts-ignore
   export type { DecoratedVoiceTypeSegment, VoiceTypeSegmentsOptions } from './composables/useVoiceTypeSegments'
   import('./composables/useVoiceTypeSegments')
+  // @ts-ignore
+  export type { HighScoreGame, HighScoreConfig, HighScore, HighScoreInput, RecordResult } from './stores/useHighScoreStore'
+  import('./stores/useHighScoreStore')
 }
 
 // for vue template auto import
@@ -211,6 +218,7 @@ declare module 'vue' {
     readonly DEFAULT_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['DEFAULT_CLARITY_THRESHOLD']>
     readonly DEFAULT_PREVIEW_ENABLED: UnwrapRef<typeof import('./composables/useSettings')['DEFAULT_PREVIEW_ENABLED']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly HIGH_SCORE_GAMES: UnwrapRef<typeof import('./stores/useHighScoreStore')['HIGH_SCORE_GAMES']>
     readonly MAX_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['MAX_CLARITY_THRESHOLD']>
     readonly MAX_FREQUENCY: UnwrapRef<typeof import('./composables/usePitchDetection')['MAX_FREQUENCY']>
     readonly MAX_REFERENCE_PITCH: UnwrapRef<typeof import('./composables/useReferencePitch')['MAX_REFERENCE_PITCH']>
@@ -248,8 +256,10 @@ declare module 'vue' {
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly getCurrentWatcher: UnwrapRef<typeof import('vue')['getCurrentWatcher']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
+    readonly highScoreKey: UnwrapRef<typeof import('./stores/useHighScoreStore')['highScoreKey']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
     readonly isAccidentalStyle: UnwrapRef<typeof import('./composables/accidentalStyle')['isAccidentalStyle']>
+    readonly isBetter: UnwrapRef<typeof import('./stores/useHighScoreStore')['isBetter']>
     readonly isGuitarAudioRunning: UnwrapRef<typeof import('./composables/useGuitarSampler')['isGuitarAudioRunning']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
@@ -309,6 +319,7 @@ declare module 'vue' {
     readonly useErrorToastStore: UnwrapRef<typeof import('./stores/useErrorToastStore')['useErrorToastStore']>
     readonly useFaviconPermissionColor: UnwrapRef<typeof import('./composables/useFaviconPermissionColor')['useFaviconPermissionColor']>
     readonly useGuitarSampler: UnwrapRef<typeof import('./composables/useGuitarSampler')['useGuitarSampler']>
+    readonly useHighScoreStore: UnwrapRef<typeof import('./stores/useHighScoreStore')['useHighScoreStore']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useIdlePreview: UnwrapRef<typeof import('./composables/useIdlePreview')['useIdlePreview']>
