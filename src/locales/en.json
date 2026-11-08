@@ -360,7 +360,7 @@
     "done": "Done",
     "cancel": "Cancel",
     "resultTitle": "You sang {range}",
-    "widened": "We'll save it as {range}, a whole octave, so every game can use it.",
+    "widened": "Games need a whole octave, so we'll save it as {range}.",
     "useThis": "Use this",
     "tryAgain": "Try again",
     "compare": {

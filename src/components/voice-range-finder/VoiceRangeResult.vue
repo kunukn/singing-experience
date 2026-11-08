@@ -37,9 +37,12 @@ const isWidened = computed(
         })
       }}
     </p>
-    <p
+    <!-- A message, not muted text: the saved range differs from what was just
+         sung, and a missed hint reads as a save that didn't work -->
+    <PrimeMessage
       v-if="isWidened"
-      class="text-center text-sm text-(--p-text-muted-color)"
+      severity="info"
+      size="small"
       data-testid="voice-range-finder-widened"
     >
       {{
@@ -47,7 +50,7 @@ const isWidened = computed(
           range: formatRange(foundRange.midiMin, foundRange.midiMax),
         })
       }}
-    </p>
+    </PrimeMessage>
     <div class="flex items-center gap-2">
       <PrimeButton
         severity="secondary"
