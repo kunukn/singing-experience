@@ -245,9 +245,7 @@ watch(scrubSeconds, (seconds) => {
         </div>
 
         <div class="flex flex-col gap-1 text-xs text-(--p-text-muted-color)">
-          <span
-            >State: <strong>{{ gameState }}</strong></span
-          >
+          <span>State: <strong>{{ gameState }}</strong></span>
           <span>Live elapsed: {{ (elapsedMs / 1000).toFixed(1) }}s</span>
         </div>
       </div>
