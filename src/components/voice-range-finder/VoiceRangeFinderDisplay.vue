@@ -12,6 +12,7 @@ import VoiceRangeExplorePanel from './VoiceRangeExplorePanel.vue'
 import VoiceRangeResult from './VoiceRangeResult.vue'
 import VoiceRangeSearchStep from './VoiceRangeSearchStep.vue'
 import VoiceRangeSlots from './VoiceRangeSlots.vue'
+import VoiceRangeWidth from './VoiceRangeWidth.vue'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
 import { formatRange, withHighest, withLowest } from './voiceRangeNotes'
 
@@ -290,6 +291,10 @@ onUnmounted(() => {
                   </span>
                 </Transition>
               </p>
+              <VoiceRangeWidth
+                :midiMin="myVoiceRange.midiMin"
+                :midiMax="myVoiceRange.midiMax"
+              />
             </div>
 
             <!--

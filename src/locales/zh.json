@@ -361,6 +361,8 @@
     "stepOf": "{current}/{total}",
     "cancel": "取消",
     "resultTitle": "你唱出了 {range}",
+    "widthSemitones": "{count}个半音",
+    "widthOctaves": "{count}个八度",
     "widened": "我们会存为 {range}，整整一个八度，这样所有游戏都能用。",
     "useThis": "就用这个",
     "tryAgain": "再试一次",

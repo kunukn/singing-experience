@@ -361,6 +361,8 @@
     "stepOf": "{current} kati ya {total}",
     "cancel": "Ghairi",
     "resultTitle": "Uliimba {range}",
+    "widthSemitones": "Nusu-toni {count}",
+    "widthOctaves": "Oktavu {count}",
     "widened": "Tutakihifadhi kama {range}, Oktavu nzima, ili kila mchezo uweze kukitumia.",
     "useThis": "Tumia hiki",
     "tryAgain": "Jaribu tena",

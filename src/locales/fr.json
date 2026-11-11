@@ -361,6 +361,8 @@
     "stepOf": "{current} sur {total}",
     "cancel": "Annuler",
     "resultTitle": "Tu as chanté {range}",
+    "widthSemitones": "{count} demi-ton | {count} demi-tons",
+    "widthOctaves": "{count} octave | {count} octaves",
     "widened": "On l'enregistre comme {range}, une octave entière, pour que tous les jeux puissent l'utiliser.",
     "useThis": "Garder",
     "tryAgain": "Réessayer",

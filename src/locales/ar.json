@@ -361,6 +361,8 @@
     "stepOf": "{current} من {total}",
     "cancel": "إلغاء",
     "resultTitle": "غنّيت {range}",
+    "widthSemitones": "{count} نصف نغمة",
+    "widthOctaves": "{count} أوكتاف",
     "widened": "سنحفظه باسم {range}، أوكتاف كامل، لتستطيع كل الألعاب استخدامه.",
     "useThis": "استخدم هذا",
     "tryAgain": "حاول مجددًا",

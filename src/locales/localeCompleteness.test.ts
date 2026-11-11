@@ -135,6 +135,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'glossary.octave.name',
     'glossary.cents.name',
     'voiceRanges.mezzoSopranoShort',
+    'voiceRangeFinder.widthOctaves',
   ],
   id: [
     'voiceRecorder.quality.studio',

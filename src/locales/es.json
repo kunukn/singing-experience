@@ -361,6 +361,8 @@
     "stepOf": "{current} de {total}",
     "cancel": "Cancelar",
     "resultTitle": "Cantaste {range}",
+    "widthSemitones": "{count} semitono | {count} semitonos",
+    "widthOctaves": "{count} octava | {count} octavas",
     "widened": "Lo guardaremos como {range}, una octava entera, para que todos los juegos puedan usarlo.",
     "useThis": "Usar este",
     "tryAgain": "Intentar de nuevo",

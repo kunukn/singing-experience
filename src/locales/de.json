@@ -361,6 +361,8 @@
     "stepOf": "{current} von {total}",
     "cancel": "Abbrechen",
     "resultTitle": "Du hast {range} gesungen",
+    "widthSemitones": "{count} Halbton | {count} Halbtöne",
+    "widthOctaves": "{count} Oktave | {count} Oktaven",
     "widened": "Wir speichern ihn als {range}, eine ganze Oktave, damit jedes Spiel ihn nutzen kann.",
     "useThis": "Übernehmen",
     "tryAgain": "Nochmal versuchen",

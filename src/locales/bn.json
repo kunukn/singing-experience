@@ -361,6 +361,8 @@
     "stepOf": "{total}-এর মধ্যে {current}",
     "cancel": "বাতিল",
     "resultTitle": "তুমি গেয়েছ {range}",
+    "widthSemitones": "{count} সেমিটোন",
+    "widthOctaves": "{count} অক্টেভ",
     "widened": "আমরা এটা {range} হিসেবে সেভ করব — পুরো এক অক্টেভ, যাতে সব খেলা এটা ব্যবহার করতে পারে।",
     "useThis": "এটাই রাখো",
     "tryAgain": "আবার চেষ্টা করো",

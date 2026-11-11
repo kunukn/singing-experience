@@ -22,6 +22,9 @@ function mountResult(sungRange: MidiRange, foundRange: MidiRange) {
 const widenedNote = (wrapper: ReturnType<typeof mountResult>) =>
   wrapper.find('[data-testid="voice-range-finder-widened"]')
 
+const width = (wrapper: ReturnType<typeof mountResult>) =>
+  wrapper.find('[data-testid="voice-range-width"]')
+
 describe('VoiceRangeResult', () => {
   test('should show the sung range without a widened note when saved as sung', () => {
     const range = { midiMin: C3, midiMax: C4 }
@@ -29,6 +32,22 @@ describe('VoiceRangeResult', () => {
 
     expect(wrapper.text()).toContain('You sang C3–C4')
     expect(widenedNote(wrapper).exists()).toBe(false)
+  })
+
+  test('should say how wide a range saved as sung is', () => {
+    const range = { midiMin: C3, midiMax: C4 }
+    const wrapper = mountResult(range, range)
+
+    expect(width(wrapper).text()).toBe('12 semitones · 1 octave')
+  })
+
+  test('should leave the width out when the sung range was too short', () => {
+    const wrapper = mountResult(
+      { midiMin: C3, midiMax: G3 },
+      { midiMin: C3, midiMax: C4 },
+    )
+
+    expect(width(wrapper).exists()).toBe(false)
   })
 
   test('should name the octave it will save when the sung range was too short', () => {

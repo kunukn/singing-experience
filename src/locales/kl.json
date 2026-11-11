@@ -304,6 +304,8 @@
     "stepOf": "{current} of {total}",
     "cancel": "Cancel",
     "resultTitle": "You sang {range}",
+    "widthSemitones": "{count} semitone | {count} semitones",
+    "widthOctaves": "{count} octave | {count} octaves",
     "widened": "Games need a whole octave, so we'll save it as {range}.",
     "useThis": "Use this",
     "tryAgain": "Try again",

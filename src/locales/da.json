@@ -361,6 +361,8 @@
     "stepOf": "{current} af {total}",
     "cancel": "Annuller",
     "resultTitle": "Du sang {range}",
+    "widthSemitones": "{count} halvtone | {count} halvtoner",
+    "widthOctaves": "{count} oktav | {count} oktaver",
     "widened": "Vi gemmer det som {range}, en hel oktav, så alle spil kan bruge det.",
     "useThis": "Brug det",
     "tryAgain": "Prøv igen",

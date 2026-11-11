@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { MidiRange } from '@/utils/normalizeVoiceRange'
 import { formatRange } from './voiceRangeNotes'
+import VoiceRangeWidth from './VoiceRangeWidth.vue'
 
 type Props = {
   /* What the singer sang, low to high */
@@ -37,6 +38,13 @@ const isWidened = computed(
         })
       }}
     </p>
+    <!-- Only for a range saved as sung: a shorter one is saved as a different
+         range, and the message below already calls that a whole octave -->
+    <VoiceRangeWidth
+      v-if="!isWidened"
+      :midiMin="sungRange.midiMin"
+      :midiMax="sungRange.midiMax"
+    />
     <!-- A message, not muted text: the saved range differs from what was just
          sung, and a missed hint reads as a save that didn't work -->
     <PrimeMessage

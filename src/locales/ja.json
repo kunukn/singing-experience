@@ -361,6 +361,8 @@
     "stepOf": "{current}/{total}",
     "cancel": "キャンセル",
     "resultTitle": "きみが歌ったのは {range}",
+    "widthSemitones": "{count}半音",
+    "widthOctaves": "{count}オクターブ",
     "widened": "どのゲームでも使えるように、1オクターブにして {range} で保存するよ。",
     "useThis": "これにする",
     "tryAgain": "もう一回",

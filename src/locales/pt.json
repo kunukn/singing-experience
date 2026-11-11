@@ -361,6 +361,8 @@
     "stepOf": "{current} de {total}",
     "cancel": "Cancelar",
     "resultTitle": "Você cantou {range}",
+    "widthSemitones": "{count} semitom | {count} semitons",
+    "widthOctaves": "{count} oitava | {count} oitavas",
     "widened": "Vamos salvar como {range}, uma oitava inteira, para todos os jogos poderem usar.",
     "useThis": "Usar esta",
     "tryAgain": "Tentar de novo",

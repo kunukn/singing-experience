@@ -361,6 +361,8 @@
     "stepOf": "{total} में से {current}",
     "cancel": "रद्द करें",
     "resultTitle": "तुमने {range} गाया",
+    "widthSemitones": "{count} सेमीटोन",
+    "widthOctaves": "{count} ऑक्टेव",
     "widened": "हम इसे {range} के रूप में सेव करेंगे — पूरा एक ऑक्टेव, ताकि हर खेल इसे इस्तेमाल कर सके।",
     "useThis": "यही रखो",
     "tryAgain": "फिर से कोशिश करो",

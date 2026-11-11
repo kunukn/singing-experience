@@ -220,6 +220,12 @@ describe('VoiceRangeFinderDisplay', () => {
     expect(wrapper.get('[data-testid="my-range-notes"]').text()).toContain(
       'A2–E4',
     )
+    expect(
+      wrapper
+        .get('[data-testid="my-range-card"]')
+        .get('[data-testid="voice-range-width"]')
+        .text(),
+    ).toBe('19 semitones · 1.6 octaves')
     expect(wrapper.find('[data-testid="my-range-saved"]').exists()).toBe(true)
     expect(slot().attributes('data-active')).toBe('true')
 
