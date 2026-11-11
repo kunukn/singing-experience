@@ -1,26 +1,15 @@
 import { directionalTextColor } from '@/utils/pitchColors'
+import { isNearZeroCents, NEAR_ZERO_CENTS_TEXT } from '@/utils/centsText'
 import { centsOffNearest } from './useRangeFinder'
-
-/* Cents within this of the note show as "about zero". A held note jitters
- * by a few cents in the detector, and nobody hears 2¢, so the readout would
- * only flicker -1¢, 0¢, +2¢. Display only: whether a note counts as clean is
- * still decided from the exact pitch (useRangeFinder). */
-const CENTS_DEAD_ZONE = 2
 
 /* Signed whole cents, "+12¢" / "-7¢" / "0¢": the sign says which way to move */
 export const formatSignedCents = (cents: number) =>
   cents > 0 ? `+${cents}¢` : `${cents}¢`
 
-/* Inside the dead zone the cents text reads ≈0¢: "0¢" would claim a
- * precision the wobbling line beside it disproves, and an empty label came
- * and went on every wobble, shifting the note name beside it. No "-": that
- * is the flat sign. */
-const NEAR_ZERO_CENTS_TEXT = '≈0¢'
-
+/* The dead zone shared with CentsLabel (centsText.ts), as plain text for the
+ * labels here that are built as strings */
 export const centsLabel = (cents: number) =>
-  Math.abs(cents) <= CENTS_DEAD_ZONE
-    ? NEAR_ZERO_CENTS_TEXT
-    : formatSignedCents(cents)
+  isNearZeroCents(cents) ? NEAR_ZERO_CENTS_TEXT : formatSignedCents(cents)
 
 /**
  * How far a live, fractional MIDI note sits from its nearest semitone, as the

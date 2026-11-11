@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { isNearZeroCents, NEAR_ZERO_CENTS_TEXT } from '@/utils/centsText'
 import {
   A4_FREQUENCY,
   toAccidentalGlyph,
@@ -106,11 +107,16 @@ const liveNoteLabel = computed(() =>
     : '–',
 )
 
-const liveCentsLabel = computed(() =>
-  match.medianCents.value === null
-    ? ''
-    : `${centsFormatter.value.format(Math.round(match.medianCents.value))}¢`,
-)
+/* SVG text, so it shares CentsLabel's dead zone rather than the component */
+const liveCentsLabel = computed(() => {
+  const cents = match.medianCents.value
+
+  if (cents === null) return ''
+
+  if (isNearZeroCents(cents)) return NEAR_ZERO_CENTS_TEXT
+
+  return `${centsFormatter.value.format(Math.round(cents))}¢`
+})
 
 const formattedEstimate = computed(() =>
   match.estimateHz.value === null

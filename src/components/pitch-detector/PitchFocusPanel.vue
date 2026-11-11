@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
-import { directionalTextColor } from '@/utils/pitchColors'
 import PitchFocusLevel from './PitchFocusLevel.vue'
 import PitchFocusStats from './PitchFocusStats.vue'
 import PitchHistoryChart from './PitchHistoryChart.vue'
@@ -24,8 +23,7 @@ const emit = defineEmits<{
   tonePlayed: []
 }>()
 
-const { t, locale } = useI18n()
-const { isDark } = useDarkMode()
+const { t } = useI18n()
 
 const { playTone } = useTonePlayer()
 
@@ -115,26 +113,6 @@ const targetMidi = computed<TargetValue>({
 const focusLabel = computed(() =>
   focusMidi.value === null ? null : midiToNoteLabel(focusMidi.value).label,
 )
-
-const centsFormat = computed(
-  () =>
-    new Intl.NumberFormat(locale.value, {
-      signDisplay: 'exceptZero',
-      maximumFractionDigits: 0,
-    }),
-)
-
-const centsLabel = computed(() =>
-  centsFromFocus.value === null
-    ? null
-    : `${centsFormat.value.format(centsFromFocus.value)}¢`,
-)
-
-const centsColor = computed(() =>
-  centsFromFocus.value === null
-    ? undefined
-    : directionalTextColor(centsFromFocus.value, isDark.value),
-)
 </script>
 
 <template>
@@ -158,16 +136,12 @@ const centsColor = computed(() =>
         <!-- Kept in the layout through silence (invisible, not removed) and
              7ch wide to fit "−2,000¢" — a locked tone can sit octaves away —
              so the lock button beside it holds still -->
-        <span
+        <CentsLabel
           v-if="focusLabel"
-          class="min-w-[7ch] text-xl tabular-nums"
-          :class="{ invisible: !centsLabel }"
-          dir="ltr"
-          :style="{ color: centsColor }"
+          class="min-w-[7ch] text-xl"
+          :cents="centsFromFocus"
           data-testid="focus-cents"
-        >
-          {{ centsLabel ?? '+0¢' }}
-        </span>
+        />
       </div>
 
       <ToggleIconButton

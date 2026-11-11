@@ -13,9 +13,19 @@ type Props = {
   holdProgress: number
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
 
 const { t } = useI18n()
+
+/* Green anywhere inside the allowed range, then the too low / too high
+ * colours of the arrows beside it */
+const centsColor = computed(() => {
+  const cents = props.centsFromTarget ?? 0
+
+  if (Math.abs(cents) <= MAX_CENTS_DEVIATION) return 'var(--p-green-400)'
+
+  return cents > 0 ? 'var(--p-orange-400)' : 'var(--p-blue-400)'
+})
 </script>
 
 <template>
@@ -66,21 +76,8 @@ const { t } = useI18n()
     </div>
 
     <div class="flex min-h-8 flex-col justify-end gap-1">
-      <div
-        class="flex items-center gap-1 text-xs"
-        :class="[
-          centsFromTarget === null ? 'invisible' : '',
-          Math.abs(centsFromTarget ?? 0) <= 50
-            ? 'text-(--p-green-400)'
-            : (centsFromTarget ?? 0) > 0
-              ? 'text-(--p-orange-400)'
-              : 'text-(--p-blue-400)',
-        ]"
-      >
-        <span>{{ t('generic.cents') }} </span>
-        <span class="tabular-nums">
-          {{ ((centsFromTarget ?? 0) > 0 ? '+' : '') + (centsFromTarget ?? 0) }}
-        </span>
+      <div class="flex items-center text-xs">
+        <CentsLabel :cents="centsFromTarget" :color="centsColor" />
       </div>
 
       <p v-if="targetFrequency" class="text-xs text-(--p-surface-500)">

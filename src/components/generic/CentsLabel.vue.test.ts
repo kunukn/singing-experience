@@ -17,7 +17,13 @@ describe('CentsLabel', () => {
   test.each([
     { cents: 12, expected: '+12¢' },
     { cents: -12, expected: '-12¢' },
-    { cents: 0, expected: '0¢' },
+    { cents: 3, expected: '+3¢' },
+    { cents: -3, expected: '-3¢' },
+    { cents: 2, expected: '≈0¢' },
+    { cents: 1, expected: '≈0¢' },
+    { cents: 0, expected: '≈0¢' },
+    { cents: -1, expected: '≈0¢' },
+    { cents: -2, expected: '≈0¢' },
   ])('should show $cents cents as "$expected"', ({ cents, expected }) => {
     const wrapper = mountLabel(cents)
 

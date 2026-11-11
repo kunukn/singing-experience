@@ -69,12 +69,6 @@ const noteColor = computed(() =>
     : null,
 )
 
-const centsColor = computed(() =>
-  shownNoteInfo.value && isShownClean.value
-    ? directionalTextColor(shownNoteInfo.value.cents, isDark.value)
-    : null,
-)
-
 type UkuleleString = { note: NoteName; octave: number }
 type UkuleleTuning = 'highG' | 'lowG'
 
@@ -461,13 +455,9 @@ watch(
 
         <div
           v-if="shownNoteInfo && isShownClean"
-          class="mt-1 flex items-center gap-1 text-xs tabular-nums"
-          :style="{ color: centsColor ?? undefined }"
+          class="mt-1 flex items-center text-xs"
         >
-          <span>{{ t('generic.cents') }}</span>
-          <span class="min-w-6 text-end tabular-nums">
-            {{ shownNoteInfo.cents > 0 ? '+' : '' }}{{ shownNoteInfo.cents }}
-          </span>
+          <CentsLabel :cents="shownNoteInfo.cents" />
         </div>
 
         <div

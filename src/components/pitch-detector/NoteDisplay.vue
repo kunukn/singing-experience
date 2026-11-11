@@ -66,16 +66,8 @@ const noteSlotHeight = computed(() =>
 
     <!-- The row keeps its height whether or not a note is being sung, so the
          column doesn't grow the moment the singer lands one. -->
-    <div
-      class="mt-1 flex h-4 items-center gap-1 text-xs tabular-nums"
-      :style="{ color: noteColor ?? undefined }"
-    >
-      <template v-if="noteInfo && isClean">
-        <span>{{ t('generic.cents') }}</span>
-        <span class="min-w-6 text-end tabular-nums">
-          {{ noteInfo.cents > 0 ? '+' : '' }}{{ noteInfo.cents }}
-        </span>
-      </template>
+    <div class="mt-1 flex h-4 items-center text-xs">
+      <CentsLabel :cents="noteInfo && isClean ? noteInfo.cents : null" />
     </div>
   </div>
 </template>
