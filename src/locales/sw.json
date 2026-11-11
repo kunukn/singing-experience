@@ -357,6 +357,8 @@
     "keepHolding": "Endelea kushikilia {note} ili kuihifadhi",
     "aboveLimit": "Tunahesabu noti hadi {note} tu.",
     "done": "Nimemaliza",
+    "next": "Endelea",
+    "stepOf": "{current} kati ya {total}",
     "cancel": "Ghairi",
     "resultTitle": "Uliimba {range}",
     "widened": "Tutakihifadhi kama {range}, Oktavu nzima, ili kila mchezo uweze kukitumia.",

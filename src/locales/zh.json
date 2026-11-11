@@ -357,6 +357,8 @@
     "keepHolding": "继续保持 {note} 就能存下来",
     "aboveLimit": "我们只计到 {note} 为止的音。",
     "done": "好了",
+    "next": "下一步",
+    "stepOf": "{current}/{total}",
     "cancel": "取消",
     "resultTitle": "你唱出了 {range}",
     "widened": "我们会存为 {range}，整整一个八度，这样所有游戏都能用。",

@@ -8,6 +8,8 @@ import VoiceRangeSearchStep from './VoiceRangeSearchStep.vue'
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
 
 const CUE = '[data-testid="voice-range-finder-pause-cue"]'
+const HEADING = '[data-testid="voice-range-finder-step-heading"]'
+const FINISH = '[data-testid="voice-range-finder-done"]'
 
 type Props = InstanceType<typeof VoiceRangeSearchStep>['$props']
 
@@ -125,5 +127,68 @@ describe('VoiceRangeSearchStep', () => {
       expect(wrapper.find(CUE).exists()).toBe(false)
       wrapper.unmount()
     })
+  })
+
+  describe('step heading', () => {
+    test.each([
+      { step: 'low', expected: '1 of 2 · Lowest note' },
+      { step: 'high', expected: '2 of 2 · Highest note' },
+    ] as const)(
+      'should count the $step step of a full search',
+      ({ step, expected }) => {
+        const wrapper = mountStep({ step, mode: 'both' })
+
+        expect(wrapper.get(HEADING).text()).toBe(expected)
+        wrapper.unmount()
+      },
+    )
+
+    test('should not count steps in a one-end search', () => {
+      const wrapper = mountStep({ step: 'high', mode: 'high' })
+
+      expect(wrapper.get(HEADING).text()).toBe('Highest note')
+      wrapper.unmount()
+    })
+  })
+
+  describe('finish button', () => {
+    test.each([
+      {
+        name: 'the low step of a full search with nothing sung',
+        props: { step: 'low', mode: 'both' },
+        expected: 'Skip',
+      },
+      {
+        name: 'the low step of a full search with a note saved',
+        props: { step: 'low', mode: 'both', lowestMidi: 43 },
+        expected: 'Next',
+      },
+      {
+        name: 'the high step of a full search',
+        props: { step: 'high', mode: 'both', lowestMidi: 43 },
+        expected: 'Done',
+      },
+      {
+        name: 'a one-end search',
+        props: { step: 'low', mode: 'low', lowestMidi: 43 },
+        expected: 'Done',
+      },
+    ] as const)('should say $expected on $name', ({ props, expected }) => {
+      const wrapper = mountStep(props)
+
+      expect(wrapper.get(FINISH).text()).toBe(expected)
+      wrapper.unmount()
+    })
+  })
+
+  test('should emit cancel from the close button', async () => {
+    const wrapper = mountStep({})
+
+    await wrapper
+      .get('[data-testid="voice-range-finder-cancel"]')
+      .trigger('click')
+
+    expect(wrapper.emitted('cancel')).toHaveLength(1)
+    wrapper.unmount()
   })
 })

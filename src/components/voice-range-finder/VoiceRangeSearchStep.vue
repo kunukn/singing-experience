@@ -141,9 +141,38 @@ const recordText = computed(() => {
     : t('voiceRangeFinder.highestSoFar', { note })
 })
 
-/* In a full search Done also skips: past the low step with nothing sung, or
- * out of the high step keeping just the low end. It only stays off when
- * pressing it would save nothing. */
+/* Names where the singer is. Only a full search has two steps to count. */
+const stepHeading = computed(() => {
+  const isLowStep = props.step === 'low'
+  const end = isLowStep
+    ? t('voiceRangeFinder.lowest')
+    : t('voiceRangeFinder.highest')
+
+  if (props.mode !== 'both') return end
+
+  const counter = t('voiceRangeFinder.stepOf', {
+    current: isLowStep ? 1 : 2,
+    total: 2,
+  })
+
+  return `${counter} · ${end}`
+})
+
+/* The finish button says what pressing it does: the low step of a full search
+ * leads on to the high step (Skip while nothing is sung, Next after), and
+ * everything else ends the search. */
+const finishLabel = computed(() => {
+  if (props.mode !== 'both' || props.step !== 'low')
+    return t('voiceRangeFinder.done')
+
+  return stepRecord.value === null
+    ? t('generic.skip')
+    : t('voiceRangeFinder.next')
+})
+
+/* In a full search the finish button also skips: past the low step with
+ * nothing sung, or out of the high step keeping just the low end. It only
+ * stays off when pressing it would save nothing. */
 const canFinishStep = computed(() =>
   props.mode === 'both'
     ? props.step === 'low' ||
@@ -155,11 +184,32 @@ const canFinishStep = computed(() =>
 
 <template>
   <section
-    class="flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
+    class="relative flex w-full flex-col items-center gap-3 rounded-lg border border-(--p-content-border-color) bg-(--p-content-background) p-4"
     data-testid="voice-range-finder-step"
     :data-step="step"
     :data-record-flash="isRecordFlash"
   >
+    <!-- px-8 keeps a long heading clear of the ✕ in the corner -->
+    <h3
+      class="px-8 text-center text-sm font-medium text-(--p-text-muted-color)"
+      data-testid="voice-range-finder-step-heading"
+    >
+      {{ stepHeading }}
+    </h3>
+    <!-- In the corner, apart from the step's own button: it leaves the whole
+         search, not only this step. absolute! beats PrimeVue's own
+         position: relative on buttons. -->
+    <PrimeButton
+      class="absolute! end-2 top-2"
+      icon="pi pi-times"
+      severity="secondary"
+      size="small"
+      rounded
+      text
+      :aria-label="t('voiceRangeFinder.cancel')"
+      data-testid="voice-range-finder-cancel"
+      @click="emit('cancel')"
+    />
     <p class="text-center text-sm">
       {{
         step === 'low'
@@ -253,25 +303,14 @@ const canFinishStep = computed(() =>
     >
       {{ recordText }}
     </p>
-    <div class="flex items-center gap-2">
-      <PrimeButton
-        severity="secondary"
-        size="small"
-        rounded
-        text
-        @click="emit('cancel')"
-      >
-        {{ t('voiceRangeFinder.cancel') }}
-      </PrimeButton>
-      <PrimeButton
-        size="small"
-        rounded
-        :disabled="!canFinishStep"
-        data-testid="voice-range-finder-done"
-        @click="emit('done')"
-      >
-        {{ t('voiceRangeFinder.done') }}
-      </PrimeButton>
-    </div>
+    <PrimeButton
+      size="small"
+      rounded
+      :disabled="!canFinishStep"
+      data-testid="voice-range-finder-done"
+      @click="emit('done')"
+    >
+      {{ finishLabel }}
+    </PrimeButton>
   </section>
 </template>

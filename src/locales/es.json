@@ -357,6 +357,8 @@
     "keepHolding": "Sigue manteniendo {note} para guardarla",
     "aboveLimit": "Solo contamos notas hasta {note}.",
     "done": "Listo",
+    "next": "Siguiente",
+    "stepOf": "{current} de {total}",
     "cancel": "Cancelar",
     "resultTitle": "Cantaste {range}",
     "widened": "Lo guardaremos como {range}, una octava entera, para que todos los juegos puedan usarlo.",

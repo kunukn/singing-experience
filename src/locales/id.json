@@ -357,6 +357,8 @@
     "keepHolding": "Terus tahan {note} untuk menyimpannya",
     "aboveLimit": "Kami hanya menghitung nada sampai {note}.",
     "done": "Selesai",
+    "next": "Lanjut",
+    "stepOf": "{current} dari {total}",
     "cancel": "Batal",
     "resultTitle": "Kamu menyanyikan {range}",
     "widened": "Kami simpan sebagai {range}, satu oktaf penuh, supaya semua permainan bisa memakainya.",

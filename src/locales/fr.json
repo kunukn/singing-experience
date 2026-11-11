@@ -357,6 +357,8 @@
     "keepHolding": "Continue de tenir {note} pour l'enregistrer",
     "aboveLimit": "On compte seulement les notes jusqu'à {note}.",
     "done": "Fini",
+    "next": "Suivant",
+    "stepOf": "{current} sur {total}",
     "cancel": "Annuler",
     "resultTitle": "Tu as chanté {range}",
     "widened": "On l'enregistre comme {range}, une octave entière, pour que tous les jeux puissent l'utiliser.",

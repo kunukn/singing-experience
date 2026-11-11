@@ -357,6 +357,8 @@
     "keepHolding": "واصل الثبات على {note} لحفظها",
     "aboveLimit": "نحسب النغمات حتى {note} فقط.",
     "done": "تم",
+    "next": "التالي",
+    "stepOf": "{current} من {total}",
     "cancel": "إلغاء",
     "resultTitle": "غنّيت {range}",
     "widened": "سنحفظه باسم {range}، أوكتاف كامل، لتستطيع كل الألعاب استخدامه.",

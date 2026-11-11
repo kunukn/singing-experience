@@ -357,6 +357,8 @@
     "keepHolding": "Bliv ved med at holde {note} for at gemme den",
     "aboveLimit": "Vi tæller kun toner op til {note}.",
     "done": "Færdig",
+    "next": "Næste",
+    "stepOf": "{current} af {total}",
     "cancel": "Annuller",
     "resultTitle": "Du sang {range}",
     "widened": "Vi gemmer det som {range}, en hel oktav, så alle spil kan bruge det.",

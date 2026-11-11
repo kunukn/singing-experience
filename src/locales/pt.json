@@ -357,6 +357,8 @@
     "keepHolding": "Continue segurando {note} para salvar",
     "aboveLimit": "Só contamos notas até {note}.",
     "done": "Pronto",
+    "next": "Próximo",
+    "stepOf": "{current} de {total}",
     "cancel": "Cancelar",
     "resultTitle": "Você cantou {range}",
     "widened": "Vamos salvar como {range}, uma oitava inteira, para todos os jogos poderem usar.",

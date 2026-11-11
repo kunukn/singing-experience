@@ -300,6 +300,8 @@
     "keepHolding": "Keep holding {note} to save it",
     "aboveLimit": "We only count notes up to {note}.",
     "done": "Done",
+    "next": "Next",
+    "stepOf": "{current} of {total}",
     "cancel": "Cancel",
     "resultTitle": "You sang {range}",
     "widened": "Games need a whole octave, so we'll save it as {range}.",
