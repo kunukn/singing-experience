@@ -258,6 +258,7 @@ function drawNotes(
 
     context.fillStyle = directionalCleanColor(
       note.centsFromGrid,
+      isDark.value,
       NOTE_FILL_OPACITY,
     )
     context.beginPath()

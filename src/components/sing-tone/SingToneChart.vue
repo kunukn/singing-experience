@@ -9,6 +9,7 @@ import { getGridMidis } from '@/utils/chartGrid'
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
 import type { MidiNoteLabel, NoteName } from '@/utils/noteUtils'
 import { midiToNoteLabel, noteToFrequency } from '@/utils/noteUtils'
+import { cleanPitchColor } from '@/utils/pitchColors'
 import { drawPitchLine } from '@/utils/pitchLineRenderer'
 import SingToneTargetFeedback from './SingToneTargetFeedback.vue'
 import { SING_TONE_PREVIEW_DURATION_S } from './useSingTone'
@@ -86,6 +87,7 @@ const OVERLAY_DOT_GAP_PX = 28
 const OVERLAY_EDGE_INSET_PX = 4
 
 const { colorForCents } = usePitchPreviewColor()
+const { isDark } = useDarkMode()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 const containerRef = ref<HTMLElement | null>(null)
@@ -225,7 +227,7 @@ function drawChart() {
   ctx.lineWidth = 1
   const activeMidiValue = activeMidi.value
   const gridLineGrey = withAlpha(borderColor, 0.5)
-  const gridLineGreen = 'rgba(74, 222, 128, 0.5)'
+  const gridLineGreen = cleanPitchColor(isDark.value, 0.5)
   for (const note of gridNotes.value) {
     const y = midiToY(note.midi, height)
     ctx.strokeStyle =
@@ -261,7 +263,7 @@ function drawChart() {
         -Math.PI / 2 + Math.PI * 2 * props.holdProgress,
       )
       ctx.strokeStyle = props.isSingingCorrectNote
-        ? 'rgba(74, 222, 128, 0.6)'
+        ? cleanPitchColor(isDark.value, 0.6)
         : withAlpha(textColor, 0.2)
       ctx.lineWidth = 3
       ctx.stroke()
@@ -271,21 +273,23 @@ function drawChart() {
     ctx.beginPath()
     ctx.arc(chartCenterX, dotY, TARGET_GLOW_RADIUS, 0, Math.PI * 2)
     ctx.fillStyle = props.isSingingCorrectNote
-      ? 'rgba(74, 222, 128, 0.15)'
+      ? cleanPitchColor(isDark.value, 0.15)
       : withAlpha(textColor, 0.06)
     ctx.fill()
 
     /* Solid dot */
     ctx.beginPath()
     ctx.arc(chartCenterX, dotY, TARGET_RADIUS, 0, Math.PI * 2)
-    ctx.fillStyle = props.isSingingCorrectNote ? '#4ade80' : textColor
+    ctx.fillStyle = props.isSingingCorrectNote
+      ? cleanPitchColor(isDark.value)
+      : textColor
     ctx.fill()
 
     /* Note label to the left of the dot */
     const info = midiToNoteLabel(props.targetMidi)
     ctx.font = 'bold 14px monospace'
     ctx.fillStyle = props.isSingingCorrectNote
-      ? 'rgba(74, 222, 128, 0.9)'
+      ? cleanPitchColor(isDark.value, 0.9)
       : withAlpha(textColor, 0.7)
     ctx.textAlign = 'end'
     ctx.textBaseline = 'middle'
@@ -319,6 +323,7 @@ function drawChart() {
       lineX0: chartLeft,
       lineX1: chartRight,
       dotX: chartCenterX,
+      isDark: isDark.value,
       isCorrect: props.isSingingCorrectNote,
       hideLabelWhenCorrect: true,
       centsThreshold: null,

@@ -4,6 +4,7 @@ import { resolveCssColor, withAlpha } from '@/utils/cssColor'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
   CLEAN_CENTS,
+  cleanPitchColor,
   directionalCleanColor,
   directionalCleanColorRgb,
   CLOSE_CENTS,
@@ -85,6 +86,7 @@ const LABEL_COLLISION_Y = 26
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
 const { colorForCents } = usePitchPreviewColor()
+const { isDark } = useDarkMode()
 const { t } = useI18n()
 
 /*
@@ -142,10 +144,11 @@ function centsFor(sample: PitchSample): number {
  * blue there: sharp of the lower note, then flat of the upper one. */
 const isFocusMode = () => props.focusMidi != null
 
-const trailColorRgb = (cents: number) => directionalCleanColorRgb(cents)
+const trailColorRgb = (cents: number) =>
+  directionalCleanColorRgb(cents, isDark.value)
 
 const trailColor = (cents: number, opacity: number) =>
-  directionalCleanColor(cents, opacity)
+  directionalCleanColor(cents, isDark.value, opacity)
 
 /* Cents jump by about 100 where nearest-note cents wrap (+49 → −49);
  * averaging across that would paint a green blip, so the newer point wins */
@@ -238,6 +241,7 @@ function drawPreviewIndicators(
       lineX0: geom.chartLeftX,
       lineX1: geom.chartRightX,
       dotX: (geom.chartLeftX + geom.chartRightX) / 2,
+      isDark: isDark.value,
       centsThreshold: 20,
       isRtl: props.isRtl ?? false,
       noteLabel:
@@ -269,9 +273,11 @@ function drawFocusZone(
   height: number,
   focusMidi: number,
 ) {
-  const green = resolveCssColor('--p-green-400')
-  const red = resolveCssColor('--p-red-400')
-  const blue = resolveCssColor('--p-blue-400')
+  /* The zone speaks the trail's own colours: its clean green, and the sharp
+   * and flat "off" shades at ±OFF_CENTS */
+  const green = (opacity: number) => cleanPitchColor(isDark.value, opacity)
+  const offSharp = (opacity: number) => trailColor(OFF_CENTS, opacity)
+  const offFlat = (opacity: number) => trailColor(-OFF_CENTS, opacity)
   const width = geom.chartRightX - geom.chartLeftX
   /* 100 cents per semitone */
   const cleanTop = midiToY(focusMidi + CLEAN_CENTS / 100, height)
@@ -282,11 +288,11 @@ function drawFocusZone(
   ctx.save()
   /* The On pitch band, half the Spot on alpha: OK ground rather than the
    * target. Two strips around the inner band, so it doesn't stack on it. */
-  ctx.fillStyle = withAlpha(green, 0.06)
+  ctx.fillStyle = green(0.06)
   ctx.fillRect(geom.chartLeftX, closeTop, width, cleanTop - closeTop)
   ctx.fillRect(geom.chartLeftX, cleanBottom, width, closeBottom - cleanBottom)
 
-  ctx.fillStyle = withAlpha(green, 0.12) // faint — the trail must stay on top
+  ctx.fillStyle = green(0.12) // faint — the trail must stay on top
   ctx.fillRect(geom.chartLeftX, cleanTop, width, cleanBottom - cleanTop)
 
   ctx.lineWidth = 1
@@ -295,17 +301,15 @@ function drawFocusZone(
    * singer starts pulling the focus over. Muted red: the trail's "off" hue,
    * dimmed so a guide line never reads as an alarm. */
   const guides = [
-    { cents: CLOSE_CENTS, color: withAlpha(green, 0.35) },
-    { cents: OFF_CENTS, color: withAlpha(red, 0.35) },
+    { cents: CLOSE_CENTS, color: green(0.35) },
+    { cents: OFF_CENTS, color: offSharp(0.35) },
   ]
   for (const guide of guides) {
     for (const sign of [1, -1]) {
       /* Below the note "off" is flat, so its guide is blue like a flat
        * trail: the two ±50¢ lines double as the colour key */
       ctx.strokeStyle =
-        guide.cents === OFF_CENTS && sign < 0
-          ? withAlpha(blue, 0.35)
-          : guide.color
+        guide.cents === OFF_CENTS && sign < 0 ? offFlat(0.35) : guide.color
       const y = midiToY(focusMidi + (sign * guide.cents) / 100, height)
       ctx.beginPath()
       ctx.moveTo(geom.chartLeftX, y)
@@ -344,7 +348,7 @@ function drawFocusZoneLabels(
   ctx.setLineDash([])
   ctx.font = '10px monospace'
   const mutedColor = withAlpha(resolveCssColor('--p-text-muted-color'), 0.8)
-  const offColor = withAlpha(resolveCssColor('--p-red-400'), 0.7) // matches its dimmed guide line
+  const offColor = trailColor(OFF_CENTS, 0.7) // matches its dimmed guide line
   /* Explicit left/right rather than start/end, which would follow the
    * canvas's own direction instead of the chart's */
   ctx.textAlign = isRtl ? 'right' : 'left'
@@ -619,7 +623,7 @@ function drawChart() {
   const textColor = resolveCssColor('--p-text-color')
   const contentBg = resolveCssColor('--p-content-background')
   const gridLineColor = withAlpha(borderColor, 0.5)
-  const gridLineActiveColor = 'rgba(74, 222, 128, 0.5)'
+  const gridLineActiveColor = cleanPitchColor(isDark.value, 0.5)
   const markerDotColor = textColor
   const markerLabelColor = textColor
   const labelBgColor = withAlpha(contentBg, 0.9)

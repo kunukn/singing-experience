@@ -68,14 +68,15 @@ Every cents colour in every program speaks one language, built on the tiers abov
 | Sharp (positive cents)       | **Yellow → orange → red** |
 | Flat (negative cents)        | **Blue → deep blue**      |
 
-- **Use the helpers in [pitchColors.ts](../../src/utils/pitchColors.ts); never hardcode a pitch colour.** `directionalTextColor` for text and thin lines (theme-aware), `directionalCleanColor` / `directionalCleanColorRgb` for canvas trails and bars, `usePitchPreviewColor().colorForCents` for idle "See my voice" previews.
+- **Use the helpers in [pitchColors.ts](../../src/utils/pitchColors.ts); never hardcode a pitch colour.** `directionalTextColor` for text and thin lines, `directionalCleanColor` / `directionalCleanColorRgb` for canvas trails and bars, `cleanPitchColor` for a canvas mark that means on pitch, `usePitchPreviewColor().colorForCents` for idle "See my voice" previews.
+- **One shade per theme.** Every helper takes the theme, so the note text, the trail and the highlighted grid line are the same green: the 600s on light surfaces, the 400s on dark. A readout with no cents ramp (too low / on pitch / too high) uses the CSS variables `--pitch-low`, `--pitch-clean` and `--pitch-high` from [style.css](../../src/style.css), e.g. `text-(--pitch-clean)`; never `--p-green-400` and friends.
 - **Brightness separates thin lines, not hue.** On a 1–2 px line or a small dot the eye barely tells blue from green, so the clean green stays clearly brighter than every flat blue, and flat never uses sky or cyan (as bright as the green). The 10–20¢ fade is eased, so it is past the teal mix of green and blue within a few cents.
 - **Green also means success.** A game target hit, the Tuner's in-tune ring, a "correct note" line. During a game the singer's preview line stays the neutral orange, so green there only ever means "you hit it".
 - **Other colours keep off the pitch hues.** A colour that says _who_ or _what_ rather than _how in tune_ must avoid green, blue and the yellow → red ramp. The duet high-lane is violet for this reason.
 
 The rule is guarded by the "pitch colour rule" tests in `pitchColors.test.ts`. They assert the hues and the brightness gap, not exact shades, so a retune passes as long as it keeps the rule.
 
-Why: [0003 — Pitch colours](decisions/0003-pitch-colours.md)
+Why: [0003 — Pitch colours](decisions/0003-pitch-colours.md), [0006 — One pitch palette per theme](decisions/0006-one-pitch-palette-per-theme.md)
 
 ## Copy Tone
 

@@ -4,13 +4,14 @@ Why the product rules in [design-rules.md](../design-rules.md) are what they are
 
 Records are append-only. To change a decision, add a new record and mark the old one `Superseded by NNNN`; then update the rule in `design-rules.md`.
 
-| #                                    | Decision                           | Status   |
-| ------------------------------------ | ---------------------------------- | -------- |
-| [0001](0001-pitch-accuracy-tiers.md) | Pitch accuracy tiers: 10/20/50¢    | Accepted |
-| [0002](0002-vertical-ordering.md)    | More at the top                    | Accepted |
-| [0003](0003-pitch-colours.md)        | Green clean, warm sharp, blue flat | Accepted |
-| [0004](0004-copy-tone.md)            | Child-friendly copy                | Accepted |
-| [0005](0005-button-conventions.md)   | Button conventions                 | Accepted |
+| #                                           | Decision                           | Status   |
+| ------------------------------------------- | ---------------------------------- | -------- |
+| [0001](0001-pitch-accuracy-tiers.md)        | Pitch accuracy tiers: 10/20/50¢    | Accepted |
+| [0002](0002-vertical-ordering.md)           | More at the top                    | Accepted |
+| [0003](0003-pitch-colours.md)               | Green clean, warm sharp, blue flat | Accepted |
+| [0004](0004-copy-tone.md)                   | Child-friendly copy                | Accepted |
+| [0005](0005-button-conventions.md)          | Button conventions                 | Accepted |
+| [0006](0006-one-pitch-palette-per-theme.md) | One pitch palette per theme        | Accepted |
 
 ## Template
 

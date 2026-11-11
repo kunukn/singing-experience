@@ -127,7 +127,7 @@ function targetState(key: PianoKey): 'active' | 'correct' | undefined {
  * app, which made "due" and "hit" indistinguishable. */
 const TARGET_WASH_CLASS: Record<'active' | 'correct', string> = {
   active: 'bg-(--p-blue-400)/40',
-  correct: 'bg-(--p-green-400)/60',
+  correct: 'bg-(--pitch-clean)/60',
 }
 
 /* The same switch the pitch detector's chart ribbon reads, so one toggle drives

@@ -235,7 +235,7 @@ Product and design rules that hold across every program live in [docs/product/de
 
 - **Vertical Ordering** (any dropdown or list with a magnitude): anything with a magnitude reads high at the top, low at the bottom. Pitch, seconds, BPM, counts. Guarded by `voiceRanges.test.ts`.
 - **Pitch Accuracy Thresholds** (anything judging "how in tune"): import `CLEAN_CENTS` / `CLOSE_CENTS` / `OFF_CENTS` from `pitchColors.ts`; never hardcode 10/20/50¢. Scoring tolerance is a separate concept.
-- **Pitch Colours** (any cents colour): green when clean, yellow → red when sharp, blue when flat, through the `pitchColors.ts` helpers only. Guarded by the "pitch colour rule" tests.
+- **Pitch Colours** (any cents colour): green when clean, yellow → red when sharp, blue when flat, through the `pitchColors.ts` helpers only, or the `--pitch-clean` / `--pitch-low` / `--pitch-high` variables for a readout with no ramp. One shade per theme. Guarded by the "pitch colour rule" tests.
 - **Copy Tone** (any user-facing text): friendly, plain, child-friendly. Per-language rules in `translation.instructions.md`.
 - **Button Conventions** (any `PrimeButton`): main actions are `rounded` with no icon, Start green and Stop red. Record is the exception: red with `pi pi-circle-fill`. Clear always has `pi pi-trash`. Buttons in a row share a shape.
 

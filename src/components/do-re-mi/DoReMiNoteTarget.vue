@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { directionalColor } from '@/utils/pitchColors'
 import type { ScaleStep } from './useDoReMiGame'
 import { TOO_LOW_OR_HIGH_HINT_MS } from './useDoReMiGame'
 
@@ -31,13 +32,9 @@ const { t } = useI18n()
 
 /* Green anywhere inside the allowed range, then the too low / too high
  * colours of the arrows beside it */
-const centsColor = computed(() => {
-  const cents = centsFromTarget ?? 0
-
-  if (Math.abs(cents) <= maxCentsDeviation) return 'var(--p-green-400)'
-
-  return cents > 0 ? 'var(--p-orange-400)' : 'var(--p-blue-400)'
-})
+const centsColor = computed(() =>
+  directionalColor(centsFromTarget ?? 0, maxCentsDeviation),
+)
 
 const confettiCanvas = ref<HTMLCanvasElement | null>(null)
 const { fireMicroConfetti } = useConfetti(confettiCanvas)
@@ -72,7 +69,7 @@ function onAnimationEnd() {
           class="col-start-1 row-start-1"
           :class="
             showSingLowerArrow
-              ? 'animate-bounce text-(--p-blue-400)'
+              ? 'animate-bounce text-(--pitch-low)'
               : 'invisible'
           "
         >
@@ -82,7 +79,7 @@ function onAnimationEnd() {
           class="col-start-1 row-start-1"
           :class="
             showSingHigherArrow
-              ? 'animate-bounce text-(--p-orange-400)'
+              ? 'animate-bounce text-(--pitch-high)'
               : 'invisible'
           "
         >
@@ -110,7 +107,7 @@ function onAnimationEnd() {
           class="text-5xl font-bold"
           :class="[
             isSingingCorrectNote
-              ? 'text-(--p-green-400)'
+              ? 'text-(--pitch-clean)'
               : 'text-(--p-text-color)',
             isAnimating && 'animate-note-pop',
           ]"
@@ -155,7 +152,8 @@ function onAnimationEnd() {
   }
   35% {
     transform: scale(1.3);
-    text-shadow: 0 0 12px rgba(74, 222, 128, 0.8);
+    text-shadow: 0 0 12px
+      color-mix(in srgb, var(--pitch-clean) 80%, transparent);
   }
   100% {
     transform: scale(1);

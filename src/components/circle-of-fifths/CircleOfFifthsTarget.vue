@@ -33,7 +33,7 @@ const { t } = useI18n()
     <span
       v-if="showSolfege"
       class="text-[8cqi] font-bold transition-colors"
-      :class="isCorrect ? 'text-(--p-green-400)' : 'text-(--p-text-color)'"
+      :class="isCorrect ? 'text-(--pitch-clean)' : 'text-(--p-text-color)'"
       data-testid="circle-target-solfege"
       >{{ solfege }}</span
     >
@@ -44,7 +44,7 @@ const { t } = useI18n()
           ? 'text-[3.6cqi] text-(--p-text-muted-color)'
           : [
               'text-[7cqi] font-bold transition-colors',
-              isCorrect ? 'text-(--p-green-400)' : 'text-(--p-text-color)',
+              isCorrect ? 'text-(--pitch-clean)' : 'text-(--p-text-color)',
             ]
       "
       data-testid="circle-target-note"

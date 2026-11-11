@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { MidiNoteLabel } from '@/utils/noteUtils'
+import { directionalColor } from '@/utils/pitchColors'
 import { MAX_CENTS_DEVIATION } from './useSingTone'
 
 type Props = {
@@ -19,13 +20,9 @@ const { t } = useI18n()
 
 /* Green anywhere inside the allowed range, then the too low / too high
  * colours of the arrows beside it */
-const centsColor = computed(() => {
-  const cents = props.centsFromTarget ?? 0
-
-  if (Math.abs(cents) <= MAX_CENTS_DEVIATION) return 'var(--p-green-400)'
-
-  return cents > 0 ? 'var(--p-orange-400)' : 'var(--p-blue-400)'
-})
+const centsColor = computed(() =>
+  directionalColor(props.centsFromTarget ?? 0, MAX_CENTS_DEVIATION),
+)
 </script>
 
 <template>
@@ -33,7 +30,7 @@ const centsColor = computed(() => {
     <div
       class="text-3xl font-bold"
       :class="
-        isSingingCorrectNote ? 'text-(--p-green-400)' : 'text-(--p-text-color)'
+        isSingingCorrectNote ? 'text-(--pitch-clean)' : 'text-(--p-text-color)'
       "
     >
       {{ targetNoteLabel.label }}
@@ -45,7 +42,7 @@ const centsColor = computed(() => {
           class="col-start-1 row-start-1"
           :class="
             showSingLowerArrow
-              ? 'animate-bounce text-(--p-blue-400)'
+              ? 'animate-bounce text-(--pitch-low)'
               : 'invisible'
           "
         >
@@ -55,7 +52,7 @@ const centsColor = computed(() => {
           class="col-start-1 row-start-1"
           :class="
             showSingHigherArrow
-              ? 'animate-bounce text-(--p-orange-400)'
+              ? 'animate-bounce text-(--pitch-high)'
               : 'invisible'
           "
         >

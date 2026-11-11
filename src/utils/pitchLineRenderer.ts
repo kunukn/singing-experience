@@ -13,7 +13,7 @@ import {
   frequencyToMidi,
   midiToNoteLabel,
 } from '@/utils/noteUtils'
-import { OFF_CENTS } from '@/utils/pitchColors'
+import { cleanPitchColor, OFF_CENTS } from '@/utils/pitchColors'
 
 /* The one place to change the pitch line's stroke/dot geometry. Consumed by
  * every Tier-A chart; Tier B/C intentionally keep their own (different) values. */
@@ -33,13 +33,9 @@ const LABEL_GAP_PX = 6
 /* The single shared pitch-line palette, verified identical across Tier A:
  * green line 0.3 / red|orange line 0.25, dot 0.8 (correct) | 0.7, label
  * 0.9 (correct) | 0.8. rgba literals (not --p-* vars) because each element
- * carries its own alpha — matches the existing canvas convention. */
+ * carries its own alpha — matches the existing canvas convention. The
+ * on-target green is the themed clean green, see correctColors. */
 const COLORS = {
-  correct: {
-    line: 'rgba(74, 222, 128, 0.3)',
-    dot: 'rgba(74, 222, 128, 0.8)',
-    label: 'rgba(74, 222, 128, 0.9)',
-  },
   outOfRange: {
     line: 'rgba(239, 68, 68, 0.25)',
     dot: 'rgba(239, 68, 68, 0.7)',
@@ -61,6 +57,16 @@ const COLORS = {
     label: 'rgba(167, 139, 250, 0.8)',
   },
 } as const
+
+/* On target: the app's clean green for the theme, so the line matches the
+ * trail and the cents text beside it */
+function correctColors(isDark: boolean) {
+  return {
+    line: cleanPitchColor(isDark, 0.3),
+    dot: cleanPitchColor(isDark, 0.8),
+    label: cleanPitchColor(isDark, 0.9),
+  }
+}
 
 /* Line and dot keep the in-range palette's alphas so a cents-coloured line
  * stays as faint as the orange one; the label is opaque so small text in the
@@ -129,8 +135,10 @@ export function pitchLineColors(state: {
   cents?: number
   colorForCents?: ColorForCents | null
   offChartCents?: number
+  /* Picks the on-target green's shade */
+  isDark?: boolean
 }): { line: string; dot: string; label: string } {
-  if (state.isCorrect) return COLORS.correct
+  if (state.isCorrect) return correctColors(state.isDark ?? true)
   if (
     state.isOutOfRange &&
     state.colorForCents &&
@@ -165,6 +173,8 @@ type DrawPitchLineOptions = {
   lineX1: number
   /* Dot + label anchor X. */
   dotX: number
+  /* Required, so no chart can draw the other theme's green */
+  isDark: boolean
   isCorrect?: boolean
   /* Draw this line as the duet high voice (blue) rather than the low/only one
    * (orange). See pitchLineColors. */
@@ -213,6 +223,7 @@ export function drawPitchLine(
     lineX0,
     lineX1,
     dotX,
+    isDark,
     isCorrect = false,
     isHighLane = false,
     showLabel = true,
@@ -241,6 +252,7 @@ export function drawPitchLine(
   const colors = pitchLineColors({
     isOutOfRange,
     isCorrect,
+    isDark,
     isHighLane,
     cents: frequency != null ? cents : undefined,
     colorForCents,

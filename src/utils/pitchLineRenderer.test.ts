@@ -61,6 +61,19 @@ describe('pitchLineColors', () => {
     })
   })
 
+  test("correct uses the light theme's green in light mode", () => {
+    const colors = pitchLineColors({
+      isOutOfRange: false,
+      isCorrect: true,
+      isDark: false,
+    })
+    expect(colors).toEqual({
+      line: 'rgba(22, 163, 74, 0.3)',
+      dot: 'rgba(22, 163, 74, 0.8)',
+      label: 'rgba(22, 163, 74, 0.9)',
+    })
+  })
+
   test('out-of-range (not correct) → red', () => {
     const colors = pitchLineColors({ isOutOfRange: true })
     expect(colors).toEqual({
@@ -153,6 +166,7 @@ describe('drawPitchLine - cents colour', () => {
       lineX0: 0,
       lineX1: 100,
       dotX: 50,
+      isDark: true,
       isHighLane: options.isHighLane,
       colorForCents: options.colorForCents,
     })
@@ -188,6 +202,7 @@ describe('drawPitchLine - cents colour', () => {
         lineX0: 0,
         lineX1: 100,
         dotX: 50,
+        isDark: true,
         colorForCents: (c, opacity) => `cents ${c} @ ${opacity}`,
         colorOffChartByDirection: true,
       })
@@ -207,6 +222,7 @@ describe('drawPitchLine - cents colour', () => {
       lineX0: 0,
       lineX1: 100,
       dotX: 50,
+      isDark: true,
       colorForCents,
     })
 

@@ -3,6 +3,7 @@ import { resolveCssColor, withAlpha } from '@/utils/cssColor'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
+  cleanPitchColor,
   directionalCleanColor,
   directionalCleanColorRgb,
 } from '@/utils/pitchColors'
@@ -82,6 +83,7 @@ const SUSTAINED_THRESHOLD_MS = 200
 const SUSTAINED_PASSING_THRESHOLD_MS = 150
 
 const { colorForCents } = usePitchPreviewColor()
+const { isDark } = useDarkMode()
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
@@ -201,8 +203,8 @@ function drawTargets(
     let fillColor: string
     let strokeColor: string
     if (target.status === 'hit') {
-      fillColor = 'rgba(74, 222, 128, 0.85)'
-      strokeColor = 'rgba(34, 197, 94, 1)'
+      fillColor = cleanPitchColor(isDark.value, 0.85)
+      strokeColor = cleanPitchColor(isDark.value)
     } else if (target.status === 'missed') {
       fillColor = 'rgba(239, 68, 68, 0.35)'
       strokeColor = 'rgba(239, 68, 68, 0.6)'
@@ -295,6 +297,7 @@ function drawPreviewIndicator(
    * orange, so only the green "hit" says a note counted. */
   const baseColors = pitchLineColors({
     isOutOfRange,
+    isDark: isDark.value,
     /* 100 = cents per semitone, measured from the named note */
     cents:
       props.previewFrequency != null
@@ -310,8 +313,8 @@ function drawPreviewIndicator(
   if (isOutOfRange) {
     dotColor = baseColors.dot
   } else if (isGameActive && props.isClean) {
-    /* Green matches the PrimeVue --p-green-400 family used for hit targets */
-    dotColor = 'rgba(74, 222, 128, 0.9)'
+    /* The clean green of the hit targets */
+    dotColor = cleanPitchColor(isDark.value, 0.9)
   } else if (isGameActive) {
     dotColor = 'rgba(251, 146, 60, 0.9)'
   } else {
@@ -397,7 +400,7 @@ function drawChart() {
   const textColor = resolveCssColor('--p-text-color')
   const contentBg = resolveCssColor('--p-content-background')
   const gridLineColor = withAlpha(borderColor, 0.5)
-  const gridLineActiveColor = 'rgba(74, 222, 128, 0.5)'
+  const gridLineActiveColor = cleanPitchColor(isDark.value, 0.5)
   const markerDotColor = textColor
   const markerLabelColor = textColor
   const labelBgColor = withAlpha(contentBg, 0.9)
@@ -561,7 +564,7 @@ function drawChart() {
           Math.abs(p1.cents - p2.cents) > 50
             ? p2.cents
             : (p1.cents + p2.cents) / 2
-        const [r, g, b] = directionalCleanColorRgb(avgCents)
+        const [r, g, b] = directionalCleanColorRgb(avgCents, isDark.value)
 
         ctx.beginPath()
         ctx.moveTo(p1.x, p1.y)
@@ -573,7 +576,11 @@ function drawChart() {
       ctx.beginPath()
       ctx.moveTo(points[0].x, points[0].y)
       ctx.lineTo(points[0].x, points[0].y)
-      ctx.strokeStyle = directionalCleanColor(points[0].cents, 0.7)
+      ctx.strokeStyle = directionalCleanColor(
+        points[0].cents,
+        isDark.value,
+        0.7,
+      )
       ctx.stroke()
     }
   }
@@ -591,7 +598,7 @@ function drawChart() {
     ctx.arc(x, y, sample.isClean ? 2 : 1.5, 0, Math.PI * 2)
     // Unclean samples rendered at 60% opacity to dim them relative to clean ones
     ctx.fillStyle = sample.isClean
-      ? directionalCleanColor(sample.cents, opacity)
+      ? directionalCleanColor(sample.cents, isDark.value, opacity)
       : `rgba(250, 204, 21, ${opacity * 0.6})`
     ctx.fill()
   }
@@ -663,7 +670,7 @@ function drawChart() {
   if (latestSample && latestSample.isClean) {
     const headX = timeToX(latestSample.timestamp, now, geom)
     const headY = midiToY(latestSample.midiNote, height)
-    const headColor = directionalCleanColor(latestSample.cents, 1)
+    const headColor = directionalCleanColor(latestSample.cents, isDark.value)
 
     // Head dot: outer glow ring (7 px) + solid color center (5 px)
     ctx.beginPath()

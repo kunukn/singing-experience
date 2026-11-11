@@ -1,13 +1,18 @@
 import { describe, expect, test } from 'vitest'
 import {
   CLEAN_CENTS,
+  cleanPitchColor,
   CLOSE_CENTS,
   colorAtMidi,
   colorRgbAtMidi,
   directionalCleanColor,
   directionalCleanColorRgb,
+  directionalColor,
   directionalTextColor,
   OFF_CENTS,
+  PITCH_CLEAN_COLOR,
+  PITCH_HIGH_COLOR,
+  PITCH_LOW_COLOR,
   textColorAtMidi,
   voiceTypeColor,
 } from './pitchColors'
@@ -88,12 +93,11 @@ const luminance = (rgb: [number, number, number]) => {
 /* Asserts the rule in design-rules.md "Pitch Colours" rather than pinning
  * today's shades, so a deliberate retune only fails if it breaks the rule */
 describe('pitch colour rule', () => {
-  const textColorsFor = (cents: number) =>
-    [false, true].map((isDark) => parseRgb(directionalTextColor(cents, isDark)))
-  const allColorsFor = (cents: number) => [
-    ...textColorsFor(cents),
-    directionalCleanColorRgb(cents),
-  ]
+  const allColorsFor = (cents: number) =>
+    [false, true].flatMap((isDark) => [
+      parseRgb(directionalTextColor(cents, isDark)),
+      directionalCleanColorRgb(cents, isDark),
+    ])
 
   test('should be green within CLEAN_CENTS, on both sides', () => {
     for (const cents of [-CLEAN_CENTS, -1, 0, 1, CLEAN_CENTS])
@@ -184,9 +188,35 @@ describe('directionalTextColor', () => {
 
 describe('directionalCleanColor', () => {
   test('should give the rgba string the requested opacity', () => {
-    expect(directionalCleanColor(0, 0.5)).toMatch(
+    expect(directionalCleanColor(0, true, 0.5)).toMatch(
       /^rgba\(\d+, \d+, \d+, 0\.5\)$/,
     )
+  })
+
+  /* A trail and the cents text beside it must be the same colour */
+  test.each([false, true])(
+    'should match the text colour when isDark is %s',
+    (isDark) => {
+      for (const cents of [-OFF_CENTS, -CLOSE_CENTS, 0, CLOSE_CENTS, OFF_CENTS])
+        expect(directionalCleanColorRgb(cents, isDark)).toEqual(
+          parseRgb(directionalTextColor(cents, isDark)),
+        )
+    },
+  )
+
+  test('should use a different shade per theme', () => {
+    expect(cleanPitchColor(true)).not.toBe(cleanPitchColor(false))
+  })
+})
+
+describe('directionalColor', () => {
+  test.each([
+    { cents: 0, expected: PITCH_CLEAN_COLOR },
+    { cents: OFF_CENTS, expected: PITCH_CLEAN_COLOR },
+    { cents: OFF_CENTS + 1, expected: PITCH_HIGH_COLOR },
+    { cents: -OFF_CENTS - 1, expected: PITCH_LOW_COLOR },
+  ])('returns $expected at $cents cents', ({ cents, expected }) => {
+    expect(directionalColor(cents)).toBe(expected)
   })
 })
 

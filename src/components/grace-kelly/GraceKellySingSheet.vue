@@ -598,7 +598,7 @@ defineExpose({ scrollToSyllable })
       class="pointer-events-none absolute inset-x-2 h-0 border-t-3 transition-colors duration-100"
       :class="
         isOnPitch
-          ? 'border-solid border-(--p-green-400)'
+          ? 'border-solid border-(--pitch-clean)'
           : 'border-dashed border-(--p-orange-400)/50'
       "
       :style="{ top: `${pitchLineTop}px`, ...pitchLineCentsStyle?.line }"
@@ -616,7 +616,7 @@ defineExpose({ scrollToSyllable })
     >
       <span
         class="rounded bg-(--p-content-background) px-0.5 text-xs leading-none font-semibold tabular-nums transition-colors duration-100"
-        :class="isOnPitch ? 'text-(--p-green-400)' : 'text-(--p-orange-400)'"
+        :class="isOnPitch ? 'text-(--pitch-clean)' : 'text-(--p-orange-400)'"
         :style="pitchLineCentsStyle?.chip"
       >
         {{ sungToneText }}
@@ -634,7 +634,7 @@ defineExpose({ scrollToSyllable })
 /* Result-state correctness feedback — noteheads the singer got right. */
 :deep(.note-correct path),
 :deep(.note-correct rect) {
-  fill: var(--p-green-400);
+  fill: var(--pitch-clean);
 }
 
 :deep(.syllable-active) {

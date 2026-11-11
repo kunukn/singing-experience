@@ -95,6 +95,22 @@
    */
   :root {
     --app-control-height: 2.1875rem; /* 35px */
+
+    /*
+     * The three fixed pitch colours, for a readout with no cents ramp: on
+     * pitch, too low, too high (design-rules.md "Pitch Colours"). The same
+     * shades as the ramp's stops in pitchColors.ts, per theme: darker on
+     * light surfaces, brighter on dark. Retune both together.
+     */
+    --pitch-clean: var(--p-green-600);
+    --pitch-low: var(--p-blue-600);
+    --pitch-high: var(--p-orange-600);
+  }
+
+  .p-dark {
+    --pitch-clean: var(--p-green-400);
+    --pitch-low: var(--p-blue-400);
+    --pitch-high: var(--p-orange-400);
   }
 
   .p-button,

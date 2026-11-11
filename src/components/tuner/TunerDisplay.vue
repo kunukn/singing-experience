@@ -19,6 +19,7 @@ import {
   CLEAN_CENTS,
   directionalCleanColor,
   directionalTextColor,
+  PITCH_CLEAN_COLOR,
 } from '@/utils/pitchColors'
 import {
   findNearestString,
@@ -242,8 +243,8 @@ const guidedStringRingColor = computed(() => {
   if (!guidedString.value) return undefined
 
   return isGuidedStringAlmost.value
-    ? 'var(--p-green-300)'
-    : directionalCleanColor(guidedString.value.cents)
+    ? PITCH_CLEAN_COLOR
+    : directionalCleanColor(guidedString.value.cents, isDark.value)
 })
 
 const guidedStringTextColor = computed(() =>
@@ -623,8 +624,8 @@ watch(
 
 .string-highlighted {
   box-shadow:
-    0 0 0 3px var(--p-green-400),
-    0 0 12px 4px var(--p-green-500);
+    0 0 0 3px var(--pitch-clean),
+    0 0 12px 4px var(--pitch-clean);
   transition: box-shadow 0.15s ease;
 }
 

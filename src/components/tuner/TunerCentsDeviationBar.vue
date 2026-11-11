@@ -30,12 +30,14 @@ const props = withDefaults(defineProps<Props>(), {
   height: 'min-h-30 max-h-60',
 })
 
+const { isDark } = useDarkMode()
+
 const indicatorColor = computed(() => {
   if (props.cents === null) return undefined
 
   return props.colorMode === 'directional'
     ? directionalColor(props.cents, props.threshold)
-    : directionalCleanColor(props.cents)
+    : directionalCleanColor(props.cents, isDark.value)
 })
 
 function toTopPercent(cents: number) {
@@ -74,7 +76,7 @@ const offMarkerTops = computed(() =>
       <div
         v-for="top in offMarkerTops"
         :key="top"
-        class="absolute inset-s-0 w-full border-t border-dotted border-(--p-green-500)"
+        class="absolute inset-s-0 w-full border-t border-dotted border-(--pitch-clean)"
         :style="{ top }"
       />
       <!-- Deviation indicator — 50ms glide smooths detector jitter without trailing the cents readout -->

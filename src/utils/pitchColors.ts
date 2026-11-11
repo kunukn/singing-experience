@@ -155,46 +155,63 @@ function lerpThreeStop(
  * pitchColors.test.ts.
  */
 
-/* Canvas palette — trail splines, dots and bars, on light and dark charts */
-const CLEAN_GREEN: Rgb = [34, 197, 94] // green-500 — clean
-const CLOSE_YELLOW: Rgb = [250, 204, 21] // yellow-400 — slightly sharp
-const OFF_RED: Rgb = [239, 68, 68] // red-500 — clearly sharp
-const CLOSE_FLAT: Rgb = [59, 130, 246] // blue-500 — slightly flat
-const OFF_FLAT: Rgb = [29, 78, 216] // blue-700 — clearly flat
+/* Dark mode — brighter shades for dark surfaces */
+const CLEAN_GREEN_DARK: Rgb = [74, 222, 128] // green-400
+const CLOSE_YELLOW_DARK: Rgb = [253, 224, 71] // yellow-300
+const OFF_RED_DARK: Rgb = [248, 113, 113] // red-400
+const CLOSE_FLAT_DARK: Rgb = [96, 165, 250] // blue-400
+const OFF_FLAT_DARK: Rgb = [59, 130, 246] // blue-500
 
-/* Text palette (dark mode) — brighter shades for dark surfaces */
-const CLEAN_TEXT_GREEN_DARK: Rgb = [74, 222, 128] // green-400
-const CLOSE_TEXT_YELLOW_DARK: Rgb = [253, 224, 71] // yellow-300
-const OFF_TEXT_RED_DARK: Rgb = [248, 113, 113] // red-400
-const CLOSE_TEXT_FLAT_DARK: Rgb = [96, 165, 250] // blue-400
-const OFF_TEXT_FLAT_DARK: Rgb = [59, 130, 246] // blue-500
+/* Light mode — darker shades for light surfaces */
+const CLEAN_GREEN_LIGHT: Rgb = [22, 163, 74] // green-600
+const CLOSE_YELLOW_LIGHT: Rgb = [202, 138, 4] // yellow-600
+const OFF_RED_LIGHT: Rgb = [220, 38, 38] // red-600
+const CLOSE_FLAT_LIGHT: Rgb = [37, 99, 235] // blue-600
+const OFF_FLAT_LIGHT: Rgb = [30, 64, 175] // blue-800
 
-/* Text palette (light mode) — darker shades for light surfaces */
-const CLEAN_TEXT_GREEN_LIGHT: Rgb = [22, 163, 74] // green-600
-const CLOSE_TEXT_YELLOW_LIGHT: Rgb = [202, 138, 4] // yellow-600
-const OFF_TEXT_RED_LIGHT: Rgb = [220, 38, 38] // red-600
-const CLOSE_TEXT_FLAT_LIGHT: Rgb = [37, 99, 235] // blue-600
-const OFF_TEXT_FLAT_LIGHT: Rgb = [30, 64, 175] // blue-800
-
-/* Trail colour: green when clean, green → yellow → red when sharp, green →
- * blue → deep blue when flat. See directionalTextColor for why. */
-export function directionalCleanColorRgb(cents: number): Rgb {
+/*
+ * One palette per theme for everything that shows cents: text, thin lines,
+ * trails, dots and bars. The note beside a chart and the trail on it are then
+ * the same green, in light mode as in dark.
+ */
+function pitchRgb(cents: number, isDark: boolean): Rgb {
   const isFlat = cents < 0
+  const stops = isDark
+    ? {
+        clean: CLEAN_GREEN_DARK,
+        close: isFlat ? CLOSE_FLAT_DARK : CLOSE_YELLOW_DARK,
+        off: isFlat ? OFF_FLAT_DARK : OFF_RED_DARK,
+      }
+    : {
+        clean: CLEAN_GREEN_LIGHT,
+        close: isFlat ? CLOSE_FLAT_LIGHT : CLOSE_YELLOW_LIGHT,
+        off: isFlat ? OFF_FLAT_LIGHT : OFF_RED_LIGHT,
+      }
 
-  return lerpThreeStop(
-    {
-      clean: CLEAN_GREEN,
-      close: isFlat ? CLOSE_FLAT : CLOSE_YELLOW,
-      off: isFlat ? OFF_FLAT : OFF_RED,
-    },
-    cents,
-  )
+  return lerpThreeStop(stops, cents)
 }
 
-export function directionalCleanColor(cents: number, opacity = 1): string {
-  const [r, g, b] = directionalCleanColorRgb(cents)
+/* Trail colour: green when clean, green → yellow → red when sharp, green →
+ * blue → deep blue when flat. See directionalTextColor for why. The theme is
+ * required, so a caller cannot fall back to the wrong theme's shades. */
+export function directionalCleanColorRgb(cents: number, isDark: boolean): Rgb {
+  return pitchRgb(cents, isDark)
+}
+
+export function directionalCleanColor(
+  cents: number,
+  isDark: boolean,
+  opacity = 1,
+): string {
+  const [r, g, b] = pitchRgb(cents, isDark)
 
   return `rgba(${r}, ${g}, ${b}, ${opacity})`
+}
+
+/* The clean green on its own, for canvas marks that mean "on pitch" or "you
+ * hit it": a highlighted grid line, a hit target, a correct-note line */
+export function cleanPitchColor(isDark: boolean, opacity = 1): string {
+  return directionalCleanColor(0, isDark, opacity)
 }
 
 /*
@@ -206,33 +223,24 @@ export function directionalCleanColor(cents: number, opacity = 1): string {
  * colour-blind singers tell apart best.
  */
 export function directionalTextColor(cents: number, isDark = true): string {
-  const isFlat = cents < 0
-  const stops = isDark
-    ? {
-        clean: CLEAN_TEXT_GREEN_DARK,
-        close: isFlat ? CLOSE_TEXT_FLAT_DARK : CLOSE_TEXT_YELLOW_DARK,
-        off: isFlat ? OFF_TEXT_FLAT_DARK : OFF_TEXT_RED_DARK,
-      }
-    : {
-        clean: CLEAN_TEXT_GREEN_LIGHT,
-        close: isFlat ? CLOSE_TEXT_FLAT_LIGHT : CLOSE_TEXT_YELLOW_LIGHT,
-        off: isFlat ? OFF_TEXT_FLAT_LIGHT : OFF_TEXT_RED_LIGHT,
-      }
-  const [r, g, b] = lerpThreeStop(stops, cents)
+  const [r, g, b] = pitchRgb(cents, isDark)
 
   return `rgb(${r}, ${g}, ${b})`
 }
 
-const DIRECTIONAL_ORANGE = '#fb923c' // too high
-const DIRECTIONAL_BLUE = '#3b82f6' // too low — blue-500, the flat ramp's
-const DIRECTIONAL_GREEN = '#22c55e' // in tune — green-500, the clean green
+/* The fixed pitch colours, themed in style.css: usable in a style binding or
+ * a class (`text-(--pitch-clean)`), not on a canvas */
+export const PITCH_CLEAN_COLOR = 'var(--pitch-clean)'
+export const PITCH_LOW_COLOR = 'var(--pitch-low)'
+export const PITCH_HIGH_COLOR = 'var(--pitch-high)'
 
 /*
  * Returns a directional color based on cents deviation: green when within
  * threshold, orange when too high, blue when too low. For game targets, where
  * green means "accepted" (a success colour, not a cents colour).
  */
-export function directionalColor(cents: number, threshold = 50): string {
-  if (Math.abs(cents) <= threshold) return DIRECTIONAL_GREEN
-  return cents > 0 ? DIRECTIONAL_ORANGE : DIRECTIONAL_BLUE
+export function directionalColor(cents: number, threshold = OFF_CENTS): string {
+  if (Math.abs(cents) <= threshold) return PITCH_CLEAN_COLOR
+
+  return cents > 0 ? PITCH_HIGH_COLOR : PITCH_LOW_COLOR
 }
