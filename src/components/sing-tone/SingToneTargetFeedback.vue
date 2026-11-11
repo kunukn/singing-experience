@@ -42,7 +42,7 @@ const centsColor = computed(() =>
           class="col-start-1 row-start-1"
           :class="
             showSingLowerArrow
-              ? 'animate-bounce text-(--pitch-low)'
+              ? 'animate-bounce text-(--pitch-high)'
               : 'invisible'
           "
         >
@@ -52,7 +52,7 @@ const centsColor = computed(() =>
           class="col-start-1 row-start-1"
           :class="
             showSingHigherArrow
-              ? 'animate-bounce text-(--pitch-high)'
+              ? 'animate-bounce text-(--pitch-low)'
               : 'invisible'
           "
         >
