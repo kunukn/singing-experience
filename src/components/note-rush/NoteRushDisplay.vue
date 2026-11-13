@@ -335,6 +335,9 @@ onUnmounted(() => {
     class="flex flex-1 flex-col items-center gap-4"
     data-testid="note-rush-display"
   >
+    <h1 class="flex items-center gap-2 text-2xl font-semibold">
+      <span>{{ t('home.programs.noteRush.name') }}</span>
+    </h1>
     <div class="flex min-h-40 w-full flex-col items-center justify-center">
       <NoteRushIdlePanel
         v-if="gameState === 'idle'"
