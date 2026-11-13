@@ -389,6 +389,7 @@ onUnmounted(() => {
       :highlightedMidi="highlightedMidi"
       :targets="targets"
       :simplifyChart="gameState !== 'idle'"
+      :isReviewable="gameState === 'complete'"
       @tonePlayed="handleTonePlayed"
     />
   </div>

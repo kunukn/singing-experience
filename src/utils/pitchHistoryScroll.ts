@@ -1,5 +1,3 @@
-import { HISTORY_WINDOW_MS } from './pitchConstants'
-
 /*
  * Maps the pitch chart's native horizontal scroller to a time offset: how many
  * ms back from the end of the take the chart's live edge sits.
@@ -55,15 +53,17 @@ export function offsetMsToScrollLeft(
 /*
  * Where the position thumb sits along the chart, as fractions of its width.
  * `startFraction` is measured from the inline-start edge — the oldest side
- * in both directions, since the chart mirrors in RTL.
+ * in both directions, since the chart mirrors in RTL. `windowMs` is how much
+ * time the chart shows at once.
  */
 export function getScrollThumb(
   offsetMs: number,
   scrollableMs: number,
+  windowMs: number,
 ): { sizeFraction: number; startFraction: number } | null {
   if (scrollableMs <= 0) return null
 
-  const sizeFraction = HISTORY_WINDOW_MS / (HISTORY_WINDOW_MS + scrollableMs)
+  const sizeFraction = windowMs / (windowMs + scrollableMs)
   const progress = 1 - clampOffsetMs(offsetMs, scrollableMs) / scrollableMs
 
   return { sizeFraction, startFraction: progress * (1 - sizeFraction) }

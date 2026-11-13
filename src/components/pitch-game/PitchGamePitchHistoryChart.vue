@@ -8,6 +8,7 @@ import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
 import { getGridMidis } from '@/utils/chartGrid'
 import type { NoteInfo, NoteName } from '@/utils/noteUtils'
 import { midiToNoteLabel, noteToFrequency } from '@/utils/noteUtils'
+import { HISTORY_WINDOW_MS } from './pitchConstants'
 import PitchGamePitchHistoryCanvas from './PitchGamePitchHistoryCanvas.vue'
 import type { GameTarget } from './usePitchGame'
 
@@ -24,6 +25,8 @@ type Props = {
   previewFrequency?: number | null
   targets?: GameTarget[]
   simplifyChart?: boolean
+  /* A finished round is on the chart, so it can be scrolled back through */
+  isReviewable?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -36,8 +39,10 @@ const props = withDefaults(defineProps<Props>(), {
   previewFrequency: null,
   targets: () => [],
   simplifyChart: false,
+  isReviewable: false,
 })
 
+const { t } = useI18n()
 const isRtl = useIsRtl()
 
 type GridNote = {
@@ -148,6 +153,26 @@ onUnmounted(() => {
   resizeObserver = null
 })
 
+/* Scrolling back through a finished round to see every target, hit or
+ * missed — see useHistoryScroller */
+const {
+  scrollerRef,
+  viewOffsetMs,
+  isScrollable,
+  scrollSpacerWidthPx,
+  scrollThumb,
+  handleTimeScaleChange,
+  handleScroll,
+  handlePointerDown,
+  handlePointerMove,
+  handlePointerEnd,
+} = useHistoryScroller({
+  containerRef,
+  isRtl,
+  isEnabled: () => props.isReviewable,
+  windowMs: HISTORY_WINDOW_MS,
+})
+
 const gridNoteCount = computed(() => gridNotes.value.length)
 
 function getSamples() {
@@ -183,7 +208,44 @@ defineExpose({ gridNoteCount, getSamples, getTargetViewportOrigin })
       :targets="props.targets"
       :simplifyChart="props.simplifyChart"
       :isRtl="isRtl"
+      :viewOffsetMs="viewOffsetMs"
       @markerClick="handleMarkerClick"
+      @timeScaleChange="handleTimeScaleChange"
+    />
+    <!-- Native scroller over the canvas once a finished round is longer than
+         the window. Invisible, and under the note labels so those stay
+         clickable. Always LTR: the RTL mapping lives in pitchHistoryScroll.
+         touch-manipulation, not pan-x, so a vertical swipe on the chart still
+         scrolls the page. -->
+    <div
+      v-if="isScrollable"
+      ref="scrollerRef"
+      class="absolute inset-0 cursor-grab touch-manipulation [scrollbar-width:none] overflow-x-auto overflow-y-hidden overscroll-x-contain rounded-lg focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-(--p-primary-color) active:cursor-grabbing [&::-webkit-scrollbar]:hidden"
+      dir="ltr"
+      role="region"
+      tabindex="0"
+      :aria-label="t('generic.scrollGame')"
+      data-testid="pitch-game-history-scroller"
+      :data-view-offset-ms="Math.round(viewOffsetMs)"
+      @scroll="handleScroll"
+      @pointerdown="handlePointerDown"
+      @pointermove="handlePointerMove"
+      @pointerup="handlePointerEnd"
+      @pointercancel="handlePointerEnd"
+    >
+      <div class="h-full" :style="{ width: `${scrollSpacerWidthPx}px` }" />
+    </div>
+    <!-- Where the view sits in the round — shows there is more to scroll to,
+         since the scroller itself is invisible -->
+    <div
+      v-if="scrollThumb"
+      class="pointer-events-none absolute bottom-1 h-1 rounded-full bg-(--p-surface-400)/70 dark:bg-(--p-surface-500)/70"
+      :style="{
+        insetInlineStart: `${scrollThumb.startFraction * 100}%`,
+        width: `${scrollThumb.sizeFraction * 100}%`,
+      }"
+      aria-hidden="true"
+      data-testid="pitch-game-history-scroll-thumb"
     />
     <button
       v-for="pos in labelPositions"

@@ -27,7 +27,7 @@ import {
   type PitchPreviewLane,
 } from './pitchLanes'
 import { HISTORY_WINDOW_MS, PAUSE_GAP_MS } from './pitchConstants'
-import type { PitchHistoryTimeScale } from './pitchHistoryScroll'
+import type { PitchHistoryTimeScale } from '@/utils/pitchHistoryScroll'
 
 type Props = {
   /* One entry per singing voice — one 'low' lane in single-voice mode, both

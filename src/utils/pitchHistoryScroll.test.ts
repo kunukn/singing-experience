@@ -46,15 +46,15 @@ describe('pitchHistoryScroll', () => {
 
   test('sizes the thumb to the visible share of the take', () => {
     /* 5 s visible of 8 s total */
-    expect(getScrollThumb(0, 3000)?.sizeFraction).toBeCloseTo(5 / 8)
+    expect(getScrollThumb(0, 3000, 5000)?.sizeFraction).toBeCloseTo(5 / 8)
   })
 
   test('moves the thumb from the oldest edge to the newest', () => {
-    expect(getScrollThumb(3000, 3000)?.startFraction).toBe(0)
-    expect(getScrollThumb(0, 3000)?.startFraction).toBeCloseTo(3 / 8)
+    expect(getScrollThumb(3000, 3000, 5000)?.startFraction).toBe(0)
+    expect(getScrollThumb(0, 3000, 5000)?.startFraction).toBeCloseTo(3 / 8)
   })
 
   test('hides the thumb when there is nothing to scroll', () => {
-    expect(getScrollThumb(0, 0)).toBeNull()
+    expect(getScrollThumb(0, 0, 5000)).toBeNull()
   })
 })

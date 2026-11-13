@@ -15,6 +15,7 @@ type Props = {
   highlightedMidi?: number | null
   targets?: GameTarget[]
   simplifyChart?: boolean
+  isReviewable?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -26,6 +27,7 @@ const props = withDefaults(defineProps<Props>(), {
   highlightedMidi: null,
   targets: () => [],
   simplifyChart: false,
+  isReviewable: false,
 })
 
 const emit = defineEmits<{
@@ -58,6 +60,7 @@ defineExpose({ getTargetViewportOrigin })
       :highlightedMidi="props.highlightedMidi"
       :targets="props.targets"
       :simplifyChart="props.simplifyChart"
+      :isReviewable="props.isReviewable"
       @tonePlayed="emit('tonePlayed')"
     />
   </div>

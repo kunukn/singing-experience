@@ -7,6 +7,7 @@ import {
   directionalCleanColor,
   directionalCleanColorRgb,
 } from '@/utils/pitchColors'
+import type { PitchHistoryTimeScale } from '@/utils/pitchHistoryScroll'
 import {
   clampPitchY,
   pitchLineColors,
@@ -19,6 +20,7 @@ import {
   HISTORY_WINDOW_MS,
   PAUSE_GAP_MS,
 } from './pitchConstants'
+import { getReviewScrollableMs } from './pitchGameReview'
 import {
   HIT_TOLERANCE_CENTS,
   LEAD_IN_MS,
@@ -40,6 +42,8 @@ type Props = {
   isRtl?: boolean
   targets?: GameTarget[]
   simplifyChart?: boolean
+  /* How far back from the end of a finished round the chart is scrolled, in ms */
+  viewOffsetMs?: number
 }
 
 export type PitchSample = {
@@ -68,6 +72,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<{
   markerClick: [midiNote: number]
+  timeScaleChange: [timeScale: PitchHistoryTimeScale]
 }>()
 
 const LABEL_WIDTH = 40
@@ -93,6 +98,11 @@ const markerHitAreas: MarkerHitArea[] = []
 let animationFrameId: number | null = null
 
 let pausedAt: number | null = null
+
+/* Only a frozen chart can be scrolled — a live one always shows the present */
+function getViewOffsetMs(): number {
+  return pausedAt !== null ? (props.viewOffsetMs ?? 0) : 0
+}
 
 let sustainedMidi: number | null = null
 let sustainedStartTime = 0
@@ -243,6 +253,9 @@ function drawPreviewIndicator(
   now: number,
 ) {
   if (props.previewMidi == null || props.replayProgress != null) return
+  /* The frozen dot is the last pitch sung, so it belongs to the round's final
+   * moment only — scrolled back, it would sit among targets it never met. */
+  if (getViewOffsetMs() > 0) return
 
   /* Fractional MIDI from Hz for sub-semitone positioning (game-snap below
    * may override). */
@@ -374,6 +387,26 @@ function drawPreviewIndicator(
   }
 }
 
+let reportedTimeScale: PitchHistoryTimeScale = { pxPerMs: 0, scrollableMs: 0 }
+
+/*
+ * Tells the chart how far a finished round can be scrolled back, and at what
+ * scale. Reported from the draw, which owns the geometry, and only on change —
+ * the render loop calls this every frame.
+ */
+function reportTimeScale(geom: ChartGeometry) {
+  const pxPerMs = Math.abs(geom.labelAxisX - geom.nowEdgeX) / HISTORY_WINDOW_MS
+  const scrollableMs = getReviewScrollableMs(props.targets ?? [], pausedAt)
+  if (
+    pxPerMs === reportedTimeScale.pxPerMs &&
+    scrollableMs === reportedTimeScale.scrollableMs
+  )
+    return
+
+  reportedTimeScale = { pxPerMs, scrollableMs }
+  emit('timeScaleChange', reportedTimeScale)
+}
+
 function drawChart() {
   const canvas = canvasRef.value
   if (!canvas) return
@@ -407,6 +440,7 @@ function drawChart() {
   const headGlowColor = withAlpha(textColor, 0.25)
 
   const geom = computeGeometry(width, props.isRtl ?? false)
+  reportTimeScale(geom)
 
   // Draw horizontal grid lines at octave boundaries
   ctx.lineWidth = 1
@@ -444,7 +478,7 @@ function drawChart() {
     ? samples[0].timestamp +
       (props.replayProgress as number) *
         (samples[samples.length - 1].timestamp - samples[0].timestamp)
-    : (pausedAt ?? performance.now())
+    : (pausedAt ?? performance.now()) - getViewOffsetMs()
 
   // Scrolling vertical time markers — march away from the live edge toward the label edge
   {
@@ -816,6 +850,13 @@ watch(
 
 watch(
   () => props.activeMidi,
+  () => drawChart(),
+)
+
+/* Scrolling a finished round, and Play again / Settings clearing its targets —
+ * the render loop may be stopped by then, so repaint explicitly. */
+watch(
+  () => [props.viewOffsetMs, props.targets],
   () => drawChart(),
 )
 

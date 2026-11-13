@@ -131,6 +131,7 @@ declare global {
   const useFireConfetti: typeof import('./composables/useConfetti').useFireConfetti
   const useGuitarSampler: typeof import('./composables/useGuitarSampler').useGuitarSampler
   const useHighScoreStore: typeof import('./stores/useHighScoreStore').useHighScoreStore
+  const useHistoryScroller: typeof import('./composables/useHistoryScroller').useHistoryScroller
   const useI18n: typeof import('vue-i18n').useI18n
   const useId: typeof import('vue').useId
   const useIdlePreview: typeof import('./composables/useIdlePreview').useIdlePreview
@@ -320,6 +321,7 @@ declare module 'vue' {
     readonly useFaviconPermissionColor: UnwrapRef<typeof import('./composables/useFaviconPermissionColor')['useFaviconPermissionColor']>
     readonly useGuitarSampler: UnwrapRef<typeof import('./composables/useGuitarSampler')['useGuitarSampler']>
     readonly useHighScoreStore: UnwrapRef<typeof import('./stores/useHighScoreStore')['useHighScoreStore']>
+    readonly useHistoryScroller: UnwrapRef<typeof import('./composables/useHistoryScroller')['useHistoryScroller']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useIdlePreview: UnwrapRef<typeof import('./composables/useIdlePreview')['useIdlePreview']>
