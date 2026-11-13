@@ -200,7 +200,6 @@
     }
   },
   "warmUp": {
-    "title": "热身",
     "voice": "声音",
     "sequences": "序列",
     "semitoneStep": "步长",
@@ -508,6 +507,9 @@
   },
   "singFly": {
     "subtitle": "唱出每个音，飞过缺口"
+  },
+  "noteRush": {
+    "subtitle": "音符滑进来时，唱出每一个并保持住就能得分。"
   },
   "graceKelly": {
     "subtitle": "选个声部，跟着唱",

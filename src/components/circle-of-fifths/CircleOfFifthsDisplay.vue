@@ -393,13 +393,11 @@ onUnmounted(() => stop())
     :data-screen="screen"
   >
     <div class="flex min-h-17 flex-col items-center gap-2 text-center">
-      <h1 class="flex items-center gap-2 text-2xl font-semibold">
-        <span>
-          {{ t('home.programs.circleOfFifths.name')
-          }}{{ titleSuffix ? ` ${titleSuffix}` : '' }}
-        </span>
-      </h1>
-      <p class="text-sm text-(--p-text-muted-color)">{{ subtitle }}</p>
+      <ProgramHeader
+        programKey="circleOfFifths"
+        :subtitle="subtitle"
+        :titleSuffix="titleSuffix"
+      />
       <CircleOfFifthsSolfegeLadder
         :class="{ invisible: ladder.isPlaceholder }"
         :keyIndex="ladder.keyIndex"

@@ -200,7 +200,6 @@
     }
   },
   "warmUp": {
-    "title": "Kuipasha sauti",
     "voice": "Sauti",
     "sequences": "Mfuatano",
     "semitoneStep": "Hatua",
@@ -508,6 +507,9 @@
   },
   "singFly": {
     "subtitle": "Imba kila noti upite kwenye mwanya"
+  },
+  "noteRush": {
+    "subtitle": "Imba kila noti inapoingia na uishikilie upate pointi."
   },
   "graceKelly": {
     "subtitle": "Chagua sehemu na uimbe pamoja",

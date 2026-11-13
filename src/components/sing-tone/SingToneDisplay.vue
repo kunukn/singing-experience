@@ -307,15 +307,11 @@ onUnmounted(() => {
     data-testid="sing-tone-game-display"
     :data-state="gameState"
   >
-    <h1 class="flex items-center gap-2 text-2xl font-semibold">
-      <span>{{ t('home.programs.singTone.name') }}</span>
-    </h1>
-    <p
-      v-show="gameState !== 'complete'"
-      class="text-sm text-(--p-text-muted-color) sm:mb-4"
-    >
-      {{ t('singTone.subtitle') }}
-    </p>
+    <ProgramHeader
+      programKey="singTone"
+      :subtitle="t('singTone.subtitle')"
+      :isSubtitleHidden="gameState === 'complete'"
+    />
     <p
       v-if="gameState === 'idle'"
       class="text-sm text-(--p-text-muted-color) md:hidden"

@@ -106,3 +106,16 @@ Buttons that do the same job look the same in every program, so nobody has to re
 This rule has no automated guard, so check a similar button in another program before adding one.
 
 Why: [0005 — Button conventions](decisions/0005-button-conventions.md)
+
+## Program Header
+
+Every program page opens the same way, so a player always knows where they are and the pages feel like one app. Use [ProgramHeader.vue](../../src/components/generic/ProgramHeader.vue); don't hand-roll an `<h1>`.
+
+- **Title: always.** It is the name on the program's card (`home.programs.<key>.name`), so a page can't call itself something else.
+- **Subtitle: one short line saying what to do**, when the program has one. A program whose tabs each carry their own instruction line (Grace Kelly Challenge) shows the title alone.
+- **Size and spacing are fixed by the component**: title `text-2xl font-semibold`, subtitle `text-sm` muted, 4px between them, both centred.
+- **On an end screen the subtitle is hidden, not removed** (`isSubtitleHidden`). It keeps its space, so nothing below moves.
+
+Guarded by `ProgramHeader.vue.test.ts`. Most tools don't have a header yet.
+
+Why: [0007 — One program header](decisions/0007-program-header.md)

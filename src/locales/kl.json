@@ -186,7 +186,6 @@
     }
   },
   "warmUp": {
-    "title": "Nipersiorneq",
     "voice": "Nipi",
     "sequences": "Tulleriiaat",
     "semitoneStep": "Allunneq",
@@ -396,6 +395,9 @@
   },
   "singFly": {
     "subtitle": "Nipi tamaasa erinnarlugu putummut ikaarniarit"
+  },
+  "noteRush": {
+    "subtitle": "Sing each note as it scrolls in and hold it to score."
   },
   "graceKelly": {
     "subtitle": "Nipi toqqarlugu erinarsorlutillu",

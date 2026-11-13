@@ -477,19 +477,11 @@ defineExpose({
     class="flex flex-1 flex-col items-center gap-4 pb-4"
     data-testid="singfly-display"
   >
-    <div class="flex min-h-17 flex-col items-center gap-4">
-      <h1 class="flex items-center gap-2 text-2xl font-semibold">
-        <span>{{ t('home.programs.singFly.name') }}</span>
-      </h1>
-      <!-- Kept mounted (v-show, not v-if) so the header block holds a stable
-        height across state changes and the layout doesn't reflow. -->
-      <p
-        v-show="gameState !== 'complete'"
-        class="text-sm text-(--p-text-muted-color)"
-      >
-        {{ t('singFly.subtitle') }}
-      </p>
-    </div>
+    <ProgramHeader
+      programKey="singFly"
+      :subtitle="t('singFly.subtitle')"
+      :isSubtitleHidden="gameState === 'complete'"
+    />
 
     <div class="flex min-h-40 w-full flex-col items-center sm:min-h-60">
       <SingFlyIdlePanel

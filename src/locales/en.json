@@ -200,7 +200,6 @@
     }
   },
   "warmUp": {
-    "title": "Warm-up",
     "voice": "Voice",
     "sequences": "Sequences",
     "semitoneStep": "Step",
@@ -508,6 +507,9 @@
   },
   "singFly": {
     "subtitle": "Sing each note to fly through the gap"
+  },
+  "noteRush": {
+    "subtitle": "Sing each note as it scrolls in and hold it to score."
   },
   "graceKelly": {
     "subtitle": "Pick a part and sing along",

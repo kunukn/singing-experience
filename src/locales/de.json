@@ -200,7 +200,6 @@
     }
   },
   "warmUp": {
-    "title": "Aufwärmen",
     "voice": "Stimme",
     "sequences": "Sequenzen",
     "semitoneStep": "Schritt",
@@ -508,6 +507,9 @@
   },
   "singFly": {
     "subtitle": "Singe jeden Ton und flieg durch die Lücke"
+  },
+  "noteRush": {
+    "subtitle": "Sing jede Note, wenn sie hereingleitet, und halte sie, um zu punkten."
   },
   "graceKelly": {
     "subtitle": "Wähl eine Stimme und sing mit",

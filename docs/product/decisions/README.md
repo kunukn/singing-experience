@@ -12,6 +12,7 @@ Records are append-only. To change a decision, add a new record and mark the old
 | [0004](0004-copy-tone.md)                   | Child-friendly copy                | Accepted |
 | [0005](0005-button-conventions.md)          | Button conventions                 | Accepted |
 | [0006](0006-one-pitch-palette-per-theme.md) | One pitch palette per theme        | Accepted |
+| [0007](0007-program-header.md)              | One program header                 | Accepted |
 
 ## Template
 

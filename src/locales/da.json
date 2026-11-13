@@ -200,7 +200,6 @@
     }
   },
   "warmUp": {
-    "title": "Opvarmning",
     "voice": "Stemme",
     "sequences": "Sekvenser",
     "semitoneStep": "Trin",
@@ -508,6 +507,9 @@
   },
   "singFly": {
     "subtitle": "Syng hver tone og flyv gennem hullet"
+  },
+  "noteRush": {
+    "subtitle": "Syng hver tone, når den glider ind, og hold den for at score."
   },
   "graceKelly": {
     "subtitle": "Vælg en stemme og syng med",

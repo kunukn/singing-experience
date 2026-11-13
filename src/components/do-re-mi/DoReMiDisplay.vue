@@ -332,22 +332,12 @@ onUnmounted(() => {
     class="do-re-mi-display relative flex grow flex-col items-center gap-4 pb-4"
     data-testid="do-re-mi-display"
   >
-    <!-- Fixed-height header so the subtitle collapsing on 'complete'
-      (v-show → display:none) doesn't shift everything below it. -->
-    <div class="flex min-h-17 flex-col items-center gap-4">
-      <h1 class="flex items-center gap-2 text-2xl font-semibold">
-        <span>
-          {{ t('home.programs.doReMi.name')
-          }}{{ titleSuffix ? ` ${titleSuffix}` : '' }}
-        </span>
-      </h1>
-      <p
-        v-show="gameState !== 'complete'"
-        class="text-sm text-(--p-text-muted-color)"
-      >
-        {{ t('doReMi.singNoteFor', { seconds: durationSec }) }}
-      </p>
-    </div>
+    <ProgramHeader
+      programKey="doReMi"
+      :subtitle="t('doReMi.singNoteFor', { seconds: durationSec })"
+      :isSubtitleHidden="gameState === 'complete'"
+      :titleSuffix="titleSuffix"
+    />
 
     <slot :gameState="gameState" :targetStep="targetStep" />
 

@@ -525,14 +525,11 @@ onUnmounted(() => {
     class="flex flex-1 flex-col items-center gap-4 pb-4"
     data-testid="sing-the-keys-display"
   >
-    <div class="text-center">
-      <h1 class="flex items-center justify-center gap-2 text-2xl font-semibold">
-        <span>{{ t('home.programs.singTheKeys.name') }} {{ titleSuffix }}</span>
-      </h1>
-      <p class="text-sm text-(--p-text-muted-color)">
-        {{ t('singTheKeys.subtitle') }}
-      </p>
-    </div>
+    <ProgramHeader
+      programKey="singTheKeys"
+      :subtitle="t('singTheKeys.subtitle')"
+      :titleSuffix="titleSuffix"
+    />
 
     <SingTheKeysSettingsRow
       v-model:songId="songId"

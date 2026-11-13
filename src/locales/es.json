@@ -200,7 +200,6 @@
     }
   },
   "warmUp": {
-    "title": "Calentamiento",
     "voice": "Voz",
     "sequences": "Secuencias",
     "semitoneStep": "Paso",
@@ -508,6 +507,9 @@
   },
   "singFly": {
     "subtitle": "Canta cada nota y pasa por el hueco"
+  },
+  "noteRush": {
+    "subtitle": "Canta cada nota cuando entre y mantenla para sumar puntos."
   },
   "graceKelly": {
     "subtitle": "Elige una voz y canta",

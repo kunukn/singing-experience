@@ -238,6 +238,7 @@ Product and design rules that hold across every program live in [docs/product/de
 - **Pitch Colours** (any cents colour): green when clean, yellow → red when sharp, blue when flat, through the `pitchColors.ts` helpers only, or the `--pitch-clean` / `--pitch-low` / `--pitch-high` variables for a readout with no ramp. One shade per theme. Guarded by the "pitch colour rule" tests.
 - **Copy Tone** (any user-facing text): friendly, plain, child-friendly. Per-language rules in `translation.instructions.md`.
 - **Button Conventions** (any `PrimeButton`): main actions are `rounded` with no icon, Start green and Stop red. Record is the exception: red with `pi pi-circle-fill`. Clear always has `pi pi-trash`. Buttons in a row share a shape.
+- **Program Header** (any program page): open with `ProgramHeader`: the card name as the title, an optional one-line subtitle, hidden in place on end screens. Never a hand-rolled `<h1>`.
 
 Changing one of these rules? Update its section in `design-rules.md` and add a decision record.
 

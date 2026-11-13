@@ -200,7 +200,6 @@
     }
   },
   "warmUp": {
-    "title": "ウォームアップ",
     "voice": "声",
     "sequences": "シーケンス",
     "semitoneStep": "ステップ",
@@ -508,6 +507,9 @@
   },
   "singFly": {
     "subtitle": "音を歌って、すき間を通り抜けよう"
+  },
+  "noteRush": {
+    "subtitle": "流れてくる音を歌って、のばすと得点だよ。"
   },
   "graceKelly": {
     "subtitle": "パートを選んで一緒に歌おう",

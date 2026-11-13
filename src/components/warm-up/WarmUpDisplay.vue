@@ -272,15 +272,11 @@ onUnmounted(() => {
     data-testid="warm-up-display"
     :data-state="gameState"
   >
-    <h1 class="flex items-center gap-2 text-2xl font-semibold">
-      <span>{{ $t('warmUp.title') }}</span>
-    </h1>
-    <p
-      v-show="gameState !== 'complete'"
-      class="text-sm text-(--p-text-muted-color)"
-    >
-      {{ $t('warmUp.subtitle') }}
-    </p>
+    <ProgramHeader
+      programKey="warmUp"
+      :subtitle="$t('warmUp.subtitle')"
+      :isSubtitleHidden="gameState === 'complete'"
+    />
 
     <!-- State: idle -->
     <div

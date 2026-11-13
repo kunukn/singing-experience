@@ -200,7 +200,6 @@
     }
   },
   "warmUp": {
-    "title": "Pemanasan",
     "voice": "Suara",
     "sequences": "Urutan",
     "semitoneStep": "Langkah",
@@ -508,6 +507,9 @@
   },
   "singFly": {
     "subtitle": "Nyanyikan tiap nada buat lewat celah"
+  },
+  "noteRush": {
+    "subtitle": "Nyanyikan tiap nada saat meluncur masuk dan tahan untuk dapat skor."
   },
   "graceKelly": {
     "subtitle": "Pilih suara dan ikut bernyanyi",

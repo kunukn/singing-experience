@@ -159,6 +159,7 @@ declare module 'vue' {
     ProgramDoReMiIcon: typeof import('./components/icons/program/ProgramDoReMiIcon.vue')['default']
     ProgramGraceKellyIcon: typeof import('./components/icons/program/ProgramGraceKellyIcon.vue')['default']
     ProgramGuitarIcon: typeof import('./components/icons/program/ProgramGuitarIcon.vue')['default']
+    ProgramHeader: typeof import('./components/generic/ProgramHeader.vue')['default']
     ProgramHelpButton: typeof import('./components/generic/ProgramHelpButton.vue')['default']
     ProgramIconsTestPage: typeof import('./components/icons/program/ProgramIconsTestPage.vue')['default']
     ProgramIconTile: typeof import('./components/icons/program/ProgramIconTile.vue')['default']

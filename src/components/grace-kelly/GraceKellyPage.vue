@@ -137,6 +137,7 @@ watch(activeTab, () => {
 
 <template>
   <div class="mx-auto w-full max-w-400">
+    <ProgramHeader programKey="graceKelly" class="mb-2" />
     <PrimeTabs v-model:value="activeTab">
       <PrimeTabList>
         <PrimeTab value="sing">{{ t('graceKelly.tabs.singAlong') }}</PrimeTab>
