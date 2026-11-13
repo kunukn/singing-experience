@@ -3,7 +3,6 @@ import {
   VOICE_RANGE_GROUP_ORDER,
   type VoiceRangeGroupId,
 } from '@/constants/voiceRanges'
-import { midiToNoteLabel } from '@/utils/noteUtils'
 
 export type VoiceRangeOption = {
   /* Index into VOICE_RANGES — every consumer models the selection as an index. */
@@ -20,8 +19,6 @@ export type VoiceRangeGroup = {
 export type VoiceRangeGroupsOptions = {
   /* Restricts what can be offered — warm-up hides the full range. */
   allowedIndices?: readonly number[]
-  /* 'span' shows the whole range ("C3–C5"); 'startNote' only its lowest note. */
-  noteLabelMode?: 'span' | 'startNote'
 }
 
 /**
@@ -37,7 +34,7 @@ export function useVoiceRangeGroups(
   const { t } = useI18n()
 
   return computed<VoiceRangeGroup[]>(() => {
-    const { allowedIndices, noteLabelMode = 'span' } = toValue(options)
+    const { allowedIndices } = toValue(options)
 
     const entries = VOICE_RANGES.map((range, index) => ({
       range,
@@ -49,14 +46,10 @@ export function useVoiceRangeGroups(
       label: t(`voiceRanges.groups.${groupId}`),
       items: entries
         .filter(({ range }) => range.group === groupId)
-        .map(({ range, index }) => {
-          const noteLabel =
-            noteLabelMode === 'startNote'
-              ? midiToNoteLabel(range.midiMin).label
-              : range.noteRange
-
-          return { value: index, label: `${t(range.labelKey)} (${noteLabel})` }
-        }),
+        .map(({ range, index }) => ({
+          value: index,
+          label: `${t(range.labelKey)} (${range.noteRange})`,
+        })),
     })).filter((group) => group.items.length > 0)
   })
 }

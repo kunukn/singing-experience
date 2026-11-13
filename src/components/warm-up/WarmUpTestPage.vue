@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { DEFAULT_RANGE_INDEX } from '@/constants/voiceRanges'
 import type { NoteName } from '@/utils/noteUtils'
 import {
   midiToFrequency,
@@ -12,12 +11,13 @@ import {
   DEFAULT_PATTERN,
   DEFAULT_SEMITONE_STEP,
   DEFAULT_SEQUENCE_COUNT,
+  DEFAULT_START_OFFSET,
   useWarmUpGame,
   type WarmUpPatternId,
 } from './useWarmUpGame'
 
 const selectedDurationSec = ref(DEFAULT_HOLD_DURATION_MS / 1000)
-const selectedRangeIndex = ref<number>(DEFAULT_RANGE_INDEX)
+const selectedStartOffset = ref<number>(DEFAULT_START_OFFSET)
 const selectedSequenceCount = ref<number>(DEFAULT_SEQUENCE_COUNT)
 const selectedSemitoneStep = ref<number>(DEFAULT_SEMITONE_STEP)
 const selectedPatternId = ref<WarmUpPatternId>(DEFAULT_PATTERN)
@@ -162,7 +162,7 @@ function snapToTarget() {
       :overridePreviewFrequency="overridePreviewFrequency"
       :disableIdlePreview="true"
       v-model:durationSec="selectedDurationSec"
-      v-model:rangeIndex="selectedRangeIndex"
+      v-model:startOffset="selectedStartOffset"
       v-model:sequenceCount="selectedSequenceCount"
       v-model:semitoneStep="selectedSemitoneStep"
       v-model:patternId="selectedPatternId"

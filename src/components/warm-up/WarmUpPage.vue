@@ -1,17 +1,22 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
+import { VOICE_RANGES } from '@/constants/voiceRanges'
+import { C3_MIDI } from '@/utils/noteUtils'
 import WarmUpDisplay from './WarmUpDisplay.vue'
 import {
   DEFAULT_HOLD_DURATION_MS,
   DEFAULT_PATTERN,
   DEFAULT_SEMITONE_STEP,
   DEFAULT_SEQUENCE_COUNT,
+  DEFAULT_START_OFFSET,
   HOLD_DURATION_OPTIONS,
   SEMITONE_STEP_OPTIONS,
   SEQUENCE_COUNT_OPTIONS,
   useWarmUpGame,
+  WARM_UP_HIGHEST_START_OFFSET,
+  WARM_UP_LOWEST_START_OFFSET,
   WARM_UP_PATTERNS,
-  WARM_UP_VOICE_RANGE_INDICES,
+  WARM_UP_START_TONE_OPTIONS,
   type WarmUpPatternId,
 } from './useWarmUpGame'
 
@@ -27,13 +32,30 @@ if (!HOLD_DURATION_OPTIONS.includes(selectedDurationSec.value as never)) {
   selectedDurationSec.value = defaultDurationSec
 }
 
-/* Cross-feature key — also used by pitch-game / piano / pitch-detector /
- * singfly / sing-tone. Keep the string identical across all of them.
- * allowedIndices only filters what warm-up can select/display — it never
- * rewrites the shared stored value (see useVoiceRangeIndex). */
-const selectedRangeIndex = useVoiceRangeIndex('syng.rangeIndex', {
-  allowedIndices: WARM_UP_VOICE_RANGE_INDICES,
-})
+/* Warm-up used to start on the lowest note of the shared voice range. Seed the
+ * start tone from that range so the first note stays where the singer left it.
+ * VueUse writes this default on first read, so later range changes never move
+ * it. The full range was never offered here — it falls back to the default. */
+const sharedRange = VOICE_RANGES[useVoiceRangeIndex('syng.rangeIndex').value]
+const seedStartOffset =
+  sharedRange.labelKey === 'voiceRanges.full'
+    ? DEFAULT_START_OFFSET
+    : Math.min(
+        WARM_UP_HIGHEST_START_OFFSET,
+        Math.max(WARM_UP_LOWEST_START_OFFSET, sharedRange.midiMin - C3_MIDI),
+      )
+
+const selectedStartOffset = useLocalStorage<number>(
+  'syng.warmup.startOffset',
+  seedStartOffset,
+)
+if (
+  !WARM_UP_START_TONE_OPTIONS.some(
+    (option) => option.offset === selectedStartOffset.value,
+  )
+) {
+  selectedStartOffset.value = DEFAULT_START_OFFSET
+}
 
 const selectedSequenceCount = useLocalStorage<number>(
   'syng.warmup.sequenceCount',
@@ -66,7 +88,7 @@ const game = useWarmUpGame()
   <WarmUpDisplay
     :game="game"
     v-model:durationSec="selectedDurationSec"
-    v-model:rangeIndex="selectedRangeIndex"
+    v-model:startOffset="selectedStartOffset"
     v-model:sequenceCount="selectedSequenceCount"
     v-model:semitoneStep="selectedSemitoneStep"
     v-model:patternId="selectedPatternId"

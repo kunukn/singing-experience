@@ -1,17 +1,21 @@
 <script setup lang="ts">
-import { START_TONE_GROUPS } from '@/utils/noteUtils'
+import { START_TONE_GROUPS, type StartToneGroup } from '@/utils/noteUtils'
 
 /* Start-tone picker shared by the games that transpose a melody or scale from a
- * chosen tonic (Do-Re-Mi, Sing the Keys). Options come from START_TONE_GROUPS
- * (G4 down to G2, grouped by voice tier); the value is the semitone offset from
- * C3, so the caller's tonic MIDI is C3_MIDI + startOffset. */
+ * chosen tonic (Do-Re-Mi, Sing the Keys, Warm-up). Options default to
+ * START_TONE_GROUPS (G4 down to G2, grouped by voice tier); the value is the
+ * semitone offset from C3, so the caller's tonic MIDI is C3_MIDI + startOffset. */
 type Props = {
   /* The option marked with a ⭐ — the caller's recommended default. */
   defaultOffset?: number
   disabled?: boolean
+  /* A wider or narrower list than the shared one — warm-up reaches down to E2. */
+  groups?: StartToneGroup[]
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  groups: () => START_TONE_GROUPS,
+})
 
 const startOffset = defineModel<number>('startOffset', { required: true })
 
@@ -21,7 +25,7 @@ const { t } = useI18n()
 <template>
   <PrimeSelect
     v-model="startOffset"
-    :options="START_TONE_GROUPS"
+    :options="props.groups"
     optionLabel="label"
     optionValue="offset"
     optionGroupLabel="voiceTier"

@@ -1,19 +1,28 @@
 import { useDoReMiPlaySequence } from '@/components/do-re-mi/useDoReMiPlaySequence'
-import { DEFAULT_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import type { NoteInfo } from '@/utils/noteUtils'
 import {
+  buildStartToneOptions,
+  C3_MIDI,
   frequencyToCents,
+  groupStartToneOptions,
   midiToFrequency,
   midiToNoteLabel,
 } from '@/utils/noteUtils'
 
-/* Indices into VOICE_RANGES shown in the warm-up voice selector.
- * Excludes `voiceRanges.full` — too wide for a focused transposition start. */
-export const WARM_UP_VOICE_RANGE_INDICES: readonly number[] = VOICE_RANGES.map(
-  (range, index) => ({ range, index }),
+/* Start tones are semitone offsets from C3, like the shared start-tone select. */
+export const WARM_UP_HIGHEST_START_OFFSET = 19 // G4, top of the shared list
+/* E2 — below the shared list's G2, so a bass can start at the bottom of the
+ * voice. */
+export const WARM_UP_LOWEST_START_OFFSET = -8
+export const DEFAULT_START_OFFSET = 7 // G3
+
+export const WARM_UP_START_TONE_OPTIONS = buildStartToneOptions(
+  WARM_UP_HIGHEST_START_OFFSET,
+  WARM_UP_LOWEST_START_OFFSET,
 )
-  .filter(({ range }) => range.labelKey !== 'voiceRanges.full')
-  .map(({ index }) => index)
+export const WARM_UP_START_TONE_GROUPS = groupStartToneOptions(
+  WARM_UP_START_TONE_OPTIONS,
+)
 
 export const SEQUENCE_COUNT_OPTIONS = [
   1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13,
@@ -196,7 +205,7 @@ export type WarmUpGameResult = ReturnType<typeof useWarmUpGame>
 
 export function useWarmUpGame(options: WarmUpGameOptions = {}) {
   const holdDurationMs = ref(options.holdDurationMs ?? DEFAULT_HOLD_DURATION_MS)
-  const rangeIndex = ref<number>(DEFAULT_RANGE_INDEX)
+  const startOffset = ref<number>(DEFAULT_START_OFFSET)
   const sequenceCount = ref<number>(DEFAULT_SEQUENCE_COUNT)
   const semitoneStep = ref<number>(DEFAULT_SEMITONE_STEP)
   const patternId = ref<WarmUpPatternId>(DEFAULT_PATTERN)
@@ -249,9 +258,7 @@ export function useWarmUpGame(options: WarmUpGameOptions = {}) {
   const { isPlayingSequence, currentPlayingIndex, playSequence, stopSequence } =
     useDoReMiPlaySequence()
 
-  const startMidi = computed(
-    () => VOICE_RANGES[rangeIndex.value]?.midiMin ?? 48,
-  )
+  const startMidi = computed(() => C3_MIDI + startOffset.value)
 
   const phraseNotesMidi = computed<number[]>(() =>
     currentIntervals.value.map(
@@ -498,8 +505,8 @@ export function useWarmUpGame(options: WarmUpGameOptions = {}) {
     holdDurationMs.value = ms
   }
 
-  function setRangeIndex(index: number) {
-    rangeIndex.value = index
+  function setStartOffset(offset: number) {
+    startOffset.value = offset
     stop()
   }
 
@@ -524,7 +531,7 @@ export function useWarmUpGame(options: WarmUpGameOptions = {}) {
 
   return {
     phase: readonly(phase),
-    rangeIndex: readonly(rangeIndex),
+    startOffset: readonly(startOffset),
     sequenceCount: readonly(sequenceCount),
     semitoneStep: readonly(semitoneStep),
     patternId: readonly(patternId),
@@ -558,7 +565,7 @@ export function useWarmUpGame(options: WarmUpGameOptions = {}) {
     stop,
     reset,
     setHoldDuration,
-    setRangeIndex,
+    setStartOffset,
     setSequenceCount,
     setSemitoneStep,
     setPattern,

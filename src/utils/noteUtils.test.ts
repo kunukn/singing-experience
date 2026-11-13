@@ -3,9 +3,11 @@ import {
   buildChromaticDisplayScale,
   buildScale,
   buildScaleModeGroups,
+  buildStartToneOptions,
   C3_MIDI,
   frequencyToNote,
   frequencyToNoteName,
+  groupStartToneOptions,
   midiToFlatLabel,
   midiToFrequency,
   midiToNoteLabel,
@@ -15,6 +17,8 @@ import {
   SCALE_MODE_SEMITONES,
   snapFrequencyToSemitone,
   snapMidiWithHysteresis,
+  START_TONE_GROUPS,
+  START_TONE_OPTIONS,
 } from './noteUtils'
 import type { ScaleMode } from './noteUtils'
 
@@ -570,5 +574,53 @@ describe('buildScaleModeGroups', () => {
       'aeolian',
       'minorBlues',
     ])
+  })
+})
+
+describe('buildStartToneOptions', () => {
+  test('keeps the shared list at 25 tones from G4 down to G2', () => {
+    expect(START_TONE_OPTIONS).toHaveLength(25)
+    expect(START_TONE_OPTIONS[0].label).toBe('G4')
+    expect(START_TONE_OPTIONS.at(-1)!.label).toBe('G2')
+  })
+
+  test('runs from the highest offset down to the lowest, both included', () => {
+    const options = buildStartToneOptions(2, -8)
+
+    expect(options.map((option) => option.offset)).toEqual([
+      2, 1, 0, -1, -2, -3, -4, -5, -6, -7, -8,
+    ])
+    expect(options[0].label).toBe('D3')
+    expect(options.at(-1)!.label).toBe('E2')
+  })
+
+  test('sets each MIDI note as the offset from C3', () => {
+    const [option] = buildStartToneOptions(-8, -8)
+
+    expect(option.midiNote).toBe(C3_MIDI - 8)
+  })
+})
+
+describe('groupStartToneOptions', () => {
+  test('orders the tiers high, mid, low and keeps every option', () => {
+    const groups = groupStartToneOptions(buildStartToneOptions(19, -8))
+
+    expect(groups.map((group) => group.voiceTier)).toEqual([
+      'high',
+      'mid',
+      'low',
+    ])
+    expect(groups.flatMap((group) => group.items)).toHaveLength(28)
+  })
+
+  test('puts the tones below G2 in the low tier', () => {
+    const groups = groupStartToneOptions(buildStartToneOptions(-6, -8))
+
+    expect(groups).toHaveLength(1)
+    expect(groups[0].voiceTier).toBe('low')
+  })
+
+  test('matches the shared groups for the shared span', () => {
+    expect(groupStartToneOptions(START_TONE_OPTIONS)).toEqual(START_TONE_GROUPS)
   })
 })

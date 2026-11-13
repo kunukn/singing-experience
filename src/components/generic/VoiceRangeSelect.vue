@@ -1,13 +1,8 @@
 <script setup lang="ts">
 /* Omit `allowedIndices` to offer every range; pass a subset to narrow it. Groups
  * left empty by the subset are dropped by the composable. */
-const {
-  allowedIndices,
-  noteLabelMode = 'span',
-  headerLabel,
-} = defineProps<{
+const { allowedIndices, headerLabel } = defineProps<{
   allowedIndices?: readonly number[]
-  noteLabelMode?: 'span' | 'startNote'
   headerLabel?: string
 }>()
 
@@ -15,10 +10,7 @@ const rangeIndex = defineModel<number>('rangeIndex', { required: true })
 
 const { t } = useI18n()
 
-const voiceRangeGroups = useVoiceRangeGroups(() => ({
-  allowedIndices,
-  noteLabelMode,
-}))
+const voiceRangeGroups = useVoiceRangeGroups(() => ({ allowedIndices }))
 </script>
 
 <template>

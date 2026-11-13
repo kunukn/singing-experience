@@ -594,7 +594,8 @@ type StartToneOption = {
 
 /*
  * Maps a MIDI note to one of three voice tiers used as i18n keys.
- * Boundaries: high ≥ 59 (B3–G4), mid 51–58 (D#3–A#3), low ≤ 50 (G2–D3).
+ * Boundaries: high ≥ 59 (B3–G4), mid 51–58 (D#3–A#3), low ≤ 50 (D3 and
+ * below — G2 in the shared list, E2 in warm-up's).
  * The default start tone G3 (MIDI 55) falls in 'mid'.
  */
 function getVoiceTier(midi: number): VoiceTier {
@@ -603,36 +604,52 @@ function getVoiceTier(midi: number): VoiceTier {
   return 'low'
 }
 
-/*
- * 25 starting tone options spanning G4 (offset 19) down to G2 (offset −5),
- * covering typical singing ranges from soprano highs to baritone lows.
+/**
+ * Start-tone options from `highestOffset` down to `lowestOffset`, both
+ * semitones from C3 and both included. Highest first, matching the chart's
+ * y-axis — see "Vertical Ordering" in design-rules.md.
  */
-const START_TONE_OPTIONS: StartToneOption[] = Array.from(
-  { length: 25 },
-  (_, i) => {
-    const offset = 19 - i // highest offset first, descending
+function buildStartToneOptions(
+  highestOffset: number,
+  lowestOffset: number,
+): StartToneOption[] {
+  return Array.from({ length: highestOffset - lowestOffset + 1 }, (_, i) => {
+    const offset = highestOffset - i
     const midi = C3_MIDI + offset
     const noteIndex = ((midi % 12) + 12) % 12
     const octave = Math.floor(midi / 12) - 1
     const label = toAccidentalGlyph(`${NOTE_NAMES[noteIndex]}${octave}`)
 
     return { offset, label, midiNote: midi, voiceTier: getVoiceTier(midi) }
-  },
-)
+  })
+}
 
 type StartToneGroup = {
   voiceTier: VoiceTier
   items: StartToneOption[]
 }
 
-/* Group start-tone options by voice tier (high → mid → low), preserving the
- * descending pitch order of START_TONE_OPTIONS within each group. */
-const START_TONE_GROUPS: StartToneGroup[] = (['high', 'mid', 'low'] as const)
-  .map((voiceTier) => ({
-    voiceTier,
-    items: START_TONE_OPTIONS.filter((o) => o.voiceTier === voiceTier),
-  }))
-  .filter((g) => g.items.length > 0)
+/**
+ * Group start-tone options by voice tier (high → mid → low), preserving their
+ * order within each group. Tiers with no option are dropped.
+ */
+function groupStartToneOptions(options: StartToneOption[]): StartToneGroup[] {
+  return (['high', 'mid', 'low'] as const)
+    .map((voiceTier) => ({
+      voiceTier,
+      items: options.filter((option) => option.voiceTier === voiceTier),
+    }))
+    .filter((group) => group.items.length > 0)
+}
+
+/*
+ * 25 starting tone options spanning G4 (offset 19) down to G2 (offset −5),
+ * covering typical singing ranges from soprano highs to baritone lows.
+ */
+const START_TONE_OPTIONS: StartToneOption[] = buildStartToneOptions(19, -5)
+
+const START_TONE_GROUPS: StartToneGroup[] =
+  groupStartToneOptions(START_TONE_OPTIONS)
 
 type MidiNoteLabel = {
   note: NoteName
@@ -755,8 +772,10 @@ export {
   buildMajorScale,
   buildScale,
   buildScaleModeGroups,
+  buildStartToneOptions,
   C3_MIDI,
   G2_MIDI,
+  groupStartToneOptions,
   MAJOR_SCALE_SEMITONES,
   midiRangeToScaleNotes,
   midiToFlatLabel,

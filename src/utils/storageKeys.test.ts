@@ -90,6 +90,7 @@ const STORAGE_KEYS = [
   'syng.warmup.patternId',
   'syng.warmup.semitoneStep',
   'syng.warmup.sequenceCount',
+  'syng.warmup.startOffset',
 ]
 
 /* Composables that persist under a key their caller supplies. The key itself

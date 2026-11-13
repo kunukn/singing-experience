@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { useDoReMiPlaySequence } from '@/components/do-re-mi/useDoReMiPlaySequence'
-import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import type { WarmUpGameResult, WarmUpPatternId } from './useWarmUpGame'
 import WarmUpChart from './WarmUpChart.vue'
@@ -17,7 +16,7 @@ type Props = {
 const props = defineProps<Props>()
 
 const durationSec = defineModel<number>('durationSec', { required: true })
-const rangeIndex = defineModel<number>('rangeIndex', { required: true })
+const startOffset = defineModel<number>('startOffset', { required: true })
 const sequenceCount = defineModel<number>('sequenceCount', { required: true })
 const semitoneStep = defineModel<number>('semitoneStep', { required: true })
 const patternId = defineModel<WarmUpPatternId>('patternId', { required: true })
@@ -48,7 +47,7 @@ const {
   stop,
   reset,
   setHoldDuration,
-  setRangeIndex,
+  setStartOffset,
   setSequenceCount,
   setSemitoneStep,
   setPattern,
@@ -147,12 +146,6 @@ const gameState = computed<GameState>(() => {
 
 const elapsedSeconds = computed(() => (elapsedMs.value / 1000).toFixed(1))
 
-const { t } = useI18n()
-
-const voiceTypeLabel = computed(() =>
-  t(VOICE_RANGES[rangeIndex.value]?.labelKey ?? 'voiceRanges.everyone'),
-)
-
 watch(
   durationSec,
   (sec) => {
@@ -162,9 +155,9 @@ watch(
 )
 
 watch(
-  rangeIndex,
-  (index) => {
-    setRangeIndex(index)
+  startOffset,
+  (offset) => {
+    setStartOffset(offset)
   },
   { immediate: true },
 )
@@ -296,7 +289,7 @@ onUnmounted(() => {
     >
       <WarmUpSettingsRow
         v-model:patternId="patternId"
-        v-model:rangeIndex="rangeIndex"
+        v-model:startOffset="startOffset"
         v-model:durationSec="durationSec"
         v-model:sequenceCount="sequenceCount"
         v-model:semitoneStep="semitoneStep"
@@ -410,8 +403,10 @@ onUnmounted(() => {
         {{ $t('warmUp.done') }}
       </h2>
       <div class="flex flex-col items-center gap-1">
-        <p class="text-(--p-surface-400) dark:text-(--p-surface-300)">
-          {{ voiceTypeLabel }} — {{ $t('warmUp.startToneInline') }}
+        <p
+          class="text-(--p-surface-400) first-letter:uppercase dark:text-(--p-surface-300)"
+        >
+          {{ $t('warmUp.startToneInline') }}
           <span class="font-mono">{{ startToneLabel }}</span>
           · {{ sequenceCount }} {{ $t('warmUp.sequencesUnit') }} ·
           <span class="font-mono">{{ durationSec }}s</span>

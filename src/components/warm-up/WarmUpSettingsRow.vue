@@ -1,22 +1,33 @@
 <script setup lang="ts">
 import type { ToneMode } from '@/composables/toneEngine'
+import { C3_MIDI } from '@/utils/noteUtils'
 import {
+  DEFAULT_START_OFFSET,
   HOLD_DURATION_OPTIONS,
   PATTERN_SHORT_LABELS,
   SEMITONE_STEP_OPTIONS,
   SEQUENCE_COUNT_OPTIONS,
   WARM_UP_PATTERNS,
-  WARM_UP_VOICE_RANGE_INDICES,
+  WARM_UP_START_TONE_GROUPS,
   type WarmUpPatternId,
 } from './useWarmUpGame'
 
-const rangeIndex = defineModel<number>('rangeIndex', { required: true })
+const startOffset = defineModel<number>('startOffset', { required: true })
 const durationSec = defineModel<number>('durationSec', { required: true })
 const sequenceCount = defineModel<number>('sequenceCount', { required: true })
 const semitoneStep = defineModel<number>('semitoneStep', { required: true })
 const patternId = defineModel<WarmUpPatternId>('patternId', { required: true })
 
 const { t } = useI18n()
+
+/* The ⭐ in the start-tone list: the bottom of the singer's own range once the
+ * Voice Range Finder has one, the app default until then. */
+const { myVoiceRange, hasFoundVoiceRange } = useMyVoiceRange()
+const recommendedStartOffset = computed(() =>
+  hasFoundVoiceRange.value
+    ? myVoiceRange.value.midiMin - C3_MIDI
+    : DEFAULT_START_OFFSET,
+)
 
 const patternGroups = computed(() => [
   {
@@ -119,13 +130,12 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 
     <div class="settings-item">
       <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
-        t('warmUp.voice')
+        t('doReMi.startTone')
       }}</label>
-      <VoiceRangeSelect
-        v-model:rangeIndex="rangeIndex"
-        :allowedIndices="WARM_UP_VOICE_RANGE_INDICES"
-        noteLabelMode="startNote"
-        :headerLabel="t('warmUp.voice')"
+      <StartToneSelect
+        v-model:startOffset="startOffset"
+        :groups="WARM_UP_START_TONE_GROUPS"
+        :defaultOffset="recommendedStartOffset"
       />
     </div>
 
