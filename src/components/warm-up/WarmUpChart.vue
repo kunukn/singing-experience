@@ -20,8 +20,9 @@ type Props = {
   midiMax: number
   /* Explicit list of MIDI notes to render as grid lines + clickable labels.
    * Unlike SingToneChart, the warm-up chart does no auto-stepping — only the
-   * notes in this list are shown, so the singer isn't distracted by chromatic
-   * tones the phrase doesn't use. */
+   * notes in this list are labelled, so the singer isn't distracted by
+   * chromatic tones the phrase doesn't use. The semitones it skips get a bare
+   * dashed line, which keeps every row the same height. */
   gridMidis: number[]
   isSingingCorrectNote: boolean
   holdProgress: number
@@ -89,6 +90,17 @@ const gridNotes = computed<GridNote[]>(() =>
     return { midi, label: info.label, note: info.note, octave: info.octave }
   }),
 )
+
+/* Semitones inside the chart's span that the phrase skips. */
+const passingMidis = computed(() => {
+  const midis: number[] = []
+
+  for (let midi = props.midiMin + 1; midi < props.midiMax; midi++) {
+    if (!props.gridMidis.includes(midi)) midis.push(midi)
+  }
+
+  return midis
+})
 
 const labelPositions = computed(() => {
   if (!containerHeight.value) return []
@@ -167,13 +179,27 @@ function drawChart() {
   chartCenterXRef.value = chartCenterX
 
   const textColor = resolveCssColor('--p-text-color', '#334155')
-  const borderColor = resolveCssColor('--p-content-border-color', '#e2e8f0')
 
   /* Draw horizontal grid lines */
   ctx.lineWidth = 1
   const activeMidiValue = activeMidi.value
-  const gridLineGrey = withAlpha(borderColor, 0.5)
+  /* Both kinds of line are tints of the text colour — the border colour is
+   * too pale to see. Note lines are the stronger; the dashed rows only keep
+   * the spacing even. */
+  const gridLineGrey = withAlpha(textColor, 0.3)
   const gridLineGreen = cleanPitchColor(isDark.value, 0.5)
+
+  ctx.strokeStyle = withAlpha(textColor, 0.2)
+  ctx.setLineDash([4, 4]) // px dash/gap — lighter than the solid note lines
+  for (const midi of passingMidis.value) {
+    const y = midiToY(midi, height)
+    ctx.beginPath()
+    ctx.moveTo(chartLeft, y)
+    ctx.lineTo(chartRight, y)
+    ctx.stroke()
+  }
+  ctx.setLineDash([])
+
   for (const note of gridNotes.value) {
     const y = midiToY(note.midi, height)
     ctx.strokeStyle =
