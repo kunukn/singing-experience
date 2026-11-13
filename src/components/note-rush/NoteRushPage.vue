@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
-import PitchGameDisplay from './PitchGameDisplay.vue'
+import NoteRushDisplay from './NoteRushDisplay.vue'
 import {
   GAME_DURATION_OPTIONS,
   HOLD_DURATION_OPTIONS,
   type GameDurationSec,
   type HoldDurationSec,
-} from './pitchGameOptions'
+} from './noteRushOptions'
 
 const selectedRangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
 const holdDurationSec = useLocalStorage<number>(
-  'syng.pitchGameHoldDurationSec',
+  'syng.noteRushHoldDurationSec',
   0.1,
 )
 if (!HOLD_DURATION_OPTIONS.includes(holdDurationSec.value as HoldDurationSec)) {
   holdDurationSec.value = 0.1
 }
 
-const gameDurationSec = useLocalStorage<number>('syng.pitchGameDurationSec', 20)
+const gameDurationSec = useLocalStorage<number>('syng.noteRushDurationSec', 20)
 if (!GAME_DURATION_OPTIONS.includes(gameDurationSec.value as GameDurationSec)) {
   gameDurationSec.value = 20
 }
@@ -32,7 +32,7 @@ const detection = usePitchDetection({ softRawAudio: true, rejectSpikes: true })
 </script>
 
 <template>
-  <PitchGameDisplay
+  <NoteRushDisplay
     :detection="detection"
     v-model:rangeIndex="selectedRangeIndex"
     v-model:holdDurationSec="holdDurationSec"

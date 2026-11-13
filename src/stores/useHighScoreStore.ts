@@ -7,10 +7,16 @@ export const HIGH_SCORE_GAMES = [
   'singTheKeys',
   'graceKelly',
   'singFly',
-  'pitchGame',
+  'noteRush',
   'circleOfFifths',
 ] as const
 export type HighScoreGame = (typeof HIGH_SCORE_GAMES)[number]
+
+/* Program keys that were renamed. Scores saved under the old key move to the
+ * new one on load, so a rename doesn't wipe anyone's best scores. */
+const LEGACY_GAME_KEYS: Record<string, HighScoreGame> = {
+  pitchGame: 'noteRush',
+}
 
 /*
  * The settings that make a run harder or easier. Two runs compete only when
@@ -77,6 +83,17 @@ function isHighScore(value: unknown): value is HighScore {
   )
 }
 
+/* Re-keys a score saved under a renamed program key; other values pass through. */
+function migrateLegacyGame(value: unknown): unknown {
+  if (typeof value !== 'object' || value === null) return value
+
+  const game = (value as Record<string, unknown>).game
+  if (typeof game !== 'string' || !Object.hasOwn(LEGACY_GAME_KEYS, game))
+    return value
+
+  return { ...value, game: LEGACY_GAME_KEYS[game] }
+}
+
 export const useHighScoreStore = defineStore('highScores', () => {
   /* Keyed by highScoreKey. The literal key is what storageKeys.test.ts scans for. */
   const scores = useLocalStorage<HighScoreMap>('syng.highScores', {})
@@ -87,9 +104,19 @@ export const useHighScoreStore = defineStore('highScores', () => {
     scores.value = {}
   } else {
     const entries = Object.entries(stored)
-    const validEntries = entries.filter(([, score]) => isHighScore(score))
-    if (validEntries.length !== entries.length) {
-      scores.value = Object.fromEntries(validEntries)
+    const migratedScores = entries.map(([, score]) => migrateLegacyGame(score))
+    const validScores = migratedScores.filter(isHighScore)
+    const hasChanged =
+      validScores.length !== entries.length ||
+      migratedScores.some((score, index) => score !== entries[index][1])
+    if (hasChanged) {
+      /* Re-keyed, because the game is part of the key */
+      scores.value = Object.fromEntries(
+        validScores.map((score) => [
+          highScoreKey(score.game, score.config),
+          score,
+        ]),
+      )
     }
   }
 

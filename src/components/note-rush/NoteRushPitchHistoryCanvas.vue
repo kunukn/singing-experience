@@ -19,13 +19,9 @@ import {
   HISTORY_RETENTION_MS,
   HISTORY_WINDOW_MS,
   PAUSE_GAP_MS,
-} from './pitchConstants'
-import { getReviewScrollableMs } from './pitchGameReview'
-import {
-  HIT_TOLERANCE_CENTS,
-  LEAD_IN_MS,
-  type GameTarget,
-} from './usePitchGame'
+} from './noteRushConstants'
+import { getReviewScrollableMs } from './noteRushReview'
+import { HIT_TOLERANCE_CENTS, LEAD_IN_MS, type GameTarget } from './useNoteRush'
 
 type Props = {
   noteInfo: NoteInfo | null
@@ -273,7 +269,7 @@ function drawPreviewIndicator(
    * is currently in its capturable pickup zone, snap the dot exactly onto
    * that target's integer-MIDI row so it lines up with the green target
    * circle instead of floating a few cents above/below it. Mirrors the
-   * hit-detection window in usePitchGame (same pickup zone + 50¢ tolerance)
+   * hit-detection window in useNoteRush (same pickup zone + 50¢ tolerance)
    * so the dot snaps precisely when — and only when — a hit can register. */
   if (isGameActive && props.targets) {
     let nearestTargetMidi: number | null = null

@@ -130,7 +130,7 @@
         "name": "Ton singen",
         "description": "Ein zufälliger Ton wird gespielt – singe ihn nach! Treffe verschiedene Töne in Folge, um zu gewinnen."
       },
-      "pitchGame": {
+      "noteRush": {
         "name": "Notenjagd",
         "description": "Zielnoten gleiten herein — singe jede und halte sie, um zu punkten. Lauf gegen die Uhr und triff so viele wie du kannst."
       },
@@ -761,7 +761,7 @@
       "step2": "Sing höher, um hochzufliegen, und tiefer, um runterzufliegen.",
       "step3": "Flieg durch die Lücken, um zu punkten."
     },
-    "pitchGame": {
+    "noteRush": {
       "step1": "Drück auf Start.",
       "step2": "Sing jede Note, wenn sie hereingleitet, und halte sie, um zu punkten.",
       "step3": "Triff so viele Noten wie möglich, bevor die Zeit abläuft."

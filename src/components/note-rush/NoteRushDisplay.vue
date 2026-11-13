@@ -5,11 +5,11 @@ import { VOICE_RANGES } from '@/constants/voiceRanges'
 import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { midiToNoteLabel } from '@/utils/noteUtils'
-import PitchGamePitchDisplay from './PitchGamePitchDisplay.vue'
-import PitchGameCompletePanel from './PitchGameCompletePanel.vue'
-import PitchGameIdlePanel from './PitchGameIdlePanel.vue'
-import PitchGamePlayingPanel from './PitchGamePlayingPanel.vue'
-import { useGame } from './usePitchGame'
+import NoteRushPitchDisplay from './NoteRushPitchDisplay.vue'
+import NoteRushCompletePanel from './NoteRushCompletePanel.vue'
+import NoteRushIdlePanel from './NoteRushIdlePanel.vue'
+import NoteRushPlayingPanel from './NoteRushPlayingPanel.vue'
+import { useNoteRush } from './useNoteRush'
 
 type PitchDetectionInput = {
   frequency: Readonly<Ref<number | null>>
@@ -87,7 +87,7 @@ const {
   startGame,
   stopGame,
   reset: resetGame,
-} = useGame({
+} = useNoteRush({
   noteInfo,
   isClean,
   midiMin: gameMidiMin,
@@ -103,7 +103,7 @@ const {
   onEnd: () => stop(),
 })
 
-const pitchDisplayRef = ref<InstanceType<typeof PitchGamePitchDisplay> | null>(
+const pitchDisplayRef = ref<InstanceType<typeof NoteRushPitchDisplay> | null>(
   null,
 )
 const { fireMicroConfetti } = useConfetti()
@@ -148,7 +148,7 @@ watch(
       recordResult.value =
         finished?.endReason === 'natural'
           ? recordScore({
-              game: 'pitchGame',
+              game: 'noteRush',
               config: {
                 durationSec: finished.durationMs / 1000,
                 holdSec: holdDurationSec.value,
@@ -333,10 +333,10 @@ onUnmounted(() => {
 <template>
   <div
     class="flex flex-1 flex-col items-center gap-4"
-    data-testid="pitch-game-display"
+    data-testid="note-rush-display"
   >
     <div class="flex min-h-40 w-full flex-col items-center justify-center">
-      <PitchGameIdlePanel
+      <NoteRushIdlePanel
         v-if="gameState === 'idle'"
         v-model:rangeIndex="rangeIndex"
         v-model:toneMode="toneMode"
@@ -351,7 +351,7 @@ onUnmounted(() => {
         @toggleSequence="toggleSequence"
       />
 
-      <PitchGamePlayingPanel
+      <NoteRushPlayingPanel
         v-else-if="gameState === 'playing'"
         :score="score"
         :totalTargets="targets.length"
@@ -359,7 +359,7 @@ onUnmounted(() => {
         @stop="handleStop"
       />
 
-      <PitchGameCompletePanel
+      <NoteRushCompletePanel
         v-else-if="gameState === 'complete' && summary"
         :score="summary.score"
         :totalTargets="summary.totalTargets"
@@ -376,7 +376,7 @@ onUnmounted(() => {
 
     <slot />
 
-    <PitchGamePitchDisplay
+    <NoteRushPitchDisplay
       ref="pitchDisplayRef"
       :noteInfo="noteInfo"
       :isClean="isClean"

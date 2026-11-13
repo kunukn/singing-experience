@@ -130,7 +130,7 @@
         "name": "Tebak Nada",
         "description": "Sebuah nada acak dimainkan — nyanyikan kembali! Cocokkan nada berbeda berturut-turut untuk menang."
       },
-      "pitchGame": {
+      "noteRush": {
         "name": "Kejar Nada",
         "description": "Nada-nada target meluncur masuk — nyanyikan tiap satu dan tahan untuk mencetak skor. Kejar waktu dan kena sebanyak mungkin."
       },
@@ -761,7 +761,7 @@
       "step2": "Nyanyi lebih tinggi untuk terbang naik, lebih rendah untuk turun.",
       "step3": "Terbang lewat celah untuk dapat skor."
     },
-    "pitchGame": {
+    "noteRush": {
       "step1": "Tekan Mulai.",
       "step2": "Nyanyikan tiap nada saat meluncur masuk dan tahan untuk dapat skor.",
       "step3": "Kena sebanyak mungkin nada sebelum waktu habis."

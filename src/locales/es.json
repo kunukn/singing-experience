@@ -130,7 +130,7 @@
         "name": "Canta el tono",
         "description": "Se reproduce un tono aleatorio — ¡cántalo de vuelta! Acierta tonos diferentes seguidos para ganar."
       },
-      "pitchGame": {
+      "noteRush": {
         "name": "Carrera de notas",
         "description": "Notas objetivo aparecen deslizándose — canta cada una y mantenla para puntuar. Corre contra el reloj y acierta todas las que puedas."
       },
@@ -761,7 +761,7 @@
       "step2": "Canta más agudo para subir y más grave para bajar.",
       "step3": "Pasa por los huecos para sumar puntos."
     },
-    "pitchGame": {
+    "noteRush": {
       "step1": "Pulsa Iniciar.",
       "step2": "Canta cada nota cuando entre y mantenla para sumar puntos.",
       "step3": "Acierta todas las notas que puedas antes de que se acabe el tiempo."

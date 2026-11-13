@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RecordResult } from '@/stores/useHighScoreStore'
-import type { GameSummary } from './usePitchGame'
+import type { GameSummary } from './useNoteRush'
 
 type Props = {
   score: number
@@ -20,7 +20,7 @@ const emit = defineEmits<{
   settings: []
 }>()
 
-/* Same condition as the confetti in PitchGameDisplay — the heading matches the
+/* Same condition as the confetti in NoteRushDisplay — the heading matches the
  * celebration, so a manual Stop reads "Game over" even with hits. */
 const isCelebrated = computed(
   () => props.score >= 1 && props.endReason === 'natural',

@@ -26,7 +26,7 @@ if (!ROUNDS_OPTIONS.includes(selectedRounds.value)) {
   selectedRounds.value = DEFAULT_TOTAL_ROUNDS
 }
 
-/* Cross-feature key — also used by pitch-game / piano / pitch-detector /
+/* Cross-feature key — also used by note-rush / piano / pitch-detector /
  * singfly / warm-up. Keep the string identical across all of them. */
 const selectedRangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 

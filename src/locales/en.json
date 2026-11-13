@@ -130,7 +130,7 @@
         "name": "Sing Tone",
         "description": "A random tone is played — sing it back! Match different tones in a row to win."
       },
-      "pitchGame": {
+      "noteRush": {
         "name": "Note Rush",
         "description": "Target notes scroll in — sing each one and hold it to score. Race the clock and hit as many as you can."
       },
@@ -761,7 +761,7 @@
       "step2": "Sing higher to fly up, lower to fly down.",
       "step3": "Fly through the gaps to score."
     },
-    "pitchGame": {
+    "noteRush": {
       "step1": "Press Start.",
       "step2": "Sing each note as it scrolls in and hold it to score.",
       "step3": "Hit as many notes as you can before time runs out."

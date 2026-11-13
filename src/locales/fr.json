@@ -130,7 +130,7 @@
         "name": "Chante le ton",
         "description": "Un ton aléatoire est joué — chante-le ! Reproduis différents tons d'affilée pour gagner."
       },
-      "pitchGame": {
+      "noteRush": {
         "name": "Course aux notes",
         "description": "Des notes cibles défilent — chante chacune et tiens-la pour marquer. Cours contre la montre et touches-en un maximum."
       },
@@ -761,7 +761,7 @@
       "step2": "Chante plus haut pour monter, plus bas pour descendre.",
       "step3": "Passe dans les trous pour marquer des points."
     },
-    "pitchGame": {
+    "noteRush": {
       "step1": "Appuie sur Démarrer.",
       "step2": "Chante chaque note quand elle arrive et tiens-la pour marquer.",
       "step3": "Touche le plus de notes possible avant la fin du temps."

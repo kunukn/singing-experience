@@ -10,7 +10,7 @@ import {
 /* Persisted singfly settings shared by the real page and the test page.
  * Each ref is validated on load so a stale or hand-edited localStorage value
  * can't put the game in an impossible state. `syng.rangeIndex` is a
- * cross-feature key (also used by pitch-game / piano / pitch-detector /
+ * cross-feature key (also used by note-rush / piano / pitch-detector /
  * sing-tone / warm-up) — keep the string identical. */
 export function useSingFlySettings() {
   const rangeIndex = useVoiceRangeIndex('syng.rangeIndex')

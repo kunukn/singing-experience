@@ -130,7 +130,7 @@
         "name": "Kuimba Toni",
         "description": "Toni ya nasibu inachezwa — iimbe tena! Linganisha toni tofauti mfululizo ili kushinda."
       },
-      "pitchGame": {
+      "noteRush": {
         "name": "Mbio za Noti",
         "description": "Noti za lengo zinaingia zikiteleza — imba kila moja na uishikilie kupata pointi. Kimbiza muda na piga nyingi kadri uwezavyo."
       },
@@ -761,7 +761,7 @@
       "step2": "Imba juu zaidi kupaa, chini zaidi kushuka.",
       "step3": "Pita kwenye mianya upate pointi."
     },
-    "pitchGame": {
+    "noteRush": {
       "step1": "Bonyeza “Anza”.",
       "step2": "Imba kila noti inapoingia na uishikilie upate pointi.",
       "step3": "Piga noti nyingi kadri uwezavyo kabla muda haujaisha."

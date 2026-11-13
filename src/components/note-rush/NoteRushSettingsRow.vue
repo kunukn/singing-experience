@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type { ToneMode } from '@/composables/toneEngine'
-import {
-  GAME_DURATION_OPTIONS,
-  HOLD_DURATION_OPTIONS,
-} from './pitchGameOptions'
+import { GAME_DURATION_OPTIONS, HOLD_DURATION_OPTIONS } from './noteRushOptions'
 
 const { t } = useI18n()
 

@@ -168,6 +168,22 @@ describe('useHighScoreStore', () => {
     expect(store.allScores).toEqual([valid])
   })
 
+  test('should keep scores saved under a renamed program key', () => {
+    const config = { durationSec: 20, holdSec: 0.1 }
+    const legacy = { ...createScore({ config }), game: 'pitchGame' }
+    localStorage.setItem(
+      'syng.highScores',
+      JSON.stringify({ 'pitchGame|durationSec=20,holdSec=0.1': legacy }),
+    )
+
+    const store = useHighScoreStore()
+
+    expect(store.bestFor('noteRush', config)).toEqual(
+      createScore({ game: 'noteRush', config }),
+    )
+    expect(store.allScores).toHaveLength(1)
+  })
+
   test('should recover from a stored value that is not an object', () => {
     localStorage.setItem('syng.highScores', JSON.stringify([1, 2]))
 

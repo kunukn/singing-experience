@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { NoteInfo } from '@/utils/noteUtils'
-import PitchGamePitchHistoryChart from './PitchGamePitchHistoryChart.vue'
-import type { GameTarget } from './usePitchGame'
+import NoteRushPitchHistoryChart from './NoteRushPitchHistoryChart.vue'
+import type { GameTarget } from './useNoteRush'
 
 type Props = {
   noteInfo: NoteInfo | null
@@ -34,7 +34,7 @@ const emit = defineEmits<{
   tonePlayed: []
 }>()
 
-const chartRef = ref<InstanceType<typeof PitchGamePitchHistoryChart> | null>(
+const chartRef = ref<InstanceType<typeof NoteRushPitchHistoryChart> | null>(
   null,
 )
 
@@ -47,7 +47,7 @@ defineExpose({ getTargetViewportOrigin })
 
 <template>
   <div class="flex w-full flex-1 flex-col gap-4">
-    <PitchGamePitchHistoryChart
+    <NoteRushPitchHistoryChart
       ref="chartRef"
       :noteInfo="noteInfo"
       :isListening="isListening"

@@ -3,8 +3,8 @@ import type { VoiceRange } from '@/constants/voiceRanges'
 import type { NoteInfo } from '@/utils/noteUtils'
 import type { Ref } from 'vue'
 
-import { GAME_PICKUP_LINE_RATIO, HISTORY_WINDOW_MS } from './pitchConstants'
-import { pitchGameMachine, type PitchGamePhase } from './pitchGameMachine'
+import { GAME_PICKUP_LINE_RATIO, HISTORY_WINDOW_MS } from './noteRushConstants'
+import { noteRushMachine, type NoteRushPhase } from './noteRushMachine'
 
 export type GameTargetStatus = 'pending' | 'hit' | 'missed'
 
@@ -27,7 +27,7 @@ export type GameSummary = {
   endReason: 'natural' | 'manual'
 }
 
-type UseGameOptions = {
+type UseNoteRushOptions = {
   noteInfo: Ref<NoteInfo | null>
   isClean: Ref<boolean>
   midiMin: Ref<number>
@@ -70,7 +70,7 @@ function randomIntExcluding(min: number, max: number, exclude: number): number {
 
 export type GameState = 'idle' | 'playing' | 'complete'
 
-export function useGame(options: UseGameOptions) {
+export function useNoteRush(options: UseNoteRushOptions) {
   const targets = ref<GameTarget[]>([])
   const score = ref(0)
   const summary = ref<GameSummary | null>(null)
@@ -80,9 +80,9 @@ export function useGame(options: UseGameOptions) {
   /* The single source of truth for the round lifecycle. Side-effects (mic via
    * onEnd, RAF tick, end timer, confetti) live in the imperative wrappers
    * below and in the Display's watchers, not in the machine — it stays pure. */
-  const { snapshot, send } = useMachine(pitchGameMachine)
-  const phase = computed<PitchGamePhase>(
-    () => snapshot.value.value as PitchGamePhase,
+  const { snapshot, send } = useMachine(noteRushMachine)
+  const phase = computed<NoteRushPhase>(
+    () => snapshot.value.value as NoteRushPhase,
   )
   const gameState = phase
   const isIdle = computed(() => phase.value === 'idle')

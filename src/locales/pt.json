@@ -130,7 +130,7 @@
         "name": "Cante o tom",
         "description": "Um tom aleatório é tocado — cante de volta! Acerte tons diferentes seguidos para vencer."
       },
-      "pitchGame": {
+      "noteRush": {
         "name": "Corrida de notas",
         "description": "Notas-alvo aparecem rolando — cante cada uma e segure para pontuar. Corra contra o tempo e acerte o máximo que puder."
       },
@@ -761,7 +761,7 @@
       "step2": "Cante mais agudo para subir e mais grave para descer.",
       "step3": "Passe pelos buracos para fazer pontos."
     },
-    "pitchGame": {
+    "noteRush": {
       "step1": "Aperte Iniciar.",
       "step2": "Cante cada nota que vai aparecendo e segure para fazer pontos.",
       "step3": "Acerte o máximo de notas que puder antes de o tempo acabar."

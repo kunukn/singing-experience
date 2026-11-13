@@ -8,9 +8,9 @@ import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
 import { getGridMidis } from '@/utils/chartGrid'
 import type { NoteInfo, NoteName } from '@/utils/noteUtils'
 import { midiToNoteLabel, noteToFrequency } from '@/utils/noteUtils'
-import { HISTORY_WINDOW_MS } from './pitchConstants'
-import PitchGamePitchHistoryCanvas from './PitchGamePitchHistoryCanvas.vue'
-import type { GameTarget } from './usePitchGame'
+import { HISTORY_WINDOW_MS } from './noteRushConstants'
+import NoteRushPitchHistoryCanvas from './NoteRushPitchHistoryCanvas.vue'
+import type { GameTarget } from './useNoteRush'
 
 type Props = {
   noteInfo: NoteInfo | null
@@ -109,7 +109,7 @@ const gridMidis = computed(() => gridNotes.value.map((n) => n.midi))
 
 const containerRef = ref<HTMLElement | null>(null)
 const canvasComponentRef = ref<InstanceType<
-  typeof PitchGamePitchHistoryCanvas
+  typeof NoteRushPitchHistoryCanvas
 > | null>(null)
 const containerHeight = ref(0)
 
@@ -192,7 +192,7 @@ defineExpose({ gridNoteCount, getSamples, getTargetViewportOrigin })
     class="relative min-h-64 w-full max-w-4xl flex-1 overflow-hidden"
     style="max-height: 50rem"
   >
-    <PitchGamePitchHistoryCanvas
+    <NoteRushPitchHistoryCanvas
       ref="canvasComponentRef"
       :noteInfo="noteInfo"
       :isListening="isListening"
@@ -225,7 +225,7 @@ defineExpose({ gridNoteCount, getSamples, getTargetViewportOrigin })
       role="region"
       tabindex="0"
       :aria-label="t('generic.scrollGame')"
-      data-testid="pitch-game-history-scroller"
+      data-testid="note-rush-history-scroller"
       :data-view-offset-ms="Math.round(viewOffsetMs)"
       @scroll="handleScroll"
       @pointerdown="handlePointerDown"
@@ -245,7 +245,7 @@ defineExpose({ gridNoteCount, getSamples, getTargetViewportOrigin })
         width: `${scrollThumb.sizeFraction * 100}%`,
       }"
       aria-hidden="true"
-      data-testid="pitch-game-history-scroll-thumb"
+      data-testid="note-rush-history-scroll-thumb"
     />
     <button
       v-for="pos in labelPositions"

@@ -1,8 +1,8 @@
 import { describe, expect, test } from 'vitest'
 
-import { HISTORY_WINDOW_MS } from './pitchConstants'
-import { getReviewScrollableMs } from './pitchGameReview'
-import { LEAD_IN_MS, type GameTarget } from './usePitchGame'
+import { HISTORY_WINDOW_MS } from './noteRushConstants'
+import { getReviewScrollableMs } from './noteRushReview'
+import { LEAD_IN_MS, type GameTarget } from './useNoteRush'
 
 const ROUND_START = 1000
 
@@ -13,7 +13,7 @@ const createTarget = (offsetMs: number): GameTarget => ({
   status: 'missed',
 })
 
-describe('pitchGameReview', () => {
+describe('noteRushReview', () => {
   test('returns the round length beyond the visible window', () => {
     const targets = [createTarget(0), createTarget(8000)]
 

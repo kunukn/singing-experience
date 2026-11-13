@@ -1,13 +1,13 @@
 import { setup } from 'xstate'
 
-export type PitchGamePhase = 'idle' | 'playing' | 'complete'
+export type NoteRushPhase = 'idle' | 'playing' | 'complete'
 
-type PitchGameEvent =
+type NoteRushEvent =
   | { type: 'START' }
   | { type: 'COMPLETE' }
   | { type: 'RESET' }
 
-/* The single source of truth for the PitchGame round lifecycle.
+/* The single source of truth for the NoteRush round lifecycle.
  *
  * COMPLETE is only accepted in `playing`, so a stray (or double) completion is
  * structurally impossible — replaces the old isPlaying/summary flag-guard.
@@ -17,12 +17,12 @@ type PitchGameEvent =
  * lifecycle side-effect (mic, RAF tick, end timer, confetti) lives in the
  * composable / Display around this machine, not in it: the machine stays
  * pure. */
-export const pitchGameMachine = setup({
+export const noteRushMachine = setup({
   types: {
-    events: {} as PitchGameEvent,
+    events: {} as NoteRushEvent,
   },
 }).createMachine({
-  id: 'pitchGame',
+  id: 'noteRush',
   initial: 'idle',
   states: {
     idle: {

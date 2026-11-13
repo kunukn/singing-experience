@@ -93,7 +93,7 @@ export const programHelpByKey: Record<string, ProgramHelp> = {
   singTheKeys: { stepCount: 3, terms: ['note', 'songRange'] },
   graceKelly: { stepCount: 3, terms: ['harmony', 'note', 'bpm'] },
   singFly: { stepCount: 3, terms: ['note', 'voiceRange'] },
-  pitchGame: { stepCount: 3, terms: ['note', 'voiceRange'] },
+  noteRush: { stepCount: 3, terms: ['note', 'voiceRange'] },
   circleOfFifths: { stepCount: 3, terms: ['solfege', 'key'] },
   singingTools: { stepCount: 3, terms: [] },
   singingGames: { stepCount: 3, terms: [] },

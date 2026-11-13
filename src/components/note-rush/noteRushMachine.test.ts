@@ -1,17 +1,17 @@
 import { createActor } from 'xstate'
 import { describe, expect, test } from 'vitest'
-import { pitchGameMachine } from './pitchGameMachine'
+import { noteRushMachine } from './noteRushMachine'
 
 /* Pure FSM tests — no Vue. Proves the graph only allows the legal lifecycle
  * transitions; a stray COMPLETE outside `playing` is structurally rejected. */
 
 function actor() {
-  const a = createActor(pitchGameMachine)
+  const a = createActor(noteRushMachine)
   a.start()
   return a
 }
 
-describe('pitchGameMachine', () => {
+describe('noteRushMachine', () => {
   test('starts idle', () => {
     expect(actor().getSnapshot().value).toBe('idle')
   })

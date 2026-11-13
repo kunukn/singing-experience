@@ -47,7 +47,7 @@ The tools all listen to your voice in real time and show you where it lands — 
 | <img src="docs/icons/sing-the-keys.svg" width="20" height="20" align="absmiddle" alt="" /> Sing the Keys `beta`                 | Notes fall onto a piano — sing each one as it lands. Twinkle Twinkle, Für Elise and more, in any key |
 | <img src="docs/icons/grace-kelly-challenge.svg" width="20" height="20" align="absmiddle" alt="" /> Grace Kelly Challenge `beta` | Sing along to MIKA's "Grace Kelly" with real sheet music and harmonies                               |
 | <img src="docs/icons/singfly.svg" width="20" height="20" align="absmiddle" alt="" /> Singfly `beta`                             | Your pitch flies the bird through the gaps                                                           |
-| <img src="docs/icons/pitch-game.svg" width="20" height="20" align="absmiddle" alt="" /> Note Rush `beta`                        | Hit as many scrolling target notes as you can before the clock runs out                              |
+| <img src="docs/icons/note-rush.svg" width="20" height="20" align="absmiddle" alt="" /> Note Rush `beta`                         | Hit as many scrolling target notes as you can before the clock runs out                              |
 | <img src="docs/icons/circle-of-fifths.svg" width="20" height="20" align="absmiddle" alt="" /> Circle of Fifths `beta`           | Sing DO then SO to hop around the circle of fifths and light up all 12 keys, or explore each key     |
 
 Each program has its own settings — voice range, difficulty, tempo, hold time, and more. DO RE MI offers difficulty levels and 40+ scale modes spanning classical, jazz, and world music.

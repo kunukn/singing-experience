@@ -120,7 +120,7 @@
         "name": "Niperuserneq",
         "description": "Nipi nalinginnaasumik nipilerisarpoq — utertitsillugu niperusillugu! Nipit nalinginnaanngitsumillu tulleriiaarneqassapput ajugaannginnarlutit."
       },
-      "pitchGame": {
+      "noteRush": {
         "name": "Pitch Pinnguaq",
         "description": "Nipit anguniagaasut takkuttarput — ataasiakkaarlugit niperuserlugillu tigusimaaruk akilersinnaajumallutit. Piffissaq akiullugu tamarmik anguniagaaffigeqqullugit."
       },
@@ -619,7 +619,7 @@
       "step2": "Sing higher to fly up, lower to fly down.",
       "step3": "Fly through the gaps to score."
     },
-    "pitchGame": {
+    "noteRush": {
       "step1": "Press Aallartitsit.",
       "step2": "Sing each note as it scrolls in and hold it to score.",
       "step3": "Hit as many notes as you can before time runs out."

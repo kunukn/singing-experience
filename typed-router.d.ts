@@ -115,6 +115,20 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/note-rush': RouteRecordInfo<
+      '/note-rush',
+      '/note-rush',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
+    '/note-rush-test': RouteRecordInfo<
+      '/note-rush-test',
+      '/note-rush-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/notes': RouteRecordInfo<
       '/notes',
       '/notes',
@@ -153,20 +167,6 @@ declare module 'vue-router/auto-routes' {
     '/pitch-detector-test': RouteRecordInfo<
       '/pitch-detector-test',
       '/pitch-detector-test',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/pitch-game': RouteRecordInfo<
-      '/pitch-game',
-      '/pitch-game',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
-    '/pitch-game-test': RouteRecordInfo<
-      '/pitch-game-test',
-      '/pitch-game-test',
       Record<never, never>,
       Record<never, never>,
       | never
@@ -434,6 +434,22 @@ declare module 'vue-router/auto-routes' {
       pathParamNames:
         | never
     }
+    'src/pages/note-rush.vue': {
+      routes:
+        | '/note-rush'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/note-rush-test.vue': {
+      routes:
+        | '/note-rush-test'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
     'src/pages/notes.vue': {
       routes:
         | '/notes'
@@ -477,22 +493,6 @@ declare module 'vue-router/auto-routes' {
     'src/pages/pitch-detector-test.vue': {
       routes:
         | '/pitch-detector-test'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/pages/pitch-game.vue': {
-      routes:
-        | '/pitch-game'
-      views:
-        | never
-      pathParamNames:
-        | never
-    }
-    'src/pages/pitch-game-test.vue': {
-      routes:
-        | '/pitch-game-test'
       views:
         | never
       pathParamNames:

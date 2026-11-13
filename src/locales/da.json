@@ -130,7 +130,7 @@
         "name": "Syng tonen",
         "description": "En tilfældig tone afspilles — syng den efter! Match forskellige toner i træk for at vinde."
       },
-      "pitchGame": {
+      "noteRush": {
         "name": "Nodejagt",
         "description": "Mål-toner glider ind — syng hver enkelt og hold den for at score. Kap tiden og ram så mange du kan."
       },
@@ -761,7 +761,7 @@
       "step2": "Syng højere for at flyve op og dybere for at flyve ned.",
       "step3": "Flyv gennem hullerne for at score."
     },
-    "pitchGame": {
+    "noteRush": {
       "step1": "Tryk på Start.",
       "step2": "Syng hver tone, når den glider ind, og hold den for at score.",
       "step3": "Ram så mange toner som muligt, før tiden løber ud."

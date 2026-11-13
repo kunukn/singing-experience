@@ -7,7 +7,7 @@ import ProgramGuitarIcon from '@/components/icons/program/ProgramGuitarIcon.vue'
 import ProgramNotesIcon from '@/components/icons/program/ProgramNotesIcon.vue'
 import ProgramPianoIcon from '@/components/icons/program/ProgramPianoIcon.vue'
 import ProgramPitchDetectorIcon from '@/components/icons/program/ProgramPitchDetectorIcon.vue'
-import ProgramPitchGameIcon from '@/components/icons/program/ProgramPitchGameIcon.vue'
+import ProgramNoteRushIcon from '@/components/icons/program/ProgramNoteRushIcon.vue'
 import ProgramScaleDetectorIcon from '@/components/icons/program/ProgramScaleDetectorIcon.vue'
 import ProgramSingFlyIcon from '@/components/icons/program/ProgramSingFlyIcon.vue'
 import ProgramSingTheKeysIcon from '@/components/icons/program/ProgramSingTheKeysIcon.vue'
@@ -86,9 +86,9 @@ export const games: Program[] = [
     section: 'startHere',
   },
   {
-    key: 'pitchGame',
-    icon: ProgramPitchGameIcon,
-    route: '/pitch-game',
+    key: 'noteRush',
+    icon: ProgramNoteRushIcon,
+    route: '/note-rush',
     section: 'challenges',
     stage: 'beta',
   },

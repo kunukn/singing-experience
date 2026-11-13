@@ -1,5 +1,5 @@
-import { HISTORY_WINDOW_MS } from './pitchConstants'
-import { LEAD_IN_MS, type GameTarget } from './usePitchGame'
+import { HISTORY_WINDOW_MS } from './noteRushConstants'
+import { LEAD_IN_MS, type GameTarget } from './useNoteRush'
 
 /*
  * How far back a finished round can be scrolled: its length beyond the one

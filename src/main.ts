@@ -43,7 +43,12 @@ const router = createRouter({
   history: useHistory
     ? createWebHistory(import.meta.env.BASE_URL)
     : createWebHashHistory(import.meta.env.BASE_URL),
-  routes: [...routes, { path: '/warmup', redirect: '/warm-up' }],
+  routes: [
+    ...routes,
+    { path: '/warmup', redirect: '/warm-up' },
+    /* Note Rush lived at /pitch-game — keeps old links and bookmarks working */
+    { path: '/pitch-game', redirect: '/note-rush' },
+  ],
 })
 
 if (import.meta.hot) {

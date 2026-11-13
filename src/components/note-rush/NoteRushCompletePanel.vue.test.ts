@@ -3,13 +3,13 @@ import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
-import PitchGameCompletePanel from './PitchGameCompletePanel.vue'
-import type { GameSummary } from './usePitchGame'
+import NoteRushCompletePanel from './NoteRushCompletePanel.vue'
+import type { GameSummary } from './useNoteRush'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
 
 function mountPanel(score: number, endReason: GameSummary['endReason']) {
-  return mount(PitchGameCompletePanel, {
+  return mount(NoteRushCompletePanel, {
     props: {
       score,
       totalTargets: 5,
@@ -23,7 +23,7 @@ function mountPanel(score: number, endReason: GameSummary['endReason']) {
   })
 }
 
-describe('PitchGameCompletePanel', () => {
+describe('NoteRushCompletePanel', () => {
   test.each([
     { score: 3, endReason: 'natural', heading: 'Congratulations!' },
     { score: 0, endReason: 'natural', heading: 'Game over' },

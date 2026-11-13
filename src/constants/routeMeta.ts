@@ -114,7 +114,7 @@ export const ROUTE_META: Record<string, DocumentMeta> = {
     description:
       'Your voice is the controller: sing higher or lower to fly the bird through the gaps. A playful pitch-control game in your browser.',
   },
-  '/pitch-game': {
+  '/note-rush': {
     title: 'Note Rush — Sing the Target Notes',
     description:
       'Target notes scroll in — sing each one and hold it to score. Race the clock and hit as many as you can.',

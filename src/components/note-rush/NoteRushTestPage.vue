@@ -5,7 +5,7 @@ import {
   NOTE_NAMES,
   NOTE_OPTIONS_HIGH_TO_LOW,
 } from '@/utils/noteUtils'
-import PitchGameDisplay from './PitchGameDisplay.vue'
+import NoteRushDisplay from './NoteRushDisplay.vue'
 
 const selectedRangeIndex = ref(4)
 const selectedHoldDurationSec = ref(0.05)
@@ -54,7 +54,7 @@ const overridePreviewFrequency = computed(() => {
 </script>
 
 <template>
-  <PitchGameDisplay
+  <NoteRushDisplay
     :detection="detection"
     :overridePreviewMidi="overridePreviewMidi"
     :overridePreviewNoteLabel="overridePreviewNoteLabel"
@@ -129,5 +129,5 @@ const overridePreviewFrequency = computed(() => {
         />
       </div>
     </div>
-  </PitchGameDisplay>
+  </NoteRushDisplay>
 </template>
