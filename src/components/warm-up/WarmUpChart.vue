@@ -189,7 +189,7 @@ function drawChart() {
   const gridLineGrey = withAlpha(textColor, 0.3)
   const gridLineGreen = cleanPitchColor(isDark.value, 0.5)
 
-  ctx.strokeStyle = withAlpha(textColor, 0.2)
+  ctx.strokeStyle = withAlpha(textColor, 0.15)
   ctx.setLineDash([4, 4]) // px dash/gap — lighter than the solid note lines
   for (const midi of passingMidis.value) {
     const y = midiToY(midi, height)
