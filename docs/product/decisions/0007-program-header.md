@@ -21,4 +21,4 @@ One `ProgramHeader` component: the card name as the page title, an optional one-
 
 ## Consequences
 
-A new program gets the right heading by using the component. Warm-up's title now matches its card, and the `warmUp.title` string is gone. Eleven tools still have no header; adding one is a per-tool layout call, since their controls sit tighter.
+A new program gets the right heading by using the component. Warm-up's title now matches its card, and the `warmUp.title` string is gone. Tools get the same header, title only, from their route page.

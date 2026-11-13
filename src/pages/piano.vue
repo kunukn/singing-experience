@@ -6,6 +6,7 @@
 
 <template>
   <div data-page="piano">
+    <ProgramHeader programKey="piano" class="mb-4" />
     <PianoPage />
   </div>
 </template>

@@ -116,6 +116,8 @@ Every program page opens the same way, so a player always knows where they are a
 - **Size and spacing are fixed by the component**: title `text-2xl font-semibold`, subtitle `text-sm` muted, 4px between them, both centred.
 - **On an end screen the subtitle is hidden, not removed** (`isSubtitleHidden`). It keeps its space, so nothing below moves.
 
-Guarded by `ProgramHeader.vue.test.ts`. Most tools don't have a header yet.
+- **Where it goes:** a game puts it at the top of its Display, where it knows the game state. A tool has no end screen, so its route page in `src/pages/` renders it above the tool, title only.
+
+Guarded by `ProgramHeader.vue.test.ts`.
 
 Why: [0007 — One program header](decisions/0007-program-header.md)

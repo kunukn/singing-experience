@@ -6,6 +6,7 @@
 
 <template>
   <div data-page="guitar">
+    <ProgramHeader programKey="guitar" class="mb-4" />
     <GuitarPage />
   </div>
 </template>
