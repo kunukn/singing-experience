@@ -32,7 +32,7 @@ const logoHue = computed<ProgramIconHue>(() => {
       <h1 class="product-title mb-2 font-bold">{{ t('home.title') }}</h1>
     </div>
 
-    <p class="mb-4 text-(--p-text-muted-color)">
+    <p class="mb-4 text-(--p-text-muted-color) md:mb-6 lg:mb-10">
       {{ t('home.subtitle') }}
     </p>
 
