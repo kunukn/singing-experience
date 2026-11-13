@@ -57,7 +57,7 @@ const isCelebrated = computed(
       </span>
     </p>
 
-    <HighScoreBadge :result="recordResult" />
+    <HighScoreBadge :result="recordResult" class="mb-2 md:mb-4" />
 
     <GameEndActions
       @playAgain="emit('playAgain')"
