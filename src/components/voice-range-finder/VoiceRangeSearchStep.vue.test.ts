@@ -56,6 +56,26 @@ describe('VoiceRangeSearchStep', () => {
     })
   })
 
+  describe('sound with no clear pitch', () => {
+    const mountUnclear = () => mountStep({ pauseReason: 'unclear' })
+
+    test('should say no clear note is heard', () => {
+      const wrapper = mountUnclear()
+
+      expect(
+        wrapper.get('[data-testid="voice-range-finder-hold-hint"]').text(),
+      ).toBe("Can't hear a clear note.")
+      wrapper.unmount()
+    })
+
+    test('should not point anywhere with an arrow', () => {
+      const wrapper = mountUnclear()
+
+      expect(wrapper.find(CUE).exists()).toBe(false)
+      wrapper.unmount()
+    })
+  })
+
   describe('pause cue', () => {
     test('should point down to the next note below the low record', () => {
       const wrapper = mountStep({

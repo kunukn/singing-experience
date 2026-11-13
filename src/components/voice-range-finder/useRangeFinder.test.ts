@@ -2,17 +2,25 @@ import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { effectScope, ref } from 'vue'
 import { CLOSE_CENTS } from '@/utils/pitchColors'
 import { TUNING_STRAY_MS } from '@/utils/tuningHold'
-import { RANGE_FINDER_HOLD_MS, useRangeFinder } from './useRangeFinder'
+import {
+  RANGE_FINDER_HOLD_MS,
+  UNCLEAR_CUE_MS,
+  UNCLEAR_SOUND_LEVEL,
+  useRangeFinder,
+} from './useRangeFinder'
 
 /* A little past the hold, so the last frame lands after it completes */
 const HOLD_WITH_SLACK_MS = RANGE_FINDER_HOLD_MS + 100
 
 function setup() {
   const midi = ref<number | null>(null)
+  const level = ref(0)
   const scope = effectScope()
-  const finder = scope.run(() => useRangeFinder({ sungMidi: midi }))!
+  const finder = scope.run(() =>
+    useRangeFinder({ sungMidi: midi, soundLevel: level }),
+  )!
 
-  return { midi, finder, scope }
+  return { midi, level, finder, scope }
 }
 
 describe('useRangeFinder', () => {
@@ -404,6 +412,67 @@ describe('useRangeFinder', () => {
       expect(finder.pauseReason.value).toBe('aboveLimit')
       expect(finder.highestMidi.value).toBe(null)
       scope.stop()
+    })
+
+    describe('sound with no clear pitch', () => {
+      /* A little past the delay, so a frame lands after it */
+      const UNCLEAR_DELAY_WITH_SLACK_MS = UNCLEAR_CUE_MS + 50
+
+      test('should say the note is unclear once the sound has lasted', () => {
+        const { level, finder, scope } = setup()
+
+        finder.start()
+        level.value = UNCLEAR_SOUND_LEVEL
+        vi.advanceTimersByTime(UNCLEAR_CUE_MS / 2)
+        expect(finder.pauseReason.value).toBe(null)
+
+        vi.advanceTimersByTime(UNCLEAR_DELAY_WITH_SLACK_MS)
+
+        expect(finder.pauseReason.value).toBe('unclear')
+        scope.stop()
+      })
+
+      test('should stay quiet about a silent room', () => {
+        const { level, finder, scope } = setup()
+
+        finder.start()
+        level.value = UNCLEAR_SOUND_LEVEL / 2
+        vi.advanceTimersByTime(UNCLEAR_DELAY_WITH_SLACK_MS)
+
+        expect(finder.pauseReason.value).toBe(null)
+        scope.stop()
+      })
+
+      test('should clear as soon as a clean note is heard', () => {
+        const { midi, level, finder, scope } = setup()
+
+        finder.start()
+        level.value = UNCLEAR_SOUND_LEVEL
+        vi.advanceTimersByTime(UNCLEAR_DELAY_WITH_SLACK_MS)
+        midi.value = 44
+        vi.advanceTimersByTime(50)
+
+        expect(finder.pauseReason.value).toBe(null)
+        scope.stop()
+      })
+
+      test('should keep the hold through an unclear stretch', () => {
+        const { midi, level, finder, scope } = setup()
+
+        finder.start()
+        level.value = UNCLEAR_SOUND_LEVEL
+        midi.value = 44
+        vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS / 2)
+        midi.value = null // the note turns croaky
+        vi.advanceTimersByTime(UNCLEAR_DELAY_WITH_SLACK_MS)
+        const progressWhileUnclear = finder.progress.value
+        midi.value = 44
+        vi.advanceTimersByTime(RANGE_FINDER_HOLD_MS / 2 + 100)
+
+        expect(progressWhileUnclear).toBeGreaterThan(0)
+        expect(finder.lowestMidi.value).toBe(44)
+        scope.stop()
+      })
     })
 
     test('should still count C6 itself', () => {

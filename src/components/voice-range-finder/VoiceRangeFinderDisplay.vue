@@ -21,6 +21,8 @@ type Props = {
   detection: {
     frequency: Readonly<Ref<number | null>>
     isClean: Readonly<Ref<boolean>>
+    /* Mic level (RMS, 0–1), also while no clean pitch is heard */
+    level: Readonly<Ref<number>>
     isListening: Readonly<Ref<boolean>>
     error: Readonly<Ref<string | null>>
     start: () => void | Promise<void>
@@ -87,7 +89,11 @@ const sungMidi = computed(() => {
     : null
 })
 
-const finder = useRangeFinder({ sungMidi })
+const finder = useRangeFinder({
+  sungMidi,
+  soundLevel: () =>
+    props.detection.isListening.value ? props.detection.level.value : 0,
+})
 const {
   step,
   mode,

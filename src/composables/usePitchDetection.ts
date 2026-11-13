@@ -95,6 +95,10 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
   const frequency = ref<number | null>(null)
   const noteInfo = ref<NoteInfo | null>(null)
   const clarity = ref(0)
+  /* How loud the mic signal is: RMS of the frame, 0–1. Reported for every
+   * frame, so a caller can tell sound with no clean pitch (breath, a croaky
+   * note) from silence. */
+  const level = ref(0)
   const isListening = ref(false)
   const isClean = ref(false)
   const error = ref<string | null>(null)
@@ -141,6 +145,13 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
     const [pitch, detectedClarity] = detector.findPitch(input, sampleRate)
 
     clarity.value = Math.round(detectedClarity * 100) / 100 // round to 2 decimal places
+
+    let sumOfSquares = 0
+    for (const sample of input) sumOfSquares += sample * sample
+    /* 3 decimals, so a quiet room settles on one value instead of changing
+     * the ref every frame */
+    level.value =
+      Math.round(Math.sqrt(sumOfSquares / input.length) * 1000) / 1000
 
     if (
       detectedClarity >= clarityThreshold.value &&
@@ -299,6 +310,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
     frequency.value = null
     noteInfo.value = null
     clarity.value = 0
+    level.value = 0
     isClean.value = false
   }
 
@@ -306,6 +318,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
     frequency: readonly(frequency),
     noteInfo: readonly(noteInfo),
     clarity: readonly(clarity),
+    level: readonly(level),
     isListening: readonly(isListening),
     isClean: readonly(isClean),
     error: readonly(error),

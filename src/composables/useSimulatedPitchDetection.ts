@@ -14,10 +14,15 @@ type SimulationConfig = {
   referenceA4?: MaybeRefOrGetter<number>
 }
 
+/* Level reported whenever the simulated voice makes any sound, well above what
+ * a quiet room reads on a real mic */
+const SIMULATED_VOICE_LEVEL = 0.1
+
 export function useSimulatedPitchDetection(config: SimulationConfig) {
   const frequency = ref<number | null>(null)
   const noteInfo = ref<NoteInfo | null>(null)
   const clarity = ref(0)
+  const level = ref(0)
   const isListening = ref(false)
   const isClean = ref(false)
   const error = ref<string | null>(null)
@@ -53,6 +58,9 @@ export function useSimulatedPitchDetection(config: SimulationConfig) {
     clarity.value = Math.min(1, Math.max(0, config.clarity.value))
     // 0.85 matches CLARITY_THRESHOLD in usePitchDetection — keeps simulation consistent
     isClean.value = clarity.value >= 0.85
+    /* Clarity 0 is the voice switched off; anything above it is sound, clean
+     * or not */
+    level.value = clarity.value > 0 ? SIMULATED_VOICE_LEVEL : 0
 
     animationFrameId = requestAnimationFrame(tick)
   }
@@ -76,6 +84,7 @@ export function useSimulatedPitchDetection(config: SimulationConfig) {
     frequency.value = null
     noteInfo.value = null
     clarity.value = 0
+    level.value = 0
     isClean.value = false
     prevMidi = undefined
   }
@@ -84,6 +93,7 @@ export function useSimulatedPitchDetection(config: SimulationConfig) {
     frequency: readonly(frequency),
     noteInfo: readonly(noteInfo),
     clarity: readonly(clarity),
+    level: readonly(level),
     isListening: readonly(isListening),
     isClean: readonly(isClean),
     error: readonly(error),

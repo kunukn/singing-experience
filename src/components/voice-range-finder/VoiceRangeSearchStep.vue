@@ -75,7 +75,7 @@ watch(
 )
 
 /* Names what the filling bar is about to save, or why a note above the span
- * doesn't count. Otherwise empty on a paused bar — it would claim progress that
+ * or a sound with no clear pitch doesn't count. Otherwise empty on a paused bar — it would claim progress that
  * isn't happening. */
 const holdHint = computed(() => {
   if (isRecordFlash.value) return ''
@@ -84,6 +84,8 @@ const holdHint = computed(() => {
     return t('voiceRangeFinder.aboveLimit', {
       note: formatNote(VOICE_RANGE_HIGHEST_MIDI),
     })
+
+  if (props.pauseReason === 'unclear') return t('voiceRangeFinder.unclearNote')
 
   return props.isFilling && props.candidateMidi !== null
     ? t('voiceRangeFinder.keepHolding', {

@@ -6,6 +6,8 @@ import VoiceRangeFinderDisplay from './VoiceRangeFinderDisplay.vue'
 
 const VOICE_ON_CLARITY = 0.95
 const VOICE_OFF_CLARITY = 0
+/* Sound, but under the clean threshold — a croaky or breathy note */
+const VOICE_UNCLEAR_CLARITY = 0.5
 
 const selectedNote = ref<NoteName>('G')
 const selectedOctave = ref(2)
@@ -25,6 +27,13 @@ const isVoiceOn = computed({
   get: () => selectedClarity.value >= VOICE_ON_CLARITY,
   set: (isOn) => {
     selectedClarity.value = isOn ? VOICE_ON_CLARITY : VOICE_OFF_CLARITY
+  },
+})
+
+const isVoiceUnclear = computed({
+  get: () => selectedClarity.value === VOICE_UNCLEAR_CLARITY,
+  set: (isUnclear) => {
+    selectedClarity.value = isUnclear ? VOICE_UNCLEAR_CLARITY : VOICE_ON_CLARITY
   },
 })
 
@@ -78,6 +87,11 @@ const octaveOptions = [6, 5, 4, 3, 2]
       <label class="flex items-center gap-2 text-sm">
         <PrimeToggleSwitch v-model="isVoiceOn" />
         Voice
+      </label>
+
+      <label class="flex items-center gap-2 text-sm">
+        <PrimeToggleSwitch v-model="isVoiceUnclear" />
+        Unclear
       </label>
     </div>
 

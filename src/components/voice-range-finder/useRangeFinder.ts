@@ -23,11 +23,29 @@ export type RangeFinderMode = 'both' | 'low' | 'high'
 
 /* Why a sung note isn't filling the hold, when the singer can do something
  * about it */
-export type RangeFinderPauseReason = 'notPastRecord' | 'offPitch' | 'aboveLimit'
+export type RangeFinderPauseReason =
+  | 'notPastRecord'
+  | 'offPitch'
+  | 'aboveLimit'
+  | 'unclear'
+
+/* Mic level (RMS, 0–1) from which sound with no clean pitch counts as the
+ * singer trying, not the room. The finder's mic runs without auto gain, so the
+ * level follows how loud the singer really is. */
+export const UNCLEAR_SOUND_LEVEL = 0.01
+
+/* How long sound must stay unclear before the hint says so. Longer than the
+ * other reasons' TUNING_STRAY_MS: every note starts and fades through a moment
+ * of unclear sound, and a breath between tries is one too. */
+export const UNCLEAR_CUE_MS = 500
 
 type RangeFinderOptions = {
-  /* Fractional MIDI of the live sung pitch, or null for silence */
+  /* Fractional MIDI of the live sung pitch, or null when no clean pitch is
+   * heard */
   sungMidi: MaybeRefOrGetter<number | null>
+  /* Mic level (RMS, 0–1). Tells a croaky or breathy note, which has no clean
+   * pitch, from silence. Omit to treat every pitchless frame as silence. */
+  soundLevel?: MaybeRefOrGetter<number>
 }
 
 /* Cents off the nearest semitone — the same rounding the hold uses to pick the
@@ -56,7 +74,10 @@ export const isCleanEnough = (midi: number) =>
  * Samples once per animation frame rather than watching the pitch, for the
  * reason useSongTuning gives: a steady tone never changes the ref.
  */
-export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
+export function useRangeFinder({
+  sungMidi,
+  soundLevel = 0,
+}: RangeFinderOptions) {
   const hold = createTuningHold({ holdMs: RANGE_FINDER_HOLD_MS })
 
   const step = ref<RangeFinderStep>('idle')
@@ -116,7 +137,10 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
    * next note to point at. */
   function readPauseReason(): RangeFinderPauseReason | null {
     const midi = toValue(sungMidi)
-    if (midi === null) return null
+    /* Sound but no pitch: without a reason the bar would sit still, and a
+     * croaky note at the bottom of the voice would look like a dead mic. */
+    if (midi === null)
+      return toValue(soundLevel) >= UNCLEAR_SOUND_LEVEL ? 'unclear' : null
 
     /* Only reaching up: above the span the note can't count, and without a
      * reason the bar would sit still as if the app had stopped listening. */
@@ -138,8 +162,9 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
   }
 
   /* A reason shows once it has lasted TUNING_STRAY_MS, so sliding through the
-   * record or a wobble across the clean limit doesn't flash a cue. It clears
-   * at once, because the bar is already moving again. */
+   * record or a wobble across the clean limit doesn't flash a cue (unclear
+   * sound waits longer, see UNCLEAR_CUE_MS). It clears at once, because the
+   * bar is already moving again. */
   function updatePauseReason(timestamp: number) {
     const reason = readPauseReason()
     if (reason !== latestPauseReason) {
@@ -147,8 +172,10 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
       latestPauseReasonSince = timestamp
     }
 
+    const delayMs = reason === 'unclear' ? UNCLEAR_CUE_MS : TUNING_STRAY_MS
+
     pauseReason.value =
-      timestamp - latestPauseReasonSince >= TUNING_STRAY_MS ? reason : null
+      timestamp - latestPauseReasonSince >= delayMs ? reason : null
   }
 
   function clearPauseReason() {
@@ -162,8 +189,8 @@ export function useRangeFinder({ sungMidi }: RangeFinderOptions) {
    * C2 record out of the moments the detector reads an octave low, however far
    * apart they are. A far note ends it at once, as the jump gate leaves it on
    * screen only briefly between slips; a near one must last, as vibrato crosses
-   * into it. Silence and an out-of-tune high note only pause: breathy dropouts
-   * and strained top notes are part of a real attempt.
+   * into it. Silence, unclear sound and an out-of-tune high note only pause:
+   * breathy dropouts and strained top notes are part of a real attempt.
    */
   function breaksHold(): boolean {
     if (pauseReason.value === 'notPastRecord') return true

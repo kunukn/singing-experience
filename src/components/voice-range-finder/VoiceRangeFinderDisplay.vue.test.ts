@@ -31,6 +31,7 @@ async function mountDisplay() {
   const detection = {
     frequency,
     isClean: ref(true),
+    level: ref(0),
     isListening,
     error: ref<string | null>(null),
     start: vi.fn(() => {
