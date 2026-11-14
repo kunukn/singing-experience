@@ -19,7 +19,7 @@ const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 
-const TAB_VALUES = ['sing', 'harmony', 'sing-live'] as const
+const TAB_VALUES = ['sing', 'harmony', 'harmony-chart', 'sing-live'] as const
 type GraceKellyTab = (typeof TAB_VALUES)[number]
 const DEFAULT_TAB: GraceKellyTab = 'sing'
 
@@ -71,7 +71,7 @@ if (!isValidVozSelection) {
   selectedVozIndices.value = [...ALL_VOZ_INDICES]
 }
 
-/* Active tab lives only in the URL (?tab=sing|harmony|sing-live) — the single
+/* Active tab lives only in the URL (?tab=sing|harmony|harmony-chart|sing-live) — the single
  * source of truth. Unknown/missing values fall back to the default so a panel
  * always shows. replace() keeps tab switches out of the browser history. */
 const activeTab = computed<GraceKellyTab>({
@@ -142,6 +142,9 @@ watch(activeTab, () => {
       <PrimeTabList>
         <PrimeTab value="sing">{{ t('graceKelly.tabs.singAlong') }}</PrimeTab>
         <PrimeTab value="harmony">{{ t('graceKelly.tabs.harmony') }}</PrimeTab>
+        <PrimeTab value="harmony-chart">
+          {{ t('graceKelly.tabs.harmonyChart') }}
+        </PrimeTab>
         <PrimeTab value="sing-live">{{ t('graceKelly.tabs.sing') }}</PrimeTab>
       </PrimeTabList>
       <PrimeTabPanels class="px-0">
@@ -159,6 +162,16 @@ watch(activeTab, () => {
         <PrimeTabPanel value="harmony">
           <GraceKellyHarmonyDisplay
             :game="harmonyGame"
+            v-model:startToneMidi="startToneMidi"
+            v-model:bpm="bpm"
+            v-model:selectedVozIndices="selectedVozIndices"
+            v-model:areToneLabelsShown="areToneLabelsShown"
+          />
+        </PrimeTabPanel>
+        <PrimeTabPanel value="harmony-chart">
+          <GraceKellyHarmonyDisplay
+            :game="harmonyGame"
+            view="chart"
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
             v-model:selectedVozIndices="selectedVozIndices"

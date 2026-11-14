@@ -6,9 +6,18 @@ type Props = {
   /* True while a sequence plays or is paused — the toggles lock so the running
    * timeline can't change underneath it. */
   isRunning: boolean
+  /* 'auto' picks by viewport height (see isShortViewport); the other two force
+   * the stack or the row, for a parent that places the ladder itself. */
+  layout?: 'auto' | 'vertical' | 'horizontal'
+  /* One colour per part, by VOZ_MELODIES index. When given, each row shows a
+   * dot in its colour — the legend for a chart that draws the parts. */
+  colors?: string[]
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  layout: 'auto',
+  colors: undefined,
+})
 
 /* Voices to play and show, by VOZ_MELODIES index, kept sorted ascending. */
 const selectedVozIndices = defineModel<number[]>('selectedVozIndices', {
@@ -21,6 +30,12 @@ const { t } = useI18n()
  * .short class) and the row order from one breakpoint so the two can't drift. */
 const isShortViewport = useMediaQuery('(max-height: 799px)')
 
+const isHorizontal = computed(() =>
+  props.layout === 'auto'
+    ? isShortViewport.value
+    : props.layout === 'horizontal',
+)
+
 const partRows = computed(() => {
   /* Natural index order is Melody (0) … Low (5). The vertical stack keeps this so
    * it reads top→bottom like the stacked sheets below. The horizontal row reverses
@@ -30,7 +45,7 @@ const partRows = computed(() => {
     label: t(`graceKelly.vozLabels.${key}`),
   }))
 
-  return isShortViewport.value ? rows.toReversed() : rows
+  return isHorizontal.value ? rows.toReversed() : rows
 })
 
 function isSelected(index: number) {
@@ -57,7 +72,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rootRef)
     ref="rootRef"
     class="ladder"
     :class="{
-      short: isShortViewport,
+      short: isHorizontal,
       'mask-start': canScrollStart,
       'mask-end': canScrollEnd,
     }"
@@ -73,6 +88,12 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rootRef)
         :disabled="props.isRunning"
         @update:modelValue="(value: boolean) => toggle(part.index, value)"
       />
+      <span
+        v-if="props.colors"
+        class="size-2.5 shrink-0 rounded-full"
+        :style="{ backgroundColor: props.colors[part.index] }"
+        aria-hidden="true"
+      />
       <span class="flex-1 text-start">{{ part.label }}</span>
     </label>
   </div>
@@ -83,7 +104,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rootRef)
 
 /* Tall viewports: a centered vertical stack. */
 .ladder {
-  @apply mx-auto flex w-full max-w-90 flex-col bg-gray-50;
+  @apply mx-auto flex w-full max-w-90 flex-col bg-(--p-surface-50) dark:bg-(--p-surface-900);
 }
 
 .ladder-row {

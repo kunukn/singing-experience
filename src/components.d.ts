@@ -57,6 +57,8 @@ declare module 'vue' {
     GraceKellyLyrics: typeof import('./components/grace-kelly/GraceKellyLyrics.vue')['default']
     GraceKellyPage: typeof import('./components/grace-kelly/GraceKellyPage.vue')['default']
     GraceKellyPartLadder: typeof import('./components/grace-kelly/GraceKellyPartLadder.vue')['default']
+    GraceKellyRollCanvas: typeof import('./components/grace-kelly/GraceKellyRollCanvas.vue')['default']
+    GraceKellyRollChart: typeof import('./components/grace-kelly/GraceKellyRollChart.vue')['default']
     GraceKellySettingsRow: typeof import('./components/grace-kelly/GraceKellySettingsRow.vue')['default']
     GraceKellySheet: typeof import('./components/grace-kelly/GraceKellySheet.vue')['default']
     GraceKellySingDisplay: typeof import('./components/grace-kelly/GraceKellySingDisplay.vue')['default']

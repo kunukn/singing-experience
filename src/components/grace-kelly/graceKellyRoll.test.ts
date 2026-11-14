@@ -1,0 +1,128 @@
+import { describe, expect, test } from 'vitest'
+import { VOZ_MELODIES } from './graceKellyMelodies'
+import {
+  assignLyricRows,
+  buildRollBlocks,
+  eighthToRollX,
+  ROLL_BAR_LINE_EIGHTHS,
+  ROLL_COLUMNS,
+  ROLL_PADDING_X,
+  ROLL_TOTAL_EIGHTHS,
+  rollMidiRange,
+  vozColorIndex,
+} from './graceKellyRoll'
+
+/* G2 — the page's default start tone. */
+const START_TONE_MIDI = 43
+const ALL_VOICES = VOZ_MELODIES.map((_, index) => index)
+/* Voz indices: the lead melody and the one-tone part open on the same pitch. */
+const MELODY = 0
+const ONE_TONE = 3
+
+describe('graceKellyRoll', () => {
+  test('the timeline has one column per note and spans the whole song', () => {
+    expect(ROLL_COLUMNS).toHaveLength(34)
+    expect(ROLL_COLUMNS[0].startEighth).toBe(0)
+    expect(ROLL_TOTAL_EIGHTHS).toBe(46)
+  })
+
+  test('columns follow each other without gaps or overlaps', () => {
+    for (let index = 1; index < ROLL_COLUMNS.length; index++) {
+      const previous = ROLL_COLUMNS[index - 1]
+
+      expect(ROLL_COLUMNS[index].startEighth).toBe(
+        previous.startEighth + previous.eighths,
+      )
+    }
+  })
+
+  test('bar lines fall after the pickup and then every six eighths', () => {
+    expect(ROLL_BAR_LINE_EIGHTHS).toEqual([3, 9, 15, 21, 27, 33, 39, 45])
+  })
+
+  test('a tied run becomes one block', () => {
+    const blocks = buildRollBlocks([ONE_TONE], START_TONE_MIDI)
+    const lastBlock = blocks[blocks.length - 1]
+
+    /* 34 notes, the last two tied. */
+    expect(blocks).toHaveLength(33)
+    expect(lastBlock.firstNoteIndex).toBe(32)
+    expect(lastBlock.lastNoteIndex).toBe(33)
+    expect(lastBlock.startEighth + lastBlock.eighths).toBe(ROLL_TOTAL_EIGHTHS)
+  })
+
+  test('blocks are transposed by the start tone', () => {
+    const [low] = buildRollBlocks([5], START_TONE_MIDI)
+    const [higher] = buildRollBlocks([5], START_TONE_MIDI + 2)
+
+    expect(higher.midi).toBe(low.midi + 2)
+  })
+
+  test('voices in unison share the row as stripes', () => {
+    const blocks = buildRollBlocks([MELODY, ONE_TONE], START_TONE_MIDI)
+    const melodyFirst = blocks.find(
+      (block) => block.vozIndex === MELODY && block.firstNoteIndex === 0,
+    )
+    const oneToneFirst = blocks.find(
+      (block) => block.vozIndex === ONE_TONE && block.firstNoteIndex === 0,
+    )
+
+    expect(melodyFirst?.midi).toBe(oneToneFirst?.midi)
+    expect(melodyFirst).toMatchObject({ stripeIndex: 0, stripeCount: 2 })
+    expect(oneToneFirst).toMatchObject({ stripeIndex: 1, stripeCount: 2 })
+  })
+
+  test('a voice alone on its pitch keeps the full row', () => {
+    const blocks = buildRollBlocks([ONE_TONE], START_TONE_MIDI)
+
+    expect(blocks.every((block) => block.stripeCount === 1)).toBe(true)
+  })
+
+  test('the pitch range covers every voice plus a semitone of headroom', () => {
+    /* Offsets run 0–36, so G2 (43) gives 43–79 before padding. */
+    expect(rollMidiRange(START_TONE_MIDI)).toEqual({ midiMin: 42, midiMax: 80 })
+  })
+
+  test('every block of every voice sits inside the pitch range', () => {
+    const { midiMin, midiMax } = rollMidiRange(START_TONE_MIDI)
+    const blocks = buildRollBlocks(ALL_VOICES, START_TONE_MIDI)
+
+    expect(blocks.every((block) => block.midi > midiMin)).toBe(true)
+    expect(blocks.every((block) => block.midi < midiMax)).toBe(true)
+  })
+
+  test('the time axis maps the song between the two edge paddings', () => {
+    const width = 500
+
+    expect(eighthToRollX(0, width)).toBe(ROLL_PADDING_X)
+    expect(eighthToRollX(ROLL_TOTAL_EIGHTHS, width)).toBe(
+      width - ROLL_PADDING_X,
+    )
+  })
+
+  test('colours climb with the ladder: Low lowest, Melody highest', () => {
+    expect(vozColorIndex(5)).toBe(0)
+    expect(vozColorIndex(MELODY)).toBe(5)
+  })
+
+  test('lyrics stay on one row while they fit', () => {
+    const syllables = [
+      { x: 0, width: 10 },
+      { x: 20, width: 10 },
+      { x: 40, width: 10 },
+    ]
+
+    expect(assignLyricRows(syllables, 2)).toEqual([0, 0, 0])
+  })
+
+  test('a syllable that would run into the previous one drops a row', () => {
+    const syllables = [
+      { x: 0, width: 10 },
+      { x: 20, width: 30 },
+      { x: 40, width: 10 },
+      { x: 60, width: 10 },
+    ]
+
+    expect(assignLyricRows(syllables, 2)).toEqual([0, 0, 1, 0])
+  })
+})
