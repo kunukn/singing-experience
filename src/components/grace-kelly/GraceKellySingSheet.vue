@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { formatNoteLabelWithCents, midiToNoteLabel } from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
-import { renderAbc } from 'abcjs'
+import { renderAbc, type ClickListener } from 'abcjs'
 import ActiveBarHighlight from './ActiveBarHighlight.vue'
 import {
   estimateStaffWidth,
@@ -59,6 +59,12 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  /* A notehead was clicked; carries that note's sounding MIDI (start tone
+   * applied). */
+  noteClick: [midi: number]
+}>()
 
 const { colorForCents } = usePitchPreviewColor()
 
@@ -355,6 +361,24 @@ function calibratePitchToY() {
   pitchToY.value = buildPitchToY(samples)
 }
 
+/* abcjs click handler: map the clicked SVG group back to its melody note. A tied,
+ * beat-split note has several noteheads, so look the group up in noteGroups
+ * rather than by flat index. Rest, clef, bar and tempo clicks resolve to no
+ * `.abcjs-note` and are ignored. */
+const handleAbcClick: ClickListener = (abcElem) => {
+  const svgElement = abcElem.abselem?.elemset?.[0]
+  const noteGroup = svgElement?.closest('.abcjs-note')
+  if (!noteGroup) return
+
+  const noteIndex = noteGroups.value.findIndex((group) =>
+    group.includes(noteGroup),
+  )
+  const note = props.melody.notes[noteIndex]
+  if (!note) return
+
+  emit('noteClick', props.startToneMidi + note.midiOffset)
+}
+
 async function renderSheet() {
   if (!containerRef.value) return
 
@@ -382,11 +406,16 @@ async function renderSheet() {
 
   /* Pass 1 — render at an oversized width so abcjs keeps everything on one
    * line (it wraps only when staffwidth is smaller than the music needs). */
+  const baseOptions = {
+    add_classes: true,
+    format: SANS_FONTS,
+    clickListener: handleAbcClick,
+  }
+
   const probeWidth = estimateStaffWidth(props.melody.notes.length)
   renderAbc(containerRef.value, abcString, {
-    add_classes: true,
+    ...baseOptions,
     staffwidth: probeWidth,
-    format: SANS_FONTS,
   })
 
   /* Pass 2 — measure the music's natural width and re-render at that width so
@@ -398,9 +427,8 @@ async function renderSheet() {
   if (musicWidth > 0) {
     const TRAILING_MARGIN = 24
     renderAbc(containerRef.value, abcString, {
-      add_classes: true,
+      ...baseOptions,
       staffwidth: Math.ceil(musicWidth) + TRAILING_MARGIN,
-      format: SANS_FONTS,
     })
     await nextTick()
   }
@@ -626,8 +654,14 @@ defineExpose({ scrollToSyllable })
 </template>
 
 <style scoped>
+/* abcjs marks a clicked note with `abcjs-note_selected` plus a hardcoded red
+ * fill attribute; CSS outranks presentation attributes, so the theme wins. The
+ * bare class covers the lyric text under the note, which inherits the fill. */
 :deep(.note-active path),
-:deep(.note-active rect) {
+:deep(.note-active rect),
+:deep(.abcjs-note_selected),
+:deep(.abcjs-note_selected path),
+:deep(.abcjs-note_selected rect) {
   fill: var(--p-primary-color);
 }
 

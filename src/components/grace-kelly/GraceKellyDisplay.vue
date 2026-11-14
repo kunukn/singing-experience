@@ -1,5 +1,9 @@
 <script setup lang="ts">
-import { frequencyToMidi, midiToNoteLabel } from '@/utils/noteUtils'
+import {
+  frequencyToMidi,
+  midiToFrequency,
+  midiToNoteLabel,
+} from '@/utils/noteUtils'
 import { useLocalStorage } from '@vueuse/core'
 import BarHighlightToggle from './BarHighlightToggle.vue'
 import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
@@ -86,6 +90,16 @@ const sungMidi = computed(() => {
 /* De-flickered note label riding the orange preview line; held 50ms before
  * showing to avoid strobe. */
 const { stableSungLabel, stableSungCents } = useStableSungLabel({ sungMidi })
+
+const { playTone } = useTonePlayer()
+
+/* Clicking a note plays it — skipped while the timeline runs so it can't clash
+ * with the scheduled sequence. */
+function playNote(midi: number) {
+  if (isRunning.value) return
+
+  void playTone(midiToFrequency(midi))
+}
 
 const sheetRef = ref<{
   scrollToSyllable: (index: number) => void
@@ -235,6 +249,7 @@ const showAllParts = useLocalStorage('syng.graceKellyShowAllParts', false)
         shouldColorByCents
         :showToneLabels="areToneLabelsShown"
         :showBarHighlight="isBarHighlightEnabled"
+        @noteClick="playNote"
       />
     </div>
 
