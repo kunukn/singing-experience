@@ -36,15 +36,11 @@ const isChartView = computed(() => props.view === 'chart')
  * toggles between a scrollable row (below) and a stacked list (from here up). */
 const isWideViewport = useMediaQuery('(min-width: 48rem)')
 
-/* How the part toggles are laid out. Below md both views show one scrollable
- * row, leaving the height to the sheets or the chart. From md up the chart
- * view stacks them beside the chart, and the sheets view lets the ladder
- * choose by viewport height. */
-const ladderLayout = computed(() => {
-  if (!isWideViewport.value) return 'horizontal'
-
-  return isChartView.value ? 'vertical' : 'auto'
-})
+/* How the part toggles are laid out. Below md: one scrollable row, leaving
+ * the height to the sheets or the chart. From md up: stacked beside them. */
+const ladderLayout = computed(() =>
+  isWideViewport.value ? 'vertical' : 'horizontal',
+)
 
 /* One colour per part, by VOZ_MELODIES index. The dot on a part's toggle, the
  * dot by its sheet title and its blocks on the chart all share it. */
@@ -131,19 +127,16 @@ const allVozLabels = computed(() =>
       </p>
     </div>
 
-    <!-- The wrappers lay out the chart view (ladder beside the chart). In the
-         sheets view the outer ones are display: contents, so its single centred
-         column is unchanged. The inner one stays a real box there: the sheets
-         watch their parent's width to re-render, and display: contents has no
-         box to watch. -->
+    <!-- From md up the part toggles sit beside the sheets or the chart, level
+         with its top, and stick while the page scrolls (the sheet stack can be
+         taller than the window). Their top margin is the Start button row
+         beside them: one control height plus the 1rem gap. -->
     <div
-      :class="
-        isChartView
-          ? 'flex w-full flex-col items-center gap-4 md:flex-row'
-          : 'contents'
-      "
+      class="flex w-full flex-col items-center gap-4 md:flex-row md:items-start"
     >
-      <div :class="isChartView ? 'w-full md:w-44 md:shrink-0' : 'contents'">
+      <div
+        class="w-full md:sticky md:top-4 md:mt-[calc(var(--app-control-height)+1rem)] md:w-44 md:shrink-0"
+      >
         <GraceKellyPartLadder
           v-model:selectedVozIndices="selectedVozIndices"
           :isRunning="isRunning"
@@ -152,13 +145,7 @@ const allVozLabels = computed(() =>
         />
       </div>
 
-      <div
-        :class="
-          isChartView
-            ? 'flex w-full min-w-0 flex-1 flex-col items-center gap-4'
-            : 'flex w-full flex-col items-center gap-4'
-        "
-      >
+      <div class="flex w-full min-w-0 flex-1 flex-col items-center gap-4">
         <div class="flex min-w-50 items-center gap-2">
           <PrimeButton
             v-if="isRunning"
