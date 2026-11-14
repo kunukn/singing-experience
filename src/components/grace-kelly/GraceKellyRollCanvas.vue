@@ -8,6 +8,7 @@ import {
   buildRollBlocks,
   buildRollToneLabels,
   eighthToRollX,
+  findRollBlockAt,
   ROLL_BAR_LINE_EIGHTHS,
   ROLL_COLUMNS,
   vozColorIndex,
@@ -37,6 +38,11 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  /* A block was clicked; carries its sounding MIDI. */
+  noteClick: [midi: number]
+}>()
 
 const { isDark } = useDarkMode()
 const { colorForCents } = usePitchPreviewColor()
@@ -75,9 +81,52 @@ const BAR_LINE_OPACITY = 0.5
 const ACTIVE_BAND_OPACITY = 0.14
 const PLAYHEAD_WIDTH_PX = 2
 
+/* px a block's row is widened by, above and below, when clicked: a row can be
+ * as thin as MIN_BLOCK_HEIGHT_PX, too small a target for a finger. */
+const BLOCK_HIT_SLOP_Y_PX = 4
+
 const blocks = computed(() =>
   buildRollBlocks(props.vozIndices, props.startToneMidi),
 )
+
+/* The block under a pointer event, in the same geometry draw() uses. */
+function blockAtEvent(event: MouseEvent) {
+  const canvas = canvasRef.value
+  if (!canvas || props.width <= 0 || props.height <= 0) return null
+
+  const rect = canvas.getBoundingClientRect()
+  const scale = {
+    midiMin: props.midiMin,
+    midiMax: props.midiMax,
+    height: props.height,
+  }
+
+  return findRollBlockAt(
+    blocks.value,
+    { x: event.clientX - rect.left, y: event.clientY - rect.top },
+    {
+      width: props.width,
+      rowHeight: rowHeightFor(scale),
+      midiToY: (midi) => midiToChartY(midi, scale),
+      slopY: BLOCK_HIT_SLOP_Y_PX,
+    },
+  )
+}
+
+/* `click`, not `pointerdown`, so swiping the chart sideways plays nothing. */
+function handleClick(event: MouseEvent) {
+  const block = blockAtEvent(event)
+  if (block) emit('noteClick', block.midi)
+}
+
+/* Pointer cursor over a block, but only while nothing plays: a click during a
+ * run is ignored by the parent, so the cursor should not promise one. */
+const isOverBlock = ref(false)
+
+function handlePointerMove(event: PointerEvent) {
+  isOverBlock.value =
+    props.activeNoteIndex === null && blockAtEvent(event) !== null
+}
 
 const toneLabels = computed(() => buildRollToneLabels(blocks.value))
 
@@ -328,8 +377,12 @@ onMounted(draw)
   <canvas
     ref="canvasRef"
     class="absolute inset-0 size-full"
+    :class="{ 'cursor-pointer': isOverBlock }"
     aria-hidden="true"
     data-testid="grace-kelly-roll-canvas"
     :data-active-note-index="activeNoteIndex ?? ''"
+    @click="handleClick"
+    @pointermove="handlePointerMove"
+    @pointerleave="isOverBlock = false"
   />
 </template>

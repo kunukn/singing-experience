@@ -238,6 +238,43 @@ export function eighthToRollX(eighth: number, width: number): number {
 }
 
 /*
+ * The block under a point on the plot, or null when the point is on no block.
+ * Drawing and clicking both go through the same x and y mapping, so what is
+ * hit is what is drawn. A block is hit across its whole row, whichever stripe
+ * of a unison the point is on: every stripe there is the same tone. `slopY`
+ * widens each row by that many px above and below, for small touch targets;
+ * where two widened rows overlap, the nearer one wins.
+ */
+export function findRollBlockAt(
+  blocks: readonly RollBlock[],
+  point: { x: number; y: number },
+  layout: {
+    width: number
+    rowHeight: number
+    midiToY: (midi: number) => number
+    slopY?: number
+  },
+): RollBlock | null {
+  const reach = layout.rowHeight / 2 + (layout.slopY ?? 0)
+  let nearest: RollBlock | null = null
+  let nearestDistance = Infinity
+
+  for (const block of blocks) {
+    const startX = eighthToRollX(block.startEighth, layout.width)
+    const endX = eighthToRollX(block.startEighth + block.eighths, layout.width)
+    if (point.x < startX || point.x > endX) continue
+
+    const distance = Math.abs(point.y - layout.midiToY(block.midi))
+    if (distance > reach || distance >= nearestDistance) continue
+
+    nearest = block
+    nearestDistance = distance
+  }
+
+  return nearest
+}
+
+/*
  * Palette stop (for voiceTypeColor) of a voice. Voices are listed Melody (0)
  * to Low (5) while the palette runs low to high, so the order flips: Low gets
  * the lowest stop and the colours climb with the ladder.

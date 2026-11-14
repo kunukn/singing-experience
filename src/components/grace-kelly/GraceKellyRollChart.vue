@@ -40,6 +40,11 @@ type Props = {
 
 const props = defineProps<Props>()
 
+const emit = defineEmits<{
+  /* A block on the chart was clicked; carries its sounding MIDI. */
+  noteClick: [midi: number]
+}>()
+
 const { t } = useI18n()
 const { isDark } = useDarkMode()
 const { myVoiceRange, hasFoundVoiceRange } = useMyVoiceRange()
@@ -251,6 +256,7 @@ watch(
             :previewMidi="previewMidi"
             :previewFrequency="previewFrequency"
             :previewAnchorX="previewAnchorX"
+            @noteClick="emit('noteClick', $event)"
           />
         </div>
         <div

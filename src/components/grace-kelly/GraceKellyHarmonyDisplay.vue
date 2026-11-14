@@ -247,6 +247,7 @@ const allVozLabels = computed(() =>
           :showToneLabels="areToneLabelsShown"
           :previewMidi="previewMidi"
           :previewFrequency="previewFrequency"
+          @noteClick="playNote"
         />
         <GraceKellyAllSheets
           v-else-if="selectedVozIndices.length > 0"

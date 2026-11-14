@@ -6,6 +6,7 @@ import {
   buildRollToneLabels,
   clipRangeToRoll,
   eighthToRollX,
+  findRollBlockAt,
   ROLL_BAR_LINE_EIGHTHS,
   ROLL_COLUMNS,
   ROLL_PADDING_X,
@@ -158,6 +159,72 @@ describe('graceKellyRoll', () => {
 
     expect(atStart).toHaveLength(1)
     expect(atStart[0].vozIndex).toBe(MELODY)
+  })
+
+  describe('findRollBlockAt', () => {
+    const WIDTH = 1000
+    const ROW_HEIGHT = 10
+    /* 10px per semitone, higher tones further up. */
+    const midiToY = (midi: number) => (100 - midi) * 10
+    const layout = { width: WIDTH, rowHeight: ROW_HEIGHT, midiToY }
+    const blocks = buildRollBlocks([MELODY], START_TONE_MIDI)
+    const first = blocks[0]
+    const centerOf = (block: (typeof blocks)[number]) => ({
+      x: eighthToRollX(block.startEighth + block.eighths / 2, WIDTH),
+      y: midiToY(block.midi),
+    })
+
+    test('returns the block under the point', () => {
+      expect(findRollBlockAt(blocks, centerOf(first), layout)).toBe(first)
+    })
+
+    test('returns the block sounding at that moment, not an earlier one', () => {
+      const later = blocks.find((block) => block.midi !== first.midi)!
+
+      expect(findRollBlockAt(blocks, centerOf(later), layout)?.midi).toBe(
+        later.midi,
+      )
+    })
+
+    test('returns null above and below the row', () => {
+      const { x, y } = centerOf(first)
+
+      expect(findRollBlockAt(blocks, { x, y: y - 6 }, layout)).toBeNull()
+      expect(findRollBlockAt(blocks, { x, y: y + 6 }, layout)).toBeNull()
+    })
+
+    test('returns null before the first block starts', () => {
+      const { y } = centerOf(first)
+
+      expect(findRollBlockAt(blocks, { x: 0, y }, layout)).toBeNull()
+    })
+
+    test('reaches past the row by the slop', () => {
+      const { x, y } = centerOf(first)
+
+      expect(
+        findRollBlockAt(blocks, { x, y: y - 8 }, { ...layout, slopY: 4 }),
+      ).toBe(first)
+    })
+
+    test('picks the nearer row where two widened rows overlap', () => {
+      const unison = buildRollBlocks(ALL_VOICES, START_TONE_MIDI)
+      const start = unison.filter((block) => block.startEighth === 0)
+      const midis = [...new Set(start.map((block) => block.midi))].sort(
+        (a, b) => a - b,
+      )
+      const x = eighthToRollX(0.5, WIDTH)
+
+      for (const midi of midis) {
+        const hit = findRollBlockAt(
+          unison,
+          { x, y: midiToY(midi) + 1 },
+          { ...layout, slopY: 30 },
+        )
+
+        expect(hit?.midi).toBe(midi)
+      }
+    })
   })
 
   describe('clipRangeToRoll', () => {
