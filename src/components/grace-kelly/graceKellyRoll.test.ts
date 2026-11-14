@@ -3,6 +3,7 @@ import { VOZ_MELODIES } from './graceKellyMelodies'
 import {
   assignLyricRows,
   buildRollBlocks,
+  buildRollToneLabels,
   eighthToRollX,
   ROLL_BAR_LINE_EIGHTHS,
   ROLL_COLUMNS,
@@ -124,5 +125,37 @@ describe('graceKellyRoll', () => {
     ]
 
     expect(assignLyricRows(syllables, 2)).toEqual([0, 0, 1, 0])
+  })
+
+  test('a part that keeps one tone is named once', () => {
+    const labels = buildRollToneLabels(
+      buildRollBlocks([ONE_TONE], START_TONE_MIDI),
+    )
+
+    expect(labels).toHaveLength(1)
+    expect(labels[0].startEighth).toBe(0)
+  })
+
+  test('a part is named again each time its tone changes', () => {
+    const blocks = buildRollBlocks([MELODY], START_TONE_MIDI)
+    const labels = buildRollToneLabels(blocks)
+    const toneChanges = blocks.filter(
+      (block, index) => index === 0 || block.midi !== blocks[index - 1].midi,
+    )
+
+    expect(labels.length).toBeLessThan(blocks.length)
+    expect(labels.map((label) => label.startEighth)).toEqual(
+      toneChanges.map((block) => block.startEighth),
+    )
+  })
+
+  test('parts starting the same tone together share one name', () => {
+    const labels = buildRollToneLabels(
+      buildRollBlocks([MELODY, ONE_TONE], START_TONE_MIDI),
+    )
+    const atStart = labels.filter((label) => label.startEighth === 0)
+
+    expect(atStart).toHaveLength(1)
+    expect(atStart[0].vozIndex).toBe(MELODY)
   })
 })

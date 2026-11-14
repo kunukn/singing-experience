@@ -25,6 +25,8 @@ type Props = {
   startToneMidi: number
   /* Voices to draw, by VOZ_MELODIES index. */
   vozIndices: number[]
+  /* Names the tones on the chart, once per run of the same tone. */
+  showToneLabels: boolean
 }
 
 const props = defineProps<Props>()
@@ -163,6 +165,7 @@ watch(
             :startToneMidi="startToneMidi"
             :vozIndices="vozIndices"
             :activeNoteIndex="activeNoteIndex"
+            :showToneLabels="showToneLabels"
           />
         </div>
         <div

@@ -118,7 +118,7 @@ const allVozLabels = computed(() =>
       v-model:areToneLabelsShown="areToneLabelsShown"
       :isRunning="isRunning"
       :showVoz="false"
-      :showToneLabelToggle="!isChartView"
+      :showToneLabelToggle="true"
     />
 
     <div class="flex flex-col justify-center">
@@ -197,6 +197,7 @@ const allVozLabels = computed(() =>
           :activeSyllableIndex="activeSyllableIndex"
           :startToneMidi="startToneMidi"
           :vozIndices="selectedVozIndices"
+          :showToneLabels="areToneLabelsShown"
         />
         <GraceKellyAllSheets
           v-else-if="selectedVozIndices.length > 0"

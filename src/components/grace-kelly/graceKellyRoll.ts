@@ -124,6 +124,48 @@ export function buildRollBlocks(
   return blocks
 }
 
+export type RollToneLabel = {
+  vozIndex: number
+  midi: number
+  startEighth: number
+}
+
+/*
+ * Blocks that get a tone name: a part's first block, and every block where its
+ * tone changes. A run of the same tone is named once, so a part that repeats
+ * one tone is not buried in labels. When several parts start the same tone at
+ * the same moment (a unison), only the first of them is named.
+ */
+export function buildRollToneLabels(
+  blocks: readonly RollBlock[],
+): RollToneLabel[] {
+  const labels: RollToneLabel[] = []
+  const previousMidiByVoz = new Map<number, number>()
+  const named = new Set<string>()
+
+  const inOrder = blocks.toSorted(
+    (a, b) => a.vozIndex - b.vozIndex || a.startEighth - b.startEighth,
+  )
+
+  for (const block of inOrder) {
+    const isNewTone = previousMidiByVoz.get(block.vozIndex) !== block.midi
+    previousMidiByVoz.set(block.vozIndex, block.midi)
+    if (!isNewTone) continue
+
+    const key = `${block.midi}@${block.startEighth}`
+    if (named.has(key)) continue
+
+    named.add(key)
+    labels.push({
+      vozIndex: block.vozIndex,
+      midi: block.midi,
+      startEighth: block.startEighth,
+    })
+  }
+
+  return labels
+}
+
 /* Blocks on the same pitch that overlap in time split the row between them,
  * ordered by voice index so a voice keeps its place from note to note. */
 function assignUnisonStripes(blocks: RollBlock[]) {

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { midiToChartY } from '@/utils/chartGrid'
 import { resolveCssColor } from '@/utils/cssColor'
+import { midiToNoteLabel } from '@/utils/noteUtils'
 import { voiceTypeColor } from '@/utils/pitchColors'
 import {
   buildRollBlocks,
+  buildRollToneLabels,
   eighthToRollX,
   ROLL_BAR_LINE_EIGHTHS,
   ROLL_COLUMNS,
@@ -23,6 +25,8 @@ type Props = {
   vozIndices: number[]
   /* Timeline note being sung, or null when nothing plays. */
   activeNoteIndex: number | null
+  /* Names the tones above the blocks, once per run of the same tone. */
+  showToneLabels: boolean
 }
 
 const props = defineProps<Props>()
@@ -37,6 +41,16 @@ const MIN_BLOCK_HEIGHT_PX = 6
 /* px left free at a block's end, so repeated notes read as separate blocks. */
 const BLOCK_GAP_PX = 2
 const BLOCK_RADIUS_PX = 3
+
+/* Tone names: small, so they fit between two parts a few semitones apart. */
+const TONE_LABEL_FONT_SIZE_PX = 10
+const TONE_LABEL_FONT_WEIGHT = 600
+/* Space between a tone name and the top of its block. */
+const TONE_LABEL_GAP_PX = 2
+/* The name sits on a patch of the chart background, this much wider than the
+ * text, so grid lines and neighbouring blocks do not cut through the letters. */
+const TONE_LABEL_HALO_PADDING_PX = 1
+const TONE_LABEL_HALO_OPACITY = 0.85
 /* A stripe never gets thinner than this, however many voices share a pitch. */
 const MIN_STRIPE_HEIGHT_PX = 2
 
@@ -52,6 +66,8 @@ const PLAYHEAD_WIDTH_PX = 2
 const blocks = computed(() =>
   buildRollBlocks(props.vozIndices, props.startToneMidi),
 )
+
+const toneLabels = computed(() => buildRollToneLabels(blocks.value))
 
 function draw() {
   const canvas = canvasRef.value
@@ -80,6 +96,8 @@ function draw() {
   drawActiveBand(context, primaryColor)
   drawGrid(context, scale, borderColor)
   drawBlocks(context, scale)
+  if (props.showToneLabels) drawToneLabels(context, scale)
+
   drawPlayhead(context, primaryColor)
 }
 
@@ -129,9 +147,7 @@ function drawBlocks(
   context: CanvasRenderingContext2D,
   scale: { midiMin: number; midiMax: number; height: number },
 ) {
-  const semitoneHeight =
-    midiToChartY(props.midiMin, scale) - midiToChartY(props.midiMin + 1, scale)
-  const rowHeight = Math.max(MIN_BLOCK_HEIGHT_PX, semitoneHeight)
+  const rowHeight = rowHeightFor(scale)
   const activeIndex = props.activeNoteIndex
 
   for (const block of blocks.value) {
@@ -174,6 +190,59 @@ function drawBlocks(
   }
 }
 
+/* Height of one tone's row: a semitone, but never thinner than a block may be. */
+function rowHeightFor(scale: {
+  midiMin: number
+  midiMax: number
+  height: number
+}): number {
+  const semitoneHeight =
+    midiToChartY(props.midiMin, scale) - midiToChartY(props.midiMin + 1, scale)
+
+  return Math.max(MIN_BLOCK_HEIGHT_PX, semitoneHeight)
+}
+
+/* Tone names in the part's own colour, just above where each tone starts. They
+ * keep full strength while playing, when the blocks not being sung step back. */
+function drawToneLabels(
+  context: CanvasRenderingContext2D,
+  scale: { midiMin: number; midiMax: number; height: number },
+) {
+  const canvas = canvasRef.value
+  if (!canvas) return
+
+  const rowHeight = rowHeightFor(scale)
+  const haloColor = resolveCssColor('--p-content-background', '#ffffff')
+
+  context.font = `${TONE_LABEL_FONT_WEIGHT} ${TONE_LABEL_FONT_SIZE_PX}px ${getComputedStyle(canvas).fontFamily}`
+  context.textBaseline = 'bottom'
+  context.textAlign = 'left'
+
+  for (const label of toneLabels.value) {
+    const text = midiToNoteLabel(label.midi).label
+    const x = eighthToRollX(label.startEighth, props.width)
+    const bottom =
+      midiToChartY(label.midi, scale) - rowHeight / 2 - TONE_LABEL_GAP_PX
+    const textWidth = context.measureText(text).width
+
+    context.globalAlpha = TONE_LABEL_HALO_OPACITY
+    context.fillStyle = haloColor
+    context.fillRect(
+      x - TONE_LABEL_HALO_PADDING_PX,
+      bottom - TONE_LABEL_FONT_SIZE_PX,
+      textWidth + TONE_LABEL_HALO_PADDING_PX * 2,
+      TONE_LABEL_FONT_SIZE_PX,
+    )
+    context.globalAlpha = 1
+
+    context.fillStyle = voiceTypeColor(
+      vozColorIndex(label.vozIndex),
+      isDark.value,
+    )
+    context.fillText(text, x, bottom)
+  }
+}
+
 function drawPlayhead(context: CanvasRenderingContext2D, color: string) {
   const column = activeColumn()
   if (!column) return
@@ -206,6 +275,7 @@ watch(
     () => props.midiMax,
     () => props.gridMidis,
     () => props.activeNoteIndex,
+    () => props.showToneLabels,
     blocks,
     isDark,
   ],
