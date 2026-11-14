@@ -4,13 +4,18 @@ import {
   CHART_LABEL_BASE,
   CHART_LABEL_GUTTER_WIDTH,
   CHART_LABEL_WIDTH,
+  MY_RANGE_BAR_GAP,
+  MY_RANGE_BAR_WIDTH,
+  MY_RANGE_STRIPES,
 } from '@/constants/chartStyles'
+import { formatRange } from '@/components/voice-range-finder/voiceRangeNotes'
 import { getGridMidis, midiToChartY } from '@/utils/chartGrid'
 import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
 import { textColorAtMidi } from '@/utils/pitchColors'
 import { GRACE_KELLY_LYRIC_LINES } from './graceKellyLyrics'
 import {
   assignLyricRows,
+  clipRangeToRoll,
   eighthToRollX,
   ROLL_COLUMNS,
   ROLL_PADDING_X,
@@ -35,7 +40,9 @@ type Props = {
 
 const props = defineProps<Props>()
 
+const { t } = useI18n()
 const { isDark } = useDarkMode()
+const { myVoiceRange, hasFoundVoiceRange } = useMyVoiceRange()
 const { playTone } = useTonePlayer()
 
 /* Narrowest an eighth note may get. Below this the lyrics collide, so the
@@ -91,6 +98,49 @@ const axisLabels = computed(() => {
   }))
 })
 
+/*
+ * The singer's own range as a striped bar beside the note axis, so they see
+ * which parts sit inside their voice. Only once they have a range of their
+ * own: the default would point at parts they never chose. An end inside the
+ * chart reaches half a semitone past its note, to cover that tone's whole row
+ * of blocks; an end the chart cuts off runs to the plot edge.
+ */
+const myRangeBar = computed(() => {
+  if (!hasFoundVoiceRange.value || !plotHeight.value) return null
+
+  const clipped = clipRangeToRoll(myVoiceRange.value, midiRange.value)
+  if (!clipped) return null
+
+  const scale = {
+    midiMin: midiRange.value.midiMin,
+    midiMax: midiRange.value.midiMax,
+    height: plotHeight.value,
+  }
+  const top = clipped.isCutHigh
+    ? 0
+    : Math.max(0, midiToChartY(clipped.midiMax + 0.5, scale))
+  const bottom = clipped.isCutLow
+    ? plotHeight.value
+    : Math.min(plotHeight.value, midiToChartY(clipped.midiMin - 0.5, scale))
+
+  return {
+    top,
+    height: bottom - top,
+    isCutLow: clipped.isCutLow,
+    isCutHigh: clipped.isCutHigh,
+    title: `${t('voiceRanges.myRange')} ${formatRange(
+      myVoiceRange.value.midiMin,
+      myVoiceRange.value.midiMax,
+    )}`,
+  }
+})
+
+/* px the bar takes at the gutter's start edge. The gutter grows by this and
+ * the labels move in by it, so the plot's own labels keep their gap. */
+const myRangeInset = computed(() =>
+  myRangeBar.value ? MY_RANGE_BAR_WIDTH + MY_RANGE_BAR_GAP : 0,
+)
+
 const syllables = computed(() => {
   const placed = GRACE_KELLY_LYRIC_LINES.flat(2).map((syllable, index) => ({
     index,
@@ -137,10 +187,28 @@ watch(
     <div
       class="relative shrink-0"
       :style="{
-        width: `${CHART_LABEL_GUTTER_WIDTH}px`,
+        width: `${CHART_LABEL_GUTTER_WIDTH + myRangeInset}px`,
         height: `${plotHeight}px`,
       }"
     >
+      <div
+        v-if="myRangeBar"
+        class="absolute start-0"
+        :class="{
+          'rounded-t-full': !myRangeBar.isCutHigh,
+          'rounded-b-full': !myRangeBar.isCutLow,
+        }"
+        :style="{
+          top: `${myRangeBar.top}px`,
+          height: `${myRangeBar.height}px`,
+          width: `${MY_RANGE_BAR_WIDTH}px`,
+          backgroundImage: MY_RANGE_STRIPES,
+        }"
+        :title="myRangeBar.title"
+        data-testid="grace-kelly-roll-my-range"
+        :data-cut-low="myRangeBar.isCutLow"
+        :data-cut-high="myRangeBar.isCutHigh"
+      />
       <button
         v-for="axisLabel in axisLabels"
         :key="axisLabel.midi"
@@ -148,6 +216,7 @@ watch(
         :class="[CHART_LABEL_BASE, 'chart-label-tinted']"
         :style="{
           top: `${axisLabel.y}px`,
+          insetInlineStart: `${myRangeInset}px`,
           width: `${CHART_LABEL_WIDTH}px`,
           textAlign: 'end',
           '--label-tint': textColorAtMidi(axisLabel.midi, isDark),

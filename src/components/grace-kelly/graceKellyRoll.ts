@@ -5,6 +5,7 @@
  * and the playhead all read their positions from here, so they cannot drift
  * apart. */
 
+import type { MidiRange } from '@/utils/normalizeVoiceRange'
 import { VOZ_MELODIES } from './graceKellyMelodies'
 
 /* One timeline step — every voice shares the rhythm, so a column is the same
@@ -200,6 +201,32 @@ export function rollMidiRange(startToneMidi: number): {
   return {
     midiMin: startToneMidi + Math.min(...offsets) - RANGE_PADDING_SEMITONES,
     midiMax: startToneMidi + Math.max(...offsets) + RANGE_PADDING_SEMITONES,
+  }
+}
+
+export type ClippedRollRange = MidiRange & {
+  /* The range runs on past the chart's bottom or top edge. */
+  isCutLow: boolean
+  isCutHigh: boolean
+}
+
+/*
+ * The part of a voice range that fits on the chart, or null when none of it
+ * does. The chart follows the song, not the singer, so a range can run past
+ * either edge.
+ */
+export function clipRangeToRoll(
+  range: MidiRange,
+  chart: MidiRange,
+): ClippedRollRange | null {
+  if (range.midiMax < chart.midiMin || range.midiMin > chart.midiMax)
+    return null
+
+  return {
+    midiMin: Math.max(range.midiMin, chart.midiMin),
+    midiMax: Math.min(range.midiMax, chart.midiMax),
+    isCutLow: range.midiMin < chart.midiMin,
+    isCutHigh: range.midiMax > chart.midiMax,
   }
 }
 

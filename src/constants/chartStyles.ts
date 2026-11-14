@@ -22,3 +22,17 @@ export const CHART_LABEL_WIDTH = 36
  * canvas charts, and as a CSS offset on the DoReMiScale overflow
  * indicator. */
 export const OUT_OF_RANGE_OVERFLOW_PX = 6
+
+/* The singer's own range, wherever it is drawn as a bar. Voice types are
+ * fixed, so their bars are solid; a singer's range grows with practice, so
+ * theirs is striped — "not final" — in the guide lines' grey. Stripes rather
+ * than an outline: an empty middle made the bar look thinner than the 8px
+ * voice bars beside it. The colour is mixed, not faded with opacity, so the
+ * same value works in dark mode. */
+export const MY_RANGE_STRIPES =
+  'repeating-linear-gradient(-45deg, color-mix(in srgb, var(--p-text-muted-color) 60%, transparent) 0 2px, transparent 2px 5px)'
+
+/* px width of the My range bar beside a chart's note axis, and the gap
+ * between it and the note labels. */
+export const MY_RANGE_BAR_WIDTH = 4
+export const MY_RANGE_BAR_GAP = 4

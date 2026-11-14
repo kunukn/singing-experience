@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MY_RANGE_STRIPES } from '@/constants/chartStyles'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { directionalTextColor, voiceTypeColor } from '@/utils/pitchColors'
 import { VOICE_TYPES } from '@/utils/voiceRangeSegments'
@@ -345,7 +346,7 @@ const exploreMyRangeRow = (): ChartRow => {
     ...row,
     voiceStyle: {
       ...trackStyle(clippedMin, midiMax),
-      backgroundImage: RANGE_BAR_STRIPES,
+      backgroundImage: MY_RANGE_STRIPES,
     },
     solidStyle: null,
     isFaded: false,
@@ -389,19 +390,12 @@ const hasBestFit = computed(() =>
 )
 
 /* The singer's own range as a bar of its own, in the footer between its two
- * labels. Voice types are fixed, so their bars are solid; a singer's range
- * grows with practice, so theirs is striped — "not final" — in the guide
- * lines' grey. Stripes rather than an outline: an empty middle made the bar
- * look thinner than the 8px voice bars beside it. The colour is mixed, not
- * faded with opacity, so the same value works in dark mode. */
-const RANGE_BAR_STRIPES =
-  'repeating-linear-gradient(-45deg, color-mix(in srgb, var(--p-text-muted-color) 60%, transparent) 0 2px, transparent 2px 5px)'
-
+ * labels, striped (see MY_RANGE_STRIPES). */
 const rangeBarStyle = computed(() =>
   range.value
     ? {
         ...trackStyle(range.value.midiMin, range.value.midiMax),
-        backgroundImage: RANGE_BAR_STRIPES,
+        backgroundImage: MY_RANGE_STRIPES,
       }
     : null,
 )

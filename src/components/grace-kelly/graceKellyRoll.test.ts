@@ -4,6 +4,7 @@ import {
   assignLyricRows,
   buildRollBlocks,
   buildRollToneLabels,
+  clipRangeToRoll,
   eighthToRollX,
   ROLL_BAR_LINE_EIGHTHS,
   ROLL_COLUMNS,
@@ -157,5 +158,70 @@ describe('graceKellyRoll', () => {
 
     expect(atStart).toHaveLength(1)
     expect(atStart[0].vozIndex).toBe(MELODY)
+  })
+
+  describe('clipRangeToRoll', () => {
+    /* F2–A5, the chart at the default start tone, roughly. */
+    const chart = { midiMin: 41, midiMax: 81 }
+
+    test('a range inside the chart is kept whole', () => {
+      expect(clipRangeToRoll({ midiMin: 45, midiMax: 69 }, chart)).toEqual({
+        midiMin: 45,
+        midiMax: 69,
+        isCutLow: false,
+        isCutHigh: false,
+      })
+    })
+
+    test('a range ending on the chart edges is not cut', () => {
+      expect(clipRangeToRoll({ midiMin: 41, midiMax: 81 }, chart)).toEqual({
+        midiMin: 41,
+        midiMax: 81,
+        isCutLow: false,
+        isCutHigh: false,
+      })
+    })
+
+    test('a range reaching below the chart is cut at the bottom', () => {
+      expect(clipRangeToRoll({ midiMin: 36, midiMax: 69 }, chart)).toEqual({
+        midiMin: 41,
+        midiMax: 69,
+        isCutLow: true,
+        isCutHigh: false,
+      })
+    })
+
+    test('a range reaching above the chart is cut at the top', () => {
+      expect(clipRangeToRoll({ midiMin: 60, midiMax: 84 }, chart)).toEqual({
+        midiMin: 60,
+        midiMax: 81,
+        isCutLow: false,
+        isCutHigh: true,
+      })
+    })
+
+    test('a range wider than the chart is cut at both ends', () => {
+      expect(clipRangeToRoll({ midiMin: 36, midiMax: 84 }, chart)).toEqual({
+        midiMin: 41,
+        midiMax: 81,
+        isCutLow: true,
+        isCutHigh: true,
+      })
+    })
+
+    test('a range that misses the chart gives nothing to draw', () => {
+      expect(
+        clipRangeToRoll(
+          { midiMin: 36, midiMax: 48 },
+          { midiMin: 60, midiMax: 84 },
+        ),
+      ).toBeNull()
+      expect(
+        clipRangeToRoll(
+          { midiMin: 72, midiMax: 84 },
+          { midiMin: 40, midiMax: 60 },
+        ),
+      ).toBeNull()
+    })
   })
 })
