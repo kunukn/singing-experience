@@ -264,12 +264,17 @@ watch(
           :style="{ height: `${LYRIC_ROW_COUNT * LYRIC_ROW_HEIGHT_PX}px` }"
           data-testid="grace-kelly-roll-lyrics"
         >
+          <!--
+            Faux bold on the active syllable: real semibold glyphs are wider, so
+            the word stretched as it lit up. A text stroke is paint only (same
+            trick and weight as VoiceTypeComparison).
+          -->
           <span
             v-for="syllable in syllables"
             :key="syllable.index"
             class="absolute whitespace-nowrap transition-colors"
             :class="{
-              'font-semibold text-(--p-primary-color)':
+              'text-(--p-primary-color) [-webkit-text-stroke:0.4px_currentColor]':
                 syllable.index === activeSyllableIndex,
             }"
             :style="{
