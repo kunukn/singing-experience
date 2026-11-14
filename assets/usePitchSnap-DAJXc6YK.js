@@ -1,0 +1,1 @@
+import{l as e}from"./dist-TXmTEr_C.js";var t=e(`syng.pitchSnap`,!1);function n(){return{isPitchSnapEnabled:t}}export{n as t};

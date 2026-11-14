@@ -1,0 +1,1 @@
+import{l as e}from"./dist-TXmTEr_C.js";import{c as t}from"./runtime-core.esm-bundler-DRQ34iR8.js";var n=new Set([`sharp`,`flat`]);function r(e){return n.has(e)}function i(n,i){let a=e(n,i);return r(a.value)||(a.value=i),t({get:()=>r(a.value)?a.value:i,set:e=>{a.value=e}})}var a=[{label:`C♯`,value:`sharp`},{label:`D♭`,value:`flat`}];export{i as n,a as t};

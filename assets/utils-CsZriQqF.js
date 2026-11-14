@@ -1,0 +1,1 @@
+import{L as e,V as t,h as n}from"./pitchColors-D0tBUMDR.js";function r(){t({variableName:n(`scrollbar.width`).name})}function i(){e({variableName:n(`scrollbar.width`).name})}export{i as n,r as t};

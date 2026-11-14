@@ -1,0 +1,1 @@
+import{x as e}from"./noteUtils-RDj8zqqT.js";import{t}from"./useTonePlayer-B30XjOTY.js";function n(n){let{playTone:r}=t();return function(t){n.value||r(e(t))}}export{n as t};

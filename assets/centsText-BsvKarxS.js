@@ -1,0 +1,1 @@
+var e=`≈0¢`,t=e=>Math.abs(Math.round(e))<=2;export{t as n,e as t};
