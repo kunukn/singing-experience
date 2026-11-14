@@ -32,9 +32,19 @@ const { isDark } = useDarkMode()
 
 const isChartView = computed(() => props.view === 'chart')
 
-/* Tailwind's md breakpoint. From here up the chart view has room for the part
- * ladder beside the chart; below it the ladder becomes a row above. */
+/* Tailwind's md breakpoint: the one width at which both views switch the part
+ * toggles between a scrollable row (below) and a stacked list (from here up). */
 const isWideViewport = useMediaQuery('(min-width: 48rem)')
+
+/* How the part toggles are laid out. Below md both views show one scrollable
+ * row, leaving the height to the sheets or the chart. From md up the chart
+ * view stacks them beside the chart, and the sheets view lets the ladder
+ * choose by viewport height. */
+const ladderLayout = computed(() => {
+  if (!isWideViewport.value) return 'horizontal'
+
+  return isChartView.value ? 'vertical' : 'auto'
+})
 
 /* One colour per part, by VOZ_MELODIES index. The dot on a part's toggle, the
  * dot by its sheet title and its blocks on the chart all share it. */
@@ -135,9 +145,7 @@ const allVozLabels = computed(() =>
         <GraceKellyPartLadder
           v-model:selectedVozIndices="selectedVozIndices"
           :isRunning="isRunning"
-          :layout="
-            !isChartView ? 'auto' : isWideViewport ? 'vertical' : 'horizontal'
-          "
+          :layout="ladderLayout"
           :colors="vozColors"
         />
       </div>
