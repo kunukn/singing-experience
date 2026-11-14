@@ -131,9 +131,11 @@ const allVozLabels = computed(() =>
       </p>
     </div>
 
-    <!-- The two wrappers only lay out the chart view (ladder beside the chart).
-         In the sheets view they are display: contents, so its single centred
-         column is unchanged. -->
+    <!-- The wrappers lay out the chart view (ladder beside the chart). In the
+         sheets view the outer ones are display: contents, so its single centred
+         column is unchanged. The inner one stays a real box there: the sheets
+         watch their parent's width to re-render, and display: contents has no
+         box to watch. -->
     <div
       :class="
         isChartView
@@ -154,7 +156,7 @@ const allVozLabels = computed(() =>
         :class="
           isChartView
             ? 'flex w-full min-w-0 flex-1 flex-col items-center gap-4'
-            : 'contents'
+            : 'flex w-full flex-col items-center gap-4'
         "
       >
         <div class="flex min-w-50 items-center gap-2">
