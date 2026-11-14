@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useElementSize, useScroll } from '@vueuse/core'
+import { formatRange } from '@/components/voice-range-finder/voiceRangeNotes'
 import {
   CHART_LABEL_BASE,
   CHART_LABEL_GUTTER_WIDTH,
@@ -8,10 +8,10 @@ import {
   MY_RANGE_BAR_WIDTH,
   MY_RANGE_STRIPES,
 } from '@/constants/chartStyles'
-import { formatRange } from '@/components/voice-range-finder/voiceRangeNotes'
 import { getGridMidis, midiToChartY } from '@/utils/chartGrid'
 import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
 import { textColorAtMidi } from '@/utils/pitchColors'
+import { useElementSize, useScroll } from '@vueuse/core'
 import { GRACE_KELLY_LYRIC_LINES } from './graceKellyLyrics'
 import {
   assignLyricRows,
