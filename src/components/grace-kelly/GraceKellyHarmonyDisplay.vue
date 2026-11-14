@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import GraceKellyPartLadder from './GraceKellyPartLadder.vue'
+import GraceKellyPartRange from './GraceKellyPartRange.vue'
 import GraceKellySettingsRow from './GraceKellySettingsRow.vue'
 import { useMediaQuery } from '@vueuse/core'
 import { voiceTypeColor } from '@/utils/pitchColors'
 import { VOZ_LABEL_KEYS } from './graceKellyConstants'
 import { GRACE_KELLY_SYLLABLES } from './graceKellyLyrics'
+import { vozMidiRange } from './graceKellyMelodies'
 import { vozColorIndex } from './graceKellyRoll'
 import type { GraceKellyHarmonyResult } from './useGraceKellyHarmony'
 
@@ -43,6 +45,12 @@ const isWideViewport = useMediaQuery('(min-width: 48rem)')
  * the height to the sheets or the chart. From md up: stacked beside them. */
 const ladderLayout = computed(() =>
   isWideViewport.value ? 'vertical' : 'horizontal',
+)
+
+/* The tones the enabled parts reach from and to, shown under the stacked
+ * toggles. Null with every part off. */
+const partRange = computed(() =>
+  vozMidiRange(selectedVozIndices.value, startToneMidi.value),
 )
 
 /* One colour per part, by VOZ_MELODIES index. The dot on a part's toggle, the
@@ -162,6 +170,12 @@ const allVozLabels = computed(() =>
           :isRunning="isRunning"
           :layout="ladderLayout"
           :colors="vozColors"
+        />
+        <GraceKellyPartRange
+          v-if="partRange"
+          class="hidden md:block"
+          :midiMin="partRange.midiMin"
+          :midiMax="partRange.midiMax"
         />
       </div>
 

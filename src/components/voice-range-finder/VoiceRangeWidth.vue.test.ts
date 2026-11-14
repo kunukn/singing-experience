@@ -28,6 +28,24 @@ describe('VoiceRangeWidth', () => {
     },
   )
 
+  test('should put semitones and octaves on a line each when stacked', () => {
+    const wrapper = mount(VoiceRangeWidth, {
+      props: { midiMin: G2, midiMax: D4, isStacked: true },
+      global: {
+        plugins: [
+          createI18n({ legacy: false, locale: 'en', messages: { en, da } }),
+        ],
+      },
+    })
+
+    expect(
+      wrapper.find('[data-testid="voice-range-width-semitones"]').text(),
+    ).toBe('19 semitones')
+    expect(
+      wrapper.find('[data-testid="voice-range-width-octaves"]').text(),
+    ).toBe('1.6 octaves')
+  })
+
   test('should format the octaves for the language', () => {
     expect(mountWidth(G2, D4, 'da').text()).toBe('19 halvtoner · 1,6 oktaver')
   })

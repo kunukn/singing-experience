@@ -10,6 +10,8 @@
  * sheet: Voz 1 is the MIKA lead vocal; Voz 4 is the one-tone C4 part; Voz 2–3
  * and Voz 5–6 are the harmony voices. */
 
+import type { MidiRange } from '@/utils/normalizeVoiceRange'
+
 export type VozNote = {
   /* Semitones from C3 (MIDI 48). 0 = C3, 4 = E3, 7 = G3, 12 = C4, etc. */
   midiOffset: number
@@ -378,3 +380,23 @@ export const VOZ_MELODIES: VozMelody[] = [
   VOZ_5, // Voz 5
   VOZ_6, // Voz 6
 ]
+
+/*
+ * Lowest and highest tone of the given parts, by VOZ_MELODIES index: how far a
+ * voice (or a group) has to reach to sing them. Null when no part is given.
+ */
+export function vozMidiRange(
+  vozIndices: number[],
+  startToneMidi: number,
+): MidiRange | null {
+  const offsets = vozIndices.flatMap((vozIndex) =>
+    (VOZ_MELODIES[vozIndex]?.notes ?? []).map((note) => note.midiOffset),
+  )
+
+  if (offsets.length === 0) return null
+
+  return {
+    midiMin: startToneMidi + Math.min(...offsets),
+    midiMax: startToneMidi + Math.max(...offsets),
+  }
+}
