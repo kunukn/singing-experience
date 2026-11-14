@@ -32,9 +32,44 @@ type Props = {
    * green active chip overlays its note during playback). When off, only the first
    * note's label shows per staff — the start-tone cue, always visible. Defaults off. */
   showToneLabels?: boolean
+  /* One colour per part, by VOZ_MELODIES index. When given, each staff title
+   * gets a dot in its part's colour, matching the dot on the part's toggle. */
+  vozColors?: string[]
 }
 
 const props = defineProps<Props>()
+
+const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
+/* 10px across, the same size as the dot on the part toggles. */
+const TITLE_DOT_RADIUS = 5
+/* Space between the dot and the title text. */
+const TITLE_DOT_GAP = 6
+
+/*
+ * Draws the part's colour dot beside the staff title. The title is SVG text
+ * drawn by abcjs, so the dot goes into the same SVG and moves with it. It sits
+ * before the title, or after it when the title starts at the SVG's edge (the
+ * left-aligned title of a narrow view) and a dot before it would be cut off.
+ * The fill comes from --voz-color on the staff wrapper, so a theme switch
+ * recolours it without a re-render.
+ */
+function addTitleDot(container: HTMLElement) {
+  const title = container.querySelector<SVGGraphicsElement>('.abcjs-title')
+  const svg = title?.ownerSVGElement
+  if (!title || !svg) return
+
+  const box = title.getBBox()
+  const centerBefore = box.x - TITLE_DOT_GAP - TITLE_DOT_RADIUS
+  const centerAfter = box.x + box.width + TITLE_DOT_GAP + TITLE_DOT_RADIUS
+  const hasRoomBefore = centerBefore - TITLE_DOT_RADIUS >= 0
+
+  const dot = document.createElementNS(SVG_NAMESPACE, 'circle')
+  dot.setAttribute('class', 'voz-dot')
+  dot.setAttribute('cx', String(hasRoomBefore ? centerBefore : centerAfter))
+  dot.setAttribute('cy', String(box.y + box.height / 2))
+  dot.setAttribute('r', String(TITLE_DOT_RADIUS))
+  svg.append(dot)
+}
 
 /* Resolved voices to render — the given subset, or all six by default. */
 const renderedVozIndices = computed(
@@ -256,6 +291,8 @@ async function renderSheets() {
   }
 
   await nextTick()
+  if (props.vozColors) containers.forEach(addTitleDot)
+
   noteElementsByStaff.value = containers.map((container) =>
     Array.from(container.querySelectorAll('.abcjs-note')),
   )
@@ -397,6 +434,7 @@ watch(
         v-for="(vozIndex, position) in renderedVozIndices"
         :key="vozIndex"
         class="relative"
+        :style="{ '--voz-color': vozColors?.[vozIndex] }"
       >
         <div
           :ref="
@@ -446,5 +484,9 @@ watch(
  * reads as less busy; SVG text color is `fill`, not `color`. */
 :deep(.abcjs-title) {
   fill: var(--p-text-muted-color);
+}
+
+:deep(.voz-dot) {
+  fill: var(--voz-color);
 }
 </style>

@@ -36,8 +36,8 @@ const isChartView = computed(() => props.view === 'chart')
  * ladder beside the chart; below it the ladder becomes a row above. */
 const isWideViewport = useMediaQuery('(min-width: 48rem)')
 
-/* Chart view only: one colour per part, shared by the chart blocks and the
- * ladder dots that act as its legend. */
+/* One colour per part, by VOZ_MELODIES index. The dot on a part's toggle, the
+ * dot by its sheet title and its blocks on the chart all share it. */
 const vozColors = computed(() =>
   VOZ_LABEL_KEYS.map((_, index) =>
     voiceTypeColor(vozColorIndex(index), isDark.value),
@@ -127,7 +127,7 @@ const allVozLabels = computed(() =>
     <div
       :class="
         isChartView
-          ? 'flex w-full flex-col items-center gap-4 md:flex-row md:items-start'
+          ? 'flex w-full flex-col items-center gap-4 md:flex-row'
           : 'contents'
       "
     >
@@ -138,7 +138,7 @@ const allVozLabels = computed(() =>
           :layout="
             !isChartView ? 'auto' : isWideViewport ? 'vertical' : 'horizontal'
           "
-          :colors="isChartView ? vozColors : undefined"
+          :colors="vozColors"
         />
       </div>
 
@@ -209,6 +209,7 @@ const allVozLabels = computed(() =>
           :startToneMidi="startToneMidi"
           :vozLabels="allVozLabels"
           :vozIndices="selectedVozIndices"
+          :vozColors="vozColors"
           :showToneLabels="areToneLabelsShown"
         />
       </div>
