@@ -146,21 +146,16 @@ const allVozLabels = computed(() =>
       :showToneLabelToggle="true"
     />
 
-    <div class="flex flex-col justify-center">
-      <p class="text-sm leading-none text-(--p-text-muted-color)">
-        {{ t('graceKelly.harmony.subtitle') }}
-      </p>
-    </div>
-
     <!-- From md up the part toggles sit beside the sheets or the chart, level
          with its top, and stick while the page scrolls (the sheet stack can be
-         taller than the window). Their top margin is the Start button row
-         beside them: one control height plus the 1rem gap. -->
+         taller than the window). Their top margin is the subtitle and the
+         Start button row beside them: the subtitle line (0.875rem,
+         leading-none) and one control height, each followed by a 1rem gap. -->
     <div
       class="flex w-full flex-col items-center gap-4 md:flex-row md:items-start"
     >
       <div
-        class="w-full md:sticky md:top-4 md:mt-[calc(var(--app-control-height)+1rem)] md:w-44 md:shrink-0"
+        class="w-full md:sticky md:top-4 md:mt-[calc(var(--app-control-height)+2.875rem)] md:w-44 md:shrink-0"
       >
         <GraceKellyPartLadder
           v-model:selectedVozIndices="selectedVozIndices"
@@ -171,6 +166,10 @@ const allVozLabels = computed(() =>
       </div>
 
       <div class="flex w-full min-w-0 flex-1 flex-col items-center gap-4">
+        <p class="text-sm leading-none text-(--p-text-muted-color)">
+          {{ t('graceKelly.harmony.subtitle') }}
+        </p>
+
         <div class="flex min-w-50 items-center gap-2">
           <PrimeButton
             v-if="isRunning"
