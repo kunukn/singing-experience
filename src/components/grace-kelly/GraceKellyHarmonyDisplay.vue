@@ -13,6 +13,9 @@ type Props = {
   /* How the parts are shown: one music sheet per part, or all parts as
    * coloured blocks on one pitch chart. Everything else is the same. */
   view?: 'sheets' | 'chart'
+  /* True only while this display's tab is showing. PrimeTabs keeps every panel
+   * mounted, so the idle preview mic is gated on this. */
+  isActive: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), { view: 'sheets' })
@@ -78,6 +81,28 @@ watch(
   },
   { deep: true },
 )
+
+const { isPreviewEnabled } = useSettings()
+
+/* "See my voice" only has somewhere to draw on the chart, so the sheets view
+ * never counts as enabled: it neither asks for the mic nor listens when the
+ * shared setting is switched on from another tab. Writable, because
+ * useIdlePreview switches the setting back off when the mic is denied. */
+const isChartPreviewEnabled = computed({
+  get: () => isPreviewEnabled.value && isChartView.value,
+  set: (enabled) => {
+    isPreviewEnabled.value = enabled
+  },
+})
+
+/* Listens only while the chart tab is showing and nothing plays, so it never
+ * competes with playback or with another tab's mic. */
+const { previewMidi, previewFrequency, micPermission } = useIdlePreview({
+  isGameActive: computed(
+    () => isRunning.value || !props.isActive || !isChartView.value,
+  ),
+  isEnabled: isChartPreviewEnabled,
+})
 
 /* Flat reading-order index of the syllable currently being sung — the last
  * syllable whose starting tone has been reached. -1 when idle. */
@@ -189,6 +214,11 @@ const allVozLabels = computed(() =>
           >
             {{ hasFinished ? t('generic.playAgain') : t('generic.start') }}
           </PrimeButton>
+
+          <PreviewToggle
+            v-model="isPreviewEnabled"
+            :disabled="!isChartView || micPermission === 'denied' || isRunning"
+          />
         </div>
 
         <GraceKellyRollChart
@@ -198,6 +228,8 @@ const allVozLabels = computed(() =>
           :startToneMidi="startToneMidi"
           :vozIndices="selectedVozIndices"
           :showToneLabels="areToneLabelsShown"
+          :previewMidi="previewMidi"
+          :previewFrequency="previewFrequency"
         />
         <GraceKellyAllSheets
           v-else-if="selectedVozIndices.length > 0"

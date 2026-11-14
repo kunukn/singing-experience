@@ -3,6 +3,7 @@ import { midiToChartY } from '@/utils/chartGrid'
 import { resolveCssColor } from '@/utils/cssColor'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { voiceTypeColor } from '@/utils/pitchColors'
+import { drawPitchLine } from '@/utils/pitchLineRenderer'
 import {
   buildRollBlocks,
   buildRollToneLabels,
@@ -27,11 +28,22 @@ type Props = {
   activeNoteIndex: number | null
   /* Names the tones above the blocks, once per run of the same tone. */
   showToneLabels: boolean
+  /* The singer's idle "See my voice" pitch: nearest note and its measured
+   * frequency. Null when there is nothing to show. */
+  previewMidi: number | null
+  previewFrequency: number | null
+  /* x in px of the preview line's dot and note name. */
+  previewAnchorX: number
 }
 
 const props = defineProps<Props>()
 
 const { isDark } = useDarkMode()
+const { colorForCents } = usePitchPreviewColor()
+
+/* Cents off the note before the preview line's name also shows the number.
+ * Forgiving, like the Pitch Detector chart, so a small wobble shows none. */
+const PREVIEW_CENTS_THRESHOLD = 20
 
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 
@@ -99,6 +111,29 @@ function draw() {
   if (props.showToneLabels) drawToneLabels(context, scale)
 
   drawPlayhead(context, primaryColor)
+  drawPreviewLine(context, scale)
+}
+
+/* The singer's own pitch as a dashed line across the chart, before the song
+ * starts. No game is running then, so it is always coloured by cents. */
+function drawPreviewLine(
+  context: CanvasRenderingContext2D,
+  scale: { midiMin: number; midiMax: number; height: number },
+) {
+  if (props.previewMidi === null || props.activeNoteIndex !== null) return
+
+  drawPitchLine(context, {
+    midi: props.previewMidi,
+    frequency: props.previewFrequency,
+    height: props.height,
+    midiToY: (midi) => midiToChartY(midi, scale),
+    lineX0: 0,
+    lineX1: props.width,
+    dotX: props.previewAnchorX,
+    isDark: isDark.value,
+    centsThreshold: PREVIEW_CENTS_THRESHOLD,
+    colorForCents,
+  })
 }
 
 /* Tinted column behind the notes being sung. */
@@ -265,7 +300,7 @@ function activeColumn() {
 }
 
 /* Nothing moves between notes, so there is no animation loop: the roll is
- * redrawn only when what it shows changes. flush 'post' so the canvas exists
+ * redrawn only when what it shows changes, the idle preview pitch included. flush 'post' so the canvas exists
  * and a theme switch has reached the DOM before colours are read. */
 watch(
   [
@@ -276,6 +311,9 @@ watch(
     () => props.gridMidis,
     () => props.activeNoteIndex,
     () => props.showToneLabels,
+    () => props.previewMidi,
+    () => props.previewFrequency,
+    () => props.previewAnchorX,
     blocks,
     isDark,
   ],

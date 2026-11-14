@@ -162,6 +162,7 @@ watch(activeTab, () => {
         <PrimeTabPanel value="harmony">
           <GraceKellyHarmonyDisplay
             :game="harmonyGame"
+            :isActive="activeTab === 'harmony'"
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"
             v-model:selectedVozIndices="selectedVozIndices"
@@ -171,6 +172,7 @@ watch(activeTab, () => {
         <PrimeTabPanel value="harmony-chart">
           <GraceKellyHarmonyDisplay
             :game="harmonyGame"
+            :isActive="activeTab === 'harmony-chart'"
             view="chart"
             v-model:startToneMidi="startToneMidi"
             v-model:bpm="bpm"

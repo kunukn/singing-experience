@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useElementSize } from '@vueuse/core'
+import { useElementSize, useScroll } from '@vueuse/core'
 import {
   CHART_LABEL_BASE,
   CHART_LABEL_GUTTER_WIDTH,
@@ -27,6 +27,10 @@ type Props = {
   vozIndices: number[]
   /* Names the tones on the chart, once per run of the same tone. */
   showToneLabels: boolean
+  /* The singer's idle "See my voice" pitch: nearest note and its measured
+   * frequency. Null when there is nothing to show. */
+  previewMidi: number | null
+  previewFrequency: number | null
 }
 
 const props = defineProps<Props>()
@@ -53,6 +57,15 @@ const LYRIC_GAP_PX = 3
 const plotRef = ref<HTMLElement | null>(null)
 const scrollerRef = ref<HTMLElement | null>(null)
 const { width: plotWidth, height: plotHeight } = useElementSize(plotRef)
+const { width: scrollerWidth } = useElementSize(scrollerRef)
+const { x: scrollLeft } = useScroll(scrollerRef)
+
+/* Where the preview line's dot and note name sit: the middle of what is on
+ * screen. On a phone the plot is wider than its scroller, so the middle of
+ * the plot itself can be scrolled out of view. */
+const previewAnchorX = computed(
+  () => scrollLeft.value + scrollerWidth.value / 2,
+)
 
 const midiRange = computed(() => rollMidiRange(props.startToneMidi))
 
@@ -166,6 +179,9 @@ watch(
             :vozIndices="vozIndices"
             :activeNoteIndex="activeNoteIndex"
             :showToneLabels="showToneLabels"
+            :previewMidi="previewMidi"
+            :previewFrequency="previewFrequency"
+            :previewAnchorX="previewAnchorX"
           />
         </div>
         <div

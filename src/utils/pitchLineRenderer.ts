@@ -1,7 +1,8 @@
 /* Shared renderer for the "singer pitch line / preview indicator" — the dashed
  * horizontal line + dot + note label drawn at the sung/preview pitch.
  *
- * Tier A (PitchHistoryCanvas, SingToneChart, WarmUpChart) call drawPitchLine
+ * Tier A (PitchHistoryCanvas, SingToneChart, WarmUpChart,
+ * GraceKellyRollCanvas) call drawPitchLine
  * for the whole thing. Tier B/C (NoteRushPitchHistoryCanvas, SingFlyCanvas)
  * import only the primitives for value-level sharing and keep their own
  * bespoke draw orchestration — see docs/plan for why a single function would
