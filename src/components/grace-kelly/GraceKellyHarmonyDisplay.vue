@@ -90,6 +90,10 @@ watch(
   { deep: true },
 )
 
+/* Clicking a note plays that part's tone — skipped while the timeline runs so
+ * it can't clash with the scheduled sequence. */
+const playNote = useNoteClickTone(isRunning)
+
 const { isPreviewEnabled } = useSettings()
 
 /* "See my voice" only has somewhere to draw on the chart, so the sheets view
@@ -254,6 +258,7 @@ const allVozLabels = computed(() =>
           :vozIndices="selectedVozIndices"
           :vozColors="vozColors"
           :showToneLabels="areToneLabelsShown"
+          @noteClick="playNote"
         />
       </div>
     </div>

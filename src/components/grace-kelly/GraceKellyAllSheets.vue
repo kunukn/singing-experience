@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { useDebounceFn, useResizeObserver } from '@vueuse/core'
-import { renderAbc } from 'abcjs'
+import { renderAbc, type ClickListener } from 'abcjs'
 import {
   estimateStaffWidth,
   groupNoteHeads,
@@ -10,6 +10,7 @@ import {
 import { GRACE_KELLY_LYRIC_ABC } from './graceKellyLyrics'
 import { VOZ_MELODIES } from './graceKellyMelodies'
 import {
+  clickedNoteElement,
   measureMusicWidth,
   STAFF_LABEL_FONT,
   STAFF_LYRIC_FONT,
@@ -38,6 +39,12 @@ type Props = {
 }
 
 const props = defineProps<Props>()
+
+const emit = defineEmits<{
+  /* A notehead was clicked; carries that note's sounding MIDI (start tone
+   * applied) in the part whose staff was clicked. */
+  noteClick: [midi: number]
+}>()
 
 const SVG_NAMESPACE = 'http://www.w3.org/2000/svg'
 /* 10px across, the same size as the dot on the part toggles. */
@@ -219,6 +226,26 @@ const staffLabels = computed(() =>
   }),
 )
 
+/* abcjs click handler for one staff: map the clicked SVG group back to its
+ * melody note in that staff's part. A tied, beat-split note has several
+ * noteheads, so look the group up in the staff's note groups rather than by
+ * flat index. Non-note clicks are ignored. */
+function handleAbcClick(staffIndex: number): ClickListener {
+  return (abcElem) => {
+    const noteGroup = clickedNoteElement(abcElem)
+    if (!noteGroup) return
+
+    const vozIndex = renderedVozIndices.value[staffIndex]
+    const noteIndex = (noteGroupsByStaff.value[staffIndex] ?? []).findIndex(
+      (group) => group.includes(noteGroup),
+    )
+    const note = VOZ_MELODIES[vozIndex]?.notes[noteIndex]
+    if (!note) return
+
+    emit('noteClick', props.startToneMidi + note.midiOffset)
+  }
+}
+
 async function renderSheets() {
   const vozIndices = renderedVozIndices.value
   /* Containers are positional (one per rendered voice); slice to the active
@@ -252,6 +279,7 @@ async function renderSheets() {
   for (let index = 0; index < containers.length; index++) {
     renderAbc(containers[index], baseAbcStrings[index], {
       ...COMPACT_RENDER,
+      clickListener: handleAbcClick(index),
       staffwidth: probeWidth,
     })
   }
@@ -286,6 +314,7 @@ async function renderSheets() {
   for (let index = 0; index < containers.length; index++) {
     renderAbc(containers[index], abcStrings[index], {
       ...COMPACT_RENDER,
+      clickListener: handleAbcClick(index),
       staffwidth: sharedWidth,
     })
   }

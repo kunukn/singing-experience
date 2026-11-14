@@ -1,3 +1,5 @@
+import type { AbcElem } from 'abcjs'
+
 /* abcjs font strings are '<family> <size>'. Centralized so the lyric and label
  * sizes stay in sync across the single-voice sheet, the sing sheet, and the
  * stacked all-parts overview — one edit changes all three. */
@@ -21,4 +23,11 @@ export function measureMusicWidth(container: HTMLElement): number {
   }
 
   return maxRight
+}
+
+/* The `.abcjs-note` group an abcjs click landed on, or null for anything that
+ * is not a note (rest, clef, barline, tempo). Takes the first argument of an
+ * abcjs `clickListener`. */
+export function clickedNoteElement(abcElem: AbcElem): Element | null {
+  return abcElem.abselem?.elemset?.[0]?.closest('.abcjs-note') ?? null
 }

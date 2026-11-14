@@ -138,15 +138,9 @@ const isRunning = computed(() => isPlaying.value || isPaused.value)
  * change underneath a running sing OR an audible preview. */
 const isBusy = computed(() => isRunning.value || isPreviewPlaying.value)
 
-const { playTone } = useTonePlayer()
-
 /* Clicking a note plays it — skipped while either timeline is busy so it can't
  * clash with the melody preview or sound over a sing run. */
-function playNote(midi: number) {
-  if (isBusy.value) return
-
-  void playTone(midiToFrequency(midi))
-}
+const playNote = useNoteClickTone(isBusy)
 
 const { isPreviewEnabled } = useSettings()
 

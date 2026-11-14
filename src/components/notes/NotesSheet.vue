@@ -4,6 +4,7 @@ import {
   type PitchSample,
 } from '@/components/grace-kelly/graceKellySingPitch'
 import {
+  clickedNoteElement,
   measureMusicWidth,
   STAFF_LABEL_FONT,
   STAFF_LYRIC_FONT,
@@ -252,8 +253,7 @@ function calibratePitchToY() {
  * reading order (noteElements[i] ↔ midis[i]). Clef, bar and tempo clicks
  * resolve to no `.abcjs-note` and are ignored. */
 const handleAbcClick: ClickListener = (abcElem) => {
-  const svgElement = abcElem.abselem?.elemset?.[0]
-  const noteGroup = svgElement?.closest('.abcjs-note')
+  const noteGroup = clickedNoteElement(abcElem)
   if (!noteGroup) return
 
   const midi = props.midis[noteElements.value.indexOf(noteGroup)]
@@ -492,12 +492,8 @@ watch(
   display: none;
 }
 
-/* abcjs marks a clicked note with `abcjs-note_selected` plus a hardcoded red
- * fill attribute; CSS outranks presentation attributes, so the theme wins. */
 :deep(.note-active path),
-:deep(.note-active rect),
-:deep(.abcjs-note_selected path),
-:deep(.abcjs-note_selected rect) {
+:deep(.note-active rect) {
   fill: var(--p-primary-color);
 }
 

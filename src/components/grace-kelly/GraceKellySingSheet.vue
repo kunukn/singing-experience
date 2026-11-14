@@ -11,6 +11,7 @@ import {
 import type { VozMelody } from './graceKellyMelodies'
 import { buildPitchToY, type PitchSample } from './graceKellySingPitch'
 import {
+  clickedNoteElement,
   measureMusicWidth,
   STAFF_LABEL_FONT,
   STAFF_LYRIC_FONT,
@@ -366,8 +367,7 @@ function calibratePitchToY() {
  * rather than by flat index. Rest, clef, bar and tempo clicks resolve to no
  * `.abcjs-note` and are ignored. */
 const handleAbcClick: ClickListener = (abcElem) => {
-  const svgElement = abcElem.abselem?.elemset?.[0]
-  const noteGroup = svgElement?.closest('.abcjs-note')
+  const noteGroup = clickedNoteElement(abcElem)
   if (!noteGroup) return
 
   const noteIndex = noteGroups.value.findIndex((group) =>
@@ -654,14 +654,8 @@ defineExpose({ scrollToSyllable })
 </template>
 
 <style scoped>
-/* abcjs marks a clicked note with `abcjs-note_selected` plus a hardcoded red
- * fill attribute; CSS outranks presentation attributes, so the theme wins. The
- * bare class covers the lyric text under the note, which inherits the fill. */
 :deep(.note-active path),
-:deep(.note-active rect),
-:deep(.abcjs-note_selected),
-:deep(.abcjs-note_selected path),
-:deep(.abcjs-note_selected rect) {
+:deep(.note-active rect) {
   fill: var(--p-primary-color);
 }
 

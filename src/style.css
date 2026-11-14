@@ -170,3 +170,13 @@ body.p-overflow-hidden {
     opacity: 0;
   }
 }
+
+/* abcjs marks a clicked note with `abcjs-note_selected` plus a hardcoded red
+ * fill attribute; CSS outranks presentation attributes, so the theme wins on
+ * every sheet. The bare class covers the lyric text under the note, which
+ * inherits the group's fill. */
+.abcjs-note_selected,
+.abcjs-note_selected path,
+.abcjs-note_selected rect {
+  fill: var(--p-primary-color);
+}
