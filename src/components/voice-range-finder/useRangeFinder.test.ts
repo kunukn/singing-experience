@@ -399,11 +399,11 @@ describe('useRangeFinder', () => {
       scope.stop()
     })
 
-    test('should explain a note above C6 on the high step, without recording it', () => {
+    test('should explain a note above C7 on the high step, without recording it', () => {
       const { midi, finder, scope } = setup()
 
       finder.start('high')
-      midi.value = 86 // D6
+      midi.value = 98 // D7
       vi.advanceTimersByTime(50)
       expect(finder.pauseReason.value).toBe(null)
 
@@ -475,15 +475,15 @@ describe('useRangeFinder', () => {
       })
     })
 
-    test('should still count C6 itself', () => {
+    test('should still count C7 itself', () => {
       const { midi, finder, scope } = setup()
 
       finder.start('high')
-      midi.value = 84 // C6
+      midi.value = 96 // C7
       vi.advanceTimersByTime(HOLD_WITH_SLACK_MS)
 
       expect(finder.pauseReason.value).toBe(null)
-      expect(finder.highestMidi.value).toBe(84)
+      expect(finder.highestMidi.value).toBe(96)
       scope.stop()
     })
 
@@ -491,7 +491,7 @@ describe('useRangeFinder', () => {
       const { midi, finder, scope } = setup()
 
       finder.start()
-      midi.value = 86 // D6
+      midi.value = 98 // D7
       vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
 
       expect(finder.pauseReason.value).toBe(null)
@@ -547,7 +547,7 @@ describe('useRangeFinder', () => {
       scope.stop()
     })
 
-    test('should give no reason for a note outside C2–C6', () => {
+    test('should give no reason for a note outside C2–C7', () => {
       const { midi, finder, scope } = setup()
 
       finder.start()

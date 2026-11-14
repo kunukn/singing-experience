@@ -37,8 +37,8 @@ const isVoiceUnclear = computed({
   },
 })
 
-/* C2 and up. My range stops at C6; the rest of octave 6 tests notes past it */
-const octaveOptions = [6, 5, 4, 3, 2]
+/* C2 and up. My range stops at C7; the rest of octave 7 tests notes past it */
+const octaveOptions = [7, 6, 5, 4, 3, 2]
 </script>
 
 <template>

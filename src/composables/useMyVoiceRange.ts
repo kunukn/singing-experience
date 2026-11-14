@@ -27,7 +27,7 @@ const myVoiceRange = computed<MidiRange>(() =>
 
 /**
  * The singer's own range, found by the Voice Range Finder or picked by hand.
- * Always whole semitones inside C2–C6 and at least an octave wide (see
+ * Always whole semitones inside C2–C7 and at least an octave wide (see
  * normalizeVoiceRange), so every range-driven program can use it as-is.
  */
 /* The stored range always has a value (VueUse writes the default on first

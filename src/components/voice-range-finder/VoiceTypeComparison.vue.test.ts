@@ -637,6 +637,34 @@ describe('VoiceTypeComparison', () => {
           },
         )
 
+        test.each([
+          { midiMax: 96, inside: 'true' }, // C7
+          { midiMax: 85, inside: 'true' }, // C♯6
+          { midiMax: 84, inside: undefined }, // C6
+        ])(
+          'should put the high note inside the bar only above C6 ($midiMax)',
+          ({ midiMax, inside }) => {
+            setMyVoiceRange(48, midiMax) // from C3
+            const end = myRangeOf(mountSingers()).get(
+              '[data-testid="voice-type-comparison-voice-end"]',
+            )
+
+            expect(end.attributes('data-inside')).toBe(inside)
+          },
+        )
+
+        test('should clip a high end past the chart and name its real note', () => {
+          setMyVoiceRange(48, 96) // C3–C7
+          const wrapper = mountSingers()
+
+          expect(endsOf(wrapper)).toEqual(['C3', 'C7'])
+          expect(
+            myRangeOf(wrapper)
+              .get('[data-testid="voice-type-comparison-voice-end"]')
+              .attributes('style'),
+          ).toContain('inset-inline-start: 100%')
+        })
+
         test('should explain the stripes', () => {
           expect(
             mountSingers()
@@ -675,7 +703,7 @@ describe('VoiceTypeComparison', () => {
               .attributes('style')
           const before = bassStyle(mountSingers())
 
-          setMyVoiceRange(36, 84) // C2–C6, the widest allowed
+          setMyVoiceRange(36, 84) // C2–C6
           const wrapper = mountSingers()
 
           expect(endsOf(wrapper)).toEqual(['C2', 'C6'])

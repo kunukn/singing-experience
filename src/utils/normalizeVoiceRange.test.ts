@@ -20,16 +20,16 @@ describe('normalizeVoiceRange', () => {
     })
   })
 
-  test('clamps to C2–C6', () => {
-    expect(normalizeVoiceRange(20, 120)).toEqual({ midiMin: 36, midiMax: 84 })
+  test('clamps to C2–C7', () => {
+    expect(normalizeVoiceRange(20, 120)).toEqual({ midiMin: 36, midiMax: 96 })
   })
 
   test('widens a range under an octave upward', () => {
     expect(normalizeVoiceRange(55, 62)).toEqual({ midiMin: 55, midiMax: 67 })
   })
 
-  test('widens downward when the top is already at C6', () => {
-    expect(normalizeVoiceRange(80, 84)).toEqual({ midiMin: 72, midiMax: 84 })
+  test('widens downward when the top is already at C7', () => {
+    expect(normalizeVoiceRange(92, 96)).toEqual({ midiMin: 84, midiMax: 96 })
   })
 
   test.each([

@@ -193,6 +193,8 @@ type ChartRow = {
     endLeft: number
     /* Below E2 there's no room beside the bar, so the note sits inside it */
     isStartInside: boolean
+    /* The same above C6 */
+    isEndInside: boolean
   } | null
 }
 
@@ -298,6 +300,7 @@ const exploreRow = (
       startLeft: toPercent(midiMin),
       endLeft: toPercent(midiMax),
       isStartInside: false,
+      isEndInside: false,
     },
   }
 }
@@ -326,12 +329,14 @@ const exploreSingerRows = (): ChartRow[] =>
   )
 
 /* The singer's own range, to hold up against the famous singers. Striped and
- * never faded, like its bar beside My range. Its low end can pass the axis (C2,
- * the axis starts on C♯2), so that's clipped: widening the axis would rescale
- * every bar on a toggle. The label keeps the real note. */
+ * never faded, like its bar beside My range. Either end can pass the axis (C2
+ * at the bottom, where the axis starts on C♯2; up to C7 at the top, where it
+ * stops on D♯6), so they're clipped: widening the axis would rescale every bar
+ * on a toggle. The labels keep the real notes. */
 const exploreMyRangeRow = (): ChartRow => {
   const { midiMin, midiMax } = myVoiceRange.value
   const clippedMin = Math.max(axisMin.value, midiMin)
+  const clippedMax = Math.min(axisMax.value, midiMax)
   const name = t('voiceRanges.myRange')
   const row = exploreRow(midiMin, midiMax, {
     id: 'myRange',
@@ -345,7 +350,7 @@ const exploreMyRangeRow = (): ChartRow => {
   return {
     ...row,
     voiceStyle: {
-      ...trackStyle(clippedMin, midiMax),
+      ...trackStyle(clippedMin, clippedMax),
       backgroundImage: MY_RANGE_STRIPES,
     },
     solidStyle: null,
@@ -354,6 +359,8 @@ const exploreMyRangeRow = (): ChartRow => {
       ...row.ends,
       startLeft: toPercent(clippedMin),
       isStartInside: midiMin < AXIS_MIN_MIDI,
+      endLeft: toPercent(clippedMax),
+      isEndInside: midiMax > AXIS_MAX_MIDI,
     },
   }
 }
@@ -618,7 +625,7 @@ const liveLabel = computed(() => {
               :style="{ ...row.solidStyle, backgroundColor: row.color }"
             />
             <!-- Each note on the outer side of its end, so it never sits on the bar,
-                 unless the chart has no room there (see isStartInside) -->
+                 unless the chart has no room there (see isStartInside, isEndInside) -->
             <template v-if="row.ends">
               <span
                 data-testid="voice-type-comparison-voice-start"
@@ -639,8 +646,14 @@ const liveLabel = computed(() => {
               </span>
               <span
                 data-testid="voice-type-comparison-voice-end"
-                class="absolute top-1/2 -translate-y-1/2 ps-1 text-[10px] whitespace-nowrap tabular-nums"
-                :class="{ 'text-(--p-text-muted-color)': !row.isSounding }"
+                class="absolute top-1/2 -translate-y-1/2 text-[10px] whitespace-nowrap tabular-nums"
+                :class="[
+                  { 'text-(--p-text-muted-color)': !row.isSounding },
+                  row.ends.isEndInside
+                    ? '-translate-x-full bg-(--p-content-background) px-1'
+                    : 'ps-1',
+                ]"
+                :data-inside="row.ends.isEndInside || undefined"
                 :style="{
                   insetInlineStart: `${row.ends.endLeft}%`,
                   color: row.isSounding ? row.soundingColor : undefined,

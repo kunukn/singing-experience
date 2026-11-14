@@ -35,7 +35,7 @@ describe('VoiceRangeSearchStep', () => {
     const mountAbove = () =>
       mountStep({
         step: 'high',
-        sungMidi: 86, // D6
+        sungMidi: 98, // D7
         pauseReason: 'aboveLimit',
       })
 
@@ -44,7 +44,7 @@ describe('VoiceRangeSearchStep', () => {
 
       expect(
         wrapper.get('[data-testid="voice-range-finder-hold-hint"]').text(),
-      ).toBe('We only count notes up to C6.')
+      ).toBe('We only count notes up to C7.')
       wrapper.unmount()
     })
 

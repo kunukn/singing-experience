@@ -12,7 +12,7 @@ export const formatNote = (midi: number) => midiToNoteLabel(midi).label
 export const formatRange = (midiMin: number, midiMax: number) =>
   `${formatNote(midiMin)}–${formatNote(midiMax)}`
 
-/* C6 down to C2, high to low like every pitch list in the app */
+/* C7 down to C2, high to low like every pitch list in the app */
 export const VOICE_RANGE_NOTE_OPTIONS = Array.from(
   { length: VOICE_RANGE_HIGHEST_MIDI - VOICE_RANGE_LOWEST_MIDI + 1 },
   (_, offset) => {

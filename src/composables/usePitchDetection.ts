@@ -58,6 +58,10 @@ type UsePitchDetectionOptions = {
    * voice — whose pitch is carried by its fundamental and lower harmonics —
    * passes untouched. Omit for no filter. */
   lowPassHz?: number
+  /* Highest pitch (Hz) that counts. Defaults to MAX_FREQUENCY, which keeps
+   * whistles, sibilance and harmonic misreads above the singing range out of
+   * the games. The Voice Range Finder raises it to reach C7. */
+  maxFrequency?: number
   /* Frequency of A4 that note names and cents are measured against. Defaults to
    * 440. The tuner moves it to follow recordings that sit off concert pitch. */
   referenceA4?: MaybeRefOrGetter<number>
@@ -90,6 +94,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
     () => options.clarityThreshold ?? globalClarity.value,
   )
   const onsetDebounceMs = options.onsetDebounceMs ?? ONSET_DEBOUNCE_MS
+  const maxFrequency = options.maxFrequency ?? MAX_FREQUENCY
 
   const { t } = useI18n()
   const frequency = ref<number | null>(null)
@@ -156,7 +161,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
     if (
       detectedClarity >= clarityThreshold.value &&
       pitch >= MIN_FREQUENCY &&
-      pitch <= MAX_FREQUENCY
+      pitch <= maxFrequency
     ) {
       const now = performance.now()
       const acceptedPitch = jumpGate ? jumpGate.push(pitch, now) : pitch
@@ -173,7 +178,7 @@ export function usePitchDetection(options: UsePitchDetectionOptions = {}) {
        * smoothed in-band stream. */
       const isInBand =
         acceptedPitch >= toValue(options.bandMinFrequency ?? MIN_FREQUENCY) &&
-        acceptedPitch <= toValue(options.bandMaxFrequency ?? MAX_FREQUENCY)
+        acceptedPitch <= toValue(options.bandMaxFrequency ?? maxFrequency)
 
       let reportedFrequency = acceptedPitch
       if (isInBand) {
