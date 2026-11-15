@@ -321,7 +321,9 @@ export function useScaleDetector({
     removedAtMs.value = new Map()
   }
 
-  onUnmounted(stopListening)
+  /* Scope disposal, not onUnmounted: also releases the mic when run inside a
+   * plain effectScope (tests), where onUnmounted never fires. */
+  onScopeDispose(stopListening)
 
   return {
     isListening: readonly(isListening),
