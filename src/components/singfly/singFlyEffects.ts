@@ -4,6 +4,7 @@
  * deterministically on the test page. Visual only: nothing here reaches the
  * hitbox, which is derived from the bird's pitch in singFlyGeometry.
  */
+import { animationProgress } from '@/components/note-rush/noteRushEffects'
 
 /* ms — one full wing beat, and with it one up-and-down of the hover bob. */
 export const FLAP_PERIOD_MS = 600
@@ -69,6 +70,25 @@ export function flapStrength(velocity: number): number {
     MIN_FLAP_STRENGTH,
     Math.min(MAX_FLAP_STRENGTH, 1 - velocity * FLAP_STRENGTH_PER_SPEED),
   )
+}
+
+/* ms — the "+1" that rises from the gap of a pipe the bird just passed. */
+export const PASS_SCORE_FLOAT_MS = 900
+/* ms — the ring that spreads from that gap. */
+export const PASS_RING_MS = 500
+/* ms — how long the bird keeps its happy eye after a pass. */
+export const HAPPY_MS = 500
+/* ms — the squash-and-stretch of the bird the moment it passes a pipe. */
+const HAPPY_POP_MS = 400
+
+/**
+ * 0 → 1 → 0 over the pop that follows a pass, `elapsedMs` after it: one
+ * half-sine, so the body squashes wide and springs back.
+ */
+export function happyPop(elapsedMs: number): number {
+  if (elapsedMs < 0) return 0
+
+  return Math.sin(Math.PI * animationProgress(elapsedMs, HAPPY_POP_MS))
 }
 
 export function isBlinking(now: number): boolean {

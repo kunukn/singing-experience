@@ -8,6 +8,7 @@ import {
   MAX_TILT,
   TILT_SMOOTHING_MS,
   flapStrength,
+  happyPop,
   hoverBobOffset,
   isBlinking,
   smoothVelocity,
@@ -64,6 +65,14 @@ describe('singFlyEffects', () => {
     expect(flapStrength(0.1)).toBeLessThan(1)
     expect(flapStrength(5)).toBeGreaterThan(0)
     expect(flapStrength(-5)).toBeLessThan(2)
+  })
+
+  test('should pop once after a pass and then settle', () => {
+    expect(happyPop(0)).toBeCloseTo(0, 5)
+    expect(happyPop(200)).toBeCloseTo(1, 5)
+    expect(happyPop(400)).toBeCloseTo(0, 5)
+    expect(happyPop(Infinity)).toBeCloseTo(0, 5)
+    expect(happyPop(-50)).toBe(0)
   })
 
   test('should blink briefly once per blink period', () => {

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import {
+  animationProgress,
+  easeOutCubic,
+} from '@/components/note-rush/noteRushEffects'
 import { resolveCssColor } from '@/utils/cssColor'
 import { frequencyToMidi, midiToNoteLabel } from '@/utils/noteUtils'
 import { resolveEffectiveMidi } from '@/utils/pitchLineRenderer'
@@ -25,6 +29,8 @@ import {
   type Playfield,
 } from './singFlyGeometry'
 import {
+  PASS_RING_MS,
+  PASS_SCORE_FLOAT_MS,
   flapStrength,
   hoverBobOffset,
   smoothVelocity,
@@ -230,6 +236,11 @@ let birdVelocity = 0
 /* ms — a longer gap between frames means the loop was stopped; the distance
  * covered meanwhile says nothing about the bird's speed now. */
 const BIRD_SPEED_MAX_GAP_MS = 250
+
+/* Canvas time each pipe was first seen as passed (status 'hit'), keyed by
+ * target id. The game only records that a pipe was passed, not when; the
+ * celebration needs the moment, so the canvas stamps it. Visual only. */
+const passTimes = new Map<number, number>()
 
 let deathAnim: DeathAnim | null = null
 let deathTriggeredThisRound = false
@@ -494,6 +505,53 @@ function drawTrace(
   }
 }
 
+/* A passed pipe celebrates in its gap: a ring spreads from the centre and a
+ * "+1" rises above the note name. Both ride the pipe as it scrolls on. */
+function drawPassEffects(
+  ctx: CanvasRenderingContext2D,
+  field: Playfield,
+  now: number,
+) {
+  if (passTimes.size === 0) return
+
+  const isAnimated = !prefersReducedMotion
+
+  ctx.save()
+  ctx.font = 'bold 15px monospace'
+  ctx.textAlign = 'center'
+  ctx.textBaseline = 'middle'
+  for (const pipe of field.pipes) {
+    const passedAt = passTimes.get(pipe.id)
+    if (passedAt === undefined) continue
+
+    const elapsed = now - passedAt
+    /* Negative on a backward scrub of the test page's manual clock */
+    if (elapsed < 0 || elapsed >= PASS_SCORE_FLOAT_MS) continue
+
+    if (isAnimated && elapsed < PASS_RING_MS) {
+      const ring = easeOutCubic(animationProgress(elapsed, PASS_RING_MS))
+      ctx.globalAlpha = 0.7 * (1 - ring)
+      ctx.strokeStyle = PENDING_PIPE_FILL
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      /* Grows from 10px to 26px: past the note name, short of the bird's
+       * neighbours */
+      ctx.arc(pipe.centerX, pipe.gapY, 10 + 16 * ring, 0, Math.PI * 2)
+      ctx.stroke()
+    }
+
+    /* Text colour, not the pipe green: on a narrow gap the "+1" ends up over
+     * the pipe above. Starts 14px above the note name and rises 12px; under
+     * reduced motion it fades in place. */
+    const float = animationProgress(elapsed, PASS_SCORE_FLOAT_MS)
+    const rise = isAnimated ? 12 * easeOutCubic(float) : 0
+    ctx.globalAlpha = 1 - float
+    ctx.fillStyle = resolveCssColor('--p-text-color')
+    ctx.fillText('+1', pipe.centerX, pipe.gapY - 14 - rise)
+  }
+  ctx.restore()
+}
+
 function drawBird(
   ctx: CanvasRenderingContext2D,
   geom: ChartGeometry,
@@ -563,6 +621,8 @@ function drawBird(
     isSinging,
     tilt: isPerched ? 0 : tiltFromVelocity(birdVelocity),
     flapStrength: flapStrength(birdVelocity),
+    happyMs:
+      passTimes.size > 0 ? now - Math.max(...passTimes.values()) : Infinity,
     now,
     isAnimated,
   })
@@ -1056,6 +1116,16 @@ function drawChart() {
     traceLabels = traceLabels.filter((l) => now - l.time <= TRACE_MAX_AGE_MS)
   }
 
+  /* Stamp newly passed pipes. A pipe that is no longer 'hit' (new round, a
+   * scrub back on the test page) loses its stamp. */
+  for (const target of props.targets) {
+    if (target.status !== 'hit') {
+      passTimes.delete(target.id)
+    } else if (!passTimes.has(target.id)) {
+      passTimes.set(target.id, now)
+    }
+  }
+
   ctx.save()
   applyDeathShake(ctx)
 
@@ -1086,6 +1156,7 @@ function drawChart() {
   })
 
   drawPlayfield(ctx, field)
+  drawPassEffects(ctx, field, now)
   drawRangeLabels(ctx, geom, height)
   if (props.phase === 'idle') drawPerchBoard(ctx, geom, height)
   drawTrace(ctx, geom, height, now)
@@ -1174,6 +1245,7 @@ watch(
       sustainedLabelEmitted = false
       birdSpeedSample = null
       birdVelocity = 0
+      passTimes.clear()
       pausedAt = null
       crashStartedAt = null
     }

@@ -4,7 +4,7 @@
  * looks like. Drawn facing right around (0, 0) and mirrored for RTL.
  */
 import { BIRD_RADIUS } from './singFlyGeometry'
-import { isBlinking, wingLift } from './singFlyEffects'
+import { HAPPY_MS, happyPop, isBlinking, wingLift } from './singFlyEffects'
 
 export type BirdPose = 'perched' | 'flying'
 
@@ -22,6 +22,8 @@ type BirdSpriteParams = {
   tilt: number
   /* Multiplier on the wing swing, from the bird's vertical speed */
   flapStrength: number
+  /* ms since the bird last passed a pipe; Infinity when it has not */
+  happyMs: number
   /* The canvas clock, for the wing beat and the blink */
   now: number
   /* false under reduced motion: draw the settled pose */
@@ -57,6 +59,11 @@ export function drawBirdSprite(
   ctx.scale(params.facing, 1)
   /* After the mirror, so nose-up stays nose-up when the bird faces left */
   ctx.rotate(isAnimated ? params.tilt : 0)
+  if (isAnimated && !params.isCrashed) {
+    /* Up to 15% wider and 10% shorter at the peak of the pop */
+    const pop = happyPop(params.happyMs)
+    ctx.scale(1 + 0.15 * pop, 1 - 0.1 * pop)
+  }
   ctx.lineJoin = 'round'
 
   /* Tail first, so the body overlaps its root */
@@ -104,7 +111,8 @@ export function drawBirdSprite(
   ctx.stroke()
   ctx.restore()
 
-  /* Eye: a dot, a cross once crashed, or a short closed line during a blink */
+  /* Eye: a dot, a cross once crashed, an upward arc after a pass, or a short
+   * closed line during a blink */
   ctx.fillStyle = FACE_COLOR
   ctx.strokeStyle = FACE_COLOR
   ctx.lineWidth = 1.5
@@ -115,6 +123,9 @@ export function drawBirdSprite(
     ctx.lineTo(4.5, -0.5)
     ctx.moveTo(4.5, -3.5)
     ctx.lineTo(1.5, -0.5)
+    ctx.stroke()
+  } else if (params.happyMs >= 0 && params.happyMs < HAPPY_MS) {
+    ctx.arc(3, -1.5, 2, Math.PI, Math.PI * 2)
     ctx.stroke()
   } else if (isAnimated && isBlinking(now)) {
     ctx.moveTo(1.5, -2)
