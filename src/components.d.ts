@@ -228,6 +228,8 @@ declare module 'vue' {
     ToneDetectorDisplay: typeof import('./components/tone-detector/ToneDetectorDisplay.vue')['default']
     ToneDetectorPage: typeof import('./components/tone-detector/ToneDetectorPage.vue')['default']
     ToneDetectorTestPage: typeof import('./components/tone-detector/ToneDetectorTestPage.vue')['default']
+    ToneIconsTestPage: typeof import('./components/icons/tone/ToneIconsTestPage.vue')['default']
+    ToneModeIcon: typeof import('./components/icons/tone/ToneModeIcon.vue')['default']
     ToneModeSelect: typeof import('./components/generic/ToneModeSelect.vue')['default']
     ToolsPage: typeof import('./components/ToolsPage.vue')['default']
     TopBar: typeof import('./components/generic/TopBar.vue')['default']

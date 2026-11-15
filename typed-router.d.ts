@@ -255,6 +255,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/tone-icons-test': RouteRecordInfo<
+      '/tone-icons-test',
+      '/tone-icons-test',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/tools': RouteRecordInfo<
       '/tools',
       '/tools',
@@ -589,6 +596,14 @@ declare module 'vue-router/auto-routes' {
     'src/pages/tone-detector-test.vue': {
       routes:
         | '/tone-detector-test'
+      views:
+        | never
+      pathParamNames:
+        | never
+    }
+    'src/pages/tone-icons-test.vue': {
+      routes:
+        | '/tone-icons-test'
       views:
         | never
       pathParamNames:
