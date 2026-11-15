@@ -24,6 +24,7 @@ import {
   findCollidingTarget,
   hasPipeClearedBird,
   isOutOfRange,
+  pipeClearAgeMs,
 } from './singFlyGeometry'
 import type { Difficulty } from '@/constants/difficulty'
 import { DEFAULT_DIFFICULTY } from './singFlyOptions'
@@ -76,8 +77,8 @@ const DEFAULT_GAME_DURATION_MS = 10_000
  * duration); when a pipe is over or past the bird is decided by geometry. */
 const LEAD_IN_MS = HISTORY_WINDOW_MS * (1 - GAME_PICKUP_LINE_RATIO)
 
-/* Random timing jitter applied to each pipe (except the first) so the field
- * doesn't feel mechanically uniform. ±150 ms is well under every
+/* Random timing jitter applied to each pipe (except the first and the last)
+ * so the field doesn't feel mechanically uniform. ±150 ms is well under every
  * DIFFICULTY_PIPE_INTERVAL_MS value so pipes never visually collide. */
 const PIPE_JITTER_MS = 150
 /* Continuous time the bird must stay inside a pipe wall before the round ends.
@@ -376,26 +377,44 @@ export function useSingFly(options: UseSingFlyOptions) {
     const now = performance.now()
     gameStartTime.value = now
 
-    /* Pre-generate the full playing field. Even spacing every
-     * currentPipeIntervalMs (difficulty-derived) with small jitter, so the
-     * chosen game duration and difficulty together determine pipe count. */
+    /* Pre-generate the full playing field. The chosen game duration and the
+     * difficulty's pipe interval together determine the pipe count: as many
+     * pipes as fit, the first entering at the start. Counted with LEAD_IN_MS,
+     * not the canvas, so a round has the same number of pipes on every
+     * screen (best scores store that total). */
     const playableMs = Math.max(0, currentGameDurationMs - LEAD_IN_MS)
-    /* +1 so the LAST pipe's pickup-line crossing lands at ~currentGameDurationMs:
-     * a pipe reaches the bird LEAD_IN_MS after spawn, and the round ends the
-     * instant every pipe is resolved, so without the +1 the last pipe (and the win)
-     * lands a full pipeInterval + LEAD_IN_MS early. floor keeps the realized
-     * win time at or just under the picked duration, never over. */
     const targetCount = Math.max(
       1,
       Math.floor(playableMs / currentPipeIntervalMs) + 1,
     )
 
+    /* The round is won the instant the last pipe's back edge passes the bird,
+     * so that moment is placed exactly on the picked duration: a full run
+     * reads "20.0s / 20s". Spaced at the bare interval the last pipe came up
+     * to one interval early ("18.0s / 20s"), which read as the game stopping
+     * short. The pipes are spread evenly from the start to that last slot
+     * instead — never closer than the difficulty's interval (bar a rounding
+     * sliver), at most about 14% wider across the selectable lengths. */
+    const clearAgeMs =
+      options.canvasWidth.value > 0
+        ? pipeClearAgeMs(
+            computeGeometry(options.canvasWidth.value, options.isRtl.value),
+          )
+        : LEAD_IN_MS
+    const lastDueOffsetMs = Math.max(0, currentGameDurationMs - clearAgeMs)
+    const lastIndex = targetCount - 1
+    const spacingMs = lastIndex > 0 ? lastDueOffsetMs / lastIndex : 0
+
     const generated: GameTarget[] = []
     let previousMidi: number | null = null
     for (let i = 0; i < targetCount; i++) {
-      const baseTime = now + i * currentPipeIntervalMs
-      /* Skip jitter on the first pipe so it spawns cleanly at the right edge. */
-      const jitter = i === 0 ? 0 : (Math.random() * 2 - 1) * PIPE_JITTER_MS
+      /* A lone pipe has no start-to-end span to sit in: it takes the last
+       * slot, entering a little after the start. */
+      const baseTime = now + (lastIndex > 0 ? i * spacingMs : lastDueOffsetMs)
+      /* No jitter on the first pipe, so it spawns cleanly at the live edge,
+       * nor on the last, so the round ends on the picked duration. */
+      const isEdgePipe = i === 0 || i === lastIndex
+      const jitter = isEdgePipe ? 0 : (Math.random() * 2 - 1) * PIPE_JITTER_MS
       const midi: number = randomMidiStep(
         options.midiMin.value,
         options.midiMax.value,

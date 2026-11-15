@@ -643,6 +643,18 @@ export function hasPipeClearedBird(
   return pipeTravelPastBird(target, now, geom) >= PIPE_BIRD_REACH
 }
 
+/* ms after a pipe's dueTime at which its back edge passes the bird — when
+ * hasPipeClearedBird turns true. The round is laid out with it, so the last
+ * pipe is flown through exactly as the picked game length runs out. Depends on
+ * the canvas width: the pipe and the bird have fixed pixel sizes, so on a
+ * narrow chart they take longer to part. */
+export function pipeClearAgeMs(geom: ChartGeometry): number {
+  const scrollSpan = Math.abs(geom.labelAxisX - geom.nowEdgeX)
+  const liveEdgeToBird = Math.abs(pickupLineX(geom) - geom.nowEdgeX)
+
+  return (HISTORY_WINDOW_MS * (liveEdgeToBird + PIPE_BIRD_REACH)) / scrollSpan
+}
+
 /* Returns the id of the first pending pipe the bird crashes into, or null.
  *
  * A crash is: the pipe column is horizontally over the bird right now AND the

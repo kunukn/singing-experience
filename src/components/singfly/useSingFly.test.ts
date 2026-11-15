@@ -1,11 +1,16 @@
 import { mount } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { h } from 'vue'
+import type { Difficulty } from '@/constants/difficulty'
 import type { VoiceRange } from '@/constants/voiceRanges'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { frequencyToNote, midiToFrequency } from '@/utils/noteUtils'
-import { HISTORY_WINDOW_MS } from './singFlyConstants'
+import {
+  DIFFICULTY_PIPE_INTERVAL_MS,
+  HISTORY_WINDOW_MS,
+} from './singFlyConstants'
 import { computeGeometry, isPipeOverBird } from './singFlyGeometry'
+import { GAME_DURATION_OPTIONS } from './singFlyOptions'
 import { useSingFly } from './useSingFly'
 
 /* useSingFly owns an XState actor via @xstate/vue's useMachine, which starts
@@ -35,10 +40,15 @@ function noteAt(midi: number): NoteInfo {
   return { ...frequencyToNote(midiToFrequency(midi))! }
 }
 
+type Round = { difficulty: Difficulty; gameDurationMs: number }
+
+const DEFAULT_ROUND: Round = { difficulty: 'easy', gameDurationMs: 10_000 }
+
 function setup(
   noteInfo = ref<NoteInfo | null>(null),
   manualClock = true,
   canvasWidth = CANVAS_WIDTH,
+  round = DEFAULT_ROUND,
 ) {
   let api!: Api
   const wrapper = mount({
@@ -49,8 +59,8 @@ function setup(
         midiMin: ref(RANGE.midiMin),
         midiMax: ref(RANGE.midiMax),
         voiceRange: ref(RANGE),
-        gameDurationMs: ref(10_000),
-        difficulty: ref('easy'),
+        gameDurationMs: ref(round.gameDurationMs),
+        difficulty: ref(round.difficulty),
         canvasWidth: ref(canvasWidth),
         canvasHeight: ref(300),
         isRtl: ref(false),
@@ -186,13 +196,18 @@ describe('useSingFly - flying a round', () => {
 
   /* Plays until the round ends. Each frame the singer is asked what to sing
    * for the pipe that is next to be decided. */
-  function playRound(singer: Singer, canvasWidth = CANVAS_WIDTH) {
+  function playRound(
+    singer: Singer,
+    canvasWidth = CANVAS_WIDTH,
+    round = DEFAULT_ROUND,
+  ) {
     const noteInfo = ref<NoteInfo | null>(null)
-    const api = setup(noteInfo, false, canvasWidth)
+    const api = setup(noteInfo, false, canvasWidth, round)
     const roundCentreAge = findCentreAge(canvasWidth)
     api.startGame()
     /* Twice the round's length is far more than any round needs */
-    for (let elapsed = 0; elapsed < 30_000; elapsed += FRAME_MS) {
+    const giveUpAfterMs = round.gameDurationMs * 2
+    for (let elapsed = 0; elapsed < giveUpAfterMs; elapsed += FRAME_MS) {
       if (api.phase.value !== 'playing') break
 
       const next = api.targets.value.find(
@@ -304,6 +319,61 @@ describe('useSingFly - flying a round', () => {
       wrappers.pop()!.unmount()
     }
   })
+
+  const rounds = (['easy', 'normal', 'hard'] as const).flatMap((difficulty) =>
+    GAME_DURATION_OPTIONS.map((durationSec) => ({ difficulty, durationSec })),
+  )
+
+  /* A full run used to stop up to one pipe interval early: "18.0s / 20s" */
+  test.each(rounds)(
+    'should end a full $difficulty $durationSec s run on the picked length',
+    ({ difficulty, durationSec }) => {
+      const gameDurationMs = durationSec * 1000
+      /* A phone and the widest the page gets: the last pipe parts from the
+       * bird later on a narrow chart, and the layout allows for it */
+      for (const canvasWidth of [360, CANVAS_WIDTH]) {
+        const api = playRound((target) => target.midi, canvasWidth, {
+          difficulty,
+          gameDurationMs,
+        })
+
+        expect(api.phase.value, `width ${canvasWidth}`).toBe('won')
+        /* Won on the first frame at or after the picked length; the end
+         * screen clamps the readout to it */
+        expect(api.elapsedMs.value).toBeGreaterThanOrEqual(gameDurationMs)
+        expect(api.elapsedMs.value).toBeLessThan(gameDurationMs + 2 * FRAME_MS)
+        wrappers.pop()!.unmount()
+      }
+    },
+  )
+
+  test.each(rounds)(
+    'should keep the pipe count and spacing of a $difficulty $durationSec s round',
+    ({ difficulty, durationSec }) => {
+      const gameDurationMs = durationSec * 1000
+      const intervalMs = DIFFICULTY_PIPE_INTERVAL_MS[difficulty]
+      const api = setup(undefined, true, CANVAS_WIDTH, {
+        difficulty,
+        gameDurationMs,
+      })
+      api.startGame()
+      const dueTimes = api.targets.value.map((target) => target.dueTime)
+
+      /* As many pipes as before: best scores store this total. 4000ms is the
+       * approach from the live edge to the bird. */
+      expect(dueTimes).toHaveLength(
+        Math.floor((gameDurationMs - 4000) / intervalMs) + 1,
+      )
+      if (dueTimes.length < 2) return
+
+      const spacingMs =
+        (dueTimes[dueTimes.length - 1] - dueTimes[0]) / (dueTimes.length - 1)
+      /* Never meaningfully closer than the difficulty asks, never more than
+       * 15% wider */
+      expect(spacingMs).toBeGreaterThan(intervalMs * 0.99)
+      expect(spacingMs).toBeLessThan(intervalMs * 1.15)
+    },
+  )
 
   test('should score a pipe only once its back edge has passed the bird', () => {
     const noteInfo = ref<NoteInfo | null>(null)
