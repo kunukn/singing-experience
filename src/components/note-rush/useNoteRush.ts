@@ -52,6 +52,10 @@ export const DEFAULT_GAME_DURATION_MS = 10_000
  * pickup line and becomes capturable. Derived from GAME_PICKUP_LINE_RATIO so
  * the visual line and the hit-detection window stay locked together. */
 export const LEAD_IN_MS = HISTORY_WINDOW_MS * (1 - GAME_PICKUP_LINE_RATIO)
+/* Pitch frames arrive once per animation frame, about every 16 ms. A longer
+ * wait than this means detection stalled (a hidden tab, a burst of dropped
+ * frames), and that time was not spent singing. */
+const MAX_FRAME_GAP_MS = 100
 
 export type GameState = 'idle' | 'playing' | 'complete'
 
@@ -91,7 +95,8 @@ export function useNoteRush(options: UseNoteRushOptions) {
   /* Per-target accumulated on-pitch time within the pickup zone. Forgiving:
    * persists across frames so a brief drift doesn't reset progress. */
   const holdProgress = new Map<number, number>()
-  let lastWatchTime: number | null = null
+  /* The previous clean pitch frame, or null after a break in the singing */
+  let previousFrame: { time: number; midi: number } | null = null
 
   function clearEndTimer() {
     if (endTimer !== null) {
@@ -228,19 +233,29 @@ export function useNoteRush(options: UseNoteRushOptions) {
     gameStartTime.value = null
     elapsedMs.value = 0
     holdProgress.clear()
-    lastWatchTime = null
+    previousFrame = null
     send({ type: 'RESET' })
   }
 
   watch(options.noteInfo, (info) => {
     if (!isPlaying.value) return
-    if (!info || !options.isClean.value) return
-    if (info.frequency <= 0) return
+    if (!info || !options.isClean.value || info.frequency <= 0) {
+      previousFrame = null
+      return
+    }
 
+    // 440 Hz is A4, MIDI note 69; 12 semitones to the octave
     const singerMidi = 12 * Math.log2(info.frequency / 440) + 69
     const now = performance.now()
-    const delta = lastWatchTime === null ? 0 : Math.max(0, now - lastWatchTime)
-    lastWatchTime = now
+    /* Time counts as held only between two frames in a row, so a breath or a
+     * slide between notes is never credited to the note that follows it. */
+    const previous =
+      previousFrame && now - previousFrame.time <= MAX_FRAME_GAP_MS
+        ? previousFrame
+        : null
+    previousFrame = { time: now, midi: singerMidi }
+    const isOnPitch = (midi: number, target: GameTarget) =>
+      Math.abs(midi - target.midi) * 100 <= hitToleranceCents.value
 
     for (const target of targets.value) {
       if (target.status !== 'pending') continue
@@ -256,9 +271,11 @@ export function useNoteRush(options: UseNoteRushOptions) {
         continue
       }
 
-      const centsDiff = Math.abs(singerMidi - target.midi) * 100
-      if (centsDiff <= hitToleranceCents.value) {
-        const accumulated = (holdProgress.get(target.id) ?? 0) + delta
+      if (isOnPitch(singerMidi, target)) {
+        /* Both ends of the stretch must be on the note for it to count */
+        const heldMs =
+          previous && isOnPitch(previous.midi, target) ? now - previous.time : 0
+        const accumulated = (holdProgress.get(target.id) ?? 0) + heldMs
         holdProgress.set(target.id, accumulated)
         if (accumulated >= currentHoldDurationMs) {
           target.status = 'hit'

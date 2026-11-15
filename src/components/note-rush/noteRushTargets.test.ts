@@ -4,7 +4,7 @@ import { DIFFICULTY_OPTIONS, type Difficulty } from '@/constants/difficulty'
 import {
   DIFFICULTY_MAX_NOTE_STEP_SEMITONES,
   generateTargetSchedule,
-  MIN_TARGET_GAP_MS,
+  DIFFICULTY_MIN_GAP_MS,
 } from './noteRushTargets'
 
 /* C2 to C4: wide enough that an uncapped pick can jump two octaves */
@@ -87,7 +87,7 @@ describe('generateTargetSchedule', () => {
     }
   })
 
-  test.each(['easy', 'normal'] as const)(
+  test.each(DIFFICULTY_OPTIONS)(
     'never jumps further than the %s cap',
     (difficulty) => {
       const maxStep = DIFFICULTY_MAX_NOTE_STEP_SEMITONES[difficulty]
@@ -124,7 +124,7 @@ describe('generateTargetSchedule', () => {
 
         expect(offsets[0]).toBe(0)
         expect(Math.min(...getGaps(offsets))).toBeGreaterThanOrEqual(
-          MIN_TARGET_GAP_MS,
+          DIFFICULTY_MIN_GAP_MS[difficulty],
         )
         expect(getGaps(midis)).not.toContain(0)
         expect(Math.min(...midis)).toBeGreaterThanOrEqual(MIDI_MIN)
@@ -133,7 +133,7 @@ describe('generateTargetSchedule', () => {
     },
   )
 
-  test.each(['easy', 'normal'] as const)(
+  test.each(DIFFICULTY_OPTIONS)(
     'ends every %s round inside the game length',
     (difficulty) => {
       for (const seed of SEEDS) {
