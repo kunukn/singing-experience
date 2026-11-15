@@ -24,7 +24,9 @@ import {
   type ChartGeometry,
   type Playfield,
 } from './singFlyGeometry'
+import { hoverBobOffset } from './singFlyEffects'
 import type { CrashCause, SingFlyPhase } from './singFlyMachine'
+import { drawBirdSprite } from './singFlySprites'
 import type { GameTarget } from './useSingFly'
 
 type Props = {
@@ -483,10 +485,13 @@ function drawBird(
   ctx: CanvasRenderingContext2D,
   geom: ChartGeometry,
   height: number,
+  now: number,
 ) {
   /* No pitch (idle screen, preview off) → the bird perches on the board
    * instead of vanishing. The bird is ALWAYS visible and ALWAYS solid. */
-  const birdMidi = liveBirdMidi() ?? props.perchMidi
+  const sungBirdMidi = liveBirdMidi()
+  const birdMidi = sungBirdMidi ?? props.perchMidi
+  const isPerched = props.phase === 'idle' && sungBirdMidi == null
 
   /* getBirdRect applies the same chart-area clamp the bird used to do inline,
    * so the drawn circle and the collision square share one center. */
@@ -501,33 +506,22 @@ function drawBird(
   const x = rect.x + rect.width / 2
   const y = rect.y + rect.height / 2
 
-  const alpha = 1
-  ctx.fillStyle = `rgba(251, 191, 36, ${alpha})`
-  ctx.strokeStyle = `rgba(180, 83, 9, ${alpha})`
-  ctx.lineWidth = 2
-
-  ctx.beginPath()
-  ctx.arc(x, y, BIRD_RADIUS, 0, Math.PI * 2)
-  ctx.fill()
-  ctx.stroke()
-
-  /* Tiny eye + beak for a touch of personality. */
-  ctx.fillStyle = `rgba(15, 23, 42, ${alpha})`
-  ctx.beginPath()
-  ctx.arc(x + 3, y - 2, 1.5, 0, Math.PI * 2)
-  ctx.fill()
-
+  /* Airborne, the body bobs with its wing beat. Draw-time only: the hitbox
+   * and the note label stay at the true height `y`. `now` is the canvas clock,
+   * so the pose freezes with the field on a crash or a win. */
+  const isAnimated = !prefersReducedMotion
+  const drawnY = isPerched || !isAnimated ? y : y + hoverBobOffset(now)
   const beakSign = props.isRtl ? -1 : 1
-  const isCrashed = props.phase === 'crashed'
-  ctx.fillStyle = isCrashed
-    ? `rgba(180, 83, 9, ${alpha})` // burnt amber — bird's own border color; visible against red
-    : `rgba(234, 88, 12, ${alpha})`
-  ctx.beginPath()
-  ctx.moveTo(x + beakSign * (BIRD_RADIUS + 5), y) // tip points outward
-  ctx.lineTo(x + beakSign * BIRD_RADIUS, y - 2) // base flush to body
-  ctx.lineTo(x + beakSign * BIRD_RADIUS, y + 2)
-  ctx.closePath()
-  ctx.fill()
+
+  drawBirdSprite(ctx, {
+    x,
+    y: drawnY,
+    facing: beakSign,
+    pose: isPerched ? 'perched' : 'flying',
+    isCrashed: props.phase === 'crashed',
+    now,
+    isAnimated,
+  })
 
   /* Note label on the side opposite the beak — sits in the empty space
    * behind the bird, away from incoming pipes. While the bird is frozen at the
@@ -552,9 +546,9 @@ function drawBird(
    * readable on --p-content-background in both light and dark mode (it sits
    * beside the bird on the background, not on the amber body). */
   const labelColor = isOutOfRange
-    ? `rgba(234, 88, 12, ${alpha})`
+    ? 'rgb(234, 88, 12)'
     : resolveCssColor('--p-text-color')
-  const LABEL_GAP = 6 // px between bird edge and label
+  const LABEL_GAP = 10 // px between body edge and label; clears the 4px tail
   /* When out of range, nudge the label further past the chart edge it's
    * exceeding — reinforces "out of range" by pulling the label outside the
    * normal range band. */
@@ -574,7 +568,7 @@ function drawBird(
 
   /* Anchor the death burst at the drawn bird center, so shards spray from
    * where the player last saw it. */
-  lastBird = { x, y, visible: true }
+  lastBird = { x, y: drawnY, visible: true }
 }
 
 /* Test-page collision visualizer: draws the exact rectangles the game logic
@@ -757,7 +751,7 @@ function startDeathAnim() {
 
   const particles: DeathParticle[] = []
   if (anchor && !reduced) {
-    /* Match the bird palette already used in drawBird. */
+    /* Match the bird palette used in singFlySprites. */
     const palette = [
       'rgb(251, 191, 36)', // amber body
       'rgb(180, 83, 9)', // burnt outline
@@ -1051,7 +1045,7 @@ function drawChart() {
   drawRangeLabels(ctx, geom, height)
   if (props.phase === 'idle') drawPerchBoard(ctx, geom, height)
   drawTrace(ctx, geom, height, now)
-  drawBird(ctx, geom, height)
+  drawBird(ctx, geom, height, now)
   drawHitboxes(ctx, geom, width, height, now, field)
   drawDeathOverlay(ctx, width, height)
   /* After the death overlay so it stays readable through and after the
