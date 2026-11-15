@@ -87,7 +87,9 @@
     "bell": "Cloche",
     "bass": "Basse",
     "square": "Carré",
-    "tuning": "Diapason"
+    "tuning": "Diapason",
+    "organ": "Orgue",
+    "flute": "Flûte"
   },
   "home": {
     "title": "Expérience de Chant",

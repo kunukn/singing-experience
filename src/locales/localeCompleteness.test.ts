@@ -143,6 +143,7 @@ const COGNATES_BY_LOCALE: Record<string, string[]> = {
     'generic.tempo',
     'sounds.keyboard',
     'sounds.bass',
+    'sounds.organ',
     'home.programs.piano.name',
     'warmUp.patterns.yodel',
     'warmUp.patterns.rollerCoaster',

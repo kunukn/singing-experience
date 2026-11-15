@@ -87,7 +87,9 @@
     "bell": "ベル",
     "bass": "ベース",
     "square": "矩形波",
-    "tuning": "音叉"
+    "tuning": "音叉",
+    "organ": "オルガン",
+    "flute": "フルート"
   },
   "home": {
     "title": "歌唱体験",

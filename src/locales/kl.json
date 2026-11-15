@@ -81,7 +81,9 @@
     "bell": "Klokki",
     "bass": "Bass",
     "square": "Square",
-    "tuning": "Tonetunersoq"
+    "tuning": "Tonetunersoq",
+    "organ": "Organ",
+    "flute": "Flute"
   },
   "home": {
     "title": "Erinarsornermik misigisaq",

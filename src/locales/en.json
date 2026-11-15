@@ -87,7 +87,9 @@
     "bell": "Bell",
     "bass": "Bass",
     "square": "Square",
-    "tuning": "Tuning Fork"
+    "tuning": "Tuning Fork",
+    "organ": "Organ",
+    "flute": "Flute"
   },
   "home": {
     "title": "Singing Experience",

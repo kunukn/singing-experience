@@ -8,6 +8,8 @@ const VALID_TONE_MODES = new Set<ToneMode>([
   'square',
   'tuning',
   'tuning2',
+  'organ',
+  'flute',
 ])
 const DEFAULT_TONE_MODE: ToneMode = 'bell'
 

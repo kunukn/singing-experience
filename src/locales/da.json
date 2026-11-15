@@ -87,7 +87,9 @@
     "bell": "Klokke",
     "bass": "Bas",
     "square": "Firkant",
-    "tuning": "Stemgaffel"
+    "tuning": "Stemgaffel",
+    "organ": "Orgel",
+    "flute": "Fløjte"
   },
   "home": {
     "title": "Sangoplevelse",

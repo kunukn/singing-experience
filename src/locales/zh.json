@@ -87,7 +87,9 @@
     "bell": "铃声",
     "bass": "低音",
     "square": "方波",
-    "tuning": "音叉"
+    "tuning": "音叉",
+    "organ": "风琴",
+    "flute": "长笛"
   },
   "home": {
     "title": "歌唱体验",

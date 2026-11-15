@@ -9,6 +9,8 @@ export type ToneMode =
   | 'tuning2'
   | 'bass'
   | 'square'
+  | 'organ'
+  | 'flute'
 
 export type ToneEngine = {
   readonly toneMode: Readonly<Ref<ToneMode>>
@@ -127,6 +129,28 @@ const TUNING2_OPTIONS = {
   envelope: { attack: 0.01, decay: 0, sustain: 1.0, release: 0.1 },
 } as const
 
+/*
+ * Drawbar-style additive tone: fundamental plus the 2nd–4th harmonics. Phone
+ * speakers reproduce these overtones well, so the note carries where a pure
+ * sine reads quiet, while the pitch stays fixed (no filter or pitch envelope).
+ * Typed outside the `as const` object: Tone wants a mutable number[].
+ */
+const ORGAN_PARTIALS: number[] = [1, 0.5, 0.3, 0.15]
+
+const ORGAN_OPTIONS = {
+  volume: -8, // dB — full sustain and stacked partials sum loud in chords; limiter catches the rest
+  oscillator: { type: 'custom', partials: ORGAN_PARTIALS },
+  // ADSR: instant attack, no decay, full sustain → steady level for held notes
+  envelope: { attack: 0.01, decay: 0, sustain: 1.0, release: 0.15 },
+} as const
+
+const FLUTE_OPTIONS = {
+  volume: -2, // dB — triangle has weak overtones and reads quiet on mobile; lift it
+  oscillator: { type: 'triangle' }, // odd harmonics only, falling fast → soft, breathy "oo"
+  // ADSR: soft breath-like attack, settles to a steady near-full sustain
+  envelope: { attack: 0.06, decay: 0.1, sustain: 0.9, release: 0.25 },
+} as const
+
 /* Seconds a note keeps sounding after its written end — the amplitude
  * envelope's release per mode, read from the configs above so it cannot drift
  * from what actually plays. */
@@ -137,6 +161,8 @@ export const TONE_MODE_RELEASE_S: Record<ToneMode, number> = {
   tuning2: TUNING2_OPTIONS.envelope.release,
   bass: BASS_OPTIONS.envelope.release,
   square: SQUARE_OPTIONS.envelope.release,
+  organ: ORGAN_OPTIONS.envelope.release,
+  flute: FLUTE_OPTIONS.envelope.release,
 }
 
 /**
@@ -157,6 +183,8 @@ export function createTonejsAdapter(): ToneEngine {
   let squareSynth: ToneType.PolySynth | null = null
   let tuningSynth: ToneType.PolySynth | null = null
   let tuningSynth2: ToneType.PolySynth | null = null
+  let organSynth: ToneType.PolySynth | null = null
+  let fluteSynth: ToneType.PolySynth | null = null
   /* Dedicated metronome voice — independent of the selected tone mode so the
    * beat sounds the same whatever instrument is chosen, and above the pitch
    * detector's range. See getTickSynth. */
@@ -270,6 +298,32 @@ export function createTonejsAdapter(): ToneEngine {
     return tuningSynth2
   }
 
+  /** Returns a sustained additive organ polyphonic synth (lazy init). */
+  function getOrganSynth(): ToneType.PolySynth {
+    if (!organSynth) {
+      organSynth = new toneModule!.PolySynth(toneModule!.Synth, ORGAN_OPTIONS)
+      // -1 dB ceiling — full-sustain chords sum past 0 dB otherwise
+      const limiter = new toneModule!.Limiter(-1)
+      organSynth.connect(limiter)
+      limiter.toDestination()
+    }
+
+    return organSynth
+  }
+
+  /** Returns a soft triangle flute polyphonic synth (lazy init). */
+  function getFluteSynth(): ToneType.PolySynth {
+    if (!fluteSynth) {
+      fluteSynth = new toneModule!.PolySynth(toneModule!.Synth, FLUTE_OPTIONS)
+      // -1 dB ceiling — near-full sustain stacks in chords, like the tuning bus
+      const limiter = new toneModule!.Limiter(-1)
+      fluteSynth.connect(limiter)
+      limiter.toDestination()
+    }
+
+    return fluteSynth
+  }
+
   /* Standalone monophonic voice matching a tone mode — same voice class and
    * options as the shared PolySynth above, but a single voice so each scheduled
    * note retriggers (and truncates) the previous note's tail. Used by the
@@ -282,6 +336,8 @@ export function createTonejsAdapter(): ToneEngine {
     if (mode === 'bass') return new toneModule!.MonoSynth(BASS_OPTIONS)
     if (mode === 'tuning') return new toneModule!.Synth(TUNING_OPTIONS)
     if (mode === 'tuning2') return new toneModule!.Synth(TUNING2_OPTIONS)
+    if (mode === 'organ') return new toneModule!.Synth(ORGAN_OPTIONS)
+    if (mode === 'flute') return new toneModule!.Synth(FLUTE_OPTIONS)
 
     return new toneModule!.Synth(SQUARE_OPTIONS)
   }
@@ -409,6 +465,10 @@ export function createTonejsAdapter(): ToneEngine {
       synth = getTuningSynth()
     } else if (toneMode.value === 'tuning2') {
       synth = getTuningSynth2()
+    } else if (toneMode.value === 'organ') {
+      synth = getOrganSynth()
+    } else if (toneMode.value === 'flute') {
+      synth = getFluteSynth()
     } else {
       synth = getSquareSynth()
     }
@@ -615,6 +675,8 @@ export function createTonejsAdapter(): ToneEngine {
     disposeAndClear(tuningSynth)
     disposeAndClear(tuningSynth2)
     disposeAndClear(bassSynth)
+    disposeAndClear(organSynth)
+    disposeAndClear(fluteSynth)
     disposeAndClear(tickSynth)
     bellSynth = null
     keyboardSynth = null
@@ -622,6 +684,8 @@ export function createTonejsAdapter(): ToneEngine {
     tuningSynth = null
     tuningSynth2 = null
     bassSynth = null
+    organSynth = null
+    fluteSynth = null
     tickSynth = null
     lastTriggeredSynth = null
     isPlaying.value = false

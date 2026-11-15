@@ -87,7 +87,9 @@
     "bell": "Glocke",
     "bass": "Bass",
     "square": "Rechteck",
-    "tuning": "Stimmgabel"
+    "tuning": "Stimmgabel",
+    "organ": "Orgel",
+    "flute": "Flöte"
   },
   "home": {
     "title": "Gesangserlebnis",

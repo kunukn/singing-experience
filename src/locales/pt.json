@@ -87,7 +87,9 @@
     "bell": "Sino",
     "bass": "Baixo",
     "square": "Quadrada",
-    "tuning": "Diapasão"
+    "tuning": "Diapasão",
+    "organ": "Órgão",
+    "flute": "Flauta"
   },
   "home": {
     "title": "Experiência de Canto",

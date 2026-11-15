@@ -87,7 +87,9 @@
     "bell": "Lonceng",
     "bass": "Bass",
     "square": "Kotak",
-    "tuning": "Garpu Tala"
+    "tuning": "Garpu Tala",
+    "organ": "Organ",
+    "flute": "Seruling"
   },
   "home": {
     "title": "Pengalaman Bernyanyi",

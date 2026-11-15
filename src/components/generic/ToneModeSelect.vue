@@ -15,6 +15,8 @@ const options = computed(() => [
   { label: `🔔 ${t('sounds.bell')}`, value: 'bell' as ToneMode },
   { label: `〰️ ${t('sounds.tuning')}`, value: 'tuning' as ToneMode },
   { label: `〰️ ${t('sounds.tuning')} 2`, value: 'tuning2' as ToneMode },
+  { label: `🎛️ ${t('sounds.organ')}`, value: 'organ' as ToneMode },
+  { label: `🪈 ${t('sounds.flute')}`, value: 'flute' as ToneMode },
   { label: `🎹 ${t('sounds.keyboard')}`, value: 'keyboard' as ToneMode },
   { label: `🎸 ${t('sounds.bass')}`, value: 'bass' as ToneMode },
   { label: `⬜ ${t('sounds.square')}`, value: 'square' as ToneMode },
