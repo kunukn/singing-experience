@@ -3,6 +3,7 @@ import {
   animationProgress,
   easeOutCubic,
 } from '@/components/note-rush/noteRushEffects'
+import { isNearZeroCents, NEAR_ZERO_CENTS_TEXT } from '@/utils/centsText'
 import { resolveCssColor } from '@/utils/cssColor'
 import { frequencyToMidi, midiToNoteLabel } from '@/utils/noteUtils'
 import { resolveEffectiveMidi } from '@/utils/pitchLineRenderer'
@@ -65,10 +66,11 @@ type Props = {
    * delay (normally it's idle / delayed-crashed only), so the pitch-true
    * line can be eyeballed against the bird/hitboxes while playing/scrubbing. */
   alwaysShowPreviewLine?: boolean
-  /* Cents-colour the preview line like every program's idle preview — the
-   * idle screen only; with Snap on it sits at 0¢ and reads green. After
-   * a crash it stays orange: drawn against the pipe that killed the bird,
-   * green would read as "you'd have made it". */
+  /* Cents-colour the preview line like every program's idle preview, and
+   * write the cents beside its note name — the idle screen only; with Snap
+   * on it sits at 0¢, reads green and says ≈0¢. After a crash it stays
+   * orange and unsigned: drawn against the pipe that killed the bird, green
+   * would read as "you'd have made it". */
   shouldColorByCents?: boolean
   /* Where the bird perches when there is no pitch (idle screen with preview
    * off): the bird is drawn here instead of being hidden, so it is never
@@ -1044,11 +1046,17 @@ function drawPreviewLine(
   const outOfRange = rounded < props.midiMin || rounded > props.midiMax
   /* Opacity 1 — the per-element globalAlpha below still applies. 100 = cents
    * per semitone, measured from the note the label names. */
+  const cents =
+    !outOfRange &&
+    props.shouldColorByCents &&
+    props.previewLineFrequency != null
+      ? Math.round(100 * (midi - rounded))
+      : null
   let color = PREVIEW_LINE_COLOR
   if (outOfRange) {
     color = CRASHED_FILL
-  } else if (props.shouldColorByCents && props.previewLineFrequency != null) {
-    color = colorForCents(Math.round(100 * (midi - rounded)))
+  } else if (cents != null) {
+    color = colorForCents(cents)
   }
 
   const rawY = midiToY(
@@ -1086,15 +1094,29 @@ function drawPreviewLine(
   /* Label toward the far axis (RTL-aware) — the opposite side from the bird's
    * own gutter label, so the two never overlap. The line and dot stay at the
    * exact `y` (true midiToY of the sung pitch — same mapping the A2/A4 markers
-   * use, so the indicator is still pitch-true); only the text glyph is nudged
-   * +1px to optically match the bird's own label, which is likewise +1. */
+   * use, so the indicator is still pitch-true); the text sits on the line like
+   * a label on a ruler, baseline LABEL_LIFT px above it, so the dashes run
+   * under the glyphs instead of striking through them. */
+  const LABEL_LIFT = 5
   const labelSign = props.isRtl ? -1 : 1
   ctx.globalAlpha = 0.9
   ctx.font = 'bold 13px monospace'
   ctx.textAlign = props.isRtl ? 'end' : 'start'
-  ctx.textBaseline = 'middle'
+  ctx.textBaseline = 'alphabetic'
   ctx.fillStyle = color
-  ctx.fillText(midiToNoteLabel(rounded).label, dotX + labelSign * 16, y + 1)
+  /* Signed cents after the note name ("G3 +12¢"), so a held note's drift
+   * reads as a number, not just as the line moving. Inside the shared dead
+   * zone it says ≈0¢ instead of flickering -1¢ / +2¢. The text opens with
+   * the note letter, so it stays left-to-right in an RTL canvas too. */
+  const noteLabel = midiToNoteLabel(rounded).label
+  let labelText = noteLabel
+  if (cents != null) {
+    const centsText = isNearZeroCents(cents)
+      ? NEAR_ZERO_CENTS_TEXT
+      : `${cents > 0 ? '+' : ''}${cents}¢`
+    labelText = `${noteLabel} ${centsText}`
+  }
+  ctx.fillText(labelText, dotX + labelSign * 16, y - LABEL_LIFT)
 
   ctx.restore()
 }
