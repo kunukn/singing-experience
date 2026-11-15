@@ -4,15 +4,22 @@ import type { PitchDetectionInput } from '@/components/melody-writer/useMelodyWr
 import type { DuetLane } from '@/composables/useDuetPitchDetection'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import { chordAccidentalStyle, chordPitchClasses } from '@/utils/chordDetection'
-import { midiToNoteLabel, type NoteInfo } from '@/utils/noteUtils'
+import {
+  midiToFrequency,
+  midiToNoteLabel,
+  type NoteInfo,
+} from '@/utils/noteUtils'
 import { keyAccidentalStyle, pitchClassLabel } from '@/utils/scaleDetection'
 import { pitchClassOf } from '@/utils/scaleHighlight'
+import { TONE_PLAY_DURATION_S } from '@/constants/toneConstants'
 import { useLocalStorage, useMediaQuery } from '@vueuse/core'
+import { chordVoicing } from './chordVoicing'
 import ChordDetectorResults from './ChordDetectorResults.vue'
 import ScaleDetectorResults from './ScaleDetectorResults.vue'
 import {
   useScaleDetector,
   type ChordFix,
+  type ChordSelection,
   type ScaleFix,
 } from './useScaleDetector'
 
@@ -203,6 +210,28 @@ const {
   isGameActive: computed(() => isListening.value),
   isEnabled: isRealIdlePreviewEnabled,
 })
+
+const { warmUp, playToneAt, getImmediate } = useTonePlayer()
+
+/* A tapped chord also sounds, from the bottom of the piano's range — but
+ * only while stopped, so the detector never hears it as sung notes. */
+async function handleChordSelect(chord: ChordSelection) {
+  selectChord(chord)
+  if (isListening.value) return
+
+  const voicing = chordVoicing(
+    chord.root,
+    chord.type,
+    chordResult.value.bass,
+    selectedRange.value.midiMin,
+  )
+  await warmUp()
+  const startS = getImmediate()
+  for (const midi of voicing) {
+    playToneAt(midiToFrequency(midi), TONE_PLAY_DURATION_S, startS)
+  }
+  triggerDeafPeriod()
+}
 
 /* Simulated page: the one detector doubles as the idle preview while the
  * toggle is on. Starting to listen hands it to the scale detector, so it is
@@ -431,7 +460,7 @@ defineExpose({ detector })
             :result="chordResult"
             :selected="selectedChord"
             :fixes="chordFixes"
-            @select="selectChord"
+            @select="handleChordSelect"
             @applyFix="applyChordFix"
           />
         </PrimeTabPanel>
