@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDocumentVisibility } from '@vueuse/core'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { NoteInfo } from '@/utils/noteUtils'
@@ -248,6 +249,18 @@ function handleStop() {
   wasStoppedManually = true
   stopGame()
 }
+
+/* A hidden tab stops the frame loop and the microphone, but the pipes scroll
+ * on wall-clock time: they would pass the bird unjudged. The round cannot be
+ * played out fairly, so it ends as if Stop was pressed — no score recorded.
+ * The scrub clock of the test page has no running time to lose. */
+const documentVisibility = useDocumentVisibility()
+
+watch(documentVisibility, (visibility) => {
+  if (visibility === 'hidden' && isPlaying.value && !props.manualClock) {
+    handleStop()
+  }
+})
 
 /* Singfly is all-or-nothing: 'won' already means every pipe was scored
  * (the machine only enters it on a clean run), so confetti fires on entry. */
