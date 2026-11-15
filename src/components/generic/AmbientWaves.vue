@@ -107,6 +107,21 @@ function waveStyle(wave: Wave) {
 </template>
 
 <style lang="css">
+/* Full strength in the side margins, faint behind the centred content column:
+ * a line drifting through headings and cards pulls the eye off the text. The
+ * mask is in percentages because the column width differs per page. */
+.ambient-waves {
+  --wave-center-alpha: 0.25;
+
+  mask-image: linear-gradient(
+    to right,
+    #000,
+    rgb(0 0 0 / var(--wave-center-alpha)) 30%,
+    rgb(0 0 0 / var(--wave-center-alpha)) 70%,
+    #000
+  );
+}
+
 .ambient-wave {
   --wave-opacity: 0.16;
 
