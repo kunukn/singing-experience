@@ -11,6 +11,8 @@ import {
   PULSE_PERIOD_MS,
   RIPPLE_MS,
   SCORE_FLOAT_MS,
+  SMILE_FADE_MS,
+  SMILE_HOLD_MS,
   SPAWN_POP_MS,
   animationProgress,
   easeOutBack,
@@ -202,13 +204,28 @@ export function drawNoteBuddy(
   ctx.strokeStyle = colors.stroke
   ctx.stroke()
 
-  drawFace(ctx, phase, colors.face)
+  /* A resolved note keeps its smile or its sad eyes for a moment, then the
+   * face fades and the name takes the whole head: afterwards the name is what
+   * the singer reads. 0 = face showing, 1 = name only. */
+  const nameOnly =
+    phase === 'hit' || phase === 'missed'
+      ? easeOutCubic(
+          animationProgress(resolvedMs - SMILE_HOLD_MS, SMILE_FADE_MS),
+        )
+      : 0
 
-  ctx.font = 'bold 10px monospace'
+  if (nameOnly < 1) {
+    ctx.globalAlpha = alpha * (1 - nameOnly)
+    drawFace(ctx, phase, colors.face)
+    ctx.globalAlpha = alpha
+  }
+
+  /* The name moves to the centre and grows from 10px to 12px as the face goes */
+  ctx.font = `bold ${10 + 2 * nameOnly}px monospace`
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
   ctx.fillStyle = colors.face
-  ctx.fillText(params.label, 0, LABEL_OFFSET_Y)
+  ctx.fillText(params.label, 0, LABEL_OFFSET_Y * (1 - nameOnly))
 
   ctx.restore()
 

@@ -19,6 +19,11 @@ export const RIPPLE_MS = 600
 export const SCORE_FLOAT_MS = 900
 /* ms — a missed note sagging and fading. */
 export const MISS_DROOP_MS = 500
+/* ms — how long a hit note keeps smiling (or a missed one its sad eyes), and
+ * how long the face then takes to fade and leave the note's name alone in the
+ * head. */
+export const SMILE_HOLD_MS = 700
+export const SMILE_FADE_MS = 300
 /* ms — one up-and-down of an approaching note's idle bob. */
 export const BOB_PERIOD_MS = 1600
 /* ms — one beat of the "sing me now" ring on a note that can be caught. */
