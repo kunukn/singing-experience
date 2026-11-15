@@ -261,7 +261,9 @@ console.log(SEPARATOR)
 const buildResult = await runTask({
   name: 'Build',
   cmd: localBin('vite'),
-  args: ['build'],
+  /* warn hides the ~230-line list of output files; warnings and errors still
+   * print, and the [Build +Ns] trace and heartbeat still show a stall. */
+  args: ['build', '--logLevel', 'warn'],
   timeoutMs: BUILD_TIMEOUT_MS,
   stream: true,
 })
