@@ -68,6 +68,8 @@ export function useVoiceRecorder() {
   let audioContext: AudioContext | null = null
   let micSource: MediaStreamAudioSourceNode | null = null
   let captureNode: AudioWorkletNode | null = null
+  /* Aborting it removes the capture node's message listener. */
+  let captureListeners: AbortController | null = null
   let stream: MediaStream | null = null
   let collector: SampleCollector | null = null
   let startedAtMs = 0
@@ -88,10 +90,8 @@ export function useVoiceRecorder() {
   function releaseResources() {
     clock.pause()
     void wakeLock.release().catch(() => {})
-    if (captureNode) {
-      captureNode.port.onmessage = null
-      captureNode.disconnect()
-    }
+    captureListeners?.abort()
+    captureNode?.disconnect()
     micSource?.disconnect()
     if (audioContext) void audioContext.close().catch(() => {})
     if (stream) releaseMicStream(stream)
@@ -99,6 +99,7 @@ export function useVoiceRecorder() {
     audioContext = null
     micSource = null
     captureNode = null
+    captureListeners = null
     stream = null
     collector = null
     liveStream.value = null
@@ -211,9 +212,17 @@ export function useVoiceRecorder() {
       channelCount: 1,
       channelCountMode: 'explicit',
     })
-    captureNode.port.onmessage = (event: MessageEvent<Float32Array>) => {
-      if (!activeCollector.append(event.data)) requestStop('limit')
-    }
+    captureListeners = new AbortController()
+    captureNode.port.addEventListener(
+      'message',
+      (event: MessageEvent<Float32Array>) => {
+        if (!activeCollector.append(event.data)) requestStop('limit')
+      },
+      { signal: captureListeners.signal },
+    )
+    /* Unlike the onmessage setter, addEventListener leaves the port closed:
+     * without start() no samples arrive and every take comes out empty. */
+    captureNode.port.start()
     captureNode.addEventListener('processorerror', () =>
       requestStop('interrupted'),
     )

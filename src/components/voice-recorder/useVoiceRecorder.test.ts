@@ -63,12 +63,19 @@ class FakeAudioContext extends EventTarget {
   }
 }
 
+/* Like a real MessagePort: 'message' listeners hear nothing until start(). */
+class FakeMessagePort extends EventTarget {
+  isStarted = false
+
+  start() {
+    this.isStarted = true
+  }
+}
+
 class FakeAudioWorkletNode extends EventTarget {
   static latest: FakeAudioWorkletNode
 
-  port: { onmessage: ((event: { data: Float32Array }) => void) | null } = {
-    onmessage: null,
-  }
+  port = new FakeMessagePort()
 
   connect = vi.fn()
   disconnect = vi.fn()
@@ -79,7 +86,9 @@ class FakeAudioWorkletNode extends EventTarget {
   }
 
   deliver(samples: Float32Array) {
-    this.port.onmessage?.({ data: samples })
+    if (!this.port.isStarted) return
+
+    this.port.dispatchEvent(new MessageEvent('message', { data: samples }))
   }
 }
 
