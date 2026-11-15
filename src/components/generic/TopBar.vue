@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { programByRoute, programStageByRoute } from '@/constants/programs'
+import { isHighScoreGame } from '@/stores/useHighScoreStore'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -8,8 +9,12 @@ const isHome = computed(() => route.path === '/')
 const stage = computed(() => programStageByRoute.get(route.path))
 const program = computed(() => programByRoute.get(route.path))
 const isLandingPage = computed(() => route.meta.isLandingPage === true)
+/* Also on the games that keep a best score, so the board is one tap from an end screen. */
 const shouldShowRecords = computed(
-  () => isLandingPage.value || route.path === '/games',
+  () =>
+    isLandingPage.value ||
+    route.path === '/games' ||
+    (program.value !== undefined && isHighScoreGame(program.value.key)),
 )
 
 function goBack() {
@@ -37,7 +42,10 @@ function goBack() {
       <component :is="program.icon" v-if="program" class="size-6 shrink-0" />
       <ProgramStageTag v-if="stage" :stage />
     </div>
-    <div class="flex items-center gap-2">
+    <!-- No gap on phones: three icon buttons plus a long Back label and a
+         stage tag overflow 320px otherwise. The 40px buttons still keep the
+         icons apart. -->
+    <div class="flex items-center gap-2 max-xs:gap-0">
       <LanguageSwitcher v-if="isLandingPage" class="me-2" />
       <RecordsButton v-if="shouldShowRecords" />
       <ProgramHelpButton v-if="program" :programKey="program.key" />

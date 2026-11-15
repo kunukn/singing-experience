@@ -68,6 +68,7 @@ declare global {
   const isAccidentalStyle: typeof import('./composables/accidentalStyle').isAccidentalStyle
   const isBetter: typeof import('./stores/useHighScoreStore').isBetter
   const isGuitarAudioRunning: typeof import('./composables/useGuitarSampler').isGuitarAudioRunning
+  const isHighScoreGame: typeof import('./stores/useHighScoreStore').isHighScoreGame
   const isProxy: typeof import('vue').isProxy
   const isReactive: typeof import('vue').isReactive
   const isReadonly: typeof import('vue').isReadonly
@@ -263,6 +264,7 @@ declare module 'vue' {
     readonly isAccidentalStyle: UnwrapRef<typeof import('./composables/accidentalStyle')['isAccidentalStyle']>
     readonly isBetter: UnwrapRef<typeof import('./stores/useHighScoreStore')['isBetter']>
     readonly isGuitarAudioRunning: UnwrapRef<typeof import('./composables/useGuitarSampler')['isGuitarAudioRunning']>
+    readonly isHighScoreGame: UnwrapRef<typeof import('./stores/useHighScoreStore')['isHighScoreGame']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>

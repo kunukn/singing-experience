@@ -12,6 +12,10 @@ export const HIGH_SCORE_GAMES = [
 ] as const
 export type HighScoreGame = (typeof HIGH_SCORE_GAMES)[number]
 
+export function isHighScoreGame(key: string): key is HighScoreGame {
+  return (HIGH_SCORE_GAMES as readonly string[]).includes(key)
+}
+
 /* Program keys that were renamed. Scores saved under the old key move to the
  * new one on load, so a rename doesn't wipe anyone's best scores. */
 const LEGACY_GAME_KEYS: Record<string, HighScoreGame> = {

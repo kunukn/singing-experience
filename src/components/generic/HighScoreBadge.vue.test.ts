@@ -1,11 +1,20 @@
 import { describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import en from '@/locales/en.json'
 import type { HighScore, RecordResult } from '@/stores/useHighScoreStore'
 import HighScoreBadge from './HighScoreBadge.vue'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
+
+const router = createRouter({
+  history: createMemoryHistory(),
+  routes: [
+    { path: '/', component: { template: '<div />' } },
+    { path: '/records', component: { template: '<div />' } },
+  ],
+})
 
 const createScore = (overrides?: Partial<HighScore>): HighScore => ({
   game: 'singTheKeys',
@@ -20,7 +29,7 @@ const createScore = (overrides?: Partial<HighScore>): HighScore => ({
 function mountBadge(result: RecordResult | null) {
   return mount(HighScoreBadge, {
     props: { result },
-    global: { plugins: [i18n] },
+    global: { plugins: [i18n, router] },
   })
 }
 
@@ -59,5 +68,20 @@ describe('HighScoreBadge', () => {
     expect(wrapper.text()).toContain('New best!')
     expect(wrapper.get('[data-testid="previous-best"]').text()).toBe('10/14')
     expect(wrapper.get('[data-testid="best"]').text()).toBe('12/14')
+  })
+
+  test.each([
+    { name: 'the best to beat', isNewRecord: false },
+    { name: 'a new record', isNewRecord: true },
+  ])('should link to the best scores page for $name', ({ isNewRecord }) => {
+    const wrapper = mountBadge({
+      isNewRecord,
+      previous: createScore(),
+      best: createScore({ correct: 12 }),
+    })
+
+    const link = wrapper.get('a')
+    expect(link.attributes('href')).toBe('/records')
+    expect(link.text()).toContain('Best scores')
   })
 })

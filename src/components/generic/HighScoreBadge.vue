@@ -19,7 +19,7 @@ const previous = computed(() =>
 <template>
   <div
     v-if="best"
-    class="high-score-badge flex items-center justify-center gap-2 tabular-nums"
+    class="high-score-badge flex justify-center tabular-nums"
     :class="
       previous
         ? 'is-new-record font-semibold text-(--p-primary-color)'
@@ -29,19 +29,27 @@ const previous = computed(() =>
     data-testid="high-score-badge"
     :data-new-record="previous !== undefined"
   >
-    <i class="pi pi-trophy" aria-hidden="true" />
-    <span class="sr-only">{{ t('records.title') }}</span>
-    <template v-if="previous">
-      <span>{{ t('records.newRecord') }}</span>
-      <span class="text-(--p-text-muted-color)" data-testid="previous-best">
-        {{ formatHighScore(previous, locale) }}
-      </span>
-      <i
-        class="pi pi-arrow-right text-xs rtl:-scale-x-100"
-        aria-hidden="true"
-      />
-    </template>
-    <span data-testid="best">{{ formatHighScore(best, locale) }}</span>
+    <!-- The link sits inside the status region: a role on the link itself
+         would replace its link semantics. -->
+    <RouterLink
+      to="/records"
+      class="flex items-center gap-2 rounded-sm text-inherit no-underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-(--p-primary-color)"
+      data-testid="high-score-link"
+    >
+      <i class="pi pi-trophy" aria-hidden="true" />
+      <span class="sr-only">{{ t('records.title') }}</span>
+      <template v-if="previous">
+        <span>{{ t('records.newRecord') }}</span>
+        <span class="text-(--p-text-muted-color)" data-testid="previous-best">
+          {{ formatHighScore(previous, locale) }}
+        </span>
+        <i
+          class="pi pi-arrow-right text-xs rtl:-scale-x-100"
+          aria-hidden="true"
+        />
+      </template>
+      <span data-testid="best">{{ formatHighScore(best, locale) }}</span>
+    </RouterLink>
   </div>
 </template>
 
