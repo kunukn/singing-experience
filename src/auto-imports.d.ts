@@ -11,29 +11,20 @@ declare global {
   const ACCIDENTAL_STYLE_OPTIONS: typeof import('./composables/accidentalStyle').ACCIDENTAL_STYLE_OPTIONS
   const CLARITY_STEP: typeof import('./composables/useSettings').CLARITY_STEP
   const DEFAULT_CLARITY_THRESHOLD: typeof import('./composables/useSettings').DEFAULT_CLARITY_THRESHOLD
-  const DEFAULT_HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').DEFAULT_HOLD_DURATION_MS
   const DEFAULT_PREVIEW_ENABLED: typeof import('./composables/useSettings').DEFAULT_PREVIEW_ENABLED
-  const DEFAULT_SCALE_MODE: typeof import('./composables/useDoReMiGame').DEFAULT_SCALE_MODE
-  const DEFAULT_STARTING_SEMITONE_OFFSET: typeof import('./composables/useDoReMiGame').DEFAULT_STARTING_SEMITONE_OFFSET
   const EffectScope: typeof import('vue').EffectScope
-  const GRACE_PERIOD_MS: typeof import('./composables/useDoReMiGame').GRACE_PERIOD_MS
   const HIGH_SCORE_CONFIG_FIELDS: typeof import('./stores/useHighScoreStore').HIGH_SCORE_CONFIG_FIELDS
   const HIGH_SCORE_GAMES: typeof import('./stores/useHighScoreStore').HIGH_SCORE_GAMES
-  const HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').HOLD_DURATION_MS
-  const MAX_CENTS_DEVIATION: typeof import('./composables/useDoReMiGame').MAX_CENTS_DEVIATION
   const MAX_CLARITY_THRESHOLD: typeof import('./composables/useSettings').MAX_CLARITY_THRESHOLD
   const MAX_FREQUENCY: typeof import('./composables/usePitchDetection').MAX_FREQUENCY
   const MAX_REFERENCE_PITCH: typeof import('./composables/useReferencePitch').MAX_REFERENCE_PITCH
   const MIN_CLARITY_THRESHOLD: typeof import('./composables/useSettings').MIN_CLARITY_THRESHOLD
   const MIN_FREQUENCY: typeof import('./composables/usePitchDetection').MIN_FREQUENCY
   const MIN_REFERENCE_PITCH: typeof import('./composables/useReferencePitch').MIN_REFERENCE_PITCH
-  const NOTE_INTERVAL_MS: typeof import('./composables/useDoReMiPlaySequence').NOTE_INTERVAL_MS
   const ONSET_DEBOUNCE_MS: typeof import('./composables/usePitchDetection').ONSET_DEBOUNCE_MS
   const REFERENCE_PITCH_BUTTON_STEP: typeof import('./composables/useReferencePitch').REFERENCE_PITCH_BUTTON_STEP
   const REFERENCE_PITCH_PRESETS: typeof import('./composables/useReferencePitch').REFERENCE_PITCH_PRESETS
   const REFERENCE_PITCH_STEP: typeof import('./composables/useReferencePitch').REFERENCE_PITCH_STEP
-  const SCALE_MODE_OPTIONS: typeof import('./composables/useDoReMiGame').SCALE_MODE_OPTIONS
-  const SCALE_STEPS: typeof import('./composables/useDoReMiGame').SCALE_STEPS
   const SCORE_TOLERANCE_CENTS: typeof import('./composables/useDwellSingScore').SCORE_TOLERANCE_CENTS
   const SNAP_HYSTERESIS_SEMITONES: typeof import('./composables/useStablePitch').SNAP_HYSTERESIS_SEMITONES
   const STABILIZE_ACCEPT_BAND_SEMITONES: typeof import('./composables/useStablePitch').STABILIZE_ACCEPT_BAND_SEMITONES
@@ -42,13 +33,10 @@ declare global {
   const STABILIZE_JUMP_HOLD_MS: typeof import('./composables/useStablePitch').STABILIZE_JUMP_HOLD_MS
   const STABILIZE_MEDIAN_WINDOW_MS: typeof import('./composables/useStablePitch').STABILIZE_MEDIAN_WINDOW_MS
   const STABILIZE_START_HOLD_MS: typeof import('./composables/useStablePitch').STABILIZE_START_HOLD_MS
-  const START_TONE_OPTIONS: typeof import('./composables/useDoReMiGame').START_TONE_OPTIONS
   const TONE_MODE_RELEASE_S: typeof import('./composables/toneEngine').TONE_MODE_RELEASE_S
-  const TOO_LOW_OR_HIGH_HINT_MS: typeof import('./composables/useDoReMiGame').TOO_LOW_OR_HIGH_HINT_MS
   const centsFromConcertPitch: typeof import('./composables/useReferencePitch').centsFromConcertPitch
   const clampReferencePitch: typeof import('./composables/useReferencePitch').clampReferencePitch
   const computed: typeof import('vue').computed
-  const confettiKey: typeof import('./composables/useConfetti').confettiKey
   const createApp: typeof import('vue').createApp
   const createMockToneEngine: typeof import('./composables/toneEngine.mock').createMockToneEngine
   const createTonejsAdapter: typeof import('./composables/toneEngine').createTonejsAdapter
@@ -101,7 +89,6 @@ declare global {
   const readonly: typeof import('vue').readonly
   const ref: typeof import('vue').ref
   const resolveComponent: typeof import('vue').resolveComponent
-  const setupConfettiOnWindow: typeof import('./composables/useConfetti').setupConfettiOnWindow
   const shallowReactive: typeof import('vue').shallowReactive
   const shallowReadonly: typeof import('vue').shallowReadonly
   const shallowRef: typeof import('vue').shallowRef
@@ -121,8 +108,6 @@ declare global {
   const useCssModule: typeof import('vue').useCssModule
   const useCssVars: typeof import('vue').useCssVars
   const useDarkMode: typeof import('./composables/useDarkMode').useDarkMode
-  const useDoReMiGame: typeof import('./composables/useDoReMiGame').useDoReMiGame
-  const useDoReMiPlaySequence: typeof import('./composables/useDoReMiPlaySequence').useDoReMiPlaySequence
   const useDocumentDirection: typeof import('./composables/useDocumentDirection').useDocumentDirection
   const useDocumentMeta: typeof import('./composables/useDocumentMeta').useDocumentMeta
   const useDuetMode: typeof import('./composables/useDuetMode').useDuetMode
@@ -130,7 +115,6 @@ declare global {
   const useDwellSingScore: typeof import('./composables/useDwellSingScore').useDwellSingScore
   const useErrorToastStore: typeof import('./stores/useErrorToastStore').useErrorToastStore
   const useFaviconPermissionColor: typeof import('./composables/useFaviconPermissionColor').useFaviconPermissionColor
-  const useFireConfetti: typeof import('./composables/useConfetti').useFireConfetti
   const useGuitarSampler: typeof import('./composables/useGuitarSampler').useGuitarSampler
   const useHighScoreStore: typeof import('./stores/useHighScoreStore').useHighScoreStore
   const useHistoryScroller: typeof import('./composables/useHistoryScroller').useHistoryScroller
@@ -143,7 +127,6 @@ declare global {
   const useLink: typeof import('vue-router').useLink
   const useMicrophonePermission: typeof import('./composables/useMicrophonePermission').useMicrophonePermission
   const useModel: typeof import('vue').useModel
-  const useMultiToneDetection: typeof import('./composables/useMultiToneDetection').useMultiToneDetection
   const useMyVoiceRange: typeof import('./composables/useMyVoiceRange').useMyVoiceRange
   const useNoteClickTone: typeof import('./composables/useNoteClickTone').useNoteClickTone
   const usePitchDetection: typeof import('./composables/usePitchDetection').usePitchDetection
@@ -155,10 +138,8 @@ declare global {
   const useRouter: typeof import('vue-router').useRouter
   const useScaleModeGroups: typeof import('./composables/useScaleModeGroups').useScaleModeGroups
   const useScaleModeLabel: typeof import('./composables/useScaleModeGroups').useScaleModeLabel
-  const useScaleModeOptions: typeof import('./composables/useScaleModeOptions').useScaleModeOptions
   const useScrollEdgeMask: typeof import('./composables/useScrollEdgeMask').useScrollEdgeMask
   const useSettings: typeof import('./composables/useSettings').useSettings
-  const useSimulatedMultiToneDetection: typeof import('./composables/useSimulatedMultiToneDetection').useSimulatedMultiToneDetection
   const useSimulatedPitchDetection: typeof import('./composables/useSimulatedPitchDetection').useSimulatedPitchDetection
   const useSimulatedSingers: typeof import('./composables/useSimulatedSingers').useSimulatedSingers
   const useSlots: typeof import('vue').useSlots

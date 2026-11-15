@@ -127,6 +127,9 @@ export default defineConfig(({ command, mode }) => {
         ],
         dirs: ['./src/composables/**', './src/stores/**'],
         dts: './src/auto-imports.d.ts',
+        /* The default 'append' never prunes, so moved or deleted composables
+         * stayed declared as globals that type-check but are undefined at runtime. */
+        dtsMode: 'overwrite',
         vueTemplate: true,
       }),
       Components({
