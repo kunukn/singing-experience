@@ -1,7 +1,30 @@
-import { describe, expect, test, vi } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
+import { mount } from '@vue/test-utils'
+import { h } from 'vue'
 import { createMockToneEngine } from '@/composables/toneEngine.mock'
 import { useGraceKellyHarmony } from './useGraceKellyHarmony'
 import { VOZ_MELODIES } from './graceKellyMelodies'
+
+/* useMachine starts its actor in onMounted, so the composable runs inside a
+ * mounted component (same setup as useDoReMiGame.test.ts). */
+const wrappers: { unmount: () => void }[] = []
+
+function mountHarmony(options: Parameters<typeof useGraceKellyHarmony>[0]) {
+  let api!: ReturnType<typeof useGraceKellyHarmony>
+  const wrapper = mount({
+    setup() {
+      api = useGraceKellyHarmony(options)
+      return () => h('div')
+    },
+  })
+  wrappers.push(wrapper)
+
+  return api
+}
+
+afterEach(() => {
+  while (wrappers.length) wrappers.pop()!.unmount()
+})
 
 /* C3 — an arbitrary in-range start tone for the scheduling assertions. */
 const START_TONE_MIDI = 48
@@ -26,7 +49,7 @@ function expectedRunCount(vozIndex: number): number {
 describe('useGraceKellyHarmony', () => {
   test('start() sizes the voice pool to the selected part count', async () => {
     const setHarmonyVoiceCount = vi.fn()
-    const game = useGraceKellyHarmony({
+    const game = mountHarmony({
       toneEngine: createMockToneEngine({
         setHarmonyVoiceCount,
         scheduleDraw: vi.fn(),
@@ -42,7 +65,7 @@ describe('useGraceKellyHarmony', () => {
 
   test('routes each part to its own voice slot, all six parts', async () => {
     const playHarmonyVoiceAt = vi.fn()
-    const game = useGraceKellyHarmony({
+    const game = mountHarmony({
       toneEngine: createMockToneEngine({
         playHarmonyVoiceAt,
         scheduleDraw: vi.fn(),
@@ -68,7 +91,7 @@ describe('useGraceKellyHarmony', () => {
 
   test('schedules each voice at non-decreasing audio-clock times', async () => {
     const playHarmonyVoiceAt = vi.fn()
-    const game = useGraceKellyHarmony({
+    const game = mountHarmony({
       toneEngine: createMockToneEngine({
         playHarmonyVoiceAt,
         scheduleDraw: vi.fn(),
@@ -92,7 +115,7 @@ describe('useGraceKellyHarmony', () => {
   test('empty selection schedules nothing', async () => {
     const setHarmonyVoiceCount = vi.fn()
     const playHarmonyVoiceAt = vi.fn()
-    const game = useGraceKellyHarmony({
+    const game = mountHarmony({
       toneEngine: createMockToneEngine({
         setHarmonyVoiceCount,
         playHarmonyVoiceAt,
