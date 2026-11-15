@@ -19,8 +19,10 @@ import {
 } from './singFlyConstants'
 import { createCrashGuard } from './singFlyCrashGuard'
 import {
+  computeGeometry,
   findCollidingTarget,
   isOutOfRange,
+  isPipeOverBird,
   isPitchInGap,
 } from './singFlyGeometry'
 import type { Difficulty } from '@/constants/difficulty'
@@ -243,9 +245,24 @@ export function useSingFly(options: UseSingFlyOptions) {
         continue
       }
 
+      /* Scoring opens the moment the pipe's column is over the bird — the
+       * same stretch collision tests — and stays open until the pipe leaves
+       * the chart. It used to open only once the pipe's centre reached the
+       * bird: a singer in the gap for the front half who moved on at the
+       * centre was neither scored nor (the back half being shorter than
+       * CRASH_GRACE_MS on a wide canvas) crashed, and the pipe became a
+       * silent miss. */
+      const isOverBird =
+        options.canvasWidth.value > 0 &&
+        isPipeOverBird(
+          target,
+          now,
+          computeGeometry(options.canvasWidth.value, options.isRtl.value),
+        )
       const inPickupZone =
-        now >= target.dueTime + LEAD_IN_MS &&
-        now <= target.dueTime + HISTORY_WINDOW_MS
+        isOverBird ||
+        (now >= target.dueTime + LEAD_IN_MS &&
+          now <= target.dueTime + HISTORY_WINDOW_MS)
       if (!inPickupZone) continue
 
       /* Same predicate the collision test negates and the renderer sizes the

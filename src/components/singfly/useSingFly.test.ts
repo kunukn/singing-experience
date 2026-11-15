@@ -1,8 +1,11 @@
 import { mount } from '@vue/test-utils'
-import { afterEach, describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import { h } from 'vue'
 import type { VoiceRange } from '@/constants/voiceRanges'
 import type { NoteInfo } from '@/utils/noteUtils'
+import { frequencyToNote, midiToFrequency } from '@/utils/noteUtils'
+import { GAME_PICKUP_LINE_RATIO, HISTORY_WINDOW_MS } from './singFlyConstants'
+import { computeGeometry, isPipeOverBird } from './singFlyGeometry'
 import { useSingFly } from './useSingFly'
 
 /* useSingFly owns an XState actor via @xstate/vue's useMachine, which starts
@@ -25,19 +28,26 @@ type Api = ReturnType<typeof useSingFly>
 
 const wrappers: { unmount: () => void }[] = []
 
-function setup() {
+const CANVAS_WIDTH = 800
+
+/* A fresh object per call, as the real detector emits one per frame */
+function noteAt(midi: number): NoteInfo {
+  return { ...frequencyToNote(midiToFrequency(midi))! }
+}
+
+function setup(noteInfo = ref<NoteInfo | null>(null)) {
   let api!: Api
   const wrapper = mount({
     setup() {
       api = useSingFly({
-        noteInfo: ref<NoteInfo | null>(null),
+        noteInfo,
         isClean: ref(true),
         midiMin: ref(RANGE.midiMin),
         midiMax: ref(RANGE.midiMax),
         voiceRange: ref(RANGE),
         gameDurationMs: ref(10_000),
         difficulty: ref('easy'),
-        canvasWidth: ref(800),
+        canvasWidth: ref(CANVAS_WIDTH),
         canvasHeight: ref(300),
         isRtl: ref(false),
         manualClock: ref(true),
@@ -51,6 +61,7 @@ function setup() {
 
 afterEach(() => {
   while (wrappers.length) wrappers.pop()!.unmount()
+  vi.restoreAllMocks()
 })
 
 describe('useSingFly ↔ machine', () => {
@@ -130,5 +141,65 @@ describe('useSingFly ↔ machine', () => {
     api.setElapsedMs(60_000)
     expect(api.phase.value).toBe('playing')
     expect(api.targets.value.every((t) => t.status !== 'pending')).toBe(true)
+  })
+})
+
+describe('useSingFly - scoring window', () => {
+  test('should score a pipe flown through on its front half only', async () => {
+    /* The hold accumulates real elapsed time, so the test owns the clock */
+    let clock = 50_000
+    vi.spyOn(performance, 'now').mockImplementation(() => clock)
+    const noteInfo = ref<NoteInfo | null>(null)
+    const api = setup(noteInfo)
+    api.startGame()
+    const target = api.targets.value[0]
+    const geom = computeGeometry(CANVAS_WIDTH, false)
+    const sing = async (midi: number) => {
+      noteInfo.value = noteAt(midi)
+      await nextTick()
+    }
+
+    /* Scrub to the first moment the pipe's column is over the bird */
+    let elapsed = 0
+    const isOverBird = () =>
+      isPipeOverBird(target, api.gameStartTime.value! + elapsed, geom)
+    while (!isOverBird()) {
+      elapsed += 5
+      api.setElapsedMs(elapsed)
+    }
+    /* Still before the pipe's centre reaches the bird, where scoring used to
+     * open */
+    const centreAtBirdMs = HISTORY_WINDOW_MS * (1 - GAME_PICKUP_LINE_RATIO)
+    expect(elapsed + 60).toBeLessThan(centreAtBirdMs)
+
+    /* In the gap for 60ms of the front half, then away before the centre */
+    await sing(target.midi)
+    /* Real time and the scrub move together, so the pipe scrolls on 60ms */
+    clock += 60
+    api.setElapsedMs(elapsed + 60)
+    await sing(target.midi)
+
+    expect(target.status).toBe('hit')
+    expect(api.score.value).toBe(1)
+  })
+
+  test('should not score a pipe that has not reached the bird', async () => {
+    const noteInfo = ref<NoteInfo | null>(null)
+    const api = setup(noteInfo)
+    api.startGame()
+    const target = api.targets.value[0]
+
+    let clock = 50_000
+    vi.spyOn(performance, 'now').mockImplementation(() => clock)
+    api.setElapsedMs(1000)
+    noteInfo.value = noteAt(target.midi)
+    await nextTick()
+    clock += 60
+    api.setElapsedMs(1060)
+    noteInfo.value = noteAt(target.midi)
+    await nextTick()
+
+    expect(target.status).toBe('pending')
+    expect(api.score.value).toBe(0)
   })
 })

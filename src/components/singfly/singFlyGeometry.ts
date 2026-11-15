@@ -587,6 +587,25 @@ type CollisionParams = {
   gapHalfSemitones: number
 }
 
+/* THE single source of truth for "is this pipe's column over the bird right
+ * now": the column's x extent overlaps the bird box's. Collision tests it
+ * (with the pitch outside the gap) and scoring opens on it (with the pitch
+ * inside), so a pipe can be crashed into and flown through over exactly the
+ * same stretch of time. */
+export function isPipeOverBird(
+  target: GameTarget,
+  now: number,
+  geom: ChartGeometry,
+): boolean {
+  const pipeLeft = timeToX(target.dueTime, now, geom) - PIPE_WIDTH / 2
+  const birdLeft = pickupLineX(geom) - BIRD_HITBOX_HALF
+
+  return (
+    birdLeft < pipeLeft + PIPE_WIDTH &&
+    birdLeft + BIRD_HITBOX_HALF * 2 > pipeLeft
+  )
+}
+
 /* Returns the id of the first pending pipe the bird crashes into, or null.
  *
  * A crash is: the pipe column is horizontally over the bird right now AND the
@@ -598,47 +617,19 @@ type CollisionParams = {
  * point-vs-box ambiguity). No bird (silent player) or an unmeasured canvas
  * means no collision is possible. */
 export function findCollidingTarget(params: CollisionParams): number | null {
-  const {
-    targets,
-    birdMidi,
-    now,
-    width,
-    height,
-    isRtl,
-    midiMin,
-    midiMax,
-    gapHalfSemitones,
-  } = params
+  const { targets, birdMidi, now, width, height, isRtl, gapHalfSemitones } =
+    params
   if (birdMidi === null || width <= 0 || height <= 0) return null
 
   const geom = computeGeometry(width, isRtl)
-  const birdRect = getBirdRect(
-    birdMidi,
-    geom,
-    height,
-    midiMin,
-    midiMax,
-    gapHalfSemitones,
-  )
 
   for (const target of targets) {
     if (target.status !== 'pending') continue
 
-    const pipe = getPipeRects(
-      target,
-      now,
-      geom,
-      height,
-      midiMin,
-      midiMax,
-      gapHalfSemitones,
-    )
-    /* Pipe column (top/bottom share one x extent) currently over the bird. */
-    const xOverlap =
-      birdRect.x < pipe.top.x + pipe.top.width &&
-      birdRect.x + birdRect.width > pipe.top.x
-
-    if (xOverlap && !isPitchInGap(birdMidi, target.midi, gapHalfSemitones)) {
+    if (
+      isPipeOverBird(target, now, geom) &&
+      !isPitchInGap(birdMidi, target.midi, gapHalfSemitones)
+    ) {
       return target.id
     }
   }

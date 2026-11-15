@@ -16,6 +16,7 @@ import {
   getPipeRects,
   isBirdPositionFrozen,
   isOutOfRange,
+  isPipeOverBird,
   isPitchInGap,
   midiToY,
   pickupLineX,
@@ -170,6 +171,42 @@ describe('horizontal gating', () => {
         gapHalfSemitones: 1.5,
       }),
     ).toBe(false)
+  })
+})
+
+describe('isPipeOverBird', () => {
+  test('should cover exactly the stretch where an off-pitch bird collides', () => {
+    const target: GameTarget = {
+      id: 1,
+      midi: 55,
+      dueTime: NOW,
+      status: 'pending',
+    }
+    const geom = computeGeometry(700, false)
+    let overBirdFrames = 0
+
+    /* Sweep the pipe across the whole chart, bird far outside the gap */
+    for (let age = 0; age <= 5000; age += 5) {
+      const now = NOW + age
+      const collided =
+        findCollidingTarget({
+          targets: [target],
+          birdMidi: 40,
+          now,
+          width: 700,
+          height: 320,
+          isRtl: false,
+          midiMin: 48,
+          midiMax: 72,
+          gapHalfSemitones: 1.5,
+        }) !== null
+      const overBird = isPipeOverBird(target, now, geom)
+      if (overBird) overBirdFrames++
+
+      expect(overBird, `age ${age}`).toBe(collided)
+    }
+
+    expect(overBirdFrames).toBeGreaterThan(0)
   })
 })
 
