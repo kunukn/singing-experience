@@ -1,0 +1,18 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  /* Run with --production (see scripts/check.js): storageKeys.test.ts globs
+   * every src file as raw text, which makes all of src look reachable once
+   * test files count as entries. */
+  "entry": ["scripts/*.js!"],
+  "ignore": [
+    /* Loaded at runtime by URL from debugRainbow.ts, never imported. */
+    "public/rainbow.js",
+    /* Test-only helpers, so they are outside the production graph. */
+    "src/composables/toneEngine.mock.ts",
+    "src/components/icons/program/programIconExport.ts",
+    /* Imported only by vite.config.ts, which knip treats as non-production. */
+    "src/constants/sampleManifest.ts",
+  ],
+  /* Imported only by vite.config.ts — same reason as sampleManifest.ts. */
+  "ignoreDependencies": ["@tailwindcss/vite", "dayjs"],
+}

@@ -60,6 +60,7 @@
     "code-inspector-plugin": "2.0.9",
     "happy-dom": "21.0.4",
     "husky": "9.1.7",
+    "knip": "6.44.1",
     "lint-staged": "17.6.0",
     "oxfmt": "0.78.0",
     "oxlint": "1.93.0",

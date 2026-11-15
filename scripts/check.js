@@ -33,6 +33,17 @@ const tasks = [
     args: ['src'],
   },
   {
+    /* Unused files and dependencies. --production is required — see knip.jsonc. */
+    name: 'Knip',
+    cmd: localBin('knip'),
+    args: [
+      '--production',
+      '--include',
+      'files,dependencies,unlisted,unresolved',
+      '--no-progress',
+    ],
+  },
+  {
     name: 'Unit tests',
     cmd: localBin('vitest'),
     args: ['run'],

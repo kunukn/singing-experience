@@ -70,7 +70,7 @@ When adding a new script to `package.json`, follow these rules so the list stays
 - `npm test` — Run tests once
 - `npm run test:watch` — Run tests in watch mode
 - `npm run test:ui` — Run tests with the Vitest UI
-- `npm run check` — Run all pre-push checks (typecheck + lint + tests + build + validate) in parallel. Pre-push runs this automatically; humans run it manually only when verifying before pushing.
+- `npm run check` — Run all pre-push checks (typecheck + lint + knip unused-file/dependency scan + tests + build + validate) in parallel. Pre-push runs this automatically; humans run it manually only when verifying before pushing.
 - `npm run check:fix` — Format then run `check`. Intended for AI/agent workflows that bypass the husky hooks — agents should run this before handing control back. Humans normally don't need it: pre-commit auto-formats staged files via lint-staged, and pre-push runs `check`.
 - `npm run deploy` — Deploy `dist/` to the `gh-pages` branch
 
