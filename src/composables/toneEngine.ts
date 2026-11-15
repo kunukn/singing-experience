@@ -118,13 +118,15 @@ const BASS_OPTIONS = {
 } as const
 
 const TUNING_OPTIONS = {
-  volume: -3, // dB — limiter downstream prevents clipping on stacked sines
+  /* dB — headroom for overlapping piano keys: 3 stacked sines peak near 0 dBFS
+   * (+9.5 dB), so the bus compressor rarely engages. */
+  volume: -9,
   oscillator: { type: 'sine' },
   envelope: { attack: 0.01, decay: 0, sustain: 1.0, release: 0.1 },
 } as const
 
 const TUNING2_OPTIONS = {
-  volume: 3, // dB — pure sines read quiet on mobile speakers (no harmonics to reproduce); +3 to overcome that
+  volume: -3, // dB — the louder tuning variant, 6 dB above `tuning` for mobile speakers; 2 stacked voices peak near +3 dBFS, which the bus compressor evens out
   oscillator: { type: 'sine' },
   envelope: { attack: 0.01, decay: 0, sustain: 1.0, release: 0.1 },
 } as const
@@ -138,17 +140,34 @@ const TUNING2_OPTIONS = {
 const ORGAN_PARTIALS: number[] = [1, 0.5, 0.3, 0.15]
 
 const ORGAN_OPTIONS = {
-  volume: -8, // dB — full sustain and stacked partials sum loud in chords; limiter catches the rest
+  volume: -12, // dB — full sustain stacks in chords: 3 voices peak near -2.5 dBFS, so the bus compressor rarely engages
   oscillator: { type: 'custom', partials: ORGAN_PARTIALS },
   // ADSR: instant attack, no decay, full sustain → steady level for held notes
   envelope: { attack: 0.01, decay: 0, sustain: 1.0, release: 0.15 },
 } as const
 
 const FLUTE_OPTIONS = {
-  volume: -2, // dB — triangle has weak overtones and reads quiet on mobile; lift it
+  volume: -8, // dB — near-full sustain stacks in chords: 3 voices peak near +1.5 dBFS, which the bus compressor evens out
   oscillator: { type: 'triangle' }, // odd harmonics only, falling fast → soft, breathy "oo"
   // ADSR: soft breath-like attack, settles to a steady near-full sustain
   envelope: { attack: 0.06, decay: 0.1, sustain: 0.9, release: 0.25 },
+} as const
+
+/*
+ * Peak control for sustained polyphonic buses (tuning, organ, flute, harmony
+ * pool). Tone's Limiter
+ * hardcodes a 10 ms release, fast enough to follow the 30–70 Hz loudness
+ * wobble (beating) of two overlapping sines; that gain modulation adds
+ * off-scale sidebands and distortion. A release well above the slowest beat
+ * period holds the gain steady across the wobble, so it acts as a smooth
+ * level control instead.
+ */
+const SUSTAIN_BUS_COMPRESSOR = {
+  threshold: -1, // dB — ceiling just under full scale
+  ratio: 20, // limiter-strength, same as Tone's Limiter
+  knee: 0, // dB — hard knee; Tone's default 30 dB soft knee lets peaks pass well over the threshold
+  attack: 0.003, // s — catches a new note's onset peak
+  release: 0.25, // s — longer than any beat period between piano notes
 } as const
 
 /* Seconds a note keeps sounding after its written end — the amplitude
@@ -190,13 +209,13 @@ export function createTonejsAdapter(): ToneEngine {
    * detector's range. See getTickSynth. */
   let tickSynth: ToneType.Synth | null = null
   /* Harmony voice pool — one standalone monophonic synth per melodic line,
-   * routed through a shared limiter. Built on demand by setHarmonyVoiceCount()
+   * routed through a shared compressor. Built on demand by setHarmonyVoiceCount()
    * and disposed by cancelScheduled(). Keeps polyphony bounded to the number of
    * parts when several lines play together (Grace Kelly harmony). */
   let harmonyVoices: Array<
     ToneType.Synth | ToneType.FMSynth | ToneType.MonoSynth
   > = []
-  let harmonyLimiter: ToneType.Limiter | null = null
+  let harmonyCompressor: ToneType.Compressor | null = null
   /*
    * Tracks the synth that played the most recent manual note (via playTone).
    * stopCurrent() releases it before the next manual note triggers, so quick
@@ -224,6 +243,11 @@ export function createTonejsAdapter(): ToneEngine {
           .catch(() => {})
       }
     })
+  }
+
+  /** Returns a compressor routed to the destination for a sustained polyphonic bus. */
+  function createSustainBusCompressor(): ToneType.Compressor {
+    return new toneModule!.Compressor(SUSTAIN_BUS_COMPRESSOR).toDestination()
   }
 
   /** Returns a square-wave polyphonic synth (lazy init). */
@@ -273,10 +297,7 @@ export function createTonejsAdapter(): ToneEngine {
   function getTuningSynth(): ToneType.PolySynth {
     if (!tuningSynth) {
       tuningSynth = new toneModule!.PolySynth(toneModule!.Synth, TUNING_OPTIONS)
-      // -1 dB ceiling — catches peaks when multiple sine voices sum
-      const limiter = new toneModule!.Limiter(-1)
-      tuningSynth.connect(limiter)
-      limiter.toDestination()
+      tuningSynth.connect(createSustainBusCompressor())
     }
 
     return tuningSynth
@@ -289,10 +310,7 @@ export function createTonejsAdapter(): ToneEngine {
         toneModule!.Synth,
         TUNING2_OPTIONS,
       )
-      // 0 dB ceiling — only catches polyphonic peaks, does not attenuate single voices
-      const limiter = new toneModule!.Limiter(0)
-      tuningSynth2.connect(limiter)
-      limiter.toDestination()
+      tuningSynth2.connect(createSustainBusCompressor())
     }
 
     return tuningSynth2
@@ -302,10 +320,7 @@ export function createTonejsAdapter(): ToneEngine {
   function getOrganSynth(): ToneType.PolySynth {
     if (!organSynth) {
       organSynth = new toneModule!.PolySynth(toneModule!.Synth, ORGAN_OPTIONS)
-      // -1 dB ceiling — full-sustain chords sum past 0 dB otherwise
-      const limiter = new toneModule!.Limiter(-1)
-      organSynth.connect(limiter)
-      limiter.toDestination()
+      organSynth.connect(createSustainBusCompressor())
     }
 
     return organSynth
@@ -315,10 +330,7 @@ export function createTonejsAdapter(): ToneEngine {
   function getFluteSynth(): ToneType.PolySynth {
     if (!fluteSynth) {
       fluteSynth = new toneModule!.PolySynth(toneModule!.Synth, FLUTE_OPTIONS)
-      // -1 dB ceiling — near-full sustain stacks in chords, like the tuning bus
-      const limiter = new toneModule!.Limiter(-1)
-      fluteSynth.connect(limiter)
-      limiter.toDestination()
+      fluteSynth.connect(createSustainBusCompressor())
     }
 
     return fluteSynth
@@ -539,7 +551,7 @@ export function createTonejsAdapter(): ToneEngine {
     if (endS > scheduledUntilS) scheduledUntilS = endS
   }
 
-  /** Disposes every harmony voice and the shared limiter, resetting the pool. */
+  /** Disposes every harmony voice and the shared compressor, resetting the pool. */
   function disposeHarmonyVoices(): void {
     for (const voice of harmonyVoices) {
       try {
@@ -550,13 +562,13 @@ export function createTonejsAdapter(): ToneEngine {
     }
     harmonyVoices = []
 
-    if (harmonyLimiter) {
+    if (harmonyCompressor) {
       try {
-        harmonyLimiter.dispose()
+        harmonyCompressor.dispose()
       } catch {
         /* noop */
       }
-      harmonyLimiter = null
+      harmonyCompressor = null
     }
   }
 
@@ -566,13 +578,11 @@ export function createTonejsAdapter(): ToneEngine {
 
     disposeHarmonyVoices()
 
-    // -1 dB ceiling — catches peaks when several voices sum, like the tuning bus
-    harmonyLimiter = new toneModule.Limiter(-1)
-    harmonyLimiter.toDestination()
+    harmonyCompressor = createSustainBusCompressor()
 
     for (let index = 0; index < count; index++) {
       const voice = createMonoVoice(toneMode.value)
-      voice.connect(harmonyLimiter)
+      voice.connect(harmonyCompressor)
       harmonyVoices.push(voice)
     }
   }
