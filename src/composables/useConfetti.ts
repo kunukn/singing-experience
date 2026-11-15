@@ -176,14 +176,17 @@ export function useConfetti(canvasRef?: Ref<HTMLCanvasElement | null>) {
 
   /* Small, quick celebratory burst for per-note success.
    * scalar 0.5 = half-size particles; ticks 30 = very short lifetime;
-   * gravity 1.5 = fast drop so it doesn't linger; green palette matches "correct" UI color. */
+   * gravity 1.5 = fast drop so it doesn't linger; green palette matches "correct" UI color.
+   * `tier` (0–3) is a streak tier: each one adds 8 particles and throws them
+   * a little harder, so a run of hits visibly builds. */
   function fireMicroConfetti(
     origin: { x: number; y: number } = { x: 0.5, y: 0.5 },
+    tier = 0,
   ) {
     fire({
-      particleCount: 15,
-      spread: 60,
-      startVelocity: 15,
+      particleCount: 15 + 8 * tier,
+      spread: 60 + 10 * tier,
+      startVelocity: 15 + 3 * tier,
       gravity: 1.5,
       ticks: 30,
       origin,

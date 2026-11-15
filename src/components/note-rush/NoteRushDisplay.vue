@@ -6,6 +6,7 @@ import { VOICE_RANGES } from '@/constants/voiceRanges'
 import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { midiToNoteLabel } from '@/utils/noteUtils'
+import { streakTier } from '@/components/sing-the-keys/singTheKeysHitEffects'
 import NoteRushPitchDisplay from './NoteRushPitchDisplay.vue'
 import NoteRushCompletePanel from './NoteRushCompletePanel.vue'
 import NoteRushIdlePanel from './NoteRushIdlePanel.vue'
@@ -83,6 +84,7 @@ const gameDurationMs = computed(() => gameDurationSec.value * 1000)
 const {
   targets,
   score,
+  streak,
   summary,
   gameState,
   elapsedMs,
@@ -101,8 +103,8 @@ const {
   difficulty,
   onHit: (target) => {
     const origin = pitchDisplayRef.value?.getTargetViewportOrigin(target.id)
-    if (origin) fireMicroConfetti(origin)
-    else fireMicroConfetti()
+    /* A longer run of hits throws a bigger burst */
+    fireMicroConfetti(origin ?? undefined, streakTier(target.streak))
   },
   onEnd: () => stop(),
 })
@@ -365,6 +367,7 @@ onUnmounted(() => {
       <NoteRushPlayingPanel
         v-else-if="gameState === 'playing'"
         :score="score"
+        :streak="streak"
         :totalTargets="targets.length"
         :elapsedSeconds="liveElapsedSeconds"
         @stop="handleStop"
@@ -374,6 +377,7 @@ onUnmounted(() => {
         v-else-if="gameState === 'complete' && summary"
         :score="summary.score"
         :totalTargets="summary.totalTargets"
+        :bestStreak="summary.bestStreak"
         :durationSec="summary.durationMs / 1000"
         :difficulty="summary.difficulty"
         :elapsedSeconds="elapsedSeconds"

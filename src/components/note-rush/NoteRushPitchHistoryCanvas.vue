@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { resolveCssColor, withAlpha } from '@/utils/cssColor'
+import { streakTier } from '@/components/sing-the-keys/singTheKeysHitEffects'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import {
@@ -20,7 +21,16 @@ import {
   HISTORY_WINDOW_MS,
   PAUSE_GAP_MS,
 } from './noteRushConstants'
+import { STREAK_CALLOUT_MIN, currentStreak } from './noteRushEffects'
 import { getReviewScrollableMs } from './noteRushReview'
+import {
+  NOTE_BUDDY_MARGIN,
+  SINGER_AVATAR_RADIUS,
+  drawNoteBuddy,
+  drawSingerAvatar,
+  type NoteBuddyColors,
+  type NoteBuddyPhase,
+} from './noteRushSprites'
 import { LEAD_IN_MS, type GameTarget } from './useNoteRush'
 
 type Props = {
@@ -96,6 +106,22 @@ const markerHitAreas: MarkerHitArea[] = []
 let animationFrameId: number | null = null
 
 let pausedAt: number | null = null
+
+const prefersReducedMotion = window.matchMedia(
+  '(prefers-reduced-motion: reduce)',
+).matches
+
+/* A frozen chart shows every animation settled: the round's last notes are
+ * resolved at the very moment it freezes, and would otherwise hang mid-pop. */
+function isAnimated(): boolean {
+  return !prefersReducedMotion && pausedAt === null
+}
+
+/* Recent heights of the singer's avatar, newest first — its tail */
+let avatarTailYs: number[] = []
+/* Beads in the tail with no streak, and how many each streak tier adds */
+const AVATAR_TAIL_LENGTH = 5
+const AVATAR_TAIL_LENGTH_PER_TIER = 3
 
 /* Only a frozen chart can be scrolled — a live one always shows the present */
 function getViewOffsetMs(): number {
@@ -195,52 +221,73 @@ function drawTargets(
 ) {
   if (!props.targets || props.targets.length === 0) return
 
-  /* Target circle radius — large enough to be tappable-looking, leaves room for a label above */
-  const TARGET_RADIUS = 10
+  /* Dark slate on every fill: the pale 300 shades and the clean green all
+   * keep it readable in both themes. */
+  const face = 'rgba(15, 23, 42, 0.95)'
+  const celebrate = cleanPitchColor(isDark.value)
+  /* Violet and pink say "a note to sing" without borrowing a pitch hue:
+   * green is kept for a hit, blue and yellow → red for flat and sharp. */
+  const colorsByPhase: Record<NoteBuddyPhase, NoteBuddyColors> = {
+    /* Not yet catchable: violet, slightly see-through */
+    approaching: {
+      fill: withAlpha(resolveCssColor('--p-violet-300'), 0.8),
+      stroke: resolveCssColor('--p-violet-500'),
+      face,
+      celebrate,
+    },
+    /* Past the pickup line: brightens to pink */
+    capturable: {
+      fill: resolveCssColor('--p-pink-300'),
+      stroke: resolveCssColor('--p-pink-500'),
+      face,
+      celebrate,
+    },
+    hit: {
+      fill: cleanPitchColor(isDark.value, 0.85),
+      stroke: celebrate,
+      /* The light theme's clean green is deep, so its face turns white */
+      face: isDark.value ? face : 'rgba(255, 255, 255, 0.97)',
+      celebrate,
+    },
+    missed: {
+      fill: 'rgba(239, 68, 68, 0.35)',
+      stroke: 'rgba(239, 68, 68, 0.6)',
+      /* The fill is mostly see-through, so the face follows the theme's text */
+      face: resolveCssColor('--p-text-color'),
+      celebrate,
+    },
+  }
 
   for (const target of props.targets) {
     const x = timeToX(target.dueTime, now, geom)
     if (
-      x < geom.chartLeftX - TARGET_RADIUS ||
-      x > geom.chartRightX + TARGET_RADIUS
+      x < geom.chartLeftX - NOTE_BUDDY_MARGIN ||
+      x > geom.chartRightX + NOTE_BUDDY_MARGIN
     ) {
       continue
     }
-    const y = midiToY(target.midi, height)
 
-    let fillColor: string
-    let strokeColor: string
-    if (target.status === 'hit') {
-      fillColor = cleanPitchColor(isDark.value, 0.85)
-      strokeColor = cleanPitchColor(isDark.value)
-    } else if (target.status === 'missed') {
-      fillColor = 'rgba(239, 68, 68, 0.35)'
-      strokeColor = 'rgba(239, 68, 68, 0.6)'
-    } else if (now < target.dueTime + LEAD_IN_MS) {
-      /* Approach zone — target hasn't crossed the pickup line yet and can't
-       * be captured. Grey fill signals "not yet active"; flips to white once
-       * the target enters the capturable zone. */
-      fillColor = 'rgba(148, 163, 184, 0.55)'
-      strokeColor = 'rgba(148, 163, 184, 0.9)'
-    } else {
-      fillColor = 'rgba(255, 255, 255, 0.95)'
-      strokeColor = 'rgba(148, 163, 184, 0.9)'
-    }
+    /* Pending notes are 'approaching' until they cross the pickup line; only
+     * then can they be caught. */
+    let phase: NoteBuddyPhase = 'capturable'
+    if (target.status !== 'pending') phase = target.status
+    else if (now < target.dueTime + LEAD_IN_MS) phase = 'approaching'
 
-    ctx.beginPath()
-    ctx.arc(x, y, TARGET_RADIUS, 0, Math.PI * 2)
-    ctx.fillStyle = fillColor
-    ctx.fill()
-    ctx.lineWidth = 2
-    ctx.strokeStyle = strokeColor
-    ctx.stroke()
-
-    const label = midiToNoteLabel(target.midi).label
-    ctx.font = 'bold 11px monospace'
-    ctx.textAlign = 'center'
-    ctx.textBaseline = 'middle'
-    ctx.fillStyle = 'rgba(15, 23, 42, 0.95)'
-    ctx.fillText(label, x, y)
+    drawNoteBuddy(ctx, {
+      x,
+      y: midiToY(target.midi, height),
+      label: midiToNoteLabel(target.midi).label,
+      phase,
+      colors: colorsByPhase[phase],
+      now,
+      ageMs: now - target.dueTime,
+      resolvedMs:
+        target.resolvedAt === null ? Infinity : now - target.resolvedAt,
+      seed: target.id,
+      scoreText:
+        target.streak >= STREAK_CALLOUT_MIN ? `×${target.streak}` : '+1',
+      isAnimated: isAnimated(),
+    })
   }
 }
 
@@ -346,9 +393,14 @@ function drawPreviewIndicator(
     ctx.lineTo(geom.farAxisX, clampedY)
     ctx.stroke()
 
-    /* Pickup segment — pickup line to label-axis side: solid blue, slightly thicker */
-    ctx.strokeStyle = pickupLineColor
-    ctx.lineWidth = 2
+    /* Pickup segment — pickup line to label-axis side: a blue beam, strong at
+     * the avatar and fading out toward the labels */
+    const beam = ctx.createLinearGradient(dotX, 0, geom.labelAxisX, 0)
+    beam.addColorStop(0, pickupLineColor)
+    beam.addColorStop(1, withAlpha(pickupLineColor, 0.08))
+    ctx.strokeStyle = beam
+    ctx.lineWidth = 5
+    ctx.lineCap = 'round'
     ctx.setLineDash([])
     ctx.beginPath()
     ctx.moveTo(dotX, clampedY)
@@ -366,12 +418,33 @@ function drawPreviewIndicator(
   }
   ctx.restore()
 
-  /* Circle sits on the pickup line (or chart center in idle mode) */
-  const PREVIEW_RADIUS = 5
-  ctx.beginPath()
-  ctx.arc(dotX, clampedY, PREVIEW_RADIUS, 0, Math.PI * 2)
-  ctx.fillStyle = dotColor
-  ctx.fill()
+  /* Sits on the pickup line (or chart center in idle mode): the singer's
+   * avatar in a game, a plain dot in the idle preview */
+  const PREVIEW_RADIUS = isGameActive ? SINGER_AVATAR_RADIUS : 5
+  if (isGameActive) {
+    if (isAnimated()) {
+      /* The tail grows with the run of hits */
+      const tailLength =
+        AVATAR_TAIL_LENGTH +
+        AVATAR_TAIL_LENGTH_PER_TIER *
+          streakTier(currentStreak(props.targets ?? []))
+      avatarTailYs.unshift(clampedY)
+      avatarTailYs.length = Math.min(avatarTailYs.length, tailLength)
+    }
+    drawSingerAvatar(ctx, {
+      x: dotX,
+      y: clampedY,
+      color: dotColor,
+      /* Faces the live edge, where the notes come from */
+      facing: geom.farAxisX > geom.labelAxisX ? 1 : -1,
+      tailYs: prefersReducedMotion ? [] : avatarTailYs,
+    })
+  } else {
+    ctx.beginPath()
+    ctx.arc(dotX, clampedY, PREVIEW_RADIUS, 0, Math.PI * 2)
+    ctx.fillStyle = dotColor
+    ctx.fill()
+  }
 
   /* Note label sits next to the dot on the reading-trailing side, mirroring in RTL */
   if (props.previewNoteLabel) {
@@ -863,6 +936,7 @@ watch(
   (listening) => {
     if (listening) {
       pausedAt = null
+      avatarTailYs = []
       samples = []
       noteMarkers = []
       sustainedMidi = null

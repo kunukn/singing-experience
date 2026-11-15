@@ -11,6 +11,8 @@ const createTarget = (offsetMs: number): GameTarget => ({
   midi: 60,
   dueTime: ROUND_START + LEAD_IN_MS + offsetMs,
   status: 'missed',
+  resolvedAt: null,
+  streak: 0,
 })
 
 describe('noteRushReview', () => {

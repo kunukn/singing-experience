@@ -19,6 +19,12 @@ export type GameTarget = {
   midi: number
   dueTime: number
   status: GameTargetStatus
+  /* When the target was hit or missed (performance.now), null while pending.
+   * The chart times its pop and droop animations from this. */
+  resolvedAt: number | null
+  /* Length of the run of hits, in the order the notes arrive, that this one
+   * extended; 0 unless hit */
+  streak: number
 }
 
 export type GameSummary = {
@@ -28,6 +34,8 @@ export type GameSummary = {
   totalTargets: number
   voiceRangeLabelKey: string
   voiceRangeNoteRange: string
+  /* Longest run of notes hit one after the other, in the order they arrive */
+  bestStreak: number
   /* How the round ended — 'natural' when the timer elapsed or every target
    * resolved, 'manual' when the player hit Stop. Drives whether the Display
    * celebrates with confetti. */
@@ -65,6 +73,9 @@ export function useNoteRush(options: UseNoteRushOptions) {
   const summary = ref<GameSummary | null>(null)
   const gameStartTime = ref<number | null>(null)
   const elapsedMs = ref(0)
+  /* The run of hits the singer is on: notes hit one after the other, in the
+   * order they arrive */
+  const streak = ref(0)
   /* Set when a round starts, so the chart snaps the dot at the same distance
    * the round scores at. */
   const hitToleranceCents = ref(
@@ -97,6 +108,44 @@ export function useNoteRush(options: UseNoteRushOptions) {
   const holdProgress = new Map<number, number>()
   /* The previous clean pitch frame, or null after a break in the singing */
   let previousFrame: { time: number; midi: number } | null = null
+  /* Index of the note hit last, -1 before the first hit */
+  let lastHitIndex = -1
+
+  /*
+   * A run is counted along the notes' arrival order, not the order they are
+   * resolved in: a skipped note is only marked missed when it leaves the
+   * chart, seconds after the notes behind it were hit, so "hits since the
+   * last miss" would let a run carry on straight over the gap.
+   */
+  function markMissed(target: GameTarget, now: number) {
+    target.status = 'missed'
+    target.resolvedAt = now
+    /* A note that expires behind the current run was already left out of it */
+    if (targets.value.indexOf(target) > lastHitIndex) streak.value = 0
+  }
+
+  function markHit(target: GameTarget, now: number) {
+    const index = targets.value.indexOf(target)
+    let run = 1
+    while (targets.value[index - run]?.status === 'hit') run += 1
+
+    target.status = 'hit'
+    target.resolvedAt = now
+    target.streak = run
+    streak.value = run
+    lastHitIndex = index
+  }
+
+  function longestRun(): number {
+    let longest = 0
+    let run = 0
+    for (const target of targets.value) {
+      run = target.status === 'hit' ? run + 1 : 0
+      longest = Math.max(longest, run)
+    }
+
+    return longest
+  }
 
   function clearEndTimer() {
     if (endTimer !== null) {
@@ -127,7 +176,7 @@ export function useNoteRush(options: UseNoteRushOptions) {
           target.status === 'pending' &&
           now > target.dueTime + HISTORY_WINDOW_MS
         ) {
-          target.status = 'missed'
+          markMissed(target, now)
         }
       }
 
@@ -175,6 +224,8 @@ export function useNoteRush(options: UseNoteRushOptions) {
       midi,
       dueTime: now + LEAD_IN_MS + offsetMs,
       status: 'pending',
+      resolvedAt: null,
+      streak: 0,
     }))
 
     elapsedMs.value = 0
@@ -200,12 +251,13 @@ export function useNoteRush(options: UseNoteRushOptions) {
     clearEndTimer()
     stopElapsedTicker()
 
+    const now = performance.now()
     if (gameStartTime.value !== null) {
-      elapsedMs.value = performance.now() - gameStartTime.value
+      elapsedMs.value = now - gameStartTime.value
     }
 
     for (const target of targets.value) {
-      if (target.status === 'pending') target.status = 'missed'
+      if (target.status === 'pending') markMissed(target, now)
     }
 
     summary.value = {
@@ -215,6 +267,7 @@ export function useNoteRush(options: UseNoteRushOptions) {
       totalTargets: targets.value.length,
       voiceRangeLabelKey: options.voiceRange.value.labelKey,
       voiceRangeNoteRange: options.voiceRange.value.noteRange,
+      bestStreak: longestRun(),
       endReason: reason,
     }
 
@@ -232,6 +285,8 @@ export function useNoteRush(options: UseNoteRushOptions) {
     summary.value = null
     gameStartTime.value = null
     elapsedMs.value = 0
+    streak.value = 0
+    lastHitIndex = -1
     holdProgress.clear()
     previousFrame = null
     send({ type: 'RESET' })
@@ -266,7 +321,7 @@ export function useNoteRush(options: UseNoteRushOptions) {
 
       if (!inPickupZone) {
         if (now > target.dueTime + HISTORY_WINDOW_MS) {
-          target.status = 'missed'
+          markMissed(target, now)
         }
         continue
       }
@@ -278,7 +333,7 @@ export function useNoteRush(options: UseNoteRushOptions) {
         const accumulated = (holdProgress.get(target.id) ?? 0) + heldMs
         holdProgress.set(target.id, accumulated)
         if (accumulated >= currentHoldDurationMs) {
-          target.status = 'hit'
+          markHit(target, now)
           score.value += 1
           options.onHit?.(target)
         }
@@ -294,6 +349,7 @@ export function useNoteRush(options: UseNoteRushOptions) {
   return {
     targets,
     score,
+    streak,
     phase,
     isIdle,
     isPlaying,

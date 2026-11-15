@@ -89,6 +89,47 @@ describe('useNoteRush - hold detection', () => {
     expect(game.score.value).toBe(1)
   })
 
+  test('should stamp a hit with its time and start a streak', async () => {
+    const game = setup()
+    game.startGame()
+    const target = game.targets.value[0]
+
+    await singFor(target.midi, ZONE_START_MS, HOLD_MS + FRAME_MS)
+
+    expect(target.resolvedAt).toBe(now)
+    expect(target.streak).toBe(1)
+    expect(game.streak.value).toBe(1)
+  })
+
+  test('should not run a streak across a skipped note', async () => {
+    const game = setup()
+    game.startGame()
+    const [first, skipped, third] = game.targets.value
+    /* When the third note can be caught, with the skipped one still pending */
+    const thirdZoneStartMs = third.dueTime + LEAD_IN_MS
+
+    await singFor(first.midi, ZONE_START_MS, HOLD_MS + FRAME_MS)
+    await singFor(third.midi, thirdZoneStartMs, HOLD_MS + FRAME_MS)
+
+    expect(skipped.status).not.toBe('hit')
+    expect(third.status).toBe('hit')
+    expect(third.streak).toBe(1)
+  })
+
+  test('should end the streak on a miss and keep the best one', async () => {
+    const game = setup()
+    game.startGame()
+    const target = game.targets.value[0]
+
+    await singFor(target.midi, ZONE_START_MS, HOLD_MS + FRAME_MS)
+    game.stopGame()
+
+    const missed = game.targets.value.filter((t) => t.status === 'missed')
+    expect(missed.every((t) => t.resolvedAt === now)).toBe(true)
+    if (missed.length > 0) expect(game.streak.value).toBe(0)
+    expect(game.summary.value?.bestStreak).toBe(1)
+  })
+
   test('should not score a note sung for less than the hold duration', async () => {
     const game = setup()
     game.startGame()

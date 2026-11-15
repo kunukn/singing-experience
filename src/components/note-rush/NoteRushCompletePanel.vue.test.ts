@@ -38,6 +38,24 @@ describe('NoteRushCompletePanel', () => {
     },
   )
 
+  test.each([
+    { score: 5, stars: '3' },
+    { score: 3, stars: '2' },
+    { score: 1, stars: '1' },
+  ])('should award $stars stars for $score of 5', ({ score, stars }) => {
+    const wrapper = mountPanel(score, 'natural')
+
+    expect(
+      wrapper.get('[data-testid="note-rush-stars"]').attributes('data-stars'),
+    ).toBe(stars)
+  })
+
+  test('should award no stars when the round was stopped', () => {
+    const wrapper = mountPanel(5, 'manual')
+
+    expect(wrapper.find('[data-testid="note-rush-stars"]').exists()).toBe(false)
+  })
+
   test('should name the level the round was played on', () => {
     const wrapper = mountPanel(3, 'natural')
 
