@@ -20,13 +20,17 @@ import {
   buildPlayfield,
   computeGeometry,
   findCollidingTarget,
+  gapSide,
   getBirdRect,
   isBirdPositionFrozen,
   isOutOfRange,
   midiToY,
   pickupLineX,
+  PIPE_WIDTH,
   type ChartGeometry,
+  type GapSide,
   type Playfield,
+  type PlayfieldPipe,
 } from './singFlyGeometry'
 import {
   PASS_RING_MS,
@@ -536,11 +540,59 @@ function drawPassRings(
   ctx.restore()
 }
 
+/* The label's colour per side of the gap: the app's three-state pitch
+ * palette (too low / on pitch / too high), theme-aware. */
+const GAP_SIDE_COLOR_VARIABLE: Record<GapSide, string> = {
+  below: '--pitch-low',
+  inside: '--pitch-clean',
+  above: '--pitch-high',
+}
+/* px — the "sing higher / lower" arrow beside the bird's label. */
+const GAP_ARROW_HALF_WIDTH = 3.5
+const GAP_ARROW_HALF_HEIGHT = 3
+const GAP_ARROW_GAP = 4
+
+/* The pipe the bird's label is judged against: while playing, the nearest
+ * pending pipe that has not yet scrolled past the bird; on the crash frame,
+ * the pipe that killed it. Null when there is none on screen. */
+function findGuidePipe(
+  field: Playfield,
+  geom: ChartGeometry,
+  birdX: number,
+): PlayfieldPipe | null {
+  if (props.phase === 'crashed') {
+    return field.pipes.find((pipe) => pipe.status === 'crashed') ?? null
+  }
+  if (props.phase !== 'playing') return null
+
+  /* -1 when the field scrolls toward smaller x (LTR), +1 in RTL */
+  const scrollSign = Math.sign(geom.labelAxisX - geom.nowEdgeX)
+  /* px past the bird's centre at which the pipe's column has cleared its body */
+  const clearedDistance = PIPE_WIDTH / 2 + BIRD_RADIUS
+  let nearest: PlayfieldPipe | null = null
+  let nearestDistance = Infinity
+  for (const pipe of field.pipes) {
+    if (pipe.status !== 'pending') continue
+
+    const travelledPastBird = (pipe.centerX - birdX) * scrollSign
+    if (travelledPastBird > clearedDistance) continue
+
+    const distance = Math.abs(pipe.centerX - birdX)
+    if (distance < nearestDistance) {
+      nearest = pipe
+      nearestDistance = distance
+    }
+  }
+
+  return nearest
+}
+
 function drawBird(
   ctx: CanvasRenderingContext2D,
   geom: ChartGeometry,
   height: number,
   now: number,
+  field: Playfield,
 ) {
   /* No pitch (idle screen, preview off) → the bird perches on the board
    * instead of vanishing. The bird is ALWAYS visible and ALWAYS solid. */
@@ -657,9 +709,19 @@ function drawBird(
    * consistency. In range: theme-adaptive --p-text-color so the label stays
    * readable on --p-content-background in both light and dark mode (it sits
    * beside the bird on the background, not on the amber body). */
-  const labelColor = isOutOfRange
-    ? 'rgb(234, 88, 12)'
-    : resolveCssColor('--p-text-color')
+  /* With a pipe ahead, the label says how to get through it instead: blue and
+   * an up arrow below the gap, warm and a down arrow above it, green inside.
+   * Judged on the bird's own pitch, the one scoring and collision use. */
+  const guidePipe = findGuidePipe(field, geom, x)
+  const guideSide = guidePipe
+    ? gapSide(birdMidi, guidePipe.midi, props.gapHalfSemitones)
+    : null
+  let labelColor = resolveCssColor('--p-text-color')
+  if (guideSide) {
+    labelColor = resolveCssColor(GAP_SIDE_COLOR_VARIABLE[guideSide])
+  } else if (isOutOfRange) {
+    labelColor = 'rgb(234, 88, 12)'
+  }
   const LABEL_GAP = 10 // px between body edge and label; clears the 4px tail
   /* When out of range, nudge the label further past the chart edge it's
    * exceeding — reinforces "out of range" by pulling the label outside the
@@ -681,6 +743,25 @@ function drawBird(
     const labelX = x + -beakSign * (BIRD_RADIUS + LABEL_GAP)
     /* Nudge label down to optically center against the bird body. */
     ctx.fillText(label, labelX, y + 1 + outOfRangeOffset)
+
+    /* A triangle path rather than a "▲" glyph, whose size and baseline vary by
+     * font. Sits past the label's far end, pointing the way to sing. */
+    if (guideSide === 'below' || guideSide === 'above') {
+      const arrowX =
+        labelX -
+        beakSign *
+          (ctx.measureText(label).width + GAP_ARROW_GAP + GAP_ARROW_HALF_WIDTH)
+      const arrowY = y + outOfRangeOffset
+      /* Canvas y grows downward: the tip is above the base to point up */
+      const tipOffset =
+        guideSide === 'below' ? -GAP_ARROW_HALF_HEIGHT : GAP_ARROW_HALF_HEIGHT
+      ctx.beginPath()
+      ctx.moveTo(arrowX, arrowY + tipOffset)
+      ctx.lineTo(arrowX - GAP_ARROW_HALF_WIDTH, arrowY - tipOffset)
+      ctx.lineTo(arrowX + GAP_ARROW_HALF_WIDTH, arrowY - tipOffset)
+      ctx.closePath()
+      ctx.fill()
+    }
   }
 
   /* Anchor the death burst at the drawn bird center, so shards spray from
@@ -1178,7 +1259,7 @@ function drawChart() {
    * the line's dot instead of wearing it. */
   const isPreviewLineBehindBird = props.phase === 'idle'
   if (isPreviewLineBehindBird) drawPreviewLine(ctx, geom, height)
-  drawBird(ctx, geom, height, now)
+  drawBird(ctx, geom, height, now, field)
   drawHitboxes(ctx, geom, width, height, now, field)
   drawDeathOverlay(ctx, width, height)
   /* After the death overlay so it stays readable through and after the

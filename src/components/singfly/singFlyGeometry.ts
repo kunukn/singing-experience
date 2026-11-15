@@ -71,6 +71,21 @@ export function isPitchInGap(
   return Math.abs(birdMidi - targetMidi) <= gapHalfSemitones
 }
 
+export type GapSide = 'below' | 'inside' | 'above'
+
+/* Where the bird is relative to a pipe's gap, for the "sing higher / lower"
+ * cue on the bird's label. 'inside' is isPitchInGap itself, so the cue can
+ * never disagree with scoring and collision. */
+export function gapSide(
+  birdMidi: number,
+  targetMidi: number,
+  gapHalfSemitones: number,
+): GapSide {
+  if (isPitchInGap(birdMidi, targetMidi, gapHalfSemitones)) return 'inside'
+
+  return birdMidi < targetMidi ? 'below' : 'above'
+}
+
 /* THE single source of truth for "is the bird out of range" — the ceiling/floor
  * analogue of isPitchInGap. The bird is judged by its pitch center vs the
  * selected voice range in semitone space (plus boundaryToleranceSemitones —

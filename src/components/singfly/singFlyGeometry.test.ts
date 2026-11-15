@@ -16,6 +16,7 @@ import {
   getPipeRects,
   isBirdPositionFrozen,
   isOutOfRange,
+  gapSide,
   isPipeOverBird,
   isPitchInGap,
   midiToY,
@@ -82,6 +83,26 @@ describe('isPitchInGap', () => {
     expect(isPitchInGap(51.5, 50, 1.5)).toBe(true)
     expect(isPitchInGap(48.5, 50, 1.5)).toBe(true)
     expect(isPitchInGap(51.6, 50, 1.5)).toBe(false)
+  })
+})
+
+describe('gapSide', () => {
+  test.each([
+    { birdMidi: 50, side: 'inside' },
+    { birdMidi: 51.5, side: 'inside' },
+    { birdMidi: 48.5, side: 'inside' },
+    { birdMidi: 51.6, side: 'above' },
+    { birdMidi: 48.4, side: 'below' },
+  ])('should report $side for a bird at $birdMidi', ({ birdMidi, side }) => {
+    expect(gapSide(birdMidi, 50, 1.5)).toBe(side)
+  })
+
+  test('should report inside exactly where the bird scores', () => {
+    for (let birdMidi = 46; birdMidi <= 54; birdMidi += 0.1) {
+      expect(gapSide(birdMidi, 50, 1) === 'inside').toBe(
+        isPitchInGap(birdMidi, 50, 1),
+      )
+    }
   })
 })
 
