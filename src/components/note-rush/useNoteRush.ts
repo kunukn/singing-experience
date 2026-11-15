@@ -1,10 +1,16 @@
 import { useMachine } from '@xstate/vue'
+import type { Difficulty } from '@/constants/difficulty'
 import type { VoiceRange } from '@/constants/voiceRanges'
 import type { NoteInfo } from '@/utils/noteUtils'
 import type { Ref } from 'vue'
 
 import { GAME_PICKUP_LINE_RATIO, HISTORY_WINDOW_MS } from './noteRushConstants'
 import { noteRushMachine, type NoteRushPhase } from './noteRushMachine'
+import {
+  DEFAULT_DIFFICULTY,
+  DIFFICULTY_HIT_TOLERANCE_CENTS,
+  generateTargetSchedule,
+} from './noteRushTargets'
 
 export type GameTargetStatus = 'pending' | 'hit' | 'missed'
 
@@ -17,6 +23,7 @@ export type GameTarget = {
 
 export type GameSummary = {
   durationMs: number
+  difficulty: Difficulty
   score: number
   totalTargets: number
   voiceRangeLabelKey: string
@@ -35,38 +42,16 @@ type UseNoteRushOptions = {
   voiceRange: Ref<VoiceRange>
   holdDurationMs: Ref<number>
   gameDurationMs: Ref<number>
+  difficulty: Ref<Difficulty>
   onHit?: (target: GameTarget) => void
   onEnd?: () => void
 }
 
 export const DEFAULT_GAME_DURATION_MS = 10_000
-export const HIT_TOLERANCE_CENTS = 50
 /* Time a target spends approaching from the live edge before it crosses the
  * pickup line and becomes capturable. Derived from GAME_PICKUP_LINE_RATIO so
  * the visual line and the hit-detection window stay locked together. */
 export const LEAD_IN_MS = HISTORY_WINDOW_MS * (1 - GAME_PICKUP_LINE_RATIO)
-/* Minimum gap between two consecutive target dueTimes. A singer can only
- * sing one note at a time, so two targets must not land at the exact same
- * moment — 100 ms is enough separation to keep them visually distinct. */
-const MIN_TARGET_GAP_MS = 100
-
-function randomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
-
-/* Random int in [min, max] that is never `exclude`, so the game never shows
- * the same note on two consecutive targets. Falls back to the single available
- * value when the range collapses to one semitone (a repeat is unavoidable
- * then — doesn't happen with real voice ranges, all span ≥12 semitones). */
-function randomIntExcluding(min: number, max: number, exclude: number): number {
-  if (min >= max) return min
-
-  let value = randomInt(min, max)
-  while (value === exclude) {
-    value = randomInt(min, max)
-  }
-  return value
-}
 
 export type GameState = 'idle' | 'playing' | 'complete'
 
@@ -76,6 +61,11 @@ export function useNoteRush(options: UseNoteRushOptions) {
   const summary = ref<GameSummary | null>(null)
   const gameStartTime = ref<number | null>(null)
   const elapsedMs = ref(0)
+  /* Set when a round starts, so the chart snaps the dot at the same distance
+   * the round scores at. */
+  const hitToleranceCents = ref(
+    DIFFICULTY_HIT_TOLERANCE_CENTS[DEFAULT_DIFFICULTY],
+  )
 
   /* The single source of truth for the round lifecycle. Side-effects (mic via
    * onEnd, RAF tick, end timer, confetti) live in the imperative wrappers
@@ -96,6 +86,7 @@ export function useNoteRush(options: UseNoteRushOptions) {
    * don't disturb the current round. */
   let currentGameDurationMs = DEFAULT_GAME_DURATION_MS
   let currentHoldDurationMs = 50
+  let currentDifficulty: Difficulty = DEFAULT_DIFFICULTY
 
   /* Per-target accumulated on-pitch time within the pickup zone. Forgiving:
    * persists across frames so a brief drift doesn't reset progress. */
@@ -154,15 +145,11 @@ export function useNoteRush(options: UseNoteRushOptions) {
 
     currentGameDurationMs = options.gameDurationMs.value
     currentHoldDurationMs = options.holdDurationMs.value
+    currentDifficulty = options.difficulty.value
+    hitToleranceCents.value = DIFFICULTY_HIT_TOLERANCE_CENTS[currentDifficulty]
 
     const now = performance.now()
     gameStartTime.value = now
-
-    /* Half a target per second of game duration — same rule as before. */
-    const targetCount = Math.max(
-      1,
-      Math.floor(currentGameDurationMs / 1000 / 2),
-    )
 
     /* Cap the latest offset so the last possible hit (the end of the pickup
      * zone) lands at or before currentGameDurationMs — keeps the displayed
@@ -172,47 +159,18 @@ export function useNoteRush(options: UseNoteRushOptions) {
       currentGameDurationMs - LEAD_IN_MS - HISTORY_WINDOW_MS,
     )
 
-    const generated: GameTarget[] = []
-    for (let i = 0; i < targetCount; i++) {
-      /* First target enters the chart at game start so the playing panel
-       * isn't empty. Remaining targets stay random within the safe window. */
-      const offset = i === 0 ? 0 : Math.random() * maxOffset
-      /* midi assigned after the sort below, in time order, so the
-       * no-immediate-repeat rule applies to the order the player hears. */
-      generated.push({
-        id: i,
-        midi: 0,
-        dueTime: now + LEAD_IN_MS + offset,
-        status: 'pending',
-      })
-    }
-    generated.sort((a, b) => a.dueTime - b.dueTime)
-
-    /* Enforce a minimum gap so two targets never share a dueTime. Walking in
-     * order and bumping forward preserves the randomness of the earlier
-     * targets while guaranteeing no visual pile-up. */
-    for (let i = 1; i < generated.length; i++) {
-      const minDueTime = generated[i - 1].dueTime + MIN_TARGET_GAP_MS
-      if (generated[i].dueTime < minDueTime) {
-        generated[i].dueTime = minDueTime
-      }
-    }
-
-    /* Assign notes in time order so no two consecutive targets repeat. */
-    let previousMidi: number | null = null
-    for (const target of generated) {
-      const midi: number =
-        previousMidi === null
-          ? randomInt(options.midiMin.value, options.midiMax.value)
-          : randomIntExcluding(
-              options.midiMin.value,
-              options.midiMax.value,
-              previousMidi,
-            )
-      target.midi = midi
-      previousMidi = midi
-    }
-    targets.value = generated
+    targets.value = generateTargetSchedule({
+      durationMs: currentGameDurationMs,
+      maxOffsetMs: maxOffset,
+      difficulty: currentDifficulty,
+      midiMin: options.midiMin.value,
+      midiMax: options.midiMax.value,
+    }).map(({ offsetMs, midi }, index): GameTarget => ({
+      id: index,
+      midi,
+      dueTime: now + LEAD_IN_MS + offsetMs,
+      status: 'pending',
+    }))
 
     elapsedMs.value = 0
     /* reset() above sent RESET → idle; START enters 'playing'. */
@@ -247,6 +205,7 @@ export function useNoteRush(options: UseNoteRushOptions) {
 
     summary.value = {
       durationMs: currentGameDurationMs,
+      difficulty: currentDifficulty,
       score: score.value,
       totalTargets: targets.value.length,
       voiceRangeLabelKey: options.voiceRange.value.labelKey,
@@ -298,7 +257,7 @@ export function useNoteRush(options: UseNoteRushOptions) {
       }
 
       const centsDiff = Math.abs(singerMidi - target.midi) * 100
-      if (centsDiff <= HIT_TOLERANCE_CENTS) {
+      if (centsDiff <= hitToleranceCents.value) {
         const accumulated = (holdProgress.get(target.id) ?? 0) + delta
         holdProgress.set(target.id, accumulated)
         if (accumulated >= currentHoldDurationMs) {
@@ -325,6 +284,7 @@ export function useNoteRush(options: UseNoteRushOptions) {
     summary,
     gameState,
     elapsedMs,
+    hitToleranceCents,
     startGame,
     stopGame,
     reset,

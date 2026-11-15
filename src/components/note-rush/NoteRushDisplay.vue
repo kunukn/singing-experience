@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useDoReMiPlaySequence } from '@/components/do-re-mi/useDoReMiPlaySequence'
 import type { ToneMode } from '@/composables/toneEngine'
+import type { Difficulty } from '@/constants/difficulty'
 import { VOICE_RANGES } from '@/constants/voiceRanges'
 import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { NoteInfo } from '@/utils/noteUtils'
@@ -39,6 +40,7 @@ const holdDurationSec = defineModel<number>('holdDurationSec', {
 const gameDurationSec = defineModel<number>('gameDurationSec', {
   required: true,
 })
+const difficulty = defineModel<Difficulty>('difficulty', { required: true })
 
 const { t } = useI18n()
 
@@ -84,6 +86,7 @@ const {
   summary,
   gameState,
   elapsedMs,
+  hitToleranceCents,
   startGame,
   stopGame,
   reset: resetGame,
@@ -95,6 +98,7 @@ const {
   voiceRange: selectedRange,
   holdDurationMs,
   gameDurationMs,
+  difficulty,
   onHit: (target) => {
     const origin = pitchDisplayRef.value?.getTargetViewportOrigin(target.id)
     if (origin) fireMicroConfetti(origin)
@@ -150,6 +154,7 @@ watch(
           ? recordScore({
               game: 'noteRush',
               config: {
+                difficulty: finished.difficulty,
                 durationSec: finished.durationMs / 1000,
                 holdSec: holdDurationSec.value,
               },
@@ -348,6 +353,7 @@ onUnmounted(() => {
         v-model:isPreviewEnabled="isPreviewEnabled"
         v-model:holdDurationSec="holdDurationSec"
         v-model:gameDurationSec="gameDurationSec"
+        v-model:difficulty="difficulty"
         :rangeLabel="t('generic.voiceRange')"
         :micPermission="micPermission"
         :error="error"
@@ -369,6 +375,7 @@ onUnmounted(() => {
         :score="summary.score"
         :totalTargets="summary.totalTargets"
         :durationSec="summary.durationMs / 1000"
+        :difficulty="summary.difficulty"
         :elapsedSeconds="elapsedSeconds"
         :voiceRangeLabel="t(summary.voiceRangeLabelKey)"
         :voiceRangeNoteRange="summary.voiceRangeNoteRange"
@@ -393,6 +400,7 @@ onUnmounted(() => {
       :previewFrequency="previewFrequency"
       :highlightedMidi="highlightedMidi"
       :targets="targets"
+      :hitToleranceCents="hitToleranceCents"
       :simplifyChart="gameState !== 'idle'"
       :isReviewable="gameState === 'complete'"
       @tonePlayed="handleTonePlayed"

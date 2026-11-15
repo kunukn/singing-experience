@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useLocalStorage } from '@vueuse/core'
+import { DIFFICULTY_OPTIONS, type Difficulty } from '@/constants/difficulty'
 import NoteRushDisplay from './NoteRushDisplay.vue'
 import {
   GAME_DURATION_OPTIONS,
@@ -7,6 +8,7 @@ import {
   type GameDurationSec,
   type HoldDurationSec,
 } from './noteRushOptions'
+import { DEFAULT_DIFFICULTY } from './noteRushTargets'
 
 const selectedRangeIndex = useVoiceRangeIndex('syng.rangeIndex')
 
@@ -23,6 +25,14 @@ if (!GAME_DURATION_OPTIONS.includes(gameDurationSec.value as GameDurationSec)) {
   gameDurationSec.value = 20
 }
 
+const difficulty = useLocalStorage<Difficulty>(
+  'syng.noteRushDifficulty',
+  DEFAULT_DIFFICULTY,
+)
+if (!DIFFICULTY_OPTIONS.includes(difficulty.value)) {
+  difficulty.value = DEFAULT_DIFFICULTY
+}
+
 /* softRawAudio — NS/AGC off so steady sung notes register, EC kept on because
  * reference tones can play through the speaker while the mic listens (a deaf
  * window masks the overlap). rejectSpikes keeps background-noise frames off
@@ -37,5 +47,6 @@ const detection = usePitchDetection({ softRawAudio: true, rejectSpikes: true })
     v-model:rangeIndex="selectedRangeIndex"
     v-model:holdDurationSec="holdDurationSec"
     v-model:gameDurationSec="gameDurationSec"
+    v-model:difficulty="difficulty"
   />
 </template>

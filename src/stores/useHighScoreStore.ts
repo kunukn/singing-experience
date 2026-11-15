@@ -30,6 +30,35 @@ const LEGACY_GAME_KEYS: Record<string, HighScoreGame> = {
  */
 export type HighScoreConfig = Record<string, string | number | boolean>
 
+/*
+ * The settings each game saves with a score. A stored score whose settings
+ * are not exactly these no longer fits the game and is deleted on load, never
+ * migrated: see "Stored Scores" in docs/product/design-rules.md. Changing what
+ * a game records? Change its list here in the same commit.
+ */
+export const HIGH_SCORE_CONFIG_FIELDS: Record<
+  HighScoreGame,
+  readonly string[]
+> = {
+  singTone: ['rounds', 'holdSec'],
+  doReMi: ['difficulty', 'holdSec', 'scaleMode'],
+  singTheKeys: ['songId', 'speed'],
+  graceKelly: ['vozIndex', 'bpm', 'melodyGuide'],
+  singFly: ['difficulty', 'durationSec', 'pitchSnap'],
+  noteRush: ['difficulty', 'durationSec', 'holdSec'],
+  circleOfFifths: ['direction', 'difficulty', 'holdSec'],
+}
+
+function fitsGameSettings(game: HighScoreGame, config: object) {
+  const expected = HIGH_SCORE_CONFIG_FIELDS[game]
+  const actual = Object.keys(config)
+
+  return (
+    actual.length === expected.length &&
+    expected.every((name) => Object.hasOwn(config, name))
+  )
+}
+
 export type HighScore = {
   game: HighScoreGame
   config: HighScoreConfig
@@ -80,6 +109,7 @@ function isHighScore(value: unknown): value is HighScore {
     HIGH_SCORE_GAMES.includes(score.game as HighScoreGame) &&
     typeof score.config === 'object' &&
     score.config !== null &&
+    fitsGameSettings(score.game as HighScoreGame, score.config) &&
     typeof score.correct === 'number' &&
     typeof score.total === 'number' &&
     (score.elapsedMs === null || typeof score.elapsedMs === 'number') &&
@@ -102,7 +132,7 @@ export const useHighScoreStore = defineStore('highScores', () => {
   /* Keyed by highScoreKey. The literal key is what storageKeys.test.ts scans for. */
   const scores = useLocalStorage<HighScoreMap>('syng.highScores', {})
 
-  /* Drop anything a hand edit or an older shape left behind, so one bad entry can't break the board. */
+  /* Drop anything a hand edit, an older shape or a changed game setting left behind, so one bad entry can't break the board. */
   const stored: unknown = scores.value
   if (typeof stored !== 'object' || stored === null || Array.isArray(stored)) {
     scores.value = {}

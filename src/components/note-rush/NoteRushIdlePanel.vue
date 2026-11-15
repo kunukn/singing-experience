@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { ToneMode } from '@/composables/toneEngine'
+import type { Difficulty } from '@/constants/difficulty'
 
 type Props = {
   rangeLabel: string
@@ -26,6 +27,7 @@ const holdDurationSec = defineModel<number>('holdDurationSec', {
 const gameDurationSec = defineModel<number>('gameDurationSec', {
   required: true,
 })
+const difficulty = defineModel<Difficulty>('difficulty', { required: true })
 
 const { t } = useI18n()
 </script>
@@ -33,6 +35,7 @@ const { t } = useI18n()
 <template>
   <div class="flex w-full flex-col items-center gap-4">
     <NoteRushSettingsRow
+      v-model:difficulty="difficulty"
       v-model:holdDurationSec="holdDurationSec"
       v-model:gameDurationSec="gameDurationSec"
       v-model:rangeIndex="rangeIndex"

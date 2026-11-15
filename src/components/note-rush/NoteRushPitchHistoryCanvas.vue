@@ -21,7 +21,7 @@ import {
   PAUSE_GAP_MS,
 } from './noteRushConstants'
 import { getReviewScrollableMs } from './noteRushReview'
-import { HIT_TOLERANCE_CENTS, LEAD_IN_MS, type GameTarget } from './useNoteRush'
+import { LEAD_IN_MS, type GameTarget } from './useNoteRush'
 
 type Props = {
   noteInfo: NoteInfo | null
@@ -37,6 +37,8 @@ type Props = {
   previewFrequency?: number | null
   isRtl?: boolean
   targets?: GameTarget[]
+  /* How far off a target the sung pitch may be and still score, in cents */
+  hitToleranceCents: number
   simplifyChart?: boolean
   /* How far back from the end of a finished round the chart is scrolled, in ms */
   viewOffsetMs?: number
@@ -269,11 +271,11 @@ function drawPreviewIndicator(
    * is currently in its capturable pickup zone, snap the dot exactly onto
    * that target's integer-MIDI row so it lines up with the green target
    * circle instead of floating a few cents above/below it. Mirrors the
-   * hit-detection window in useNoteRush (same pickup zone + 50¢ tolerance)
+   * hit-detection window in useNoteRush (same pickup zone and tolerance)
    * so the dot snaps precisely when — and only when — a hit can register. */
   if (isGameActive && props.targets) {
     let nearestTargetMidi: number | null = null
-    let nearestCents = HIT_TOLERANCE_CENTS
+    let nearestCents = props.hitToleranceCents
     for (const target of props.targets) {
       if (target.status === 'missed') continue
 

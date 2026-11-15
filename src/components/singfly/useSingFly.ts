@@ -3,6 +3,7 @@ import type { Ref } from 'vue'
 import type { VoiceRange } from '@/constants/voiceRanges'
 import type { NoteInfo } from '@/utils/noteUtils'
 import { frequencyToMidi } from '@/utils/noteUtils'
+import { randomMidiStep } from '@/utils/randomMidi'
 
 import {
   singFlyMachine,
@@ -89,40 +90,6 @@ const CRASH_GRACE_MS = 100
 /* Sentinel "wall id" fed to the boundary crash guard when the bird is out of
  * range. Real target ids are 0..n, so -1 can never collide with a pipe id. */
 const BOUNDARY_WALL_ID = -1
-
-function randomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min
-}
-
-/* Random int in [min, max] that is never `exclude`, so the game never shows
- * the same note on two consecutive pipes. Falls back to the single available
- * value when the range collapses to one semitone (a repeat is unavoidable
- * then — doesn't happen with real voice ranges, all span ≥12 semitones). */
-function randomIntExcluding(min: number, max: number, exclude: number): number {
-  if (min >= max) return min
-
-  let value = randomInt(min, max)
-  while (value === exclude) {
-    value = randomInt(min, max)
-  }
-  return value
-}
-
-/* Pick the next pipe's note: random in [min, max], never `previous`, and no
- * more than maxStep semitones from `previous`. maxStep === Infinity widens
- * the window back to the full range (normal/hard — unchanged behavior). */
-function randomMidiStep(
-  min: number,
-  max: number,
-  previous: number | null,
-  maxStep: number,
-): number {
-  if (previous === null) return randomInt(min, max)
-
-  const lo = Math.max(min, previous - maxStep)
-  const hi = Math.min(max, previous + maxStep)
-  return randomIntExcluding(lo, hi, previous)
-}
 
 /* Back-compat projection of the machine phase for the panel `v-if`,
  * defineExpose and the test page. crashed/won both read as 'complete'. */

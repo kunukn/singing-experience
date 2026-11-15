@@ -49,6 +49,7 @@ const STORAGE_KEYS = [
   'syng.pianoScaleMode',
   'syng.pianoScaleRoot',
   'syng.pianoToneLabelMode',
+  'syng.noteRushDifficulty',
   'syng.noteRushDurationSec',
   'syng.noteRushHoldDurationSec',
   'syng.pitchSnap',

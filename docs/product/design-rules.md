@@ -121,3 +121,16 @@ Every program page opens the same way, so a player always knows where they are a
 Guarded by `ProgramHeader.vue.test.ts`.
 
 Why: [0007 — One program header](decisions/0007-program-header.md)
+
+## Stored Scores
+
+A best score counts only for the exact settings it was sung with. **When a game's settings change and a stored score no longer fits, delete it.** Never migrate it, convert it or fill in a value the player didn't choose: a score sung without a difficulty level was not an "easy" score.
+
+- **Each game lists the settings it saves** in `HIGH_SCORE_CONFIG_FIELDS` in [useHighScoreStore.ts](../../src/stores/useHighScoreStore.ts). On load, the store deletes every stored score whose settings are not exactly that list.
+- **Adding, removing or renaming a saved setting?** Change the game's list in the same commit as its `recordScore` call. The old scores then go on the next load, with no clean-up code to write.
+- **Removing an option value** (a game length, a song) leaves scores no one can beat any more. They follow the same rule: delete them, or don't show them.
+- **A renamed game is the one exception.** Its scores still fit, so `LEGACY_GAME_KEYS` carries them over to the new key.
+
+Guarded by `useHighScoreStore.test.ts`.
+
+Why: [0008 — Drop stored scores that no longer fit](decisions/0008-drop-stored-scores-that-no-longer-fit.md)

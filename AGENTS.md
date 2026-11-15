@@ -239,6 +239,7 @@ Product and design rules that hold across every program live in [docs/product/de
 - **Copy Tone** (any user-facing text): friendly, plain, child-friendly. Per-language rules in `translation.instructions.md`.
 - **Button Conventions** (any `PrimeButton`): main actions are `rounded` with no icon, Start green and Stop red. Record is the exception: red with `pi pi-circle-fill`. Clear always has `pi pi-trash`. Buttons in a row share a shape.
 - **Program Header** (any program page): open with `ProgramHeader`: the card name as the title, an optional one-line subtitle, hidden in place on end screens. Never a hand-rolled `<h1>`.
+- **Stored Scores** (any change to the settings a game saves with a best score): a stored score that no longer fits the game's settings is deleted, never migrated. Update the game's list in `HIGH_SCORE_CONFIG_FIELDS` in `useHighScoreStore.ts`; the store drops the rest on load.
 
 Changing one of these rules? Update its section in `design-rules.md` and add a decision record.
 

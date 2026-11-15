@@ -14,6 +14,7 @@ function mountPanel(score: number, endReason: GameSummary['endReason']) {
       score,
       totalTargets: 5,
       durationSec: 10,
+      difficulty: 'hard',
       elapsedSeconds: '10.0',
       voiceRangeLabel: 'Comfy',
       voiceRangeNoteRange: 'C3–C4',
@@ -36,6 +37,14 @@ describe('NoteRushCompletePanel', () => {
       expect(wrapper.get('h2').text()).toBe(heading)
     },
   )
+
+  test('should name the level the round was played on', () => {
+    const wrapper = mountPanel(3, 'natural')
+
+    expect(wrapper.get('[data-testid="note-rush-difficulty"]').text()).toBe(
+      'Hard',
+    )
+  })
 
   test('should pass Play Again and Settings through', async () => {
     const wrapper = mountPanel(3, 'natural')

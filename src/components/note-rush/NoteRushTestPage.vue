@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Difficulty } from '@/constants/difficulty'
 import type { NoteName } from '@/utils/noteUtils'
 import {
   midiToFrequency,
@@ -10,6 +11,7 @@ import NoteRushDisplay from './NoteRushDisplay.vue'
 const selectedRangeIndex = ref(4)
 const selectedHoldDurationSec = ref(0.05)
 const selectedGameDurationSec = ref(10)
+const selectedDifficulty = ref<Difficulty>('easy')
 
 const selectedNote = ref<NoteName>('B')
 const selectedOctave = ref(3)
@@ -63,6 +65,7 @@ const overridePreviewFrequency = computed(() => {
     v-model:rangeIndex="selectedRangeIndex"
     v-model:holdDurationSec="selectedHoldDurationSec"
     v-model:gameDurationSec="selectedGameDurationSec"
+    v-model:difficulty="selectedDifficulty"
   >
     <div
       class="flex w-full flex-wrap items-end gap-4 rounded-lg bg-(--p-content-background) p-4"

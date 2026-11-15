@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { Difficulty } from '@/constants/difficulty'
 import type { RecordResult } from '@/stores/useHighScoreStore'
 import type { GameSummary } from './useNoteRush'
 
@@ -6,6 +7,7 @@ type Props = {
   score: number
   totalTargets: number
   durationSec: number
+  difficulty: Difficulty
   elapsedSeconds: string
   voiceRangeLabel: string
   voiceRangeNoteRange: string
@@ -53,7 +55,10 @@ const isCelebrated = computed(
     </div>
     <p class="text-center text-sm text-(--p-text-muted-color)">
       <span class="text-(--p-text-color) tabular-nums">
-        {{ voiceRangeLabel }} ({{ voiceRangeNoteRange }})
+        <span data-testid="note-rush-difficulty">{{
+          $t(`generic.difficulty_${difficulty}`)
+        }}</span>
+        · {{ voiceRangeLabel }} ({{ voiceRangeNoteRange }})
       </span>
     </p>
 

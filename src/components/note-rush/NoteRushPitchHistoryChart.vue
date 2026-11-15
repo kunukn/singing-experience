@@ -24,6 +24,7 @@ type Props = {
   previewNoteLabel?: string | null
   previewFrequency?: number | null
   targets?: GameTarget[]
+  hitToleranceCents: number
   simplifyChart?: boolean
   /* A finished round is on the chart, so it can be scrolled back through */
   isReviewable?: boolean
@@ -206,6 +207,7 @@ defineExpose({ gridNoteCount, getSamples, getTargetViewportOrigin })
       :previewNoteLabel="props.previewNoteLabel"
       :previewFrequency="props.previewFrequency"
       :targets="props.targets"
+      :hitToleranceCents="props.hitToleranceCents"
       :simplifyChart="props.simplifyChart"
       :isRtl="isRtl"
       :viewOffsetMs="viewOffsetMs"

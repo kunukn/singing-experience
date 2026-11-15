@@ -17,6 +17,7 @@ declare global {
   const DEFAULT_STARTING_SEMITONE_OFFSET: typeof import('./composables/useDoReMiGame').DEFAULT_STARTING_SEMITONE_OFFSET
   const EffectScope: typeof import('vue').EffectScope
   const GRACE_PERIOD_MS: typeof import('./composables/useDoReMiGame').GRACE_PERIOD_MS
+  const HIGH_SCORE_CONFIG_FIELDS: typeof import('./stores/useHighScoreStore').HIGH_SCORE_CONFIG_FIELDS
   const HIGH_SCORE_GAMES: typeof import('./stores/useHighScoreStore').HIGH_SCORE_GAMES
   const HOLD_DURATION_MS: typeof import('./composables/useDoReMiGame').HOLD_DURATION_MS
   const MAX_CENTS_DEVIATION: typeof import('./composables/useDoReMiGame').MAX_CENTS_DEVIATION
@@ -221,6 +222,7 @@ declare module 'vue' {
     readonly DEFAULT_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['DEFAULT_CLARITY_THRESHOLD']>
     readonly DEFAULT_PREVIEW_ENABLED: UnwrapRef<typeof import('./composables/useSettings')['DEFAULT_PREVIEW_ENABLED']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly HIGH_SCORE_CONFIG_FIELDS: UnwrapRef<typeof import('./stores/useHighScoreStore')['HIGH_SCORE_CONFIG_FIELDS']>
     readonly HIGH_SCORE_GAMES: UnwrapRef<typeof import('./stores/useHighScoreStore')['HIGH_SCORE_GAMES']>
     readonly MAX_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['MAX_CLARITY_THRESHOLD']>
     readonly MAX_FREQUENCY: UnwrapRef<typeof import('./composables/usePitchDetection')['MAX_FREQUENCY']>

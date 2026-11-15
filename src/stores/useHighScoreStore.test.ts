@@ -3,10 +3,13 @@ import { nextTick } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
 
 import {
+  HIGH_SCORE_CONFIG_FIELDS,
+  HIGH_SCORE_GAMES,
   highScoreKey,
   isBetter,
   useHighScoreStore,
   type HighScore,
+  type HighScoreConfig,
   type HighScoreInput,
 } from './useHighScoreStore'
 
@@ -169,11 +172,13 @@ describe('useHighScoreStore', () => {
   })
 
   test('should keep scores saved under a renamed program key', () => {
-    const config = { durationSec: 20, holdSec: 0.1 }
+    const config = { difficulty: 'easy', durationSec: 20, holdSec: 0.1 }
     const legacy = { ...createScore({ config }), game: 'pitchGame' }
     localStorage.setItem(
       'syng.highScores',
-      JSON.stringify({ 'pitchGame|durationSec=20,holdSec=0.1': legacy }),
+      JSON.stringify({
+        'pitchGame|difficulty=easy,durationSec=20,holdSec=0.1': legacy,
+      }),
     )
 
     const store = useHighScoreStore()
@@ -182,6 +187,33 @@ describe('useHighScoreStore', () => {
       createScore({ game: 'noteRush', config }),
     )
     expect(store.allScores).toHaveLength(1)
+  })
+
+  test.each<{ name: string; config: HighScoreConfig }>([
+    { name: 'a setting missing', config: { durationSec: 20, holdSec: 0.1 } },
+    {
+      name: 'a setting the game no longer has',
+      config: { difficulty: 'easy', durationSec: 20, holdSec: 0.1, speed: 1 },
+    },
+  ])('should delete a stored score with $name', async ({ config }) => {
+    const fitting = createScore()
+    const stale = createScore({ game: 'noteRush', config })
+    localStorage.setItem(
+      'syng.highScores',
+      JSON.stringify({ fitting, [highScoreKey('noteRush', config)]: stale }),
+    )
+
+    const store = useHighScoreStore()
+    await nextTick()
+
+    expect(store.allScores).toEqual([fitting])
+    expect(localStorage.getItem('syng.highScores')).not.toContain('noteRush')
+  })
+
+  test('should list the saved settings of every game', () => {
+    expect(Object.keys(HIGH_SCORE_CONFIG_FIELDS).toSorted()).toEqual(
+      [...HIGH_SCORE_GAMES].toSorted(),
+    )
   })
 
   test('should recover from a stored value that is not an object', () => {

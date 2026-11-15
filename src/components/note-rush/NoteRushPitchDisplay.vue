@@ -14,6 +14,7 @@ type Props = {
   previewFrequency?: number | null
   highlightedMidi?: number | null
   targets?: GameTarget[]
+  hitToleranceCents: number
   simplifyChart?: boolean
   isReviewable?: boolean
 }
@@ -59,6 +60,7 @@ defineExpose({ getTargetViewportOrigin })
       :previewFrequency="props.previewFrequency"
       :highlightedMidi="props.highlightedMidi"
       :targets="props.targets"
+      :hitToleranceCents="props.hitToleranceCents"
       :simplifyChart="props.simplifyChart"
       :isReviewable="props.isReviewable"
       @tonePlayed="emit('tonePlayed')"
