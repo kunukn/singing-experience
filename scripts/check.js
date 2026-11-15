@@ -30,7 +30,10 @@ const tasks = [
   {
     name: 'Lint',
     cmd: localBin('oxlint'),
-    args: ['src'],
+    /* Warning budget: the current warning count, so new warnings fail the
+     * pre-push hook. Keep in step with scripts/lint-with-timing.js and the
+     * lint-staged entry in package.json. */
+    args: ['--max-warnings=0', 'src'],
   },
   {
     /* Unused files and dependencies. --production is required — see knip.jsonc. */

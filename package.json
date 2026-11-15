@@ -101,7 +101,8 @@
   },
   "homepage": "https://github.com/kunukn/singing-experience#readme",
   "lint-staged": {
-    "*": "oxfmt --no-error-on-unmatched-pattern"
+    "*": "oxfmt --no-error-on-unmatched-pattern",
+    "src/**/*.{ts,vue}": "oxlint --max-warnings=0"
   },
   "allowScripts": {
     "fsevents": false

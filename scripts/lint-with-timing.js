@@ -19,7 +19,8 @@ const localBin = (name) => {
 
 const startTime = performance.now()
 
-const oxlint = spawn(localBin('oxlint'), ['src'], {
+/* Same warning budget as the Lint step in scripts/check.js. */
+const oxlint = spawn(localBin('oxlint'), ['--max-warnings=0', 'src'], {
   stdio: ['inherit', 'inherit', 'inherit'],
   shell: isWin,
 })

@@ -31,7 +31,7 @@ This project is licensed under [0BSD](LICENSE) — essentially "do what you want
 1. Open an issue first to discuss the change — this avoids wasted effort on PRs that won't be merged.
 2. Follow the existing code style and conventions (see `AGENTS.md` for details).
 3. Use [Conventional Commits](https://www.conventionalcommits.org/) for your commit messages (`fix:`, `refactor:`, `perf:`, `docs:`, etc.). A `commit-msg` hook runs commitlint and rejects messages that don't follow the format.
-4. Run `npm run check` to verify your changes don't introduce errors. (Pre-commit auto-formats staged files; pre-push runs `check` automatically.)
+4. Run `npm run check` to verify your changes don't introduce errors. (Pre-commit auto-formats staged files and lints staged `src` files; pre-push runs `check` automatically. Lint allows zero warnings in both.)
 5. Fill out the PR template completely.
 
 ## Development Setup
@@ -71,7 +71,7 @@ When adding a new script to `package.json`, follow these rules so the list stays
 - `npm run test:watch` — Run tests in watch mode
 - `npm run test:ui` — Run tests with the Vitest UI
 - `npm run check` — Run all pre-push checks (typecheck + lint + knip unused-file/dependency scan + tests + build + validate) in parallel. Pre-push runs this automatically; humans run it manually only when verifying before pushing.
-- `npm run check:fix` — Format then run `check`. Intended for AI/agent workflows that bypass the husky hooks — agents should run this before handing control back. Humans normally don't need it: pre-commit auto-formats staged files via lint-staged, and pre-push runs `check`.
+- `npm run check:fix` — Format then run `check`. Intended for AI/agent workflows that bypass the husky hooks — agents should run this before handing control back. Humans normally don't need it: pre-commit auto-formats and lints staged files via lint-staged, and pre-push runs `check`.
 - `npm run deploy` — Deploy `dist/` to the `gh-pages` branch
 
 ## License
