@@ -61,7 +61,6 @@ declare module 'vue' {
     GraceKellyRollCanvas: typeof import('./components/grace-kelly/GraceKellyRollCanvas.vue')['default']
     GraceKellyRollChart: typeof import('./components/grace-kelly/GraceKellyRollChart.vue')['default']
     GraceKellySettingsRow: typeof import('./components/grace-kelly/GraceKellySettingsRow.vue')['default']
-    GraceKellySheet: typeof import('./components/grace-kelly/GraceKellySheet.vue')['default']
     GraceKellySingDisplay: typeof import('./components/grace-kelly/GraceKellySingDisplay.vue')['default']
     GraceKellySingSheet: typeof import('./components/grace-kelly/GraceKellySingSheet.vue')['default']
     GuitarDisplay: typeof import('./components/guitar/GuitarDisplay.vue')['default']

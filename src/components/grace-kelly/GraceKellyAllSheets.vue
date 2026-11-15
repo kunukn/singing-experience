@@ -298,7 +298,7 @@ async function renderSheets() {
    * the centered title would be off-screen. On desktop, where the midpoint stays
    * in view, keep abcjs's centered default. Re-evaluated on every resize re-render.
    * Injected here (not in the shared builder) to match the per-component title
-   * handling in GraceKellySheet / GraceKellySingSheet. */
+   * handling in GraceKellySingSheet. */
   const visibleWidth = scrollRef.value?.clientWidth ?? sharedWidth
   /* Bias the flip earlier by ~10 characters: the title is anchored from its
    * middle, so when its center lands just inside the right edge the right half
