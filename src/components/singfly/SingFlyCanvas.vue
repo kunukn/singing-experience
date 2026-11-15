@@ -66,12 +66,15 @@ type Props = {
    * delay (normally it's idle / delayed-crashed only), so the pitch-true
    * line can be eyeballed against the bird/hitboxes while playing/scrubbing. */
   alwaysShowPreviewLine?: boolean
-  /* Cents-colour the preview line like every program's idle preview, and
-   * write the cents beside its note name — the idle screen only; with Snap
-   * on it sits at 0¢, reads green and says ≈0¢. After a crash it stays
-   * orange and unsigned: drawn against the pipe that killed the bird, green
-   * would read as "you'd have made it". */
+  /* Cents-colour the preview line like every program's idle preview — the
+   * idle screen only; with Snap on it sits at 0¢ and reads green. After
+   * a crash it stays orange: drawn against the pipe that killed the bird,
+   * green would read as "you'd have made it". */
   shouldColorByCents?: boolean
+  /* Write the cents beside the preview line's note name ("G3 +12¢"). Only
+   * applies while shouldColorByCents is on, and is off with Snap: a snapped
+   * pitch always reads ≈0¢, which would claim the singer is in tune. */
+  shouldShowCents?: boolean
   /* Where the bird perches when there is no pitch (idle screen with preview
    * off): the bird is drawn here instead of being hidden, so it is never
    * invisible. Also the Y for the idle perch board. */
@@ -113,6 +116,7 @@ const props = withDefaults(defineProps<Props>(), {
   previewLineFrequency: null,
   alwaysShowPreviewLine: false,
   shouldColorByCents: false,
+  shouldShowCents: false,
   cheatButtons: false,
   crashCause: null,
 })
@@ -1110,7 +1114,7 @@ function drawPreviewLine(
    * the note letter, so it stays left-to-right in an RTL canvas too. */
   const noteLabel = midiToNoteLabel(rounded).label
   let labelText = noteLabel
-  if (cents != null) {
+  if (cents != null && props.shouldShowCents) {
     const centsText = isNearZeroCents(cents)
       ? NEAR_ZERO_CENTS_TEXT
       : `${cents > 0 ? '+' : ''}${cents}¢`
