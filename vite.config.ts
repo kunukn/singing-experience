@@ -76,8 +76,7 @@ function emitSitemap(env: Record<string, string>) {
 export default defineConfig(({ command, mode }) => {
   // Load env file based on `mode` in the current working directory.
   const env = loadEnv(mode, process.cwd(), '')
-
-  console.debug('*** Code Inspector: ', env.VITE_CODE_INSPECTOR)
+  const isCodeInspectorEnabled = ['1', 'true'].includes(env.VITE_CODE_INSPECTOR)
 
   return {
     /*
@@ -104,9 +103,21 @@ export default defineConfig(({ command, mode }) => {
     },
     plugins: [
       // Combination keys for Mac are Option + Shift; for Windows, it's Alt + Shift
-      ...(['1', 'true'].includes(env.VITE_CODE_INSPECTOR)
+      ...(isCodeInspectorEnabled
         ? [CodeInspectorPlugin({ bundler: 'vite', escapeTags: [] })]
         : []),
+      /* Report the inspector state only when a dev server starts. Logging at
+       * config load printed it on every build, test run and knip pass, and
+       * knip loads this config several times. */
+      {
+        name: 'log-code-inspector-state',
+        apply: 'serve',
+        configureServer(server) {
+          server.config.logger.info(
+            `Code Inspector: ${isCodeInspectorEnabled ? 'on' : 'off'}`,
+          )
+        },
+      },
 
       /* Dev-only: this plugin opens an inspector server and has been observed
        * to occasionally stall `vite build` in non-TTY environments (pre-push). */
