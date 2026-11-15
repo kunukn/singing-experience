@@ -161,23 +161,29 @@ const selectedRange = computed(() => VOICE_RANGES[rangeIndex.value])
 
 const { fireConfetti, fireFireworks } = useConfettiStore()
 
-/* Use the chart's visible grid notes for sequence playback */
-const rangeNotes = computed(() => {
+/* The preview plays only the range's ends, lowest then highest — every grid
+ * note in a row is too much. The grid always includes both ends. */
+const previewNotes = computed(() => {
   const notes = chartRef.value?.gridNotes ?? []
+  if (notes.length === 0) return []
 
-  return notes.map((n) => ({
+  return [notes[0], notes[notes.length - 1]]
+})
+
+const rangeNotes = computed(() =>
+  previewNotes.value.map((n) => ({
     solfege: '',
     note: n.note,
     octave: n.octave,
-  }))
-})
+  })),
+)
 
 const highlightedMidi = computed(() => {
-  const idx = currentPlayingIndex.value
-  const notes = chartRef.value?.gridNotes ?? []
-  if (idx < 0 || idx >= notes.length) return null
+  const index = currentPlayingIndex.value
+  const notes = previewNotes.value
+  if (index < 0 || index >= notes.length) return null
 
-  const n = notes[idx]
+  const n = notes[index]
   const noteIndex = NOTE_NAMES.indexOf(n.note)
 
   return (n.octave + 1) * 12 + noteIndex
