@@ -144,7 +144,6 @@ export const tools: Program[] = [
     icon: ProgramScaleDetectorIcon,
     route: '/scale-detector',
     section: 'learnMusic',
-    stage: 'beta',
   },
   {
     key: 'voiceRecorder',
