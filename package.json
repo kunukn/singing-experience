@@ -102,7 +102,7 @@
   "homepage": "https://github.com/kunukn/singing-experience#readme",
   "lint-staged": {
     "*": "oxfmt --no-error-on-unmatched-pattern",
-    "src/**/*.{ts,vue}": "oxlint --max-warnings=0"
+    "src/**/*.{ts,vue}": "node scripts/lint-with-timing.js"
   },
   "allowScripts": {
     "fsevents": false

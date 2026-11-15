@@ -454,6 +454,7 @@ If `.temp/` does not exist, create it first.
 - ✅ Use Tailwind CSS for styling as the default choice
 - ✅ Follow Conventional Commits for commit messages
 - ✅ Run `npm run check:fix` as the final step to verify no errors
+- ✅ Keep lint at zero warnings — fix a new warning, or turn its rule off in `.oxlintrc.json` with a comment saying why. Never bypass the hooks with `--no-verify` or add a warning limit
 - ✅ Add a blank line after single-line `return` statements
 - ✅ Use `/* */` for multiline comments, `//` for single-line only
 - ✅ Comment magic numbers and complex patterns that are hard to reason about without context
