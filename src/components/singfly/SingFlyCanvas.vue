@@ -670,13 +670,18 @@ function drawBird(
     : roundedMidi > props.midiMax
       ? -OUT_OF_RANGE_LABEL_NUDGE
       : OUT_OF_RANGE_LABEL_NUDGE
-  ctx.font = 'bold 13px monospace'
-  ctx.textAlign = props.isRtl ? 'start' : 'end'
-  ctx.textBaseline = 'middle'
-  ctx.fillStyle = labelColor
-  const labelX = x + -beakSign * (BIRD_RADIUS + LABEL_GAP)
-  /* Nudge label down to optically center against the bird body. */
-  ctx.fillText(label, labelX, y + 1 + outOfRangeOffset)
+  /* While idle with the preview line on, the line sits on the bird and names
+   * the same note in its pitch colour; a second label would only repeat it. */
+  const isNamedByPreviewLine = props.phase === 'idle' && isPreviewLineVisible()
+  if (!isNamedByPreviewLine) {
+    ctx.font = 'bold 13px monospace'
+    ctx.textAlign = props.isRtl ? 'start' : 'end'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = labelColor
+    const labelX = x + -beakSign * (BIRD_RADIUS + LABEL_GAP)
+    /* Nudge label down to optically center against the bird body. */
+    ctx.fillText(label, labelX, y + 1 + outOfRangeOffset)
+  }
 
   /* Anchor the death burst at the drawn bird center, so shards spray from
    * where the player last saw it. */
@@ -908,31 +913,32 @@ function startDeathAnim() {
  * Fractional MIDI from frequency for sub-semitone precision (same source
  * liveBirdMidi uses). Alphas run a touch stronger than DoReMiScaleItem's
  * /25–/80 because this canvas is far busier than that list. */
+/* Whether the preview line is drawn this frame. Shared with drawBird, which
+ * drops its own note label while the idle line already names the note. */
+function isPreviewLineVisible(): boolean {
+  if (props.previewLineMidi == null) return false
+  /* Test page bypass: draw in every phase, no crash delay. */
+  if (props.alwaysShowPreviewLine) return true
+  /* Idle preview: show immediately, in step with the moving bird. */
+  if (props.phase === 'idle') return true
+  /* Hold back until the death moment has registered (burst settled). */
+  if (props.phase === 'crashed') {
+    return (
+      crashStartedAt != null &&
+      performance.now() - crashStartedAt >= CRASH_PREVIEW_DELAY_MS
+    )
+  }
+
+  return false // playing / won: no line
+}
+
 function drawPreviewLine(
   ctx: CanvasRenderingContext2D,
   geom: ChartGeometry,
   height: number,
 ) {
-  if (props.previewLineMidi == null) return
+  if (props.previewLineMidi == null || !isPreviewLineVisible()) return
 
-  /* Test page bypass: draw in every phase, no crash delay. */
-  if (!props.alwaysShowPreviewLine) {
-    if (props.phase === 'idle') {
-      /* Idle preview: show immediately, in step with the moving bird. */
-    } else if (props.phase === 'crashed') {
-      /* Hold back until the death moment has registered (burst settled). */
-      if (
-        crashStartedAt == null ||
-        performance.now() - crashStartedAt < CRASH_PREVIEW_DELAY_MS
-      ) {
-        return
-      }
-    } else {
-      return // playing / won: no line
-    }
-  }
-
-  /* previewLineMidi is non-null here (guarded above). */
   const midi = resolveEffectiveMidi(
     props.previewLineMidi,
     props.previewLineFrequency,
@@ -1168,12 +1174,16 @@ function drawChart() {
   drawRangeLabels(ctx, geom, height)
   if (props.phase === 'idle') drawPerchBoard(ctx, geom, height)
   drawTrace(ctx, geom, height, now)
+  /* While idle the line follows the bird, so it goes behind: the bird covers
+   * the line's dot instead of wearing it. */
+  const isPreviewLineBehindBird = props.phase === 'idle'
+  if (isPreviewLineBehindBird) drawPreviewLine(ctx, geom, height)
   drawBird(ctx, geom, height, now)
   drawHitboxes(ctx, geom, width, height, now, field)
   drawDeathOverlay(ctx, width, height)
   /* After the death overlay so it stays readable through and after the
    * transient crash burst. */
-  drawPreviewLine(ctx, geom, height)
+  if (!isPreviewLineBehindBird) drawPreviewLine(ctx, geom, height)
 
   /* Diagnostic: once-per-second dump of the actual rendered state (covers the
    * post-death 'complete' frame — the bug window — but not idle). */
