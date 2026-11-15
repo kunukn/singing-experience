@@ -202,7 +202,7 @@ declare global {
   export type { SimulatedSingerLaneId, SimulatedSingerState, SimulatedSinger } from './composables/useSimulatedSingers'
   import('./composables/useSimulatedSingers')
   // @ts-ignore
-  export type { VoiceRangeOption, VoiceRangeGroup, VoiceRangeGroupsOptions } from './composables/useVoiceRangeGroups'
+  export type { VoiceRangeOption, VoiceRangeGroup } from './composables/useVoiceRangeGroups'
   import('./composables/useVoiceRangeGroups')
   // @ts-ignore
   export type { DecoratedVoiceTypeSegment, VoiceTypeSegmentsOptions } from './composables/useVoiceTypeSegments'

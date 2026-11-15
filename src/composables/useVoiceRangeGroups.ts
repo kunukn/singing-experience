@@ -16,30 +16,17 @@ export type VoiceRangeGroup = {
   items: VoiceRangeOption[]
 }
 
-export type VoiceRangeGroupsOptions = {
-  /* Restricts what can be offered — warm-up hides the full range. */
-  allowedIndices?: readonly number[]
-}
-
 /**
  * The grouped options for a voice-range select, shared by every page that offers
  * one, so they can never disagree about which groups exist or their order.
  *
- * Groups left empty by `allowedIndices` are dropped, so a subset never renders a
- * heading with nothing under it.
+ * Empty groups are dropped, so a heading never renders with nothing under it.
  */
-export function useVoiceRangeGroups(
-  options: VoiceRangeGroupsOptions | (() => VoiceRangeGroupsOptions) = {},
-) {
+export function useVoiceRangeGroups() {
   const { t } = useI18n()
 
   return computed<VoiceRangeGroup[]>(() => {
-    const { allowedIndices } = toValue(options)
-
-    const entries = VOICE_RANGES.map((range, index) => ({
-      range,
-      index,
-    })).filter(({ index }) => !allowedIndices || allowedIndices.includes(index))
+    const entries = VOICE_RANGES.map((range, index) => ({ range, index }))
 
     return VOICE_RANGE_GROUP_ORDER.map((groupId) => ({
       id: groupId,

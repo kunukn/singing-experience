@@ -23,8 +23,6 @@ const LEGACY_RANGE_ORDER = [
 ] as const
 
 type VoiceRangeIndexOptions = {
-  /* Restricts what can be selected — warm-up hides the full range. */
-  allowedIndices?: readonly number[]
   /* labelKey picked when nothing valid is stored; the app default otherwise. */
   defaultLabelKey?: string
 }
@@ -57,35 +55,12 @@ export function useVoiceRangeIndex(
     return index === -1 ? defaultIndex : index
   }
 
-  /*
-   * Normalise on load so legacy numeric values are rewritten as labelKeys.
-   * Never clamp through allowedIndices here — storageKey is often shared
-   * across features, and a page with a narrower allowedIndices must not
-   * overwrite what another page selected just because it doesn't fit here.
-   */
+  /* Normalise on load so legacy numeric values are rewritten as labelKeys. */
   storedLabelKey.value =
     VOICE_RANGES[resolveStoredIndex(storedLabelKey.value)].labelKey
 
-  /* The fallback has to be something the caller actually offers, otherwise the
-   * select renders blank while the game runs on an unlisted range. */
-  const resolveFallbackIndex = (): number => {
-    const { allowedIndices } = options
-    if (!allowedIndices || allowedIndices.includes(defaultIndex))
-      return defaultIndex
-
-    return allowedIndices[0] ?? defaultIndex
-  }
-
-  const resolveIndex = (stored: unknown): number => {
-    const index = resolveStoredIndex(stored)
-    if (options.allowedIndices && !options.allowedIndices.includes(index))
-      return resolveFallbackIndex()
-
-    return index
-  }
-
   return computed<number>({
-    get: () => resolveIndex(storedLabelKey.value),
+    get: () => resolveStoredIndex(storedLabelKey.value),
     set: (index) => {
       storedLabelKey.value = (
         VOICE_RANGES[index] ?? VOICE_RANGES[defaultIndex]
