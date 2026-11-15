@@ -15,6 +15,21 @@ export const HOVER_BOB_PX = 2
 export const BLINK_PERIOD_MS = 3500
 export const BLINK_MS = 120
 
+/* ms — time constant the bird's vertical speed is smoothed with. The bird
+ * crosses an interval in under 100ms, too brief to see a tilt; smoothed, the
+ * tilt builds during the move and settles over the next quarter second. */
+export const TILT_SMOOTHING_MS = 120
+/* rad — the furthest the bird noses up or down (about 20°). */
+export const MAX_TILT = 0.35
+/* rad per px/ms — a two-semitone step peaks near 10°, a big leap hits the cap. */
+const TILT_PER_SPEED = 1.2
+/* Share of the level-flight wing swing: a descending bird glides on shallow
+ * beats, a climbing one beats hard. */
+const MIN_FLAP_STRENGTH = 0.25
+const MAX_FLAP_STRENGTH = 1.5
+/* Per px/ms — the same two-semitone climb adds about 40% to the swing. */
+const FLAP_STRENGTH_PER_SPEED = 3
+
 /** Where the wing is in its beat: 1 = raised, -1 = fully down. */
 export function wingLift(now: number): number {
   return Math.cos((now / FLAP_PERIOD_MS) * Math.PI * 2)
@@ -27,6 +42,33 @@ export function wingLift(now: number): number {
  */
 export function hoverBobOffset(now: number): number {
   return HOVER_BOB_PX * wingLift(now)
+}
+
+/**
+ * Eases the smoothed vertical speed (px/ms, + is downward) toward the speed
+ * measured over the last `dtMs`.
+ */
+export function smoothVelocity(
+  previous: number,
+  instant: number,
+  dtMs: number,
+): number {
+  return (
+    previous + (instant - previous) * (1 - Math.exp(-dtMs / TILT_SMOOTHING_MS))
+  )
+}
+
+/** rad to rotate a right-facing bird: negative noses up, for a climb. */
+export function tiltFromVelocity(velocity: number): number {
+  return Math.max(-MAX_TILT, Math.min(MAX_TILT, velocity * TILT_PER_SPEED))
+}
+
+/** Multiplier on the wing swing: above 1 while climbing, below while sinking. */
+export function flapStrength(velocity: number): number {
+  return Math.max(
+    MIN_FLAP_STRENGTH,
+    Math.min(MAX_FLAP_STRENGTH, 1 - velocity * FLAP_STRENGTH_PER_SPEED),
+  )
 }
 
 export function isBlinking(now: number): boolean {

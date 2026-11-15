@@ -5,8 +5,13 @@ import {
   BLINK_PERIOD_MS,
   FLAP_PERIOD_MS,
   HOVER_BOB_PX,
+  MAX_TILT,
+  TILT_SMOOTHING_MS,
+  flapStrength,
   hoverBobOffset,
   isBlinking,
+  smoothVelocity,
+  tiltFromVelocity,
   wingLift,
 } from './singFlyEffects'
 import { BIRD_RADIUS } from './singFlyGeometry'
@@ -34,6 +39,31 @@ describe('singFlyEffects', () => {
 
   test('should repeat the wing beat every period', () => {
     expect(wingLift(130 + FLAP_PERIOD_MS)).toBeCloseTo(wingLift(130), 5)
+  })
+
+  test('should ease the speed toward the measured one without overshooting', () => {
+    const afterOneConstant = smoothVelocity(0, 1, TILT_SMOOTHING_MS)
+
+    /* One time constant covers 1 - 1/e of the way */
+    expect(afterOneConstant).toBeCloseTo(1 - 1 / Math.E, 5)
+    expect(smoothVelocity(0, 1, 0)).toBe(0)
+    expect(smoothVelocity(0, 1, 10_000)).toBeCloseTo(1, 5)
+  })
+
+  test('should nose up for a climb, down for a descent, and cap the tilt', () => {
+    expect(tiltFromVelocity(0)).toBe(0)
+    expect(tiltFromVelocity(-0.1)).toBeLessThan(0)
+    expect(tiltFromVelocity(0.1)).toBeGreaterThan(0)
+    expect(tiltFromVelocity(-5)).toBe(-MAX_TILT)
+    expect(tiltFromVelocity(5)).toBe(MAX_TILT)
+  })
+
+  test('should beat harder while climbing and glide while sinking', () => {
+    expect(flapStrength(0)).toBe(1)
+    expect(flapStrength(-0.1)).toBeGreaterThan(1)
+    expect(flapStrength(0.1)).toBeLessThan(1)
+    expect(flapStrength(5)).toBeGreaterThan(0)
+    expect(flapStrength(-5)).toBeLessThan(2)
   })
 
   test('should blink briefly once per blink period', () => {

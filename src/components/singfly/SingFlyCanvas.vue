@@ -24,7 +24,12 @@ import {
   type ChartGeometry,
   type Playfield,
 } from './singFlyGeometry'
-import { hoverBobOffset } from './singFlyEffects'
+import {
+  flapStrength,
+  hoverBobOffset,
+  smoothVelocity,
+  tiltFromVelocity,
+} from './singFlyEffects'
 import type { CrashCause, SingFlyPhase } from './singFlyMachine'
 import { drawBirdSprite } from './singFlySprites'
 import type { GameTarget } from './useSingFly'
@@ -217,6 +222,14 @@ let traceLabels: { time: number; midi: number; label: string }[] = []
 let sustainedMidi: number | null = null
 let sustainedStartTime = 0
 let sustainedLabelEmitted = false
+
+/* The bird's smoothed vertical speed (px/ms, + is downward), measured between
+ * frames to tilt the bird and size its wing beats. Visual only. */
+let birdSpeedSample: { y: number; time: number } | null = null
+let birdVelocity = 0
+/* ms — a longer gap between frames means the loop was stopped; the distance
+ * covered meanwhile says nothing about the bird's speed now. */
+const BIRD_SPEED_MAX_GAP_MS = 250
 
 let deathAnim: DeathAnim | null = null
 let deathTriggeredThisRound = false
@@ -513,12 +526,43 @@ function drawBird(
   const drawnY = isPerched || !isAnimated ? y : y + hoverBobOffset(now)
   const beakSign = props.isRtl ? -1 : 1
 
+  /* Measured on the true height, not the bobbing one. A frame drawn again at
+   * the same `now` (frozen crash frame, death loop) keeps the last speed, so
+   * the bird freezes mid-tilt; a backward scrub or a stopped loop restarts
+   * the measurement. */
+  const sampleGapMs = birdSpeedSample ? now - birdSpeedSample.time : 0
+  if (
+    birdSpeedSample === null ||
+    sampleGapMs < 0 ||
+    sampleGapMs > BIRD_SPEED_MAX_GAP_MS
+  ) {
+    birdVelocity = 0
+    birdSpeedSample = { y, time: now }
+  } else if (sampleGapMs > 0) {
+    birdVelocity = smoothVelocity(
+      birdVelocity,
+      (y - birdSpeedSample.y) / sampleGapMs,
+      sampleGapMs,
+    )
+    birdSpeedSample = { y, time: now }
+  }
+
+  /* The beak opens while a pitch is sung: the detected note while playing, the
+   * preview pitch that lifts the bird off the perch while idle. */
+  const isSinging =
+    props.phase === 'playing'
+      ? props.currentRawMidi != null
+      : props.phase === 'idle' && sungBirdMidi != null
+
   drawBirdSprite(ctx, {
     x,
     y: drawnY,
     facing: beakSign,
     pose: isPerched ? 'perched' : 'flying',
     isCrashed: props.phase === 'crashed',
+    isSinging,
+    tilt: isPerched ? 0 : tiltFromVelocity(birdVelocity),
+    flapStrength: flapStrength(birdVelocity),
     now,
     isAnimated,
   })
@@ -1128,6 +1172,8 @@ watch(
       sustainedMidi = null
       sustainedStartTime = 0
       sustainedLabelEmitted = false
+      birdSpeedSample = null
+      birdVelocity = 0
       pausedAt = null
       crashStartedAt = null
     }

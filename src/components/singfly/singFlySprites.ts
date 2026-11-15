@@ -16,6 +16,12 @@ type BirdSpriteParams = {
   facing: 1 | -1
   pose: BirdPose
   isCrashed: boolean
+  /* Beak open: a pitch is being sung right now */
+  isSinging: boolean
+  /* rad — nose up (-) or down (+), from the bird's vertical speed */
+  tilt: number
+  /* Multiplier on the wing swing, from the bird's vertical speed */
+  flapStrength: number
   /* The canvas clock, for the wing beat and the blink */
   now: number
   /* false under reduced motion: draw the settled pose */
@@ -49,6 +55,8 @@ export function drawBirdSprite(
   ctx.save()
   ctx.translate(params.x, params.y)
   ctx.scale(params.facing, 1)
+  /* After the mirror, so nose-up stays nose-up when the bird faces left */
+  ctx.rotate(isAnimated ? params.tilt : 0)
   ctx.lineJoin = 'round'
 
   /* Tail first, so the body overlaps its root */
@@ -73,7 +81,9 @@ export function drawBirdSprite(
    * lifts its tip, since the wing points along -x. */
   let wingAngle = WING_FOLDED_ANGLE
   if (pose === 'flying') {
-    wingAngle = isAnimated ? WING_SWING * wingLift(now) : 0
+    wingAngle = isAnimated
+      ? WING_SWING * params.flapStrength * wingLift(now)
+      : 0
   }
   ctx.save()
   ctx.translate(SHOULDER_X, SHOULDER_Y)
@@ -94,13 +104,19 @@ export function drawBirdSprite(
   ctx.stroke()
   ctx.restore()
 
-  /* Eye: a dot, or a short closed line during a blink */
+  /* Eye: a dot, a cross once crashed, or a short closed line during a blink */
   ctx.fillStyle = FACE_COLOR
   ctx.strokeStyle = FACE_COLOR
   ctx.lineWidth = 1.5
   ctx.lineCap = 'round'
   ctx.beginPath()
-  if (isAnimated && !params.isCrashed && isBlinking(now)) {
+  if (params.isCrashed) {
+    ctx.moveTo(1.5, -3.5)
+    ctx.lineTo(4.5, -0.5)
+    ctx.moveTo(4.5, -3.5)
+    ctx.lineTo(1.5, -0.5)
+    ctx.stroke()
+  } else if (isAnimated && isBlinking(now)) {
     ctx.moveTo(1.5, -2)
     ctx.lineTo(4.5, -2)
     ctx.stroke()
@@ -113,10 +129,22 @@ export function drawBirdSprite(
    * the pipe that killed the bird. */
   ctx.fillStyle = params.isCrashed ? BODY_STROKE : BEAK_FILL
   ctx.beginPath()
-  ctx.moveTo(BIRD_RADIUS + 5, 0) // tip points outward
-  ctx.lineTo(BIRD_RADIUS, -2) // base flush to body
-  ctx.lineTo(BIRD_RADIUS, 2)
-  ctx.closePath()
+  if (params.isSinging && !params.isCrashed) {
+    /* Open: the two halves part around the beak line */
+    ctx.moveTo(BIRD_RADIUS, -3.5)
+    ctx.lineTo(BIRD_RADIUS + 5, -2.5)
+    ctx.lineTo(BIRD_RADIUS, -0.5)
+    ctx.closePath()
+    ctx.moveTo(BIRD_RADIUS, 0.5)
+    ctx.lineTo(BIRD_RADIUS + 4, 2.5)
+    ctx.lineTo(BIRD_RADIUS, 3.5)
+    ctx.closePath()
+  } else {
+    ctx.moveTo(BIRD_RADIUS + 5, 0) // tip points outward
+    ctx.lineTo(BIRD_RADIUS, -2) // base flush to body
+    ctx.lineTo(BIRD_RADIUS, 2)
+    ctx.closePath()
+  }
   ctx.fill()
 
   ctx.restore()
