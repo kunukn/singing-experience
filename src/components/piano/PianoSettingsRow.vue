@@ -73,9 +73,10 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     :class="{ 'mask-start': canScrollStart, 'mask-end': canScrollEnd }"
   >
     <div class="settings-item">
-      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
-        t('generic.voiceRange')
-      }}</label>
+      <label
+        class="hidden text-end text-sm text-(--p-text-muted-color) md:block"
+        >{{ t('generic.voiceRange') }}</label
+      >
       <VoiceRangeSelect v-model:rangeIndex="rangeIndex" />
     </div>
 
