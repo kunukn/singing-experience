@@ -116,7 +116,7 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
   /* The single source of truth for the round lifecycle. Side-effects (mic,
    * RAF tick, confetti) live in the imperative wrappers below and in the
    * Display's watchers, not in the machine — it stays pure. */
-  const { snapshot, send } = useMachine(doReMiMachine)
+  const { snapshot, send, actorRef } = useMachine(doReMiMachine)
   const phase = computed<DoReMiPhase>(() => snapshot.value.value as DoReMiPhase)
   const gameState = phase
   const isIdle = computed(() => phase.value === 'idle')
@@ -261,8 +261,9 @@ export function useDoReMiGame(options: DoReMiGameOptions = {}) {
     /* RESET is the universal teardown — returns to idle from playing AND
      * complete (STOP only covers playing). Skip if the actor is no longer
      * active: on unmount @xstate/vue stops it before our onUnmounted runs,
-     * and sending to a stopped actor logs a noisy warning. */
-    if (snapshot.value.status === 'active') {
+     * and sending to a stopped actor logs a noisy warning. Ask the actor, not
+     * `snapshot`: the ref never receives the final 'stopped' snapshot. */
+    if (actorRef.getSnapshot().status === 'active') {
       send({ type: 'RESET' })
     }
     stopTimer()

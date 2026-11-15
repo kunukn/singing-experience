@@ -133,7 +133,7 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
 
   const playback = useCircleOfFifthsPlayback({ toneEngine: options.toneEngine })
 
-  const { snapshot, send } = useMachine(circleOfFifthsMachine)
+  const { snapshot, send, actorRef } = useMachine(circleOfFifthsMachine)
   const phase = computed(() => snapshot.value.value as CircleOfFifthsPhase)
   const isIdle = computed(() => phase.value === 'idle')
   const isWalking = computed(() => phase.value === 'walking')
@@ -510,8 +510,10 @@ export function useCircleOfFifthsGame(options: CircleOfFifthsGameOptions = {}) {
 
   function stop() {
     /* RESET returns to idle from every state. Skip it once the actor has
-     * stopped: on unmount @xstate/vue stops it before our onUnmounted runs. */
-    if (snapshot.value.status === 'active') {
+     * stopped: on unmount @xstate/vue stops it before our onUnmounted runs.
+     * Ask the actor, not `snapshot`: the ref never receives the final
+     * 'stopped' snapshot. */
+    if (actorRef.getSnapshot().status === 'active') {
       send({ type: 'RESET' })
     }
     cancelMicRelease()

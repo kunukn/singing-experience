@@ -118,7 +118,7 @@ export function useSingTone(options: singToneOptions = {}) {
   /* The single source of truth for the round lifecycle. Side-effects (mic,
    * RAF tick, reference tone, confetti) live in the imperative wrappers below
    * and in the Display's watchers, not in the machine — it stays pure. */
-  const { snapshot, send } = useMachine(singToneMachine)
+  const { snapshot, send, actorRef } = useMachine(singToneMachine)
   const phase = computed<SingTonePhase>(
     () => snapshot.value.value as SingTonePhase,
   )
@@ -323,8 +323,9 @@ export function useSingTone(options: singToneOptions = {}) {
     /* RESET is the universal teardown — returns to idle from playing AND
      * complete (STOP only covers playing). Skip if the actor is no longer
      * active: on unmount @xstate/vue stops it before our onUnmounted runs,
-     * and sending to a stopped actor logs a noisy warning. */
-    if (snapshot.value.status === 'active') {
+     * and sending to a stopped actor logs a noisy warning. Ask the actor, not
+     * `snapshot`: the ref never receives the final 'stopped' snapshot. */
+    if (actorRef.getSnapshot().status === 'active') {
       send({ type: 'RESET' })
     }
     stopTimer()
