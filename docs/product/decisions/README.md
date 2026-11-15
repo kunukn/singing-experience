@@ -14,6 +14,7 @@ Records are append-only. To change a decision, add a new record and mark the old
 | [0006](0006-one-pitch-palette-per-theme.md)           | One pitch palette per theme           | Accepted |
 | [0007](0007-program-header.md)                        | One program header                    | Accepted |
 | [0008](0008-drop-stored-scores-that-no-longer-fit.md) | Drop stored scores that no longer fit | Accepted |
+| [0009](0009-game-cues-point-at-the-target.md)         | Game cues point at the target         | Accepted |
 
 ## Template
 
