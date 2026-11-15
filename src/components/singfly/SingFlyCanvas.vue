@@ -505,49 +505,33 @@ function drawTrace(
   }
 }
 
-/* A passed pipe celebrates in its gap: a ring spreads from the centre and a
- * "+1" rises above the note name. Both ride the pipe as it scrolls on. */
-function drawPassEffects(
+/* A passed pipe celebrates in its gap: a ring spreads from the note name and
+ * rides the pipe as it scrolls on. The "+1" is drawn with the bird. */
+function drawPassRings(
   ctx: CanvasRenderingContext2D,
   field: Playfield,
   now: number,
 ) {
-  if (passTimes.size === 0) return
-
-  const isAnimated = !prefersReducedMotion
+  if (passTimes.size === 0 || prefersReducedMotion) return
 
   ctx.save()
-  ctx.font = 'bold 15px monospace'
-  ctx.textAlign = 'center'
-  ctx.textBaseline = 'middle'
+  ctx.strokeStyle = PENDING_PIPE_FILL
+  ctx.lineWidth = 2
   for (const pipe of field.pipes) {
     const passedAt = passTimes.get(pipe.id)
     if (passedAt === undefined) continue
 
     const elapsed = now - passedAt
     /* Negative on a backward scrub of the test page's manual clock */
-    if (elapsed < 0 || elapsed >= PASS_SCORE_FLOAT_MS) continue
+    if (elapsed < 0 || elapsed >= PASS_RING_MS) continue
 
-    if (isAnimated && elapsed < PASS_RING_MS) {
-      const ring = easeOutCubic(animationProgress(elapsed, PASS_RING_MS))
-      ctx.globalAlpha = 0.7 * (1 - ring)
-      ctx.strokeStyle = PENDING_PIPE_FILL
-      ctx.lineWidth = 2
-      ctx.beginPath()
-      /* Grows from 10px to 26px: past the note name, short of the bird's
-       * neighbours */
-      ctx.arc(pipe.centerX, pipe.gapY, 10 + 16 * ring, 0, Math.PI * 2)
-      ctx.stroke()
-    }
-
-    /* Text colour, not the pipe green: on a narrow gap the "+1" ends up over
-     * the pipe above. Starts 14px above the note name and rises 12px; under
-     * reduced motion it fades in place. */
-    const float = animationProgress(elapsed, PASS_SCORE_FLOAT_MS)
-    const rise = isAnimated ? 12 * easeOutCubic(float) : 0
-    ctx.globalAlpha = 1 - float
-    ctx.fillStyle = resolveCssColor('--p-text-color')
-    ctx.fillText('+1', pipe.centerX, pipe.gapY - 14 - rise)
+    const ring = easeOutCubic(animationProgress(elapsed, PASS_RING_MS))
+    ctx.globalAlpha = 0.7 * (1 - ring)
+    ctx.beginPath()
+    /* Grows from 10px to 26px: past the note name, short of the bird's
+     * neighbours */
+    ctx.arc(pipe.centerX, pipe.gapY, 10 + 16 * ring, 0, Math.PI * 2)
+    ctx.stroke()
   }
   ctx.restore()
 }
@@ -612,6 +596,10 @@ function drawBird(
       ? props.currentRawMidi != null
       : props.phase === 'idle' && sungBirdMidi != null
 
+  /* ms since the bird last passed a pipe */
+  const happyMs =
+    passTimes.size > 0 ? now - Math.max(...passTimes.values()) : Infinity
+
   drawBirdSprite(ctx, {
     x,
     y: drawnY,
@@ -621,11 +609,31 @@ function drawBird(
     isSinging,
     tilt: isPerched ? 0 : tiltFromVelocity(birdVelocity),
     flapStrength: flapStrength(birdVelocity),
-    happyMs:
-      passTimes.size > 0 ? now - Math.max(...passTimes.values()) : Infinity,
+    happyMs,
     now,
     isAnimated,
   })
+
+  /* "+1" for the pipe just passed, above the bird: where the singer is
+   * already looking, and clear of the gap's note name. Anchored to the true
+   * height like the note label, so it does not bob. Starts 10px above the
+   * body and rises 12px; under reduced motion it fades in place. */
+  if (
+    props.phase !== 'crashed' &&
+    happyMs >= 0 &&
+    happyMs < PASS_SCORE_FLOAT_MS
+  ) {
+    const float = animationProgress(happyMs, PASS_SCORE_FLOAT_MS)
+    const rise = isAnimated ? 12 * easeOutCubic(float) : 0
+    ctx.save()
+    ctx.globalAlpha = 1 - float
+    ctx.font = 'bold 15px monospace'
+    ctx.textAlign = 'center'
+    ctx.textBaseline = 'middle'
+    ctx.fillStyle = resolveCssColor('--p-text-color')
+    ctx.fillText('+1', x, y - BIRD_RADIUS - 10 - rise)
+    ctx.restore()
+  }
 
   /* Note label on the side opposite the beak — sits in the empty space
    * behind the bird, away from incoming pipes. While the bird is frozen at the
@@ -1156,7 +1164,7 @@ function drawChart() {
   })
 
   drawPlayfield(ctx, field)
-  drawPassEffects(ctx, field, now)
+  drawPassRings(ctx, field, now)
   drawRangeLabels(ctx, geom, height)
   if (props.phase === 'idle') drawPerchBoard(ctx, geom, height)
   drawTrace(ctx, geom, height, now)
