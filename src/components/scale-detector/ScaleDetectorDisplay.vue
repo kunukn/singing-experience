@@ -134,10 +134,12 @@ const sungNotes = computed(() =>
   ),
 )
 
-/* A fix-it hint drops the wrong note and picks what the rest then fit. */
+/* A fix-it hint drops the wrong note and picks what the rest then fit. The
+ * fix carries its own bass: dropping the lowest note changes it. */
 function applyChordFix(fix: ChordFix) {
   removePitchClass(fix.pitchClass)
   selectChord(fix)
+  playChord(fix, fix.bass)
 }
 
 function applyScaleFix(fix: ScaleFix) {
@@ -213,17 +215,21 @@ const piano = useTemplateRef<InstanceType<typeof PianoDisplay>>('piano')
  * its keys glow — the blue strips say which notes belong to the chord, the
  * glow which keys are sounding. Only while stopped, so the detector never
  * hears it as sung notes. */
-function handleChordSelect(chord: ChordSelection) {
-  selectChord(chord)
+function playChord(chord: ChordSelection, bass: number | null) {
   if (isListening.value) return
 
   const voicing = chordVoicing(
     chord.root,
     chord.type,
-    chordResult.value.bass,
+    bass,
     selectedRange.value.midiMin,
   )
   for (const midi of voicing) void piano.value?.playKey(midi)
+}
+
+function handleChordSelect(chord: ChordSelection) {
+  selectChord(chord)
+  playChord(chord, chordResult.value.bass)
 }
 
 /* Simulated page: the one detector doubles as the idle preview while the
