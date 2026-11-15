@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { mount, RouterLinkStub } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
@@ -20,7 +20,10 @@ function mountPanel(score: number, endReason: GameSummary['endReason']) {
       voiceRangeNoteRange: 'C3–C4',
       endReason,
     },
-    global: { plugins: [i18n, PrimeVue] },
+    global: {
+      plugins: [i18n, PrimeVue],
+      stubs: { RouterLink: RouterLinkStub },
+    },
   })
 }
 
