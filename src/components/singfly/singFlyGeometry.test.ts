@@ -17,6 +17,7 @@ import {
   isBirdPositionFrozen,
   isOutOfRange,
   gapSide,
+  hasPipeClearedBird,
   isPipeOverBird,
   isPitchInGap,
   midiToY,
@@ -229,6 +230,38 @@ describe('isPipeOverBird', () => {
 
     expect(overBirdFrames).toBeGreaterThan(0)
   })
+})
+
+describe('hasPipeClearedBird', () => {
+  test.each([
+    { name: 'LTR', isRtl: false },
+    { name: 'RTL', isRtl: true },
+  ])(
+    'should follow straight on from the pipe being over the bird ($name)',
+    ({ isRtl }) => {
+      const target: GameTarget = {
+        id: 1,
+        midi: 55,
+        dueTime: NOW,
+        status: 'pending',
+      }
+      const geom = computeGeometry(700, isRtl)
+      /* approaching → over → cleared, each exactly once, in that order */
+      const stages: string[] = []
+
+      for (let age = 0; age <= 5000; age += 1) {
+        const overBird = isPipeOverBird(target, NOW + age, geom)
+        const cleared = hasPipeClearedBird(target, NOW + age, geom)
+        /* Never both: a pipe that can still crash the bird is not decided */
+        expect(overBird && cleared, `age ${age}`).toBe(false)
+
+        const stage = cleared ? 'cleared' : overBird ? 'over' : 'approaching'
+        if (stages[stages.length - 1] !== stage) stages.push(stage)
+      }
+
+      expect(stages).toEqual(['approaching', 'over', 'cleared'])
+    },
+  )
 })
 
 describe('isOutOfRange', () => {

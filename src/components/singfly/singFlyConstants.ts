@@ -35,10 +35,10 @@ export const GAME_PICKUP_LINE_RATIO = 0.2
 
 /* Half-height of the pipe gap, in MIDI semitones, per difficulty. THE single
  * source of truth for "is the bird in the gap": the renderer draws the gap
- * this many semitones above/below the target, the scoring gate passes when
- * |singerMidi - target.midi| <= this, and the collision test crashes when it
- * exceeds this (see isPitchInGap in singFlyGeometry). One number → drawn
- * gap, scored band and crash band are identical at every canvas size and
+ * this many semitones above/below the target, and the collision test crashes
+ * when |singerMidi - target.midi| exceeds it (see isPitchInGap in
+ * singFlyGeometry); a pipe that never crashes the bird scores. One number →
+ * the drawn gap and the safe band are identical at every canvas size and
  * voice range. easy widens it so a casual singer a semitone off (e.g. D#3
  * against a D3 pipe) still flies through and scores; hard demands near-exact
  * pitch. */

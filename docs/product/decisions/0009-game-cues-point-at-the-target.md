@@ -20,4 +20,4 @@ A cue shown during a round judges the pitch against what the game is asking for,
 
 ## Consequences
 
-Green in a running game no longer means only a target already hit; it also means the singer is on course for one. The two never disagree in Singfly, because "inside the gap" is the same test scoring uses (`isPitchInGap`, through `gapSide`). Intonation practice stays on the idle "See my voice" preview, the one place cents to the nearest note are coloured. A new game that adds a mid-round cue follows this rule instead of reusing the cents ramp.
+Green in a running game no longer means only a target already hit; it also means the singer is on course for one. The two never disagree in Singfly, because "inside the gap" is the same test the crash rule uses (`isPitchInGap`, through `gapSide`): a bird that stays inside is flown through, and a pipe flown through scores. Intonation practice stays on the idle "See my voice" preview, the one place cents to the nearest note are coloured. A new game that adds a mid-round cue follows this rule instead of reusing the cents ramp.

@@ -10,7 +10,7 @@ import type { GameTarget, GameTargetStatus } from './useSingFly'
  * here place the pipes/bird the renderer draws and decide *when* a pipe is
  * horizontally over the bird. Whether the bird is *in the gap* is a separate,
  * purely-semitone decision — isPitchInGap — shared verbatim by the renderer
- * (gap height), the scoring gate and the collision test, so "what you see is
+ * (gap height) and the collision test, so "what you see is
  * what you hit" holds at every canvas size and voice range. */
 
 /* Chart paddings for the singfly chart. PADDING_TOP/PADDING_BOTTOM are
@@ -60,9 +60,10 @@ const BIRD_HITBOX_HALF = BIRD_RADIUS / Math.SQRT2
 /* THE single source of truth for "is the bird in the gap". The bird is judged
  * by its pitch center vs the target note in semitone space — not by a pixel
  * box — so the answer is identical at every canvas size and voice range.
- * Scoring passes on this; collision crashes on its negation; getPipeRects
- * sizes the drawn gap from the same gapHalfSemitones. Drawn gap, scored band
- * and crash band can never diverge. */
+ * Collision crashes on its negation, and a pipe that never crashes the bird
+ * scores once it has passed (hasPipeClearedBird); getPipeRects
+ * sizes the drawn gap from the same gapHalfSemitones. Drawn gap and safe band
+ * can never diverge. */
 export function isPitchInGap(
   birdMidi: number,
   targetMidi: number,
@@ -75,7 +76,7 @@ export type GapSide = 'below' | 'inside' | 'above'
 
 /* Where the bird is relative to a pipe's gap, for the "sing higher / lower"
  * cue on the bird's label. 'inside' is isPitchInGap itself, so the cue can
- * never disagree with scoring and collision. */
+ * never disagree with collision. */
 export function gapSide(
   birdMidi: number,
   targetMidi: number,
@@ -602,32 +603,52 @@ type CollisionParams = {
   gapHalfSemitones: number
 }
 
+/* px the pipe's centre has travelled past the bird's centre, along the scroll
+ * direction: negative while the pipe is still approaching. One measure for
+ * both "over the bird" and "cleared the bird", so the two can never overlap
+ * or leave a gap between them. */
+function pipeTravelPastBird(
+  target: GameTarget,
+  now: number,
+  geom: ChartGeometry,
+): number {
+  /* -1 when the field scrolls toward smaller x (LTR), +1 in RTL */
+  const scrollSign = Math.sign(geom.labelAxisX - geom.nowEdgeX)
+
+  return (timeToX(target.dueTime, now, geom) - pickupLineX(geom)) * scrollSign
+}
+
+/* px between the two centres at which the column and the bird box just touch */
+const PIPE_BIRD_REACH = PIPE_WIDTH / 2 + BIRD_HITBOX_HALF
+
 /* THE single source of truth for "is this pipe's column over the bird right
- * now": the column's x extent overlaps the bird box's. Collision tests it
- * (with the pitch outside the gap) and scoring opens on it (with the pitch
- * inside), so a pipe can be crashed into and flown through over exactly the
- * same stretch of time. */
+ * now": the column's x extent overlaps the bird box's. Only then can the pipe
+ * crash the bird. */
 export function isPipeOverBird(
   target: GameTarget,
   now: number,
   geom: ChartGeometry,
 ): boolean {
-  const pipeLeft = timeToX(target.dueTime, now, geom) - PIPE_WIDTH / 2
-  const birdLeft = pickupLineX(geom) - BIRD_HITBOX_HALF
+  return Math.abs(pipeTravelPastBird(target, now, geom)) < PIPE_BIRD_REACH
+}
 
-  return (
-    birdLeft < pipeLeft + PIPE_WIDTH &&
-    birdLeft + BIRD_HITBOX_HALF * 2 > pipeLeft
-  )
+/* The pipe's back edge has passed the bird: it can no longer crash it. The
+ * moment a pipe is decided — a pipe that got here without crashing the bird
+ * has been flown through. */
+export function hasPipeClearedBird(
+  target: GameTarget,
+  now: number,
+  geom: ChartGeometry,
+): boolean {
+  return pipeTravelPastBird(target, now, geom) >= PIPE_BIRD_REACH
 }
 
 /* Returns the id of the first pending pipe the bird crashes into, or null.
  *
  * A crash is: the pipe column is horizontally over the bird right now AND the
  * bird's pitch is outside the gap (isPitchInGap === false). The vertical
- * decision is the same semitone predicate the scoring gate uses — never a
- * pixel box vs the drawn rect — so "you scored" and "you didn't crash" are the
- * exact same boolean at any canvas size or voice range. Only the horizontal
+ * decision is a semitone predicate — never a pixel box vs the drawn rect — so
+ * the answer is the same at any canvas size or voice range. Only the horizontal
  * "is the pipe at the bird yet" test stays positional (x has no
  * point-vs-box ambiguity). No bird (silent player) or an unmeasured canvas
  * means no collision is possible. */

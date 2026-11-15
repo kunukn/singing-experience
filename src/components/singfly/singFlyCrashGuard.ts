@@ -3,8 +3,7 @@
  * ~50ms). Collision must not end the round on such a blip, so the bird has to
  * stay *continuously* inside the same pipe wall for graceMs before it counts
  * as a real crash. Leaving the wall — or moving to a different pipe — resets
- * the accumulator, so only an uninterrupted off-pitch overlap is fatal. This
- * is the crash-side analogue of the scoring hold (HIT_STABILITY_MS). */
+ * the accumulator, so only an uninterrupted off-pitch overlap is fatal. */
 
 export type CrashGuard = {
   /* Feed every tick with the pipe the bird currently overlaps (null = clear)

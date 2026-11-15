@@ -11,6 +11,7 @@ import {
   type SingFlyPhase,
 } from './singFlyMachine'
 import {
+  BIRD_MOTION_MAX_DT_MS,
   DIFFICULTY_GAP_HALF_SEMITONES,
   DIFFICULTY_MAX_NOTE_STEP_SEMITONES,
   DIFFICULTY_PIPE_INTERVAL_MS,
@@ -21,16 +22,17 @@ import { createCrashGuard } from './singFlyCrashGuard'
 import {
   computeGeometry,
   findCollidingTarget,
+  hasPipeClearedBird,
   isOutOfRange,
-  isPipeOverBird,
-  isPitchInGap,
 } from './singFlyGeometry'
 import type { Difficulty } from '@/constants/difficulty'
 import { DEFAULT_DIFFICULTY } from './singFlyOptions'
 
-/* 'missed' = unresolved when the round ended (scrolled past, or bulk-marked
- * by stopGame) — renders green like a pending pillar. 'crashed' = the single
- * pillar the bird actually flew into, the cause of death — the only red one. */
+/* 'hit' = flown through: the pipe's back edge passed the bird without a crash.
+ * 'missed' = still undecided when the round ended (bulk-marked by stopGame on
+ * a Stop press or the end timer) — renders green like a pending pillar. A pipe
+ * that passes the bird is never a miss. 'crashed' = the single pillar the bird
+ * actually flew into, the cause of death — the only red one. */
 export type GameTargetStatus = 'pending' | 'hit' | 'missed' | 'crashed'
 
 export type GameTarget = {
@@ -69,25 +71,26 @@ type UseSingFlyOptions = {
 }
 
 const DEFAULT_GAME_DURATION_MS = 10_000
-/* Time a target spends approaching from the live edge before it crosses the
- * pickup line and becomes capturable. Derived from GAME_PICKUP_LINE_RATIO so
- * the visual line and the hit-detection window stay locked together. */
+/* Roughly the time a target spends approaching from the live edge before it
+ * reaches the bird. Only sizes the round (how many pipes fit the chosen
+ * duration); when a pipe is over or past the bird is decided by geometry. */
 const LEAD_IN_MS = HISTORY_WINDOW_MS * (1 - GAME_PICKUP_LINE_RATIO)
 
 /* Random timing jitter applied to each pipe (except the first) so the field
  * doesn't feel mechanically uniform. ±150 ms is well under every
  * DIFFICULTY_PIPE_INTERVAL_MS value so pipes never visually collide. */
 const PIPE_JITTER_MS = 150
-/* Minimum on-pitch time inside the pickup zone before a pipe counts as hit.
- * Just enough to filter out a single noisy detection frame; not user-facing. */
-const HIT_STABILITY_MS = 50
 /* Continuous time the bird must stay inside a pipe wall before the round ends.
  * The stabilized pitch can still carry a short few-semitone fluke (~50ms) that
  * the median lets through; requiring sustained overlap means such a blip can't
- * crash the bird while a genuinely off-pitch hold still does. Crash-side
- * analogue of HIT_STABILITY_MS — sized to also absorb the median's recovery
- * lag after the spike ends. */
+ * crash the bird while a genuinely off-pitch hold still does. Sized to also
+ * absorb the median's recovery lag after the spike ends. */
 const CRASH_GRACE_MS = 100
+/* Longest step one evaluation may count toward a crash. A stalled frame (GC,
+ * a throttled tab) says nothing about where the bird was meanwhile, so it must
+ * not be able to use up the whole CRASH_GRACE_MS in one sample. The same clamp
+ * the bird's motion uses, so the judged bird and the drawn bird step alike. */
+const EVALUATE_MAX_DT_MS = BIRD_MOTION_MAX_DT_MS
 
 /* Sentinel "wall id" fed to the boundary crash guard when the bird is out of
  * range. Real target ids are 0..n, so -1 can never collide with a pipe id. */
@@ -141,9 +144,6 @@ export function useSingFly(options: UseSingFlyOptions) {
   let currentGapHalfSemitones =
     DIFFICULTY_GAP_HALF_SEMITONES[DEFAULT_DIFFICULTY]
 
-  /* Per-target accumulated on-pitch time within the pickup zone. */
-  const holdProgress = new Map<number, number>()
-
   /* Debounces wall crashes so a brief pitch fluke can't end the round. */
   const crashGuard = createCrashGuard(CRASH_GRACE_MS)
 
@@ -187,16 +187,15 @@ export function useSingFly(options: UseSingFlyOptions) {
       : performance.now()
   }
 
-  /* A pipe scrolling past unhit (or a wall crash) ends the round only in
-   * real-time play. Under the manual scrub clock the user is exploring the
-   * field, so the pipe is just marked missed and the round keeps going. */
+  /* A crash ends the round only in real-time play. Under the manual scrub
+   * clock the user is exploring the field, so the pipe is just marked crashed
+   * and the round keeps going. */
   function shouldAutoEndRound(): boolean {
     return !currentManualClock
   }
 
   /* Crash test: a pipe column is horizontally over the bird AND the bird's
-   * pitch is outside that pipe's gap (the same isPitchInGap the scoring gate
-   * passes on — one source of truth). On silence the bird holds its last
+   * pitch is outside that pipe's gap (isPitchInGap). On silence the bird holds its last
    * position (no gravity), so a brief dropout never moves it into a wall;
    * only an actually off-pitch sung note crashes it (debounced by
    * CRASH_GRACE_MS). */
@@ -222,64 +221,49 @@ export function useSingFly(options: UseSingFlyOptions) {
   }
 
   /* The single time-driven sweep for scoring, crashing and round-end. Reads
-   * the pitch bird (resolveBirdMidi) for both the score gate and the crash
-   * test so the game always agrees with the visible bird. Returns true when
-   * the round has ended so the caller stops its clock.
+   * the pitch bird (resolveBirdMidi), so the game always agrees with the
+   * visible bird. Returns true when the round has ended so the caller stops
+   * its clock.
    *
-   * Death is exactly: the bird's pitch is outside a pipe's gap while that
-   * column is over it (sustained CRASH_GRACE_MS), or a sung pitch is past the
-   * range into the lethal floor/ceiling. A player who never sings just holds
-   * on the perch (no gravity); each pipe scrolls past as a miss and the round
-   * ends once every pipe is resolved (or the end-timer fires). */
-  function evaluate(now: number, tickDeltaMs: number): boolean {
+   * A pipe has exactly two fates. It crashes the bird: the bird's pitch is
+   * outside its gap while its column is over the bird, sustained
+   * CRASH_GRACE_MS. Or its back edge passes the bird and it scores. There is
+   * no third outcome, so a round a singer flies all the way through is always
+   * a win. (There used to be a separate "held the note long enough" timer for
+   * scoring; whatever satisfied neither timer became a silent miss, and a
+   * clean-looking run ended as "Game over".)
+   *
+   * The other death is a sung pitch past the range, into the lethal
+   * floor/ceiling. On silence the bird holds its last position (no gravity):
+   * it passes the pipes whose gap it sits in and crashes into the first one
+   * it does not. */
+  function evaluate(now: number, rawTickDeltaMs: number): boolean {
     const birdMidi = resolveBirdMidi()
+    const tickDeltaMs = Math.min(rawTickDeltaMs, EVALUATE_MAX_DT_MS)
+    const geom =
+      options.canvasWidth.value > 0
+        ? computeGeometry(options.canvasWidth.value, options.isRtl.value)
+        : null
 
     for (const target of targets.value) {
       if (target.status !== 'pending') continue
 
-      /* Scrolled fully past unresolved → just a miss; the round ends via a
-       * crash, the boundary, or every pipe being resolved. A silent player's
-       * pipes all become misses and the round ends when none stay pending. */
-      if (now > target.dueTime + HISTORY_WINDOW_MS) {
-        target.status = 'missed'
+      /* Flown through: the back edge is past the bird and the pipe never
+       * crashed it. Needs a bird and a measured canvas, the same things a
+       * crash needs, so a pipe cannot score where it could not have killed. */
+      if (
+        birdMidi !== null &&
+        geom !== null &&
+        hasPipeClearedBird(target, now, geom)
+      ) {
+        target.status = 'hit'
+        score.value += 1
         continue
       }
 
-      /* Scoring opens the moment the pipe's column is over the bird — the
-       * same stretch collision tests — and stays open until the pipe leaves
-       * the chart. It used to open only once the pipe's centre reached the
-       * bird: a singer in the gap for the front half who moved on at the
-       * centre was neither scored nor (the back half being shorter than
-       * CRASH_GRACE_MS on a wide canvas) crashed, and the pipe became a
-       * silent miss. */
-      const isOverBird =
-        options.canvasWidth.value > 0 &&
-        isPipeOverBird(
-          target,
-          now,
-          computeGeometry(options.canvasWidth.value, options.isRtl.value),
-        )
-      const inPickupZone =
-        isOverBird ||
-        (now >= target.dueTime + LEAD_IN_MS &&
-          now <= target.dueTime + HISTORY_WINDOW_MS)
-      if (!inPickupZone) continue
-
-      /* Same predicate the collision test negates and the renderer sizes the
-       * gap from — scoring "pass" and "didn't crash" are one boolean, so what
-       * you see is exactly what you hit at any canvas size or voice range.
-       * Held-note fallback means a brief dropout in the gap still accrues. */
-      if (
-        birdMidi !== null &&
-        isPitchInGap(birdMidi, target.midi, currentGapHalfSemitones)
-      ) {
-        const accumulated = (holdProgress.get(target.id) ?? 0) + tickDeltaMs
-        holdProgress.set(target.id, accumulated)
-        if (accumulated >= HIT_STABILITY_MS) {
-          target.status = 'hit'
-          score.value += 1
-        }
-      }
+      /* Left the chart still undecided. Only without a bird or a measured
+       * canvas, which real play never has; kept so such a round still ends. */
+      if (now > target.dueTime + HISTORY_WINDOW_MS) target.status = 'missed'
     }
 
     /* Wall crash, debounced: the stabilized pitch can still carry a brief
@@ -345,7 +329,7 @@ export function useSingFly(options: UseSingFlyOptions) {
       }
     }
 
-    /* Early end once every pipe has been resolved (all hit). */
+    /* Early end once every pipe is decided: the last one was flown through. */
     if (
       isPlaying.value &&
       targets.value.length > 0 &&
@@ -397,8 +381,8 @@ export function useSingFly(options: UseSingFlyOptions) {
      * chosen game duration and difficulty together determine pipe count. */
     const playableMs = Math.max(0, currentGameDurationMs - LEAD_IN_MS)
     /* +1 so the LAST pipe's pickup-line crossing lands at ~currentGameDurationMs:
-     * a pipe is hittable LEAD_IN_MS after spawn, and the round ends the instant
-     * every pipe is resolved, so without the +1 the last pipe (and the win)
+     * a pipe reaches the bird LEAD_IN_MS after spawn, and the round ends the
+     * instant every pipe is resolved, so without the +1 the last pipe (and the win)
      * lands a full pipeInterval + LEAD_IN_MS early. floor keeps the realized
      * win time at or just under the picked duration, never over. */
     const targetCount = Math.max(
@@ -537,7 +521,6 @@ export function useSingFly(options: UseSingFlyOptions) {
     summary.value = null
     gameStartTime.value = null
     elapsedMs.value = 0
-    holdProgress.clear()
     crashGuard.reset()
     boundaryGuard.reset()
     send({ type: 'RESET' })
