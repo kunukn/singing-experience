@@ -286,6 +286,10 @@ function playLaneKey(midi: number) {
   void playKey(midi)
 }
 
+/* Plays keys from outside (a tapped chord) with the same sound, glow and
+ * tonePlayed as a press — but no notePressed, so nothing records them. */
+defineExpose({ playKey })
+
 /* A pressed key washes green, then fades back out. Slower than the flash used
  * elsewhere (TONE_CLICK_HIGHLIGHT_DURATION_MS) so the tail reads as a fade
  * rather than a flicker. */
