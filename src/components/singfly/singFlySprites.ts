@@ -24,6 +24,8 @@ type BirdSpriteParams = {
   flapStrength: number
   /* ms since the bird last passed a pipe; Infinity when it has not */
   happyMs: number
+  /* The round was won: the happy eye stays once the celebration has settled */
+  isWinner: boolean
   /* The canvas clock, for the wing beat and the blink */
   now: number
   /* false under reduced motion: draw the settled pose */
@@ -124,7 +126,10 @@ export function drawBirdSprite(
     ctx.moveTo(4.5, -3.5)
     ctx.lineTo(1.5, -0.5)
     ctx.stroke()
-  } else if (params.happyMs >= 0 && params.happyMs < HAPPY_MS) {
+  } else if (
+    params.isWinner ||
+    (params.happyMs >= 0 && params.happyMs < HAPPY_MS)
+  ) {
     ctx.arc(3, -1.5, 2, Math.PI, Math.PI * 2)
     ctx.stroke()
   } else if (isAnimated && isBlinking(now)) {

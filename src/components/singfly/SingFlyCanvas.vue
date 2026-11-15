@@ -241,10 +241,19 @@ let birdVelocity = 0
  * covered meanwhile says nothing about the bird's speed now. */
 const BIRD_SPEED_MAX_GAP_MS = 250
 
-/* Canvas time each pipe was first seen as passed (status 'hit'), keyed by
- * target id. The game only records that a pipe was passed, not when; the
+/* Celebration time each pipe was first seen as passed (status 'hit'), keyed
+ * by target id. The game only records that a pipe was passed, not when; the
  * celebration needs the moment, so the canvas stamps it. Visual only. */
 const passTimes = new Map<number, number>()
+
+/* The clock the pass celebration runs on. Not the field clock: that one
+ * freezes the instant the round ends, which is the instant the last pipe
+ * scores — its ring, "+1" and pop would stay on their first frame. The real
+ * clock lets them play out over the frozen end frame. The test page's scrub
+ * still drives it, so scrubbing stays deterministic. */
+function celebrationClock(): number {
+  return props.nowOverride ?? performance.now()
+}
 
 let deathAnim: DeathAnim | null = null
 let deathTriggeredThisRound = false
@@ -514,7 +523,7 @@ function drawTrace(
 function drawPassRings(
   ctx: CanvasRenderingContext2D,
   field: Playfield,
-  now: number,
+  celebrationNow: number,
 ) {
   if (passTimes.size === 0 || prefersReducedMotion) return
 
@@ -525,7 +534,7 @@ function drawPassRings(
     const passedAt = passTimes.get(pipe.id)
     if (passedAt === undefined) continue
 
-    const elapsed = now - passedAt
+    const elapsed = celebrationNow - passedAt
     /* Negative on a backward scrub of the test page's manual clock */
     if (elapsed < 0 || elapsed >= PASS_RING_MS) continue
 
@@ -592,6 +601,7 @@ function drawBird(
   geom: ChartGeometry,
   height: number,
   now: number,
+  celebrationNow: number,
   field: Playfield,
 ) {
   /* No pitch (idle screen, preview off) → the bird perches on the board
@@ -650,7 +660,9 @@ function drawBird(
 
   /* ms since the bird last passed a pipe */
   const happyMs =
-    passTimes.size > 0 ? now - Math.max(...passTimes.values()) : Infinity
+    passTimes.size > 0
+      ? celebrationNow - Math.max(...passTimes.values())
+      : Infinity
 
   /* Only a real collision knocks the bird out. A round that ends with a pipe
    * left unpassed is also phase 'crashed' (cause 'incomplete'), but the bird
@@ -668,6 +680,7 @@ function drawBird(
     tilt: isPerched ? 0 : tiltFromVelocity(birdVelocity),
     flapStrength: flapStrength(birdVelocity),
     happyMs,
+    isWinner: props.phase === 'won',
     now,
     isAnimated,
   })
@@ -1213,13 +1226,15 @@ function drawChart() {
     traceLabels = traceLabels.filter((l) => now - l.time <= TRACE_MAX_AGE_MS)
   }
 
+  const celebrationNow = celebrationClock()
+
   /* Stamp newly passed pipes. A pipe that is no longer 'hit' (new round, a
    * scrub back on the test page) loses its stamp. */
   for (const target of props.targets) {
     if (target.status !== 'hit') {
       passTimes.delete(target.id)
     } else if (!passTimes.has(target.id)) {
-      passTimes.set(target.id, now)
+      passTimes.set(target.id, celebrationNow)
     }
   }
 
@@ -1253,7 +1268,7 @@ function drawChart() {
   })
 
   drawPlayfield(ctx, field)
-  drawPassRings(ctx, field, now)
+  drawPassRings(ctx, field, celebrationNow)
   drawRangeLabels(ctx, geom, height)
   if (props.phase === 'idle') drawPerchBoard(ctx, geom, height)
   drawTrace(ctx, geom, height, now)
@@ -1261,7 +1276,7 @@ function drawChart() {
    * the line's dot instead of wearing it. */
   const isPreviewLineBehindBird = props.phase === 'idle'
   if (isPreviewLineBehindBird) drawPreviewLine(ctx, geom, height)
-  drawBird(ctx, geom, height, now, field)
+  drawBird(ctx, geom, height, now, celebrationNow, field)
   drawHitboxes(ctx, geom, width, height, now, field)
   drawDeathOverlay(ctx, width, height)
   /* After the death overlay so it stays readable through and after the
