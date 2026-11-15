@@ -789,6 +789,13 @@
       "step2": "Permita o microfone quando o navegador perguntar. Sem ele, os programas não conseguem ouvir você cantar.",
       "step3": "Primeira vez? Experimente os primeiros passos: aqueça, encontre sua extensão vocal e depois cante uma nota."
     },
+    "records": {
+      "description": "Suas melhores pontuações dos jogos de canto, todas em um só lugar.",
+      "step1": "Termine um jogo e sua melhor pontuação aparece aqui.",
+      "step2": "Guardamos só a sua melhor pontuação de cada jogo e de cada combinação de ajustes, como dificuldade ou velocidade. Se você superar, a nova fica no lugar.",
+      "step3": "Suas pontuações ficam salvas só neste aparelho. Nada vai para a internet, então você não vai vê-las em outro celular ou computador.",
+      "step4": "Elas somem se você limpar os dados do navegador ou tocar em Limpar aqui. Não dá para desfazer."
+    },
     "voiceRecorder": {
       "step1": "Aperte Gravar e cante. A linha em movimento mostra que o microfone ouve você.",
       "step2": "Aperte Parar e depois ouça sua gravação ou baixe.",

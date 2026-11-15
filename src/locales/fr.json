@@ -789,6 +789,13 @@
       "step2": "Autorise le micro quand ton navigateur te le demande. Sans lui, les programmes ne peuvent pas t'entendre chanter.",
       "step3": "Première fois ? Essaie les premières étapes : échauffe-toi, trouve ta tessiture, puis chante une note."
     },
+    "records": {
+      "description": "Tes meilleurs scores des jeux de chant, réunis au même endroit.",
+      "step1": "Termine un jeu et ton meilleur score apparaît ici.",
+      "step2": "On garde seulement ton meilleur score pour chaque jeu et chaque combinaison de réglages, comme la difficulté ou la vitesse. Si tu le bats, le nouveau prend sa place.",
+      "step3": "Tes scores sont enregistrés sur cet appareil uniquement. Rien n'est envoyé en ligne, donc tu ne les verras pas sur un autre téléphone ou ordinateur.",
+      "step4": "Ils disparaissent si tu effaces les données de ton navigateur ou si tu appuies sur Effacer ici. C'est définitif."
+    },
     "voiceRecorder": {
       "step1": "Appuie sur Enregistrer et chante. La ligne qui bouge montre que le micro t'entend.",
       "step2": "Appuie sur Arrêter, puis écoute ton enregistrement ou télécharge-le.",

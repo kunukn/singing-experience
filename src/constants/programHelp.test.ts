@@ -34,6 +34,7 @@ function requiredHelpKeys() {
     for (let step = 1; step <= help.stepCount; step++) {
       keys.push(`programHelp.${programKey}.step${step}`)
     }
+    if (help.descriptionKey) keys.push(help.descriptionKey)
     for (const term of help.terms) {
       keys.push(`glossary.${term}.name`, `glossary.${term}.description`)
     }
@@ -48,9 +49,9 @@ describe('program help', () => {
       (program) => program.key,
     )
 
-    /* `home` is the landing page's guide, not a program */
+    /* `home` and `records` are guides for pages that aren't programs */
     expect(Object.keys(programHelpByKey).toSorted()).toEqual(
-      [...programKeys, 'home'].toSorted(),
+      [...programKeys, 'home', 'records'].toSorted(),
     )
   })
 

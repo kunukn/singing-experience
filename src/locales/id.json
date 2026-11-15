@@ -789,6 +789,13 @@
       "step2": "Izinkan mikrofon saat browser bertanya. Tanpa itu, program tidak bisa mendengar kamu bernyanyi.",
       "step3": "Baru di sini? Coba langkah pertama: pemanasan, temukan jangkauan suaramu, lalu nyanyikan satu nada."
     },
+    "records": {
+      "description": "Skor terbaikmu dari permainan bernyanyi, semuanya di satu tempat.",
+      "step1": "Selesaikan satu permainan, lalu skor terbaikmu muncul di sini.",
+      "step2": "Kami hanya menyimpan skor terbaikmu untuk tiap permainan dan tiap gabungan pengaturan, seperti tingkat kesulitan atau kecepatan. Kalau kamu mengalahkannya, skor baru menggantikannya.",
+      "step3": "Skormu hanya disimpan di perangkat ini. Tidak ada yang dikirim ke internet, jadi skor itu tidak muncul di ponsel atau komputer lain.",
+      "step4": "Skor akan hilang kalau kamu menghapus data browser atau menekan Hapus di sini. Ini tidak bisa dibatalkan."
+    },
     "voiceRecorder": {
       "step1": "Tekan Rekam dan bernyanyilah. Garis yang bergerak menunjukkan mikrofon bisa mendengarmu.",
       "step2": "Tekan Berhenti, lalu putar rekamanmu atau unduh.",

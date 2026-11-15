@@ -789,6 +789,13 @@
       "step2": "Ruhusu maikrofoni kivinjari kinapouliza. Bila hiyo, programu haziwezi kukusikia ukiimba.",
       "step3": "Mgeni hapa? Jaribu hatua za kwanza: pasha sauti moto, tafuta kiwango cha sauti yako, kisha imba noti moja."
     },
+    "records": {
+      "description": "Alama zako bora kutoka kwenye michezo ya kuimba, zote mahali pamoja.",
+      "step1": "Maliza mchezo, na alama yako bora itaonekana hapa.",
+      "step2": "Tunahifadhi alama yako bora tu kwa kila mchezo na kila mchanganyiko wa mipangilio, kama ugumu au kasi. Ukiipita, alama mpya inachukua nafasi yake.",
+      "step3": "Alama zako zinahifadhiwa kwenye kifaa hiki tu. Hakuna kinachotumwa mtandaoni, kwa hiyo hutaziona kwenye simu au kompyuta nyingine.",
+      "step4": "Zitapotea ukifuta data ya kivinjari au ukibonyeza Futa hapa. Huwezi kuzirudisha."
+    },
     "voiceRecorder": {
       "step1": "Bonyeza Rekodi na uimbe. Mstari unaosogea unaonyesha kwamba maikrofoni inakusikia.",
       "step2": "Bonyeza Simamisha, kisha cheza rekodi yako au uipakue.",

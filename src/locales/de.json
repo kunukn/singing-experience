@@ -789,6 +789,13 @@
       "step2": "Erlaube das Mikrofon, wenn dein Browser fragt. Sonst können die Programme dich nicht singen hören.",
       "step3": "Neu hier? Probier die ersten Schritte: aufwärmen, deinen Stimmumfang finden, dann einen Ton singen."
     },
+    "records": {
+      "description": "Deine Bestleistungen aus den Singspielen, alle an einem Ort.",
+      "step1": "Spiel ein Spiel zu Ende, dann erscheint deine Bestleistung hier.",
+      "step2": "Wir speichern nur deine Bestleistung für jedes Spiel und jede Kombination von Einstellungen, zum Beispiel Schwierigkeit oder Tempo. Schlägst du sie, nimmt die neue ihren Platz ein.",
+      "step3": "Deine Ergebnisse werden nur auf diesem Gerät gespeichert. Nichts geht ins Internet, deshalb siehst du sie nicht auf einem anderen Handy oder Computer.",
+      "step4": "Sie verschwinden, wenn du deine Browserdaten löschst oder hier auf „Löschen“ tippst. Das lässt sich nicht rückgängig machen."
+    },
     "voiceRecorder": {
       "step1": "Drück auf Aufnehmen und sing. Die bewegte Linie zeigt, dass das Mikro dich hört.",
       "step2": "Drück auf Stopp und spiel deine Aufnahme ab oder lade sie herunter.",

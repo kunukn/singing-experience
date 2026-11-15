@@ -789,6 +789,13 @@
       "step2": "Permite el micrófono cuando tu navegador te lo pida. Sin él, los programas no pueden oírte cantar.",
       "step3": "¿Primera vez? Prueba los primeros pasos: calienta, encuentra tu rango y luego canta una nota."
     },
+    "records": {
+      "description": "Tus mejores puntuaciones de los juegos de canto, todas en un solo lugar.",
+      "step1": "Termina un juego y tu mejor puntuación aparecerá aquí.",
+      "step2": "Solo guardamos tu mejor puntuación de cada juego y de cada combinación de ajustes, como la dificultad o la velocidad. Si la superas, la nueva ocupa su lugar.",
+      "step3": "Tus puntuaciones se guardan solo en este dispositivo. Nada se envía a internet, así que no las verás en otro teléfono u ordenador.",
+      "step4": "Se pierden si borras los datos del navegador o pulsas Borrar aquí. No se puede deshacer."
+    },
     "voiceRecorder": {
       "step1": "Pulsa Grabar y canta. La línea que se mueve muestra que el micrófono te oye.",
       "step2": "Pulsa Detener y luego reproduce tu grabación o descárgala.",

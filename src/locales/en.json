@@ -789,6 +789,13 @@
       "step2": "Allow the microphone when your browser asks. Without it, the programs can't hear you sing.",
       "step3": "New here? Try the first steps: warm up, find your range, then sing a tone."
     },
+    "records": {
+      "description": "Your best scores from the singing games, all in one place.",
+      "step1": "Finish a game and your best score shows up here.",
+      "step2": "We keep only your best score for each game and each mix of settings, like difficulty or speed. Beat it, and the new one takes its place.",
+      "step3": "Your scores are saved on this device only. Nothing goes online, so you won't see them on another phone or computer.",
+      "step4": "They go away if you clear your browser data or press Clear here. That can't be undone."
+    },
     "voiceRecorder": {
       "step1": "Press Record and sing. The moving line shows the mic can hear you.",
       "step2": "Press Stop, then play your recording or download it.",

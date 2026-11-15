@@ -36,7 +36,7 @@ export type ProgramHelp = {
   descriptionKey?: string
 }
 
-/* Keyed by `Program.key` in programs.ts, plus `home` for the landing page — the help button reads it by route */
+/* Keyed by `Program.key` in programs.ts, plus `home` and `records` for the pages that aren't programs — the help button reads it by route */
 export const programHelpByKey: Record<string, ProgramHelp> = {
   pitchDetector: {
     stepCount: 3,
@@ -102,5 +102,11 @@ export const programHelpByKey: Record<string, ProgramHelp> = {
     terms: [],
     nameKey: 'home.title',
     descriptionKey: 'home.subtitle',
+  },
+  records: {
+    stepCount: 4,
+    terms: [],
+    nameKey: 'records.title',
+    descriptionKey: 'programHelp.records.description',
   },
 }

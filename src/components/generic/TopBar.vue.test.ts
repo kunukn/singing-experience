@@ -48,4 +48,21 @@ describe('TopBar', () => {
       )
     },
   )
+
+  test.each([
+    { path: '/', programKey: 'home' },
+    { path: '/records', programKey: 'records' },
+    { path: '/note-rush', programKey: 'noteRush' },
+  ])(
+    'should offer the $programKey guide on $path',
+    async ({ path, programKey }) => {
+      const wrapper = await mountAt(path)
+
+      expect(
+        wrapper
+          .findComponent({ name: 'ProgramHelpButton' })
+          .props('programKey'),
+      ).toBe(programKey)
+    },
+  )
 })

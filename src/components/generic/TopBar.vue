@@ -9,6 +9,7 @@ const isHome = computed(() => route.path === '/')
 const stage = computed(() => programStageByRoute.get(route.path))
 const program = computed(() => programByRoute.get(route.path))
 const isLandingPage = computed(() => route.meta.isLandingPage === true)
+const isRecordsPage = computed(() => route.path === '/records')
 /* Also on the games that keep a best score, so the board is one tap from an end screen. */
 const shouldShowRecords = computed(
   () =>
@@ -50,6 +51,7 @@ function goBack() {
       <RecordsButton v-if="shouldShowRecords" />
       <ProgramHelpButton v-if="program" :programKey="program.key" />
       <ProgramHelpButton v-else-if="isLandingPage" programKey="home" />
+      <ProgramHelpButton v-else-if="isRecordsPage" programKey="records" />
       <SettingsPanel />
     </div>
   </div>
