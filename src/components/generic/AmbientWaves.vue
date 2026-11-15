@@ -111,7 +111,7 @@ function waveStyle(wave: Wave) {
  * a line drifting through headings and cards pulls the eye off the text. The
  * mask is in percentages because the column width differs per page. */
 .ambient-waves {
-  --wave-center-alpha: 0.5;
+  --wave-center-alpha: 0.4;
 
   mask-image: linear-gradient(
     to right,
