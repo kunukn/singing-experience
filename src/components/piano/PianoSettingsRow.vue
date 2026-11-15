@@ -87,44 +87,6 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
       <ToneModeSelect v-model="toneMode" />
     </div>
 
-    <!-- The toggles share one item: ToggleIconButton prints its own label from
-         md up (icon-only below), so the item's label track stays empty — the
-         placeholder div keeps the subgrid pairs aligned with the other items.
-
-         At md the item spans the whole grid. Three labelled toggles (plus the
-         icon-only voice-types and note-log ones) are the widest thing in the
-         row, and
-         because every item shares the subgrid's
-         columns, letting them sit in column 2 pins that column for the voice
-         range and tone-label rows too — in the kl locale that pushed the row
-         past the viewport at 768px. On its own row the cluster sizes nothing
-         but itself; five items still take three rows, so nothing gets taller. -->
-    <div class="settings-item md:col-span-full lg:col-span-2">
-      <div />
-      <div
-        class="flex items-center gap-2 md:col-[2/-1] md:justify-self-start lg:col-auto lg:justify-self-auto"
-      >
-        <PreviewToggle
-          v-model="isPreviewEnabled"
-          :disabled="micPermission === 'denied'"
-        />
-
-        <DuetToggle
-          v-model="isDuetEnabled"
-          :disabled="!isPreviewEnabled || micPermission === 'denied'"
-        />
-
-        <KeyboardHintsToggle
-          v-if="!isCoarsePointer"
-          v-model="areKeyboardHintsVisible"
-        />
-
-        <VoiceTypeRibbonToggle v-model="isVoiceTypeRibbonVisible" />
-
-        <PianoNoteLogToggle v-model="isNoteLogVisible" />
-      </div>
-    </div>
-
     <div class="settings-item">
       <label
         class="hidden text-end text-sm text-(--p-text-muted-color) md:block"
@@ -157,6 +119,52 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         data-testid="piano-accidentals"
       />
     </div>
+
+    <!-- The toggles share one item: ToggleIconButton prints its own label from
+         md up (icon-only below), so the item's label track stays empty — the
+         placeholder div keeps the subgrid pairs aligned with the other items.
+
+         Three labelled toggles (plus the icon-only voice-types and note-log
+         ones) are the widest thing in the row, and every item shares the
+         subgrid's columns, so wherever the cluster sits it sizes those columns
+         for every other row too. It comes last in the DOM so it can take the
+         space the other four leave over:
+         - md: its own full-width row, content from column 2. Sitting in one
+           column pair pinned that column for the voice range and tone-label
+           rows too — in the kl locale that pushed the row past the viewport
+           at 768px.
+         - lg: columns 3–6 of the second row, beside the accidentals. Spread
+           over four narrow columns it barely widens them; in row 1 next to the
+           two selects it overflowed the row at 1024px and squeezed the voice
+           range label into wrapping. The placeholder goes, so the cluster
+           starts under the tone-sound label. It may wrap (lg only — on the
+           mobile scroller wrapping would stack every toggle): in kl the
+           cluster alone is ~630px and the row still outgrew 1024px. -->
+    <div class="settings-item md:col-span-full lg:col-span-4">
+      <div class="lg:hidden" />
+      <div
+        class="flex items-center gap-2 md:col-[2/-1] md:justify-self-start lg:col-[1/-1] lg:flex-wrap"
+      >
+        <PreviewToggle
+          v-model="isPreviewEnabled"
+          :disabled="micPermission === 'denied'"
+        />
+
+        <DuetToggle
+          v-model="isDuetEnabled"
+          :disabled="!isPreviewEnabled || micPermission === 'denied'"
+        />
+
+        <KeyboardHintsToggle
+          v-if="!isCoarsePointer"
+          v-model="areKeyboardHintsVisible"
+        />
+
+        <VoiceTypeRibbonToggle v-model="isVoiceTypeRibbonVisible" />
+
+        <PianoNoteLogToggle v-model="isNoteLogVisible" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -164,10 +172,12 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 @reference '@/style.css';
 
 /*
- * Five items (each col-span-2), and five never divides evenly, so the row steps
- * up a breakpoint at a time: 2 per row at md, 3 from lg. Fitting more sooner
- * would push the whole document into a horizontal scrollbar — the piano's items
- * are wider than the guitar row's, which manages 4 per row at lg.
+ * Four control items (each col-span-2) plus the toggle cluster, which fills
+ * whatever the controls leave: 2 per row at md with the cluster on its own row,
+ * 3 per row from lg with the cluster spanning the rest of row 2 (col-span-4).
+ * Fitting more sooner would push the whole document into a horizontal
+ * scrollbar — the piano's items are wider than the guitar row's, which manages
+ * 4 per row at lg.
  *
  * There is deliberately no single-row layout on wide screens: all five items in
  * one line stretched the row far wider than the keyboard beneath it.
