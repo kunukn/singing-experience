@@ -652,12 +652,18 @@ function drawBird(
   const happyMs =
     passTimes.size > 0 ? now - Math.max(...passTimes.values()) : Infinity
 
+  /* Only a real collision knocks the bird out. A round that ends with a pipe
+   * left unpassed is also phase 'crashed' (cause 'incomplete'), but the bird
+   * hit nothing. */
+  const hasCollided =
+    props.phase === 'crashed' && props.crashCause?.kind !== 'incomplete'
+
   drawBirdSprite(ctx, {
     x,
     y: drawnY,
     facing: beakSign,
     pose: isPerched ? 'perched' : 'flying',
-    isCrashed: props.phase === 'crashed',
+    isCrashed: hasCollided,
     isSinging,
     tilt: isPerched ? 0 : tiltFromVelocity(birdVelocity),
     flapStrength: flapStrength(birdVelocity),
@@ -670,11 +676,7 @@ function drawBird(
    * already looking, and clear of the gap's note name. Anchored to the true
    * height like the note label, so it does not bob. Starts 10px above the
    * body and rises 12px; under reduced motion it fades in place. */
-  if (
-    props.phase !== 'crashed' &&
-    happyMs >= 0 &&
-    happyMs < PASS_SCORE_FLOAT_MS
-  ) {
+  if (!hasCollided && happyMs >= 0 && happyMs < PASS_SCORE_FLOAT_MS) {
     const float = animationProgress(happyMs, PASS_SCORE_FLOAT_MS)
     const rise = isAnimated ? 12 * easeOutCubic(float) : 0
     ctx.save()
