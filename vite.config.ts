@@ -274,9 +274,11 @@ export default defineConfig(({ command, mode }) => {
     test: {
       environment: 'happy-dom',
       experimental: {
-        /* Silences the "happy-dom was created N times" hint. Its suggested
-         * pool: 'vmThreads' runs ~2s faster but fails 5 tests (2026-11-15). */
-        diagnostics: { environment: false },
+        /* Silences two speed hints whose suggestions break tests (2026-11-15):
+         * pool: 'vmThreads' fails 5 tests, and isolate: false leaks state
+         * between files (localStorage, module state), failing a different
+         * set of tests on each run. */
+        diagnostics: { environment: false, isolate: false },
       },
     },
   }
