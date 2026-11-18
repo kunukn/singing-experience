@@ -77,9 +77,9 @@
     "resetCancel": "Annuler",
     "reload": "Recharger l'appli",
     "version": "Version",
-    "feedback": "Donne ton avis ou signale un problème",
-    "githubRepository": "Dépôt GitHub",
-    "githubIssues": "Problèmes GitHub"
+    "feedback": "Signale un problème",
+    "sourceCode": "Code source",
+    "opensInNewTab": "(s’ouvre dans un nouvel onglet)"
   },
   "sounds": {
     "toneSound": "Son de tonalité ",

@@ -77,9 +77,9 @@
     "resetCancel": "रद्द करें",
     "reload": "ऐप फिर से लोड करें",
     "version": "वर्शन",
-    "feedback": "अपनी राय दो या समस्या बताओ",
-    "githubRepository": "GitHub रिपॉज़िटरी",
-    "githubIssues": "GitHub समस्याएँ"
+    "feedback": "समस्या बताओ",
+    "sourceCode": "सोर्स कोड",
+    "opensInNewTab": "(नए टैब में खुलता है)"
   },
   "sounds": {
     "toneSound": "स्वर ध्वनि",

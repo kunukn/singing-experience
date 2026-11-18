@@ -77,9 +77,9 @@
     "resetCancel": "キャンセル",
     "reload": "アプリを再読み込み",
     "version": "バージョン",
-    "feedback": "感想を送るか不具合を報告",
-    "githubRepository": "GitHub リポジトリ",
-    "githubIssues": "GitHub の問題"
+    "feedback": "不具合を報告",
+    "sourceCode": "ソースコード",
+    "opensInNewTab": "（新しいタブで開きます）"
   },
   "sounds": {
     "toneSound": "音色",

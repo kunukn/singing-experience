@@ -77,9 +77,9 @@
     "resetCancel": "Batal",
     "reload": "Muat ulang aplikasi",
     "version": "Versi",
-    "feedback": "Beri masukan atau laporkan masalah",
-    "githubRepository": "Repositori GitHub",
-    "githubIssues": "Masalah GitHub"
+    "feedback": "Laporkan masalah",
+    "sourceCode": "Kode sumber",
+    "opensInNewTab": "(terbuka di tab baru)"
   },
   "sounds": {
     "toneSound": "Suara nada",

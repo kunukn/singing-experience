@@ -77,9 +77,9 @@
     "resetCancel": "Отмена",
     "reload": "Перезагрузить приложение",
     "version": "Версия",
-    "feedback": "Оставь отзыв или сообщи о проблеме",
-    "githubRepository": "Репозиторий GitHub",
-    "githubIssues": "Проблемы GitHub"
+    "feedback": "Сообщи о проблеме",
+    "sourceCode": "Исходный код",
+    "opensInNewTab": "(откроется в новой вкладке)"
   },
   "sounds": {
     "toneSound": "Звук тона",

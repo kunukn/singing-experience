@@ -77,9 +77,9 @@
     "resetCancel": "إلغاء",
     "reload": "إعادة تحميل التطبيق",
     "version": "الإصدار",
-    "feedback": "شارك رأيك أو أبلغ عن مشكلة",
-    "githubRepository": "مستودع GitHub",
-    "githubIssues": "مشكلات GitHub"
+    "feedback": "أبلغ عن مشكلة",
+    "sourceCode": "الكود المصدري",
+    "opensInNewTab": "(يُفتح في علامة تبويب جديدة)"
   },
   "sounds": {
     "toneSound": "صوت النغمة",

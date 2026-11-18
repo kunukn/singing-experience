@@ -77,9 +77,9 @@
     "resetCancel": "বাতিল",
     "reload": "অ্যাপ রিলোড করুন",
     "version": "সংস্করণ",
-    "feedback": "মতামত দাও বা সমস্যা জানাও",
-    "githubRepository": "GitHub রিপোজিটরি",
-    "githubIssues": "GitHub সমস্যা"
+    "feedback": "সমস্যা জানাও",
+    "sourceCode": "সোর্স কোড",
+    "opensInNewTab": "(নতুন ট্যাবে খোলে)"
   },
   "sounds": {
     "toneSound": "টোন শব্দ",

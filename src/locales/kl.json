@@ -71,9 +71,9 @@
     "resetToDefaults": "Pillugu utertippallakkit",
     "reload": "App nutaamik ammartik",
     "version": "Version",
-    "feedback": "Oqaaseqaatissatit tunniukkit imaluunniit ajortoq nalunaaruteqaruk",
-    "githubRepository": "GitHub-imi toqqortarfik",
-    "githubIssues": "GitHub-imi ajornartorsiutit"
+    "feedback": "Ajortoq nalunaaruteqaruk",
+    "sourceCode": "Source code",
+    "opensInNewTab": "(opens in a new tab)"
   },
   "sounds": {
     "toneSound": "Nipi",

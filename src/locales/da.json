@@ -77,9 +77,9 @@
     "resetCancel": "Annuller",
     "reload": "Genindlæs app",
     "version": "Version",
-    "feedback": "Giv feedback eller meld en fejl",
-    "githubRepository": "GitHub-arkiv",
-    "githubIssues": "GitHub-fejl"
+    "feedback": "Meld en fejl",
+    "sourceCode": "Kildekode",
+    "opensInNewTab": "(åbner i en ny fane)"
   },
   "sounds": {
     "toneSound": "Tone lyd",

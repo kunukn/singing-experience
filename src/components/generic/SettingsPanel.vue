@@ -43,6 +43,16 @@ function onReset() {
 }
 
 const appVersion = import.meta.env.VITE_APP_VERSION
+
+const REPO_URL = 'https://github.com/kunukn/singing-experience'
+
+// Prefill the build so every report says which version it came from.
+const issueUrl = computed(
+  () =>
+    `${REPO_URL}/issues/new?${new URLSearchParams({
+      body: `${t('settings.version')}: ${appVersion}\n\n`,
+    })}`,
+)
 </script>
 
 <template>
@@ -203,30 +213,30 @@ const appVersion = import.meta.env.VITE_APP_VERSION
         </div>
       </div>
 
-      <div class="mt-2 flex shrink-0 flex-col items-end justify-center gap-2">
-        <div class="flex items-center gap-4">
-          <a
-            href="https://github.com/kunukn/singing-experience"
-            target="_blank"
-            rel="noopener noreferrer"
-            :aria-label="t('settings.githubRepository')"
-            class="text-xs leading-none text-(--p-text-muted-color)"
-          >
-            {{ t('settings.version') }}: {{ appVersion }}
-          </a>
-        </div>
-        <div class="flex items-center gap-4">
-          <a
-            href="https://github.com/kunukn/singing-experience/issues"
-            target="_blank"
-            rel="noopener noreferrer"
-            :aria-label="t('settings.githubIssues')"
-            class="flex items-center gap-2 text-xs leading-none text-(--p-text-muted-color)"
-          >
-            <span>{{ t('settings.feedback') }}</span>
-            <GitHubIcon :size="20" />
-          </a>
-        </div>
+      <div
+        class="mt-2 flex shrink-0 flex-col items-end justify-center gap-3 text-xs leading-none text-(--p-text-muted-color)"
+      >
+        <p>{{ t('settings.version') }}: {{ appVersion }}</p>
+        <a
+          :href="REPO_URL"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-2 hover:text-(--p-text-color)"
+        >
+          <GitHubIcon :size="16" />
+          {{ t('settings.sourceCode') }}
+          <span class="sr-only">{{ t('settings.opensInNewTab') }}</span>
+        </a>
+        <a
+          :href="issueUrl"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center gap-2 hover:text-(--p-text-color)"
+        >
+          <i class="pi pi-flag" aria-hidden="true" />
+          {{ t('settings.feedback') }}
+          <span class="sr-only">{{ t('settings.opensInNewTab') }}</span>
+        </a>
       </div>
     </div>
   </Drawer>
