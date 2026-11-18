@@ -9,21 +9,21 @@ const { locale } = useI18n()
  * Used to rank languages so the most likely candidates surface first.
  */
 const languages = [
-  { code: 'en', label: '🇬🇧 English', total: 1500 }, // L1 ~385M, L2 ~1.1B
-  { code: 'zh', label: '🇨🇳 中文', total: 1200 }, // L1 ~960M, L2 ~200M
-  { code: 'es', label: '🇪🇸 Español', total: 573 }, // L1 ~483M, L2 ~90M
-  { code: 'hi', label: '🇮🇳 हिन्दी', total: 593 }, // L1 ~343M, L2 ~250M
-  { code: 'ar', label: '🇸🇦 العربية', total: 597 }, // L1 ~327M, L2 ~270M
-  { code: 'bn', label: '🇧🇩 বাংলা', total: 275 }, // L1 ~235M, L2 ~40M
-  { code: 'pt', label: '🇧🇷 Português', total: 265 }, // L1 ~235M, L2 ~30M
-  { code: 'ru', label: '🇷🇺 Русский', total: 260 }, // L1 ~150M, L2 ~110M
-  { code: 'ja', label: '🇯🇵 日本語', total: 128 }, // L1 ~126M, L2 ~2M
-  { code: 'fr', label: '🇫🇷 Français', total: 300 }, // L1 ~80M, L2 ~220M
-  { code: 'de', label: '🇩🇪 Deutsch', total: 136 }, // L1 ~76M, L2 ~60M
-  { code: 'id', label: '🇮🇩 Indonesia', total: 250 }, // L1 ~43M, L2 ~200M
-  { code: 'sw', label: '🇹🇿 Kiswahili', total: 120 }, // L1 ~16M, L2 ~100M
-  { code: 'da', label: '🇩🇰 Dansk', total: 6.3 }, // L1 ~6M, L2 ~300K
-  { code: 'kl', label: '🇬🇱 Kalaallisut', total: 0.06 }, // L1 ~50K, L2 ~10K
+  { code: 'en', label: 'English', total: 1500 }, // L1 ~385M, L2 ~1.1B
+  { code: 'zh', label: '中文', total: 1200 }, // L1 ~960M, L2 ~200M
+  { code: 'es', label: 'Español', total: 573 }, // L1 ~483M, L2 ~90M
+  { code: 'hi', label: 'हिन्दी', total: 593 }, // L1 ~343M, L2 ~250M
+  { code: 'ar', label: 'العربية', total: 597 }, // L1 ~327M, L2 ~270M
+  { code: 'bn', label: 'বাংলা', total: 275 }, // L1 ~235M, L2 ~40M
+  { code: 'pt', label: 'Português', total: 265 }, // L1 ~235M, L2 ~30M
+  { code: 'ru', label: 'Русский', total: 260 }, // L1 ~150M, L2 ~110M
+  { code: 'ja', label: '日本語', total: 128 }, // L1 ~126M, L2 ~2M
+  { code: 'fr', label: 'Français', total: 300 }, // L1 ~80M, L2 ~220M
+  { code: 'de', label: 'Deutsch', total: 136 }, // L1 ~76M, L2 ~60M
+  { code: 'id', label: 'Indonesia', total: 250 }, // L1 ~43M, L2 ~200M
+  { code: 'sw', label: 'Kiswahili', total: 120 }, // L1 ~16M, L2 ~100M
+  { code: 'da', label: 'Dansk', total: 6.3 }, // L1 ~6M, L2 ~300K
+  { code: 'kl', label: 'Kalaallisut', total: 0.06 }, // L1 ~50K, L2 ~10K
 ] as const
 
 type Language = (typeof languages)[number]
@@ -83,6 +83,12 @@ watch(selected, async (next) => {
     aria-label="Language"
     scrollHeight="370px"
   >
+    <template #value="{ value, placeholder }">
+      <span class="flex items-center gap-2">
+        <i class="pi pi-globe" aria-hidden="true" />
+        {{ languages.find((l) => l.code === value)?.label ?? placeholder }}
+      </span>
+    </template>
     <template #header></template>
     <template #optiongroup="_slotProps"></template>
     <template #option="{ option }">
