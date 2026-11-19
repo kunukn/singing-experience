@@ -60,7 +60,7 @@ Works fully offline after the first visit, and installs like a native app via "A
 
 ## 🌍 Languages
 
-Available in 15 languages, covering roughly 68% of the world's population:
+Available in 15 languages, spoken (natively or as a second language) by roughly two-thirds of the world:
 
 🇬🇧 English · 🇨🇳 中文 · 🇪🇸 Español · 🇮🇳 हिन्दी · 🇸🇦 العربية · 🇧🇩 বাংলা · 🇧🇷 Português · 🇷🇺 Русский · 🇯🇵 日本語 · 🇫🇷 Français · 🇩🇪 Deutsch · 🇮🇩 Bahasa Indonesia · 🇹🇿 Kiswahili · 🇩🇰 Dansk · 🇬🇱 Kalaallisut
 
