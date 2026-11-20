@@ -45,14 +45,6 @@ function onReset() {
 const appVersion = import.meta.env.VITE_APP_VERSION
 
 const REPO_URL = 'https://github.com/kunukn/singing-experience'
-
-// Prefill the build so every report says which version it came from.
-const issueUrl = computed(
-  () =>
-    `${REPO_URL}/issues/new?${new URLSearchParams({
-      body: `${t('settings.version')}: ${appVersion}\n\n`,
-    })}`,
-)
 </script>
 
 <template>
@@ -225,16 +217,6 @@ const issueUrl = computed(
         >
           <GitHubIcon :size="16" />
           {{ t('settings.sourceCode') }}
-          <span class="sr-only">{{ t('settings.opensInNewTab') }}</span>
-        </a>
-        <a
-          :href="issueUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="flex items-center gap-2 hover:text-(--p-text-color)"
-        >
-          <i class="pi pi-flag" aria-hidden="true" />
-          {{ t('settings.feedback') }}
           <span class="sr-only">{{ t('settings.opensInNewTab') }}</span>
         </a>
       </div>
