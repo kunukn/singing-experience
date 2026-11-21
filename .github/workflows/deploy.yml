@@ -33,6 +33,8 @@ jobs:
           commit_message=$(git log -1 --pretty=%s)
           cd dist
           touch .nojekyll
+          # Vercel reads vercel.json from the pushed branch, so main's config can't stop gh-pages builds.
+          echo '{ "git": { "deploymentEnabled": false } }' > vercel.json
           git init -q -b gh-pages
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

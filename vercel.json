@@ -1,9 +1,4 @@
 {
-  "git": {
-    "deploymentEnabled": {
-      "gh-pages": false
-    }
-  },
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     {
