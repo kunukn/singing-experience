@@ -1,0 +1,1 @@
+function e(e){if(e.length===0)return()=>0;if(new Set(e.map(e=>e.midi)).size<2){let t=e[0];return e=>t.y+(e-t.midi)*-2.1}let t=e.length,n=0,r=0,i=0,a=0;for(let{midi:t,y:o}of e)n+=t,r+=o,i+=t*o,a+=t*t;let o=t*a-n*n,s=(t*i-n*r)/o,c=(r-s*n)/t;return e=>s*e+c}export{e as t};

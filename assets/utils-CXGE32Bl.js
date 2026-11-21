@@ -1,0 +1,1 @@
+import{N as e,k as t,s as n}from"./basecomponent-CT5h5LLo.js";function r(){e({variableName:n(`scrollbar.width`).name})}function i(){t({variableName:n(`scrollbar.width`).name})}export{i as n,r as t};

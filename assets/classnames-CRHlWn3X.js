@@ -1,0 +1,1 @@
+function e(...t){if(t){let n=[];for(let r=0;r<t.length;r++){let i=t[r];if(!i)continue;let a=typeof i;if(a===`string`||a===`number`)n.push(i);else if(a===`object`){let t=Array.isArray(i)?[e(...i)]:Object.entries(i).map(([e,t])=>t?e:void 0);n=t.length?n.concat(t.filter(e=>!!e)):n}}return n.join(` `).trim()}}export{e as t};
