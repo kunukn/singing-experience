@@ -14,7 +14,7 @@ Singing Experience is a free web app for exploring your voice: practice singing,
 
 **[www.syng.fun](https://www.syng.fun)** · [kunukn.github.io/singing-experience](https://kunukn.github.io/singing-experience)
 
-<img src="docs/qr-live-demo.png" alt="QR code for live demo" width="200" />
+<img src="docs/qr-live-demo.png" alt="QR code for live demo" width="198" />
 
 ## ✨ What's Inside
 
