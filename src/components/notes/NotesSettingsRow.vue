@@ -58,7 +58,9 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     }"
   >
     <div class="settings-item">
-      <div />
+      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+        t('generic.clef')
+      }}</label>
       <PrimeSelectButton
         v-model="clefIndex"
         :options="clefOptions"
@@ -67,6 +69,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         :allowEmpty="false"
         :disabled="props.isRunning"
         size="small"
+        :aria-label="t('generic.clef')"
       >
         <template #option="{ option }">
           <ClefOption :clef="option.clef" :label="option.label" />
@@ -75,7 +78,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     </div>
 
     <div class="settings-item">
-      <label class="text-sm text-(--p-text-muted-color) md:block">{{
+      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('generic.tempo')
       }}</label>
       <PrimeSelect
@@ -85,6 +88,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         optionValue="value"
         size="small"
         :disabled="props.isRunning"
+        :ariaLabel="t('generic.tempo')"
       >
         <template #header>
           <div
@@ -97,7 +101,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     </div>
 
     <div class="settings-item">
-      <label class="hidden text-sm text-(--p-text-muted-color) lg:block">{{
+      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('sounds.toneSound')
       }}</label>
       <ToneModeSelect v-model="toneMode" />

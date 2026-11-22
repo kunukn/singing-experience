@@ -3,6 +3,7 @@ import {
   CLEF_LABEL_KEYS,
   type ClefKey,
 } from '@/components/notes/notesConstants'
+import type { ToneMode } from '@/composables/toneEngine'
 import {
   ALLOWED_BPMS,
   GRID_OPTIONS,
@@ -61,6 +62,24 @@ const gridOptions = GRID_OPTIONS.map((value) => ({
   value,
 }))
 
+/* Tone-mode selector — mirrors PianoSettingsRow. Never locked: playback and
+ * the piano read the mode per note, so a change only affects later notes.
+ * Re-warm the AudioContext inside the user-gesture frame so iOS Safari doesn't
+ * silently refuse a later resume. */
+const { setToneMode, warmUp } = useTonePlayer()
+const { toneMode: storedToneMode } = storeToRefs(useToneModeStore())
+const toneMode = computed<ToneMode>({
+  get: () => storedToneMode.value,
+  set: (mode) => {
+    storedToneMode.value = mode
+    setToneMode(mode)
+    void warmUp().catch((error) =>
+      debugLog('[TonePlayer] warmUp on tone-mode change failed', error),
+    )
+  },
+})
+setToneMode(storedToneMode.value)
+
 const rowRef = ref<HTMLElement | null>(null)
 const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 </script>
@@ -75,7 +94,9 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     }"
   >
     <div class="settings-item">
-      <div />
+      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+        t('melodyWriter.inputLabel')
+      }}</label>
       <PrimeSelectButton
         v-model="input"
         :options="inputOptions"
@@ -90,7 +111,19 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     </div>
 
     <div class="settings-item">
-      <div />
+      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+        t('sounds.toneSound')
+      }}</label>
+      <ToneModeSelect
+        v-model="toneMode"
+        data-testid="melody-writer-tone-mode"
+      />
+    </div>
+
+    <div class="settings-item">
+      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
+        t('generic.clef')
+      }}</label>
       <PrimeSelectButton
         v-model="clef"
         :options="clefOptions"
@@ -98,6 +131,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         optionValue="value"
         :allowEmpty="false"
         size="small"
+        :aria-label="t('generic.clef')"
         data-testid="melody-writer-clef"
       >
         <template #option="{ option }">
@@ -107,7 +141,7 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
     </div>
 
     <div class="settings-item">
-      <label class="text-sm text-(--p-text-muted-color) md:block">{{
+      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('generic.tempo')
       }}</label>
       <PrimeSelect
@@ -117,12 +151,21 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         optionValue="value"
         size="small"
         :disabled="props.isTempoLocked"
+        :ariaLabel="t('generic.tempo')"
         data-testid="melody-writer-bpm"
-      />
+      >
+        <template #header>
+          <div
+            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
+          >
+            {{ t('generic.tempo') }}
+          </div>
+        </template>
+      </PrimeSelect>
     </div>
 
     <div class="settings-item">
-      <label class="text-sm text-(--p-text-muted-color) md:block">{{
+      <label class="hidden text-sm text-(--p-text-muted-color) md:block">{{
         t('melodyWriter.grid')
       }}</label>
       <PrimeSelect
@@ -132,8 +175,17 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
         optionValue="value"
         size="small"
         :disabled="props.isGridLocked"
+        :ariaLabel="t('melodyWriter.grid')"
         data-testid="melody-writer-grid"
-      />
+      >
+        <template #header>
+          <div
+            class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)"
+          >
+            {{ t('melodyWriter.grid') }}
+          </div>
+        </template>
+      </PrimeSelect>
     </div>
 
     <div class="settings-item">
@@ -153,11 +205,12 @@ const { canScrollStart, canScrollEnd } = useScrollEdgeMask(rowRef)
 <style scoped>
 @reference '@/style.css';
 
-/* One row from md up: five items (each col-span-2) side by side. All auto,
- * not 1fr: in this content-sized grid, 1fr tracks all grow to the widest
- * one, which stretched short selects like Shortest note to Tempo's width.
- * gap-3, not the shared gap-4: five items only fit a 768px viewport with it. */
+/* Six items (each col-span-2), 3 per row at every width from md up, like the
+ * warm-up row. No single-row layout on wide screens: with labels one row is
+ * ~950–1200px across locales, far wider than the sheet beneath it.
+ * All auto, not 1fr: in this content-sized grid, 1fr tracks all grow to the
+ * widest one, which stretched short selects like Grid to Tempo's width. */
 .settings-row {
-  @apply md:grid-cols-[repeat(10,auto)] md:gap-3;
+  @apply md:grid-cols-[repeat(6,auto)] md:gap-3;
 }
 </style>

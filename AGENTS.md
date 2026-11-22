@@ -75,6 +75,12 @@ PrimeVue components are **auto-imported** via `PrimeVueResolver({ prefix: 'Prime
 
 **Phone layout uses `xs`, not `sm`.** For phone-only styling use `max-xs:` (30rem / 480px, `--breakpoint-xs` in [style.css](src/style.css)) — `sm` (640px) also catches small tablets. In script, use `useMediaQuery(PHONE_MEDIA_QUERY)` from [breakpoints.ts](src/constants/breakpoints.ts); change both together.
 
+**Setting labels follow the layout, not the control.**
+
+- **Settings grid (`.settings-row`), `md` and up:** every select and select button gets a visible label, even when its value explains itself (Tone sound, Voice range), so the label column stays aligned across rows. Toggles print their own text and keep an empty `<div />` placeholder.
+- **Below `md` (the snap-scroller):** hide labels with `hidden md:block`. Each control must still name itself: a select gets a `#header` with the setting name and an `ariaLabel`, and a select button gets an `aria-label`.
+- **Inline toolbars** (flex rows mixing actions and toggles, e.g. the pitch detector's): no labels. Use only controls that explain themselves (icon plus value). A control that can't belongs in the settings grid.
+
 **When to add to `/src/components/generic/`**:
 
 - The element needs app-specific logic or styling PrimeVue doesn't cover

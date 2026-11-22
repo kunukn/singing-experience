@@ -20,6 +20,7 @@ const voiceRangeGroups = useVoiceRangeGroups()
     optionGroupChildren="items"
     size="small"
     scrollHeight="370px"
+    :ariaLabel="headerLabel ?? t('generic.voiceRange')"
   >
     <template #header>
       <div class="px-3 py-2 text-xs font-medium text-(--p-text-muted-color)">

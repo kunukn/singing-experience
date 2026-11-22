@@ -401,15 +401,12 @@ onUnmounted(() => {
         class="min-w-32 flex-1"
       />
 
-      <div class="flex items-center gap-2">
-        <label
-          v-if="false"
-          class="hidden text-sm text-(--p-text-muted-color) lg:block"
-        >
-          {{ t('sounds.toneSound') }}
-        </label>
-        <!-- min-w-28, not 30: the tone names are short, and those 8px are what
-             keep the longest voice-range label from being clipped -->
+      <!-- No label: this is a toolbar, not a settings grid (see AGENTS.md,
+           Setting labels). The wrapper keeps the select's flex-1 from growing
+           it against the range select. min-w-28, not 30: the tone names are
+           short, and those 8px are what keep the longest voice-range label
+           from being clipped -->
+      <div class="flex items-center">
         <ToneModeSelect v-model="toneMode" class="min-w-28 flex-1" />
       </div>
 

@@ -35,6 +35,7 @@ function labelOf(mode: ToneMode): string {
     optionValue="value"
     size="small"
     scrollHeight="370px"
+    :ariaLabel="t('sounds.toneSound')"
     @update:modelValue="$emit('update:modelValue', $event)"
   >
     <template #value="{ value, placeholder }">
