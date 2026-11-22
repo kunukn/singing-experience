@@ -1,5 +1,8 @@
 import { useEventListener } from '@vueuse/core'
-import { TONE_PLAY_DURATION_S } from '@/constants/toneConstants'
+import {
+  TONE_PLAY_DURATION_S,
+  TONE_PRESS_LEAD_S,
+} from '@/constants/toneConstants'
 import { midiToFrequency } from '@/utils/noteUtils'
 
 type PianoKeyPlaybackOptions = {
@@ -41,8 +44,13 @@ export function usePianoKeyPlayback(options: PianoKeyPlaybackOptions = {}) {
      * the first press); playToneAt needs it running and doesn't self-start. */
     await warmUp()
     /* getImmediate, not getNow: a press should sound at once, and getNow would
-     * add Tone's 100 ms look-ahead on top of the device's output latency. */
-    playToneAt(midiToFrequency(midi), TONE_PLAY_DURATION_S, getImmediate())
+     * add Tone's 100 ms look-ahead on top of the device's output latency. The
+     * short lead keeps the note's start ahead of the audio thread. */
+    playToneAt(
+      midiToFrequency(midi),
+      TONE_PLAY_DURATION_S,
+      getImmediate() + TONE_PRESS_LEAD_S,
+    )
     options.onTonePlayed?.(midi)
   }
 
