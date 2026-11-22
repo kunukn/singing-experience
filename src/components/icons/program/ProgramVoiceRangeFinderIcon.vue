@@ -1,5 +1,5 @@
 <template>
-  <ProgramIconTile hue="rose">
+  <ProgramIconTile hue="indigo">
     <!-- Highest and lowest note on their ledger lines, the reach between them -->
     <path
       d="M21 10h12M7 30h12"
