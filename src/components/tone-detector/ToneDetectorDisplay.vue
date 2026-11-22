@@ -77,12 +77,8 @@ onUnmounted(() => {
       </p>
     </div>
 
-    <div
-      v-else
-      class="flex flex-col items-center gap-2 text-(--p-text-muted-color)"
-    >
-      <ProgramToneDetectorIcon class="size-16" />
-      <p class="text-sm">{{ t('toneDetector.pressStart') }}</p>
-    </div>
+    <p v-else class="text-sm text-(--p-text-muted-color)">
+      {{ t('toneDetector.pressStart') }}
+    </p>
   </div>
 </template>
