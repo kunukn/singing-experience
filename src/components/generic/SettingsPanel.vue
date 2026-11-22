@@ -194,7 +194,7 @@ const REPO_URL = 'https://github.com/kunukn/singing-experience'
 
             <PrimeButton
               severity="secondary"
-              text
+              outlined
               size="small"
               icon="pi pi-refresh"
               :label="t('settings.reload')"
