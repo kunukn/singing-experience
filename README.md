@@ -1,4 +1,4 @@
-# <img src="public/icons/note.svg" width="32" height="32" align="absmiddle" alt="music note" /> Singing Experience
+# <img src="public/icons/voice.svg" width="32" height="32" align="absmiddle" alt="singer with sound waves" /> Singing Experience
 
 [![License: 0BSD](https://img.shields.io/badge/license-0BSD-green.svg)](LICENSE)
 [![Live](https://img.shields.io/badge/live-syng.fun-blue)](https://www.syng.fun/)

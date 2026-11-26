@@ -1,19 +1,25 @@
-import { NOTE_HEADS, NOTE_STEMS_BEAM_PATH } from '@/components/icons/noteMark'
+import {
+  VOICE_HEAD,
+  VOICE_SHOULDERS_PATH,
+  VOICE_WAVES,
+  VOICE_WAVE_STROKE_WIDTH,
+} from '@/components/icons/voiceMark'
 
 /*
- * Brand mark from noteMark.ts (and public/icons/note.svg) as a plain SVG
+ * Brand mark from voiceMark.ts (and public/icons/voice.svg) as a plain SVG
  * string: a data-URI favicon can't read CSS vars, so every shape takes one hex
  * colour and the tile is that colour at 16%, matching the in-app tile tint.
  */
-function buildBrandNoteSvg(color: string): string {
+function buildBrandMarkSvg(color: string): string {
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" color="${color}">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke-linecap="round" color="${color}">`,
     '<rect x="1" y="1" width="38" height="38" rx="10" fill="currentColor" fill-opacity="0.16"/>',
-    ...NOTE_HEADS.map(
-      (head) =>
-        `<ellipse cx="${head.cx}" cy="${head.cy}" rx="${head.rx}" ry="${head.ry}" transform="${head.transform}" fill="currentColor"/>`,
+    `<circle cx="${VOICE_HEAD.cx}" cy="${VOICE_HEAD.cy}" r="${VOICE_HEAD.r}" fill="currentColor"/>`,
+    `<path d="${VOICE_SHOULDERS_PATH}" fill="currentColor"/>`,
+    ...VOICE_WAVES.map(
+      (wave) =>
+        `<path d="${wave.d}" stroke="currentColor" stroke-width="${VOICE_WAVE_STROKE_WIDTH}" stroke-opacity="${wave.opacity}"/>`,
     ),
-    `<path d="${NOTE_STEMS_BEAM_PATH}" fill="currentColor"/>`,
     '</svg>',
   ].join('')
 }
@@ -23,7 +29,7 @@ const COLOR_GRANTED = '#22c55e'
 const COLOR_DENIED = '#ef4444'
 
 function buildFaviconHref(color: string): string {
-  return `data:image/svg+xml,${encodeURIComponent(buildBrandNoteSvg(color))}`
+  return `data:image/svg+xml,${encodeURIComponent(buildBrandMarkSvg(color))}`
 }
 
 function getFaviconLink(): HTMLLinkElement | null {

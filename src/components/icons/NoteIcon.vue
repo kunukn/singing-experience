@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { NOTE_HEADS, NOTE_STEMS_BEAM_PATH } from './noteMark'
 
-/* Brand-mark notes without the tile, in currentColor — sized by class (e.g. size-5) */
+/* Beamed notes without a tile, in currentColor — sized by class (e.g. size-5) */
 </script>
 
 <template>

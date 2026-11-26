@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" stroke-linecap="round">
+  <!-- Hand copy of src/components/icons/voiceMark.ts; every shape draws in currentColor -->
+  <style>
+    svg { color: #475569; }
+    @media (prefers-color-scheme: dark) {
+      svg { color: #a1a1aa; }
+    }
+  </style>
+  <rect x="1" y="1" width="38" height="38" rx="10" fill="currentColor" fill-opacity="0.16"/>
+  <circle cx="15.5" cy="14" r="6.5" fill="currentColor"/>
+  <path d="M5.11 32A10.5 10.5 0 0 1 25.89 32Q25.89 33.5 24.39 33.5H6.61Q5.11 33.5 5.11 32Z" fill="currentColor"/>
+  <path d="M26.9 11a7 7 0 0 1 0 9" stroke="currentColor" stroke-width="2.5"/>
+  <path d="M31.1 7.5a12.5 12.5 0 0 1 0 16" stroke="currentColor" stroke-width="2.5" stroke-opacity="0.6"/>
+</svg>

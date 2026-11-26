@@ -1,8 +1,6 @@
 /*
- * Brand note mark on a 40×40 grid: two tilted oval heads plus one filled
- * outline for both stems and the beam. Shared by NoteIcon, MusicNoteIcon and
- * the favicon string; public/icons/note.svg is a hand copy because a static
- * file can't import this.
+ * Beamed notes on a 40×40 grid: two tilted oval heads plus one filled outline
+ * for both stems and the beam. Drawn by NoteIcon.
  */
 export const NOTE_HEADS = [
   { cx: 13.5, cy: 29.5, rx: 4, ry: 3, transform: 'rotate(-20 13.5 29.5)' },
