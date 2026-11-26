@@ -144,6 +144,9 @@ vite.config.ts.timestamp-*
 .claude/settings.local.json
 CLAUDE.local.md
 
+# Playwright E2E output
+playwright-report/
+test-results/
 # ignore temporary files (keep folder)
 .temp/*
 !.temp/.gitkeep

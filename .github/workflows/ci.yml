@@ -42,7 +42,7 @@ jobs:
           npx --no-install tsc --project tsconfig.node.json
 
       - name: Lint
-        run: npx --no-install oxlint src
+        run: npx --no-install oxlint src e2e
 
       - name: Unit tests
         run: npx --no-install vitest run

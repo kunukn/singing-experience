@@ -50,8 +50,8 @@ npm run dev
 When adding a new script to `package.json`, follow these rules so the list stays scannable:
 
 - **Format**: `<group>:<action>` — colon-separated, lowercase, no camelCase, no kebab inside the name (`build:validate`, not `validateBuild` or `validate-build`).
-- **Groups**: `dev`, `build`, `test`, `check`, `format`. Pick one — do not invent new groups without discussion.
-- **Bare names** (no colon) are reserved for the canonical action of a group: `dev`, `build`, `preview`, `typecheck`, `lint`, `format`, `test`, `check`, `deploy`. Everything else must have a group prefix.
+- **Groups**: `dev`, `build`, `test`, `e2e`, `check`, `format`. Pick one — do not invent new groups without discussion.
+- **Bare names** (no colon) are reserved for the canonical action of a group: `dev`, `build`, `preview`, `typecheck`, `lint`, `format`, `test`, `e2e`, `check`, `deploy`. Everything else must have a group prefix.
 - **Action describes intent, not tooling.** Use `build:validate` (not `playwright:smoke`), `check:fix` (not `format-and-check`). The reader should understand the script without opening its body.
 - **No duplicates / aliases.** If two scripts run the same command, delete one and update callers (CI, hooks, docs).
 - **When you rename a script**, grep the repo for the old name — the husky hooks in [.husky/](.husky/), the GitHub workflow [.github/workflows/deploy.yml](.github/workflows/deploy.yml), and the docs ([AGENTS.md](AGENTS.md) and this file) all reference scripts by name.
@@ -70,6 +70,8 @@ When adding a new script to `package.json`, follow these rules so the list stays
 - `npm test` — Run tests once
 - `npm run test:watch` — Run tests in watch mode
 - `npm run test:ui` — Run tests with the Vitest UI
+- `npm run e2e` — Run the Playwright end-to-end specs in `e2e/` (headless Chromium; starts Vite or reuses a running `npm run dev`). Not part of `check` or CI — run it when you change a flow a spec covers.
+- `npm run e2e:ui` — Run the end-to-end specs in Playwright's UI mode
 - `npm run check` — Run all pre-push checks (typecheck + lint + knip unused-file/dependency scan + tests + build + validate) in parallel. Pre-push runs this automatically; humans run it manually only when verifying before pushing.
 - `npm run check:fix` — Format then run `check`. Intended for AI/agent workflows that bypass the husky hooks — agents should run this before handing control back. Humans normally don't need it: pre-commit auto-formats and lints staged files via lint-staged, and pre-push runs `check`.
 - `npm run social-preview` — Regenerate `public/social-preview.png` (the 1280×640 link-share card) from the real Pitch Detector via Vite + headless Chromium. Run after visible changes to the Pitch Detector or the brand mark.

@@ -4,7 +4,45 @@ applyTo: '**/*.test.ts'
 
 # Testing Guidelines
 
-These instructions apply when writing or modifying test files (`*.test.ts`).
+These instructions apply when writing or modifying test files (`*.test.ts`). Playwright specs in `e2e/` have their own rules in [e2e.instructions.md](e2e.instructions.md).
+
+## A Test Must Earn Its Place
+
+A test earns its place when a real bug turns it red and a harmless refactor doesn't. For every test, name the product change that would fail it. "None" means it's tautological; "renaming or restructuring internals" means it's too structure-sensitive. Rewrite or delete either kind.
+
+**Mutation check:** after writing a test, break the code it guards (flip a default, drop a branch, swap a constant) and confirm the test goes red. If it stays green, find out which is true: the test doesn't test that code, or the break changed nothing.
+
+### Tautologies: tests that can't fail
+
+- Don't assert what the implementation's shape already guarantees, such as that a function returns a member of the array it indexes.
+- Don't recompute the expected value with the code's own formula and constants. Assert a contract a plausible bug would break instead: an ordering, a relationship between two outputs, or a hand-computed example (`440 Hz` is `A4`).
+- A purity test ("same input → same output") is only worth it when it guards a stated rule. Say the rule in the test name.
+
+### Structure-sensitive: tests that fail on harmless changes
+
+- Test through the public surface: props and events in, rendered text, `data-*` state and emitted events out. "Testing Philosophy" below has the details for components.
+- Derive limits from the source of truth instead of writing the number: `CLEAN_CENTS` / `CLOSE_CENTS` / `OFF_CENTS` from `pitchColors.ts`, the fields in `HIGH_SCORE_CONFIG_FIELDS`, a scale's own step list. Pin a literal only where it _is_ the spec under test.
+- Persistence tests are the exception: there the stored shape is the contract, so assert it.
+
+### Fixtures and mocks must match reality
+
+- Send only inputs the real app can produce. A mock pitch provider reports what the detector reports: a frequency together with its note, octave and clarity, not a note the frequency doesn't belong to.
+- Produce current-format data through the real writer, such as a store's own actions, so the fixture can't drift from the code. Hand-write storage JSON only for legacy or corrupt saves.
+- Nothing driven by layout, the network or real audio runs in happy-dom. Cover that behaviour in e2e, or stub it per test with callbacks that fire the way the browser does.
+- Keep comments that describe fixtures true. A comment naming the wrong value misleads the next author more than no comment would.
+
+### Isolation
+
+- Pinia stores and `useLocalStorage` refs are shared state, and happy-dom's `localStorage` survives between tests in a file. Reset both in `beforeEach` so each test starts as a new singer and test order doesn't matter:
+
+  ```typescript
+  beforeEach(() => {
+    localStorage.clear()
+    setActivePinia(createPinia())
+  })
+  ```
+
+- Assert new-singer defaults on a fresh store, never after another test has changed it.
 
 ## Testing Philosophy
 

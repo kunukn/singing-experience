@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2024",
-    "lib": ["ES2024"],
+    /* DOM: e2e `page.evaluate` callbacks and init scripts run in the browser */
+    "lib": ["ES2024", "DOM"],
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
@@ -18,5 +19,5 @@
     "noUncheckedSideEffectImports": true,
     "types": ["vitest/config"]
   },
-  "include": ["vite.config.ts"]
+  "include": ["vite.config.ts", "playwright.config.ts", "e2e/**/*.ts"]
 }

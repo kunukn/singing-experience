@@ -8,7 +8,7 @@ This document provides coding standards and architectural principles for AI codi
 - **UI Libraries**: Tailwind CSS + Vue Single File Components (SFC) for styling.
 - **State Management**: Pinia (global state)
 - **Linting**: oxlint
-- **Testing**: vitest
+- **Testing**: vitest (unit and component), Playwright (end-to-end)
 - **Package Manager**: npm
 
 ## Directory Structure
@@ -317,7 +317,12 @@ const song = await songLibrary.fetchSong(songId)
 
 - Write tests for critical business logic
 - Keep test files close to the code they test
-- Use Vitest for unit and integration tests
+- Use Vitest for unit and integration tests (`*.test.ts`, `npm test`)
+- Use Playwright for flows that need a real browser: several pages, lazy loading, storage across a reload (`e2e/*.spec.ts`, `npm run e2e`, or `npm run e2e:ui` for UI mode)
+
+`npm run e2e` starts Vite on port 5555 or reuses a running `npm run dev`. It is not part of `npm run check`, the pre-push hook or CI, which only typecheck and lint the specs. Run it when you change a flow a spec covers. Specs never use the microphone: sung flows run on the `-test` routes (see "Test Pages").
+
+A test earns its place when a real bug turns it red and a harmless refactor doesn't. The rules for both kinds are in the path-scoped instructions below.
 
 Prefer testing business logic outcomes (submitted values, rendered output) over intermediate DOM state.
 
@@ -411,10 +416,11 @@ Translation/i18n copy rules live in [.github/instructions/translation.instructio
 
 Files in [.github/instructions/](.github/instructions/) carry an `applyTo` glob in their frontmatter. Read the file when touching matching paths:
 
-| File                          | Applies to           |
-| ----------------------------- | -------------------- |
-| `translation.instructions.md` | `src/locales/*.json` |
-| `test.instructions.md`        | `**/*.test.ts`       |
+| File                          | Applies to                            |
+| ----------------------------- | ------------------------------------- |
+| `translation.instructions.md` | `src/locales/*.json`                  |
+| `test.instructions.md`        | `**/*.test.ts`                        |
+| `e2e.instructions.md`         | `e2e/**/*.ts`, `playwright.config.ts` |
 
 ### Code Verification
 
@@ -475,4 +481,5 @@ If `.temp/` does not exist, create it first.
 - ✅ Wrap user-facing strings with `$t()` / `t()` for i18n — never hardcode display text
 - ✅ Keep translated copy informal and child-friendly — see "i18n Copy & Translations"
 - ✅ Save screenshot files to `.temp/` (see "Saving Screenshots" above)
+- ✅ E2E specs (`e2e/*.spec.ts`) drive sung flows through the `-test` routes — run `npm run e2e` when you change a flow they cover
 - ✅ Test pages (`*Test*` / `/-test` routes) must simulate all voice input — never the real microphone (see "Test Pages")

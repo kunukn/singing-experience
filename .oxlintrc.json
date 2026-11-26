@@ -32,7 +32,8 @@
   },
   "overrides": [
     {
-      "files": ["**/*.test.{ts,vue}", "**/*.spec.{ts,vue}", "**/test/**"],
+      // *.spec.ts is left out: those are the Playwright specs in e2e/
+      "files": ["**/*.test.{ts,vue}", "**/test/**"],
       "plugins": ["unicorn", "typescript", "oxc", "vue", "vitest"]
     }
   ],

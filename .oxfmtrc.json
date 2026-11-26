@@ -11,6 +11,8 @@
     "dist",
     "coverage",
     ".temp",
+    "playwright-report",
+    "test-results",
     "package-lock.json",
     "src/auto-imports.d.ts",
     "typed-router.d.ts"

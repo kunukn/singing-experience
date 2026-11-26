@@ -21,6 +21,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
+    "e2e": "playwright install chromium && playwright test",
+    "e2e:ui": "playwright install chromium && playwright test --ui",
     "check": "node scripts/check.js",
     "licenses": "node scripts/third-party-licenses.js",
     "social-preview": "playwright install chromium && node scripts/generate-social-preview.js",
@@ -55,6 +57,7 @@
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
+    "@playwright/test": "1.65.0",
     "@types/canvas-confetti": "1.9.0",
     "@vitejs/plugin-vue": "6.0.10",
     "@vitest/ui": "5.1.0",
@@ -104,7 +107,7 @@
   "homepage": "https://github.com/kunukn/singing-experience#readme",
   "lint-staged": {
     "*": "oxfmt --no-error-on-unmatched-pattern",
-    "src/**/*.{ts,vue}": "node scripts/lint-with-timing.js"
+    "{src,e2e}/**/*.{ts,vue}": "node scripts/lint-with-timing.js"
   },
   "allowScripts": {
     "fsevents": false

@@ -21,11 +21,14 @@ const startTime = performance.now()
 
 /* The one place that decides how lint runs: `npm run lint`, the Lint step in
  * scripts/check.js and the pre-commit hook all call this script. lint-staged
- * appends the staged paths; with no paths it lints src.
+ * appends the staged paths; with no paths it lints src and e2e.
  * --deny-warnings has no limit to raise: fix a new warning, or turn its rule
  * off in .oxlintrc.json with a comment saying why. */
 const targets = process.argv.slice(2)
-const oxlintArgs = ['--deny-warnings', ...(targets.length ? targets : ['src'])]
+const oxlintArgs = [
+  '--deny-warnings',
+  ...(targets.length ? targets : ['src', 'e2e']),
+]
 
 const oxlint = spawn(localBin('oxlint'), oxlintArgs, {
   stdio: ['inherit', 'inherit', 'inherit'],

@@ -11,6 +11,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 import { PrimeVueResolver } from 'unplugin-vue-components/resolvers'
 import Components from 'unplugin-vue-components/vite'
 import { defineConfig, loadEnv } from 'vite'
+import { configDefaults } from 'vitest/config'
 import { VitePWA } from 'vite-plugin-pwa'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import VueRouter from 'vue-router/vite'
@@ -275,6 +276,9 @@ export default defineConfig(({ command, mode }) => {
     },
     test: {
       environment: 'happy-dom',
+      /* e2e/*.spec.ts are Playwright specs (npm run e2e). Vitest's default
+       * include matches *.spec.ts too and would try to run them. */
+      exclude: [...configDefaults.exclude, 'e2e/**'],
       experimental: {
         /* Silences two speed hints whose suggestions break tests (2026-11-15):
          * pool: 'vmThreads' fails 5 tests, and isolate: false leaks state
