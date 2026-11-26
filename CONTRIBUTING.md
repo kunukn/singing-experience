@@ -72,6 +72,7 @@ When adding a new script to `package.json`, follow these rules so the list stays
 - `npm run test:ui` — Run tests with the Vitest UI
 - `npm run check` — Run all pre-push checks (typecheck + lint + knip unused-file/dependency scan + tests + build + validate) in parallel. Pre-push runs this automatically; humans run it manually only when verifying before pushing.
 - `npm run check:fix` — Format then run `check`. Intended for AI/agent workflows that bypass the husky hooks — agents should run this before handing control back. Humans normally don't need it: pre-commit auto-formats and lints staged files via lint-staged, and pre-push runs `check`.
+- `npm run social-preview` — Regenerate `public/social-preview.png` (the 1280×640 link-share card) from the real Pitch Detector via Vite + headless Chromium. Run after visible changes to the Pitch Detector or the brand mark.
 - `npm run deploy` — Deploy `dist/` to the `gh-pages` branch
 
 ## License

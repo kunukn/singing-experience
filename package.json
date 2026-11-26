@@ -23,6 +23,7 @@
     "test:ui": "vitest --ui",
     "check": "node scripts/check.js",
     "licenses": "node scripts/third-party-licenses.js",
+    "social-preview": "playwright install chromium && node scripts/generate-social-preview.js",
     "check:fix": "npm run format && npm run check",
     "prepare": "husky"
   },

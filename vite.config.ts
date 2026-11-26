@@ -216,8 +216,10 @@ export default defineConfig(({ command, mode }) => {
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff,woff2}'],
           /* The WASM AAC encoder (~1.1 MB) only runs for a voice recorder
            * "Small file" in browsers without native AAC, mainly Firefox, so
-           * it's fetched on demand instead of by every visitor. */
-          globIgnores: ['**/mediabunny-aac-encoder-*.js'],
+           * it's fetched on demand instead of by every visitor.
+           * social-preview.png is the link-share card: crawlers fetch it, the
+           * app never shows it. */
+          globIgnores: ['**/mediabunny-aac-encoder-*.js', 'social-preview.png'],
           additionalManifestEntries: allSampleUrls.map((url) => ({
             url,
             revision: null,
