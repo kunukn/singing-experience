@@ -1,38 +1,62 @@
 import { describe, expect, test } from 'vitest'
 
-import type { PitchTrack } from './pitchTrack'
+import { midiToFrequency } from '@/utils/noteUtils'
+
+import {
+  ANALYSIS_SAMPLE_RATE,
+  createPitchTrack,
+  frameTimeMs,
+} from './pitchTrack'
 import type { TakeNote } from './takeNotes'
 import { buildTakeRating, MIN_RATED_VOICED_MS } from './takeRating'
 
 const C_MAJOR = [60, 62, 64, 65, 67, 69, 71, 72]
+/* A clear, comfortably loud voice in every frame. */
+const SUNG_CLARITY = 0.95
+const SUNG_DB = -20
 
-const track: PitchTrack = {
-  hopMs: 10,
-  windowMs: 40,
-  frameCount: 1,
-  hz: new Float32Array([261.63]),
-  clarity: new Float32Array([0.95]),
-  rmsDb: new Float32Array([-20]),
+/*
+ * A take that is clear singing from start to end: eight held, centred notes in
+ * key, sung back to back and sharing the time equally. Only drift can lower the
+ * key score.
+ */
+function createTake(voicedMs: number) {
+  const noteMs = voicedMs / C_MAJOR.length
+  const notes: TakeNote[] = C_MAJOR.map((midi, index) => ({
+    midi,
+    startMs: index * noteMs,
+    endMs: (index + 1) * noteMs,
+    centerMidi: midi,
+    centsFromGrid: 0,
+    isGlide: false,
+    hasSlideIn: false,
+    hasCleanStart: true,
+    wobbleCents: 3,
+    vibrato: null,
+  }))
+
+  const track = createPitchTrack({
+    samples: new Float32Array(
+      Math.ceil((voicedMs / 1000) * ANALYSIS_SAMPLE_RATE),
+    ),
+    sampleRate: ANALYSIS_SAMPLE_RATE,
+  })
+  for (let frame = 0; frame < track.frameCount; frame++) {
+    const noteIndex = Math.min(
+      notes.length - 1,
+      Math.floor(frameTimeMs(track, frame) / noteMs),
+    )
+    track.hz[frame] = midiToFrequency(notes[noteIndex].midi)
+    track.clarity[frame] = SUNG_CLARITY
+    track.rmsDb[frame] = SUNG_DB
+  }
+
+  return { track, notes }
 }
-
-/* Eight held, centred notes in key: only drift can lower the key score. */
-const notes: TakeNote[] = C_MAJOR.map((midi, index) => ({
-  midi,
-  startMs: index * 1000,
-  endMs: index * 1000 + 900,
-  centerMidi: midi,
-  centsFromGrid: 0,
-  isGlide: false,
-  hasSlideIn: false,
-  hasCleanStart: true,
-  wobbleCents: 3,
-  vibrato: null,
-}))
 
 function rate(voicedMs: number, driftCents: number) {
   return buildTakeRating({
-    track,
-    notes,
+    ...createTake(voicedMs),
     voicedMs,
     driftCents,
     inScaleShare: 1,

@@ -47,27 +47,33 @@ describe('CircleOfFifthsTarget', () => {
 
   test('should keep the chord row laid out but hidden once it fades', () => {
     const wrapper = mountTarget({
-      chordNotes: [{ label: 'C', isNext: false, isGuide: false }],
+      chordNotes: [
+        { label: 'C', isNext: false, isGuide: false },
+        { label: 'E', isNext: false, isGuide: false },
+        { label: 'G', isNext: true, isGuide: false },
+      ],
       isChordRinging: false,
     })
     const chord = wrapper.get('[data-testid="circle-target-chord"]')
 
     expect(chord.attributes('data-visible')).toBe('false')
-    expect(chord.text()).toBe('C')
+    expect(chord.text()).toBe('C·E·G')
   })
 
   test('should point from the guide note when the next note is not in the chord', () => {
+    /* A7 on the way to D: a guide note only ever sits in a dominant 7th */
     const wrapper = mountTarget({
       chordNotes: [
         { label: 'A', isNext: false, isGuide: false },
         { label: 'C♯', isNext: false, isGuide: true },
         { label: 'E', isNext: false, isGuide: false },
+        { label: 'G', isNext: false, isGuide: false },
       ],
       isChordRinging: true,
     })
     const chord = wrapper.get('[data-testid="circle-target-chord"]')
 
-    expect(chord.text()).toBe('A·C♯↗·E')
+    expect(chord.text()).toBe('A·C♯↗·E·G')
     expect(chord.get('[data-guide="true"]').text()).toBe('C♯↗')
     expect(chord.find('[data-next="true"]').exists()).toBe(false)
   })

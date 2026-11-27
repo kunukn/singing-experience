@@ -45,11 +45,19 @@ describe('useVoiceRangeSlots', () => {
     expect(slots.value[1]).toBeNull()
   })
 
-  test('should ignore an index outside the slots', () => {
-    const { slots, saveSlot } = useVoiceRangeSlots('test.slots.outside')
+  /* The slots can't show it: they are read back as exactly
+   * VOICE_RANGE_SLOT_COUNT entries either way. What an out-of-range save must
+   * not do is touch the store. */
+  test('should write nothing for an index outside the slots', async () => {
+    const key = 'test.slots.outside'
+    const { slots, saveSlot } = useVoiceRangeSlots(key)
+    const storedBefore = localStorage.getItem(key)
 
     saveSlot(VOICE_RANGE_SLOT_COUNT, { midiMin: G2, midiMax: E4, name: '' })
+    saveSlot(-1, { midiMin: G2, midiMax: E4, name: '' })
+    await nextTick() // useLocalStorage writes on the next flush
 
+    expect(localStorage.getItem(key)).toBe(storedBefore)
     expect(slots.value).toEqual(Array(VOICE_RANGE_SLOT_COUNT).fill(null))
   })
 

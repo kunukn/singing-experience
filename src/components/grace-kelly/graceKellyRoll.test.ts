@@ -13,6 +13,7 @@ import {
   ROLL_TOTAL_EIGHTHS,
   rollMidiRange,
   vozColorIndex,
+  type RollBlock,
 } from './graceKellyRoll'
 
 /* G2 — the page's default start tone. */
@@ -29,11 +30,12 @@ describe('graceKellyRoll', () => {
     expect(ROLL_TOTAL_EIGHTHS).toBe(46)
   })
 
-  test('columns follow each other without gaps or overlaps', () => {
+  /* A gap is allowed: a note clipped by a rest leaves one after it. */
+  test('no column starts before the one before it has ended', () => {
     for (let index = 1; index < ROLL_COLUMNS.length; index++) {
       const previous = ROLL_COLUMNS[index - 1]
 
-      expect(ROLL_COLUMNS[index].startEighth).toBe(
+      expect(ROLL_COLUMNS[index].startEighth).toBeGreaterThanOrEqual(
         previous.startEighth + previous.eighths,
       )
     }
@@ -139,16 +141,30 @@ describe('graceKellyRoll', () => {
   })
 
   test('a part is named again each time its tone changes', () => {
-    const blocks = buildRollBlocks([MELODY], START_TONE_MIDI)
-    const labels = buildRollToneLabels(blocks)
-    const toneChanges = blocks.filter(
-      (block, index) => index === 0 || block.midi !== blocks[index - 1].midi,
-    )
+    const createBlock = (midi: number, startEighth: number): RollBlock => ({
+      vozIndex: MELODY,
+      midi,
+      startEighth,
+      eighths: 1,
+      firstNoteIndex: startEighth,
+      lastNoteIndex: startEighth,
+      stripeIndex: 0,
+      stripeCount: 1,
+    })
+    /* C4, C4, D4, C4: named at the start, at the step up and at the return,
+     * not on the repeated C4. */
+    const labels = buildRollToneLabels([
+      createBlock(60, 0),
+      createBlock(60, 1),
+      createBlock(62, 2),
+      createBlock(60, 3),
+    ])
 
-    expect(labels.length).toBeLessThan(blocks.length)
-    expect(labels.map((label) => label.startEighth)).toEqual(
-      toneChanges.map((block) => block.startEighth),
-    )
+    expect(labels).toEqual([
+      { vozIndex: MELODY, midi: 60, startEighth: 0 },
+      { vozIndex: MELODY, midi: 62, startEighth: 2 },
+      { vozIndex: MELODY, midi: 60, startEighth: 3 },
+    ])
   })
 
   test('parts starting the same tone together share one name', () => {

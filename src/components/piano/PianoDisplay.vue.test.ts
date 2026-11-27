@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
 import PianoDisplay from './PianoDisplay.vue'
@@ -64,13 +64,22 @@ function mountDisplay(
   })
 }
 
+/* The display reads two module-level useLocalStorage refs, which
+ * localStorage.clear() does not reach, so each goes back to its new-singer
+ * default through its own setter: ribbon shown, and light mode (happy-dom
+ * reports no dark preference). */
+const { isVoiceTypeRibbonVisible } = useVoiceTypeRibbon()
+const { isDark, toggleDark } = useDarkMode()
+
+beforeEach(() => {
+  isVoiceTypeRibbonVisible.value = true
+  if (isDark.value) toggleDark()
+
+  localStorage.clear()
+  setActivePinia(createPinia())
+})
+
 describe('PianoDisplay - lane slot', () => {
-  test('should render nothing extra when no lane slot is given', () => {
-    const wrapper = mountDisplay()
-
-    expect(wrapper.find('[data-testid="lane-probe"]').exists()).toBe(false)
-  })
-
   test('should hand the key layout to the lane slot', () => {
     const wrapper = mountDisplay(
       {},
@@ -168,8 +177,8 @@ describe('PianoDisplay - target key', () => {
     expect(
       wrapper
         .get('[data-testid="piano-key-glow"][data-midi="64"]')
-        .attributes('style'),
-    ).toBeUndefined()
+        .attributes('data-glow-shape'),
+    ).toBe('key')
   })
 
   /* A black key already is the block's shape, so its wash stays on the key. */
@@ -320,6 +329,38 @@ describe('PianoDisplay - keyboard hints', () => {
     const wrapper = mountDisplay({ areKeyboardHintsVisible: false })
 
     expect(wrapper.findAll('[data-testid="piano-key-hint"]')).toHaveLength(0)
+    wrapper.unmount()
+  })
+})
+
+describe('PianoDisplay - octave shift readout', () => {
+  /* C2–C7: wide enough for the computer-key map to move one octave down and
+   * two up from the printed layout. */
+  const FULL_RANGE = { midiMin: 36, midiMax: 96 }
+
+  async function pressShiftKey(code: 'Minus' | 'Equal') {
+    window.dispatchEvent(new KeyboardEvent('keydown', { code }))
+    await nextTick()
+  }
+
+  /* The readout names the note the leftmost mapped key (Z) plays — the base
+   * moved by whole octaves, so it stays on a C wherever the map sits. */
+  test('should anchor the readout on a C at every shift position', async () => {
+    const wrapper = mountDisplay(FULL_RANGE)
+    const readout = () =>
+      wrapper.get('[data-testid="piano-octave-anchor"]').text()
+
+    expect(readout()).toBe('Z = C3')
+
+    await pressShiftKey('Minus')
+    expect(readout()).toBe('Z = C2')
+
+    await pressShiftKey('Equal')
+    await pressShiftKey('Equal')
+    expect(readout()).toBe('Z = C4')
+
+    await pressShiftKey('Equal')
+    expect(readout()).toBe('Z = C5')
     wrapper.unmount()
   })
 })

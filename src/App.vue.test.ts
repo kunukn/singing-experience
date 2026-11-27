@@ -3,17 +3,21 @@ import { createHead } from '@unhead/vue/client'
 import { mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config'
-import { describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { createI18n } from 'vue-i18n'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import App from './App.vue'
+import TopBar from './components/generic/TopBar.vue'
 import Theme from './theme'
 
 function createTestRouter() {
   return createRouter({
     history: createMemoryHistory(),
     routes: [
-      { path: '/', component: { template: '<div>Home</div>' } },
+      {
+        path: '/',
+        component: { template: '<div data-testid="home-page">Home</div>' },
+      },
       {
         path: '/catalogue',
         meta: { ambientBackground: true },
@@ -45,10 +49,22 @@ async function mountAt(path: string) {
   })
 }
 
+beforeEach(() => {
+  localStorage.clear()
+})
+
 describe('App', () => {
-  test('should render without errors', async () => {
+  test('should render the page of the current route', async () => {
     const wrapper = await mountAt('/')
-    expect(wrapper.exists()).toBe(true)
+    expect(wrapper.find('[data-testid="home-page"]').exists()).toBe(true)
+  })
+
+  test('should show the top bar on every page', async () => {
+    const home = await mountAt('/')
+    const catalogue = await mountAt('/catalogue')
+
+    expect(home.findComponent(TopBar).exists()).toBe(true)
+    expect(catalogue.findComponent(TopBar).exists()).toBe(true)
   })
 
   test('should show the wave backdrop on a page that opts in', async () => {

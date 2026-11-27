@@ -153,14 +153,18 @@ describe('takePersistence', () => {
     })
 
     test('should keep the take when the browser refuses to persist', async () => {
-      vi.stubGlobal('navigator', {
-        storage: { persist: () => Promise.reject(failure) },
-      })
+      const persist = vi.fn(() => Promise.reject(failure))
+      vi.stubGlobal('navigator', { storage: { persist } })
+      /* The browser is asked once per page load, and an earlier test's save
+       * has already asked: only a fresh copy of the module asks again. */
+      vi.resetModules()
+      const freshPage = await import('./takePersistence')
 
-      await saveTake(createTake())
+      await freshPage.saveTake(createTake())
       vi.unstubAllGlobals()
 
-      expect((await loadTake())?.blob.size).toBe(3)
+      expect(persist).toHaveBeenCalledOnce()
+      expect((await freshPage.loadTake())?.blob.size).toBe(3)
     })
   })
 })

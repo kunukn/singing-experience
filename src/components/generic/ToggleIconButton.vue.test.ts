@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { breakpointsTailwind } from '@vueuse/core'
 import PrimeVue from 'primevue/config'
+import { BREAKPOINT_XS_PX } from '@/constants/breakpoints'
 import ToggleIconButton from './ToggleIconButton.vue'
 import type { ToggleLabelFrom } from './toggleIconButton'
 
@@ -37,15 +39,27 @@ describe('ToggleIconButton', () => {
     vi.restoreAllMocks()
   })
 
+  /* No labelFrom means md. */
   test.each([
-    { labelFrom: undefined, width: 767, isShown: false },
-    { labelFrom: undefined, width: 768, isShown: true },
-    { labelFrom: 'xs', width: 479, isShown: false },
-    { labelFrom: 'xs', width: 480, isShown: true },
-    { labelFrom: 'sm', width: 639, isShown: false },
-    { labelFrom: 'sm', width: 640, isShown: true },
-    { labelFrom: 'lg', width: 1023, isShown: false },
-    { labelFrom: 'lg', width: 1024, isShown: true },
+    { labelFrom: undefined, startsAtPx: breakpointsTailwind.md },
+    { labelFrom: 'xs', startsAtPx: BREAKPOINT_XS_PX },
+    { labelFrom: 'sm', startsAtPx: breakpointsTailwind.sm },
+    { labelFrom: 'lg', startsAtPx: breakpointsTailwind.lg },
+  ] as const)(
+    'should show the text from the $labelFrom breakpoint up, not a pixel below',
+    ({ labelFrom, startsAtPx }) => {
+      setScreenWidth(startsAtPx - 1)
+      expect(mountToggle(labelFrom).get('button').text()).not.toContain(LABEL)
+
+      setScreenWidth(startsAtPx)
+      const button = mountToggle(labelFrom).get('button')
+
+      expect(button.text()).toContain(LABEL)
+      expect(button.attributes('aria-label')).toBe(LABEL)
+    },
+  )
+
+  test.each([
     { labelFrom: 'always', width: 320, isShown: true },
     { labelFrom: 'never', width: 1920, isShown: false },
   ] as const)(

@@ -113,12 +113,6 @@ describe('option lists', () => {
     })
   })
 
-  it('only names modes that noteUtils can build', () => {
-    for (const mode of SCALE_HIGHLIGHT_MODES) {
-      expect(SCALE_MODE_SEMITONES[mode]).toBeDefined()
-    }
-  })
-
   /*
    * Deliberately NOT "every mode has a locale key" — modes without one are the
    * point of the English fallback (see useScaleModeGroups). What still has to

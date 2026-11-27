@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import type { NoteInfo } from '@/utils/noteUtils'
+import {
+  frequencyToNote,
+  midiToFrequency,
+  type NoteInfo,
+} from '@/utils/noteUtils'
+import { CLOSE_CENTS } from '@/utils/pitchColors'
 import {
   MATCH_WINDOW_MS,
   useReferencePitchMatch,
@@ -8,8 +13,20 @@ import {
 /* ~60 fps detector frames */
 const FRAME_MS = 16
 
-function noteAt(cents: number, midiNote = 57): NoteInfo {
-  return { note: 'A', octave: 3, cents, midiNote, frequency: 220 }
+const A3_MIDI = 57
+const B3_MIDI = 59
+
+/* What the detector reports for a pitch `cents` off `midiNote`. It measures
+ * against the current reference, so the note, cents and frequency are all read
+ * off the one frequency on that grid. */
+function noteAt(
+  cents: number,
+  midiNote: number,
+  referenceA4: number,
+): NoteInfo {
+  const frequency = midiToFrequency(midiNote + cents / 100, referenceA4)
+
+  return frequencyToNote(frequency, undefined, referenceA4)!
 }
 
 function setup(referenceA4 = 440) {
@@ -25,12 +42,12 @@ function setup(referenceA4 = 440) {
   function hold(
     durationMs: number,
     centsAt: (index: number) => number,
-    midiNote?: number,
+    midiNote = A3_MIDI,
   ) {
     const frames = Math.ceil(durationMs / FRAME_MS)
     for (let index = 0; index <= frames; index++) {
       isClean.value = true
-      noteInfo.value = noteAt(centsAt(index), midiNote)
+      noteInfo.value = noteAt(centsAt(index), midiNote, referenceA4)
       vi.advanceTimersByTime(FRAME_MS)
     }
   }
@@ -85,27 +102,37 @@ describe('useReferencePitchMatch', () => {
   test('a change of note restarts the window', () => {
     const { match, hold } = setup()
     match.begin()
-    hold(MATCH_WINDOW_MS * 0.6, () => -30, 57)
-    hold(FRAME_MS, () => -30, 59)
+    hold(MATCH_WINDOW_MS * 0.6, () => -30, A3_MIDI)
+    hold(FRAME_MS, () => -30, B3_MIDI)
 
     expect(match.progress.value).toBeLessThan(0.1)
   })
 
-  test('a wobbly attack is dropped, not averaged in', () => {
+  test('should drop a wobbly attack instead of averaging it in', () => {
     const { match, hold } = setup()
     match.begin()
-    hold(300, (index) => (index % 2 === 0 ? 40 : -40))
+    /* Swinging ±CLOSE_CENTS is twice the spread a steady note may have. Held
+     * for a whole window, because the median shrugs off a short wobble either
+     * way: only a window that never fills shows the wobble was dropped. */
+    hold(MATCH_WINDOW_MS, (index) =>
+      index % 2 === 0 ? CLOSE_CENTS : -CLOSE_CENTS,
+    )
+
+    expect(match.isCapturing.value).toBe(true)
+    expect(match.resultHz.value).toBeNull()
+
     hold(MATCH_WINDOW_MS, () => -32)
 
     expect(match.resultHz.value).toBeCloseTo(432, 0)
   })
 
-  test('the result is clamped to the supported range', () => {
-    const { match, hold } = setup(466)
+  test('should clamp the result to the supported range', () => {
+    /* +45¢ above the highest supported reference */
+    const { match, hold } = setup(MAX_REFERENCE_PITCH)
     match.begin()
     hold(MATCH_WINDOW_MS, () => 45)
 
-    expect(match.resultHz.value).toBe(466)
+    expect(match.resultHz.value).toBe(MAX_REFERENCE_PITCH)
   })
 
   test('ignores frames until begin()', () => {

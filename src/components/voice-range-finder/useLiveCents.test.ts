@@ -1,6 +1,11 @@
 import { describe, expect, test } from 'vitest'
 import { effectScope, ref } from 'vue'
+import { CENTS_DEAD_ZONE, NEAR_ZERO_CENTS_TEXT } from '@/utils/centsText'
 import { centsLabel, formatSignedCents, useLiveCents } from './useLiveCents'
+
+/* The first whole cent the label still spells out */
+const JUST_OUTSIDE = CENTS_DEAD_ZONE + 1
+const A3_MIDI = 57
 
 describe('formatSignedCents', () => {
   test.each([
@@ -14,11 +19,11 @@ describe('formatSignedCents', () => {
 
 describe('centsLabel', () => {
   test.each([
-    { cents: -3, expected: '-3¢' },
-    { cents: -2, expected: '≈0¢' },
-    { cents: 0, expected: '≈0¢' },
-    { cents: 2, expected: '≈0¢' },
-    { cents: 3, expected: '+3¢' },
+    { cents: -JUST_OUTSIDE, expected: `-${JUST_OUTSIDE}¢` },
+    { cents: -CENTS_DEAD_ZONE, expected: NEAR_ZERO_CENTS_TEXT },
+    { cents: 0, expected: NEAR_ZERO_CENTS_TEXT },
+    { cents: CENTS_DEAD_ZONE, expected: NEAR_ZERO_CENTS_TEXT },
+    { cents: JUST_OUTSIDE, expected: `+${JUST_OUTSIDE}¢` },
   ])('labels $cents as "$expected"', ({ cents, expected }) => {
     expect(centsLabel(cents)).toBe(expected)
   })
@@ -52,19 +57,20 @@ describe('useLiveCents', () => {
     scope.stop()
   })
 
-  test('should read ≈0¢ within 2¢ but keep the exact cents', () => {
-    const midi = ref(57.02)
+  test('should read as about zero inside the dead zone but keep the exact cents', () => {
+    /* 100 cents to a semitone */
+    const midi = ref(A3_MIDI + CENTS_DEAD_ZONE / 100)
     const scope = effectScope()
     const { liveCents, liveCentsText } = scope.run(() => useLiveCents(midi))!
 
-    expect(liveCents.value).toBe(2)
-    expect(liveCentsText.value).toBe('≈0¢')
+    expect(liveCents.value).toBe(CENTS_DEAD_ZONE)
+    expect(liveCentsText.value).toBe(NEAR_ZERO_CENTS_TEXT)
 
-    midi.value = 56.98
-    expect(liveCentsText.value).toBe('≈0¢')
+    midi.value = A3_MIDI - CENTS_DEAD_ZONE / 100
+    expect(liveCentsText.value).toBe(NEAR_ZERO_CENTS_TEXT)
 
-    midi.value = 57.03
-    expect(liveCentsText.value).toBe('+3¢')
+    midi.value = A3_MIDI + JUST_OUTSIDE / 100
+    expect(liveCentsText.value).toBe(`+${JUST_OUTSIDE}¢`)
     scope.stop()
   })
 })

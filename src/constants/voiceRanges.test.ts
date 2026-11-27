@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { nextTick } from 'vue'
 import { useMyVoiceRange } from '@/composables/useMyVoiceRange'
 import { midiToNoteLabel } from '@/utils/noteUtils'
 import { DEFAULT_MY_VOICE_RANGE } from '@/utils/normalizeVoiceRange'
-import { getSegmentsForRange } from '@/utils/voiceRangeSegments'
 import { VOICE_RANGE_GROUP_ORDER, VOICE_RANGES } from './voiceRanges'
 
 const VOICE_TYPE_LABEL_KEYS = VOICE_RANGES.filter(
@@ -34,7 +34,9 @@ describe('VOICE_RANGES', () => {
    * header and both game summaries. Nothing else in the app cross-checks them, so
    * an edit to one without the other would ship a label that quietly lies.
    */
-  test.each(VOICE_RANGES)(
+  /* Not My range: it builds its label from its MIDI span, so the two cannot
+   * drift apart. Its own tests are at the bottom of this file. */
+  test.each(VOICE_RANGES.filter((range) => range.group !== 'mine'))(
     '$labelKey noteRange matches its MIDI span',
     (range) => {
       const from = midiToNoteLabel(range.midiMin).label
@@ -106,40 +108,16 @@ describe('VOICE_RANGES ordering', () => {
     },
   )
 
-  test.each(VOICE_RANGE_GROUP_ORDER)(
-    '%s catch-alls come after every pitch-ordered option',
-    (groupId) => {
-      const isCatchAll = rangesIn(groupId).map((range) =>
-        CATCH_ALL_LABEL_KEYS.has(range.labelKey),
-      )
-      const firstCatchAll = isCatchAll.indexOf(true)
-      if (firstCatchAll === -1) return
-
-      expect(isCatchAll.slice(firstCatchAll).every(Boolean)).toBe(true)
-    },
-  )
-
-  /*
-   * The ribbon stacks its columns low-to-high because lane 0 sits nearest the
-   * axis, so every vertical rendering of those segments has to turn them
-   * around. Asserted here rather than in the legend's own test: it is the rule
-   * that is being pinned, not one component's markup.
-   */
-  test('a vertical list of voice type segments reads high to low', () => {
-    const choirIndex = VOICE_RANGES.findIndex(
-      (range) => range.labelKey === 'voiceRanges.choir',
+  /* Both catch-alls are wide ranges, so that is the one group with something
+   * to order them against. */
+  test('wide catch-alls come after every pitch-ordered option', () => {
+    const isCatchAll = rangesIn('wide').map((range) =>
+      CATCH_ALL_LABEL_KEYS.has(range.labelKey),
     )
-    const choir = VOICE_RANGES[choirIndex]
-    const rows = getSegmentsForRange(
-      choirIndex,
-      choir.midiMin,
-      choir.midiMax,
-    ).toReversed()
-    const midpoints = rows.map(
-      (segment) => (segment.midiFrom + segment.midiTo) / 2,
-    )
+    const firstCatchAll = isCatchAll.indexOf(true)
 
-    expect(midpoints).toEqual([...midpoints].sort((a, b) => b - a))
+    expect(isCatchAll.filter(Boolean)).toHaveLength(CATCH_ALL_LABEL_KEYS.size)
+    expect(isCatchAll.slice(firstCatchAll).every(Boolean)).toBe(true)
   })
 
   test('groups appear in VOICE_RANGE_GROUP_ORDER, uninterrupted', () => {
@@ -162,15 +140,28 @@ describe('VOICE_RANGES - My range', () => {
   )!
   const { setMyVoiceRange } = useMyVoiceRange()
 
-  afterEach(() => {
+  /* The stored range is one module-level ref, which clearing localStorage does
+   * not reach, so it goes back through its setter. The write to storage lands
+   * a tick later; clearing after it leaves both as a new singer has them. */
+  beforeEach(async () => {
     setMyVoiceRange(
       DEFAULT_MY_VOICE_RANGE.midiMin,
       DEFAULT_MY_VOICE_RANGE.midiMax,
     )
+    await nextTick()
+    localStorage.clear()
   })
 
-  test('should start out as G3–G4, the same as Everyone', () => {
-    expect(myRange.noteRange).toBe('G3–G4')
+  test('should start out as G3–G4, the same as Everyone', async () => {
+    /* Loaded afresh, so the range is read from the empty storage rather than
+     * left over from the reset above */
+    vi.resetModules()
+    const { VOICE_RANGES: freshRanges } = await import('./voiceRanges')
+    const freshMyRange = freshRanges.find(
+      (range) => range.labelKey === 'voiceRanges.myRange',
+    )!
+
+    expect(freshMyRange.noteRange).toBe('G3–G4')
   })
 
   test('should follow the stored range', () => {
@@ -181,11 +172,10 @@ describe('VOICE_RANGES - My range', () => {
     expect(myRange.noteRange).toBe('G2–B4')
   })
 
-  test('should spell accidentals the way midiToNoteLabel does', () => {
+  test('should spell accidentals with the sharp glyph, as the charts do', () => {
+    /* MIDI 42 is F♯2 and 70 is A♯4 */
     setMyVoiceRange(42, 70)
 
-    expect(myRange.noteRange).toBe(
-      `${midiToNoteLabel(42).label}–${midiToNoteLabel(70).label}`,
-    )
+    expect(myRange.noteRange).toBe('F♯2–A♯4')
   })
 })

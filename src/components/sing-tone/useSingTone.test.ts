@@ -1,6 +1,6 @@
 import { mount } from '@vue/test-utils'
 import type { NoteInfo } from '@/utils/noteUtils'
-import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
+import { frequencyToNote, midiToFrequency } from '@/utils/noteUtils'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { h } from 'vue'
 import type { PitchDetectionProvider, singToneOptions } from './useSingTone'
@@ -78,6 +78,9 @@ function createMockPitchDetection() {
     setNoteInfo: (info: NoteInfo | null) => {
       noteInfo.value = info
     },
+    setClarity: (value: number) => {
+      clarity.value = value
+    },
     setIsClean: (clean: boolean) => {
       isClean.value = clean
     },
@@ -87,24 +90,34 @@ function createMockPitchDetection() {
   }
 }
 
+/* Detector confidence, 0–1: a clear sung tone sits above the 0.9 default gate
+ * and breath or room tone well below it. */
+const SUNG_CLARITY = 0.95
+const SILENCE_CLARITY = 0.3
+
+/* One clean frame as usePitchDetection reports it: the note is whichever one
+ * the frequency belongs to, so far enough off `midi` it is a neighbour. */
 function simulateSingingMidi(
   mock: ReturnType<typeof createMockPitchDetection>,
   midi: number,
   centsOffset = 0,
 ) {
-  const baseFreq = midiToFrequency(midi)
-  const freq = baseFreq * Math.pow(2, centsOffset / 1200)
-  const { note, octave } = midiToNoteLabel(midi)
+  /* 1200 cents per octave */
+  const sungFrequency = midiToFrequency(midi) * 2 ** (centsOffset / 1200)
 
-  mock.setFrequency(freq)
-  mock.setNoteInfo({
-    note,
-    octave,
-    cents: centsOffset,
-    midiNote: midi,
-    frequency: freq,
-  })
+  mock.setClarity(SUNG_CLARITY)
+  /* The detector reports the frequency to 0.1 Hz. */
+  mock.setFrequency(Math.round(sungFrequency * 10) / 10)
+  mock.setNoteInfo(frequencyToNote(sungFrequency))
   mock.setIsClean(true)
+}
+
+/* A frame under the clarity gate: the detector reports no pitch at all. */
+function simulateSilence(mock: ReturnType<typeof createMockPitchDetection>) {
+  mock.setClarity(SILENCE_CLARITY)
+  mock.setFrequency(null)
+  mock.setNoteInfo(null)
+  mock.setIsClean(false)
 }
 
 function advanceRAF(ms: number) {
@@ -123,6 +136,7 @@ describe('useSingTone', () => {
   afterEach(() => {
     while (wrappers.length) wrappers.pop()!.unmount()
     vi.useRealTimers()
+    vi.restoreAllMocks()
   })
 
   test('should have correct initial state', () => {
@@ -156,28 +170,29 @@ describe('useSingTone', () => {
     expect(mock.provider.start).toHaveBeenCalled()
     expect(game.isListening.value).toBe(true)
     expect(game.targetMidi.value).not.toBe(null)
-    expect(game.targetMidi.value).toBeGreaterThanOrEqual(MIDI_MIN)
-    expect(game.targetMidi.value).toBeLessThanOrEqual(MIDI_MAX)
   })
 
-  test('should generate target within midi range', async () => {
-    const mock = createMockPitchDetection()
-    const game = mountGame({
-      pitchDetection: mock.provider,
-      midiMin: MIDI_MIN,
-      midiMax: MIDI_MAX,
-    })
+  /* C4–D4, away from the composable's own default range, so ignoring the
+   * options would show. Math.random() returns 0 up to, but never, 1. */
+  test.each([
+    { name: 'lowest', random: 0, expected: 60 },
+    { name: 'highest', random: 0.999, expected: 62 },
+  ])(
+    'should pick the $name note of the midi range on the $name random draw',
+    async ({ random, expected }) => {
+      vi.spyOn(Math, 'random').mockReturnValue(random)
+      const mock = createMockPitchDetection()
+      const game = mountGame({
+        pitchDetection: mock.provider,
+        midiMin: 60,
+        midiMax: 62,
+      })
 
-    await game.start()
-
-    for (let i = 0; i < 20; i++) {
-      const midi = game.targetMidi.value!
-      expect(midi).toBeGreaterThanOrEqual(MIDI_MIN)
-      expect(midi).toBeLessThanOrEqual(MIDI_MAX)
-      game.reset()
       await game.start()
-    }
-  })
+
+      expect(game.targetMidi.value).toBe(expected)
+    },
+  )
 
   test('should detect correct note when singing the target', async () => {
     const mock = createMockPitchDetection()
@@ -197,7 +212,7 @@ describe('useSingTone', () => {
     expect(game.isSingingCorrectNote.value).toBe(true)
   })
 
-  test('should reject note when not clean', async () => {
+  test('should stop matching when the pitch is lost', async () => {
     const mock = createMockPitchDetection()
     const game = mountGame({
       pitchDetection: mock.provider,
@@ -210,13 +225,29 @@ describe('useSingTone', () => {
 
     const target = game.targetMidi.value!
     simulateSingingMidi(mock, target)
-    mock.setIsClean(false)
+    await nextTick()
+    expect(game.isSingingCorrectNote.value).toBe(true)
+
+    simulateSilence(mock)
     await nextTick()
 
     expect(game.isSingingCorrectNote.value).toBe(false)
   })
 
-  test('should reject note when cents deviation exceeds threshold', async () => {
+  /* The tolerance is half a semitone, so a pitch outside it is one the
+   * detector already names as the neighbouring note. */
+  test.each([
+    {
+      name: 'accept a pitch inside',
+      centsOffset: MAX_CENTS_DEVIATION - 10,
+      expected: true,
+    },
+    {
+      name: 'reject a pitch outside',
+      centsOffset: MAX_CENTS_DEVIATION + 10,
+      expected: false,
+    },
+  ])('should $name the cents tolerance', async ({ centsOffset, expected }) => {
     const mock = createMockPitchDetection()
     const game = mountGame({
       pitchDetection: mock.provider,
@@ -228,10 +259,10 @@ describe('useSingTone', () => {
     advanceRAF(DEAF_PERIOD_MS + 50)
 
     const target = game.targetMidi.value!
-    simulateSingingMidi(mock, target, MAX_CENTS_DEVIATION + 10)
+    simulateSingingMidi(mock, target, centsOffset)
     await nextTick()
 
-    expect(game.isSingingCorrectNote.value).toBe(false)
+    expect(game.isSingingCorrectNote.value).toBe(expected)
   })
 
   test('should accumulate hold time when singing correctly', async () => {
@@ -274,7 +305,8 @@ describe('useSingTone', () => {
     advanceRAF(500)
     expect(game.holdTimeMs.value).toBeGreaterThan(0)
 
-    mock.setIsClean(false)
+    /* A whole tone above the target */
+    simulateSingingMidi(mock, target + 2)
     await nextTick()
 
     advanceRAF(GRACE_PERIOD_MS + 50)
@@ -305,7 +337,7 @@ describe('useSingTone', () => {
     expect(game.targetMidi.value).not.toBe(null)
   })
 
-  test('should complete game after 8 rounds', async () => {
+  test('should complete game after the default number of rounds', async () => {
     const mock = createMockPitchDetection()
     const holdMs = 100
     const game = mountGame({
@@ -387,29 +419,46 @@ describe('useSingTone', () => {
     expect(game.isComplete.value).toBe(false)
   })
 
-  test('should update hold duration via setHoldDuration', () => {
+  test('should advance after the hold duration set via setHoldDuration', async () => {
     const mock = createMockPitchDetection()
+    /* Well under the default hold, which would not have advanced yet. */
+    const holdMs = 200
     const game = mountGame({
       pitchDetection: mock.provider,
       midiMin: MIDI_MIN,
       midiMax: MIDI_MAX,
     })
 
-    game.setHoldDuration(2000)
-    expect(game.holdDurationMs.value).toBe(2000)
+    game.setHoldDuration(holdMs)
+    await game.start()
+    advanceRAF(DEAF_PERIOD_MS + 50)
+    simulateSingingMidi(mock, game.targetMidi.value!)
+    await nextTick()
+
+    advanceRAF(holdMs + 50)
+
+    expect(game.completedCount.value).toBe(1)
   })
 
-  test('should update midi range via setMidiRange', () => {
+  test('should stop the round and draw the next target from the range set via setMidiRange', async () => {
     const mock = createMockPitchDetection()
     const game = mountGame({
       pitchDetection: mock.provider,
       midiMin: MIDI_MIN,
       midiMax: MIDI_MAX,
     })
+    await game.start()
 
-    game.setMidiRange(60, 84)
-    expect(game.midiMin.value).toBe(60)
-    expect(game.midiMax.value).toBe(84)
+    /* C6–D6, clear of the C3–C5 the round started in */
+    game.setMidiRange(84, 86)
+
+    expect(game.isStarted.value).toBe(false)
+    expect(game.targetMidi.value).toBe(null)
+
+    await game.start()
+
+    expect(game.targetMidi.value).toBeGreaterThanOrEqual(84)
+    expect(game.targetMidi.value).toBeLessThanOrEqual(86)
   })
 
   test('should ignore pitch matches during deaf period after start', async () => {

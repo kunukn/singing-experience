@@ -160,10 +160,12 @@ describe('useCircleOfFifthsGame - walk', () => {
     expect(game.holdTimeMs.value).toBe(0)
   })
 
-  test('should not report a sung note while idle', () => {
+  test('should not report a sung note while idle', async () => {
     const { game, mock } = setup()
 
     mock.singMidi(60)
+    /* The sung note is set by a watcher, which runs after this tick */
+    await nextTick()
 
     expect(game.sungMidi.value).toBeNull()
   })

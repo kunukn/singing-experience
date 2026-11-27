@@ -393,7 +393,9 @@ describe('useRangeFinder', () => {
       midi.value = 48 // C3 — same reason, so the delay keeps running
       expect(finder.pauseReason.value).toBe(null)
 
-      vi.advanceTimersByTime(CUE_DELAY_WITH_SLACK_MS)
+      /* Too short on C3 alone: the cue only shows if the delay kept running
+       * through the change of note. */
+      vi.advanceTimersByTime(TUNING_STRAY_MS - 40)
 
       expect(finder.pauseReason.value).toBe('notPastRecord')
       scope.stop()

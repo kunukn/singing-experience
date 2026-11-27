@@ -10,6 +10,7 @@ export {}
 declare global {
   const ACCIDENTAL_STYLE_OPTIONS: typeof import('./composables/accidentalStyle').ACCIDENTAL_STYLE_OPTIONS
   const CLARITY_STEP: typeof import('./composables/useSettings').CLARITY_STEP
+  const DARK_MODE_STORAGE_KEY: typeof import('./composables/useDarkMode').DARK_MODE_STORAGE_KEY
   const DEFAULT_CLARITY_THRESHOLD: typeof import('./composables/useSettings').DEFAULT_CLARITY_THRESHOLD
   const DEFAULT_PREVIEW_ENABLED: typeof import('./composables/useSettings').DEFAULT_PREVIEW_ENABLED
   const EffectScope: typeof import('vue').EffectScope
@@ -200,6 +201,7 @@ declare module 'vue' {
   interface ComponentCustomProperties {
     readonly ACCIDENTAL_STYLE_OPTIONS: UnwrapRef<typeof import('./composables/accidentalStyle')['ACCIDENTAL_STYLE_OPTIONS']>
     readonly CLARITY_STEP: UnwrapRef<typeof import('./composables/useSettings')['CLARITY_STEP']>
+    readonly DARK_MODE_STORAGE_KEY: UnwrapRef<typeof import('./composables/useDarkMode')['DARK_MODE_STORAGE_KEY']>
     readonly DEFAULT_CLARITY_THRESHOLD: UnwrapRef<typeof import('./composables/useSettings')['DEFAULT_CLARITY_THRESHOLD']>
     readonly DEFAULT_PREVIEW_ENABLED: UnwrapRef<typeof import('./composables/useSettings')['DEFAULT_PREVIEW_ENABLED']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>

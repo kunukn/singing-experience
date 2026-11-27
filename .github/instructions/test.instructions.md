@@ -42,6 +42,8 @@ A test earns its place when a real bug turns it red and a harmless refactor does
   })
   ```
 
+- `localStorage.clear()` does not reach a `useLocalStorage` ref created at module load, such as the ones behind `useDarkMode`, `useMyVoiceRange` and `useSettings`: the ref keeps the value the last test gave it. Set those back through their own setter in the same `beforeEach`.
+- Other module-level state, such as a flag that remembers a one-time request, survives too. Load a fresh module for it with `vi.resetModules()` and a dynamic `import()`.
 - Assert new-singer defaults on a fresh store, never after another test has changed it.
 
 ## Testing Philosophy

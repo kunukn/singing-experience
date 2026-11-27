@@ -1,23 +1,41 @@
-import { describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
-import { createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
-import type { ScaleCandidate } from '@/utils/scaleDetection'
+import { detectScales } from '@/utils/scaleDetection'
 import type { TakeKey } from './analyzeTake'
 import TakeKeyScale from './TakeKeyScale.vue'
+import { familiarTwins } from './takeKeyScale'
 
 const SAME_NOTES = '[data-testid="notes-used-same-notes"]'
 
-const F = 5
-const G = 7
-const B_FLAT = 10
+/* F G A B♭ C D E♭ F */
+const F_MIXOLYDIAN_MIDIS = [65, 67, 69, 70, 72, 74, 75, 77]
+/* F G A B♭ C D E F */
+const F_MAJOR_MIDIS = [65, 67, 69, 70, 72, 74, 76, 77]
+const NOTE_MS = 500
 
-function mountScale(takeKey: Omit<TakeKey, 'pitchClasses' | 'tonicScore'>) {
+/* The key the take analysis names for a scale sung once, every note the same
+ * length. */
+function takeKeyFor(midis: number[]): TakeKey {
+  const [family] = detectScales(
+    midis.map((midi) => ({ midi, durationMs: NOTE_MS })),
+  ).families
+
+  return {
+    ...family.candidates[0],
+    pitchClasses: family.pitchClasses,
+    familiarTwins: familiarTwins(family.candidates),
+  }
+}
+
+function mountScale(midis: number[]) {
   return mount(TakeKeyScale, {
     props: {
-      takeKey: { ...takeKey, pitchClasses: new Set<number>(), tonicScore: 0 },
-      notesUsed: [{ midi: 53, totalMs: 500 }],
+      takeKey: takeKeyFor(midis),
+      /* Highest note first, as the analysis lists them. */
+      notesUsed: midis.toReversed().map((midi) => ({ midi, totalMs: NOTE_MS })),
     },
     global: {
       plugins: [
@@ -28,13 +46,15 @@ function mountScale(takeKey: Omit<TakeKey, 'pitchClasses' | 'tonicScore'>) {
   })
 }
 
+beforeEach(() => {
+  /* The tone mode store keeps its choice in localStorage. */
+  localStorage.clear()
+  setActivePinia(createPinia())
+})
+
 describe('TakeKeyScale', () => {
   test('should name the major and minor scales with the same notes', () => {
-    const familiarTwins: ScaleCandidate[] = [
-      { root: B_FLAT, mode: 'ionian', tonicScore: 0 },
-      { root: G, mode: 'aeolian', tonicScore: 0 },
-    ]
-    const wrapper = mountScale({ root: F, mode: 'mixolydian', familiarTwins })
+    const wrapper = mountScale(F_MIXOLYDIAN_MIDIS)
 
     expect(wrapper.get('[data-testid="notes-used-key"]').text()).toContain(
       'F Mixolydian',
@@ -45,8 +65,11 @@ describe('TakeKeyScale', () => {
   })
 
   test('should hide the same notes line without familiar twins', () => {
-    const wrapper = mountScale({ root: F, mode: 'ionian', familiarTwins: [] })
+    const wrapper = mountScale(F_MAJOR_MIDIS)
 
+    expect(wrapper.get('[data-testid="notes-used-key"]').text()).toContain(
+      'F Major',
+    )
     expect(wrapper.find(SAME_NOTES).exists()).toBe(false)
   })
 })

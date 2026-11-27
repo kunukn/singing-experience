@@ -9,10 +9,15 @@ import {
 } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { defineComponent, nextTick, ref } from 'vue'
+import { TONE_MODE_RELEASE_S } from '@/composables/toneEngine'
 import { createMockToneEngine } from '@/composables/toneEngine.mock'
 import { midiToFrequency } from '@/utils/noteUtils'
 import type { Song } from './singTheKeysSongs'
-import { ENDING_GLIDE_MS, DEFAULT_LOOKAHEAD_MS } from './singTheKeysTimeline'
+import {
+  ENDING_GLIDE_MS,
+  DEFAULT_LOOKAHEAD_MS,
+  SCORE_LAG_MS,
+} from './singTheKeysTimeline'
 import { useSingTheKeys } from './useSingTheKeys'
 
 const C4 = 60
@@ -132,19 +137,22 @@ describe('useSingTheKeys', () => {
     expect(game.activeNoteIndex.value).toBe(1)
   })
 
-  test('should score each note 80 ms later than it is shown', async () => {
+  test('should score each note the score lag later than it is shown', async () => {
     const { game, nowS } = createGame()
+    /* The second note starts at 600 ms; the samples sit 10 ms either side of
+     * the moment the scorer catches up with it. */
+    const scoredFromMs = 600 + SCORE_LAG_MS
 
     await game.start(startParams())
-    /* 50 ms into the second note: the pitch arriving now was sung to the first. */
-    nowS.value = SONG_START_S + 0.65
+    /* Into the second note, but the pitch arriving now was sung to the first. */
+    nowS.value = SONG_START_S + (scoredFromMs - 10) / 1000
     vi.advanceTimersByTime(20)
     await nextTick()
 
     expect(game.activeNoteIndex.value).toBe(1)
     expect(game.scoredNoteIndex.value).toBe(0)
 
-    nowS.value = SONG_START_S + 0.7
+    nowS.value = SONG_START_S + (scoredFromMs + 10) / 1000
     vi.advanceTimersByTime(20)
     await nextTick()
 
@@ -250,14 +258,16 @@ describe('useSingTheKeys', () => {
     expect(game.isEndingSettled.value).toBe(false)
     expect(game.activeNoteIndex.value).toBeNull()
 
-    /* The last tone ends at 1200 + 1200 × 0.92 = 2304 ms and the mock's
-     * keyboard mode releases for 0.8 s more, so the sound stops at 3104 ms. */
-    const fallEndMs = 1200 + 1200 * 0.92 + 800
-    nowS.value = SONG_START_S + 3
+    /* The last tone ends at 1200 + 1200 × 0.92 = 2304 ms, and the sound stops
+     * once the mock's keyboard mode has released after it. */
+    const fallEndMs = 1200 + 1200 * 0.92 + TONE_MODE_RELEASE_S.keyboard * 1000
+    /* Halfway between the song's end (2400 ms) and the last of the sound. */
+    const stillFallingMs = (2400 + fallEndMs) / 2
+    nowS.value = SONG_START_S + stillFallingMs / 1000
     vi.advanceTimersByTime(20)
     await nextTick()
 
-    expect(game.laneElapsedMs.value).toBeCloseTo(3000, 5)
+    expect(game.laneElapsedMs.value).toBeCloseTo(stillFallingMs, 5)
     /* The scorer's clock stays on the finish. */
     expect(game.elapsedMs.value).toBeCloseTo(2400, 5)
 

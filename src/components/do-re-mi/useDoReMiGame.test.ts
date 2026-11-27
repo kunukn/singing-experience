@@ -5,9 +5,10 @@ import type { NoteInfo } from '@/utils/noteUtils'
 import {
   buildMajorScale,
   C3_MIDI,
-  frequencyToMidi,
+  frequencyToNote,
   noteToFrequency,
 } from '@/utils/noteUtils'
+import { CLEAN_CENTS, CLOSE_CENTS, OFF_CENTS } from '@/utils/pitchColors'
 import type { DoReMiGameOptions, PitchDetectionProvider } from './useDoReMiGame'
 import {
   useDoReMiGame,
@@ -86,17 +87,13 @@ function simulateSingingNote(
   centsOffset = 0,
 ) {
   const baseFreq = noteToFrequency(note as never, octave)
+  // 1200 cents to the octave
   const freq = baseFreq * Math.pow(2, centsOffset / 1200)
-  const midiNote = Math.round(frequencyToMidi(baseFreq))
 
   mock.setFrequency(freq)
-  mock.setNoteInfo({
-    note: note as never,
-    octave,
-    cents: centsOffset,
-    midiNote,
-    frequency: freq,
-  })
+  /* The reading the detector gives for this frequency. Past 50 cents that is
+   * the next semitone, slightly flat, not this note with a large cents value. */
+  mock.setNoteInfo(frequencyToNote(freq))
   mock.setIsClean(true)
 }
 
@@ -187,18 +184,20 @@ describe('useDoReMiGame', () => {
     expect(game.isSingingCorrectNote.value).toBe(false)
   })
 
-  test('should default to the ±50 cents easy tolerance', () => {
+  test('should default to easy, which accepts anything short of off-pitch', () => {
     const mock = createMockPitchDetection()
     const game = mountGame({ pitchDetection: mock.provider })
 
     expect(game.difficulty.value).toBe('easy')
-    expect(game.maxCentsDeviation.value).toBe(50)
+    expect(game.maxCentsDeviation.value).toBe(OFF_CENTS)
   })
 
+  /* The pass rule follows the pitch colours: easy takes anything short of red,
+   * normal needs green or yellow, hard needs green. */
   test.each([
-    { difficulty: 'easy', maxCents: 50 },
-    { difficulty: 'normal', maxCents: 20 },
-    { difficulty: 'hard', maxCents: 10 },
+    { difficulty: 'easy', maxCents: OFF_CENTS },
+    { difficulty: 'normal', maxCents: CLOSE_CENTS },
+    { difficulty: 'hard', maxCents: CLEAN_CENTS },
   ] as const)(
     'should accept within ±$maxCents cents and reject beyond on $difficulty',
     async ({ difficulty, maxCents }) => {
@@ -229,7 +228,8 @@ describe('useDoReMiGame', () => {
     await game.start()
 
     const target = scaleSteps[0]
-    simulateSingingNote(mock, target.note, target.octave, 20)
+    /* Close but not clean: passes on easy, fails on hard */
+    simulateSingingNote(mock, target.note, target.octave, CLOSE_CENTS)
     await nextTick()
     expect(game.isSingingCorrectNote.value).toBe(true)
 
@@ -250,8 +250,8 @@ describe('useDoReMiGame', () => {
     await game.start()
 
     const target = scaleSteps[0]
-    /* 20¢ sharp — fine on Easy/Normal, past Hard's ±10¢ */
-    simulateSingingNote(mock, target.note, target.octave, 20)
+    /* Close but not clean — fine on Easy/Normal, past Hard's tolerance */
+    simulateSingingNote(mock, target.note, target.octave, CLOSE_CENTS)
     await nextTick()
 
     advanceRAF(500)
@@ -418,7 +418,7 @@ describe('useDoReMiGame', () => {
 
     expect(game.isStarted.value).toBe(false)
 
-    const newScale = buildMajorScale(C3_MIDI + 2)
-    expect(game.scaleSteps.value[0].note).toBe(newScale[0].note)
+    /* Two semitones above C3 */
+    expect(game.scaleSteps.value[0]).toMatchObject({ note: 'D', octave: 3 })
   })
 })

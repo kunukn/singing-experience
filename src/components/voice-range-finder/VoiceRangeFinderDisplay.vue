@@ -6,7 +6,7 @@ import {
   normalizeVoiceRange,
 } from '@/utils/normalizeVoiceRange'
 import { frequencyToMidi } from '@/utils/noteUtils'
-import { useRangeFinder } from './useRangeFinder'
+import { SAVED_FLASH_MS, useRangeFinder } from './useRangeFinder'
 import VoiceRangeEndPicker from './VoiceRangeEndPicker.vue'
 import VoiceRangeExplorePanel from './VoiceRangeExplorePanel.vue'
 import VoiceRangeResult from './VoiceRangeResult.vue'
@@ -151,9 +151,6 @@ const chartLiveMidi = computed(() => {
     ? null
     : frequencyToMidi(previewFrequency.value)
 })
-
-/* How long the ✓ beside the range confirms a sung save */
-const SAVED_FLASH_MS = 2000
 
 const {
   isPending: isJustSaved,

@@ -1,13 +1,16 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest'
-import { buildMajorScale, C3_MIDI, noteToFrequency } from '@/utils/noteUtils'
+import { buildMajorScale, C3_MIDI } from '@/utils/noteUtils'
 import { createMockToneEngine } from '@/composables/toneEngine.mock'
 import {
   useDoReMiPlaySequence,
+  LEAD_IN_S,
   NOTE_INTERVAL_MS,
 } from './useDoReMiPlaySequence'
 
-/* Mirror the LEAD_IN_S constant in useDoReMiPlaySequence (50 ms). */
-const LEAD_IN_MS = 50
+const LEAD_IN_MS = LEAD_IN_S * 1000
+
+/* One playToneAt call, in argument order. */
+type ToneCall = [frequency: number, durationS: number, whenS: number]
 
 describe('useDoReMiPlaySequence', () => {
   const scaleSteps = buildMajorScale(C3_MIDI)
@@ -39,7 +42,7 @@ describe('useDoReMiPlaySequence', () => {
     expect(isPlayingSequence.value).toBe(true)
   })
 
-  test('should call playToneAt with correct frequencies for every step', async () => {
+  test('should play the scale from C3 up to C4, one note per interval', async () => {
     const mockPlayToneAt = vi.fn()
     const { playSequence } = useDoReMiPlaySequence({
       toneEngine: createMockToneEngine({ playToneAt: mockPlayToneAt }),
@@ -47,19 +50,29 @@ describe('useDoReMiPlaySequence', () => {
 
     await playSequence(scaleSteps)
 
-    expect(mockPlayToneAt).toHaveBeenCalledTimes(scaleSteps.length)
+    const calls = mockPlayToneAt.mock.calls as ToneCall[]
+    const intervalS = NOTE_INTERVAL_MS / 1000
 
-    for (let i = 0; i < scaleSteps.length; i++) {
-      const expectedFreq = noteToFrequency(
-        scaleSteps[i].note,
-        scaleSteps[i].octave,
-      )
-      expect(mockPlayToneAt).toHaveBeenNthCalledWith(
-        i + 1,
-        expectedFreq,
-        (NOTE_INTERVAL_MS - 20) / 1000,
-        expect.any(Number),
-      )
+    /* Do re mi fa sol la ti do: C3 (130.81 Hz) up to C4 (261.63 Hz) */
+    expect(calls).toHaveLength(8)
+    expect(calls[0][0]).toBeCloseTo(130.81, 1)
+    expect(calls[7][0]).toBeCloseTo(261.63, 1)
+
+    /* The first note waits for the lead-in, so its start is not clipped */
+    expect(calls[0][2]).toBeGreaterThan(0)
+
+    for (let index = 1; index < calls.length; index++) {
+      const [frequency, , whenS] = calls[index]
+      const [previousFrequency, , previousWhenS] = calls[index - 1]
+
+      expect(frequency).toBeGreaterThan(previousFrequency)
+      expect(whenS - previousWhenS).toBeCloseTo(intervalS, 6)
+    }
+
+    /* A note sounds for most of its interval and stops before the next one */
+    for (const [, durationS] of calls) {
+      expect(durationS).toBeGreaterThan(intervalS / 2)
+      expect(durationS).toBeLessThan(intervalS)
     }
   })
 

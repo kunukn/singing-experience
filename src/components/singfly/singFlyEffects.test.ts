@@ -4,6 +4,7 @@ import {
   BLINK_MS,
   BLINK_PERIOD_MS,
   FLAP_PERIOD_MS,
+  HAPPY_POP_MS,
   HOVER_BOB_PX,
   MAX_TILT,
   TILT_SMOOTHING_MS,
@@ -69,8 +70,8 @@ describe('singFlyEffects', () => {
 
   test('should pop once after a pass and then settle', () => {
     expect(happyPop(0)).toBeCloseTo(0, 5)
-    expect(happyPop(200)).toBeCloseTo(1, 5)
-    expect(happyPop(400)).toBeCloseTo(0, 5)
+    expect(happyPop(HAPPY_POP_MS / 2)).toBeCloseTo(1, 5)
+    expect(happyPop(HAPPY_POP_MS)).toBeCloseTo(0, 5)
     expect(happyPop(Infinity)).toBeCloseTo(0, 5)
     expect(happyPop(-50)).toBe(0)
   })

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import DoReMiScaleItem from './DoReMiScaleItem.vue'
 
@@ -18,6 +18,11 @@ function mountItem(propsOverrides = {}) {
     },
   })
 }
+
+/* The preview colours read the theme from localStorage. */
+beforeEach(() => {
+  localStorage.clear()
+})
 
 describe('DoReMiScaleItem', () => {
   test('should render solfège label and note name', () => {
@@ -106,16 +111,16 @@ describe('DoReMiScaleItem', () => {
   })
 
   test('should cents-colour the preview line only when given cents', () => {
-    const lineStyleOf = (previewCents: number | null) =>
+    const isCentsColoured = (previewCents: number | null) =>
       mountItem({ previewOffsetPercent: 50, previewCents })
         .get('[data-testid="preview-line"]')
-        .attributes('style')
+        .attributes('data-cents-coloured')
 
-    expect(lineStyleOf(12)).toContain('border-color')
-    expect(lineStyleOf(null) ?? '').not.toContain('border-color')
+    expect(isCentsColoured(12)).toBe('true')
+    expect(isCentsColoured(null)).toBe('false')
   })
 
-  test('should keep an out-of-range preview red despite cents', () => {
+  test('should not cents-colour an out-of-range preview despite cents', () => {
     const wrapper = mountItem({
       previewOffsetPercent: 50,
       previewCents: 12,
@@ -123,7 +128,14 @@ describe('DoReMiScaleItem', () => {
     })
 
     expect(
-      wrapper.get('[data-testid="preview-line"]').attributes('style') ?? '',
-    ).not.toContain('border-color')
+      wrapper
+        .get('[data-testid="preview-line"]')
+        .attributes('data-cents-coloured'),
+    ).toBe('false')
+    expect(
+      wrapper
+        .get('[data-testid="preview-indicator"]')
+        .attributes('data-out-of-range'),
+    ).toBe('true')
   })
 })

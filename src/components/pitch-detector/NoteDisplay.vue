@@ -43,6 +43,7 @@ const noteSlotHeight = computed(() =>
     <div class="flex items-center" :class="noteSlotHeight">
       <div
         v-if="noteInfo && isClean"
+        data-testid="note-readout"
         class="transition-colors duration-150"
         :style="{ color: noteColor ?? undefined }"
       >

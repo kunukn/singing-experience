@@ -1,5 +1,5 @@
-import { beforeEach, describe, expect, test, vi } from 'vitest'
-import { flushPromises, mount } from '@vue/test-utils'
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import { nextTick } from 'vue'
 import { createI18n } from 'vue-i18n'
@@ -53,21 +53,45 @@ function mountDisplay(laneDetections: PitchLaneDetection[]) {
 const C4 = 60
 const G5 = 79
 
-describe('PitchDisplay', () => {
-  test('should render without errors', () => {
-    expect(mountDisplay([]).exists()).toBe(true)
-  })
+/* The note each readout names, in lane order. Read from the readout itself:
+ * the rest of the display prints its own letters and digits ("Clarity",
+ * "784 Hz"). */
+function noteReadouts(wrapper: ReturnType<typeof mountDisplay>) {
+  return wrapper
+    .findAll('[data-testid="note-readout"]')
+    .map((readout) => readout.text())
+}
 
-  test('shows one unlabelled readout for a single voice', () => {
+/* A mounted display listens on window and runs a timer until it is unmounted,
+ * so none may outlive its test. */
+enableAutoUnmount(afterEach)
+
+/* The display reads two module-level useLocalStorage refs, which
+ * localStorage.clear() does not reach, so each goes back to its new-singer
+ * default through its own setter: ribbon shown, and light mode (happy-dom
+ * reports no dark preference). */
+const { isVoiceTypeRibbonVisible } = useVoiceTypeRibbon()
+const { isDark, toggleDark } = useDarkMode()
+
+beforeEach(() => {
+  isVoiceTypeRibbonVisible.value = true
+  if (isDark.value) toggleDark()
+
+  localStorage.clear()
+  setActivePinia(createPinia())
+})
+
+describe('PitchDisplay', () => {
+  test('should show one unlabelled readout for a single voice', () => {
     const wrapper = mountDisplay([laneDetection('low', C4)])
 
-    expect(wrapper.text()).toContain('C')
+    expect(noteReadouts(wrapper)).toEqual(['C4'])
     /* One voice needs no column heading — there is nothing to tell apart. */
     expect(wrapper.text()).not.toContain('Low voice')
     expect(wrapper.text()).not.toContain('High voice')
   })
 
-  test('shows both voices, each named, in duet mode', () => {
+  test('should show both voices, each named, in duet mode', () => {
     const wrapper = mountDisplay([
       laneDetection('low', C4),
       laneDetection('high', G5),
@@ -75,9 +99,7 @@ describe('PitchDisplay', () => {
 
     expect(wrapper.text()).toContain('Low voice')
     expect(wrapper.text()).toContain('High voice')
-    /* The octave digits are what separate C4 from G5 in the rendered text. */
-    expect(wrapper.text()).toContain('4')
-    expect(wrapper.text()).toContain('5')
+    expect(noteReadouts(wrapper)).toEqual(['C4', 'G5'])
   })
 })
 
@@ -109,7 +131,6 @@ describe('PitchDisplay recording persistence', () => {
   }
 
   beforeEach(() => {
-    setActivePinia(createPinia())
     vi.mocked(savePitchTake).mockReset().mockResolvedValue()
     vi.mocked(deleteSavedPitchTake).mockReset().mockResolvedValue()
     vi.mocked(loadPitchTake).mockReset().mockResolvedValue(null)

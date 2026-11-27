@@ -1,24 +1,27 @@
 import { describe, expect, test } from 'vitest'
+import { VOICE_TYPES } from '@/utils/voiceRangeSegments'
 import { FAMOUS_SINGERS } from './famousSingers'
 
-const E2_MIDI = 40
-const C6_MIDI = 84
+/* The comparison chart runs from the bottom of the lowest voice type to the
+ * top of the highest (VOICE_TYPES is sorted low first). */
+const CHART_MIN_MIDI = VOICE_TYPES[0]!.range.midiMin
+const CHART_MAX_MIDI = VOICE_TYPES.at(-1)!.range.midiMax
 
 describe('famousSingers', () => {
-  test('keeps every range inside E2–C6, so the chart axis never rescales', () => {
+  test('keeps every range inside the voice types, so the chart axis never rescales', () => {
     for (const singer of FAMOUS_SINGERS) {
-      expect(singer.midiMin).toBeGreaterThanOrEqual(E2_MIDI)
-      expect(singer.midiMax).toBeLessThanOrEqual(C6_MIDI)
+      expect(singer.midiMin).toBeGreaterThanOrEqual(CHART_MIN_MIDI)
+      expect(singer.midiMax).toBeLessThanOrEqual(CHART_MAX_MIDI)
       expect(singer.midiMax).toBeGreaterThan(singer.midiMin)
     }
   })
 
-  test('spans the whole chart, from E2 to C6', () => {
+  test('spans the whole chart, from its lowest note to its highest', () => {
     expect(Math.min(...FAMOUS_SINGERS.map(({ midiMin }) => midiMin))).toBe(
-      E2_MIDI,
+      CHART_MIN_MIDI,
     )
     expect(Math.max(...FAMOUS_SINGERS.map(({ midiMax }) => midiMax))).toBe(
-      C6_MIDI,
+      CHART_MAX_MIDI,
     )
   })
 

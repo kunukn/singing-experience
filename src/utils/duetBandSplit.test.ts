@@ -1,8 +1,10 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 import { midiToFrequency } from '@/utils/noteUtils'
 import {
   BAND_SILENCE_RMS,
   crossoverFrequency,
+  HARMONIC_ENERGY_FLOOR_DB,
+  HARMONIC_MATCH_TOLERANCE_CENTS,
   isHarmonicOf,
   isPitchInBand,
   relativeEnergyDb,
@@ -31,11 +33,21 @@ describe('crossoverFrequency', () => {
     expect(crossoverFrequency(40, 84)).toBeCloseTo(293.66, 1)
   })
 
-  it('handles an odd span by landing between semitones', () => {
+  test('splits the voice-type ranges on a whole semitone', () => {
     /* C4–C6 (60–84) — midpoint 72 = C5. */
     expect(crossoverFrequency(60, 84)).toBeCloseTo(523.25, 1)
     /* A3–A5 (57–81) — midpoint 69 = A4 = 440 Hz. */
     expect(crossoverFrequency(57, 81)).toBeCloseTo(440, 1)
+  })
+
+  test('lands between semitones for a span with no middle note', () => {
+    /* Alto–Soprano F3–C6 (53–84) — midpoint 68.5, a quarter tone above G♯4
+     * (415.30 Hz) and below A4 (440 Hz). */
+    const crossover = crossoverFrequency(53, 84)
+
+    expect(crossover).toBeCloseTo(427.47, 1)
+    expect(crossover).toBeGreaterThan(midiToFrequency(68))
+    expect(crossover).toBeLessThan(midiToFrequency(69))
   })
 })
 
@@ -84,15 +96,19 @@ describe('isHarmonicOf', () => {
     expect(isHarmonicOf(C3 * 4, C3)).toBe(true)
   })
 
-  it('tolerates a slightly flat or sharp singer', () => {
-    // ±30 cents, inside the ±35 cent window
-    expect(isHarmonicOf(C3 * 2 * Math.pow(2, 30 / 1200), C3)).toBe(true)
-    expect(isHarmonicOf(C3 * 2 * Math.pow(2, -30 / 1200), C3)).toBe(true)
+  test('tolerates a slightly flat or sharp singer', () => {
+    /* 5 cents inside HARMONIC_MATCH_TOLERANCE_CENTS, on either side */
+    const inside = HARMONIC_MATCH_TOLERANCE_CENTS - 5
+
+    expect(isHarmonicOf(C3 * 2 * Math.pow(2, inside / 1200), C3)).toBe(true)
+    expect(isHarmonicOf(C3 * 2 * Math.pow(2, -inside / 1200), C3)).toBe(true)
   })
 
-  it('rejects a pitch just outside the tolerance window', () => {
-    // ±40 cents, outside the ±35 cent window
-    expect(isHarmonicOf(C3 * 2 * Math.pow(2, 40 / 1200), C3)).toBe(false)
+  test('rejects a pitch just outside the tolerance window', () => {
+    /* 5 cents past HARMONIC_MATCH_TOLERANCE_CENTS */
+    const outside = HARMONIC_MATCH_TOLERANCE_CENTS + 5
+
+    expect(isHarmonicOf(C3 * 2 * Math.pow(2, outside / 1200), C3)).toBe(false)
   })
 
   it('rejects a non-harmonic interval', () => {
@@ -233,9 +249,10 @@ describe('shouldShowHighLane', () => {
     ).toBe(false)
   })
 
-  it('holds the line exactly at the energy floor', () => {
-    /* HARMONIC_ENERGY_FLOOR_DB is -12 dB; 10^(-12/20) ≈ 0.2512 of the low band. */
-    const atFloor = 0.09 * Math.pow(10, -12 / 20)
+  test('holds the line exactly at the energy floor', () => {
+    /* dB to an amplitude ratio is 10^(dB/20), so this is the high-band level
+     * sitting exactly HARMONIC_ENERGY_FLOOR_DB under a 0.09 low band. */
+    const atFloor = 0.09 * Math.pow(10, HARMONIC_ENERGY_FLOOR_DB / 20)
     expect(
       shouldShowHighLane({
         highHz: C4,

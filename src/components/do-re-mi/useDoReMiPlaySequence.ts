@@ -15,7 +15,7 @@ type PlaySequenceOptions = {
   toneEngine?: ToneEngine
 }
 
-export { NOTE_INTERVAL_MS }
+export { LEAD_IN_S, NOTE_INTERVAL_MS }
 
 export function useDoReMiPlaySequence(options: PlaySequenceOptions = {}) {
   const engine = options.toneEngine ?? defaultToneEngine

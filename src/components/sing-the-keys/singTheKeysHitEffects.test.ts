@@ -9,16 +9,24 @@ import {
   SPARK_RISE_MAX_PX,
   SPARK_RISE_MIN_PX,
   SPARK_RISE_SCALE_PER_TIER,
-  SPARKS_PER_TIER,
   STREAM_SPARK_MAX_DURATION_MS,
   STREAM_SPARK_MIN_DURATION_MS,
-  STREAM_SPARKS_PER_TIER,
   streakEndingAt,
   streakTier,
   tierValue,
+  type Spark,
 } from './singTheKeysHitEffects'
 
 const SPREAD_PX = 30
+const TIERS = [0, 1, 2, 3]
+
+/* px a spark travels, to 0.001px: the fan's angle leaves float noise in the
+ * last digits, which would make two equal lengths compare as different. */
+function flightLengthOf(spark: Spark): number {
+  const lengthPx = Math.hypot(spark.toXPx - spark.fromXPx, spark.toYPx)
+
+  return Math.round(lengthPx * 1000) / 1000
+}
 
 function setOfRange(from: number, to: number) {
   return new Set(Array.from({ length: to - from + 1 }, (_, i) => from + i))
@@ -100,13 +108,17 @@ describe('singTheKeysHitEffects - newlyCollectedIndices', () => {
 })
 
 describe('singTheKeysHitEffects - buildSparks', () => {
-  test.each([0, 1, 2, 3])('builds the spark count of tier %i', (tier) => {
-    expect(buildSparks(0, tier, SPREAD_PX)).toHaveLength(
-      tierValue(SPARKS_PER_TIER, tier),
-    )
+  test('throws more sparks at every tier', () => {
+    const counts = TIERS.map((tier) => buildSparks(0, tier, SPREAD_PX).length)
+
+    expect(counts[0]).toBeGreaterThan(0)
+    expect(counts).toEqual(counts.toSorted((a, b) => a - b))
+    expect(new Set(counts).size).toBe(TIERS.length)
   })
 
-  test('builds the same sparks for the same note', () => {
+  /* The sparks only read as random: a note throws the same burst on every
+   * run. */
+  test('builds the same sparks for a note on every run, with no randomness', () => {
     expect(buildSparks(7, 1, SPREAD_PX)).toEqual(buildSparks(7, 1, SPREAD_PX))
   })
 
@@ -151,27 +163,35 @@ describe('singTheKeysHitEffects - buildSparks', () => {
 })
 
 describe('singTheKeysHitEffects - buildStreamSparks', () => {
-  test.each([0, 1, 2, 3])('builds the stream count of tier %i', (tier) => {
-    expect(buildStreamSparks(0, tier, SPREAD_PX)).toHaveLength(
-      tierValue(STREAM_SPARKS_PER_TIER, tier),
+  test('thickens the stream at every tier', () => {
+    const counts = TIERS.map(
+      (tier) => buildStreamSparks(0, tier, SPREAD_PX).length,
     )
+
+    expect(counts[0]).toBeGreaterThan(0)
+    expect(counts).toEqual(counts.toSorted((a, b) => a - b))
+    expect(new Set(counts).size).toBe(TIERS.length)
   })
 
-  test('builds the same stream for the same note', () => {
+  /* The glow rebuilds the stream whenever its inputs change under a held
+   * note, such as the keyboard resizing. */
+  test('rebuilds an identical stream for a note, so a held note never reshuffles it', () => {
     expect(buildStreamSparks(7, 1, SPREAD_PX)).toEqual(
       buildStreamSparks(7, 1, SPREAD_PX),
     )
   })
 
-  test('builds a stream that differs from the note burst', () => {
-    const flightOf = (spark: { toXPx: number; toYPx: number }) => [
-      spark.toXPx,
-      spark.toYPx,
-    ]
+  /* Flight lengths, not positions: the two fans hold different numbers of
+   * sparks, so their positions differ whatever is drawn. Note 0 is where the
+   * draws would meet — its nth stream spark and nth burst spark share a seed
+   * unless the stream's is moved away. */
+  test('draws the stream its own flight lengths, apart from the burst of the same note', () => {
+    const streamLengths = buildStreamSparks(0, 0, SPREAD_PX).map(flightLengthOf)
+    const burstLengths = buildSparks(0, 0, SPREAD_PX)
+      .slice(0, streamLengths.length)
+      .map(flightLengthOf)
 
-    expect(buildStreamSparks(7, 0, SPREAD_PX).map(flightOf)).not.toEqual(
-      buildSparks(7, 0, SPREAD_PX).slice(0, 3).map(flightOf),
-    )
+    expect(streamLengths).not.toEqual(burstLengths)
   })
 
   test('gives every spark its own loop length within the range', () => {

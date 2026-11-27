@@ -47,6 +47,7 @@ const beamFadeOut = `${BEAM_FADE_OUT_MS}ms`
   >
     <div
       class="hit-beam"
+      data-testid="sing-the-keys-hit-beam-light"
       :style="{
         transform: `translateY(${hitLineOffsetPx - BEAM_HEIGHT_PX}px)`,
       }"

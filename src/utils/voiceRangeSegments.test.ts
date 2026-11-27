@@ -159,8 +159,8 @@ describe('getVoiceTypeSegments', () => {
 
   test('finds the neighbouring voices inside a single-voice range', () => {
     /* Mezzo-Soprano A3–A5 overlaps all six, but Bass, Baritone and Tenor only
-     * reach a third, a half and five eighths of the way in, so the ribbon
-     * keeps the three that genuinely sit around the singer. */
+     * have 7, 12 and 15 of their 24 semitones inside it, so the ribbon keeps
+     * the three that genuinely sit around the singer. */
     const segments = getVoiceTypeSegments(57, 81)
 
     expect(segments.map((segment) => segment.labelKey)).toEqual([
@@ -200,9 +200,9 @@ describe('getSegmentsForRange', () => {
     /* Every one of these spans reaches past the voices it is named for: E2–A4
      * covers most of Tenor and two-thirds of Alto, A2–C5 nearly four fifths of
      * both Bass and Alto, E2–C5 most of Alto, F3–C6 most of Tenor, and C3–C6
-     * contains all six outright. A focus list is the run between the two ends of the name, so
-     * the neighbours stay out — and the voices inside the run stay in, which
-     * is why Bass–Tenor names Baritone. */
+     * seven eighths of Baritone. A focus list is the run between the two ends
+     * of the name, so the neighbours stay out — and the voices inside the run
+     * stay in, which is why Bass–Tenor names Baritone. */
     expect(voiceTypesForRange('voiceRanges.bassToBaritone')).toEqual([
       'voiceRanges.bass',
       'voiceRanges.baritone',

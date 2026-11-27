@@ -9,6 +9,7 @@ import {
   directionalCleanColorRgb,
   directionalColor,
   directionalTextColor,
+  OCTAVE_COLORS,
   OFF_CENTS,
   PITCH_CLEAN_COLOR,
   PITCH_HIGH_COLOR,
@@ -31,14 +32,23 @@ describe('pitch accuracy tiers', () => {
 })
 
 describe('colorRgbAtMidi', () => {
-  test('returns an RGB tuple', () => {
-    const [r, g, b] = colorRgbAtMidi(60)
-    expect(r).toBeGreaterThanOrEqual(0)
-    expect(r).toBeLessThanOrEqual(255)
-    expect(g).toBeGreaterThanOrEqual(0)
-    expect(g).toBeLessThanOrEqual(255)
-    expect(b).toBeGreaterThanOrEqual(0)
-    expect(b).toBeLessThanOrEqual(255)
+  test('returns one palette stop per C, from C2 up to C7', () => {
+    /* MIDI 36 is C2, and each octave up is 12 semitones */
+    const colorsOnEachC = OCTAVE_COLORS.map((_, octave) =>
+      colorRgbAtMidi(36 + 12 * octave),
+    )
+
+    expect(colorsOnEachC).toEqual(OCTAVE_COLORS)
+  })
+
+  test('blends the two neighbouring stops between one C and the next', () => {
+    /* F♯2 (MIDI 42) sits halfway from the C2 stop to the C3 stop */
+    const [lower, upper] = OCTAVE_COLORS
+
+    colorRgbAtMidi(42).forEach((channel, index) => {
+      expect(channel).toBeGreaterThan(Math.min(lower[index], upper[index]))
+      expect(channel).toBeLessThan(Math.max(lower[index], upper[index]))
+    })
   })
 
   test('clamps values at MIDI boundaries', () => {
@@ -61,9 +71,9 @@ describe('colorAtMidi', () => {
 })
 
 describe('textColorAtMidi', () => {
-  test('returns rgb string', () => {
-    const color = textColorAtMidi(60)
-    expect(color).toMatch(/^rgb\(\d+, \d+, \d+\)$/)
+  test('defaults to the dark-surface ramp', () => {
+    expect(textColorAtMidi(60)).toBe(textColorAtMidi(60, true))
+    expect(textColorAtMidi(60)).not.toBe(textColorAtMidi(60, false))
   })
 
   test('returns different colors for different MIDI ranges', () => {
@@ -135,8 +145,9 @@ describe('directionalTextColor', () => {
   const contrastOnWhite = (color: string) =>
     1.05 / (luminance(parseRgb(color)) + 0.05)
 
-  test('returns an rgb string', () => {
-    expect(directionalTextColor(0)).toMatch(/^rgb\(\d+, \d+, \d+\)$/)
+  test('defaults to the dark-surface shades', () => {
+    expect(directionalTextColor(0)).toBe(directionalTextColor(0, true))
+    expect(directionalTextColor(0)).not.toBe(directionalTextColor(0, false))
   })
 
   test('should use a different shade per theme', () => {

@@ -30,8 +30,8 @@ describe('VoiceRangeExplorePanel', () => {
   })
 
   test('should remember the toggle being turned back off', async () => {
-    localStorage.setItem(STORAGE_KEY, 'true')
-
+    /* On in one visit, off again in the next. */
+    await mountPanel().get('input#voice-range-famous-singers').trigger('change')
     await mountPanel().get('input#voice-range-famous-singers').trigger('change')
 
     expect(localStorage.getItem(STORAGE_KEY)).toBe('false')

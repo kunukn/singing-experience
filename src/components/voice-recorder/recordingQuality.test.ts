@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, test, vi } from 'vitest'
+import { nextTick } from 'vue'
 
 const STORAGE_KEY = 'syng.voiceRecorderBitDepth'
 
@@ -21,7 +22,11 @@ describe('recordingQuality', () => {
   })
 
   test('keeps a saved Studio choice', async () => {
-    localStorage.setItem(STORAGE_KEY, '24')
+    const earlierVisit = await importRecordingQuality()
+    earlierVisit.useRecordingBitDepth().value = 24
+    /* The choice is written to storage on the next tick. */
+    await nextTick()
+
     const { useRecordingBitDepth } = await importRecordingQuality()
 
     expect(useRecordingBitDepth().value).toBe(24)

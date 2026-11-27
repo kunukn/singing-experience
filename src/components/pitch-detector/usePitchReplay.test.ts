@@ -103,10 +103,13 @@ describe('usePitchReplay', () => {
     expect(mockFrequencyParam.linearRampToValueAtTime).toHaveBeenCalledTimes(5)
   })
 
-  test('should skip unclean samples', () => {
+  test('should skip samples a stored take marks unclean', () => {
     const { mockFrequencyParam } = mockAudioContextGlobal()
 
     const { isReplaying, replayPitchHistory } = usePitchReplay()
+    /* The recorder only ever writes isClean: true. A take brought back from
+     * storage can still carry false, since pitchTakePersistence accepts either
+     * boolean, and that is the one way these samples reach a replay. */
     const samples: PitchSample[] = [
       { midiNote: 60, timestamp: 1000, isClean: false, cents: 0 },
       { midiNote: 62, timestamp: 1050, isClean: false, cents: 0 },
@@ -127,11 +130,13 @@ describe('usePitchReplay', () => {
 
     replayPitchHistory({ low: samples })
     expect(isReplaying.value).toBe(true)
+    /* Starting a replay already schedules one stop, for the end of the take */
+    expect(mockOscillator.stop).toHaveBeenCalledTimes(1)
 
     stopReplay()
 
     expect(isReplaying.value).toBe(false)
-    expect(mockOscillator.stop).toHaveBeenCalled()
+    expect(mockOscillator.stop).toHaveBeenCalledTimes(2)
     expect(mockOscillator.disconnect).toHaveBeenCalled()
     expect(mockGainNode.disconnect).toHaveBeenCalled()
   })
@@ -189,7 +194,7 @@ describe('usePitchReplay', () => {
       ],
       high: [
         { midiNote: 72, timestamp: 1200, isClean: true, cents: 0 },
-        { midiNote: 72, timestamp: 1400, isClean: true, cents: 0 },
+        { midiNote: 72, timestamp: 1300, isClean: true, cents: 0 },
       ],
     })
 
@@ -197,10 +202,10 @@ describe('usePitchReplay', () => {
       (call) => call[1],
     )
 
-    /* ctx.currentTime is 0 in the mock, so offsets are the absolute times. */
-    expect(rampTimes).toContain(0) // low lane's first sample, at the origin
-    expect(rampTimes).toContain(0.2) // high lane's entry, 200 ms in
-    expect(rampTimes).toContain(0.4) // both lanes' last sample
+    /* ctx.currentTime is 0 in the mock, so offsets are the absolute times: the
+     * low lane at 0 and 0.4 s, the high lane at 0.2 and 0.3 s. Were each lane
+     * timed from its own first sample, the high lane would land on 0 and 0.1. */
+    expect(rampTimes.toSorted((a, b) => a - b)).toEqual([0, 0.2, 0.3, 0.4])
   })
 
   test('should ignore a lane that recorded nothing', () => {
@@ -233,20 +238,20 @@ describe('usePitchReplay', () => {
   })
 
   test('should stop previous replay when starting a new one', () => {
-    const { mockOscillator } = mockAudioContextGlobal()
+    const { mockOscillator, mockGainNode } = mockAudioContextGlobal()
 
     const { replayPitchHistory } = usePitchReplay()
     const samples = createMockSamples(5)
 
     replayPitchHistory({ low: samples })
-
-    /* Reset to track the second call's oscillator */
-    const firstStop = mockOscillator.stop.mock.calls.length
+    expect(mockOscillator.disconnect).not.toHaveBeenCalled()
 
     replayPitchHistory({ low: samples })
 
-    /* stopReplay called internally — oscillator.stop called again for cleanup */
-    expect(mockOscillator.stop.mock.calls.length).toBeGreaterThan(firstStop)
+    /* Only tearing a voice down disconnects it, so this is the first replay's
+     * voice being dropped. Scheduling the second one disconnects nothing. */
+    expect(mockOscillator.disconnect).toHaveBeenCalledTimes(1)
+    expect(mockGainNode.disconnect).toHaveBeenCalledTimes(1)
   })
 
   test('replayProgress should be null initially', () => {
@@ -269,7 +274,7 @@ describe('usePitchReplay', () => {
     mockAudioContextGlobal()
 
     const { isReplaying, replayPitchHistory } = usePitchReplay()
-    /* 10 samples × 50ms = 450ms span; at 2× scaled to 225ms + 100ms buffer = 325ms total */
+    /* 10 samples 50ms apart span 450ms; at 2× scaled to 225ms + 100ms buffer = 325ms total */
     const samples = createMockSamples(10)
 
     replayPitchHistory({ low: samples }, { speed: 2 })

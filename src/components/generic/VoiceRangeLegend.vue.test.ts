@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
-import { VOICE_RANGES } from '@/constants/voiceRanges'
+import { MY_RANGE_INDEX, VOICE_RANGES } from '@/constants/voiceRanges'
 import VoiceRangeLegend from './VoiceRangeLegend.vue'
 import VoiceRangeRibbon from './VoiceRangeRibbon.vue'
 
@@ -151,8 +151,9 @@ describe('VoiceRangeLegend', () => {
 
   test('should list the same voices as the ribbon it names', () => {
     /* The point of the shared composable: a key row and the bar it belongs to
-     * can never describe different voices. */
-    const rangeIndex = indexOfRange('voiceRanges.choir')
+     * can never describe different voices. Tenor to soprano leaves two of the
+     * six voices out, so a legend that skipped the filtering would show. */
+    const rangeIndex = indexOfRange('voiceRanges.tenorToSoprano')
     const range = VOICE_RANGES[rangeIndex]
     const ribbon = mount(VoiceRangeRibbon, {
       props: {
@@ -169,7 +170,10 @@ describe('VoiceRangeLegend', () => {
       .findAll('[data-testid="voice-range-segment"]')
       .map((segment) => segment.attributes('data-voice-type'))
 
-    expect(voiceTypesOf('voiceRanges.choir')).toEqual(barVoices.toReversed())
+    expect(barVoices).toHaveLength(4)
+    expect(voiceTypesOf('voiceRanges.tenorToSoprano')).toEqual(
+      barVoices.toReversed(),
+    )
   })
 
   test('should mark a clipped end so a row never claims a boundary it lacks', () => {
@@ -183,9 +187,9 @@ describe('VoiceRangeLegend', () => {
 
   test('should render nothing when no voice type is on screen', () => {
     const wrapper = mount(VoiceRangeLegend, {
-      /* A zero-width span: every voice overlaps it at a single note, which
-       * getVoiceTypeSegments drops. */
-      props: { midiMin: 60, midiMax: 60, rangeIndex: 0 },
+      /* My range set to C2–C3: it reaches only the bottom of Bass and
+       * Baritone, too little of either to count as on screen. */
+      props: { midiMin: 36, midiMax: 48, rangeIndex: MY_RANGE_INDEX },
       global: { plugins: [i18n] },
     })
 

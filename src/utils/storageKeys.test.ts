@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+import { DARK_MODE_STORAGE_KEY } from '@/composables/useDarkMode'
 
 /*
  * Registry of every localStorage key the app writes. Keys are not migrated:
@@ -117,8 +118,9 @@ const DYNAMIC_KEY_CALLERS = [
 ]
 
 /* Keys the scan cannot reach because they are never written as a literal at a
- * call site. Kept explicit so the total stays honest. */
-const DYNAMIC_ONLY_KEYS = ['syng.darkMode' /* useDarkMode.ts STORAGE_KEY */]
+ * call site. Imported from the module that writes them, so a rename there
+ * shows up here instead of passing against a copy. */
+const DYNAMIC_ONLY_KEYS = [DARK_MODE_STORAGE_KEY]
 
 const sourceFiles = import.meta.glob('/src/**/*.{ts,vue}', {
   query: '?raw',
@@ -143,13 +145,6 @@ describe('localStorage keys', () => {
     }
 
     expect([...foundKeys].sort()).toEqual([...STORAGE_KEYS].sort())
-  })
-
-  test('no key is registered that src no longer uses', () => {
-    /* Covered by the assertion above, which compares both directions. This
-     * case is spelled out so a future edit cannot weaken it to a subset check
-     * without the intent being obvious. */
-    expect(new Set(STORAGE_KEYS).size).toBe(STORAGE_KEYS.length)
   })
 
   test('only known wrappers call useLocalStorage with a non-literal key', () => {

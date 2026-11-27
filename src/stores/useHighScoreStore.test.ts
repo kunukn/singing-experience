@@ -10,12 +10,24 @@ import {
   useHighScoreStore,
   type HighScore,
   type HighScoreConfig,
+  type HighScoreGame,
   type HighScoreInput,
 } from './useHighScoreStore'
 
+const HIGH_SCORES_KEY = 'syng.highScores'
+
+/* A config with exactly the settings the game saves, all set to one value. */
+const createConfig = (
+  game: HighScoreGame,
+  value: string | number = 1,
+): HighScoreConfig =>
+  Object.fromEntries(
+    HIGH_SCORE_CONFIG_FIELDS[game].map((name) => [name, value]),
+  )
+
 const createInput = (overrides?: Partial<HighScoreInput>): HighScoreInput => ({
   game: 'singTone',
-  config: { rounds: 5, holdSec: 0.75 },
+  config: createConfig('singTone'),
   correct: 3,
   total: 5,
   elapsedMs: 20_000,
@@ -27,6 +39,17 @@ const createScore = (overrides?: Partial<HighScore>): HighScore => ({
   achievedAt: 0,
   ...overrides,
 })
+
+/* Saves one score through the store and returns what it wrote to storage, so
+ * a test can add a corrupt or stale entry next to a real one. */
+async function saveOneScore(): Promise<Record<string, HighScore>> {
+  useHighScoreStore().recordScore(createInput())
+  /* useLocalStorage writes from a watcher, so the write lands on the next tick */
+  await nextTick()
+  setActivePinia(createPinia())
+
+  return JSON.parse(localStorage.getItem(HIGH_SCORES_KEY) ?? '{}')
+}
 
 describe('highScoreKey', () => {
   test('returns the same key whatever the config order', () => {
@@ -131,7 +154,7 @@ describe('useHighScoreStore', () => {
 
     store.recordScore(createInput())
     const result = store.recordScore(
-      createInput({ config: { rounds: 10, holdSec: 0.75 }, correct: 9 }),
+      createInput({ config: createConfig('singTone', 2), correct: 9 }),
     )
 
     expect(result.isNewRecord).toBe(false)
@@ -156,29 +179,32 @@ describe('useHighScoreStore', () => {
     expect(store.allScores).toHaveLength(0)
   })
 
-  test('should drop malformed entries on load', () => {
-    const valid = createScore()
+  test('should drop malformed entries on load', async () => {
+    const saved = await saveOneScore()
     localStorage.setItem(
-      'syng.highScores',
+      HIGH_SCORES_KEY,
       JSON.stringify({
-        good: valid,
+        ...saved,
         bad: { game: 'unknownGame', correct: 'x' },
       }),
     )
 
     const store = useHighScoreStore()
 
-    expect(store.allScores).toEqual([valid])
+    expect(store.allScores).toEqual(Object.values(saved))
+    expect(store.allScores).toHaveLength(1)
   })
 
   test('should keep scores saved under a renamed program key', () => {
-    const config = { difficulty: 'easy', durationSec: 20, holdSec: 0.1 }
+    const config = createConfig('noteRush')
     const legacy = { ...createScore({ config }), game: 'pitchGame' }
+    const legacyKey = highScoreKey('noteRush', config).replace(
+      'noteRush',
+      'pitchGame',
+    )
     localStorage.setItem(
-      'syng.highScores',
-      JSON.stringify({
-        'pitchGame|difficulty=easy,durationSec=20,holdSec=0.1': legacy,
-      }),
+      HIGH_SCORES_KEY,
+      JSON.stringify({ [legacyKey]: legacy }),
     )
 
     const store = useHighScoreStore()
@@ -190,24 +216,30 @@ describe('useHighScoreStore', () => {
   })
 
   test.each<{ name: string; config: HighScoreConfig }>([
-    { name: 'a setting missing', config: { durationSec: 20, holdSec: 0.1 } },
+    {
+      name: 'a setting missing',
+      config: Object.fromEntries(
+        Object.entries(createConfig('noteRush')).slice(1),
+      ),
+    },
     {
       name: 'a setting the game no longer has',
-      config: { difficulty: 'easy', durationSec: 20, holdSec: 0.1, speed: 1 },
+      config: { ...createConfig('noteRush'), removedSetting: 1 },
     },
   ])('should delete a stored score with $name', async ({ config }) => {
-    const fitting = createScore()
+    const saved = await saveOneScore()
     const stale = createScore({ game: 'noteRush', config })
     localStorage.setItem(
-      'syng.highScores',
-      JSON.stringify({ fitting, [highScoreKey('noteRush', config)]: stale }),
+      HIGH_SCORES_KEY,
+      JSON.stringify({ ...saved, [highScoreKey('noteRush', config)]: stale }),
     )
 
     const store = useHighScoreStore()
     await nextTick()
 
-    expect(store.allScores).toEqual([fitting])
-    expect(localStorage.getItem('syng.highScores')).not.toContain('noteRush')
+    expect(store.allScores).toEqual(Object.values(saved))
+    expect(store.allScores).toHaveLength(1)
+    expect(localStorage.getItem(HIGH_SCORES_KEY)).not.toContain('noteRush')
   })
 
   test('should list the saved settings of every game', () => {
@@ -217,7 +249,7 @@ describe('useHighScoreStore', () => {
   })
 
   test('should recover from a stored value that is not an object', () => {
-    localStorage.setItem('syng.highScores', JSON.stringify([1, 2]))
+    localStorage.setItem(HIGH_SCORES_KEY, JSON.stringify([1, 2]))
 
     const store = useHighScoreStore()
 

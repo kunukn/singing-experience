@@ -1,5 +1,5 @@
 import { GUITAR_TUNINGS } from '@/utils/guitarTunings'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 import {
   BOARD_VERTICAL_CHROME,
   DOUBLE_INLAY_FRET,
@@ -33,14 +33,12 @@ const C3_MIDI = 48
 
 const STANDARD = GUITAR_TUNINGS.standard.midi
 const DROP_D = GUITAR_TUNINGS.dropD.midi
+const D_STANDARD = GUITAR_TUNINGS.dStandard.midi
 
 describe('board range', () => {
-  it('derives from the tuning and fret count', () => {
+  test('derives from the tuning and fret count', () => {
     expect(guitarMidiMin(STANDARD)).toBe(40) // E2, open 6th string
     expect(guitarMidiMax(STANDARD)).toBe(86) // D6, 22nd fret of the 1st string
-    expect(guitarMidiMax(STANDARD)).toBe(
-      Math.max(...STANDARD) + GUITAR_MAX_FRET,
-    )
   })
 
   it('follows the tuning down when a string is dropped', () => {
@@ -62,11 +60,16 @@ describe('board range', () => {
     expect(guitarMidiMax(STANDARD)).toBeGreaterThan(guitarDuetMidiMax(STANDARD))
   })
 
-  it('still lets the tuning move the duet split', () => {
-    /* Pinned to a fret, not to a pitch: retuning changes what the low voice can
-     * reach, and the split has to follow that. */
+  test('still lets the tuning move the duet split', () => {
+    /* Pinned to a fret, not to a pitch: the ceiling is the 15th fret of the
+     * highest string, so it follows that string. D standard lowers every string
+     * a whole step, the 1st included. */
+    expect(guitarDuetMidiMax(D_STANDARD)).toBe(77) // F5, 15th fret of a D4 string
+    expect(guitarDuetMidiMax(D_STANDARD)).toBeLessThan(
+      guitarDuetMidiMax(STANDARD),
+    )
+    /* Drop D lowers string 6 only, so the ceiling stays where it was. */
     expect(guitarDuetMidiMax(DROP_D)).toBe(guitarDuetMidiMax(STANDARD))
-    expect(guitarMidiMin(DROP_D)).toBeLessThan(guitarMidiMin(STANDARD))
   })
 })
 

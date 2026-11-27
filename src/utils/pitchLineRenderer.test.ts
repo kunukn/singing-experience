@@ -5,7 +5,25 @@ import {
   pitchLineColors,
   resolveEffectiveMidi,
 } from './pitchLineRenderer'
-import { OFF_CENTS } from './pitchColors'
+import { cleanPitchColor, OFF_CENTS } from './pitchColors'
+import { OUT_OF_RANGE_OVERFLOW_PX } from '@/constants/chartStyles'
+
+/* On target the line is the theme's clean green, whatever shade that is. The
+ * alphas are the renderer's own: line 0.3, dot 0.8, label 0.9. */
+const onTargetColors = (isDark: boolean) => ({
+  line: cleanPitchColor(isDark, 0.3),
+  dot: cleanPitchColor(isDark, 0.8),
+  label: cleanPitchColor(isDark, 0.9),
+})
+
+/* The fixed palettes, each pinned once in 'pitchLineColors' below. Every other
+ * test only asks which palette won. */
+const OUT_OF_RANGE_COLORS = pitchLineColors({ isOutOfRange: true })
+const IN_RANGE_COLORS = pitchLineColors({ isOutOfRange: false })
+const HIGH_LANE_COLORS = pitchLineColors({
+  isOutOfRange: false,
+  isHighLane: true,
+})
 
 describe('resolveEffectiveMidi', () => {
   test('returns fractional MIDI from a valid frequency (A4 = 440 Hz → 69)', () => {
@@ -24,7 +42,11 @@ describe('resolveEffectiveMidi', () => {
 })
 
 describe('clampPitchY', () => {
-  const HEIGHT = 100 // padded band is [16, 84]; overflow ±6 → clamp [10, 90]
+  /* The renderer pads 16 px top and bottom unless told otherwise, so at this
+   * height the padded band is [16, 84]. An off-chart line stops
+   * OUT_OF_RANGE_OVERFLOW_PX past either edge of it. */
+  const HEIGHT = 100
+  const DEFAULT_PADDING = 16
 
   test('in-range Y passes through unchanged', () => {
     const result = clampPitchY(50, HEIGHT)
@@ -35,13 +57,15 @@ describe('clampPitchY', () => {
   test('above the top padding is out of range and clamped to the overflow edge', () => {
     const result = clampPitchY(-100, HEIGHT)
     expect(result.isOutOfRange).toBe(true)
-    expect(result.clampedY).toBe(10)
+    expect(result.clampedY).toBe(DEFAULT_PADDING - OUT_OF_RANGE_OVERFLOW_PX)
   })
 
   test('below the bottom padding is out of range and clamped to the overflow edge', () => {
     const result = clampPitchY(500, HEIGHT)
     expect(result.isOutOfRange).toBe(true)
-    expect(result.clampedY).toBe(90)
+    expect(result.clampedY).toBe(
+      HEIGHT - DEFAULT_PADDING + OUT_OF_RANGE_OVERFLOW_PX,
+    )
   })
 
   test('honors custom paddings', () => {
@@ -53,12 +77,9 @@ describe('clampPitchY', () => {
 
 describe('pitchLineColors', () => {
   test('correct (on target) wins over out-of-range → green', () => {
+    /* No theme given: the dark theme's green */
     const colors = pitchLineColors({ isOutOfRange: true, isCorrect: true })
-    expect(colors).toEqual({
-      line: 'rgba(74, 222, 128, 0.3)',
-      dot: 'rgba(74, 222, 128, 0.8)',
-      label: 'rgba(74, 222, 128, 0.9)',
-    })
+    expect(colors).toEqual(onTargetColors(true))
   })
 
   test("correct uses the light theme's green in light mode", () => {
@@ -67,11 +88,8 @@ describe('pitchLineColors', () => {
       isCorrect: true,
       isDark: false,
     })
-    expect(colors).toEqual({
-      line: 'rgba(22, 163, 74, 0.3)',
-      dot: 'rgba(22, 163, 74, 0.8)',
-      label: 'rgba(22, 163, 74, 0.9)',
-    })
+    expect(colors).toEqual(onTargetColors(false))
+    expect(colors).not.toEqual(onTargetColors(true))
   })
 
   test('out-of-range (not correct) → red', () => {
@@ -103,7 +121,7 @@ describe('pitchLineColors', () => {
 
   test('out-of-range beats the high lane hue → red', () => {
     const colors = pitchLineColors({ isOutOfRange: true, isHighLane: true })
-    expect(colors.dot).toBe('rgba(239, 68, 68, 0.7)')
+    expect(colors).toEqual(OUT_OF_RANGE_COLORS)
   })
 
   test('on target beats the high lane hue → green', () => {
@@ -112,7 +130,7 @@ describe('pitchLineColors', () => {
       isCorrect: true,
       isHighLane: true,
     })
-    expect(colors.dot).toBe('rgba(74, 222, 128, 0.8)')
+    expect(colors).toEqual(onTargetColors(true))
   })
 })
 
@@ -226,23 +244,19 @@ describe('drawPitchLine - cents colour', () => {
       colorForCents,
     })
 
-    expect(recorded.dot).toBe('rgba(251, 146, 60, 0.7)')
+    expect(recorded.dot).toBe(IN_RANGE_COLORS.dot)
     expect(colorForCents).not.toHaveBeenCalled()
   })
 
   test('keeps the orange palette without a cents colourer', () => {
-    expect(drawColors({})).toEqual({
-      line: 'rgba(251, 146, 60, 0.25)',
-      dot: 'rgba(251, 146, 60, 0.7)',
-      label: 'rgba(251, 146, 60, 0.8)',
-    })
+    expect(drawColors({})).toEqual(IN_RANGE_COLORS)
   })
 
   test('keeps the high lane violet', () => {
     const colorForCents = vi.fn(() => 'cents-colour')
 
-    expect(drawColors({ isHighLane: true, colorForCents }).dot).toBe(
-      'rgba(167, 139, 250, 0.7)',
+    expect(drawColors({ isHighLane: true, colorForCents })).toEqual(
+      HIGH_LANE_COLORS,
     )
     expect(colorForCents).not.toHaveBeenCalled()
   })
@@ -250,8 +264,8 @@ describe('drawPitchLine - cents colour', () => {
   test('keeps an out-of-range line red', () => {
     const colorForCents = vi.fn(() => 'cents-colour')
 
-    expect(drawColors({ isOutOfRange: true, colorForCents }).dot).toBe(
-      'rgba(239, 68, 68, 0.7)',
+    expect(drawColors({ isOutOfRange: true, colorForCents })).toEqual(
+      OUT_OF_RANGE_COLORS,
     )
     expect(colorForCents).not.toHaveBeenCalled()
   })
@@ -272,10 +286,10 @@ describe('pitchLineColors - cents colour', () => {
   })
 
   test.each([
-    { state: { isCorrect: true }, dot: 'rgba(74, 222, 128, 0.8)' },
-    { state: { isOutOfRange: true }, dot: 'rgba(239, 68, 68, 0.7)' },
-    { state: { isHighLane: true }, dot: 'rgba(167, 139, 250, 0.7)' },
-  ])('ranks below $state', ({ state, dot }) => {
+    { state: { isCorrect: true }, expected: onTargetColors(true) },
+    { state: { isOutOfRange: true }, expected: OUT_OF_RANGE_COLORS },
+    { state: { isHighLane: true }, expected: HIGH_LANE_COLORS },
+  ])('ranks below $state', ({ state, expected }) => {
     const colors = pitchLineColors({
       isOutOfRange: false,
       ...state,
@@ -283,7 +297,7 @@ describe('pitchLineColors - cents colour', () => {
       colorForCents,
     })
 
-    expect(colors.dot).toBe(dot)
+    expect(colors).toEqual(expected)
   })
 
   test('colours off-chart by offChartCents, still below on-target', () => {
@@ -301,12 +315,12 @@ describe('pitchLineColors - cents colour', () => {
         offChartCents: -OFF_CENTS,
         colorForCents,
       }).dot,
-    ).toBe('rgba(74, 222, 128, 0.8)')
+    ).toBe(onTargetColors(true).dot)
   })
 
   test('falls back to orange without cents', () => {
-    expect(pitchLineColors({ isOutOfRange: false, colorForCents }).dot).toBe(
-      'rgba(251, 146, 60, 0.7)',
+    expect(pitchLineColors({ isOutOfRange: false, colorForCents })).toEqual(
+      IN_RANGE_COLORS,
     )
   })
 })

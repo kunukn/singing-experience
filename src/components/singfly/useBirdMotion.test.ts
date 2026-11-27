@@ -5,6 +5,7 @@ import {
   frequencyToNote,
   midiToFrequency,
 } from '@/utils/noteUtils'
+import { DIFFICULTY_GAP_HALF_SEMITONES } from './singFlyConstants'
 import { useBirdMotion } from './useBirdMotion'
 
 /* All cases drive the deterministic manual-clock path (the test page's): no
@@ -141,11 +142,12 @@ describe('useBirdMotion — pitch bird (no gravity)', () => {
     expect(game.value()).toBeCloseTo(50, 0)
   })
 
-  /* Hard mode's worst case: a ~octave leap must land in the (1-semitone) gap
-   * fast enough to beat the next pipe. The distance-aware cap no longer
-   * throttles the TAU ease, so a 12-st jump reaches the gap well inside
+  /* Hard mode's worst case: a ~octave leap must land in the hard gap, the
+   * narrowest, fast enough to beat the next pipe. The distance-aware cap no
+   * longer throttles the TAU ease, so a 12-st jump reaches the gap well inside
    * ~224ms (~14 frames). */
   const BIG_JUMP_FRAMES = 14 // ~224ms of 16ms frames
+  const HARD_GAP_HALF_SEMITONES = DIFFICULTY_GAP_HALF_SEMITONES.hard
 
   test('a big UP leap reaches the hard gap fast, never overshooting', async () => {
     const game = setup()
@@ -161,8 +163,10 @@ describe('useBirdMotion — pitch bird (no gravity)', () => {
       expect(value).toBeLessThanOrEqual(target + 1e-6)
       previous = value
     }
-    /* Inside the hard difficulty's 1-semitone gap within the budget. */
-    expect(Math.abs(game.value()! - target)).toBeLessThanOrEqual(1)
+    /* Inside the hard difficulty's gap within the budget. */
+    expect(Math.abs(game.value()! - target)).toBeLessThanOrEqual(
+      HARD_GAP_HALF_SEMITONES,
+    )
   })
 
   test('a big DOWN leap reaches the hard gap fast, never overshooting', async () => {
@@ -178,7 +182,9 @@ describe('useBirdMotion — pitch bird (no gravity)', () => {
       expect(value).toBeGreaterThanOrEqual(target - 1e-6)
       previous = value
     }
-    expect(Math.abs(game.value()! - target)).toBeLessThanOrEqual(1)
+    expect(Math.abs(game.value()! - target)).toBeLessThanOrEqual(
+      HARD_GAP_HALF_SEMITONES,
+    )
   })
 
   test('a small move keeps the gentle ease — no single-frame snap', async () => {
@@ -206,13 +212,17 @@ describe('useBirdMotion — pitch bird (no gravity)', () => {
     expect(game.value()).toBeCloseTo(target, 0)
   })
 
-  test('never emits null while playing (silence holds, not clears)', async () => {
+  test('should keep a position on every silent frame while playing', async () => {
     const game = setup()
     await game.start()
     await game.frames(72, 5)
-    await game.frames(null, 30)
-    await game.frames(60, 5)
-    expect(game.smoothNoteInfo.value).not.toBeNull()
+
+    /* Checked frame by frame: a bird cleared by silence comes back on the next
+     * sung frame, so a check after the singing resumes would miss it. */
+    for (let i = 0; i < 30; i++) {
+      await game.frame(null)
+      expect(game.smoothNoteInfo.value, `silent frame ${i}`).not.toBeNull()
+    }
   })
 
   test('a huge clock jump on silence still does not move the bird', async () => {

@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
 import { createI18n } from 'vue-i18n'
@@ -69,6 +69,21 @@ function pxOf(style: string | undefined, property: string): number {
 
   return Number(match?.[1])
 }
+
+function beatFlashOpacityOf(
+  beatFlash: { intensity: number; isBarStart: boolean } | null,
+): number {
+  const style = mountLane({ beatFlash })
+    .get('[data-testid="sing-the-keys-beat-flash"]')
+    .attributes('style')
+
+  return Number(/opacity:\s*([\d.]+)/.exec(style ?? '')?.[1])
+}
+
+/* The preview colours read the theme from localStorage. */
+beforeEach(() => {
+  localStorage.clear()
+})
 
 describe('SingTheKeysLane', () => {
   test('should render one block per note', () => {
@@ -221,9 +236,8 @@ describe('SingTheKeysLane', () => {
     await block.trigger('pointerdown', { button: 0, pointerId: 1 })
     await block.trigger('pointerup', { button: 0, pointerId: 1 })
 
-    expect(wrapper.emitted('blockPress')).toEqual([
-      [Number(block.attributes('data-midi'))],
-    ])
+    /* Note 1 is C♯4, MIDI 61. */
+    expect(wrapper.emitted('blockPress')).toEqual([[61]])
   })
 
   test('should ignore block presses while blocks are not pressable', async () => {
@@ -350,19 +364,24 @@ describe('SingTheKeysLane', () => {
   test.each([
     { beatFlash: null, expected: 0 },
     { beatFlash: { intensity: 1, isBarStart: true }, expected: 1 },
-    { beatFlash: { intensity: 1, isBarStart: false }, expected: 0.6 },
     { beatFlash: { intensity: 0.5, isBarStart: true }, expected: 0.5 },
   ])(
     'should glow the hit line at $expected for $beatFlash',
     ({ beatFlash, expected }) => {
-      const style = mountLane({ beatFlash })
-        .get('[data-testid="sing-the-keys-beat-flash"]')
-        .attributes('style')
-      const opacity = Number(/opacity:\s*([\d.]+)/.exec(style ?? '')?.[1])
-
-      expect(opacity).toBeCloseTo(expected)
+      expect(beatFlashOpacityOf(beatFlash)).toBeCloseTo(expected)
     },
   )
+
+  test('should glow softer for a pulse than for a bar start', () => {
+    const pulseOpacity = beatFlashOpacityOf({ intensity: 1, isBarStart: false })
+    const barStartOpacity = beatFlashOpacityOf({
+      intensity: 1,
+      isBarStart: true,
+    })
+
+    expect(pulseOpacity).toBeGreaterThan(0)
+    expect(pulseOpacity).toBeLessThan(barStartOpacity)
+  })
 
   test('should burst on the hit line when a note is collected mid-run', async () => {
     const wrapper = mountLane({ isPlaying: true, activeNoteIndex: 0 })
@@ -393,8 +412,6 @@ describe('SingTheKeysLane', () => {
   })
 
   test('should light the collected block from the hit line', () => {
-    /* Note 0 runs 0–600ms; at 200ms, 400ms of it (40px) is still above the
-     * line. The beam is 120px tall with its foot on the line: 40 − 120. */
     const wrapper = mountLane({
       isPlaying: true,
       elapsedMs: 200,
@@ -412,7 +429,30 @@ describe('SingTheKeysLane', () => {
         .exists(),
     ).toBe(true)
     expect(beams[0]?.attributes('data-held')).toBe('true')
-    expect(beams[0]?.html()).toContain('translateY(-80px)')
+  })
+
+  test('should keep the block light on the hit line as the block falls', async () => {
+    const wrapper = mountLane({
+      isPlaying: true,
+      elapsedMs: 200,
+      activeNoteIndex: 0,
+      correctNoteIndices: [0],
+      isOnPitch: true,
+    })
+    const lightOffsetPx = () =>
+      Number(
+        /translateY\((-?[\d.]+)px\)/.exec(
+          wrapper
+            .get('[data-testid="sing-the-keys-hit-beam-light"]')
+            .attributes('style') ?? '',
+        )?.[1],
+      )
+    const offsetAt200Ms = lightOffsetPx()
+
+    await wrapper.setProps({ elapsedMs: 300 })
+
+    /* In 100ms the block falls 10px, so the light moves 10px up inside it. */
+    expect(lightOffsetPx() - offsetAt200Ms).toBeCloseTo(-10)
   })
 
   test('should dim the block light when the singer leaves the pitch', () => {
@@ -583,9 +623,8 @@ describe('SingTheKeysLane - scrolling', () => {
     await scroller.trigger('pointerdown', { button: 0, pointerId: 1 })
     await scroller.trigger('pointerup', { button: 0, pointerId: 1 })
 
-    expect(wrapper.emitted('blockPress')).toEqual([
-      [Number(block.attributes('data-midi'))],
-    ])
+    /* Note 1 is C♯4, MIDI 61. */
+    expect(wrapper.emitted('blockPress')).toEqual([[61]])
     Reflect.deleteProperty(document, 'elementsFromPoint')
   })
 

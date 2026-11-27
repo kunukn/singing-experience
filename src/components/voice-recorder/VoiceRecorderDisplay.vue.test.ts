@@ -1,10 +1,14 @@
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
+import { beforeEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
-import { useSettings } from '@/composables/useSettings'
+import { DEFAULT_PREVIEW_ENABLED, useSettings } from '@/composables/useSettings'
 import en from '@/locales/en.json'
 import { frequencyToNote } from '@/utils/noteUtils'
-import { useRecordingBitDepth } from './recordingQuality'
+import {
+  DEFAULT_RECORDING_BIT_DEPTH,
+  useRecordingBitDepth,
+} from './recordingQuality'
+import { MAX_UPLOAD_MS } from './uploadedTake'
 import type { RecorderStatus, Take } from './useVoiceRecorder'
 import VoiceRecorderDisplay from './VoiceRecorderDisplay.vue'
 
@@ -71,11 +75,15 @@ function mountDisplay({
   })
 }
 
-describe('VoiceRecorderDisplay toggles', () => {
-  afterEach(() => {
-    useSettings().isPreviewEnabled.value = false
-  })
+/* Each test starts as a new singer. The preview and quality settings live in
+ * module-level refs, which clearing localStorage alone does not reset. */
+beforeEach(() => {
+  localStorage.clear()
+  useSettings().isPreviewEnabled.value = DEFAULT_PREVIEW_ENABLED
+  useRecordingBitDepth().value = DEFAULT_RECORDING_BIT_DEPTH
+})
 
+describe('VoiceRecorderDisplay toggles', () => {
   test.each<{
     state: string
     status: RecorderStatus
@@ -154,10 +162,6 @@ describe('VoiceRecorderDisplay toggles', () => {
 })
 
 describe('VoiceRecorderDisplay - recording quality', () => {
-  afterEach(() => {
-    useRecordingBitDepth().value = 16
-  })
-
   test('should start on Standard and switch to Studio when picked', async () => {
     const wrapper = mountDisplay()
     const toggle = wrapper.get(QUALITY_TOGGLE)
@@ -243,8 +247,11 @@ describe('VoiceRecorderDisplay - opening a file', () => {
   test('should say how long an opened recording can be', () => {
     const wrapper = mountDisplay()
 
+    /* 60 000 ms per minute */
+    const maxMinutes = MAX_UPLOAD_MS / 60_000
+
     expect(wrapper.text()).toContain(
-      'Or open a recording of your singing, up to 5 minutes.',
+      `Or open a recording of your singing, up to ${maxMinutes} minutes.`,
     )
   })
 })

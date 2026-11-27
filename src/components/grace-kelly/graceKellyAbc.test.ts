@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import {
   groupNoteHeads,
   noteHeadCountsPerNote,
@@ -39,7 +39,7 @@ describe('vozMelodyToAbcString — 6/8 beat-straddling split', () => {
    * token `c`, so the body is easy to assert against. */
   const C5 = 72
 
-  it('splits the middle quarter of a "three quarters" bar into two tied eighths', () => {
+  test('splits the middle quarter of a "three quarters" bar into two tied eighths', () => {
     const threeQuarters: VozMelody = {
       clef: 'treble',
       notes: [
@@ -57,7 +57,7 @@ describe('vozMelodyToAbcString — 6/8 beat-straddling split', () => {
     expect(bodyLine(abc)).not.toContain('c2 c2 c2')
   })
 
-  it('does not split notes that already sit within a beat', () => {
+  test('does not split notes that already sit within a beat', () => {
     const beatAligned: VozMelody = {
       clef: 'treble',
       /* Two dotted quarters fill the bar at beats 0 and 3 — neither straddles. */
@@ -73,7 +73,7 @@ describe('vozMelodyToAbcString — 6/8 beat-straddling split', () => {
     expect(bodyLine(abc)).toContain('c3 c3')
   })
 
-  it('leaves the w: line byte-identical when nothing splits', () => {
+  test('leaves the w: line byte-identical when nothing splits', () => {
     const noSplit: VozMelody = {
       clef: 'treble',
       notes: [
@@ -95,7 +95,7 @@ describe('vozMelodyToAbcString — 6/8 beat-straddling split', () => {
     expect(lyricLine(abc)).toBe('do re mi')
   })
 
-  it('inserts exactly one melisma slot and keeps lyrics aligned (real melody)', () => {
+  test('inserts exactly one melisma slot and keeps lyrics aligned (real melody)', () => {
     const abc = vozMelodyToAbcString(
       VOZ_MELODIES[0],
       'Voz 1',
@@ -116,8 +116,8 @@ describe('vozMelodyToAbcString — 6/8 beat-straddling split', () => {
 })
 
 describe('noteHeadCountsPerNote / groupNoteHeads — melody-index ↔ notehead map', () => {
-  it('reports one notehead per note when nothing straddles a beat', () => {
-    /* Three quarters starting on the beat — each sits inside one 6/8 beat. */
+  test('reports one notehead per note when nothing straddles a beat', () => {
+    /* Three dotted quarters, each starting on a beat and filling it. */
     const onBeat: VozMelody = {
       clef: 'treble',
       notes: [
@@ -130,7 +130,7 @@ describe('noteHeadCountsPerNote / groupNoteHeads — melody-index ↔ notehead m
     expect(noteHeadCountsPerNote(onBeat)).toEqual([1, 1, 1])
   })
 
-  it('counts the extra notehead a beat-straddling note splits into', () => {
+  test('counts the extra notehead a beat-straddling note splits into', () => {
     /* Quarter, quarter, quarter in 6/8: the middle quarter straddles the beat
      * boundary at eighth 3 → two tied noteheads, so counts are [1, 2, 1]. */
     const threeQuarters: VozMelody = {
@@ -145,21 +145,31 @@ describe('noteHeadCountsPerNote / groupNoteHeads — melody-index ↔ notehead m
     expect(noteHeadCountsPerNote(threeQuarters)).toEqual([1, 2, 1])
   })
 
-  it('keeps the flat notehead list aligned to melody.notes (real melody)', () => {
-    const melody = VOZ_MELODIES[0]
-    const counts = noteHeadCountsPerNote(melody)
+  test('buckets the flat notehead list into one group per melody note', () => {
+    /* Quarter, quarter, quarter in 6/8: the middle quarter is drawn as two tied
+     * noteheads, so four noteheads belong to three notes. */
+    const threeQuarters: VozMelody = {
+      clef: 'treble',
+      notes: [
+        { midiOffset: 0, eighthNotes: 2 },
+        { midiOffset: 2, eighthNotes: 2 },
+        { midiOffset: 4, eighthNotes: 2 },
+      ],
+    }
 
-    /* One entry per melody note; total covers the synthetic split heads. */
-    expect(counts).toHaveLength(melody.notes.length)
+    expect(groupNoteHeads(['a', 'b', 'c', 'd'], threeQuarters)).toEqual([
+      ['a'],
+      ['b', 'c'],
+      ['d'],
+    ])
+  })
 
-    const total = counts.reduce((sum, count) => sum + count, 0)
-    const flat = Array.from({ length: total }, (_, index) => index)
-    const groups = groupNoteHeads(flat, melody)
+  test('counts one extra notehead in the real melody, on the note that straddles a beat', () => {
+    const counts = noteHeadCountsPerNote(VOZ_MELODIES[0])
 
-    /* Buckets partition the flat list in order, one bucket per melody note, each
-     * holding that note's piece(s) — so group[i][0] is note i's leading head. */
-    expect(groups).toHaveLength(melody.notes.length)
-    expect(groups.flat()).toEqual(flat)
-    expect(groups.map((group) => group.length)).toEqual(counts)
+    /* Bar 3 is three quarters, so its middle one (note 12) is drawn as two
+     * noteheads: 34 notes become 35 noteheads. */
+    expect(counts[12]).toBe(2)
+    expect(counts.reduce((sum, count) => sum + count, 0)).toBe(35)
   })
 })

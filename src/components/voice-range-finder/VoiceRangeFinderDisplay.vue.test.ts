@@ -4,7 +4,13 @@ import PrimeVue from 'primevue/config'
 import { createI18n } from 'vue-i18n'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import en from '@/locales/en.json'
-import { RANGE_FINDER_HOLD_MS } from './useRangeFinder'
+import { DEFAULT_MY_VOICE_RANGE } from '@/utils/normalizeVoiceRange'
+import {
+  RANGE_FINDER_HOLD_MS,
+  RECORD_FLASH_MS,
+  SAVED_FLASH_MS,
+} from './useRangeFinder'
+import { useVoiceRangeSlots, type VoiceRangeSlot } from './useVoiceRangeSlots'
 import VoiceRangeFinderDisplay from './VoiceRangeFinderDisplay.vue'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
@@ -14,6 +20,18 @@ const G2_HZ = 98
 const D3_HZ = 146.83
 
 const { isPreviewEnabled } = useSettings()
+const { setMyVoiceRange } = useMyVoiceRange()
+
+/* Saved through the slots' own writer, so the stored shape is whatever the
+ * app writes today. The scope ends the writer's storage listeners again. */
+async function saveSlot(index: number, slot: VoiceRangeSlot) {
+  const scope = effectScope()
+  scope.run(() =>
+    useVoiceRangeSlots('syng.voiceRangeSlots').saveSlot(index, slot),
+  )
+  await nextTick() // useLocalStorage writes on the next flush
+  scope.stop()
+}
 
 async function createTestRouter() {
   const router = createRouter({
@@ -25,7 +43,10 @@ async function createTestRouter() {
   return router
 }
 
-async function mountDisplay() {
+/* attachTo: isVisible() only sees a hidden tab panel's display:none on an
+ * attached element */
+async function mountDisplay(attachTo?: HTMLElement) {
+  const router = await createTestRouter()
   const frequency = ref<number | null>(null)
   const isListening = ref(false)
   const detection = {
@@ -43,10 +64,11 @@ async function mountDisplay() {
   }
   const wrapper = mount(VoiceRangeFinderDisplay, {
     props: { detection, simulateIdlePreview: true },
-    global: { plugins: [i18n, PrimeVue, await createTestRouter()] },
+    attachTo,
+    global: { plugins: [i18n, PrimeVue, router] },
   })
 
-  return { wrapper, frequency, detection }
+  return { wrapper, frequency, detection, router }
 }
 
 type DisplayWrapper = Awaited<ReturnType<typeof mountDisplay>>['wrapper']
@@ -55,12 +77,19 @@ const liveLinesOf = (wrapper: DisplayWrapper) =>
   wrapper.findAll('[data-testid="voice-type-comparison-live-line"]')
 
 describe('VoiceRangeFinderDisplay', () => {
+  /* My range and See my voice are module-level refs, which
+   * localStorage.clear() alone doesn't reset */
   beforeEach(() => {
     vi.useFakeTimers()
+    localStorage.clear()
+    setMyVoiceRange(
+      DEFAULT_MY_VOICE_RANGE.midiMin,
+      DEFAULT_MY_VOICE_RANGE.midiMax,
+    )
+    isPreviewEnabled.value = false
   })
   afterEach(() => {
     vi.useRealTimers()
-    isPreviewEnabled.value = false
   })
 
   describe('See your voice', () => {
@@ -126,7 +155,7 @@ describe('VoiceRangeFinderDisplay', () => {
     const centsMeter = () => stepSection().get('[data-testid="cents-meter"]')
     expect(centsMeter().attributes('data-visible')).toBe('false')
 
-    vi.advanceTimersByTime(1000)
+    vi.advanceTimersByTime(RECORD_FLASH_MS)
     await nextTick()
 
     expect(centsMeter().attributes('data-visible')).toBe('true')
@@ -197,10 +226,13 @@ describe('VoiceRangeFinderDisplay', () => {
       .get('[data-testid="voice-range-finder-done"]')
       .trigger('click')
 
-    expect(wrapper.get('[data-testid="my-range-notes"]').text()).toContain('G2')
+    /* The new singer's G3–G4 with its low end moved down to the sung G2 */
+    expect(wrapper.get('[data-testid="my-range-notes"]').text()).toContain(
+      'G2–G4',
+    )
     expect(savedTick().exists()).toBe(true)
 
-    vi.advanceTimersByTime(2000)
+    vi.advanceTimersByTime(SAVED_FLASH_MS)
     await nextTick()
 
     expect(savedTick().exists()).toBe(false)
@@ -209,10 +241,7 @@ describe('VoiceRangeFinderDisplay', () => {
   test('should set My range from a saved slot and mark it', async () => {
     const A2 = 45
     const E4 = 64
-    localStorage.setItem(
-      'syng.voiceRangeSlots',
-      JSON.stringify([{ midiMin: A2, midiMax: E4, name: 'Choir' }]),
-    )
+    await saveSlot(0, { midiMin: A2, midiMax: E4, name: 'Choir' })
     const { wrapper } = await mountDisplay()
     const slot = () => wrapper.get('[data-testid="range-slot-1"]')
 
@@ -229,8 +258,6 @@ describe('VoiceRangeFinderDisplay', () => {
     ).toBe('19 semitones · 1.6 octaves')
     expect(wrapper.find('[data-testid="my-range-saved"]').exists()).toBe(true)
     expect(slot().attributes('data-active')).toBe('true')
-
-    localStorage.removeItem('syng.voiceRangeSlots')
   })
 
   describe('Explore tab', () => {
@@ -239,15 +266,23 @@ describe('VoiceRangeFinderDisplay', () => {
         .get('[data-testid="voice-range-finder-tab-explore"]')
         .trigger('click')
 
-    test('should show the live note without the My range card', async () => {
+    /* Both panels stay mounted, so "shown" has to be read from visibility
+     * and the URL, not from what is in the DOM */
+    test('should open from its tab, keep the tab in the URL, and show the live note in place of the My range card', async () => {
       isPreviewEnabled.value = true
-      const { wrapper, frequency } = await mountDisplay()
+      const { wrapper, frequency, router } = await mountDisplay(document.body)
+      const explore = wrapper.get('[data-testid="voice-range-explore"]')
+      const myRangeCard = wrapper.get('[data-testid="my-range-card"]')
+      expect(explore.isVisible()).toBe(false)
 
       await openExplore(wrapper)
+      await flushPromises()
       frequency.value = D3_HZ
       await nextTick()
 
-      const explore = wrapper.get('[data-testid="voice-range-explore"]')
+      expect(router.currentRoute.value.query.tab).toBe('explore')
+      expect(explore.isVisible()).toBe(true)
+      expect(myRangeCard.isVisible()).toBe(false)
       expect(
         explore.get('[data-testid="voice-range-explore-note"]').text(),
       ).toBe('D3')
@@ -256,9 +291,7 @@ describe('VoiceRangeFinderDisplay', () => {
           .findAll('[data-testid="voice-type-comparison-row"]')
           .some((row) => row.attributes('data-sounding') === 'true'),
       ).toBe(true)
-      expect(explore.find('[data-testid="my-range-highest"]').exists()).toBe(
-        false,
-      )
+      wrapper.unmount()
     })
 
     test('should cancel a running search when switching tabs', async () => {

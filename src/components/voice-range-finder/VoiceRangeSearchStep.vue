@@ -7,6 +7,7 @@ import {
   type RangeFinderMode,
   type RangeFinderPauseReason,
   type RangeFinderStep,
+  RECORD_FLASH_MS,
 } from './useRangeFinder'
 import { formatNote } from './voiceRangeNotes'
 
@@ -49,10 +50,6 @@ const { liveCents, liveCentsText, liveCentsColor } = useLiveCents(
 const stepRecord = computed(() =>
   props.step === 'low' ? props.lowestMidi : props.highestMidi,
 )
-
-/* How long a new record shows as a full bar with a ✓ — long enough to
- * register, short enough not to stall a singer creeping on to the next note. */
-const RECORD_FLASH_MS = 700
 
 const justRecordedMidi = ref<number | null>(null)
 const { isPending: isRecordFlash, start: startRecordFlash } = useTimeoutFn(

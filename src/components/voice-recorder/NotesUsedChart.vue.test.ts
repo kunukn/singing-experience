@@ -1,14 +1,15 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { nextTick } from 'vue'
-import { createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import { createI18n } from 'vue-i18n'
 import { TONE_CLICK_HIGHLIGHT_DURATION_MS } from '@/constants/toneConstants'
 import en from '@/locales/en.json'
-import { midiToFrequency } from '@/utils/noteUtils'
 import NotesUsedChart from './NotesUsedChart.vue'
 
-const playTone = vi.fn(() => Promise.resolve())
+const playTone = vi.fn<(frequency: number) => Promise<void>>(() =>
+  Promise.resolve(),
+)
 
 /* Tones need a Web Audio context happy-dom doesn't have. */
 vi.mock('@/composables/useTonePlayer', () => ({
@@ -16,6 +17,8 @@ vi.mock('@/composables/useTonePlayer', () => ({
 }))
 
 const G3 = 55
+/* G3 with A4 at 440 Hz. */
+const G3_HZ = 196
 const D3 = 50
 
 function mountChart() {
@@ -42,6 +45,9 @@ const rowFor = (wrapper: ReturnType<typeof mountChart>, label: string) =>
     .find((row) => row.get('[data-testid="notes-used-play"]').text() === label)!
 
 beforeEach(() => {
+  /* The tone mode store keeps its choice in localStorage. */
+  localStorage.clear()
+  setActivePinia(createPinia())
   playTone.mockClear()
   vi.useFakeTimers()
 })
@@ -58,7 +64,8 @@ describe('NotesUsedChart - hear a note', () => {
       .get('[data-testid="notes-used-play"]')
       .trigger('click')
 
-    expect(playTone).toHaveBeenCalledWith(midiToFrequency(G3))
+    expect(playTone).toHaveBeenCalledOnce()
+    expect(playTone.mock.calls[0][0]).toBeCloseTo(G3_HZ, 1)
     expect(wrapper.emitted('tonePlay')).toHaveLength(1)
   })
 

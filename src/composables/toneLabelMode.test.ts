@@ -22,9 +22,8 @@ describe('useToneLabelMode', () => {
     localStorage.clear()
   })
 
-  /* A distinct key per case: useLocalStorage keeps one ref per key for the
-   * lifetime of the module, so a second call on the same key would read back
-   * what the first one persisted rather than an empty store. */
+  /* A distinct key per call: the first call writes its default to storage, so
+   * a second call on the same key would read that back, not its own default. */
   test('falls back to the default when nothing is stored', () => {
     expect(useToneLabelMode('test.toneLabelMode.emptyOff', 'off').value).toBe(
       'off',
@@ -34,8 +33,9 @@ describe('useToneLabelMode', () => {
     ).toBe('simple')
   })
 
-  test('reads back a valid stored mode', () => {
-    localStorage.setItem(STORAGE_KEY, 'advanced')
+  test('reads back a mode saved on an earlier visit', async () => {
+    useToneLabelMode(STORAGE_KEY, 'off').value = 'advanced'
+    await nextTick()
 
     expect(useToneLabelMode(STORAGE_KEY, 'off').value).toBe('advanced')
   })

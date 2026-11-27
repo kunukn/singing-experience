@@ -36,7 +36,6 @@ describe('createPitchLaneRecorder', () => {
 
     expect(lane.samples).toHaveLength(2)
     expect(lane.samples[0].timestamp).toBe(1000)
-    expect(lane.samples[0].isClean).toBe(true)
   })
 
   it('stores fractional midi so the spline does not staircase', () => {

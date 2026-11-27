@@ -4,12 +4,21 @@ import { findSoundSpan, trimSilence } from './trimSilence'
 
 /* Low, so the sample counts below stay readable: 1 sample per ms. */
 const SAMPLE_RATE = 1000
+/*
+ * In radians. The 100 Hz wave repeats every 10 samples, and cuts land on
+ * multiples of 10: starting it at 0 would put a zero crossing under every cut,
+ * so the ends would read 0 with or without a fade.
+ */
+const WAVE_PHASE = 1
 
 function buildTake(parts: { ms: number; amplitude: number }[]) {
   const samples: number[] = []
   for (const { ms, amplitude } of parts) {
     for (let i = 0; i < ms; i++) {
-      samples.push(amplitude * Math.sin((2 * Math.PI * 100 * i) / SAMPLE_RATE))
+      samples.push(
+        amplitude *
+          Math.sin((2 * Math.PI * 100 * i) / SAMPLE_RATE + WAVE_PHASE),
+      )
     }
   }
 

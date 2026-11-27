@@ -587,6 +587,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
               class="piano-key-glow pointer-events-none absolute inset-0 rounded-b-md bg-(--p-primary-color)"
               aria-hidden="true"
               data-testid="piano-key-glow"
+              data-glow-shape="key"
               :data-midi="key.midi"
             />
 
@@ -638,6 +639,7 @@ const PREVIEW_LABEL_ROW_HEIGHT = 12
             }"
             aria-hidden="true"
             data-testid="piano-key-glow"
+            data-glow-shape="block"
             :data-midi="glow.midi"
           />
 

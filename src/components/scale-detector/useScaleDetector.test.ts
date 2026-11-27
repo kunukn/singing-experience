@@ -151,7 +151,6 @@ describe('useScaleDetector - removing a wrong note', () => {
     detector.removePitchClass(0)
 
     detector.reset()
-    clockMs = 0
     tap(detector, C)
 
     expect(pitchClassesOf(detector)).toEqual([0])

@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
@@ -9,22 +9,12 @@ function createTestI18n() {
   return createI18n({ legacy: false, locale: 'en', messages: { en } })
 }
 
-describe('DoReMiScale', () => {
-  test('should render without errors', () => {
-    const i18n = createTestI18n()
-    const wrapper = mount(DoReMiScale, {
-      global: { plugins: [i18n] },
-      props: {
-        scaleSteps: buildMajorScale(C3_MIDI),
-        currentStepIndex: 0,
-        holdProgress: 0,
-        isComplete: false,
-        isStarted: false,
-      },
-    })
-    expect(wrapper.exists()).toBe(true)
-  })
+/* The preview colours read the theme from localStorage. */
+beforeEach(() => {
+  localStorage.clear()
+})
 
+describe('DoReMiScale', () => {
   test('should render 13 chromatic items for a major scale', () => {
     const i18n = createTestI18n()
     const wrapper = mount(DoReMiScale, {
@@ -63,7 +53,10 @@ describe('DoReMiScale', () => {
     expect(excludedItems).toHaveLength(5)
   })
 
-  test('should clamp below-range preview to bottom of root item without label', () => {
+  /* The label is drawn for an out-of-range preview today, although the comment
+   * on previewIndicator in DoReMiScale.vue says it is suppressed. These two
+   * tests pin what the singer sees now; see the owner flag on that comment. */
+  test('should clamp a below-range preview past the bottom of the root item and keep its label', () => {
     const i18n = createTestI18n()
     const wrapper = mount(DoReMiScale, {
       global: { plugins: [i18n] },
@@ -78,16 +71,20 @@ describe('DoReMiScale', () => {
       },
     })
 
-    /* Root item (C3) at chromaticIndex 0 should have the preview indicator */
-    const rootItem = wrapper.find('[data-testid="scale-step-0"]')
-    expect(rootItem.exists()).toBe(true)
+    /* The only indicator sits in the root item (C3), below its bottom edge */
+    expect(wrapper.findAll('[data-testid="preview-indicator"]')).toHaveLength(1)
 
-    /* The preview indicator should be present but with no label */
-    const previewLabel = rootItem.find('[data-testid="preview-label"]')
-    expect(previewLabel.exists()).toBe(false)
+    const indicator = wrapper
+      .get('[data-testid="scale-step-0"]')
+      .get('[data-testid="preview-indicator"]')
+    expect(indicator.attributes('data-out-of-range')).toBe('true')
+    expect(indicator.attributes('style')).toMatch(
+      /top:\s*calc\(100% \+ \d+px\)/,
+    )
+    expect(indicator.get('[data-testid="preview-label"]').text()).toBe('A#2')
   })
 
-  test('should clamp above-range preview to top of highest item without label', () => {
+  test('should clamp an above-range preview past the top of the highest item and keep its label', () => {
     const i18n = createTestI18n()
     const wrapper = mount(DoReMiScale, {
       global: { plugins: [i18n] },
@@ -102,16 +99,18 @@ describe('DoReMiScale', () => {
       },
     })
 
-    /* Highest item (C4) at scale-step-7 should have the preview indicator */
-    const topItem = wrapper.find('[data-testid="scale-step-7"]')
-    expect(topItem.exists()).toBe(true)
+    /* The only indicator sits in the highest item (C4), above its top edge */
+    expect(wrapper.findAll('[data-testid="preview-indicator"]')).toHaveLength(1)
 
-    /* The preview indicator should be present but with no label */
-    const previewLabel = topItem.find('[data-testid="preview-label"]')
-    expect(previewLabel.exists()).toBe(false)
+    const indicator = wrapper
+      .get('[data-testid="scale-step-7"]')
+      .get('[data-testid="preview-indicator"]')
+    expect(indicator.attributes('data-out-of-range')).toBe('true')
+    expect(indicator.attributes('style')).toMatch(/top:\s*-\d+px/)
+    expect(indicator.get('[data-testid="preview-label"]').text()).toBe('D4')
   })
 
-  test('should show label for in-range previewMidi', () => {
+  test('should show the label in the item of an in-range previewMidi', () => {
     const i18n = createTestI18n()
     const wrapper = mount(DoReMiScale, {
       global: { plugins: [i18n] },
@@ -127,8 +126,14 @@ describe('DoReMiScale', () => {
     })
 
     /* F3 is at chromaticIndex 5 (scale-step-3 for Fa) */
-    const fItem = wrapper.find('[data-testid="scale-step-3"]')
-    expect(fItem.exists()).toBe(true)
+    const fItem = wrapper.get('[data-testid="scale-step-3"]')
+    expect(fItem.get('[data-testid="preview-label"]').text()).toBe('F3')
+    expect(
+      fItem
+        .get('[data-testid="preview-indicator"]')
+        .attributes('data-out-of-range'),
+    ).toBe('false')
+    expect(wrapper.findAll('[data-testid="preview-label"]')).toHaveLength(1)
   })
 
   test('should position at 50% for perfect pitch frequency', () => {
@@ -152,7 +157,7 @@ describe('DoReMiScale', () => {
     const rootItem = wrapper.find('[data-testid="scale-step-0"]')
     expect(rootItem.exists()).toBe(true)
 
-    const indicator = rootItem.find('.pointer-events-none')
+    const indicator = rootItem.find('[data-testid="preview-indicator"]')
     expect(indicator.exists()).toBe(true)
     expect(indicator.attributes('style')).toContain('top: 50%')
   })
@@ -176,7 +181,7 @@ describe('DoReMiScale', () => {
     })
 
     const rootItem = wrapper.find('[data-testid="scale-step-0"]')
-    const indicator = rootItem.find('.pointer-events-none')
+    const indicator = rootItem.find('[data-testid="preview-indicator"]')
     expect(indicator.exists()).toBe(true)
 
     const style = indicator.attributes('style') ?? ''
@@ -207,7 +212,7 @@ describe('DoReMiScale', () => {
     })
 
     const rootItem = wrapper.find('[data-testid="scale-step-0"]')
-    const indicator = rootItem.find('.pointer-events-none')
+    const indicator = rootItem.find('[data-testid="preview-indicator"]')
     expect(indicator.exists()).toBe(true)
 
     const style = indicator.attributes('style') ?? ''
@@ -235,7 +240,7 @@ describe('DoReMiScale', () => {
     })
 
     const rootItem = wrapper.find('[data-testid="scale-step-0"]')
-    const indicator = rootItem.find('.pointer-events-none')
+    const indicator = rootItem.find('[data-testid="preview-indicator"]')
     expect(indicator.exists()).toBe(true)
     expect(indicator.attributes('style')).toContain('top: 50%')
   })
@@ -258,7 +263,7 @@ describe('DoReMiScale', () => {
     })
 
     const rootItem = wrapper.find('[data-testid="scale-step-0"]')
-    const indicator = rootItem.find('.pointer-events-none')
+    const indicator = rootItem.find('[data-testid="preview-indicator"]')
     expect(indicator.exists()).toBe(true)
     expect(indicator.attributes('style')).toContain('top: 50%')
   })

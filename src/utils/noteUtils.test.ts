@@ -12,8 +12,6 @@ import {
   midiToFrequency,
   midiToNoteLabel,
   noteToFrequency,
-  SCALE_MODE_GROUP_ORDER,
-  SCALE_MODE_OPTIONS,
   SCALE_MODE_SEMITONES,
   snapFrequencyToSemitone,
   snapMidiWithHysteresis,
@@ -266,14 +264,16 @@ describe('frequencyToNoteName', () => {
 })
 
 describe('buildScale', () => {
+  /* Every mode has a step table and a solfège list, kept by hand side by side.
+   * A list one label short leaves the top note without a name; one label too
+   * many, or a table that stops short of the octave, takes its closing DO. */
   test.each(Object.keys(SCALE_MODE_SEMITONES) as ScaleMode[])(
-    'returns correct note count for mode "%s" starting at 0 and ending at 12',
+    'runs mode "%s" from DO on the root to DO an octave up',
     (mode) => {
-      const semitones = SCALE_MODE_SEMITONES[mode]
       const scale = buildScale(C3_MIDI, mode)
-      expect(scale).toHaveLength(semitones.length)
-      expect(semitones[0]).toBe(0)
-      expect(semitones.at(-1)).toBe(12)
+
+      expect(scale[0]).toEqual({ solfege: 'DO', note: 'C', octave: 3 })
+      expect(scale.at(-1)).toEqual({ solfege: 'DO', note: 'C', octave: 4 })
     },
   )
 
@@ -382,19 +382,6 @@ describe('buildScale - bebop scales', () => {
     expect(scale[0].solfege).toBe('DO')
     expect(scale[8].solfege).toBe('DO')
   })
-
-  test('all bebop semitone arrays end at 12 (octave)', () => {
-    const bebopModes: ScaleMode[] = [
-      'majorBebop',
-      'dominantBebop',
-      'minorBebop',
-    ]
-
-    for (const mode of bebopModes) {
-      const semitones = SCALE_MODE_SEMITONES[mode]
-      expect(semitones.at(-1)).toBe(12)
-    }
-  })
 })
 
 describe('buildScale - blues & pentatonic scales', () => {
@@ -440,6 +427,15 @@ describe('buildScale - symmetric scales', () => {
     const scale = buildScale(C3_MIDI, 'wholeTone')
 
     expect(scale).toHaveLength(7)
+    expect(scale.map((step) => step.note)).toEqual([
+      'C',
+      'D',
+      'E',
+      'F#',
+      'G#',
+      'A#',
+      'C',
+    ])
     expect(scale[0].solfege).toBe('DO')
     expect(scale[3].solfege).toBe('♯FA')
     expect(scale[6].solfege).toBe('DO')
@@ -536,14 +532,26 @@ describe('buildScaleModeGroups', () => {
   const build = (modes?: readonly ScaleMode[]) =>
     buildScaleModeGroups({ groupLabel, modeLabel, modes })
 
-  test('orders the groups as SCALE_MODE_GROUP_ORDER declares', () => {
-    expect(build().map((group) => group.id)).toEqual(SCALE_MODE_GROUP_ORDER)
+  test('orders the groups from the popular scales to the symmetric ones', () => {
+    expect(build().map((group) => group.id)).toEqual([
+      'popular',
+      'church',
+      'melodicMinor',
+      'harmonicMinor',
+      'harmonicMajor',
+      'world',
+      'bebop',
+      'symmetric',
+    ])
   })
 
+  /* Against the step table, not the catalogue the builder reads: a mode left
+   * out of the catalogue, or listed under two groups, would otherwise match
+   * itself. The table's keys are unique, so a duplicate row fails too. */
   test('offers every mode exactly once', () => {
     const ids = build().flatMap((group) => group.items.map((item) => item.id))
 
-    expect(ids.sort()).toEqual(SCALE_MODE_OPTIONS.map((o) => o.id).sort())
+    expect(ids.toSorted()).toEqual(Object.keys(SCALE_MODE_SEMITONES).toSorted())
   })
 
   test('leads with the two names everyone knows', () => {
@@ -595,9 +603,10 @@ describe('buildStartToneOptions', () => {
   })
 
   test('sets each MIDI note as the offset from C3', () => {
+    /* Eight semitones below C3 is E2, MIDI 40 */
     const [option] = buildStartToneOptions(-8, -8)
 
-    expect(option.midiNote).toBe(C3_MIDI - 8)
+    expect(option.midiNote).toBe(40)
   })
 })
 
@@ -620,7 +629,18 @@ describe('groupStartToneOptions', () => {
     expect(groups[0].voiceTier).toBe('low')
   })
 
-  test('matches the shared groups for the shared span', () => {
-    expect(groupStartToneOptions(START_TONE_OPTIONS)).toEqual(START_TONE_GROUPS)
+  test('splits the shared list into tiers at B3 and D♯3', () => {
+    /* The lowest high tone is B3 (MIDI 59) and the lowest mid tone D♯3 (51) */
+    const edges = START_TONE_GROUPS.map((group) => [
+      group.voiceTier,
+      group.items[0].label,
+      group.items.at(-1)!.label,
+    ])
+
+    expect(edges).toEqual([
+      ['high', 'G4', 'B3'],
+      ['mid', 'A♯3', 'D♯3'],
+      ['low', 'D3', 'G2'],
+    ])
   })
 })

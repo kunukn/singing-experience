@@ -1,4 +1,5 @@
 import { describe, expect, test } from 'vitest'
+import { CLEAN_CENTS } from '@/utils/pitchColors'
 import {
   FOCUS_LEVEL_RULES,
   focusLevelFor,
@@ -140,6 +141,11 @@ describe('FOCUS_LEVEL_RULES', () => {
 })
 
 describe('focusTipFor', () => {
+  /* An average past the spot on limit is what earns a sharp or flat tip; one
+   * well inside it counts as centred */
+  const OFF_CENTRE_CENTS = CLEAN_CENTS + 4
+  const CENTRED_CENTS = CLEAN_CENTS / 2
+
   test('should give no tip before any singing', () => {
     expect(focusTipFor(take({ holdMs: 0 }), null)).toBe(null)
   })
@@ -151,23 +157,32 @@ describe('focusTipFor', () => {
   })
 
   test('should praise a pitch perfect take even with an offset', () => {
-    const stats = take({ averageCents: 12 })
+    const stats = take({ averageCents: OFF_CENTRE_CENTS })
 
     expect(focusTipFor(stats, 'pitchPerfect')).toBe('perfect')
   })
 
   test('should name sharp or flat before steadiness', () => {
     expect(
-      focusTipFor(take({ averageCents: 14, wobbleCents: 30 }), 'stageReady'),
+      focusTipFor(
+        take({ averageCents: OFF_CENTRE_CENTS, wobbleCents: 30 }),
+        'stageReady',
+      ),
     ).toBe('sharp')
     expect(
-      focusTipFor(take({ averageCents: -14, wobbleCents: 30 }), 'stageReady'),
+      focusTipFor(
+        take({ averageCents: -OFF_CENTRE_CENTS, wobbleCents: 30 }),
+        'stageReady',
+      ),
     ).toBe('flat')
   })
 
   test('should ask for a steadier tone when centred but wobbly', () => {
     expect(
-      focusTipFor(take({ averageCents: 3, wobbleCents: 20 }), 'findingIt'),
+      focusTipFor(
+        take({ averageCents: CENTRED_CENTS, wobbleCents: 20 }),
+        'findingIt',
+      ),
     ).toBe('steady')
   })
 
@@ -180,11 +195,15 @@ describe('focusTipFor', () => {
   ] as const)(
     'should give a $level take that is centred and steady the "$expected" tip',
     ({ level, expected }) => {
-      expect(focusTipFor(take({ averageCents: 3 }), level)).toBe(expected)
+      expect(focusTipFor(take({ averageCents: CENTRED_CENTS }), level)).toBe(
+        expected,
+      )
     },
   )
 
   test('should name sharp before the rung tip on a lead singer take', () => {
-    expect(focusTipFor(take({ averageCents: 14 }), 'leadSinger')).toBe('sharp')
+    expect(
+      focusTipFor(take({ averageCents: OFF_CENTRE_CENTS }), 'leadSinger'),
+    ).toBe('sharp')
   })
 })

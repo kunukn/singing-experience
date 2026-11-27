@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest'
-import { midiToFrequency } from '@/utils/noteUtils'
+import { describe, expect, it, test } from 'vitest'
+import { midiToFrequency, midiToNoteLabel } from '@/utils/noteUtils'
 import { buildPianoLayout } from './pianoLayout'
 import {
   PREVIEW_LABEL_COLLISION_PX,
@@ -23,18 +23,13 @@ const pitchXOf = (midi: number) =>
   [...layout.whites, ...layout.blacks].find((key) => key.midi === midi)!.pitchX
 
 describe('buildPianoPreviewLine', () => {
-  it('returns null without a clean pitch', () => {
+  /* The preview hands over all three fields or none of them (see
+   * useIdlePreview), so a silent lane is all null. */
+  test('returns null without a clean pitch', () => {
     expect(
       lineFor({
         previewMidi: null,
-        previewFrequency: 440,
-        previewNoteLabel: 'A4',
-      }),
-    ).toBeNull()
-    expect(
-      lineFor({
-        previewMidi: 69,
-        previewFrequency: 440,
+        previewFrequency: null,
         previewNoteLabel: null,
       }),
     ).toBeNull()
@@ -215,8 +210,9 @@ describe('buildPianoPreviewLines', () => {
   /*
    * The chip slides in off its line near the ends of the keyboard, so an
    * out-of-range voice — whose line pins to the very edge — does not hang half a
-   * chip past the last key. The expected offsets are half an estimated chip
-   * (4px + 7.5px per character); see estimateLabelWidth.
+   * chip past the last key. How far it slides is an estimate of the chip's width
+   * (see estimateLabelWidth), a number tuned by eye — so these pin which way the
+   * chip moves and how two chips compare, not the px.
    */
   describe('chip clamping', () => {
     it('leaves the chip on its line in the middle of the keyboard', () => {
@@ -225,31 +221,37 @@ describe('buildPianoPreviewLines', () => {
       expect(line.labelX).toBe(line.x)
     })
 
-    it('slides the chip in where the line pins to the top end', () => {
+    test('slides the chip in where the line pins to the top end', () => {
       const [line] = buildPianoPreviewLines([laneFor('low', 97, 'C♯7')])
 
       expect(line.x).toBeCloseTo(layout.totalWidth)
-      // Half a 3-character chip clear of the end: (4 + 3 × 7.5) / 2
-      expect(layout.totalWidth - line.labelX).toBeCloseTo(13.25)
+      expect(line.labelX).toBeLessThan(line.x)
     })
 
-    it('slides the chip in where the line pins to the bottom end', () => {
+    test('slides the chip in where the line pins to the bottom end', () => {
       const [line] = buildPianoPreviewLines([laneFor('low', 35, 'B1')])
 
       expect(line.x).toBe(0)
-      // Half a 2-character chip: (4 + 2 × 7.5) / 2
-      expect(line.labelX).toBeCloseTo(9.5)
+      expect(line.labelX).toBeGreaterThan(line.x)
     })
 
-    it('slides a chip carrying cents further in than a bare one', () => {
-      const detuned = midiToFrequency(97) * Math.pow(2, 45 / 1200)
-      const [line] = buildPianoPreviewLines([
+    test('slides a same-length chip in equally far at both ends', () => {
+      /* B1 and D7 are both two characters, so their chips are the same width. */
+      const [bottom] = buildPianoPreviewLines([laneFor('low', 35, 'B1')])
+      const [top] = buildPianoPreviewLines([laneFor('low', 98, 'D7')])
+
+      expect(layout.totalWidth - top.labelX).toBeCloseTo(bottom.labelX)
+    })
+
+    test('slides a chip carrying cents further in than a bare one', () => {
+      const detuned = midiToFrequency(97) * Math.pow(2, 45 / 1200) // +45¢
+      const [bare] = buildPianoPreviewLines([laneFor('low', 97, 'C♯7')])
+      const [withCents] = buildPianoPreviewLines([
         { ...laneFor('low', 97, 'C♯7'), previewFrequency: detuned },
       ])
 
-      expect(line.text).toBe('C♯7 +45¢')
-      // Half an 8-character chip: (4 + 8 × 7.5) / 2
-      expect(layout.totalWidth - line.labelX).toBeCloseTo(32)
+      expect(withCents.text).toBe('C♯7 +45¢')
+      expect(withCents.labelX).toBeLessThan(bare.labelX)
     })
   })
 })
@@ -281,12 +283,12 @@ describe('buildPianoPreviewLine - cents colouring inputs', () => {
     expect(line!.cents).toBeNull()
   })
 
-  it('flags a pitch outside the range as out of range, the edges as in range', () => {
+  test('flags a pitch outside the range as out of range, the edges as in range', () => {
     const flagFor = (midi: number) =>
       lineFor({
         previewMidi: midi,
         previewFrequency: midiToFrequency(midi),
-        previewNoteLabel: 'X',
+        previewNoteLabel: midiToNoteLabel(midi, { showOctave: true }).label,
       })!.isOutOfRange
 
     expect(flagFor(FULL.midiMin - 1)).toBe(true)

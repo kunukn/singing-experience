@@ -197,39 +197,51 @@ describe('horizontal gating', () => {
 })
 
 describe('isPipeOverBird', () => {
-  test('should cover exactly the stretch where an off-pitch bird collides', () => {
-    const target: GameTarget = {
-      id: 1,
-      midi: 55,
-      dueTime: NOW,
-      status: 'pending',
-    }
-    const geom = computeGeometry(700, false)
-    let overBirdFrames = 0
+  test.each([
+    { name: 'LTR', isRtl: false },
+    { name: 'RTL', isRtl: true },
+  ])(
+    'should be over the bird exactly while its drawn column overlaps the bird box ($name)',
+    ({ isRtl }) => {
+      const height = 320
+      const midiMin = 48
+      const midiMax = 72
+      const target: GameTarget = {
+        id: 1,
+        midi: 55,
+        dueTime: NOW,
+        status: 'pending',
+      }
+      const geom = computeGeometry(700, isRtl)
+      /* Judged against the rectangles the canvas draws, not against the
+       * collision test: that one calls isPipeOverBird itself. */
+      const bird = getBirdRect(60, geom, height, midiMin, midiMax, TEST_GAP)
+      let overBirdFrames = 0
 
-    /* Sweep the pipe across the whole chart, bird far outside the gap */
-    for (let age = 0; age <= 5000; age += 5) {
-      const now = NOW + age
-      const collided =
-        findCollidingTarget({
-          targets: [target],
-          birdMidi: 40,
+      /* Sweep the pipe across the whole chart, one millisecond at a time */
+      for (let age = 0; age <= HISTORY_WINDOW_MS; age++) {
+        const now = NOW + age
+        const column = getPipeRects(
+          target,
           now,
-          width: 700,
-          height: 320,
-          isRtl: false,
-          midiMin: 48,
-          midiMax: 72,
-          gapHalfSemitones: 1.5,
-        }) !== null
-      const overBird = isPipeOverBird(target, now, geom)
-      if (overBird) overBirdFrames++
+          geom,
+          height,
+          midiMin,
+          midiMax,
+          TEST_GAP,
+        ).top
+        const isOverlapping =
+          column.x < bird.x + bird.width && column.x + column.width > bird.x
+        if (isOverlapping) overBirdFrames++
 
-      expect(overBird, `age ${age}`).toBe(collided)
-    }
+        expect(isPipeOverBird(target, now, geom), `age ${age}`).toBe(
+          isOverlapping,
+        )
+      }
 
-    expect(overBirdFrames).toBeGreaterThan(0)
-  })
+      expect(overBirdFrames).toBeGreaterThan(0)
+    },
+  )
 })
 
 describe('hasPipeClearedBird', () => {
@@ -443,7 +455,7 @@ describe('getBoundaryRects (drawn wall == isOutOfRange region)', () => {
       )
       expect(floor.y + floor.height).toBeCloseTo(height - PADDING_BOTTOM)
 
-      /* The range-edge note (where the C4/C3 label renders) stays outside
+      /* The range-edge note (where the C5/C3 label renders) stays outside
        * both walls — the one-semitone buffer. */
       expect(
         midiToY(midiMax, height, midiMin, midiMax, TEST_GAP),
@@ -736,22 +748,6 @@ describe('buildPlayfield (single field source for fill + hitbox)', () => {
     dueTime: dueTimeAtPickup(width, false, NOW),
     status: 'pending',
   }
-
-  test('ceiling/floor are exactly the canonical getBoundaryRects (one span source)', () => {
-    const f = field([pillarAtPickup])
-    const boundary = getBoundaryRects(
-      geom,
-      height,
-      midiMin,
-      midiMax,
-      [pillarAtPickup],
-      NOW,
-      TEST_GAP,
-    )
-
-    expect(f.ceiling).toEqual(boundary.ceiling)
-    expect(f.floor).toEqual(boundary.floor)
-  })
 
   test('no targets → only ceiling+floor in solids, full-width, no pipes', () => {
     const f = field([])

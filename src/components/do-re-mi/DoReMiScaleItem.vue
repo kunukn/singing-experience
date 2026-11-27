@@ -193,6 +193,8 @@ const isCompletedOrDone = computed(
     <div
       v-if="previewOffsetPercent != null"
       class="pointer-events-none absolute inset-x-0 z-10"
+      data-testid="preview-indicator"
+      :data-out-of-range="previewIsOutOfRange"
       :style="{
         top:
           typeof previewOffsetPercent === 'string'
@@ -209,6 +211,7 @@ const isCompletedOrDone = computed(
         "
         :style="previewCentsStyle?.line"
         data-testid="preview-line"
+        :data-cents-coloured="previewCentsStyle !== null"
       >
         <div
           class="absolute start-1/2 top-0 flex -translate-x-1/2 -translate-y-1/2 items-center gap-1.5"
@@ -231,6 +234,7 @@ const isCompletedOrDone = computed(
                 : 'text-(--p-orange-400)/80'
             "
             :style="previewCentsStyle?.label"
+            data-testid="preview-label"
             >{{ previewNoteLabel }}</span
           >
         </div>

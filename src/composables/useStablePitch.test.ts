@@ -168,7 +168,7 @@ describe('useStablePitch', () => {
     await feed(E3, 16) // re-acquire: candidate anchored, not yet adopted
     expect(stableNoteInfo.value).toBeNull()
 
-    await feed(E3, STABILIZE_JUMP_HOLD_MS + 10)
+    await feed(E3, STABILIZE_START_HOLD_MS + 10)
     expect(stableNoteInfo.value?.midiNote).toBe(E3)
   })
 

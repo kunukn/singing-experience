@@ -16,8 +16,9 @@ describe('useVoiceRangeIndex', () => {
     expect(useVoiceRangeIndex(STORAGE_KEY).value).toBe(DEFAULT_RANGE_INDEX)
   })
 
-  test('resolves a stored labelKey to its current index', () => {
-    localStorage.setItem(STORAGE_KEY, 'voiceRanges.bass')
+  test('resolves a labelKey saved on an earlier visit to its current index', async () => {
+    useVoiceRangeIndex(STORAGE_KEY).value = indexOfLabelKey('voiceRanges.bass')
+    await nextTick()
 
     expect(useVoiceRangeIndex(STORAGE_KEY).value).toBe(
       indexOfLabelKey('voiceRanges.bass'),

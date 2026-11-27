@@ -1,8 +1,9 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 import { frequencyToNote, noteToFrequency } from '@/utils/noteUtils'
 import { updateToneTracks, type ToneTrack } from './toneTracking'
 
 const C4 = noteToFrequency('C', 4)
+const C_SHARP_4 = noteToFrequency('C#', 4)
 const E4 = noteToFrequency('E', 4)
 const G4 = noteToFrequency('G', 4)
 
@@ -143,16 +144,19 @@ describe('vibrato stability', () => {
     expect([...settledLabels(frames)].sort()).toEqual(['C4', 'E4', 'G4'])
   })
 
-  it('still follows a deliberate note change', () => {
-    /* Smoothing must not be so heavy that a real melody lags behind. Half a
-     * second on the new note is far longer than the EMA needs to settle. */
+  test('should follow a deliberate semitone step on the same track', () => {
+    /* A semitone is inside the match window, so the tone keeps its track and
+     * the smoothed pitch has to glide to the new note. Smoothing must not be
+     * so heavy that a real melody lags behind: half a second on the new note
+     * (30 frames at 60 fps) is far longer than the EMA needs to settle. */
     const frames = [
       ...Array.from({ length: 30 }, () => [C4]),
-      ...Array.from({ length: 30 }, () => [E4]),
+      ...Array.from({ length: 30 }, () => [C_SHARP_4]),
     ]
-    const { labels } = runFrames(frames)
+    const { labels, tracks } = runFrames(frames)
 
+    expect(tracks).toHaveLength(1)
     expect(labels[29]).toEqual(['C4'])
-    expect(labels[labels.length - 1]).toContain('E4')
+    expect(labels.at(-1)).toEqual(['C#4'])
   })
 })

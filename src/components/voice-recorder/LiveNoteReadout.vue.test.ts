@@ -16,9 +16,8 @@ function mountReadout(noteInfo: NoteInfo | null) {
 
 describe('LiveNoteReadout', () => {
   test('should show the note name and its cents', () => {
-    const noteInfo = frequencyToNote(155.56)!
-
-    const wrapper = mountReadout({ ...noteInfo, cents: 12 })
+    /* D♯3 is 155.56 Hz; 12 cents above it is 156.64 Hz. */
+    const wrapper = mountReadout(frequencyToNote(156.64))
 
     expect(wrapper.get('[data-testid="live-note-label"]').text()).toBe('D♯3')
     expect(wrapper.get('[data-testid="live-note-cents"]').text()).toBe('+12¢')

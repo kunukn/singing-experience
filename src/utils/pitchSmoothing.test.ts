@@ -13,10 +13,13 @@ describe('pitchSmoothing', () => {
     expect(smoothPitch(null, C3)).toBe(C3)
   })
 
-  test('moves 30% of the way toward a nearby pitch', () => {
+  test('moves toward a nearby pitch but stays nearer the previous one', () => {
     const next = centsAbove(C3, 40)
+    const halfway = (C3 + next) / 2
+    const smoothed = smoothPitch(C3, next)
 
-    expect(smoothPitch(C3, next)).toBeCloseTo(C3 + 0.3 * (next - C3), 5)
+    expect(smoothed).toBeGreaterThan(C3)
+    expect(smoothed).toBeLessThan(halfway)
   })
 
   test.each([

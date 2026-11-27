@@ -7,6 +7,7 @@ import { describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { games, programs, tools } from '@/constants/programs'
 import ProgramIconTile from './ProgramIconTile.vue'
+import ProgramPitchDetectorIcon from './ProgramPitchDetectorIcon.vue'
 import { toStandaloneSvg } from './programIconExport'
 
 const allPrograms = [...programs, ...tools, ...games]
@@ -17,7 +18,8 @@ function renderIcon(icon: (typeof allPrograms)[number]['icon']) {
 
 describe('toStandaloneSvg', () => {
   test('should replace PrimeVue vars with Aura hex tokens', () => {
-    const svg = toStandaloneSvg(renderIcon(tools[0].icon))
+    /* The pitch detector's tile is emerald; Aura's emerald-600 is #059669 */
+    const svg = toStandaloneSvg(renderIcon(ProgramPitchDetectorIcon))
 
     expect(svg).not.toContain('--p-')
     expect(svg).not.toContain('class=')

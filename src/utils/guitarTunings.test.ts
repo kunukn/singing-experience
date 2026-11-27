@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 import {
   buildGuitarTuningGroups,
   GUITAR_TUNING_IDS,
@@ -7,6 +7,7 @@ import {
   guitarTuningStrings,
   isGuitarTuningId,
   type GuitarTuningId,
+  type GuitarTuningString,
 } from './guitarTunings'
 
 describe('GUITAR_TUNINGS', () => {
@@ -85,10 +86,17 @@ describe('guitarTuningStringPairs', () => {
     ])
   })
 
-  it('keeps every string exactly once', () => {
+  test('keeps every string exactly once', () => {
+    /* No tuning has two strings on the same note, so the two columns together
+     * must spell the same six strings as the tuning itself. */
+    const spell = ({ note, octave }: GuitarTuningString) => `${note}${octave}`
+
     GUITAR_TUNING_IDS.forEach((id) => {
       const { left, right } = guitarTuningStringPairs(id)
-      expect([...left, ...right], id).toHaveLength(6)
+
+      expect([...left, ...right].map(spell).toSorted(), id).toEqual(
+        guitarTuningStrings(id).map(spell).toSorted(),
+      )
     })
   })
 })

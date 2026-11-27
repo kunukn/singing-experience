@@ -15,12 +15,18 @@ describe('wavePath', () => {
     expect(path.endsWith(`T${WAVE_VIEWBOX_WIDTH},${mid}`)).toBe(true)
   })
 
-  test.each([1, 2, 5])(
-    'draws two half-periods per period in both halves for %i periods',
-    (periods) => {
+  /* A period is a crest and a trough, and the path holds the wave twice over
+   * so it can loop: four curve segments a period. */
+  test.each([
+    { periods: 1, segments: 4 },
+    { periods: 2, segments: 8 },
+    { periods: 5, segments: 20 },
+  ])(
+    'draws $segments curve segments for $periods periods',
+    ({ periods, segments }) => {
       const segmentCount = wavePath(periods, 10).split(/[QT]/).length - 1
 
-      expect(segmentCount).toBe(periods * 2 * 2)
+      expect(segmentCount).toBe(segments)
     },
   )
 

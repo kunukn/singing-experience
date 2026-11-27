@@ -20,16 +20,29 @@ function noteAt(midi: number): NoteInfo {
   }
 }
 
+/* A clean reading, as the detector hands it over: the note together with its
+ * frequency and a clarity above the 0.90 default gate. */
 function singing(laneId: PitchLaneId, midi: number): PitchLaneDetection {
+  const noteInfo = noteAt(midi)
+
   return {
     laneId,
-    noteInfo: noteAt(midi),
+    noteInfo,
+    frequency: noteInfo.frequency,
+    clarity: 0.95,
     isClean: true,
-  } as PitchLaneDetection
+  }
 }
 
+/* What a lane reports when it hears nothing. */
 function silent(laneId: PitchLaneId): PitchLaneDetection {
-  return { laneId, noteInfo: null, isClean: false } as PitchLaneDetection
+  return {
+    laneId,
+    noteInfo: null,
+    frequency: null,
+    clarity: 0,
+    isClean: false,
+  }
 }
 
 async function mountListening() {

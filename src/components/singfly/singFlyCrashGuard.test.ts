@@ -73,7 +73,7 @@ describe('createCrashGuard', () => {
     expect(guard.update(1, 1)).toBe(true)
   })
 
-  test('negative/NaN-safe: a non-positive delta does not advance', () => {
+  test('should not advance on a negative or zero delta', () => {
     const guard = createCrashGuard(GRACE_MS)
 
     expect(guard.update(1, -1000)).toBe(false)

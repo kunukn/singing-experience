@@ -2,7 +2,12 @@ import { describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
-import type { FocusLevel } from './focusLevel'
+import { CLEAN_CENTS, CLOSE_CENTS } from '@/utils/pitchColors'
+import {
+  FOCUS_LEVEL_RULES,
+  type FocusLevel,
+  type FocusLevelRule,
+} from './focusLevel'
 import PitchFocusLevelLadder from './PitchFocusLevelLadder.vue'
 
 function mountLadder(level: FocusLevel | null) {
@@ -16,6 +21,15 @@ function mountLadder(level: FocusLevel | null) {
 
 function row(wrapper: ReturnType<typeof mountLadder>, level: FocusLevel) {
   return wrapper.get(`[data-level="${level}"]`)
+}
+
+/* The scoring rule a rung shows, so the copy is checked against the table the
+ * ladder is built from rather than against numbers repeated here. */
+function ruleFor(level: FocusLevel): FocusLevelRule {
+  const rule = FOCUS_LEVEL_RULES.find((candidate) => candidate.level === level)
+  if (!rule) throw new Error(`No focus level rule for ${level}`)
+
+  return rule
 }
 
 describe('PitchFocusLevelLadder', () => {
@@ -54,14 +68,18 @@ describe('PitchFocusLevelLadder', () => {
   })
 
   test('should show both goals for the top level', () => {
+    const { minOnPitchPercent, minSpotOnPercent } = ruleFor('pitchPerfect')
+
     expect(row(mountLadder(null), 'pitchPerfect').text()).toContain(
-      '95% on pitch and 80% spot on',
+      `${minOnPitchPercent}% on pitch and ${minSpotOnPercent}% spot on`,
     )
   })
 
   test('should show only the on pitch goal when spot on is not needed', () => {
+    const { minOnPitchPercent } = ruleFor('stageReady')
+
     expect(row(mountLadder(null), 'stageReady').text()).toContain(
-      '75% on pitch',
+      `${minOnPitchPercent}% on pitch`,
     )
     expect(row(mountLadder(null), 'stageReady').text()).not.toContain('spot on')
   })
@@ -74,7 +92,7 @@ describe('PitchFocusLevelLadder', () => {
 
   test('should explain on pitch and spot on in cents', () => {
     expect(mountLadder(null).text()).toContain(
-      'On pitch: within 20 cents · Spot on: within 10 cents',
+      `On pitch: within ${CLOSE_CENTS} cents · Spot on: within ${CLEAN_CENTS} cents`,
     )
   })
 })

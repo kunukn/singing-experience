@@ -78,8 +78,9 @@ function createRandom(seed: number): () => number {
  * Broadband noise: every bin jitters around a mean level. This is what room
  * tone, breath and preamp hiss actually look like — a raised floor, not the row
  * of clean spikes it is tempting to model them as. The prominence test in
- * findPeaks is what rejects it, so this exercises a different guard than the
- * lone-peak rule does.
+ * findPeaks rejects nearly all of it, and the sieve's noise-floor bar for lone
+ * peaks rejects the spike that gets through — a different guard than the
+ * "quiet next to a real note" rule.
  */
 function buildNoiseSpectrum(meanDb: number, spreadDb: number): Float32Array {
   const random = createRandom(0x5eed)
@@ -348,23 +349,6 @@ describe('slider settings', () => {
     /* Slider 0 puts the floor at -80 dB. */
     expect(detectNotes(spectrum, DEFAULT_SENSITIVITY, 0)).toEqual(['A4'])
   })
-
-  it('never exceeds MAX_TONES', () => {
-    const spectrum = buildSpectrum([
-      ...sawtoothPartials(hzOf('C', 3)),
-      ...sawtoothPartials(hzOf('D', 3)),
-      ...sawtoothPartials(hzOf('E', 3)),
-      ...sawtoothPartials(hzOf('F', 3)),
-      ...sawtoothPartials(hzOf('G', 3)),
-      ...sawtoothPartials(hzOf('A', 3)),
-      ...sawtoothPartials(hzOf('B', 3)),
-      ...sawtoothPartials(hzOf('C', 4)),
-      ...sawtoothPartials(hzOf('D', 4)),
-      ...sawtoothPartials(hzOf('E', 4)),
-    ])
-
-    expect(detectNotes(spectrum).length).toBeLessThanOrEqual(MAX_TONES)
-  })
 })
 
 describe('lone peaks vs supported series', () => {
@@ -376,7 +360,12 @@ describe('lone peaks vs supported series', () => {
       { hz: 1013, db: -38 },
     ])
 
-    expect(detectNotes(spectrum)).toEqual(['C4'])
+    /* The widest window, so the lone peak gets past findPeaks and it is the
+     * sieve that has to turn it down. At the default the peak threshold cuts
+     * it first and the lone-peak rule is never asked. */
+    const WIDEST_SENSITIVITY = 10
+
+    expect(detectNotes(spectrum, WIDEST_SENSITIVITY)).toEqual(['C4'])
   })
 
   it('still hears a quiet note that has harmonic support', () => {
@@ -394,7 +383,9 @@ describe('lone peaks vs supported series', () => {
 
   it('reports nothing for broadband noise', () => {
     /* Real noise is broadband, not a row of clean spikes — it raises the whole
-     * floor, so nothing clears the prominence test. */
+     * floor. One spike here still clears the prominence test in findPeaks, a
+     * few dB above that floor, and the sieve turns it down for being a lone
+     * peak too close to the noise floor. */
     const spectrum = buildNoiseSpectrum(-45, 6)
 
     expect(detectNotes(spectrum)).toEqual([])

@@ -1,11 +1,7 @@
 import { describe, expect, test } from 'vitest'
+import { CLEAN_CENTS, CLOSE_CENTS, OFF_CENTS } from '@/utils/pitchColors'
 import { PAUSE_GAP_MS } from './pitchConstants'
-import {
-  createFocusTracker,
-  DEFAULT_FOCUS_HOLD_MS,
-  HEARD_PITCH_WINDOW_MS,
-  STATS_HALF_LIFE_MS,
-} from './focusToneTracker'
+import { createFocusTracker, DEFAULT_FOCUS_HOLD_MS } from './focusToneTracker'
 
 const A3 = 57
 const G3 = 55
@@ -13,6 +9,8 @@ const C4 = 60
 
 /* ~60 fps, the rate usePitchDetection reports at */
 const FRAME_MS = 16
+
+const CENTS_PER_SEMITONE = 100
 
 /* Pushes one frame every FRAME_MS from startMs until (and including) endMs,
  * returning the timestamp after the last frame. */
@@ -37,15 +35,15 @@ describe('createFocusTracker - focus', () => {
     expect(tracker.focusMidi).toBe(null)
   })
 
-  test('should focus A3 after holding A3 +20 cents for the hold time', () => {
+  test('should focus A3 after holding A3 +20 cents for the default hold time', () => {
     const tracker = createFocusTracker()
 
-    /* 24 frames × 16 ms = 384 ms, just short of the hold time */
-    const next = sing(tracker, A3 + 0.2, 0, 384)
-    expect(DEFAULT_FOCUS_HOLD_MS).toBe(400)
+    /* Up to the last frame still short of the hold time */
+    const next = sing(tracker, A3 + 0.2, 0, DEFAULT_FOCUS_HOLD_MS - FRAME_MS)
     expect(tracker.focusMidi).toBe(null)
 
-    tracker.push(A3 + 0.2, next)
+    /* On to the first frame that reaches it */
+    sing(tracker, A3 + 0.2, next, DEFAULT_FOCUS_HOLD_MS + FRAME_MS)
     expect(tracker.focusMidi).toBe(A3)
   })
 
@@ -170,22 +168,26 @@ describe('createFocusTracker - stats', () => {
     })
   })
 
-  test('should count a steady +15 cents tone as on pitch but not spot on', () => {
+  test('should count a steady tone between the spot on and on pitch limits as on pitch but not spot on', () => {
     const tracker = createFocusTracker({ holdMs: 0 })
+    const sharpCents = (CLEAN_CENTS + CLOSE_CENTS) / 2
 
-    sing(tracker, A3 + 0.15, 0, 400)
+    sing(tracker, A3 + sharpCents / CENTS_PER_SEMITONE, 0, 400)
 
-    expect(tracker.stats.averageCents).toBeCloseTo(15, 5)
+    expect(tracker.stats.averageCents).toBeCloseTo(sharpCents, 5)
     expect(tracker.stats.wobbleCents).toBeCloseTo(0, 5)
     expect(tracker.stats.onPitchPercent).toBe(100)
     expect(tracker.stats.spotOnPercent).toBe(0)
   })
 
-  test('should not count a steady +25 cents tone as on pitch', () => {
+  test('should not count a steady tone past the on pitch limit as on pitch', () => {
     const tracker = createFocusTracker({ holdMs: 0 })
+    /* Past On pitch, still short of OFF_CENTS, so the frames do count */
+    const sharpCents = (CLOSE_CENTS + OFF_CENTS) / 2
 
-    sing(tracker, A3 + 0.25, 0, 400)
+    sing(tracker, A3 + sharpCents / CENTS_PER_SEMITONE, 0, 400)
 
+    expect(tracker.stats.averageCents).toBeCloseTo(sharpCents, 5)
     expect(tracker.stats.onPitchPercent).toBe(0)
   })
 
@@ -217,7 +219,6 @@ describe('createFocusTracker - stats', () => {
       tracker.push(A3 + cents / 100, timestamp)
     }
 
-    expect(HEARD_PITCH_WINDOW_MS).toBe(200)
     expect(tracker.stats.onPitchPercent).toBeGreaterThan(95)
     expect(tracker.stats.spotOnPercent).toBeGreaterThan(90)
     expect(tracker.stats.wobbleCents).toBeLessThan(10)
@@ -236,14 +237,15 @@ describe('createFocusTracker - stats', () => {
   })
 
   test('should let a poor start fade once the tone is on pitch', () => {
-    const tracker = createFocusTracker({ holdMs: 0 })
+    /* A 1.5 s half-life: one second of clean singing has not yet outweighed
+     * the poor start, ten seconds has all but erased it */
+    const tracker = createFocusTracker({ holdMs: 0, statsHalfLifeMs: 1500 })
     tracker.lockTo(A3)
 
     /* +30 cents still counts towards the stats but is never on pitch */
     let next = sing(tracker, A3 + 0.3, 0, 10_000)
     next = sing(tracker, A3, next, next + 1000)
 
-    expect(STATS_HALF_LIFE_MS).toBe(1500)
     expect(tracker.stats.onPitchPercent).toBeLessThan(60)
 
     sing(tracker, A3, next, next + 9000)
@@ -275,14 +277,16 @@ describe('createFocusTracker - stats', () => {
     expect(singWithPause(10_000)).toEqual(singWithPause(PAUSE_GAP_MS + 1))
   })
 
-  test('should leave out frames more than 50 cents off the focus', () => {
+  test('should leave out frames past the off limit from the focus', () => {
     const tracker = createFocusTracker({ holdMs: 0 })
+    /* 10 cents past OFF_CENTS */
+    const offMidi = A3 + (OFF_CENTS + 10) / CENTS_PER_SEMITONE
 
     tracker.push(A3, 0)
-    /* Locked, so the +60 cents frames cannot pull the focus to A#3 */
+    /* Locked, so the frames past the limit cannot pull the focus to A#3 */
     tracker.setLocked(true)
-    tracker.push(A3 + 0.6, 10)
-    tracker.push(A3 + 0.6, 20)
+    tracker.push(offMidi, 10)
+    tracker.push(offMidi, 20)
 
     expect(tracker.stats.averageCents).toBeCloseTo(0, 5)
     expect(tracker.stats.holdMs).toBe(0)

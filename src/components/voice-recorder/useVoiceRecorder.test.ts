@@ -6,7 +6,10 @@ import { useVoiceTakeStore } from '@/stores/useVoiceTakeStore'
 import { acquireMicStream, releaseMicStream } from '@/utils/microphoneStream'
 
 import { loadPcmCaptureProcessor } from './pcmCapture'
-import { useRecordingBitDepth } from './recordingQuality'
+import {
+  DEFAULT_RECORDING_BIT_DEPTH,
+  useRecordingBitDepth,
+} from './recordingQuality'
 import { MAX_RECORDING_MS, useVoiceRecorder } from './useVoiceRecorder'
 
 vi.mock('@/components/voice-recorder/takePersistence', () => ({
@@ -27,9 +30,16 @@ vi.mock('./pcmCapture', async (importOriginal) => ({
 
 /* Low, so a test can hand over a whole minute of samples cheaply. */
 const SAMPLE_RATE = 1000
-const WAV_HEADER_BYTES = 44
-/* The 1 s tone plus 150 ms lead-in and 250 ms tail; the silence is gone. */
-const TRIMMED_SAMPLES = 1400
+
+/* What a saved take says about itself, read from the 44-byte WAV header: bits
+ * per sample at byte 34 and the size of the sound data at byte 40. */
+async function readWavHeader(blob: Blob) {
+  const view = new DataView(await blob.arrayBuffer())
+  const bitsPerSample = view.getUint16(34, true)
+  const dataBytes = view.getUint32(40, true)
+
+  return { bitsPerSample, sampleCount: dataBytes / (bitsPerSample / 8) }
+}
 
 class FakeAudioContext extends EventTarget {
   static latest: FakeAudioContext
@@ -92,10 +102,11 @@ class FakeAudioWorkletNode extends EventTarget {
   }
 }
 
-const track = Object.assign(new EventTarget(), {
-  getSettings: () => ({ autoGainControl: false }),
-})
-const stream = { getAudioTracks: () => [track] } as unknown as MediaStream
+/* A new track for every test: each recorder listens on its track for the mic
+ * going away, and a shared one would also reach the recorders of earlier
+ * tests. */
+let track: EventTarget
+let stream: MediaStream
 
 function createTone(seconds: number) {
   return Float32Array.from(
@@ -116,8 +127,13 @@ function createRecorder() {
 }
 
 beforeEach(() => {
+  localStorage.clear()
   setActivePinia(createPinia())
-  useRecordingBitDepth().value = 16
+  useRecordingBitDepth().value = DEFAULT_RECORDING_BIT_DEPTH
+  track = Object.assign(new EventTarget(), {
+    getSettings: () => ({ autoGainControl: false }),
+  })
+  stream = { getAudioTracks: () => [track] } as unknown as MediaStream
   vi.useFakeTimers()
   vi.stubGlobal('AudioContext', FakeAudioContext)
   vi.stubGlobal('AudioWorkletNode', FakeAudioWorkletNode)
@@ -150,7 +166,12 @@ describe('useVoiceRecorder', () => {
     expect(FakeAudioContext.latest.state).toBe('closed')
     expect(take?.mimeType).toBe('audio/wav')
     expect(take?.stopReason).toBe('user')
-    expect(take?.blob.size).toBe(WAV_HEADER_BYTES + TRIMMED_SAMPLES * 2)
+
+    /* The whole 1 s tone is kept and the 2 s of silence around it is not. */
+    const wav = await readWavHeader(take!.blob)
+    expect(wav.bitsPerSample).toBe(16)
+    expect(wav.sampleCount).toBeGreaterThanOrEqual(1 * SAMPLE_RATE)
+    expect(wav.sampleCount).toBeLessThan(2 * SAMPLE_RATE)
   })
 
   test('should save 24-bit when Studio quality was picked before the take', async () => {
@@ -165,9 +186,9 @@ describe('useVoiceRecorder', () => {
     FakeAudioWorkletNode.latest.deliver(createSilence(1))
     recorder.stop()
 
-    expect(useVoiceTakeStore().take?.blob.size).toBe(
-      WAV_HEADER_BYTES + TRIMMED_SAMPLES * 3,
-    )
+    const wav = await readWavHeader(useVoiceTakeStore().take!.blob)
+    expect(wav.bitsPerSample).toBe(24)
+    expect(wav.sampleCount).toBeGreaterThanOrEqual(1 * SAMPLE_RATE)
   })
 
   test('should stop itself at the time limit', async () => {

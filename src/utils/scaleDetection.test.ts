@@ -10,7 +10,6 @@ import {
 const C = 0
 const E_FLAT = 3
 const F = 5
-const F_SHARP = 6
 const A = 9
 const B_FLAT = 10
 const B = 11
@@ -72,18 +71,11 @@ describe('detectScales', () => {
   })
 
   test('drops every scale missing a sung note', () => {
-    /* C D E F G plus F♯ — no 7-note scale here holds both F and F♯. */
+    /* C D E F G plus F♯ — no scale here holds E, F, F♯ and G together, so
+     * nothing is left, C major included. */
     const { families } = detectScales(sing(60, 62, 64, 65, 66, 67))
 
-    for (const family of families) {
-      expect(family.pitchClasses.has(F)).toBe(true)
-      expect(family.pitchClasses.has(F_SHARP)).toBe(true)
-    }
-    expect(
-      families.some((family) =>
-        family.candidates.some(({ mode }) => mode === 'ionian'),
-      ),
-    ).toBe(false)
+    expect(families).toEqual([])
   })
 
   test('flags three notes as not enough', () => {
@@ -117,7 +109,8 @@ describe('detectScales', () => {
   })
 
   test('ignores timing noise between evenly sung notes', () => {
-    /* As the segmenter reports a real run: G a millisecond longer than C. */
+    /* As the segmenter reports a real run: every note within 10 ms of the
+     * others, and G the longest by a millisecond. */
     const durations = [523, 531, 532, 530, 533]
     const notes = [60, 62, 64, 65, 67].map((midi, index) => ({
       midi,

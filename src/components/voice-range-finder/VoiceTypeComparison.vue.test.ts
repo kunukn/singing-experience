@@ -2,10 +2,15 @@ import { beforeEach, describe, expect, test } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
+import { CENTS_DEAD_ZONE, NEAR_ZERO_CENTS_TEXT } from '@/utils/centsText'
+import { DEFAULT_MY_VOICE_RANGE } from '@/utils/normalizeVoiceRange'
 import { FAMOUS_SINGERS } from './famousSingers'
+import { formatNote } from './voiceRangeNotes'
 import VoiceTypeComparison from './VoiceTypeComparison.vue'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
+
+const { myVoiceRange, setMyVoiceRange } = useMyVoiceRange()
 
 /* G♯2–C4 */
 function mountComparison(midiMin = 44, midiMax = 60) {
@@ -23,7 +28,22 @@ const rowFor = (
   labelKey: string,
 ) => wrapper.get(`[data-voice-type="${labelKey}"]`)
 
+/* What a row tap gave a parent to act on. A test-utils wrapper also records
+ * the native click itself, which is no request to change anything. */
+const componentEventsOf = (wrapper: ReturnType<typeof mountComparison>) =>
+  Object.keys(wrapper.emitted()).filter((name) => name !== 'click')
+
 describe('VoiceTypeComparison', () => {
+  /* My range is one module-level ref, which localStorage.clear() alone
+   * doesn't reset */
+  beforeEach(() => {
+    localStorage.clear()
+    setMyVoiceRange(
+      DEFAULT_MY_VOICE_RANGE.midiMin,
+      DEFAULT_MY_VOICE_RANGE.midiMax,
+    )
+  })
+
   test('should list all six voice types, Soprano first', () => {
     const voiceTypes = rowsOf(mountComparison()).map((row) =>
       row.attributes('data-voice-type'),
@@ -247,26 +267,36 @@ describe('VoiceTypeComparison', () => {
       expect(label.attributes('data-side')).toBe('end')
     })
 
-    test('should read a note within 2¢ as ≈0¢', () => {
-      const textOf = (liveMidi: number) =>
-        liveLabelOf(liveMidi).text().replace(/\s+/g, ' ')
+    test('should read a note inside the cents dead zone as about zero', () => {
+      const E3 = 52
+      const justOutsideCents = CENTS_DEAD_ZONE + 1
+      /* Cents are hundredths of a semitone */
+      const textOf = (cents: number) =>
+        liveLabelOf(E3 + cents / 100)
+          .text()
+          .replace(/\s+/g, ' ')
 
-      expect(textOf(52.02)).toBe('E3 ≈0¢')
-      expect(textOf(51.98)).toBe('E3 ≈0¢')
-      expect(textOf(52.03)).toBe('E3 +3¢')
+      expect(textOf(CENTS_DEAD_ZONE)).toBe(`E3 ${NEAR_ZERO_CENTS_TEXT}`)
+      expect(textOf(-CENTS_DEAD_ZONE)).toBe(`E3 ${NEAR_ZERO_CENTS_TEXT}`)
+      expect(textOf(justOutsideCents)).toBe(`E3 +${justOutsideCents}¢`)
     })
 
     test('should put the label before the line past the middle', () => {
       /* C5 */
       const label = liveLabelOf(72)
 
-      expect(label.text().replace(/\s+/g, ' ')).toBe('C5 ≈0¢')
+      expect(label.text().replace(/\s+/g, ' ')).toBe(
+        `C5 ${NEAR_ZERO_CENTS_TEXT}`,
+      )
       expect(label.attributes('data-side')).toBe('start')
     })
 
+    /* B1 (61.7 Hz) is the lowest note the mic reports, just over its 60 Hz
+     * floor, and sits below the E2 axis start */
+    const B1 = 35
+
     test('should name the real note when the line is pinned to the edge', () => {
-      /* A1, below the E2 axis start */
-      expect(liveLabelOf(33).text()).toContain('A1')
+      expect(liveLabelOf(B1).text()).toContain('B1')
     })
 
     test('should not label anything while nothing is sung', () => {
@@ -274,7 +304,7 @@ describe('VoiceTypeComparison', () => {
     })
 
     test('should pin a note below the chart to its edge', () => {
-      expect(liveLinesOf(30)[0]!.attributes('style')).toContain(
+      expect(liveLinesOf(B1)[0]!.attributes('style')).toContain(
         'inset-inline-start: 0%',
       )
     })
@@ -306,14 +336,14 @@ describe('VoiceTypeComparison', () => {
   })
 
   /* A tap on the chart used to replace My range, losing a sung range unseen */
-  test('should not offer a voice as My range when a row is tapped', async () => {
+  test('should leave My range alone when a row is tapped', async () => {
     const wrapper = mountComparison()
-
-    expect(wrapper.find('button').exists()).toBe(false)
+    const rangeBefore = { ...myVoiceRange.value }
 
     await rowFor(wrapper, 'voiceRanges.baritone').trigger('click')
 
-    expect(wrapper.emitted('selectRange')).toBeUndefined()
+    expect(myVoiceRange.value).toEqual(rangeBefore)
+    expect(componentEventsOf(wrapper)).toEqual([])
   })
 
   describe('explore mode', () => {
@@ -453,14 +483,14 @@ describe('VoiceTypeComparison', () => {
       expect(soundingVoices(mountExplore(null))).toEqual([])
     })
 
-    test('should not offer a voice as My range when a row is tapped', async () => {
+    test('should leave My range alone when a row is tapped', async () => {
       const wrapper = mountExplore()
-
-      expect(wrapper.find('button').exists()).toBe(false)
+      const rangeBefore = { ...myVoiceRange.value }
 
       await wrapper.get('[data-voice-type="voiceRanges.alto"]').trigger('click')
 
-      expect(wrapper.emitted('selectRange')).toBeUndefined()
+      expect(myVoiceRange.value).toEqual(rangeBefore)
+      expect(componentEventsOf(wrapper)).toEqual([])
     })
 
     describe('famous singers', () => {
@@ -514,38 +544,51 @@ describe('VoiceTypeComparison', () => {
         ).toContain(en.voiceRangeFinder.compare.famousSingersLegend)
       })
 
+      /* Singers come from FAMOUS_SINGERS, whose ranges are estimates still to
+       * be checked: a corrected note there must not turn these red. */
       test('should read out and label a singer by their range', () => {
-        const row = mountSingers().get('[data-singer="johnnyCash"]')
+        const singer = FAMOUS_SINGERS.at(-1)!
+        const lowest = formatNote(singer.midiMin)
+        const highest = formatNote(singer.midiMax)
+        const row = mountSingers().get(`[data-singer="${singer.id}"]`)
 
-        expect(row.attributes('aria-label')).toBe('Johnny Cash, E2–D4')
+        expect(row.attributes('aria-label')).toBe(
+          `${singer.name}, ${lowest}–${highest}`,
+        )
         expect(
           row.get('[data-testid="voice-type-comparison-voice-start"]').text(),
-        ).toBe('E2')
+        ).toBe(lowest)
         expect(
           row.get('[data-testid="voice-type-comparison-voice-end"]').text(),
-        ).toBe('D4')
+        ).toBe(highest)
       })
 
       /* Which of the two shows is a container query, so the DOM shim sees both */
       test('should give a singer a short and a full name', () => {
-        const row = mountSingers().get('[data-singer="elvisPresley"]')
+        const singer = FAMOUS_SINGERS.find(
+          ({ name, shortName }) => shortName !== name,
+        )!
+        const row = mountSingers().get(`[data-singer="${singer.id}"]`)
 
         expect(
           row.get('[data-testid="voice-type-comparison-short-name"]').text(),
-        ).toBe('Presley')
+        ).toBe(singer.shortName)
         expect(
           row.get('[data-testid="voice-type-comparison-full-name"]').text(),
-        ).toBe('Elvis Presley')
+        ).toBe(singer.name)
       })
 
-      test('should light up the singers who sing the live note, and only them', () => {
-        /* A♯5: only Mariah Carey (to C6) and Whitney Houston (to A♯5) reach it */
-        const sounding = mountSingers(82)
-          .findAll('[data-singer]')
-          .filter((row) => row.attributes('data-sounding') === 'true')
-          .map((row) => row.attributes('data-singer'))
+      test('should light up a singer from their lowest to their highest note, and not a semitone past either', () => {
+        const singer = FAMOUS_SINGERS[0]!
+        const isSounding = (liveMidi: number) =>
+          mountSingers(liveMidi)
+            .get(`[data-singer="${singer.id}"]`)
+            .attributes('data-sounding')
 
-        expect(sounding).toEqual(['mariahCarey', 'whitneyHouston'])
+        expect(isSounding(singer.midiMin)).toBe('true')
+        expect(isSounding(singer.midiMax)).toBe('true')
+        expect(isSounding(singer.midiMin - 1)).toBe('false')
+        expect(isSounding(singer.midiMax + 1)).toBe('false')
       })
 
       test('should draw the live line through the singers too', () => {
@@ -586,8 +629,6 @@ describe('VoiceTypeComparison', () => {
       })
 
       describe('My range bar', () => {
-        const { setMyVoiceRange } = useMyVoiceRange()
-
         const myRangeOf = (wrapper: ReturnType<typeof mountSingers>) =>
           wrapper.get('[data-my-range]')
 

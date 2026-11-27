@@ -65,12 +65,14 @@ function mountPage() {
   })
 }
 
-describe('VoiceRecorderPage preview', () => {
-  beforeEach(() => {
-    setActivePinia(createPinia())
-    mocks.start.mockReset()
-  })
+beforeEach(() => {
+  localStorage.clear()
+  setActivePinia(createPinia())
+  mocks.start.mockReset()
+  mocks.createUploadedTake.mockReset()
+})
 
+describe('VoiceRecorderPage preview', () => {
   test('should keep the mic closed until a saved take could have loaded', async () => {
     mountPage()
 
@@ -124,11 +126,6 @@ describe('VoiceRecorderPage - opening a file', () => {
     source: 'uploaded',
   }
   const file = new File(['song'], 'song.mp3', { type: 'audio/mpeg' })
-
-  beforeEach(() => {
-    setActivePinia(createPinia())
-    mocks.createUploadedTake.mockReset()
-  })
 
   async function openFile() {
     const wrapper = mountPage()

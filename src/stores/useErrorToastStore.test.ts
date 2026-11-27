@@ -79,12 +79,30 @@ describe('useErrorToastStore', () => {
     expect(store.toasts).toHaveLength(0)
   })
 
-  test('should not fail when removing a non-existent id', () => {
+  test('should keep every toast when removing a non-existent id', () => {
     const store = useErrorToastStore()
+    store.addError('Error 1', { persistent: true })
+    store.addError('Error 2', { persistent: true })
 
     store.removeError(999)
 
-    expect(store.toasts).toHaveLength(0)
+    expect(store.toasts.map((toast) => toast.message)).toEqual([
+      'Error 1',
+      'Error 2',
+    ])
+  })
+
+  test('should keep newer toasts when the timer of a dismissed toast fires', () => {
+    const store = useErrorToastStore()
+    store.addError('Dismissed by hand')
+    store.addError('Still showing', { persistent: true })
+
+    store.removeError(store.toasts[0].id)
+    vi.advanceTimersByTime(5000) // the dismissed toast's auto-dismiss delay
+
+    expect(store.toasts.map((toast) => toast.message)).toEqual([
+      'Still showing',
+    ])
   })
 
   test('should keep at most 5 toasts and drop the oldest', () => {

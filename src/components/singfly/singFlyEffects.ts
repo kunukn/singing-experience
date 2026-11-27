@@ -79,7 +79,7 @@ export const PASS_RING_MS = 500
 /* ms — how long the bird keeps its happy eye after a pass. */
 export const HAPPY_MS = 500
 /* ms — the squash-and-stretch of the bird the moment it passes a pipe. */
-const HAPPY_POP_MS = 400
+export const HAPPY_POP_MS = 400
 
 /**
  * 0 → 1 → 0 over the pop that follows a pass, `elapsedMs` after it: one

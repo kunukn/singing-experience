@@ -12,6 +12,17 @@ import { createTuningHold, TUNING_STRAY_MS } from '@/utils/tuningHold'
  * are tiring to sustain. Still long enough to rule out a passing slide. */
 export const RANGE_FINDER_HOLD_MS = 1000
 
+/* The two flashes below belong to VoiceRangeSearchStep.vue and
+ * VoiceRangeFinderDisplay.vue. They live here because <script setup> can't
+ * export, and their tests wait them out. */
+
+/* How long a new record shows as a full bar with a ✓ — long enough to
+ * register, short enough not to stall a singer creeping on to the next note. */
+export const RECORD_FLASH_MS = 700
+
+/* How long the ✓ beside the range confirms a sung save */
+export const SAVED_FLASH_MS = 2000
+
 /* How far from the held note a voice can wobble and come back. Vibrato stays
  * within this; a reading further off is another note or a detector slip. */
 const HOLD_WOBBLE_SEMITONES = 1

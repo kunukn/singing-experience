@@ -4,7 +4,7 @@ import { h, nextTick } from 'vue'
 
 import type { VoiceRange } from '@/constants/voiceRanges'
 import type { NoteInfo } from '@/utils/noteUtils'
-import { midiToFrequency } from '@/utils/noteUtils'
+import { frequencyToNote, midiToFrequency } from '@/utils/noteUtils'
 import { LEAD_IN_MS, useNoteRush } from './useNoteRush'
 
 const RANGE: VoiceRange = {
@@ -51,9 +51,8 @@ function setup() {
 
 async function sing(midi: number | null, atMs: number) {
   now = atMs
-  /* A new object each frame, as the detector produces */
-  noteInfo.value =
-    midi === null ? null : ({ frequency: midiToFrequency(midi) } as NoteInfo)
+  /* A new, complete reading each frame, as the detector produces */
+  noteInfo.value = midi === null ? null : frequencyToNote(midiToFrequency(midi))
   await nextTick()
 }
 
@@ -124,9 +123,14 @@ describe('useNoteRush - hold detection', () => {
     await singFor(target.midi, ZONE_START_MS, HOLD_MS + FRAME_MS)
     game.stopGame()
 
-    const missed = game.targets.value.filter((t) => t.status === 'missed')
-    expect(missed.every((t) => t.resolvedAt === now)).toBe(true)
-    if (missed.length > 0) expect(game.streak.value).toBe(0)
+    /* Stopping misses every note but the one that was hit */
+    const missed = game.targets.value.filter(
+      (target) => target.status === 'missed',
+    )
+    expect(missed).toHaveLength(game.targets.value.length - 1)
+    expect(missed.length).toBeGreaterThan(0)
+    expect(missed.every((target) => target.resolvedAt === now)).toBe(true)
+    expect(game.streak.value).toBe(0)
     expect(game.summary.value?.bestStreak).toBe(1)
   })
 

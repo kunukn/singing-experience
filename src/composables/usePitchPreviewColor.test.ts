@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest'
+import { beforeEach, describe, expect, test } from 'vitest'
 import { useDarkMode } from './useDarkMode'
 import { usePitchPreviewColor } from './usePitchPreviewColor'
 
@@ -10,6 +10,14 @@ function parseRgba(color: string) {
 }
 
 describe('usePitchPreviewColor', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    /* The theme is a module-level ref, which clearing storage does not reset:
+     * put it back to light through its own toggle. */
+    const { isDark, toggleDark } = useDarkMode()
+    if (isDark.value) toggleDark()
+  })
+
   test('returns green for an in-tune pitch and red at 50 cents', () => {
     const { colorForCents } = usePitchPreviewColor()
     const inTune = parseRgba(colorForCents(0))
@@ -42,11 +50,9 @@ describe('usePitchPreviewColor', () => {
     const { colorForCents } = usePitchPreviewColor()
     const { toggleDark } = useDarkMode()
 
-    const before = colorForCents(0)
-    toggleDark()
-    const after = colorForCents(0)
+    const light = colorForCents(0)
     toggleDark()
 
-    expect(after).not.toBe(before)
+    expect(colorForCents(0)).not.toBe(light)
   })
 })

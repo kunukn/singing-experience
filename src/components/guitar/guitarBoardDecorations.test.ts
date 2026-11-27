@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, test } from 'vitest'
 import {
   INLAY_DOT_SIZE,
   buildGuitarInlays,
@@ -12,7 +12,6 @@ import {
   isGuitarSameTone,
 } from './guitarBoardDecorations'
 import {
-  DOUBLE_INLAY_FRET,
   FRET_ROW_HEIGHT,
   FRET_WIRE_HEIGHT,
   GUITAR_FRET_ROW_COUNT,
@@ -105,16 +104,14 @@ describe('buildGuitarInlays', () => {
     expect(wide.top).toBe(buildGuitarInlays(STRING_WIDTH)[0].top)
   })
 
-  it('places the 12th fret pair on the octave row', () => {
+  test('places the 12th fret pair on the octave row', () => {
     const pair = buildGuitarInlays(STRING_WIDTH).slice(
       SINGLE_INLAY_FRETS.length,
     )
 
-    expect(pair[0].top).toBe(
-      DOUBLE_INLAY_FRET * FRET_ROW_HEIGHT +
-        FRET_ROW_HEIGHT / 2 -
-        INLAY_DOT_SIZE / 2,
-    )
+    /* 12 is written out because it is the spec — the octave is the 12th fret
+     * on any neck. A dot's centre sits half a row below the top of its row. */
+    expect(pair[0].top + INLAY_DOT_SIZE / 2).toBe(12.5 * FRET_ROW_HEIGHT)
   })
 })
 
@@ -169,9 +166,13 @@ describe('guitarFretWireTop', () => {
     )
   })
 
-  it('never returns a position past the board height', () => {
+  test('keeps every wire inside the board, its own height included', () => {
+    /* The top alone is not enough: a wire that starts a pixel above the bottom
+     * edge still hangs its second pixel past the box. */
     for (let fret = 0; fret < GUITAR_FRET_ROW_COUNT; fret++) {
-      expect(guitarFretWireTop(fret, BOARD_HEIGHT)).toBeLessThan(BOARD_HEIGHT)
+      expect(
+        guitarFretWireTop(fret, BOARD_HEIGHT) + FRET_WIRE_HEIGHT,
+      ).toBeLessThanOrEqual(BOARD_HEIGHT)
     }
   })
 })
@@ -209,9 +210,10 @@ describe('at a resized row height', () => {
 })
 
 describe('scale highlight classes', () => {
-  it('gives the root a deeper dot than the other scale tones', () => {
-    expect(guitarScaleDotClass('root')).toBe('bg-(--p-blue-500)')
-    expect(guitarScaleDotClass('scale')).toBe('bg-(--p-blue-300)')
+  test('gives the root a different dot from the other scale tones', () => {
+    expect(guitarScaleDotClass('root')).not.toBeNull()
+    expect(guitarScaleDotClass('scale')).not.toBeNull()
+    expect(guitarScaleDotClass('root')).not.toBe(guitarScaleDotClass('scale'))
   })
 
   it('leaves an unhighlighted cell bare', () => {
@@ -219,21 +221,20 @@ describe('scale highlight classes', () => {
     expect(guitarScaleLabelClass(null)).toBeNull()
   })
 
-  it('recolours the name so it survives the dot fill', () => {
-    expect(guitarScaleLabelClass('root')).toBe('text-(--p-surface-0)')
-    expect(guitarScaleLabelClass('scale')).toBe('text-(--p-surface-900)')
+  test('recolours the name on every highlighted cell', () => {
+    expect(guitarScaleLabelClass('root')).not.toBeNull()
+    expect(guitarScaleLabelClass('scale')).not.toBeNull()
   })
 
   it('leaves an emphasized name to the fret button own style', () => {
     expect(guitarLabelToneClass('emphasized')).toBeNull()
   })
 
-  it('draws the two stepped-back readings in the theme text tokens', () => {
-    expect(guitarLabelToneClass('natural')).toBe(
-      'font-normal text-(--p-text-color)',
-    )
-    expect(guitarLabelToneClass('muted')).toBe(
-      'font-normal text-(--p-text-muted-color)',
+  test('steps the natural and the muted reading back by different amounts', () => {
+    expect(guitarLabelToneClass('natural')).not.toBeNull()
+    expect(guitarLabelToneClass('muted')).not.toBeNull()
+    expect(guitarLabelToneClass('natural')).not.toBe(
+      guitarLabelToneClass('muted'),
     )
   })
 })

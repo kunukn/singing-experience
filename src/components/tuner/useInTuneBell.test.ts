@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { effectScope, nextTick, ref, type EffectScope } from 'vue'
-import type { NoteInfo, NoteName } from '@/utils/noteUtils'
+import {
+  frequencyToNote,
+  noteToFrequency,
+  type NoteInfo,
+  type NoteName,
+} from '@/utils/noteUtils'
+import { TUNER_IN_TUNE_CENTS } from './tunerConstants'
 import { useInTuneBell } from './useInTuneBell'
 
 type TuningString = { note: NoteName; octave: number }
@@ -13,8 +19,16 @@ const FRAME_MS = 16
 
 let scope: EffectScope | undefined
 
+/* The first whole cent outside the in-tune window */
+const OUT_OF_TUNE_CENTS = TUNER_IN_TUNE_CENTS + 1
+
+/* What the detector reports for a string played `cents` off pitch: the note,
+ * MIDI number and cents all read off the one frequency. */
 function reading(string: TuningString, cents: number): NoteInfo {
-  return { ...string, cents, midiNote: 0, frequency: 0 }
+  const frequency =
+    noteToFrequency(string.note, string.octave) * 2 ** (cents / 1200)
+
+  return frequencyToNote(frequency)!
 }
 
 function setup() {
@@ -78,10 +92,23 @@ describe('useInTuneBell', () => {
     expect(bell.confirmedInTuneString.value).toEqual(E2)
   })
 
+  test.each([TUNER_IN_TUNE_CENTS, -TUNER_IN_TUNE_CENTS])(
+    'should count a string at the edge of the in-tune window (%i cents)',
+    async (cents) => {
+      const { bell, onBell, hear } = setup()
+
+      await hear(E2, cents)
+      vi.advanceTimersByTime(500)
+
+      expect(bell.confirmedInTuneString.value).toEqual(E2)
+      expect(onBell).toHaveBeenCalledWith(E2)
+    },
+  )
+
   test('should not count a string outside the in-tune window', async () => {
     const { bell, onBell, hear } = setup()
 
-    await hear(E2, 10)
+    await hear(E2, OUT_OF_TUNE_CENTS)
     vi.advanceTimersByTime(1000)
 
     expect(bell.confirmedInTuneString.value).toBeNull()
@@ -93,7 +120,7 @@ describe('useInTuneBell', () => {
 
     await hear(E2)
     vi.advanceTimersByTime(300)
-    await hear(E2, 10)
+    await hear(E2, OUT_OF_TUNE_CENTS)
     vi.advanceTimersByTime(FRAME_MS)
     await hear(E2)
 

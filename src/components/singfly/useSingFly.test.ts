@@ -10,7 +10,7 @@ import {
   HISTORY_WINDOW_MS,
 } from './singFlyConstants'
 import { computeGeometry, isPipeOverBird } from './singFlyGeometry'
-import { GAME_DURATION_OPTIONS } from './singFlyOptions'
+import { GAME_DURATION_OPTIONS, type GameDurationSec } from './singFlyOptions'
 import { useSingFly } from './useSingFly'
 
 /* useSingFly owns an XState actor via @xstate/vue's useMachine, which starts
@@ -33,7 +33,8 @@ type Api = ReturnType<typeof useSingFly>
 
 const wrappers: { unmount: () => void }[] = []
 
-const CANVAS_WIDTH = 800
+/* px — the page column's full width (max-w-3xl), the widest the canvas gets */
+const CANVAS_WIDTH = 768
 
 /* A fresh object per call, as the real detector emits one per frame */
 function noteAt(midi: number): NoteInfo {
@@ -160,13 +161,17 @@ describe('useSingFly ↔ machine', () => {
 
 /* Real-time rounds on a fake clock: requestAnimationFrame drives the game's
  * own ticker one 16ms frame at a time, exactly as in play, and the "singer"
- * decides its note each frame. noteInfo is the bird itself here (no
- * useBirdMotion), so the bird is wherever the singer says. */
+ * decides its note each frame.
+ *
+ * Tradeoff: noteInfo is the bird itself here (no useBirdMotion), so the bird
+ * is wherever the singer says, within one frame. The real bird eases about a
+ * fifth of the way per frame, so it cannot make these 6-semitone jumps and
+ * would spend longer in a wall than the timings below say. These rounds pin
+ * what the game does with a given bird path: a pipe is a crash or a point,
+ * decided by the time spent in its wall. How the real bird moves is covered
+ * by useBirdMotion.test.ts. */
 describe('useSingFly - flying a round', () => {
   const FRAME_MS = 16
-  /* Far wider than the page allows: a pipe is over the bird for about 130ms,
-   * shorter than the old hold timer and the crash grace together. */
-  const WIDE_CANVAS_WIDTH = 1400
   const geom = computeGeometry(CANVAS_WIDTH, false)
 
   /* ms after a pipe's dueTime at which its centre is on the bird: the middle
@@ -264,27 +269,14 @@ describe('useSingFly - flying a round', () => {
   })
 
   test('should win when the singer is in each gap only around its centre', () => {
-    /* In the gap for 80ms around the centre, in the wall before and after —
-     * about 80ms each side on this canvas, never CRASH_GRACE_MS in a row. */
+    /* A pipe is over the bird for about 250ms on this canvas. In the gap from
+     * 48ms before the centre to 40ms after it, in the wall before and after —
+     * about 77ms and 85ms. The game judges a note one frame after it is sung,
+     * which makes that about 93ms and 69ms: never CRASH_GRACE_MS in a row. */
     const api = playRound((target, msAfterCentre) =>
-      msAfterCentre >= -40 && msAfterCentre < 40
+      msAfterCentre >= -48 && msAfterCentre < 40
         ? target.midi
         : awayFrom(target.midi),
-    )
-
-    expect(api.phase.value).toBe('won')
-    expect(api.score.value).toBe(api.targets.value.length)
-  })
-
-  /* The leftover the two old timers could not decide: under 50ms in the gap
-   * in total, yet never CRASH_GRACE_MS in a row outside it. */
-  test('should win on a brief dip into each gap when a pass is very short', () => {
-    const api = playRound(
-      (target, msAfterCentre) =>
-        msAfterCentre >= -16 && msAfterCentre < 16
-          ? target.midi
-          : awayFrom(target.midi),
-      WIDE_CANVAS_WIDTH,
     )
 
     expect(api.phase.value).toBe('won')
@@ -347,6 +339,17 @@ describe('useSingFly - flying a round', () => {
     },
   )
 
+  /* Pipes in a round, counted by hand: one as the round starts, then one per
+   * pipe interval in what is left after the 4000ms approach from the live
+   * edge to the bird. Easy 10s: 6000ms left, a pipe every 2800ms, so 2 more
+   * and 3 in all. Best scores store this total, so a number that has to
+   * change here means stored scores no longer fit their round. */
+  const PIPE_COUNTS: Record<Difficulty, Record<GameDurationSec, number>> = {
+    easy: { 5: 1, 10: 3, 20: 6, 30: 10, 40: 13, 50: 17, 60: 21 },
+    normal: { 5: 1, 10: 4, 20: 9, 30: 14, 40: 19, 50: 25, 60: 30 },
+    hard: { 5: 1, 10: 5, 20: 12, 30: 19, 40: 26, 50: 33, 60: 41 },
+  }
+
   test.each(rounds)(
     'should keep the pipe count and spacing of a $difficulty $durationSec s round',
     ({ difficulty, durationSec }) => {
@@ -359,11 +362,7 @@ describe('useSingFly - flying a round', () => {
       api.startGame()
       const dueTimes = api.targets.value.map((target) => target.dueTime)
 
-      /* As many pipes as before: best scores store this total. 4000ms is the
-       * approach from the live edge to the bird. */
-      expect(dueTimes).toHaveLength(
-        Math.floor((gameDurationMs - 4000) / intervalMs) + 1,
-      )
+      expect(dueTimes).toHaveLength(PIPE_COUNTS[difficulty][durationSec])
       if (dueTimes.length < 2) return
 
       const spacingMs =

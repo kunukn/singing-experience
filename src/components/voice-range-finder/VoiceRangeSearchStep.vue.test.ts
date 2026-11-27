@@ -1,8 +1,9 @@
-import { describe, expect, test } from 'vitest'
+import { afterEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import PrimeVue from 'primevue/config'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
+import { RECORD_FLASH_MS } from './useRangeFinder'
 import VoiceRangeSearchStep from './VoiceRangeSearchStep.vue'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
@@ -77,6 +78,11 @@ describe('VoiceRangeSearchStep', () => {
   })
 
   describe('pause cue', () => {
+    /* Only the record flash test fakes the clock */
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
     test('should point down to the next note below the low record', () => {
       const wrapper = mountStep({
         sungMidi: 46, // A♯2
@@ -129,15 +135,26 @@ describe('VoiceRangeSearchStep', () => {
       wrapper.unmount()
     })
 
-    test('should show no cue during the record flash', async () => {
+    /* The props follow what useRangeFinder reports as a hold completes: G2
+     * fills under a G♯2 record, becomes the record, and the singer still on
+     * it is then "not past the record". */
+    test('should hold the cue back until the record flash is over', async () => {
+      vi.useFakeTimers()
       const wrapper = mountStep({
-        sungMidi: 43,
-        lowestMidi: 44,
+        sungMidi: 43, // G2
+        lowestMidi: 44, // G♯2
+        candidateMidi: 43,
+        progress: 0.9,
+        isFilling: true,
+      })
+
+      await wrapper.setProps({ lowestMidi: 43, progress: 1 })
+      await wrapper.setProps({
+        candidateMidi: null,
+        progress: 0,
+        isFilling: false,
         pauseReason: 'notPastRecord',
       })
-      expect(wrapper.find(CUE).exists()).toBe(true)
-
-      await wrapper.setProps({ lowestMidi: 43 })
 
       expect(
         wrapper
@@ -145,6 +162,11 @@ describe('VoiceRangeSearchStep', () => {
           .attributes('data-record-flash'),
       ).toBe('true')
       expect(wrapper.find(CUE).exists()).toBe(false)
+
+      vi.advanceTimersByTime(RECORD_FLASH_MS)
+      await nextTick()
+
+      expect(wrapper.get(CUE).text().replace(/\s/g, '')).toBe('↓F♯2')
       wrapper.unmount()
     })
   })

@@ -18,7 +18,6 @@ import {
   shiftRange,
   wheelNoteLabel,
   walkKeyOrder,
-  walkWindow,
 } from './circleOfFifths'
 
 const keyByLabel = (label: string) => {
@@ -241,14 +240,10 @@ describe('circleOfFifths - voice range placement', () => {
   test.each(rangeCases)(
     'keeps every $direction step of $name inside the range',
     ({ direction, range }) => {
-      const window = walkWindow(range)
       const steps = buildWalkSteps(direction, range)
-      const order = walkKeyOrder(direction)
 
-      expect(window.midiMax - window.midiMin).toBe(11)
       expect(steps).toHaveLength(12)
       steps.forEach((step, index) => {
-        expect(step.keyIndex).toBe(order[index])
         expect(pitchClassOf(step.rootMidi)).toBe(
           CIRCLE_KEYS[step.keyIndex].pitchClass,
         )

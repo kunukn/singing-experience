@@ -3,6 +3,11 @@ import { createTuningHold, TUNING_HOLD_MS } from './tuningHold'
 
 const FRAME_MS = 16 // ~60 fps
 
+/* The durations sung in the blip, restart and silence cases are written out
+ * for a 1.5 s hold and a 150 ms stray limit. Passing both in keeps those cases
+ * about their own rule when the app's defaults are retuned. */
+const FIXED_TIMING = { holdMs: 1500, strayMs: 150 }
+
 /* Pushes `midi` every frame from startMs for durationMs; returns the end time */
 function sing(
   hold: ReturnType<typeof createTuningHold>,
@@ -33,7 +38,7 @@ describe('tuningHold', () => {
   })
 
   test('should restart the hold when the singer moves to another semitone', () => {
-    const hold = createTuningHold()
+    const hold = createTuningHold(FIXED_TIMING)
 
     const end = sing(hold, 57, 0, 1000)
     sing(hold, 55, end, 500)
@@ -44,7 +49,7 @@ describe('tuningHold', () => {
   })
 
   test('should ride through a short blip on a neighbouring semitone', () => {
-    const hold = createTuningHold()
+    const hold = createTuningHold(FIXED_TIMING)
 
     let end = sing(hold, 57, 0, 800)
     end = sing(hold, 58, end, 60)
@@ -81,7 +86,7 @@ describe('tuningHold', () => {
   })
 
   test('should keep the candidate through silence without advancing it', () => {
-    const hold = createTuningHold()
+    const hold = createTuningHold(FIXED_TIMING)
 
     const end = sing(hold, 57, 0, 750)
     const progress = hold.progress

@@ -1,8 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { nextTick } from 'vue'
 import PrimeVue from 'primevue/config'
 import { createI18n } from 'vue-i18n'
 import en from '@/locales/en.json'
+import { useVoiceRangeSlots } from './useVoiceRangeSlots'
 import VoiceRangeSlots from './VoiceRangeSlots.vue'
 
 const i18n = createI18n({ legacy: false, locale: 'en', messages: { en } })
@@ -32,13 +34,17 @@ const slotButton = (wrapper: SlotsWrapper, number: number) =>
   wrapper.get(`[data-testid="range-slot-${number}"]`)
 
 describe('VoiceRangeSlots', () => {
-  beforeEach(() => {
+  /* Slot 1 is saved the way the app saves it, so the stored shape can't drift
+   * from the writer's. */
+  beforeEach(async () => {
     document.body.innerHTML = ''
     localStorage.clear()
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify([{ midiMin: G2, midiMax: E4, name: 'Warm-up' }, null]),
-    )
+    useVoiceRangeSlots(STORAGE_KEY).saveSlot(0, {
+      midiMin: G2,
+      midiMax: E4,
+      name: 'Warm-up',
+    })
+    await nextTick()
   })
 
   test('should show filled and empty slots', () => {
@@ -156,6 +162,29 @@ describe('VoiceRangeSlots', () => {
     const isListVisible = (wrapper: SlotsWrapper) =>
       wrapper.get('[data-testid="range-slots-list"]').isVisible()
 
+    function stubScreen({ isPhone }: { isPhone: boolean }) {
+      vi.spyOn(window, 'matchMedia').mockImplementation(
+        (query) =>
+          ({
+            matches: isPhone && query.includes('width <'),
+            media: query,
+            addEventListener: () => {},
+            removeEventListener: () => {},
+          }) as unknown as MediaQueryList,
+      )
+    }
+
+    /* Collapses the list the way a singer does, then leaves the page. */
+    async function collapseAndLeave() {
+      const wrapper = mountSlots()
+      await toggle(wrapper).trigger('click')
+      wrapper.unmount()
+    }
+
+    beforeEach(() => {
+      stubScreen({ isPhone: false })
+    })
+
     afterEach(() => {
       vi.restoreAllMocks()
     })
@@ -168,15 +197,7 @@ describe('VoiceRangeSlots', () => {
     })
 
     test('should start collapsed on a phone', () => {
-      vi.spyOn(window, 'matchMedia').mockImplementation(
-        (query) =>
-          ({
-            matches: query.includes('width <'),
-            media: query,
-            addEventListener: () => {},
-            removeEventListener: () => {},
-          }) as unknown as MediaQueryList,
-      )
+      stubScreen({ isPhone: true })
       const wrapper = mountSlots()
 
       expect(toggle(wrapper).attributes('aria-expanded')).toBe('false')
@@ -193,8 +214,8 @@ describe('VoiceRangeSlots', () => {
       expect(toggle(mountSlots()).attributes('aria-expanded')).toBe('false')
     })
 
-    test('should name the matching slot while collapsed', () => {
-      localStorage.setItem(EXPANDED_KEY, 'closed')
+    test('should name the matching slot while collapsed', async () => {
+      await collapseAndLeave()
       const wrapper = mountSlots(G2, E4)
 
       const summary = wrapper.get('[data-testid="range-slots-summary"]')
@@ -202,9 +223,11 @@ describe('VoiceRangeSlots', () => {
       expect(summary.text()).toContain('G2–E4')
     })
 
-    test('should show no summary when no slot matches', () => {
-      localStorage.setItem(EXPANDED_KEY, 'closed')
+    test('should show no summary when no slot matches', async () => {
+      await collapseAndLeave()
       const wrapper = mountSlots()
+
+      expect(toggle(wrapper).attributes('aria-expanded')).toBe('false')
 
       expect(wrapper.find('[data-testid="range-slots-summary"]').exists()).toBe(
         false,

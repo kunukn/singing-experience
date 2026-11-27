@@ -53,8 +53,11 @@ describe('quantizeNotes', () => {
   })
 
   test('keeps a short note as one step when it lasts at least half a step', () => {
+    /* 760 → 1020 ms is 1.52 → 2.04 steps: start and end both round to step 2,
+     * which leaves no length. At 260 ms it is over half a step (250 ms), so it
+     * is kept as one step instead of dropped. */
     const notes = quantizeNotes(
-      [{ startMs: 1000, endMs: 1260, midi: 60 }],
+      [{ startMs: 760, endMs: 1020, midi: 60 }],
       AT_60,
     )
 
@@ -67,7 +70,7 @@ describe('quantizeNotes', () => {
       AT_60,
     )
 
-    expect(notes.every((note) => note.midi === null)).toBe(true)
+    expect(notes).toEqual([])
   })
 
   test('keeps a half note released 15% early (a breath)', () => {

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest'
 import { midiToFrequency } from './noteUtils'
+import { CLOSE_CENTS } from './pitchColors'
 import { centsBetween, isOnPitch } from './pitchMatch'
 
 const A4 = 440
@@ -11,9 +12,13 @@ describe('pitchMatch', () => {
     expect(centsBetween(A4 * 2 ** (-30 / 1200), A4)).toBeCloseTo(-30, 5)
   })
 
-  test('isOnPitch defaults to the ±20¢ close threshold', () => {
-    expect(isOnPitch(A4 * 2 ** (19 / 1200), A4)).toBe(true)
-    expect(isOnPitch(A4 * 2 ** (21 / 1200), A4)).toBe(false)
+  test('isOnPitch defaults to the CLOSE_CENTS threshold', () => {
+    /* One cent inside the threshold, then one cent past it */
+    const inside = CLOSE_CENTS - 1
+    const outside = CLOSE_CENTS + 1
+
+    expect(isOnPitch(A4 * 2 ** (inside / 1200), A4)).toBe(true)
+    expect(isOnPitch(A4 * 2 ** (outside / 1200), A4)).toBe(false)
   })
 
   test.each([
