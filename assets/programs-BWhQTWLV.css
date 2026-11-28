@@ -1,0 +1,1 @@
+.program-icon{--icon-strong:var(--icon-strong-light);--icon-accent:var(--icon-accent-light);--icon-light:var(--p-surface-0)}.p-dark .program-icon{--icon-strong:var(--icon-strong-dark);--icon-accent:var(--icon-accent-dark);--icon-light:var(--p-surface-100)}.program-icon-tile{fill:color-mix(in srgb, var(--icon-strong) 16%, transparent)}
