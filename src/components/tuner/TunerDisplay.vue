@@ -278,7 +278,8 @@ watch(
 
 <template>
   <div class="flex flex-1 flex-col items-center gap-4 pb-4">
-    <div class="flex items-center gap-2">
+    <!-- flex-wrap: on the narrowest phones the reference pitch chip drops to its own line -->
+    <div class="flex flex-wrap items-center justify-center gap-2">
       <label class="text-sm text-(--p-text-muted-color)">
         {{ t('tuner.tuning') }}
       </label>
@@ -324,15 +325,14 @@ watch(
         :aria-label="t('generic.previewButton')"
         @click="toggleTuningPreview"
       />
+      <TunerReferencePitch
+        v-model="referenceA4"
+        :noteInfo="noteInfo"
+        :isClean="isClean"
+        :isListening="isListening"
+        :start="start"
+      />
     </div>
-
-    <TunerReferencePitch
-      v-model="referenceA4"
-      :noteInfo="noteInfo"
-      :isClean="isClean"
-      :isListening="isListening"
-      :start="start"
-    />
 
     <div class="mb-4">
       <PrimeButton
