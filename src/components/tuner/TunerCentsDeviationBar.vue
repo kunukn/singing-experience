@@ -25,9 +25,10 @@ const props = withDefaults(defineProps<Props>(), {
   colorMode: 'tuning',
   /*
    * Track fills the space the parent stretches the bar to, clamped:
-   * 120px floor keeps it usable on short phones (iPhone SE), 240px cap stops it dwarfing the readout.
+   * 96px floor still reads on short phones (iPhone SE) and lets the tuner fit above the fold;
+   * 240px cap stops it dwarfing the readout.
    */
-  height: 'min-h-30 max-h-60',
+  height: 'min-h-24 max-h-60',
 })
 
 const { isDark } = useDarkMode()
@@ -63,7 +64,9 @@ const offMarkerTops = computed(() =>
     class="flex flex-col items-center justify-center gap-1"
     :class="{ invisible: !isVisible }"
   >
-    <span class="text-xs text-(--p-text-muted-color)">{{ highLabel }}</span>
+    <span class="text-xs whitespace-nowrap text-(--p-text-muted-color)">{{
+      highLabel
+    }}</span>
 
     <div
       class="relative w-3 flex-1 overflow-hidden rounded-full bg-(--p-surface-200) dark:bg-(--p-surface-800)"
@@ -87,6 +90,8 @@ const offMarkerTops = computed(() =>
       />
     </div>
 
-    <span class="text-xs text-(--p-text-muted-color)">{{ lowLabel }}</span>
+    <span class="text-xs whitespace-nowrap text-(--p-text-muted-color)">{{
+      lowLabel
+    }}</span>
   </div>
 </template>

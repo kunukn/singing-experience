@@ -274,7 +274,8 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col items-center gap-4 pb-4">
+  <div class="flex flex-1 flex-col items-center gap-4 pb-8">
+    <!-- pb-8: breathing room under the cents bar; the bar's flex row gives it up, not the page height -->
     <!-- flex-wrap: on the narrowest phones the reference pitch chip drops to its own line -->
     <div class="flex flex-wrap items-center justify-center gap-2">
       <label class="text-sm text-(--p-text-muted-color)">
@@ -309,7 +310,7 @@ watch(
       />
     </div>
 
-    <div class="mb-4">
+    <div>
       <PrimeButton
         v-if="!isListening"
         severity="success"
@@ -369,11 +370,16 @@ watch(
           >
         </PrimeButton>
       </div>
-      <div class="h-64 w-auto">
+      <!--
+        Head shrinks with the viewport so the cents bar fits above the fold under Safari's bars.
+        12rem floor: string buttons are 2.625rem and sit ~24% of the head height apart, so below
+        12rem they overlap. 30svh = height with the browser bars shown, so it never jumps on scroll.
+      -->
+      <div class="h-[clamp(12rem,30svh,16rem)] w-auto">
         <img
           src="@/assets/images/ukulele-head.png"
           alt=""
-          class="h-56 w-auto"
+          class="h-7/8 w-auto"
           :class="{
             'instrument-is-dark': isDark,
             'instrument-is-light': !isDark,
@@ -437,13 +443,17 @@ watch(
         class="self-stretch"
       />
 
-      <div class="flex min-w-38 flex-col items-start justify-center">
+      <div
+        class="flex min-w-38 flex-col items-start justify-center max-xs:min-w-32"
+      >
         <div
           v-if="shownNoteInfo && isShownClean"
           class="transition-colors duration-150"
           :style="{ color: noteColor ?? undefined }"
         >
-          <span class="text-7xl font-bold tracking-tight md:text-8xl">
+          <span
+            class="text-7xl font-bold tracking-tight max-xs:text-6xl md:text-8xl"
+          >
             {{ toAccidentalGlyph(shownNoteInfo.note) }}
           </span>
           <span class="mt-2 inline-block align-top text-4xl font-light">

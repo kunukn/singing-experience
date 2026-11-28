@@ -277,7 +277,8 @@ watch(
 </script>
 
 <template>
-  <div class="flex flex-1 flex-col items-center gap-4 pb-4">
+  <div class="flex flex-1 flex-col items-center gap-4 pb-8">
+    <!-- pb-8: breathing room under the cents bar; the bar's flex row gives it up, not the page height -->
     <!-- flex-wrap: on the narrowest phones the reference pitch chip drops to its own line -->
     <div class="flex flex-wrap items-center justify-center gap-2">
       <label class="text-sm text-(--p-text-muted-color)">
@@ -334,7 +335,7 @@ watch(
       />
     </div>
 
-    <div class="mb-4">
+    <div>
       <PrimeButton
         v-if="!isListening"
         severity="success"
@@ -394,10 +395,15 @@ watch(
           >
         </PrimeButton>
       </div>
+      <!--
+        Head shrinks with the viewport so the cents bar fits above the fold under Safari's bars.
+        12rem floor: string buttons are 2.625rem and sit ~23% of the head height apart, so below
+        12rem they overlap. 30svh = height with the browser bars shown, so it never jumps on scroll.
+      -->
       <img
         src="@/assets/images/guitar-head.png"
         alt=""
-        class="mt-0 h-64 w-auto"
+        class="mt-0 h-[clamp(12rem,30svh,16rem)] w-auto"
         :class="{
           'instrument-is-dark': isDark,
           'instrument-is-light': !isDark,
@@ -463,18 +469,21 @@ watch(
       <!--
         Fixed width, not min-w: the row is centred, so a wider readout would slide the bar sideways.
         w-44 fits the widest note (G♯3 ≈ 141px) and the English hint; longer translations wrap.
+        Phones step down to w-36 / text-6xl so bar + readout + Hz column fit in 343px.
         Rows 1fr / auto / 1fr pin the note to the bar's centre line; the subtext hangs in the
         bottom track, so lines appearing beneath the note no longer re-centre it vertically.
       -->
       <div
-        class="grid w-44 grid-rows-[1fr_auto_1fr] justify-items-start self-stretch"
+        class="grid w-44 grid-rows-[1fr_auto_1fr] justify-items-start self-stretch max-xs:w-36"
       >
         <div
           v-if="shownNoteInfo && isShownClean"
           class="row-start-2 transition-colors duration-150"
           :style="{ color: noteColor ?? undefined }"
         >
-          <span class="text-7xl font-bold tracking-tight md:text-8xl">
+          <span
+            class="text-7xl font-bold tracking-tight max-xs:text-6xl md:text-8xl"
+          >
             {{ toAccidentalGlyph(shownNoteInfo.note) }}
           </span>
           <span class="mt-2 inline-block align-top text-4xl font-light">
